@@ -491,7 +491,7 @@
 	}
 
 	.user-access.is-denied {
-		color: #cb4258;
+		color: hsl(350deg 57% 53%);
 	}
 
 	.user-dropdown label {

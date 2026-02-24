@@ -57,12 +57,17 @@
 	let translateY = $state(0);
 
 	let activePointerId = $state(null);
+	let activePointers = new Map();
 	let isDragging = $state(false);
 	let dragMoved = $state(false);
 	let dragStartX = $state(0);
 	let dragStartY = $state(0);
 	let dragTranslateX = $state(0);
 	let dragTranslateY = $state(0);
+	let isPinching = $state(false);
+	let pinchStartDistance = $state(0);
+	let pinchStartScale = $state(1);
+	let pinchCenter = $state({ x: 0, y: 0 });
 	let hasUserViewportInteraction = $state(false);
 
 	let editPinCivInput = $state("");
@@ -215,6 +220,11 @@
 		isDragging = false;
 		dragMoved = false;
 		activePointerId = null;
+		activePointers = new Map();
+		isPinching = false;
+		pinchStartDistance = 0;
+		pinchStartScale = scale;
+		pinchCenter = { x: 0, y: 0 };
 
 		try {
 			if (typeof window !== "undefined" && window.location?.protocol === "file:") {
@@ -376,7 +386,6 @@
 			if (!settings.hideDecorations) {
 				drawFeatureGlyph(ctx, tile, featureVertices, hexSize);
 				drawElevationGlyph(ctx, tile, hexSize);
-				drawRiverGlyph(ctx, tile, hexSize);
 
 				if (tile.resource) {
 					ctx.fillStyle = settings.grayscaleTerrain ? "hsl(0deg 0% 18% / 0.48)" : "hsl(204deg 31% 20% / 0.34)";
@@ -384,7 +393,14 @@
 					ctx.arc(tile.x + hexSize * 0.3, tile.y - hexSize * 0.25, hexSize * 0.1, 0, Math.PI * 2);
 					ctx.fill();
 				}
+			}
+		}
 
+		if (!settings.hideDecorations) {
+			drawRiverOverlay(ctx, hexSize);
+
+			// Keep note pins above the river overlay.
+			for (const tile of mapTiles) {
 				if (notesByKey[tile.key]) {
 					drawNotePinGlyph(ctx, tile, hexSize);
 				}
@@ -561,11 +577,41 @@
 	}
 
 	function onViewportPointerDown(event) {
-		if (event.button !== 0 || !viewportEl) {
+		if (!viewportEl) {
+			return;
+		}
+		if (event.pointerType === "mouse" && event.button !== 0) {
 			return;
 		}
 
 		hasUserViewportInteraction = true;
+		hoveredTileKey = "";
+		hoverPointer = null;
+
+		if (event.pointerType === "touch") {
+			activePointers.set(event.pointerId, {
+				x: event.clientX,
+				y: event.clientY,
+			});
+			if (activePointers.size >= 2) {
+				const points = Array.from(activePointers.values());
+				const first = points[0];
+				const second = points[1];
+				isPinching = true;
+				pinchStartDistance = Math.hypot(first.x - second.x, first.y - second.y);
+				pinchStartScale = scale;
+				const rect = viewportEl.getBoundingClientRect();
+				pinchCenter = {
+					x: (first.x + second.x) / 2 - rect.left,
+					y: (first.y + second.y) / 2 - rect.top,
+				};
+				activePointerId = null;
+				isDragging = false;
+				dragMoved = true;
+				return;
+			}
+		}
+
 		activePointerId = event.pointerId;
 		isDragging = true;
 		dragMoved = false;
@@ -573,11 +619,35 @@
 		dragStartY = event.clientY;
 		dragTranslateX = translateX;
 		dragTranslateY = translateY;
-		viewportEl.setPointerCapture(event.pointerId);
+		if (event.currentTarget && event.currentTarget.setPointerCapture) {
+			event.currentTarget.setPointerCapture(event.pointerId);
+		}
 	}
 
 	function onViewportPointerMove(event) {
 		if (!mapMetrics) {
+			return;
+		}
+
+		if (event.pointerType === "touch" && activePointers.has(event.pointerId)) {
+			activePointers.set(event.pointerId, {
+				x: event.clientX,
+				y: event.clientY,
+			});
+		}
+
+		if (isPinching && activePointers.size >= 2) {
+			const points = Array.from(activePointers.values());
+			const distance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+			if (pinchStartDistance > 0 && Number.isFinite(distance)) {
+				const nextScale = clamp((distance / pinchStartDistance) * pinchStartScale, minScale, maxScale);
+				const worldX = (pinchCenter.x - translateX) / scale;
+				const worldY = (pinchCenter.y - translateY) / scale;
+				scale = nextScale;
+				translateX = pinchCenter.x - worldX * nextScale;
+				translateY = pinchCenter.y - worldY * nextScale;
+				clampTranslate();
+			}
 			return;
 		}
 
@@ -590,6 +660,10 @@
 			translateX = dragTranslateX + dx;
 			translateY = dragTranslateY + dy;
 			clampTranslate();
+			return;
+		}
+
+		if (isDragging || isPinching) {
 			return;
 		}
 
@@ -609,11 +683,25 @@
 	}
 
 	function onViewportPointerUp(event) {
+		if (event.pointerType === "touch") {
+			activePointers.delete(event.pointerId);
+			if (isPinching && activePointers.size < 2) {
+				isPinching = false;
+				pinchStartDistance = 0;
+				activePointerId = null;
+				isDragging = false;
+				dragMoved = true;
+				return;
+			}
+		}
+
 		if (event.pointerId !== activePointerId || !viewportEl) {
 			return;
 		}
 
-		viewportEl.releasePointerCapture(event.pointerId);
+		if (viewportEl.hasPointerCapture && viewportEl.hasPointerCapture(event.pointerId)) {
+			viewportEl.releasePointerCapture(event.pointerId);
+		}
 		isDragging = false;
 		activePointerId = null;
 
@@ -628,11 +716,21 @@
 		const tile = findTileAt(pointer.worldX, pointer.worldY);
 		if (tile) {
 			selectTile(tile.key);
+			if (event.pointerType === "touch") {
+				hoveredTileKey = tile.key;
+				hoverPointer = {
+					x: pointer.localX,
+					y: pointer.localY,
+				};
+			}
+		} else if (event.pointerType === "touch") {
+			hoveredTileKey = "";
+			hoverPointer = null;
 		}
 	}
 
 	function onViewportLeave() {
-		if (!isDragging) {
+		if (!isDragging && !isPinching) {
 			hoveredTileKey = "";
 			hoverPointer = null;
 		}
@@ -1446,41 +1544,313 @@
 		ctx.stroke();
 	}
 
-	function drawRiverGlyph(ctx, tile, hexSize) {
-		if (!Array.isArray(tile.riverSegments) || !tile.riverSegments.length) {
+	function drawRiverOverlay(ctx, hexSize) {
+		const overlay = buildRiverOverlayFromTiles(mapTiles);
+		if (!overlay.paths.length) {
 			return;
 		}
-
 		ctx.save();
-		ctx.lineCap = "round";
 		ctx.lineJoin = "round";
-		ctx.lineWidth = Math.max(1.35, hexSize * 0.2);
-		ctx.strokeStyle = settings.grayscaleTerrain ? "hsl(0deg 0% 14% / 0.66)" : "hsl(208deg 44% 16% / 0.62)";
-		for (const segment of tile.riverSegments) {
-			ctx.beginPath();
-			ctx.moveTo(tile.x + segment.x1, tile.y + segment.y1);
-			ctx.lineTo(tile.x + segment.x2, tile.y + segment.y2);
-			ctx.stroke();
-		}
-
-		ctx.lineWidth = Math.max(0.95, hexSize * 0.13);
-		ctx.strokeStyle = settings.grayscaleTerrain ? "hsl(0deg 0% 82% / 0.96)" : "hsl(202deg 88% 63% / 0.95)";
-		for (const segment of tile.riverSegments) {
-			ctx.beginPath();
-			ctx.moveTo(tile.x + segment.x1, tile.y + segment.y1);
-			ctx.lineTo(tile.x + segment.x2, tile.y + segment.y2);
-			ctx.stroke();
-		}
-
-		ctx.lineWidth = Math.max(0.5, hexSize * 0.06);
-		ctx.strokeStyle = "hsl(0deg 0% 100% / 0.9)";
-		for (const segment of tile.riverSegments) {
-			ctx.beginPath();
-			ctx.moveTo(tile.x + segment.x1, tile.y + segment.y1);
-			ctx.lineTo(tile.x + segment.x2, tile.y + segment.y2);
-			ctx.stroke();
+		ctx.lineCap = "butt";
+		const trimDistance = Math.max(0.6, hexSize * 0.08);
+		for (const layer of ["back", "mid", "top"]) {
+			const config = riverOverlayLayerConfig(layer, hexSize);
+			ctx.lineWidth = config.width;
+			ctx.strokeStyle = config.color;
+			strokeRiverPathsOnCanvas(ctx, overlay.paths, trimDistance);
 		}
 		ctx.restore();
+	}
+
+	function riverOverlayLayerConfig(layer, hexSize) {
+		const grayscale = !!settings.grayscaleTerrain;
+		const layers = {
+			back: {
+				width: Math.max(2, hexSize * 0.325),
+				color: grayscale ? "hsl(0deg 0% 12% / 0.72)" : "hsl(207deg 46% 14% / 0.72)",
+			},
+			mid: {
+				width: Math.max(1.15, hexSize * 0.225),
+				color: grayscale ? "hsl(0deg 0% 85% / 0.98)" : "hsl(202deg 88% 64% / 0.98)",
+			},
+			top: {
+				width: Math.max(0.75, hexSize * 0.175),
+				color: "hsl(0deg 0% 100% / 0.92)",
+			},
+		};
+		return layers[layer] || layers.mid;
+	}
+
+	function buildRiverOverlayFromTiles(tiles) {
+		const segments = [];
+		for (const tile of tiles || []) {
+			if (!tile || !Array.isArray(tile.riverSegments) || !tile.riverSegments.length) {
+				continue;
+			}
+			for (const segment of tile.riverSegments) {
+				segments.push({
+					x1: tile.x + segment.x1,
+					y1: tile.y + segment.y1,
+					x2: tile.x + segment.x2,
+					y2: tile.y + segment.y2,
+				});
+			}
+		}
+		if (!segments.length) {
+			return { paths: [], endpoints: [] };
+		}
+		return buildRiverPaths(segments);
+	}
+
+	function buildRiverPaths(segments) {
+		const pointByKey = new Map();
+		const adjacency = new Map();
+		const edges = [];
+		const nodeRef = { nextId: 0 };
+		(segments || []).forEach((segment, index) => {
+			const a = resolveRiverNodeKey(pointByKey, segment.x1, segment.y1, 2.2, nodeRef);
+			const b = resolveRiverNodeKey(pointByKey, segment.x2, segment.y2, 2.2, nodeRef);
+			if (!adjacency.has(a)) {
+				adjacency.set(a, new Set());
+			}
+			if (!adjacency.has(b)) {
+				adjacency.set(b, new Set());
+			}
+			adjacency.get(a).add(index);
+			adjacency.get(b).add(index);
+			edges.push({ a, b });
+		});
+
+		const visited = new Set();
+		const paths = [];
+		const endpoints = [];
+		adjacency.forEach((linked, key) => {
+			if (linked.size !== 1) {
+				return;
+			}
+			const point = pointByKey.get(key);
+			if (point) {
+				endpoints.push(point);
+			}
+		});
+
+		const walkPath = (startEdgeIndex, startKey) => {
+			const first = pointByKey.get(startKey);
+			if (!first) {
+				return null;
+			}
+			const path = [first];
+			const keys = [startKey];
+			let currentEdgeIndex = startEdgeIndex;
+			let currentKey = startKey;
+			while (Number.isInteger(currentEdgeIndex) && !visited.has(currentEdgeIndex)) {
+				visited.add(currentEdgeIndex);
+				const edge = edges[currentEdgeIndex];
+				if (!edge) {
+					break;
+				}
+				const nextKey = edge.a === currentKey ? edge.b : edge.a;
+				const nextPoint = pointByKey.get(nextKey);
+				if (!nextPoint) {
+					break;
+				}
+				path.push(nextPoint);
+				keys.push(nextKey);
+				const nextOptions = [...(adjacency.get(nextKey) || [])].filter((candidate) => !visited.has(candidate));
+				if (!nextOptions.length) {
+					break;
+				}
+				currentEdgeIndex = pickRiverContinuationEdge(currentKey, nextKey, nextOptions, edges, pointByKey);
+				currentKey = nextKey;
+			}
+			const endKey = keys[keys.length - 1];
+			return {
+				points: path,
+				startKey,
+				endKey,
+				startIsEndpoint: (adjacency.get(startKey) || new Set()).size === 1,
+				endIsEndpoint: (adjacency.get(endKey) || new Set()).size === 1,
+			};
+		};
+
+		adjacency.forEach((linked, key) => {
+			if (linked.size !== 1) {
+				return;
+			}
+			const edgeIndex = [...linked][0];
+			if (visited.has(edgeIndex)) {
+				return;
+			}
+			const path = walkPath(edgeIndex, key);
+			if (path && path.points.length >= 2) {
+				paths.push(path);
+			}
+		});
+
+		for (let edgeIndex = 0; edgeIndex < edges.length; edgeIndex += 1) {
+			if (visited.has(edgeIndex)) {
+				continue;
+			}
+			const path = walkPath(edgeIndex, edges[edgeIndex].a);
+			if (path && path.points.length >= 2) {
+				paths.push(path);
+			}
+		}
+
+		return { paths, endpoints };
+	}
+
+	function pickRiverContinuationEdge(previousKey, currentKey, candidateEdgeIndexes, edges, pointByKey) {
+		if (!Array.isArray(candidateEdgeIndexes) || !candidateEdgeIndexes.length) {
+			return null;
+		}
+		if (candidateEdgeIndexes.length === 1) {
+			return candidateEdgeIndexes[0];
+		}
+
+		const previous = pointByKey.get(previousKey);
+		const current = pointByKey.get(currentKey);
+		if (!previous || !current) {
+			return candidateEdgeIndexes[0];
+		}
+
+		const inX = current.x - previous.x;
+		const inY = current.y - previous.y;
+		const inLength = Math.hypot(inX, inY) || 1;
+
+		let bestEdge = candidateEdgeIndexes[0];
+		let bestScore = -Infinity;
+		for (const edgeIndex of candidateEdgeIndexes) {
+			const edge = edges[edgeIndex];
+			if (!edge) {
+				continue;
+			}
+			const nextKey = edge.a === currentKey ? edge.b : edge.a;
+			const next = pointByKey.get(nextKey);
+			if (!next) {
+				continue;
+			}
+			const outX = next.x - current.x;
+			const outY = next.y - current.y;
+			const outLength = Math.hypot(outX, outY) || 1;
+			const score = (inX * outX + inY * outY) / (inLength * outLength);
+			if (score > bestScore) {
+				bestScore = score;
+				bestEdge = edgeIndex;
+			}
+		}
+
+		return bestEdge;
+	}
+
+	function riverPointKey(x, y) {
+		return `${x.toFixed(2)}:${y.toFixed(2)}`;
+	}
+
+	function resolveRiverNodeKey(pointByKey, x, y, tolerance, nodeRef) {
+		let bestKey = "";
+		let bestDistanceSq = Infinity;
+		pointByKey.forEach((point, key) => {
+			const distanceSq = riverDistanceSq(point, { x, y });
+			if (distanceSq > tolerance * tolerance) {
+				return;
+			}
+			if (distanceSq < bestDistanceSq) {
+				bestDistanceSq = distanceSq;
+				bestKey = key;
+			}
+		});
+		if (bestKey) {
+			const existing = pointByKey.get(bestKey);
+			if (existing) {
+				existing.x = (existing.x + x) / 2;
+				existing.y = (existing.y + y) / 2;
+			}
+			return bestKey;
+		}
+		const key = `river-${nodeRef.nextId}:${riverPointKey(x, y)}`;
+		nodeRef.nextId += 1;
+		pointByKey.set(key, { x, y });
+		return key;
+	}
+
+	function riverDistanceSq(a, b) {
+		const dx = (a && Number(a.x)) || 0;
+		const dy = (a && Number(a.y)) || 0;
+		const tx = (b && Number(b.x)) || 0;
+		const ty = (b && Number(b.y)) || 0;
+		const x = dx - tx;
+		const y = dy - ty;
+		return x * x + y * y;
+	}
+
+	function trimRiverPathPoint(points, index, towardIndex, trimDistance) {
+		if (!Array.isArray(points) || index < 0 || towardIndex < 0 || index >= points.length || towardIndex >= points.length) {
+			return;
+		}
+		const point = points[index];
+		const toward = points[towardIndex];
+		if (!point || !toward) {
+			return;
+		}
+		const dx = toward.x - point.x;
+		const dy = toward.y - point.y;
+		const distance = Math.hypot(dx, dy) || 0;
+		if (distance <= 0) {
+			return;
+		}
+		const amount = Math.min(trimDistance, distance * 0.45);
+		point.x += (dx / distance) * amount;
+		point.y += (dy / distance) * amount;
+	}
+
+	function riverPathPointsForStroke(pathEntry, trimDistance = 0) {
+		const rawPoints = Array.isArray(pathEntry) ? pathEntry : pathEntry && Array.isArray(pathEntry.points) ? pathEntry.points : [];
+		if (!rawPoints.length) {
+			return [];
+		}
+		const shouldTrimStart = !!(pathEntry && pathEntry.startIsEndpoint);
+		const shouldTrimEnd = !!(pathEntry && pathEntry.endIsEndpoint);
+		if (!trimDistance || (!shouldTrimStart && !shouldTrimEnd)) {
+			return rawPoints;
+		}
+		const points = rawPoints.map((point) => ({ x: point.x, y: point.y }));
+		if (shouldTrimStart && points.length > 1) {
+			trimRiverPathPoint(points, 0, 1, trimDistance);
+		}
+		if (shouldTrimEnd && points.length > 1) {
+			trimRiverPathPoint(points, points.length - 1, points.length - 2, trimDistance);
+		}
+		return points;
+	}
+
+	function strokeRiverPathsOnCanvas(ctx, paths, trimDistance = 0) {
+		if (!ctx || !Array.isArray(paths) || !paths.length) {
+			return;
+		}
+		paths.forEach((pathEntry) => {
+			const path = riverPathPointsForStroke(pathEntry, trimDistance);
+			if (!Array.isArray(path) || path.length < 2) {
+				return;
+			}
+			ctx.beginPath();
+			ctx.moveTo(path[0].x, path[0].y);
+			if (path.length === 2) {
+				ctx.lineTo(path[1].x, path[1].y);
+				ctx.stroke();
+				return;
+			}
+			for (let index = 1; index < path.length - 1; index += 1) {
+				const current = path[index];
+				const next = path[index + 1];
+				const midX = (current.x + next.x) / 2;
+				const midY = (current.y + next.y) / 2;
+				ctx.quadraticCurveTo(current.x, current.y, midX, midY);
+			}
+			const last = path[path.length - 1];
+			ctx.lineTo(last.x, last.y);
+			ctx.stroke();
+		});
 	}
 
 	function drawNotePinGlyph(ctx, tile, hexSize) {
@@ -2452,8 +2822,8 @@
 	}
 
 	.pin-core {
-		fill: var(--primary, #243746);
-		stroke: var(--secondary, #f3d37f);
+		fill: var(--primary, hsl(204deg 33% 21%));
+		stroke: var(--secondary, hsl(42deg 82% 72%));
 		stroke-width: 3;
 	}
 
@@ -2462,7 +2832,7 @@
 	}
 
 	.pin-center {
-		fill: var(--secondary, #f3d37f);
+		fill: var(--secondary, hsl(42deg 82% 72%));
 	}
 
 	.pin-group.is-multi .pin-center {
@@ -2477,8 +2847,8 @@
 	}
 
 	.pin-satellite {
-		fill: var(--primary, #243746);
-		stroke: var(--secondary, #f3d37f);
+		fill: var(--primary, hsl(204deg 33% 21%));
+		stroke: var(--secondary, hsl(42deg 82% 72%));
 		stroke-width: 1.2;
 	}
 
@@ -2723,7 +3093,7 @@
 		z-index: 1;
 		border: 1px solid var(--panel-border);
 		border-radius: inherit;
-		background: var(--preview, #000000);
+		background: var(--preview, hsl(0deg 0% 0%));
 		box-shadow: inset 0 0 0 1px hsl(0deg 0% 100% / 0.3);
 		pointer-events: none;
 	}
@@ -2783,8 +3153,8 @@
 		inline-size: 0.78rem;
 		block-size: 0.78rem;
 		border-radius: 999px;
-		background: var(--primary, #243746);
-		border: 2px solid var(--secondary, #f3d37f);
+		background: var(--primary, hsl(204deg 33% 21%));
+		border: 2px solid var(--secondary, hsl(42deg 82% 72%));
 	}
 
 	.tile-pin-remove {
