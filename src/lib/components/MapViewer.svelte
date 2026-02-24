@@ -1566,16 +1566,16 @@
 		const grayscale = !!settings.grayscaleTerrain;
 		const layers = {
 			back: {
-				width: Math.max(2, hexSize * 0.325),
-				color: grayscale ? "hsl(0deg 0% 12% / 0.72)" : "hsl(207deg 46% 14% / 0.72)",
+				width: Math.max(2, hexSize * 0.35),
+				color: grayscale ? "hsl(0deg 0% 12% / 0.72)" : "hsl(207deg 90% 15% / 0.72)",
 			},
 			mid: {
-				width: Math.max(1.15, hexSize * 0.225),
-				color: grayscale ? "hsl(0deg 0% 85% / 0.98)" : "hsl(202deg 88% 64% / 0.98)",
+				width: Math.max(1.15, hexSize * 0.25),
+				color: grayscale ? "hsl(0deg 0% 85% / 0.98)" : "hsl(202deg 95% 50% / 0.98)",
 			},
 			top: {
 				width: Math.max(0.75, hexSize * 0.175),
-				color: "hsl(0deg 0% 100% / 0.92)",
+				color: "hsl(200deg 100% 90% / 0.95)",
 			},
 		};
 		return layers[layer] || layers.mid;
