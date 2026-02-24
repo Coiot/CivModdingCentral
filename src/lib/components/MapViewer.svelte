@@ -1,0 +1,2940 @@
+<script>
+	import { tick } from "svelte";
+	import { buildHexVertices, computeMapMetrics, tileCenter } from "../map/hex.js";
+	import { resolveTerrainColor } from "../map/colors.js";
+	import { computeTooltipBridgeRect, computeTooltipCoords } from "../map/tooltip.js";
+	import { NOTE_PIN_PATHS } from "../map/glyphs.js";
+
+	let { mapItem, maps = [], selectedMapId = "", onSelectMap = () => {}, canEdit = false, authUser = null, authAccessToken = "" } = $props();
+
+	const STORAGE_PREFIX = "cmc-map";
+	const CBRX_PIN_RESET_VERSION = 1;
+	const BASE_CACHE_VERSION = 1;
+	const PIN_SYNC_INTERVAL_MS = 60 * 1000;
+	const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
+	const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
+	const SUPABASE_PINS_TABLE = import.meta.env.VITE_SUPABASE_PINS_TABLE || "cmc_map_pins";
+	const PANEL_COLLAPSED_ICON_PATH =
+		"M544 512C526.3 512 512 497.7 512 480L512 160C512 142.3 526.3 128 544 128C561.7 128 576 142.3 576 160L576 480C576 497.7 561.7 512 544 512zM71 337C61.6 327.6 61.6 312.4 71 303.1L215 159C221.9 152.1 232.2 150.1 241.2 153.8C250.2 157.5 256 166.3 256 176L256 256L400 256C426.5 256 448 277.5 448 304L448 336C448 362.5 426.5 384 400 384L256 384L256 464C256 473.7 250.2 482.5 241.2 486.2C232.2 489.9 221.9 487.9 215 481L71 337z";
+	const PANEL_EXPANDED_ICON_PATH =
+		"M96 128C113.7 128 128 142.3 128 160L128 480C128 497.7 113.7 512 96 512C78.3 512 64 497.7 64 480L64 160C64 142.3 78.3 128 96 128zM569 303C578.4 312.4 578.4 327.6 569 336.9L425 481C418.1 487.9 407.8 489.9 398.8 486.2C389.8 482.5 384 473.7 384 464L384 384L240 384C213.5 384 192 362.5 192 336L192 304C192 277.5 213.5 256 240 256L384 256L384 176C384 166.3 389.8 157.5 398.8 153.8C407.8 150.1 418.1 152.2 425 159L569 303z";
+	const DEFAULT_SETTINGS = {
+		showPins: true,
+		hideDecorations: false,
+		flattenLandWater: false,
+		grayscaleTerrain: false,
+	};
+
+	let viewportEl = $state();
+	let canvasEl = $state();
+	let resizeObserver;
+
+	let baseData = $state(null);
+	let mapMetrics = $state(null);
+	let mapTiles = $state([]);
+	let tileLookup = $state(new Map());
+
+	let loading = $state(true);
+	let error = $state("");
+	let debugInfo = $state("");
+
+	let mapPins = $state([]);
+	let notesByKey = $state({});
+	let settings = $state({ ...DEFAULT_SETTINGS });
+
+	let panelTab = $state("edit");
+	let panelCollapsed = $state(true);
+	let selectedTileKey = $state("");
+	let hoveredTileKey = $state("");
+	let hoverPointer = $state(null);
+
+	let viewportWidth = $state(0);
+	let viewportHeight = $state(0);
+	let scale = $state(1);
+	let minScale = $state(0.2);
+	let maxScale = $state(4);
+	let translateX = $state(0);
+	let translateY = $state(0);
+
+	let activePointerId = $state(null);
+	let isDragging = $state(false);
+	let dragMoved = $state(false);
+	let dragStartX = $state(0);
+	let dragStartY = $state(0);
+	let dragTranslateX = $state(0);
+	let dragTranslateY = $state(0);
+	let hasUserViewportInteraction = $state(false);
+
+	let editPinCivInput = $state("");
+	let editPinPrimaryInput = $state("#243746");
+	let editPinSecondaryInput = $state("#f3d37f");
+	let editPinPrimaryHexInput = $state("#243746");
+	let editPinSecondaryHexInput = $state("#f3d37f");
+	let notesDraft = $state("");
+	let notesStatus = $state("");
+	let fitScaleLimit = $state(1);
+	let pinCloudSyncTimer = $state(null);
+	let pinCloudSyncDirty = $state(false);
+	let pinCloudSyncBusy = $state(false);
+	let pinCloudPullBusy = $state(false);
+	const notePinPathCache = new Map();
+	const basePayloadMemoryCache = new Map();
+	let lastInitializedMapId = "";
+
+	const selectedTile = $derived(selectedTileKey ? tileLookup.get(selectedTileKey) || null : null);
+	const hoveredTile = $derived(hoveredTileKey ? tileLookup.get(hoveredTileKey) || null : null);
+	const selectedTilePins = $derived.by(() => (selectedTile ? pinsForTile(selectedTile) : []));
+	const hoveredTilePins = $derived.by(() => (hoveredTile ? pinsForTile(hoveredTile) : []));
+	const selectedCivToken = $derived.by(() => normalizeToken(editPinCivInput));
+	const matchedSelectedPin = $derived.by(() => {
+		if (!selectedTilePins.length || !selectedCivToken) {
+			return null;
+		}
+		return selectedTilePins.find((pin) => normalizeToken(pin.civ) === selectedCivToken) || null;
+	});
+	const pinEditorMode = $derived.by(() => {
+		if (matchedSelectedPin) {
+			return "edit";
+		}
+		if (selectedCivToken) {
+			return "add";
+		}
+		return "idle";
+	});
+	const editorHint = $derived(canEdit ? "" : "Sign in from the user menu to make edits.");
+	const canZoomIn = $derived(scale < maxScale - 0.0001);
+	const canZoomOut = $derived(scale > minScale + 0.0001);
+	const pinGroups = $derived.by(() => {
+		const groups = new Map();
+		for (const pin of mapPins) {
+			const key = `${pin.col},${pin.row}`;
+			if (!groups.has(key)) {
+				groups.set(key, {
+					key,
+					col: pin.col,
+					row: pin.row,
+					pins: [],
+				});
+			}
+			groups.get(key).pins.push(pin);
+		}
+		return Array.from(groups.values());
+	});
+	const primaryColorDisplay = $derived.by(() => formatColorDisplay(editPinPrimaryInput, "#243746"));
+	const secondaryColorDisplay = $derived.by(() => formatColorDisplay(editPinSecondaryInput, "#f3d37f"));
+	const upsertCivButtonLabel = $derived.by(() => (pinEditorMode === "edit" ? "Update Civilization" : "Add Civilization"));
+	const pinEditorStatus = $derived.by(() => {
+		if (pinEditorMode === "edit") {
+			return `Editing "${matchedSelectedPin.civ}" on this tile.`;
+		}
+		if (pinEditorMode === "add") {
+			return `Adding "${String(editPinCivInput || "").trim()}" to this tile.`;
+		}
+		return "Enter a civilization name to add to this tile.";
+	});
+	const zoomPercent = $derived.by(() => {
+		if (!fitScaleLimit) {
+			return 100;
+		}
+		return Math.round((scale / fitScaleLimit) * 100);
+	});
+	const tooltipLayout = $derived.by(() => {
+		if (!hoveredTile || !hoverPointer || !viewportWidth || !viewportHeight) {
+			return null;
+		}
+
+		const targetWidth = 268;
+		const targetHeight = 214;
+
+		const coords = computeTooltipCoords({
+			viewportWidth,
+			viewportHeight,
+			tooltipWidth: targetWidth,
+			tooltipHeight: targetHeight,
+			position: hoverPointer,
+		});
+
+		if (!coords) {
+			return null;
+		}
+
+		const bridge = computeTooltipBridgeRect({
+			position: hoverPointer,
+			tooltipCoords: coords,
+		});
+
+		return { coords, bridge };
+	});
+
+	$effect(() => {
+		const mapId = mapItem?.id || "";
+		if (!mapId) {
+			return;
+		}
+		if (mapId === lastInitializedMapId) {
+			return;
+		}
+		lastInitializedMapId = mapId;
+		void initializeMap();
+	});
+
+	$effect(() => {
+		if (canvasEl && mapMetrics && mapTiles.length) {
+			drawMap();
+		}
+	});
+
+	$effect(() => {
+		return () => {
+			stopPinCloudSyncLoop();
+		};
+	});
+
+	async function initializeMap() {
+		stopPinCloudSyncLoop();
+		loading = true;
+		error = "";
+		debugInfo = "";
+		selectedTileKey = "";
+		hoveredTileKey = "";
+		hoverPointer = null;
+		panelTab = "edit";
+		panelCollapsed = true;
+		notesStatus = "";
+		pinCloudSyncDirty = false;
+
+		try {
+			if (typeof window !== "undefined" && window.location?.protocol === "file:") {
+				throw new Error("Maps must be served over http(s). Run `npm run dev` and open that URL.");
+			}
+
+			const baseUrl = resolveAssetUrl(mapItem.mapConfig.baseCacheUrl);
+			const pinsUrl = resolveAssetUrl(mapItem.pinsUrl);
+			debugInfo = `protocol=${window.location.protocol} base=${baseUrl} pins=${pinsUrl}`;
+
+			if (mapItem?.id === "cbrx" && typeof localStorage !== "undefined") {
+				try {
+					const resetKey = storageKey("pins-reset");
+					const resetState = loadStorageJson(resetKey, null);
+					const resetVersion = Number(resetState?.version || 0);
+					if (resetVersion < CBRX_PIN_RESET_VERSION) {
+						localStorage.removeItem(storageKey("pins"));
+						localStorage.setItem(resetKey, JSON.stringify({ version: CBRX_PIN_RESET_VERSION }));
+					}
+				} catch {
+					// Ignore storage access failures.
+				}
+			}
+
+			const localNotes = loadStorageJson(storageKey("notes"), {});
+			const localPins = loadStorageJson(storageKey("pins"), null);
+			const localSettings = loadStorageJson(storageKey("settings"), {});
+
+			let basePayload = loadCachedBasePayload(mapItem?.id);
+			if (!basePayload) {
+				basePayload = await fetchJsonSafe(baseUrl, "base");
+				saveCachedBasePayload(mapItem?.id, basePayload);
+			}
+			const pinsPayload = Array.isArray(localPins) ? { pins: localPins } : await fetchJsonSafe(pinsUrl, "pins").catch(() => ({ pins: [] }));
+
+			baseData = basePayload;
+			mapMetrics = computeMapMetrics(Number(basePayload.width), Number(basePayload.height), Number(mapItem.mapConfig.hexSize || 14));
+			notesByKey = isPlainObject(localNotes) ? localNotes : {};
+			settings = { ...DEFAULT_SETTINGS, ...(isPlainObject(localSettings) ? localSettings : {}) };
+			mapPins = normalizePins(Array.isArray(localPins) ? localPins : Array.isArray(pinsPayload?.pins) ? pinsPayload.pins : []);
+
+			await pullCloudPins({ forceApply: true });
+
+			rebuildTiles();
+
+			await tick();
+			fitToView(true);
+			drawMap();
+			startPinCloudSyncLoop();
+		} catch (loadError) {
+			const name = loadError?.name ? `${loadError.name}: ` : "";
+			error = `${name}${loadError?.message || "Unable to load map data."}`;
+			if (loadError?.stack) {
+				debugInfo = `${debugInfo}\n${loadError.stack}`;
+			}
+			baseData = null;
+			mapMetrics = null;
+			mapTiles = [];
+			tileLookup = new Map();
+			mapPins = [];
+			stopPinCloudSyncLoop();
+		} finally {
+			loading = false;
+		}
+	}
+
+	function rebuildTiles() {
+		if (!baseData || !mapMetrics) {
+			mapTiles = [];
+			tileLookup = new Map();
+			return;
+		}
+
+		const hexSize = Number(mapItem.mapConfig.hexSize || 14);
+		const built = [];
+		const lookup = new Map();
+
+		for (let sourceRow = 0; sourceRow < baseData.height; sourceRow += 1) {
+			const displayRow = baseData.height - 1 - sourceRow;
+			for (let col = 0; col < baseData.width; col += 1) {
+				const index = sourceRow * baseData.width + col;
+				const raw = normalizeRawTile(baseData.mapTiles[index]);
+				const center = tileCenter(col, sourceRow, baseData.height, hexSize);
+				const key = `${col},${displayRow}`;
+
+				const entry = {
+					key,
+					index,
+					col,
+					sourceRow,
+					row: displayRow,
+					x: center.x - mapMetrics.minX,
+					y: center.y - mapMetrics.minY,
+					terrain: lookupString(baseData.terrainList, raw.terrainType),
+					feature: lookupString(baseData.featureTerrainList, raw.featureTerrainType),
+					resource: lookupString(baseData.resourceList, raw.resourceType),
+					improvement: raw && raw.improvementType !== undefined ? lookupString(baseData.improvementList, raw.improvementType) : null,
+					riverSegments: buildRiverSegments(raw.riverData, hexSize),
+					raw,
+				};
+
+				built.push(entry);
+				lookup.set(key, entry);
+			}
+		}
+
+		mapTiles = built;
+		tileLookup = lookup;
+
+		if (selectedTileKey && !lookup.has(selectedTileKey)) {
+			selectedTileKey = "";
+		}
+		if (hoveredTileKey && !lookup.has(hoveredTileKey)) {
+			hoveredTileKey = "";
+		}
+	}
+
+	function drawMap() {
+		if (!canvasEl || !mapMetrics || !mapTiles.length) {
+			return;
+		}
+
+		const width = Math.max(1, Math.ceil(mapMetrics.width));
+		const height = Math.max(1, Math.ceil(mapMetrics.height));
+		const hexSize = Number(mapItem.mapConfig.hexSize || 14);
+		const vertices = buildHexVertices(hexSize);
+		const featureVertices = buildHexVertices(hexSize * 0.37);
+		canvasEl.width = width;
+		canvasEl.height = height;
+
+		const ctx = canvasEl.getContext("2d");
+		if (!ctx) {
+			return;
+		}
+
+		ctx.clearRect(0, 0, width, height);
+		ctx.lineWidth = 0.5;
+		ctx.strokeStyle = "rgba(8, 23, 36, 0.22)";
+
+		for (const tile of mapTiles) {
+			const fill = adjustedTerrainColor(tile);
+
+			ctx.beginPath();
+			for (let vertex = 0; vertex < vertices.length; vertex += 1) {
+				const point = vertices[vertex];
+				if (vertex === 0) {
+					ctx.moveTo(tile.x + point.x, tile.y + point.y);
+				} else {
+					ctx.lineTo(tile.x + point.x, tile.y + point.y);
+				}
+			}
+			ctx.closePath();
+
+			ctx.fillStyle = fill;
+			ctx.fill();
+			ctx.stroke();
+
+			if (!settings.hideDecorations) {
+				drawFeatureGlyph(ctx, tile, featureVertices, hexSize);
+				drawElevationGlyph(ctx, tile, hexSize);
+				drawRiverGlyph(ctx, tile, hexSize);
+
+				if (tile.resource) {
+					ctx.fillStyle = settings.grayscaleTerrain ? "hsl(0deg 0% 18% / 0.48)" : "hsl(204deg 31% 20% / 0.34)";
+					ctx.beginPath();
+					ctx.arc(tile.x + hexSize * 0.3, tile.y - hexSize * 0.25, hexSize * 0.1, 0, Math.PI * 2);
+					ctx.fill();
+				}
+
+				if (notesByKey[tile.key]) {
+					drawNotePinGlyph(ctx, tile, hexSize);
+				}
+			}
+		}
+	}
+
+	function adjustedTerrainColor(tile) {
+		const terrain = tile.terrain || "";
+		const terrainUpper = terrain.toUpperCase();
+		const feature = settings.hideDecorations ? "" : tile.feature || "";
+
+		let fill = resolveTerrainColor(terrain, feature, tile.raw?.elevation ?? 0);
+
+		if (settings.flattenLandWater) {
+			fill = terrainUpper.includes("OCEAN") || terrainUpper.includes("COAST") ? "#6d96b7" : "#b9b08f";
+		}
+
+		if (settings.grayscaleTerrain) {
+			fill = settings.flattenLandWater ? flattenedGrayscaleTerrainColor(terrainUpper) : grayscaleTerrainHex(tile, fill);
+		}
+
+		return sanitizeHexColor(fill, "#76848f");
+	}
+
+	function mountViewport(node) {
+		viewportEl = node;
+		resizeObserver = new ResizeObserver((entries) => {
+			const entry = entries[0];
+			if (!entry) {
+				return;
+			}
+			viewportWidth = Math.max(1, Math.floor(entry.contentRect.width));
+			viewportHeight = Math.max(1, Math.floor(entry.contentRect.height));
+			if (mapMetrics) {
+				const fitScale = Math.min(viewportWidth / mapMetrics.width, viewportHeight / mapMetrics.height);
+				fitScaleLimit = fitScale;
+				minScale = fitScaleLimit;
+				maxScale = fitScaleLimit * 5;
+				scale = clamp(scale || fitScale, minScale, maxScale);
+			}
+
+			if (mapMetrics && !hasUserViewportInteraction) {
+				fitToView(false);
+			} else {
+				clampTranslate();
+			}
+		});
+		resizeObserver.observe(node);
+
+		return {
+			destroy() {
+				resizeObserver?.disconnect();
+				resizeObserver = undefined;
+				if (viewportEl === node) {
+					viewportEl = undefined;
+				}
+			},
+		};
+	}
+
+	function mountCanvas(node) {
+		canvasEl = node;
+		drawMap();
+		return {
+			destroy() {
+				if (canvasEl === node) {
+					canvasEl = undefined;
+				}
+			},
+		};
+	}
+
+	function fitToView(forceReset = false) {
+		if (!mapMetrics || !viewportWidth || !viewportHeight) {
+			return;
+		}
+
+		const fitScale = Math.min(viewportWidth / mapMetrics.width, viewportHeight / mapMetrics.height);
+		fitScaleLimit = fitScale;
+		minScale = fitScaleLimit;
+		maxScale = fitScaleLimit * 5;
+		scale = clamp(forceReset ? fitScale : scale || fitScale, minScale, maxScale);
+
+		const scaledWidth = mapMetrics.width * scale;
+		const scaledHeight = mapMetrics.height * scale;
+		translateX = (viewportWidth - scaledWidth) / 2;
+		translateY = (viewportHeight - scaledHeight) / 2;
+		clampTranslate();
+	}
+
+	function resetView() {
+		hasUserViewportInteraction = false;
+		fitToView(true);
+	}
+
+	function zoomBy(multiplier, focusPoint = null) {
+		if (!mapMetrics) {
+			return;
+		}
+
+		const current = scale || 1;
+		const nextScale = clamp(current * multiplier, minScale, maxScale);
+		if (Math.abs(nextScale - current) < 0.0001) {
+			return;
+		}
+
+		const focusX = focusPoint ? focusPoint.x : viewportWidth / 2;
+		const focusY = focusPoint ? focusPoint.y : viewportHeight / 2;
+		const worldX = (focusX - translateX) / current;
+		const worldY = (focusY - translateY) / current;
+
+		scale = nextScale;
+		translateX = focusX - worldX * nextScale;
+		translateY = focusY - worldY * nextScale;
+		clampTranslate();
+	}
+
+	function clampTranslate() {
+		if (!mapMetrics || !viewportWidth || !viewportHeight || !scale) {
+			return;
+		}
+
+		const scaledWidth = mapMetrics.width * scale;
+		const scaledHeight = mapMetrics.height * scale;
+
+		if (scaledWidth <= viewportWidth) {
+			translateX = (viewportWidth - scaledWidth) / 2;
+		} else {
+			const minX = viewportWidth - scaledWidth;
+			translateX = clamp(translateX, minX, 0);
+		}
+
+		if (scaledHeight <= viewportHeight) {
+			translateY = (viewportHeight - scaledHeight) / 2;
+		} else {
+			const minY = viewportHeight - scaledHeight;
+			translateY = clamp(translateY, minY, 0);
+		}
+	}
+
+	function onViewportWheel(event) {
+		if (!mapMetrics) {
+			return;
+		}
+		event.preventDefault();
+		hasUserViewportInteraction = true;
+
+		const rect = viewportEl.getBoundingClientRect();
+		const focus = {
+			x: event.clientX - rect.left,
+			y: event.clientY - rect.top,
+		};
+
+		zoomBy(event.deltaY < 0 ? 1.12 : 1 / 1.12, focus);
+	}
+
+	function onViewportPointerDown(event) {
+		if (event.button !== 0 || !viewportEl) {
+			return;
+		}
+
+		hasUserViewportInteraction = true;
+		activePointerId = event.pointerId;
+		isDragging = true;
+		dragMoved = false;
+		dragStartX = event.clientX;
+		dragStartY = event.clientY;
+		dragTranslateX = translateX;
+		dragTranslateY = translateY;
+		viewportEl.setPointerCapture(event.pointerId);
+	}
+
+	function onViewportPointerMove(event) {
+		if (!mapMetrics) {
+			return;
+		}
+
+		if (isDragging && event.pointerId === activePointerId) {
+			const dx = event.clientX - dragStartX;
+			const dy = event.clientY - dragStartY;
+			if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+				dragMoved = true;
+			}
+			translateX = dragTranslateX + dx;
+			translateY = dragTranslateY + dy;
+			clampTranslate();
+			return;
+		}
+
+		const pointer = eventToWorldPoint(event);
+		if (!pointer) {
+			return;
+		}
+
+		const tile = findTileAt(pointer.worldX, pointer.worldY);
+		hoveredTileKey = tile ? tile.key : "";
+		hoverPointer = tile
+			? {
+					x: pointer.localX,
+					y: pointer.localY,
+				}
+			: null;
+	}
+
+	function onViewportPointerUp(event) {
+		if (event.pointerId !== activePointerId || !viewportEl) {
+			return;
+		}
+
+		viewportEl.releasePointerCapture(event.pointerId);
+		isDragging = false;
+		activePointerId = null;
+
+		if (dragMoved) {
+			return;
+		}
+
+		const pointer = eventToWorldPoint(event);
+		if (!pointer) {
+			return;
+		}
+		const tile = findTileAt(pointer.worldX, pointer.worldY);
+		if (tile) {
+			selectTile(tile.key);
+		}
+	}
+
+	function onViewportLeave() {
+		if (!isDragging) {
+			hoveredTileKey = "";
+			hoverPointer = null;
+		}
+	}
+
+	function eventToWorldPoint(event) {
+		if (!viewportEl || !scale) {
+			return null;
+		}
+
+		const rect = viewportEl.getBoundingClientRect();
+		const localX = event.clientX - rect.left;
+		const localY = event.clientY - rect.top;
+		return {
+			localX,
+			localY,
+			worldX: (localX - translateX) / scale,
+			worldY: (localY - translateY) / scale,
+		};
+	}
+
+	function findTileAt(worldX, worldY) {
+		if (!baseData || !mapMetrics || !Number.isFinite(worldX) || !Number.isFinite(worldY)) {
+			return null;
+		}
+
+		if (worldX < 0 || worldY < 0 || worldX > mapMetrics.width || worldY > mapMetrics.height) {
+			return null;
+		}
+
+		const hexSize = Number(mapItem.mapConfig.hexSize || 14);
+		const hexWidth = mapMetrics.hexWidth;
+		const verticalStep = hexSize * 1.5;
+		const originX = hexWidth / 2 - mapMetrics.minX;
+		const originY = hexSize - mapMetrics.minY;
+
+		const approxDisplayRow = (worldY - originY) / verticalStep;
+		const rowBase = Math.round(approxDisplayRow);
+		const candidates = [];
+
+		for (let rowOffset = -1; rowOffset <= 1; rowOffset += 1) {
+			const displayRow = rowBase + rowOffset;
+			if (displayRow < 0 || displayRow >= baseData.height) {
+				continue;
+			}
+
+			const rowShift = displayRow % 2 ? 0 : hexWidth / 2;
+			const approxCol = (worldX - (originX + rowShift)) / hexWidth;
+			const colBase = Math.round(approxCol);
+
+			for (let colOffset = -1; colOffset <= 1; colOffset += 1) {
+				const col = colBase + colOffset;
+				if (col < 0 || col >= baseData.width) {
+					continue;
+				}
+				const key = `${col},${displayRow}`;
+				const tile = tileLookup.get(key);
+				if (tile) {
+					candidates.push(tile);
+				}
+			}
+		}
+
+		if (!candidates.length) {
+			return null;
+		}
+
+		let best = null;
+		let bestDistance = Number.POSITIVE_INFINITY;
+		for (const tile of candidates) {
+			const dx = worldX - tile.x;
+			const dy = worldY - tile.y;
+			const distance = dx * dx + dy * dy;
+			if (distance < bestDistance) {
+				best = tile;
+				bestDistance = distance;
+			}
+		}
+
+		if (!best) {
+			return null;
+		}
+
+		const polygon = buildHexVertices(hexSize);
+		const localX = worldX - best.x;
+		const localY = worldY - best.y;
+		return pointInPolygon(localX, localY, polygon) ? best : null;
+	}
+
+	function pointInPolygon(x, y, polygon) {
+		let inside = false;
+		for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+			const xi = polygon[i].x;
+			const yi = polygon[i].y;
+			const xj = polygon[j].x;
+			const yj = polygon[j].y;
+			const intersects = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi || 1e-9) + xi;
+			if (intersects) {
+				inside = !inside;
+			}
+		}
+		return inside;
+	}
+
+	function selectTile(tileKey) {
+		selectedTileKey = tileKey;
+		syncEditorsFromSelection();
+	}
+
+	function syncEditorsFromSelection() {
+		const tile = selectedTile;
+		if (!tile) {
+			editPinCivInput = "";
+			editPinPrimaryInput = "#243746";
+			editPinSecondaryInput = "#f3d37f";
+			editPinPrimaryHexInput = "#243746";
+			editPinSecondaryHexInput = "#f3d37f";
+			notesDraft = "";
+			return;
+		}
+
+		notesDraft = notesByKey[tile.key] || "";
+
+		const pin = pinsForTile(tile)[0] || null;
+		editPinCivInput = pin?.civ || "";
+		editPinPrimaryInput = sanitizeHexColor(pin?.primary, "#243746");
+		editPinSecondaryInput = sanitizeHexColor(pin?.secondary, "#f3d37f");
+		editPinPrimaryHexInput = editPinPrimaryInput.toUpperCase();
+		editPinSecondaryHexInput = editPinSecondaryInput.toUpperCase();
+	}
+
+	function saveNotes() {
+		if (!canEdit) {
+			return;
+		}
+
+		const tile = selectedTile;
+		if (!tile) {
+			return;
+		}
+
+		const trimmed = String(notesDraft || "").trim();
+		const nextNotes = { ...notesByKey };
+		if (trimmed) {
+			nextNotes[tile.key] = trimmed;
+		} else {
+			delete nextNotes[tile.key];
+		}
+
+		notesByKey = nextNotes;
+		saveStorageJson(storageKey("notes"), notesByKey);
+		notesStatus = trimmed ? "Saved." : "Cleared.";
+		drawMap();
+	}
+
+	function addOrUpdatePin() {
+		if (!canEdit) {
+			return;
+		}
+
+		const tile = selectedTile;
+		if (!tile) {
+			return;
+		}
+
+		const civ = String(editPinCivInput || "").trim();
+		if (!civ) {
+			return;
+		}
+
+		const civKey = normalizeToken(civ);
+		const primary = sanitizeHexColor(editPinPrimaryInput, "#243746");
+		const secondary = sanitizeHexColor(editPinSecondaryInput, "#f3d37f");
+
+		const nextPins = [...mapPins];
+		const existingIndex = nextPins.findIndex((pin) => Number(pin.col) === tile.col && Number(pin.row) === tile.sourceRow && normalizeToken(pin.civ) === civKey);
+
+		const nextPin = {
+			id: existingIndex >= 0 ? nextPins[existingIndex].id : `${civKey}-${tile.col}-${tile.sourceRow}`,
+			civ,
+			col: tile.col,
+			row: tile.sourceRow,
+			primary,
+			secondary,
+		};
+
+		if (existingIndex >= 0) {
+			nextPins[existingIndex] = nextPin;
+		} else {
+			nextPins.push(nextPin);
+		}
+
+		mapPins = normalizePins(nextPins);
+		savePinsLocalAndQueueCloudSync();
+		syncEditorsFromSelection();
+	}
+
+	function removePin() {
+		if (!canEdit) {
+			return;
+		}
+
+		const tile = selectedTile;
+		if (!tile) {
+			return;
+		}
+
+		const civKey = normalizeToken(editPinCivInput);
+		if (!civKey) {
+			return;
+		}
+
+		const nextPins = mapPins.filter((pin) => !(Number(pin.col) === tile.col && Number(pin.row) === tile.sourceRow && normalizeToken(pin.civ) === civKey));
+		mapPins = nextPins;
+		savePinsLocalAndQueueCloudSync();
+		syncEditorsFromSelection();
+	}
+
+	function removePinById(pinId) {
+		if (!canEdit || !pinId) {
+			return;
+		}
+		mapPins = mapPins.filter((pin) => pin.id !== pinId);
+		savePinsLocalAndQueueCloudSync();
+		syncEditorsFromSelection();
+	}
+
+	function loadPinIntoEditor(pin) {
+		if (!pin) {
+			return;
+		}
+		editPinCivInput = pin.civ || "";
+		editPinPrimaryInput = sanitizeHexColor(pin.primary, "#243746");
+		editPinSecondaryInput = sanitizeHexColor(pin.secondary, "#f3d37f");
+		editPinPrimaryHexInput = editPinPrimaryInput.toUpperCase();
+		editPinSecondaryHexInput = editPinSecondaryInput.toUpperCase();
+	}
+
+	function updatePinColorFromPicker(kind, value) {
+		const normalized = sanitizeHexColor(value, kind === "primary" ? "#243746" : "#f3d37f").toUpperCase();
+		if (kind === "primary") {
+			editPinPrimaryInput = normalized;
+			editPinPrimaryHexInput = normalized;
+			return;
+		}
+		editPinSecondaryInput = normalized;
+		editPinSecondaryHexInput = normalized;
+	}
+
+	function updatePinColorFromHex(kind, value) {
+		const draft = String(value || "");
+		if (kind === "primary") {
+			editPinPrimaryHexInput = draft;
+		} else {
+			editPinSecondaryHexInput = draft;
+		}
+
+		const parsed = parseHexInput(draft);
+		if (!parsed) {
+			return;
+		}
+
+		if (kind === "primary") {
+			editPinPrimaryInput = parsed;
+		} else {
+			editPinSecondaryInput = parsed;
+		}
+	}
+
+	function syncPinHexDraft(kind) {
+		if (kind === "primary") {
+			editPinPrimaryHexInput = editPinPrimaryInput.toUpperCase();
+			return;
+		}
+		editPinSecondaryHexInput = editPinSecondaryInput.toUpperCase();
+	}
+
+	function pinsForTile(tile) {
+		if (!tile) {
+			return [];
+		}
+
+		return mapPins.filter((pin) => Number(pin.col) === tile.col && Number(pin.row) === tile.sourceRow).sort((a, b) => a.civ.localeCompare(b.civ));
+	}
+
+	function pinGroupPoint(group) {
+		if (!mapMetrics || !baseData || !group) {
+			return null;
+		}
+
+		const col = Number(group.col);
+		const sourceRow = Number(group.row);
+		if (!Number.isFinite(col) || !Number.isFinite(sourceRow)) {
+			return null;
+		}
+
+		const center = tileCenter(col, sourceRow, baseData.height, Number(mapItem.mapConfig.hexSize || 14));
+
+		return {
+			x: center.x - mapMetrics.minX,
+			y: center.y - mapMetrics.minY,
+		};
+	}
+
+	function pinGroupStyle(group) {
+		if (!group || !Array.isArray(group.pins) || !group.pins.length) {
+			return pinStyle(null);
+		}
+		if (group.pins.length > 1) {
+			return "--primary:#666; --secondary: #000";
+		}
+		return pinStyle(group.pins[0]);
+	}
+
+	function pinGroupLabel(group) {
+		if (!group || !Array.isArray(group.pins) || !group.pins.length) {
+			return "Pinned civilization location";
+		}
+		const civNames = group.pins.map((pin) => pin.civ).filter(Boolean);
+		if (!civNames.length) {
+			return "Pinned civilization location";
+		}
+		const preview = civNames.slice(0, 4).join(", ");
+		const overflow = civNames.length - 4;
+		return overflow > 0 ? `${preview}, +${overflow} more civilizations` : preview;
+	}
+
+	function pinSatelliteOffset(index, total) {
+		if (!total) {
+			return { x: 0, y: 0 };
+		}
+		const angle = (index / total) * Math.PI * 2 - Math.PI / 2;
+		const radius = 12;
+		return {
+			x: Math.cos(angle) * radius,
+			y: Math.sin(angle) * radius,
+		};
+	}
+
+	function selectedOutlinePoints() {
+		if (!selectedTile || !mapMetrics) {
+			return "";
+		}
+		const vertices = buildHexVertices(Number(mapItem.mapConfig.hexSize || 14));
+		return vertices.map((v) => `${selectedTile.x + v.x},${selectedTile.y + v.y}`).join(" ");
+	}
+
+	function hoveredOutlinePoints() {
+		if (!hoveredTile || !mapMetrics || hoveredTile.key === selectedTileKey) {
+			return "";
+		}
+		const vertices = buildHexVertices(Number(mapItem.mapConfig.hexSize || 14));
+		return vertices.map((v) => `${hoveredTile.x + v.x},${hoveredTile.y + v.y}`).join(" ");
+	}
+
+	function toggleSetting(key) {
+		settings = {
+			...settings,
+			[key]: !settings[key],
+		};
+		saveStorageJson(storageKey("settings"), settings);
+		drawMap();
+	}
+
+	function resetSettings() {
+		settings = { ...DEFAULT_SETTINGS };
+		saveStorageJson(storageKey("settings"), settings);
+		drawMap();
+	}
+
+	function savePinsLocalAndQueueCloudSync() {
+		saveStorageJson(storageKey("pins"), mapPins);
+		pinCloudSyncDirty = true;
+	}
+
+	function hasCloudPinSyncConfig() {
+		return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_PINS_TABLE && mapItem?.id);
+	}
+
+	function canPushCloudPins() {
+		return hasCloudPinSyncConfig() && Boolean(authAccessToken) && Boolean(authUser?.email) && canEdit;
+	}
+
+	function buildPinsSignature(input) {
+		return normalizePins(input)
+			.map((pin) => `${pin.col}|${pin.row}|${normalizeToken(pin.civ)}|${pin.primary}|${pin.secondary}`)
+			.sort((a, b) => a.localeCompare(b))
+			.join(";");
+	}
+
+	function startPinCloudSyncLoop() {
+		stopPinCloudSyncLoop();
+		if (!hasCloudPinSyncConfig() || typeof window === "undefined") {
+			return;
+		}
+
+		pinCloudSyncTimer = window.setInterval(() => {
+			void syncPinsCloudTick();
+		}, PIN_SYNC_INTERVAL_MS);
+	}
+
+	function stopPinCloudSyncLoop() {
+		if (pinCloudSyncTimer && typeof window !== "undefined") {
+			window.clearInterval(pinCloudSyncTimer);
+		}
+		pinCloudSyncTimer = null;
+		pinCloudSyncBusy = false;
+		pinCloudPullBusy = false;
+	}
+
+	async function syncPinsCloudTick() {
+		if (!hasCloudPinSyncConfig()) {
+			return;
+		}
+		if (typeof document !== "undefined" && document.visibilityState === "hidden") {
+			return;
+		}
+		if (pinCloudSyncDirty) {
+			await flushCloudPins();
+			return;
+		}
+		await pullCloudPins({ forceApply: false });
+	}
+
+	async function flushCloudPins() {
+		if (!pinCloudSyncDirty || pinCloudSyncBusy || !canPushCloudPins()) {
+			return;
+		}
+
+		pinCloudSyncBusy = true;
+		try {
+			const body = [
+				{
+					map_id: String(mapItem.id),
+					pins: mapPins,
+					updated_by: String(authUser?.email || ""),
+				},
+			];
+			const query = new URLSearchParams();
+			query.set("on_conflict", "map_id");
+
+			const response = await fetch(`${SUPABASE_URL}/rest/v1/${encodeURIComponent(SUPABASE_PINS_TABLE)}?${query.toString()}`, {
+				method: "POST",
+				headers: {
+					apikey: SUPABASE_ANON_KEY,
+					Authorization: `Bearer ${authAccessToken}`,
+					"Content-Type": "application/json",
+					Prefer: "resolution=merge-duplicates,return=minimal",
+				},
+				body: JSON.stringify(body),
+			});
+
+			if (!response.ok) {
+				const text = await response.text().catch(() => "");
+				throw new Error(`Unable to sync map pins (${response.status}). ${text}`);
+			}
+
+			pinCloudSyncDirty = false;
+		} catch (syncError) {
+			console.error(syncError);
+		} finally {
+			pinCloudSyncBusy = false;
+		}
+	}
+
+	async function pullCloudPins(options = {}) {
+		if (pinCloudPullBusy || !hasCloudPinSyncConfig()) {
+			return;
+		}
+
+		const forceApply = Boolean(options.forceApply);
+		pinCloudPullBusy = true;
+		try {
+			const query = new URLSearchParams();
+			query.set("select", "map_id,pins,updated_at");
+			query.set("map_id", `eq.${String(mapItem.id)}`);
+			query.set("limit", "1");
+
+			const headers = {
+				apikey: SUPABASE_ANON_KEY,
+			};
+			if (authAccessToken) {
+				headers.Authorization = `Bearer ${authAccessToken}`;
+			}
+
+			const response = await fetch(`${SUPABASE_URL}/rest/v1/${encodeURIComponent(SUPABASE_PINS_TABLE)}?${query.toString()}`, {
+				headers,
+			});
+
+			if (!response.ok) {
+				const text = await response.text().catch(() => "");
+				throw new Error(`Unable to fetch cloud pins (${response.status}). ${text}`);
+			}
+
+			const rows = await response.json().catch(() => []);
+			const row = Array.isArray(rows) && rows.length ? rows[0] : null;
+			if (!row || !Array.isArray(row.pins)) {
+				return;
+			}
+			if (!forceApply && pinCloudSyncDirty) {
+				return;
+			}
+
+			const nextPins = normalizePins(row.pins);
+			if (buildPinsSignature(nextPins) === buildPinsSignature(mapPins)) {
+				return;
+			}
+
+			mapPins = nextPins;
+			saveStorageJson(storageKey("pins"), mapPins);
+			syncEditorsFromSelection();
+			drawMap();
+		} catch (pullError) {
+			console.error(pullError);
+		} finally {
+			pinCloudPullBusy = false;
+		}
+	}
+
+	function storageKey(type) {
+		return `${STORAGE_PREFIX}:${mapItem?.id || "unknown"}:${type}`;
+	}
+
+	function baseCacheKey(mapId) {
+		return `${STORAGE_PREFIX}:base:${mapId || "unknown"}:v${BASE_CACHE_VERSION}`;
+	}
+
+	function isValidBasePayload(payload) {
+		return Boolean(payload && typeof payload === "object" && Number.isFinite(Number(payload.width)) && Number.isFinite(Number(payload.height)) && Array.isArray(payload.mapTiles));
+	}
+
+	function loadCachedBasePayload(mapId) {
+		if (!mapId) {
+			return null;
+		}
+
+		const memoryCached = basePayloadMemoryCache.get(mapId);
+		if (isValidBasePayload(memoryCached)) {
+			return memoryCached;
+		}
+
+		const stored = loadStorageJson(baseCacheKey(mapId), null);
+		if (!isValidBasePayload(stored)) {
+			return null;
+		}
+
+		basePayloadMemoryCache.set(mapId, stored);
+		return stored;
+	}
+
+	function saveCachedBasePayload(mapId, payload) {
+		if (!mapId || !isValidBasePayload(payload)) {
+			return;
+		}
+
+		basePayloadMemoryCache.set(mapId, payload);
+		saveStorageJson(baseCacheKey(mapId), payload);
+	}
+
+	function resolveAssetUrl(path) {
+		if (!path) {
+			return path;
+		}
+		if (/^(https?:)?\/\//.test(path) || path.startsWith("data:")) {
+			return path;
+		}
+
+		const raw = String(path);
+		const normalized = raw.replace(/^\/+/, "");
+		const base = (import.meta.env.BASE_URL || "/").replace(/\/+$/, "");
+		const encodedPath = normalized
+			.split("/")
+			.map((segment) => encodeURIComponent(segment))
+			.join("/");
+
+		return `${base}/${encodedPath}`;
+	}
+
+	async function fetchJsonSafe(url, label) {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`Unable to load ${label} json (${response.status}) from ${url}`);
+		}
+
+		const raw = await response.text();
+		const text = raw.charCodeAt(0) === 0xfeff ? raw.slice(1) : raw;
+
+		try {
+			return JSON.parse(text);
+		} catch (parseError) {
+			const snippet = text.slice(0, 180).replace(/\s+/g, " ");
+			throw new Error(`Invalid ${label} json from ${url}. ${parseError?.message || "Parse error"}. Snippet: ${snippet}`);
+		}
+	}
+
+	function loadStorageJson(key, fallback) {
+		if (typeof localStorage === "undefined") {
+			return fallback;
+		}
+		try {
+			const raw = localStorage.getItem(key);
+			if (!raw) {
+				return fallback;
+			}
+			return JSON.parse(raw);
+		} catch {
+			return fallback;
+		}
+	}
+
+	function saveStorageJson(key, value) {
+		if (typeof localStorage === "undefined") {
+			return;
+		}
+		try {
+			localStorage.setItem(key, JSON.stringify(value));
+		} catch {
+			// Ignore write failures.
+		}
+	}
+
+	function sanitizeHexColor(color, fallback) {
+		if (typeof color === "string" && /^#[0-9a-fA-F]{6}$/.test(color)) {
+			return color;
+		}
+		return fallback;
+	}
+
+	function parseHexInput(value) {
+		const normalized = String(value || "")
+			.trim()
+			.replace(/^#/, "");
+		if (!/^[0-9a-fA-F]{6}$/.test(normalized)) {
+			return null;
+		}
+		return `#${normalized.toUpperCase()}`;
+	}
+
+	function pinStyle(pin) {
+		const primary = sanitizeHexColor(pin?.primary, "#243746");
+		const secondary = sanitizeHexColor(pin?.secondary, "#f3d37f");
+		return `--primary:${primary};--secondary:${secondary}`;
+	}
+
+	function lookupString(list, index) {
+		if (!Array.isArray(list) || index === undefined || index === null || index === 0xff) {
+			return null;
+		}
+		return index >= 0 && index < list.length ? list[index] : null;
+	}
+
+	function normalizeToken(value) {
+		return String(value || "")
+			.trim()
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, "-");
+	}
+
+	function normalizePins(input) {
+		if (!Array.isArray(input)) {
+			return [];
+		}
+
+		const seen = new Set();
+		const pins = [];
+
+		for (let index = 0; index < input.length; index += 1) {
+			const candidate = input[index];
+			if (!candidate || typeof candidate !== "object") {
+				continue;
+			}
+
+			const civ = String(candidate.civ || "").trim();
+			const col = Number(candidate.col);
+			const row = Number(candidate.row);
+			if (!civ || !Number.isFinite(col) || !Number.isFinite(row)) {
+				continue;
+			}
+
+			const normalizedCol = Math.floor(col);
+			const normalizedRow = Math.floor(row);
+			const civKey = normalizeToken(civ);
+			const dedupeKey = `${normalizedCol},${normalizedRow}:${civKey}`;
+			if (seen.has(dedupeKey)) {
+				continue;
+			}
+			seen.add(dedupeKey);
+
+			pins.push({
+				id: String(candidate.id || `${civKey}-${normalizedCol}-${normalizedRow}`),
+				civ,
+				col: normalizedCol,
+				row: normalizedRow,
+				primary: sanitizeHexColor(candidate.primary, "#243746"),
+				secondary: sanitizeHexColor(candidate.secondary, "#f3d37f"),
+			});
+		}
+
+		return pins;
+	}
+
+	function formatColorDisplay(color, fallback) {
+		const hex = sanitizeHexColor(color, fallback).toUpperCase();
+		const rgb = hexToRgb(hex);
+		const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+		return {
+			hex,
+			rgb: `(${rgb.r}, ${rgb.g}, ${rgb.b})`,
+			hsl: `(${hsl.h}deg ${hsl.s}% ${hsl.l}%)`,
+		};
+	}
+
+	function hexToRgb(hex) {
+		const value = sanitizeHexColor(hex, "#000000").replace("#", "");
+		return {
+			r: Number.parseInt(value.slice(0, 2), 16),
+			g: Number.parseInt(value.slice(2, 4), 16),
+			b: Number.parseInt(value.slice(4, 6), 16),
+		};
+	}
+
+	function rgbToHsl(r, g, b) {
+		const red = clamp(r, 0, 255) / 255;
+		const green = clamp(g, 0, 255) / 255;
+		const blue = clamp(b, 0, 255) / 255;
+
+		const max = Math.max(red, green, blue);
+		const min = Math.min(red, green, blue);
+		const delta = max - min;
+
+		let hue = 0;
+		if (delta > 0) {
+			if (max === red) {
+				hue = ((green - blue) / delta) % 6;
+			} else if (max === green) {
+				hue = (blue - red) / delta + 2;
+			} else {
+				hue = (red - green) / delta + 4;
+			}
+		}
+
+		hue = Math.round((hue * 60 + 360) % 360);
+		const lightness = (max + min) / 2;
+		const saturation = delta === 0 ? 0 : delta / (1 - Math.abs(2 * lightness - 1));
+
+		return {
+			h: hue,
+			s: Math.round(saturation * 100),
+			l: Math.round(lightness * 100),
+		};
+	}
+
+	function normalizeRawTile(rawTile) {
+		if (rawTile && typeof rawTile === "object") {
+			return {
+				terrainType: Number.isFinite(rawTile.terrainType) ? rawTile.terrainType : 0,
+				resourceType: Number.isFinite(rawTile.resourceType) ? rawTile.resourceType : 0xff,
+				featureTerrainType: Number.isFinite(rawTile.featureTerrainType) ? rawTile.featureTerrainType : 0xff,
+				riverData: Number.isFinite(rawTile.riverData) ? rawTile.riverData : 0,
+				elevation: Number.isFinite(rawTile.elevation) ? rawTile.elevation : 0,
+				continent: Number.isFinite(rawTile.continent) ? rawTile.continent : 0,
+				resourceAmount: Number.isFinite(rawTile.resourceAmount) ? rawTile.resourceAmount : 0,
+				improvementType: Number.isFinite(rawTile.improvementType) ? rawTile.improvementType : 0xff,
+			};
+		}
+
+		return {
+			terrainType: 0,
+			resourceType: 0xff,
+			featureTerrainType: 0xff,
+			riverData: 0,
+			elevation: 0,
+			continent: 0,
+			resourceAmount: 0,
+			improvementType: 0xff,
+		};
+	}
+
+	function drawFeatureGlyph(ctx, tile, glyphVertices, hexSize) {
+		const featureColor = featureGlyphColor(tile.feature);
+		if (!featureColor) {
+			return;
+		}
+
+		ctx.beginPath();
+		for (let index = 0; index < glyphVertices.length; index += 1) {
+			const point = glyphVertices[index];
+			if (index === 0) {
+				ctx.moveTo(tile.x + point.x, tile.y + point.y);
+			} else {
+				ctx.lineTo(tile.x + point.x, tile.y + point.y);
+			}
+		}
+		ctx.closePath();
+		ctx.fillStyle = featureColor.fill;
+		ctx.strokeStyle = featureColor.stroke;
+		ctx.lineWidth = Math.max(0.5, hexSize * 0.05);
+		ctx.fill();
+		ctx.stroke();
+	}
+
+	function drawRiverGlyph(ctx, tile, hexSize) {
+		if (!Array.isArray(tile.riverSegments) || !tile.riverSegments.length) {
+			return;
+		}
+
+		ctx.save();
+		ctx.lineCap = "round";
+		ctx.lineJoin = "round";
+		ctx.lineWidth = Math.max(1.35, hexSize * 0.2);
+		ctx.strokeStyle = settings.grayscaleTerrain ? "hsl(0deg 0% 14% / 0.66)" : "hsl(208deg 44% 16% / 0.62)";
+		for (const segment of tile.riverSegments) {
+			ctx.beginPath();
+			ctx.moveTo(tile.x + segment.x1, tile.y + segment.y1);
+			ctx.lineTo(tile.x + segment.x2, tile.y + segment.y2);
+			ctx.stroke();
+		}
+
+		ctx.lineWidth = Math.max(0.95, hexSize * 0.13);
+		ctx.strokeStyle = settings.grayscaleTerrain ? "hsl(0deg 0% 82% / 0.96)" : "hsl(202deg 88% 63% / 0.95)";
+		for (const segment of tile.riverSegments) {
+			ctx.beginPath();
+			ctx.moveTo(tile.x + segment.x1, tile.y + segment.y1);
+			ctx.lineTo(tile.x + segment.x2, tile.y + segment.y2);
+			ctx.stroke();
+		}
+
+		ctx.lineWidth = Math.max(0.5, hexSize * 0.06);
+		ctx.strokeStyle = "hsl(0deg 0% 100% / 0.9)";
+		for (const segment of tile.riverSegments) {
+			ctx.beginPath();
+			ctx.moveTo(tile.x + segment.x1, tile.y + segment.y1);
+			ctx.lineTo(tile.x + segment.x2, tile.y + segment.y2);
+			ctx.stroke();
+		}
+		ctx.restore();
+	}
+
+	function drawNotePinGlyph(ctx, tile, hexSize) {
+		ctx.save();
+		const offsetX = 0;
+		const offsetY = hexSize * 0.14;
+		const scale = (hexSize * 0.8) / 640;
+		ctx.translate(tile.x + offsetX, tile.y + offsetY);
+		ctx.scale(scale, scale);
+		ctx.translate(-320, -576);
+
+		ctx.fillStyle = settings.grayscaleTerrain ? "hsl(0deg 0% 78%)" : "#ffd25a";
+		ctx.strokeStyle = settings.grayscaleTerrain ? "hsl(0deg 0% 10% / 0.86)" : "hsl(0deg 0% 0% / 0.8)";
+		ctx.lineWidth = 22;
+		for (const pinPath of NOTE_PIN_PATHS) {
+			const path = notePinPathByData(pinPath.d);
+			ctx.globalAlpha = Number.isFinite(pinPath.opacity) ? pinPath.opacity : 1;
+			ctx.fill(path);
+			ctx.stroke(path);
+		}
+		ctx.globalAlpha = 1;
+		ctx.restore();
+	}
+
+	function notePinPathByData(pathData) {
+		if (notePinPathCache.has(pathData)) {
+			return notePinPathCache.get(pathData);
+		}
+		const path = new Path2D(pathData);
+		notePinPathCache.set(pathData, path);
+		return path;
+	}
+
+	function drawElevationGlyph(ctx, tile, hexSize) {
+		const elevation = Number(tile?.raw?.elevation ?? 0);
+		if (elevation <= 0) {
+			return;
+		}
+
+		const yBase = tile.y + hexSize * 0.1;
+		if (elevation === 1) {
+			ctx.beginPath();
+			ctx.moveTo(tile.x - hexSize * 0.24, yBase + hexSize * 0.14);
+			ctx.lineTo(tile.x - hexSize * 0.12, yBase - hexSize * 0.14);
+			ctx.lineTo(tile.x + hexSize * 0.12, yBase - hexSize * 0.14);
+			ctx.lineTo(tile.x + hexSize * 0.24, yBase + hexSize * 0.14);
+			ctx.closePath();
+			ctx.fillStyle = settings.grayscaleTerrain ? "hsl(0deg 0% 86% / 0.48)" : "hsl(0deg 0% 100% / 0.32)";
+			ctx.strokeStyle = settings.grayscaleTerrain ? "hsl(0deg 0% 18% / 0.62)" : "hsl(198deg 33% 17% / 0.48)";
+			ctx.lineWidth = Math.max(0.4, hexSize * 0.04);
+			ctx.fill();
+			ctx.stroke();
+			return;
+		}
+
+		ctx.beginPath();
+		ctx.moveTo(tile.x - hexSize * 0.32, yBase + hexSize * 0.18);
+		ctx.lineTo(tile.x, yBase - hexSize * 0.3);
+		ctx.lineTo(tile.x + hexSize * 0.32, yBase + hexSize * 0.18);
+		ctx.closePath();
+		ctx.fillStyle = settings.grayscaleTerrain ? "hsl(0deg 0% 84% / 0.44)" : "hsl(0deg 0% 100% / 0.3)";
+		ctx.strokeStyle = settings.grayscaleTerrain ? "hsl(0deg 0% 16% / 0.65)" : "hsl(198deg 33% 17% / 0.52)";
+		ctx.lineWidth = Math.max(0.4, hexSize * 0.04);
+		ctx.fill();
+		ctx.stroke();
+	}
+
+	function featureGlyphColor(featureName) {
+		const normalized = String(featureName || "").toUpperCase();
+		if (!normalized) {
+			return null;
+		}
+		if (settings.grayscaleTerrain) {
+			if (normalized.includes("FOREST") || normalized.includes("JUNGLE")) {
+				return {
+					fill: "hsl(0deg 0% 26% / 0.55)",
+					stroke: "hsl(0deg 0% 10% / 0.72)",
+				};
+			}
+			if (normalized.includes("MARSH")) {
+				return {
+					fill: "hsl(0deg 0% 34% / 0.5)",
+					stroke: "hsl(0deg 0% 12% / 0.68)",
+				};
+			}
+			if (normalized.includes("FLOOD")) {
+				return {
+					fill: "hsl(0deg 0% 72% / 0.48)",
+					stroke: "hsl(0deg 0% 25% / 0.66)",
+				};
+			}
+			if (normalized.includes("ICE")) {
+				return {
+					fill: "hsl(0deg 0% 88% / 0.54)",
+					stroke: "hsl(0deg 0% 45% / 0.7)",
+				};
+			}
+			if (normalized.includes("OASIS")) {
+				return {
+					fill: "hsl(0deg 0% 68% / 0.48)",
+					stroke: "hsl(0deg 0% 22% / 0.66)",
+				};
+			}
+			return {
+				fill: "hsl(0deg 0% 58% / 0.46)",
+				stroke: "hsl(0deg 0% 18% / 0.62)",
+			};
+		}
+		if (normalized.includes("FOREST") || normalized.includes("JUNGLE")) {
+			return {
+				fill: "hsl(130deg 43% 34% / 0.36)",
+				stroke: "hsl(133deg 48% 20% / 0.56)",
+			};
+		}
+		if (normalized.includes("MARSH")) {
+			return {
+				fill: "hsl(170deg 35% 34% / 0.34)",
+				stroke: "hsl(178deg 36% 20% / 0.54)",
+			};
+		}
+		if (normalized.includes("FLOOD")) {
+			return {
+				fill: "hsl(205deg 78% 68% / 0.32)",
+				stroke: "hsl(208deg 61% 31% / 0.5)",
+			};
+		}
+		if (normalized.includes("ICE")) {
+			return {
+				fill: "hsl(203deg 55% 87% / 0.4)",
+				stroke: "hsl(203deg 42% 46% / 0.55)",
+			};
+		}
+		if (normalized.includes("OASIS")) {
+			return {
+				fill: "hsl(165deg 61% 53% / 0.36)",
+				stroke: "hsl(169deg 55% 28% / 0.52)",
+			};
+		}
+		return {
+			fill: "hsl(40deg 49% 56% / 0.28)",
+			stroke: "hsl(30deg 45% 30% / 0.48)",
+		};
+	}
+
+	function buildRiverSegments(riverData, hexSize) {
+		if (!riverData) {
+			return [];
+		}
+		const edges = [
+			{ bit: 1, start: 1, end: 2 },
+			{ bit: 2, start: 2, end: 3 },
+			{ bit: 4, start: 3, end: 4 },
+		];
+		const vertices = buildHexVertices(hexSize);
+		const inset = hexSize * 0.08;
+		return edges
+			.filter((edge) => riverData & edge.bit)
+			.map((edge) => ({
+				key: edge.bit,
+				...insetSegment(vertices[edge.start], vertices[edge.end], inset),
+			}));
+	}
+
+	function insetSegment(start, end, inset) {
+		if (!inset) {
+			return { x1: start.x, y1: start.y, x2: end.x, y2: end.y };
+		}
+		const midX = (start.x + end.x) / 2;
+		const midY = (start.y + end.y) / 2;
+		const length = Math.hypot(midX, midY) || 1;
+		const offsetX = (-midX / length) * inset;
+		const offsetY = (-midY / length) * inset;
+		return {
+			x1: start.x + offsetX,
+			y1: start.y + offsetY,
+			x2: end.x + offsetX,
+			y2: end.y + offsetY,
+		};
+	}
+
+	function grayscaleTerrainHex(tile, baseHex) {
+		const terrain = String(tile?.terrain || "").toUpperCase();
+		const feature = String(tile?.feature || "").toUpperCase();
+		const elevation = Number(tile?.raw?.elevation ?? 0);
+		const hasRiver = Boolean(tile?.raw?.riverData);
+
+		let target = 56;
+
+		if (terrain.includes("OCEAN")) {
+			target = 24;
+		} else if (terrain.includes("COAST")) {
+			target = 36;
+		} else if (terrain.includes("SNOW")) {
+			target = 86;
+		} else if (terrain.includes("TUNDRA")) {
+			target = 66;
+		} else if (terrain.includes("DESERT")) {
+			target = 74;
+		} else if (terrain.includes("PLAINS")) {
+			target = 60;
+		} else if (terrain.includes("GRASS")) {
+			target = 52;
+		}
+
+		if (feature.includes("FOREST") || feature.includes("JUNGLE")) {
+			target -= 10;
+		}
+		if (feature.includes("MARSH")) {
+			target -= 7;
+		}
+		if (feature.includes("ICE")) {
+			target += 7;
+		}
+		if (feature.includes("FLOOD") || feature.includes("OASIS")) {
+			target += 4;
+		}
+
+		if (elevation === 1) {
+			target += 6;
+		} else if (elevation >= 2) {
+			target -= 6;
+		}
+
+		if (hasRiver) {
+			target += 2;
+		}
+
+		const color = sanitizeHexColor(baseHex, "#76848f").replace("#", "");
+		const r = Number.parseInt(color.slice(0, 2), 16);
+		const g = Number.parseInt(color.slice(2, 4), 16);
+		const b = Number.parseInt(color.slice(4, 6), 16);
+		const luma = Math.round(((0.2126 * r + 0.7152 * g + 0.0722 * b) / 255) * 100);
+		const value = clamp(Math.round(target * 0.72 + luma * 0.28), 16, 90);
+		const channel = Math.round((value / 100) * 255);
+		return `#${toHex(channel)}${toHex(channel)}${toHex(channel)}`;
+	}
+
+	function flattenedGrayscaleTerrainColor(terrainUpper) {
+		const isWater = terrainUpper.includes("OCEAN") || terrainUpper.includes("COAST");
+		return isWater ? "#4a4a4a" : "#9f9f9f";
+	}
+
+	function toHex(value) {
+		return Math.max(0, Math.min(255, value)).toString(16).padStart(2, "0");
+	}
+
+	function clamp(value, min, max) {
+		return Math.min(Math.max(value, min), max);
+	}
+
+	function isPlainObject(value) {
+		return value !== null && typeof value === "object" && !Array.isArray(value);
+	}
+
+	function worldTransform() {
+		return `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+	}
+
+	function tileLabel(tile) {
+		return tile ? `${tile.col}, ${tile.sourceRow}` : "-";
+	}
+
+	function elevationLabel(value) {
+		if (value === 2) {
+			return "Mountain";
+		}
+		if (value === 1) {
+			return "Hill";
+		}
+		return "Flat";
+	}
+
+	function formatMapLabel(value, fallback = "None") {
+		if (!value) {
+			return fallback;
+		}
+		const raw = String(value)
+			.trim()
+			.replace(/^(TERRAIN|FEATURE_TERRAIN|FEATURE|RESOURCE|IMPROVEMENT|ROUTE)_/i, "");
+
+		if (!raw) {
+			return fallback;
+		}
+
+		return raw
+			.split(/[_\s-]+/)
+			.filter(Boolean)
+			.map((token) => token.charAt(0).toUpperCase() + token.slice(1).toLowerCase())
+			.join(" ");
+	}
+</script>
+
+<section class="viewer-wrap tile-map" aria-live="polite">
+	{#if loading}
+		<p class="status">Loading {mapItem.title}...</p>
+	{:else if error}
+		<p class="status error">{error}</p>
+		{#if debugInfo}
+			<p class="status debug">{debugInfo}</p>
+		{/if}
+	{:else if baseData && mapMetrics}
+		<div class="viewer-header">
+			<div class="map-meta">
+				<h2>{mapItem.title}</h2>
+				<p>{mapItem.description}</p>
+				<p class="meta-line">
+					{baseData.width}x{baseData.height} tiles, {mapPins.length} Civilization pins
+				</p>
+			</div>
+
+			<div class="tile-map-controls" role="toolbar" aria-label="Map zoom controls">
+				<div class="tile-map-control-group">
+					<span class="tile-map-control-label">Map</span>
+					<select class="tile-map-select" value={selectedMapId || mapItem?.id || ""} onchange={(event) => onSelectMap(event.currentTarget.value)} aria-label="Select map">
+						{#each maps as option (option.id)}
+							<option value={option.id}>{option.title}</option>
+						{/each}
+					</select>
+				</div>
+				<div class="tile-map-control-group">
+					<span class="tile-map-control-label">Zoom</span>
+					<div class="tile-map-control-cluster">
+						<button type="button" class="tile-map-control tile-map-control-ghost" onclick={() => zoomBy(1 / 1.12)} disabled={!canZoomOut} aria-label="Zoom out"> - </button>
+						<span class="tile-map-control-pill" aria-live="polite">{zoomPercent}%</span>
+						<button type="button" class="tile-map-control tile-map-control-ghost" onclick={() => zoomBy(1.12)} disabled={!canZoomIn} aria-label="Zoom in"> + </button>
+					</div>
+				</div>
+				<div class="tile-map-control-group">
+					<button type="button" class="tile-map-control" onclick={resetView}>Fit</button>
+				</div>
+				<div class="tile-map-control-group">
+					<button
+						type="button"
+						class="tile-map-control tile-map-control-collapse"
+						onclick={() => (panelCollapsed = !panelCollapsed)}
+						aria-expanded={!panelCollapsed}
+						aria-controls="map-tools-panel"
+						aria-label={panelCollapsed ? "Open editing interface" : "Collapse editing interface"}
+						title={panelCollapsed ? "Open editing interface" : "Collapse editing interface"}
+					>
+						<svg class="tile-map-control-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" aria-hidden="true">
+							<path d={panelCollapsed ? PANEL_COLLAPSED_ICON_PATH : PANEL_EXPANDED_ICON_PATH} />
+						</svg>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="workspace" class:panel-collapsed={panelCollapsed}>
+			<div class="stage-wrap">
+				<div
+					class="viewport"
+					role="region"
+					aria-label="Interactive hex map viewport"
+					use:mountViewport
+					onwheel={onViewportWheel}
+					onpointerdown={onViewportPointerDown}
+					onpointermove={onViewportPointerMove}
+					onpointerup={onViewportPointerUp}
+					onpointercancel={onViewportPointerUp}
+					onmouseleave={onViewportLeave}
+				>
+					<div class="map-world" style={`width:${Math.ceil(mapMetrics.width)}px;height:${Math.ceil(mapMetrics.height)}px;transform:${worldTransform()}`}>
+						<canvas class="map-layer" use:mountCanvas aria-label={`${mapItem.title} tile layer`}></canvas>
+
+						<svg class="overlay-layer" viewBox={`0 0 ${Math.ceil(mapMetrics.width)} ${Math.ceil(mapMetrics.height)}`} preserveAspectRatio="none" aria-label="Map overlays">
+							{#if hoveredOutlinePoints()}
+								<polygon points={hoveredOutlinePoints()} class="outline-hover"></polygon>
+							{/if}
+							{#if selectedOutlinePoints()}
+								<polygon points={selectedOutlinePoints()} class="outline-selected"></polygon>
+							{/if}
+
+							{#if settings.showPins}
+								{#each pinGroups as group (group.key)}
+									{@const point = pinGroupPoint(group)}
+									{@const isMulti = group.pins.length > 1}
+									{#if point}
+										<g
+											class="pin pin-group"
+											class:is-multi={isMulti}
+											style={pinGroupStyle(group)}
+											transform={`translate(${point.x} ${point.y})`}
+											role="button"
+											tabindex="0"
+											aria-label={pinGroupLabel(group)}
+											onclick={() => {
+												const tile = findTileAt(point.x, point.y);
+												if (tile) {
+													selectTile(tile.key);
+												}
+											}}
+											onkeydown={(event) => {
+												if (event.key !== "Enter" && event.key !== " ") {
+													return;
+												}
+												event.preventDefault();
+												const tile = findTileAt(point.x, point.y);
+												if (tile) {
+													selectTile(tile.key);
+												}
+											}}
+										>
+											<circle r={isMulti ? 6 : 9} class="pin-core" />
+											<circle r={isMulti ? 2.5 : 4} class="pin-center" />
+											{#if isMulti}
+												<circle r="10.5" class="pin-multi-ring" />
+												{#each group.pins.slice(0, 8) as pin, index (pin.id)}
+													{@const offset = pinSatelliteOffset(index, Math.min(group.pins.length, 8))}
+													<circle class="pin-satellite" cx={offset.x} cy={offset.y} r="3.1" style={pinStyle(pin)} />
+												{/each}
+												<g class="pin-count" transform="translate(10 -10)">
+													<circle r="6.5" class="pin-count-bg" />
+													<text class="pin-count-text" text-anchor="middle" dominant-baseline="central">{group.pins.length}</text>
+												</g>
+											{/if}
+										</g>
+									{/if}
+								{/each}
+							{/if}
+						</svg>
+					</div>
+
+					{#if tooltipLayout && hoveredTile}
+						{#if tooltipLayout.bridge}
+							<div
+								class="tooltip-bridge"
+								style={`left:${tooltipLayout.bridge.left}px;top:${tooltipLayout.bridge.top}px;width:${tooltipLayout.bridge.width}px;height:${tooltipLayout.bridge.height}px`}
+							></div>
+						{/if}
+						<aside class="tile-tooltip" style={`left:${tooltipLayout.coords.left}px;top:${tooltipLayout.coords.top}px`}>
+							<div class="tile-tooltip-title">Tile {hoveredTile.col}, {hoveredTile.sourceRow}</div>
+							<div class="tile-tooltip-list">
+								<div class="tile-info-row">
+									<div class="tile-info-label">Terrain</div>
+									<div class="tile-info-value">{formatMapLabel(hoveredTile.terrain, "Unknown")}</div>
+								</div>
+								<div class="tile-info-row">
+									<div class="tile-info-label">Elevation</div>
+									<div class="tile-info-value">{elevationLabel(hoveredTile.raw?.elevation ?? 0)}</div>
+								</div>
+								{#if hoveredTile.feature}
+									<div class="tile-info-row">
+										<div class="tile-info-label">Feature</div>
+										<div class="tile-info-value">{formatMapLabel(hoveredTile.feature)}</div>
+									</div>
+								{/if}
+								<div class="tile-info-row">
+									<div class="tile-info-label">Resource</div>
+									<div class="tile-info-value">{formatMapLabel(hoveredTile.resource)}</div>
+								</div>
+								{#if hoveredTile.raw?.riverData}
+									<div class="tile-info-row">
+										<div class="tile-info-label">River</div>
+										<div class="tile-info-value">Yes</div>
+									</div>
+								{/if}
+								{#if settings.showPins && hoveredTilePins.length}
+									<div class="tile-info-row">
+										<div class="tile-info-label">Civilizations</div>
+										<div class="tile-info-value">{hoveredTilePins.map((pin) => pin.civ).join(", ")}</div>
+									</div>
+								{/if}
+								{#if notesByKey[hoveredTile.key]}
+									<div class="tile-info-notes">
+										<div class="tile-info-label">Notes</div>
+										<div class="tile-info-notes-value">{notesByKey[hoveredTile.key]}</div>
+									</div>
+								{/if}
+							</div>
+						</aside>
+					{/if}
+				</div>
+			</div>
+
+			<aside id="map-tools-panel" class="side-panel" class:is-collapsed={panelCollapsed} aria-label="Map tools" aria-hidden={panelCollapsed}>
+				<div class="tab-row" role="tablist" aria-label="Map tool tabs">
+					<button type="button" role="tab" class:active={panelTab === "edit"} aria-selected={panelTab === "edit"} onclick={() => (panelTab = "edit")}> Pins </button>
+					<button type="button" role="tab" class:active={panelTab === "notes"} aria-selected={panelTab === "notes"} onclick={() => (panelTab = "notes")}> Notes </button>
+					<button type="button" role="tab" class:active={panelTab === "settings"} aria-selected={panelTab === "settings"} onclick={() => (panelTab = "settings")}> Settings </button>
+				</div>
+
+				{#if panelTab === "edit"}
+					<div class="panel-body">
+						<h3>Civilization Pins</h3>
+						{#if canEdit}
+							<p class="auth-active">{authUser?.email ? `Editing as ${authUser.email}` : "Editing enabled"}</p>
+						{/if}
+						{#if selectedTile}
+							{#if !canEdit}
+								<p class="auth-hint">{editorHint}</p>
+							{/if}
+							<p class="tile-id">Selected: {tileLabel(selectedTile)}</p>
+
+							<p class="pin-editor-state" data-mode={pinEditorMode}>{pinEditorStatus}</p>
+							<h4>Pin Colors</h4>
+							<label>
+								Civilization
+								<input type="text" value={editPinCivInput} oninput={(event) => (editPinCivInput = event.currentTarget.value)} disabled={!canEdit} />
+							</label>
+							<div class="color-row">
+								<label>
+									Primary
+									<div class="color-picker-row">
+										<div class="color-swatch-control">
+											<input
+												type="color"
+												value={editPinPrimaryInput}
+												oninput={(event) => updatePinColorFromPicker("primary", event.currentTarget.value)}
+												disabled={!canEdit}
+												aria-label="Primary color"
+											/>
+											<span class="color-preview" style={`--preview:${primaryColorDisplay.hex}`} aria-hidden="true"></span>
+										</div>
+										<input
+											type="text"
+											class="color-hex-input"
+											inputmode="text"
+											spellcheck="false"
+											placeholder="#243746"
+											value={editPinPrimaryHexInput}
+											oninput={(event) => updatePinColorFromHex("primary", event.currentTarget.value)}
+											onblur={() => syncPinHexDraft("primary")}
+											disabled={!canEdit}
+										/>
+									</div>
+									<span class="color-value">HEX {primaryColorDisplay.hex}</span>
+									<span class="color-value">RGB {primaryColorDisplay.rgb}</span>
+									<span class="color-value">HSL {primaryColorDisplay.hsl}</span>
+								</label>
+								<label>
+									Secondary
+									<div class="color-picker-row">
+										<div class="color-swatch-control">
+											<input
+												type="color"
+												value={editPinSecondaryInput}
+												oninput={(event) => updatePinColorFromPicker("secondary", event.currentTarget.value)}
+												disabled={!canEdit}
+												aria-label="Secondary color"
+											/>
+											<span class="color-preview" style={`--preview:${secondaryColorDisplay.hex}`} aria-hidden="true"></span>
+										</div>
+										<input
+											type="text"
+											class="color-hex-input"
+											inputmode="text"
+											spellcheck="false"
+											placeholder="#F3D37F"
+											value={editPinSecondaryHexInput}
+											oninput={(event) => updatePinColorFromHex("secondary", event.currentTarget.value)}
+											onblur={() => syncPinHexDraft("secondary")}
+											disabled={!canEdit}
+										/>
+									</div>
+									<span class="color-value">HEX {secondaryColorDisplay.hex}</span>
+									<span class="color-value">RGB {secondaryColorDisplay.rgb}</span>
+									<span class="color-value">HSL {secondaryColorDisplay.hsl}</span>
+								</label>
+							</div>
+							<div class="button-row pin-action-row">
+								<button type="button" onclick={addOrUpdatePin} disabled={!canEdit || pinEditorMode === "idle"}>{upsertCivButtonLabel}</button>
+								<button
+									type="button"
+									class="danger-icon-button"
+									onclick={removePin}
+									disabled={!canEdit || !matchedSelectedPin}
+									aria-label="Remove civilization"
+									title="Remove civilization"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="18"
+										height="18"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										aria-hidden="true"
+									>
+										<path d="M10 11v6" />
+										<path d="M14 11v6" />
+										<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+										<path d="M3 6h18" />
+										<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+									</svg>
+								</button>
+							</div>
+							{#if selectedTilePins.length}
+								<div class="tile-pin-list">
+									<p class="tile-pin-list-title">Civilizations on tile ({selectedTilePins.length})</p>
+									{#each selectedTilePins as pin (pin.id)}
+										<div class="tile-pin-item">
+											<button type="button" class="tile-pin-load" onclick={() => loadPinIntoEditor(pin)} disabled={!canEdit}>
+												<span class="tile-pin-swatch" style={pinStyle(pin)}></span>
+												{pin.civ}
+											</button>
+											<button
+												type="button"
+												class="tile-pin-remove danger-icon-button"
+												onclick={() => removePinById(pin.id)}
+												disabled={!canEdit}
+												aria-label={`Remove ${pin.civ}`}
+												title={`Remove ${pin.civ}`}
+											>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="15"
+													height="15"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													aria-hidden="true"
+												>
+													<path d="M10 11v6" />
+													<path d="M14 11v6" />
+													<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+													<path d="M3 6h18" />
+													<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+												</svg>
+											</button>
+										</div>
+									{/each}
+								</div>
+							{/if}
+						{:else}
+							<p>Select a tile on the map to edit pin data.</p>
+						{/if}
+					</div>
+				{/if}
+
+				{#if panelTab === "notes"}
+					<div class="panel-body">
+						<h3>Tile Notes</h3>
+						{#if selectedTile}
+							{#if !canEdit}
+								<p class="auth-hint">{editorHint}</p>
+							{/if}
+							<p class="tile-id">Tile: {tileLabel(selectedTile)}</p>
+							<textarea rows="7" placeholder="Write map notes for this tile..." value={notesDraft} oninput={(event) => (notesDraft = event.currentTarget.value)} disabled={!canEdit}
+							></textarea>
+							<div class="button-row">
+								<button type="button" onclick={saveNotes} disabled={!canEdit}>Save Notes</button>
+								<button
+									type="button"
+									disabled={!canEdit}
+									onclick={() => {
+										notesDraft = "";
+										saveNotes();
+									}}
+								>
+									Clear
+								</button>
+							</div>
+							{#if notesStatus}
+								<p class="status-inline">{notesStatus}</p>
+							{/if}
+						{:else}
+							<p>Select a tile first, then add notes here.</p>
+						{/if}
+					</div>
+				{/if}
+
+				{#if panelTab === "settings"}
+					<div class="panel-body">
+						<h3>Settings</h3>
+						<p class="panel-intro">Adjust map visibility and rendering options for quick focus while reviewing tiles.</p>
+						<div class="settings-group">
+							<label class="check-row">
+								<input type="checkbox" checked={settings.showPins} onchange={() => toggleSetting("showPins")} />
+								<span class="check-row-copy">
+									<span class="check-row-title">Show Civilization Pins</span>
+									<span class="check-row-hint">Display pin markers and civ names on the map.</span>
+								</span>
+							</label>
+							<label class="check-row">
+								<input type="checkbox" checked={settings.hideDecorations} onchange={() => toggleSetting("hideDecorations")} />
+								<span class="check-row-copy">
+									<span class="check-row-title">Hide Decorations</span>
+									<span class="check-row-hint">Remove terrain glyphs and note indicators.</span>
+								</span>
+							</label>
+							<label class="check-row">
+								<input type="checkbox" checked={settings.flattenLandWater} onchange={() => toggleSetting("flattenLandWater")} />
+								<span class="check-row-copy">
+									<span class="check-row-title">Flatten Land/Water Colors</span>
+									<span class="check-row-hint">Use simplified land and water color hexes.</span>
+								</span>
+							</label>
+							<label class="check-row">
+								<input type="checkbox" checked={settings.grayscaleTerrain} onchange={() => toggleSetting("grayscaleTerrain")} />
+								<span class="check-row-copy">
+									<span class="check-row-title">Grayscale Terrain</span>
+									<span class="check-row-hint">Reduce terrain colors to grayscale tones.</span>
+								</span>
+							</label>
+						</div>
+						<!-- <div class="button-row">
+							<button type="button" onclick={resetSettings}>Reset Settings</button>
+						</div> -->
+					</div>
+				{/if}
+			</aside>
+		</div>
+	{/if}
+</section>
+
+<style>
+	.viewer-wrap {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.status {
+		margin-block: 0;
+		padding-block: 0.8rem;
+		padding-inline: 1rem;
+		border-radius: 0.7rem;
+		background: oklch(0.965 0.018 85 / 0.92);
+		border: 1px solid oklch(0.79 0.05 82 / 0.38);
+	}
+
+	.status.error {
+		color: oklch(0.49 0.17 27);
+		border-color: oklch(0.63 0.14 28 / 0.45);
+		background: oklch(0.94 0.04 25 / 0.95);
+	}
+
+	.status.debug {
+		color: oklch(0.42 0.06 230);
+		border-color: oklch(0.55 0.05 230 / 0.38);
+		background: oklch(0.95 0.02 235 / 0.94);
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.78rem;
+		overflow-wrap: anywhere;
+	}
+
+	.viewer-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
+	.map-meta {
+		display: grid;
+		gap: 0.3rem;
+	}
+
+	.map-meta h2 {
+		margin-block: 0;
+		font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+		letter-spacing: 0.02em;
+	}
+
+	.map-meta p {
+		margin-block: 0;
+		color: var(--muted-ink);
+	}
+
+	.meta-line {
+		font-size: 0.9rem;
+		color: var(--muted-ink);
+	}
+
+	.tile-map-controls {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		align-items: center;
+	}
+
+	.tile-map-control-group {
+		min-block-size: 3rem;
+		display: inline-flex;
+		gap: 0.4rem;
+		align-items: center;
+		border: 1px solid var(--panel-border);
+		border-radius: 0.75rem;
+		background: var(--control-bg);
+		padding-block: 0.25rem;
+		padding-inline: 0.5rem;
+	}
+
+	.tile-map-select {
+		border: 1px solid var(--panel-border);
+		background: var(--input-bg);
+		color: var(--ink);
+		border-radius: 0.55rem;
+		padding-block: 0.36rem;
+		padding-inline: 0.5rem;
+		font: inherit;
+		max-inline-size: min(22rem, 48vw);
+	}
+
+	.tile-map-control-label {
+		color: var(--muted-ink);
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		text-box: trim-both cap alphabetic;
+		padding-inline-start: 0.2rem;
+	}
+
+	.tile-map-control-cluster {
+		display: inline-flex;
+		gap: 0.25rem;
+		align-items: center;
+	}
+
+	.tile-map-control {
+		border: 1px solid var(--panel-border);
+		background: var(--control-bg);
+		border-radius: 0.6rem;
+		padding-block: 0.42rem;
+		padding-inline: 0.7rem;
+		cursor: pointer;
+		color: var(--ink);
+		font: inherit;
+		line-height: 1;
+	}
+
+	.tile-map-control:hover {
+		background: color-mix(in oklch, var(--accent) 14%, var(--control-bg));
+	}
+
+	.tile-map-control-ghost {
+		min-inline-size: 2.2rem;
+		font-size: 1rem;
+		font-weight: 700;
+		padding-inline: 0.45rem;
+	}
+
+	.tile-map-control-collapse {
+		min-inline-size: 2.2rem;
+		padding-inline: 0.45rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.tile-map-control-icon {
+		width: 0.95rem;
+		height: 0.95rem;
+		fill: currentColor;
+	}
+
+	.tile-map-control-pill {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-inline-size: 3.25rem;
+		padding-block: 0.35rem;
+		padding-inline: 0.55rem;
+		border-radius: 0.5rem;
+		border: 1px solid color-mix(in oklch, var(--accent) 44%, var(--panel-border));
+		background: color-mix(in oklch, var(--accent) 12%, var(--input-bg));
+		color: var(--ink);
+		font-size: 0.82rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.tile-map-control:disabled {
+		opacity: 0.48;
+		cursor: not-allowed;
+	}
+
+	.workspace {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 320px;
+		gap: 1rem;
+		min-height: 520px;
+	}
+
+	.workspace.panel-collapsed {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.stage-wrap {
+		min-inline-size: 0;
+	}
+
+	.viewport {
+		position: relative;
+		min-block-size: 540px;
+		border-radius: 1rem;
+		overflow: hidden;
+		border: 1px solid var(--panel-border);
+		box-shadow: 0 18px 42px hsl(203deg 44% 14% / 0.24);
+		background: oklch(0.8 0.06 232);
+		outline: none;
+		touch-action: none;
+	}
+
+	.viewport:focus-visible {
+		box-shadow:
+			0 0 0 2px oklch(0.84 0.15 80 / 0.92),
+			0 18px 42px hsl(203deg 44% 14% / 0.24);
+	}
+
+	.map-world {
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		transform-origin: 0 0;
+		will-change: transform;
+	}
+
+	.map-layer,
+	.overlay-layer {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	.overlay-layer {
+		pointer-events: none;
+	}
+
+	.outline-selected {
+		fill: color-mix(in oklch, var(--accent) 26%, transparent);
+		stroke: color-mix(in oklch, var(--accent) 78%, white);
+		stroke-width: 1.1;
+	}
+
+	.outline-hover {
+		fill: hsl(199deg 100% 88% / 0.14);
+		stroke: hsl(199deg 100% 88% / 0.75);
+		stroke-width: 0.9;
+	}
+
+	.pin {
+		pointer-events: auto;
+		cursor: pointer;
+	}
+
+	.pin-group {
+		transform-box: fill-box;
+	}
+
+	.pin-core {
+		fill: var(--primary, #243746);
+		stroke: var(--secondary, #f3d37f);
+		stroke-width: 3;
+	}
+
+	.pin-group.is-multi .pin-core {
+		stroke-width: 2.4;
+	}
+
+	.pin-center {
+		fill: var(--secondary, #f3d37f);
+	}
+
+	.pin-group.is-multi .pin-center {
+		fill: hsl(0deg 0% 100% / 0.95);
+	}
+
+	.pin-multi-ring {
+		fill: none;
+		stroke: hsl(197deg 46% 17% / 0.5);
+		stroke-width: 1.2;
+		stroke-dasharray: 2 2;
+	}
+
+	.pin-satellite {
+		fill: var(--primary, #243746);
+		stroke: var(--secondary, #f3d37f);
+		stroke-width: 1.2;
+	}
+
+	.pin-count-bg {
+		fill: oklch(0.98 0.007 95 / 0.98);
+		stroke: hsl(197deg 46% 17% / 0.5);
+		stroke-width: 1;
+	}
+
+	.pin-count-text {
+		fill: hsl(197deg 46% 17%);
+		font-size: 7px;
+		font-weight: 700;
+		pointer-events: none;
+	}
+
+	.tooltip-bridge {
+		position: absolute;
+		pointer-events: none;
+	}
+
+	.tile-tooltip {
+		position: absolute;
+		z-index: 5;
+		min-inline-size: 12rem;
+		max-inline-size: min(18rem, calc(100% - 24px));
+		pointer-events: none;
+		padding-block: 0.7rem;
+		padding-inline: 0.85rem;
+		border-radius: 0.75rem;
+		border: 1px solid color-mix(in oklch, var(--panel-border) 72%, white 10%);
+		background: color-mix(in oklch, var(--panel-bg) 94%, black 6%);
+		backdrop-filter: blur(6px);
+		box-shadow: 0 14px 30px hsl(28deg 24% 8% / 0.38);
+	}
+
+	.tile-tooltip-title {
+		color: color-mix(in oklch, var(--ink) 76%, white 24%);
+		font-size: 0.72rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		margin-block-end: 0.35rem;
+	}
+
+	.tile-tooltip-list {
+		display: grid;
+		gap: 0.35rem;
+	}
+
+	.tile-info-row {
+		display: grid;
+		gap: 0.08rem;
+		font-size: 0.78rem;
+	}
+
+	.tile-info-label {
+		color: color-mix(in oklch, var(--ink) 68%, white 32%);
+	}
+
+	.tile-info-value {
+		color: color-mix(in oklch, var(--ink) 88%, white 12%);
+	}
+
+	.tile-info-notes {
+		display: grid;
+		gap: 0.35rem;
+		border-block-start: 1px solid color-mix(in oklch, var(--panel-border) 66%, white 18%);
+		padding-block-start: 0.75rem;
+		margin-block-start: 0.5rem;
+	}
+
+	.tile-info-notes .tile-info-label {
+		color: color-mix(in oklch, var(--ink) 72%, white 28%);
+		font-size: 0.7rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.tile-info-notes-value {
+		max-block-size: 6rem;
+		overflow: auto;
+		color: color-mix(in oklch, var(--ink) 84%, white 16%);
+		margin-block: 0;
+		font-size: 0.75rem;
+		line-height: 1.25;
+		white-space: pre-wrap;
+		padding-inline-end: 0.25rem;
+	}
+
+	.side-panel {
+		display: grid;
+		grid-template-rows: auto 1fr;
+		border-radius: 1rem;
+		border: 1px solid var(--panel-border);
+		background: var(--panel-bg);
+		min-height: 540px;
+		overflow: hidden;
+	}
+
+	.side-panel.is-collapsed {
+		display: none;
+	}
+
+	.tab-row {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.25rem;
+		padding: 0.35rem;
+		background: var(--control-bg);
+	}
+
+	.tab-row button {
+		border: 1px solid var(--panel-border);
+		border-radius: 0.55rem;
+		background: var(--control-bg);
+		padding: 0.45rem 0.4rem;
+		font: inherit;
+		color: var(--ink);
+		cursor: pointer;
+	}
+
+	.tab-row button.active {
+		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
+		color: oklch(0.99 0.004 85);
+		border-color: transparent;
+	}
+
+	.panel-body {
+		padding-block: 0.9rem;
+		padding-inline: 0.9rem;
+		display: grid;
+		gap: 0.72rem;
+		align-content: start;
+		overflow: auto;
+		min-inline-size: 0;
+	}
+
+	.panel-body h3,
+	.panel-body h4 {
+		margin-block: 0;
+		color: var(--ink);
+	}
+
+	.panel-intro {
+		margin-block: 0;
+		font-size: 0.84rem;
+		color: var(--muted-ink);
+		line-height: 1.4;
+	}
+
+	.tile-id {
+		margin-block: 0;
+		color: var(--muted-ink);
+		font-size: 0.86rem;
+	}
+
+	.panel-body label {
+		display: grid;
+		gap: 0.28rem;
+		font-size: 0.84rem;
+		color: var(--muted-ink);
+		min-inline-size: 0;
+	}
+
+	.panel-body input,
+	.panel-body textarea {
+		inline-size: 100%;
+		border: 1px solid var(--panel-border);
+		border-radius: 0.55rem;
+		background: var(--input-bg);
+		padding-block: 0.44rem;
+		padding-inline: 0.5rem;
+		font: inherit;
+		color: var(--ink);
+	}
+
+	.color-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0.5rem;
+		min-inline-size: 0;
+	}
+
+	.color-picker-row {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		min-inline-size: 0;
+	}
+
+	.color-swatch-control {
+		position: relative;
+		inline-size: 2rem;
+		block-size: 2rem;
+		min-inline-size: 2rem;
+		min-block-size: 2rem;
+		flex: 0 0 2rem;
+		display: block;
+		overflow: hidden;
+		border-radius: 0.45rem;
+		z-index: 0;
+	}
+
+	.color-swatch-control input[type="color"] {
+		position: absolute;
+		inset: 0;
+		inline-size: 100%;
+		block-size: 100%;
+		opacity: 0;
+		cursor: pointer;
+		z-index: 2;
+		appearance: none;
+		-webkit-appearance: none;
+		border: 0;
+		padding: 0;
+		margin: 0;
+		background: transparent;
+	}
+
+	.color-swatch-control input[type="color"]:disabled {
+		cursor: not-allowed;
+	}
+
+	.color-preview {
+		inline-size: 100%;
+		block-size: 100%;
+		position: absolute;
+		inset: 0;
+		display: block;
+		z-index: 1;
+		border: 1px solid var(--panel-border);
+		border-radius: inherit;
+		background: var(--preview, #000000);
+		box-shadow: inset 0 0 0 1px hsl(0deg 0% 100% / 0.3);
+		pointer-events: none;
+	}
+
+	.color-hex-input {
+		flex: 1;
+		min-inline-size: 0;
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		text-transform: uppercase;
+	}
+
+	.color-value {
+		font-size: 0.74rem;
+		color: var(--muted-ink);
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		line-height: 1.2;
+		overflow-wrap: anywhere;
+	}
+
+	.tile-pin-list {
+		display: grid;
+		gap: 0.35rem;
+		padding-block: 0.5rem;
+		padding-inline: 0.55rem;
+		border: 1px solid var(--panel-border);
+		border-radius: 0.55rem;
+		background: oklch(0.98 0.007 95 / 0.66);
+	}
+
+	.tile-pin-list-title {
+		margin-block: 0;
+		font-size: 0.78rem;
+		color: var(--muted-ink);
+	}
+
+	.tile-pin-item {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.4rem;
+		min-inline-size: 0;
+	}
+
+	.tile-pin-load {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		min-inline-size: 0;
+		max-inline-size: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.tile-pin-swatch {
+		display: inline-block;
+		inline-size: 0.78rem;
+		block-size: 0.78rem;
+		border-radius: 999px;
+		background: var(--primary, #243746);
+		border: 2px solid var(--secondary, #f3d37f);
+	}
+
+	.tile-pin-remove {
+		padding-inline: 0.5rem;
+	}
+
+	.button-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		min-inline-size: 0;
+	}
+
+	.pin-action-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+
+	.panel-body button {
+		border: 1px solid var(--panel-border);
+		border-radius: 0.55rem;
+		background: var(--control-bg);
+		color: var(--ink);
+		font: inherit;
+		cursor: pointer;
+		padding-block: 0.42rem;
+		padding-inline: 0.62rem;
+		min-inline-size: 0;
+	}
+
+	.pin-editor-state {
+		margin-block: 0;
+		padding-block: 0.42rem;
+		padding-inline: 0.55rem;
+		border-radius: 0.5rem;
+		border: 1px solid var(--panel-border);
+		font-size: 0.8rem;
+		color: var(--muted-ink);
+		background: color-mix(in oklch, var(--accent) 8%, var(--panel-bg));
+	}
+
+	.pin-editor-state[data-mode="edit"] {
+		border-color: color-mix(in oklch, var(--accent) 48%, var(--panel-border));
+		color: color-mix(in oklch, var(--accent) 62%, var(--ink));
+		background: color-mix(in oklch, var(--accent) 16%, var(--panel-bg));
+	}
+
+	.danger-icon-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		inline-size: 2.2rem;
+		padding-inline: 0;
+		color: oklch(0.62 0.2 28);
+		border-color: color-mix(in oklch, oklch(0.62 0.2 28) 55%, var(--panel-border));
+		background: color-mix(in oklch, oklch(0.62 0.2 28) 9%, var(--control-bg));
+	}
+
+	.danger-icon-button:hover {
+		color: oklch(0.56 0.22 28);
+		border-color: color-mix(in oklch, oklch(0.56 0.22 28) 70%, var(--panel-border));
+		background: color-mix(in oklch, oklch(0.56 0.22 28) 15%, var(--control-bg));
+	}
+
+	.settings-group {
+		display: grid;
+		gap: 0.5rem;
+	}
+
+	.check-row {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: start;
+		gap: 0.65rem;
+		padding-block: 0.55rem;
+		padding-inline: 0.6rem;
+		border-radius: 0.62rem;
+		border: 1px solid var(--panel-border);
+		background: color-mix(in oklch, var(--input-bg) 62%, var(--panel-bg));
+		font-size: 0.86rem;
+		color: var(--ink);
+		cursor: pointer;
+	}
+
+	.check-row:hover {
+		border-color: color-mix(in oklch, var(--accent) 36%, var(--panel-border));
+		background: color-mix(in oklch, var(--accent) 7%, var(--input-bg));
+	}
+
+	.check-row input {
+		inline-size: 1rem;
+		block-size: 1rem;
+		margin-block-start: 0.1rem;
+		margin-inline: 0;
+	}
+
+	.check-row-copy {
+		display: grid;
+		gap: 0.14rem;
+		min-inline-size: 0;
+	}
+
+	.check-row-title {
+		font-size: 0.86rem;
+		font-weight: 600;
+		line-height: 1.3;
+		color: var(--ink);
+	}
+
+	.check-row-hint {
+		font-size: 0.76rem;
+		line-height: 1.35;
+		color: var(--muted-ink);
+	}
+
+	.status-inline {
+		margin-block: 0;
+		color: var(--muted-ink);
+		font-size: 0.8rem;
+	}
+
+	.auth-hint {
+		margin-block: 0;
+		padding-block: 0.45rem;
+		padding-inline: 0.55rem;
+		border-radius: 0.5rem;
+		background: oklch(0.9 0.05 84 / 0.74);
+		border: 1px solid oklch(0.64 0.06 80 / 0.33);
+		color: oklch(0.46 0.07 76);
+		font-size: 0.82rem;
+	}
+
+	.auth-active {
+		margin-block: 0;
+		padding-block: 0.35rem;
+		padding-inline: 0.55rem;
+		border-radius: 0.5rem;
+		background: oklch(0.9 0.03 165 / 0.85);
+		border: 1px solid oklch(0.63 0.07 165 / 0.32);
+		color: oklch(0.45 0.08 165);
+		font-size: 0.8rem;
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .viewport {
+		background: oklch(0.23 0.012 80);
+		box-shadow: 0 18px 42px hsl(35deg 22% 4% / 0.38);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .tab-row button.active {
+		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
+		color: oklch(0.98 0.004 85);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .tile-map-control-group {
+		background: oklch(0.22 0.008 72 / 0.95);
+		border-color: oklch(0.42 0.012 74 / 0.5);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .tile-map-control {
+		background: oklch(0.255 0.01 72 / 0.96);
+		border-color: oklch(0.44 0.012 74 / 0.5);
+		color: oklch(0.95 0.004 85);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .tile-map-select {
+		background: oklch(0.255 0.01 72 / 0.96);
+		border-color: oklch(0.44 0.012 74 / 0.5);
+		color: oklch(0.95 0.004 85);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .tile-map-control:hover {
+		background: oklch(0.3 0.012 72 / 0.98);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .tile-map-control-pill {
+		background: oklch(0.34 0.016 74 / 0.98);
+		border-color: oklch(0.63 0.04 78 / 0.5);
+		color: oklch(0.97 0.006 85);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .tile-tooltip {
+		background: oklch(0.2 0.008 74 / 0.95);
+		border-color: oklch(0.45 0.012 74 / 0.52);
+		box-shadow: 0 14px 30px hsl(30deg 22% 5% / 0.45);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .tile-pin-list {
+		background: oklch(0.24 0.01 74 / 0.78);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .check-row {
+		background: oklch(0.26 0.01 74 / 0.75);
+		border-color: oklch(0.43 0.012 74 / 0.46);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .check-row:hover {
+		background: oklch(0.29 0.014 74 / 0.82);
+		border-color: oklch(0.57 0.045 78 / 0.52);
+	}
+
+	@media (max-width: 1024px) {
+		.workspace {
+			grid-template-columns: 1fr;
+		}
+
+		.side-panel {
+			min-height: auto;
+		}
+
+		.viewport {
+			min-block-size: 500px;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.viewer-header {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.tile-map-controls {
+			inline-size: 100%;
+		}
+
+		.viewport {
+			min-block-size: 420px;
+		}
+	}
+</style>
