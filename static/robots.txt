@@ -11,4 +11,4 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://civmoddingcentral.com/sitemap.xml
+Sitemap: https://civmoddingcentral.dev/sitemap.xml

@@ -8,6 +8,12 @@
   "theme_color": "#f24806",
   "icons": [
     {
+      "src": "/brand/CMC-logo.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
       "src": "/brand/cmc-logo.svg",
       "sizes": "any",
       "type": "image/svg+xml",
