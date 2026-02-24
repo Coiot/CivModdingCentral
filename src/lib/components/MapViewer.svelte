@@ -66,6 +66,8 @@
 	let hasUserViewportInteraction = $state(false);
 
 	let editPinCivInput = $state("");
+	let editPinLeaderInput = $state("");
+	let editPinAuthorInput = $state("");
 	let editPinPrimaryInput = $state("#243746");
 	let editPinSecondaryInput = $state("#f3d37f");
 	let editPinPrimaryHexInput = $state("#243746");
@@ -185,6 +187,13 @@
 	});
 
 	$effect(() => {
+		if (!mapMetrics || !viewportWidth || !viewportHeight || hasUserViewportInteraction) {
+			return;
+		}
+		fitToView(true);
+	});
+
+	$effect(() => {
 		return () => {
 			stopPinCloudSyncLoop();
 		};
@@ -252,6 +261,7 @@
 			rebuildTiles();
 
 			await tick();
+			await ensureViewportSizeReady();
 			fitToView(true);
 			drawMap();
 			startPinCloudSyncLoop();
@@ -446,6 +456,24 @@
 				}
 			},
 		};
+	}
+
+	async function ensureViewportSizeReady() {
+		if (viewportWidth > 0 && viewportHeight > 0) {
+			return;
+		}
+
+		for (let attempt = 0; attempt < 3; attempt += 1) {
+			await tick();
+			if (viewportEl) {
+				const rect = viewportEl.getBoundingClientRect();
+				if (rect.width > 0 && rect.height > 0) {
+					viewportWidth = Math.max(1, Math.floor(rect.width));
+					viewportHeight = Math.max(1, Math.floor(rect.height));
+					return;
+				}
+			}
+		}
 	}
 
 	function fitToView(forceReset = false) {
@@ -718,6 +746,8 @@
 		const tile = selectedTile;
 		if (!tile) {
 			editPinCivInput = "";
+			editPinLeaderInput = "";
+			editPinAuthorInput = "";
 			editPinPrimaryInput = "#243746";
 			editPinSecondaryInput = "#f3d37f";
 			editPinPrimaryHexInput = "#243746";
@@ -730,6 +760,8 @@
 
 		const pin = pinsForTile(tile)[0] || null;
 		editPinCivInput = pin?.civ || "";
+		editPinLeaderInput = pin?.leader || "";
+		editPinAuthorInput = pin?.author || "";
 		editPinPrimaryInput = sanitizeHexColor(pin?.primary, "#243746");
 		editPinSecondaryInput = sanitizeHexColor(pin?.secondary, "#f3d37f");
 		editPinPrimaryHexInput = editPinPrimaryInput.toUpperCase();
@@ -776,6 +808,8 @@
 		}
 
 		const civKey = normalizeToken(civ);
+		const leader = String(editPinLeaderInput || "").trim();
+		const author = String(editPinAuthorInput || "").trim();
 		const primary = sanitizeHexColor(editPinPrimaryInput, "#243746");
 		const secondary = sanitizeHexColor(editPinSecondaryInput, "#f3d37f");
 
@@ -785,6 +819,8 @@
 		const nextPin = {
 			id: existingIndex >= 0 ? nextPins[existingIndex].id : `${civKey}-${tile.col}-${tile.sourceRow}`,
 			civ,
+			leader,
+			author,
 			col: tile.col,
 			row: tile.sourceRow,
 			primary,
@@ -837,6 +873,8 @@
 			return;
 		}
 		editPinCivInput = pin.civ || "";
+		editPinLeaderInput = pin.leader || "";
+		editPinAuthorInput = pin.author || "";
 		editPinPrimaryInput = sanitizeHexColor(pin.primary, "#243746");
 		editPinSecondaryInput = sanitizeHexColor(pin.secondary, "#f3d37f");
 		editPinPrimaryHexInput = editPinPrimaryInput.toUpperCase();
@@ -990,7 +1028,7 @@
 
 	function buildPinsSignature(input) {
 		return normalizePins(input)
-			.map((pin) => `${pin.col}|${pin.row}|${normalizeToken(pin.civ)}|${pin.primary}|${pin.secondary}`)
+			.map((pin) => `${pin.col}|${pin.row}|${normalizeToken(pin.civ)}|${normalizeToken(pin.leader)}|${normalizeToken(pin.author)}|${pin.primary}|${pin.secondary}`)
 			.sort((a, b) => a.localeCompare(b))
 			.join(";");
 	}
@@ -1296,6 +1334,8 @@
 			pins.push({
 				id: String(candidate.id || `${civKey}-${normalizedCol}-${normalizedRow}`),
 				civ,
+				leader: String(candidate.leader || "").trim(),
+				author: String(candidate.author || "").trim(),
 				col: normalizedCol,
 				row: normalizedRow,
 				primary: sanitizeHexColor(candidate.primary, "#243746"),
@@ -1760,9 +1800,10 @@
 						{/each}
 					</select>
 				</div>
+				<div class="tile-map-toolbar-divider" aria-hidden="true"></div>
 				<div class="tile-map-control-group">
 					<span class="tile-map-control-label">Zoom</span>
-					<div class="tile-map-control-cluster">
+					<div class="tile-map-scale">
 						<button type="button" class="tile-map-control tile-map-control-ghost" onclick={() => zoomBy(1 / 1.12)} disabled={!canZoomOut} aria-label="Zoom out"> - </button>
 						<span class="tile-map-control-pill" aria-live="polite">{zoomPercent}%</span>
 						<button type="button" class="tile-map-control tile-map-control-ghost" onclick={() => zoomBy(1.12)} disabled={!canZoomIn} aria-label="Zoom in"> + </button>
@@ -1771,6 +1812,7 @@
 				<div class="tile-map-control-group">
 					<button type="button" class="tile-map-control" onclick={resetView}>Fit</button>
 				</div>
+				<div class="tile-map-toolbar-divider" aria-hidden="true"></div>
 				<div class="tile-map-control-group">
 					<button
 						type="button"
@@ -1937,10 +1979,20 @@
 
 							<p class="pin-editor-state" data-mode={pinEditorMode}>{pinEditorStatus}</p>
 							<h4>Pin Colors</h4>
-							<label>
-								Civilization
-								<input type="text" value={editPinCivInput} oninput={(event) => (editPinCivInput = event.currentTarget.value)} disabled={!canEdit} />
-							</label>
+							<div class="pin-meta-row">
+								<label class="pin-meta-field">
+									Civilization
+									<input type="text" value={editPinCivInput} oninput={(event) => (editPinCivInput = event.currentTarget.value)} disabled={!canEdit} />
+								</label>
+								<label class="pin-meta-field">
+									Leader
+									<input type="text" value={editPinLeaderInput} oninput={(event) => (editPinLeaderInput = event.currentTarget.value)} disabled={!canEdit} />
+								</label>
+								<label class="pin-meta-field">
+									Author(s)
+									<input type="text" value={editPinAuthorInput} oninput={(event) => (editPinAuthorInput = event.currentTarget.value)} disabled={!canEdit} />
+								</label>
+							</div>
 							<div class="color-row">
 								<label>
 									Primary
@@ -2217,6 +2269,11 @@
 		flex-wrap: wrap;
 		gap: 0.5rem;
 		align-items: center;
+		border: 1px solid var(--panel-border);
+		border-radius: 0.75rem;
+		background: var(--control-bg);
+		padding-block: 0.25rem;
+		padding-inline: 0.5rem;
 	}
 
 	.tile-map-control-group {
@@ -2224,11 +2281,8 @@
 		display: inline-flex;
 		gap: 0.4rem;
 		align-items: center;
-		border: 1px solid var(--panel-border);
-		border-radius: 0.75rem;
-		background: var(--control-bg);
-		padding-block: 0.25rem;
-		padding-inline: 0.5rem;
+		padding-block: 0;
+		padding-inline: 0;
 	}
 
 	.tile-map-select {
@@ -2252,10 +2306,17 @@
 		padding-inline-start: 0.2rem;
 	}
 
-	.tile-map-control-cluster {
+	.tile-map-scale {
 		display: inline-flex;
 		gap: 0.25rem;
 		align-items: center;
+	}
+
+	.tile-map-toolbar-divider {
+		inline-size: 1px;
+		block-size: 1.8rem;
+		background: color-mix(in oklch, var(--panel-border) 78%, transparent);
+		margin-inline: 0.15rem;
 	}
 
 	.tile-map-control {
@@ -2302,7 +2363,7 @@
 		min-inline-size: 3.25rem;
 		padding-block: 0.35rem;
 		padding-inline: 0.55rem;
-		border-radius: 0.5rem;
+		border-radius: 999px;
 		border: 1px solid color-mix(in oklch, var(--accent) 44%, var(--panel-border));
 		background: color-mix(in oklch, var(--accent) 12%, var(--input-bg));
 		color: var(--ink);
@@ -2595,6 +2656,17 @@
 		color: var(--ink);
 	}
 
+	.pin-meta-row {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
+		gap: 0.45rem;
+		min-inline-size: 0;
+	}
+
+	.pin-meta-field {
+		min-inline-size: 0;
+	}
+
 	.color-row {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr);
@@ -2867,6 +2939,11 @@
 	}
 
 	:global(:root[data-theme="dark"]) .tile-map .tile-map-control-group {
+		background: transparent;
+		border-color: transparent;
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .tile-map-controls {
 		background: oklch(0.22 0.008 72 / 0.95);
 		border-color: oklch(0.42 0.012 74 / 0.5);
 	}
@@ -2885,6 +2962,10 @@
 
 	:global(:root[data-theme="dark"]) .tile-map .tile-map-control:hover {
 		background: oklch(0.3 0.012 72 / 0.98);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .tile-map-toolbar-divider {
+		background: oklch(0.45 0.012 74 / 0.52);
 	}
 
 	:global(:root[data-theme="dark"]) .tile-map .tile-map-control-pill {
