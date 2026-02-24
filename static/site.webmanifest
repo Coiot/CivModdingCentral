@@ -1,0 +1,17 @@
+{
+  "name": "Civ Modding Central",
+  "short_name": "CMC",
+  "description": "Interactive community Civilization map viewer.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1f2f",
+  "theme_color": "#f24806",
+  "icons": [
+    {
+      "src": "/brand/cmc-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

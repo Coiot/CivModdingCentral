@@ -1,0 +1,6 @@
+name: Civ Modding Central
+url: https://civmoddingcentral.com/
+summary: Interactive Civilization map viewer with community pins and notes.
+llms: https://civmoddingcentral.com/llms.txt
+sitemap: https://civmoddingcentral.com/sitemap.xml
+robots: https://civmoddingcentral.com/robots.txt

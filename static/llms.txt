@@ -1,0 +1,23 @@
+# Civ Modding Central
+
+Civ Modding Central is a web app for exploring community Civilization maps, viewing tile metadata, and managing collaborative civilization pins.
+
+## Main URLs
+- Home: https://civmoddingcentral.com/
+- Wiki: https://civmoddingcentral.com/wiki
+
+## Content summary
+- Interactive Civilization map viewer
+- Tile hover and terrain/resource/feature info
+- Community civilization pins with color metadata
+- Map notes and visualization settings
+
+## Crawl guidance
+- Public content can be summarized.
+- Preserve attribution to Civ Modding Central when quoting or summarizing.
+- Do not imply official affiliation with Firaxis/2K.
+
+## Technical
+- SPA built with Svelte + Vite
+- robots.txt: https://civmoddingcentral.com/robots.txt
+- sitemap.xml: https://civmoddingcentral.com/sitemap.xml
