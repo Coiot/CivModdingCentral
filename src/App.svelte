@@ -16,7 +16,7 @@
 	let selectedMapId = $state(maps[0]?.id || "");
 	const selectedMap = $derived(maps.find((mapItem) => mapItem.id === selectedMapId) || maps[0] || null);
 
-	let themeMode = $state("light");
+	let themeMode = $state("dark");
 	let authUser = $state(null);
 	let authEmail = $state("");
 	let authMessage = $state("");
@@ -55,12 +55,12 @@
 
 	function restoreTheme() {
 		if (typeof localStorage === "undefined") {
-			applyTheme("light");
+			applyTheme("dark");
 			return;
 		}
 
 		const stored = localStorage.getItem(THEME_STORAGE_KEY);
-		const mode = stored === "dark" ? "dark" : "light";
+		const mode = stored === "light" ? "light" : "dark";
 		applyTheme(mode);
 	}
 

@@ -202,6 +202,10 @@
 		panelCollapsed = true;
 		notesStatus = "";
 		pinCloudSyncDirty = false;
+		hasUserViewportInteraction = false;
+		isDragging = false;
+		dragMoved = false;
+		activePointerId = null;
 
 		try {
 			if (typeof window !== "undefined" && window.location?.protocol === "file:") {
