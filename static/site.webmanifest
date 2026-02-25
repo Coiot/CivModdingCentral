@@ -8,15 +8,15 @@
   "theme_color": "#f24806",
   "icons": [
     {
-      "src": "/brand/CMC-logo.png",
-      "sizes": "256x256",
+      "src": "/icons/android-chrome-192x192.png",
+      "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/brand/cmc-logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/icons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]

@@ -89,7 +89,7 @@
 
 <header class="navbar">
 	<div class="brand">
-		<div class="brand-dot" aria-hidden="true"></div>
+		<img class="brand-logo" src="/brand/CMC-logo.png" alt="Civ Modding Central logo" width="300" height="300" />
 		<div>
 			<p class="brand-overline">Community Web Tools</p>
 			<p class="brand-title">Civ Modding Central</p>
@@ -244,12 +244,12 @@
 		gap: 0.6rem;
 	}
 
-	.brand-dot {
-		width: 0.75rem;
-		height: 0.75rem;
-		border-radius: 999px;
-		background: linear-gradient(135deg, var(--accent-strong), var(--accent-soft));
-		border: 1px solid rgba(22, 41, 55, 0.3);
+	.brand-logo {
+		inline-size: 2.25rem;
+		block-size: 2.25rem;
+		border-radius: 0.4rem;
+		object-fit: contain;
+		flex: 0 0 auto;
 	}
 
 	.brand-overline,
