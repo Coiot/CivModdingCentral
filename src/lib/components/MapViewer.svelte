@@ -1027,8 +1027,10 @@
 		const variant = normalizeLabelVariantInput(editLabelVariantInput, type);
 		const size = parseNumberInput(editLabelSizeInput);
 		const rotation = parseNumberInput(editLabelRotationInput);
-		const minZoom = parseNumberInput(editLabelMinZoomInput);
-		const maxZoom = parseNumberInput(editLabelMaxZoomInput);
+		const minZoomPercent = parseNumberInput(editLabelMinZoomInput);
+		const maxZoomPercent = parseNumberInput(editLabelMaxZoomInput);
+		const minZoom = Number.isFinite(minZoomPercent) ? minZoomPercent / 100 : null;
+		const maxZoom = Number.isFinite(maxZoomPercent) ? maxZoomPercent / 100 : null;
 
 		const nextLabel = {
 			id: editLabelId || `user-${slugifyLabelName(name)}-${type}-${tile.col}-${tile.sourceRow}-${Date.now().toString(36)}`,
@@ -1095,8 +1097,8 @@
 		editLabelVariantInput = normalizeLabelVariantInput(label.variant, editLabelTypeInput);
 		editLabelSizeInput = Number.isFinite(Number(label.size)) ? Number(label.size).toString() : "1";
 		editLabelRotationInput = Number.isFinite(Number(label.rotation)) ? Number(label.rotation).toString() : "0";
-		editLabelMinZoomInput = Number.isFinite(Number(label.minZoom)) ? Number(label.minZoom).toString() : "";
-		editLabelMaxZoomInput = Number.isFinite(Number(label.maxZoom)) ? Number(label.maxZoom).toString() : "";
+		editLabelMinZoomInput = formatZoomPercentInput(label.minZoom);
+		editLabelMaxZoomInput = formatZoomPercentInput(label.maxZoom);
 	}
 
 	function addOrUpdatePin() {
@@ -2501,6 +2503,18 @@
 		return Number.isFinite(parsed) ? parsed : null;
 	}
 
+	function formatZoomPercentInput(value) {
+		const parsed = Number(value);
+		if (!Number.isFinite(parsed)) {
+			return "";
+		}
+		const percent = parsed * 100;
+		return percent
+			.toFixed(2)
+			.replace(/\.00$/, "")
+			.replace(/(\.\d)0$/, "$1");
+	}
+
 	function normalizeLabelTypeInput(value) {
 		return String(value || "")
 			.trim()
@@ -3099,12 +3113,12 @@
 									/>
 								</label>
 								<label class="pin-meta-field">
-									Min Zoom
+									Min Zoom (%)
 									<input
 										type="number"
-										step="0.01"
+										step="1"
 										min="0"
-										max="10"
+										max="1000"
 										placeholder="auto"
 										value={editLabelMinZoomInput}
 										oninput={(event) => (editLabelMinZoomInput = event.currentTarget.value)}
@@ -3112,12 +3126,12 @@
 									/>
 								</label>
 								<label class="pin-meta-field">
-									Max Zoom
+									Max Zoom (%)
 									<input
 										type="number"
-										step="0.01"
+										step="1"
 										min="0"
-										max="10"
+										max="1000"
 										placeholder="none"
 										value={editLabelMaxZoomInput}
 										oninput={(event) => (editLabelMaxZoomInput = event.currentTarget.value)}
