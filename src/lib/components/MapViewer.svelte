@@ -26,6 +26,7 @@
 	const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
 	const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 	const SUPABASE_PINS_TABLE = import.meta.env.VITE_SUPABASE_PINS_TABLE || "cmc_map_pins";
+	const SUPABASE_LABELS_TABLE = import.meta.env.VITE_SUPABASE_LABELS_TABLE || "cmc_map_labels";
 	const PANEL_COLLAPSED_ICON_PATH =
 		"M544 512C526.3 512 512 497.7 512 480L512 160C512 142.3 526.3 128 544 128C561.7 128 576 142.3 576 160L576 480C576 497.7 561.7 512 544 512zM71 337C61.6 327.6 61.6 312.4 71 303.1L215 159C221.9 152.1 232.2 150.1 241.2 153.8C250.2 157.5 256 166.3 256 176L256 256L400 256C426.5 256 448 277.5 448 304L448 336C448 362.5 426.5 384 400 384L256 384L256 464C256 473.7 250.2 482.5 241.2 486.2C232.2 489.9 221.9 487.9 215 481L71 337z";
 	const PANEL_EXPANDED_ICON_PATH =
@@ -35,13 +36,10 @@
 		showLabels: true,
 		showRiverLabels: true,
 		showRegionLabels: true,
-		autoHideLabels: true,
-		labelDensity: "standard",
 		hideDecorations: false,
 		flattenLandWater: false,
 		grayscaleTerrain: false,
 	};
-	const LABEL_DENSITY_VALUES = ["minimal", "standard", "detailed"];
 
 	let viewportEl = $state();
 	let canvasEl = $state();
@@ -58,6 +56,8 @@
 
 	let mapPins = $state([]);
 	let mapLabels = $state([]);
+	let staticMapLabelDefs = $state([]);
+	let customMapLabelDefs = $state([]);
 	let notesByKey = $state({});
 	let settings = $state({ ...DEFAULT_SETTINGS });
 
@@ -99,6 +99,16 @@
 	let editPinSecondaryInput = $state("#f3d37f");
 	let editPinPrimaryHexInput = $state("#243746");
 	let editPinSecondaryHexInput = $state("#f3d37f");
+	let editLabelId = $state("");
+	let editLabelNameInput = $state("");
+	let editLabelTypeInput = $state("region");
+	let editLabelPriorityInput = $state("standard");
+	let editLabelVariantInput = $state("land");
+	let editLabelSizeInput = $state("1");
+	let editLabelRotationInput = $state("0");
+	let editLabelMinZoomInput = $state("");
+	let editLabelMaxZoomInput = $state("");
+	let labelStatus = $state("");
 	let notesDraft = $state("");
 	let notesStatus = $state("");
 	let fitScaleLimit = $state(1);
@@ -106,6 +116,9 @@
 	let pinCloudSyncDirty = $state(false);
 	let pinCloudSyncBusy = $state(false);
 	let pinCloudPullBusy = $state(false);
+	let labelCloudSyncDirty = $state(false);
+	let labelCloudSyncBusy = $state(false);
+	let labelCloudPullBusy = $state(false);
 	let mapPrefetchIdleHandle = null;
 	let mapPrefetchTimeoutHandle = null;
 	const notePinPathCache = new Map();
@@ -115,6 +128,7 @@
 	const selectedTile = $derived(selectedTileKey ? tileLookup.get(selectedTileKey) || null : null);
 	const hoveredTile = $derived(hoveredTileKey ? tileLookup.get(hoveredTileKey) || null : null);
 	const selectedTilePins = $derived.by(() => (selectedTile ? pinsForTile(selectedTile) : []));
+	const selectedTileCustomLabels = $derived.by(() => (selectedTile ? labelsForTile(selectedTile) : []));
 	const hoveredTilePins = $derived.by(() => (hoveredTile ? pinsForTile(hoveredTile) : []));
 	const selectedCivToken = $derived.by(() => normalizeToken(editPinCivInput));
 	const matchedSelectedPin = $derived.by(() => {
@@ -128,6 +142,21 @@
 			return "edit";
 		}
 		if (selectedCivToken) {
+			return "add";
+		}
+		return "idle";
+	});
+	const matchedSelectedCustomLabel = $derived.by(() => {
+		if (!editLabelId) {
+			return null;
+		}
+		return customMapLabelDefs.find((label) => label.id === editLabelId) || null;
+	});
+	const labelEditorMode = $derived.by(() => {
+		if (matchedSelectedCustomLabel) {
+			return "edit";
+		}
+		if (String(editLabelNameInput || "").trim()) {
 			return "add";
 		}
 		return "idle";
@@ -154,6 +183,7 @@
 	const primaryColorDisplay = $derived.by(() => formatColorDisplay(editPinPrimaryInput, "#243746"));
 	const secondaryColorDisplay = $derived.by(() => formatColorDisplay(editPinSecondaryInput, "#f3d37f"));
 	const upsertCivButtonLabel = $derived.by(() => (pinEditorMode === "edit" ? "Update Civilization" : "Add Civilization"));
+	const upsertLabelButtonLabel = $derived.by(() => (labelEditorMode === "edit" ? "Update Label" : "Add Label"));
 	const pinEditorStatus = $derived.by(() => {
 		if (pinEditorMode === "edit") {
 			return `Editing "${matchedSelectedPin.civ}" on this tile.`;
@@ -162,6 +192,15 @@
 			return `Adding "${String(editPinCivInput || "").trim()}" to this tile.`;
 		}
 		return "Enter a civilization name to add to this tile.";
+	});
+	const labelEditorStatus = $derived.by(() => {
+		if (labelEditorMode === "edit" && matchedSelectedCustomLabel) {
+			return `Editing "${matchedSelectedCustomLabel.name}" anchored on this tile.`;
+		}
+		if (labelEditorMode === "add") {
+			return `Adding "${String(editLabelNameInput || "").trim()}" anchored on this tile.`;
+		}
+		return "Enter a label name to add to this tile.";
 	});
 	const zoomPercent = $derived.by(() => {
 		if (!fitScaleLimit) {
@@ -180,9 +219,9 @@
 			showLabels: settings.showLabels,
 			showRiverLabels: settings.showRiverLabels,
 			showRegionLabels: settings.showRegionLabels,
-			density: settings.labelDensity,
+			density: "detailed",
 			zoomRatio,
-			autoHide: settings.autoHideLabels,
+			autoHide: false,
 		}),
 	);
 	const tooltipLayout = $derived.by(() => {
@@ -258,8 +297,12 @@
 		panelTab = "edit";
 		panelCollapsed = true;
 		notesStatus = "";
+		labelStatus = "";
 		pinCloudSyncDirty = false;
+		labelCloudSyncDirty = false;
 		mapLabels = [];
+		staticMapLabelDefs = [];
+		customMapLabelDefs = [];
 		hasUserViewportInteraction = false;
 		isDragging = false;
 		dragMoved = false;
@@ -296,6 +339,7 @@
 
 			const localNotes = loadStorageJson(storageKey("notes"), {});
 			const localPins = loadStorageJson(storageKey("pins"), null);
+			const localLabels = loadStorageJson(storageKey("labels"), null);
 			const localSettings = loadStorageJson(storageKey("settings"), {});
 
 			let basePayload = loadCachedBasePayload(mapItem?.id);
@@ -305,7 +349,8 @@
 			}
 			const pinsPayload = Array.isArray(localPins) ? { pins: localPins } : await fetchJsonSafe(pinsUrl, "pins").catch(() => ({ pins: [] }));
 			const labelsPayload = labelsUrl ? await fetchJsonSafe(labelsUrl, "labels").catch(() => ({ labels: [] })) : { labels: [] };
-			const normalizedLabels = normalizeMapLabels(Array.isArray(labelsPayload) ? labelsPayload : labelsPayload?.labels);
+			const normalizedStaticLabels = normalizeMapLabels(Array.isArray(labelsPayload) ? labelsPayload : labelsPayload?.labels);
+			const normalizedCustomLabels = normalizeMapLabels(Array.isArray(localLabels) ? localLabels : []);
 			const computedMetrics = computeMapMetrics(Number(basePayload.width), Number(basePayload.height), Number(mapItem.mapConfig.hexSize || 14));
 
 			baseData = basePayload;
@@ -313,13 +358,12 @@
 			notesByKey = isPlainObject(localNotes) ? localNotes : {};
 			settings = sanitizeSettings({ ...DEFAULT_SETTINGS, ...(isPlainObject(localSettings) ? localSettings : {}) });
 			mapPins = normalizePins(Array.isArray(localPins) ? localPins : Array.isArray(pinsPayload?.pins) ? pinsPayload.pins : []);
-			mapLabels = materializeMapLabels(normalizedLabels, {
-				baseData: basePayload,
-				mapMetrics: computedMetrics,
-				hexSize: Number(mapItem.mapConfig.hexSize || 14),
-			});
+			staticMapLabelDefs = normalizedStaticLabels;
+			customMapLabelDefs = normalizedCustomLabels;
+			refreshMapLabels();
 
 			await pullCloudPins({ forceApply: true });
+			await pullCloudLabels({ forceApply: true });
 
 			rebuildTiles();
 
@@ -340,6 +384,8 @@
 			mapTiles = [];
 			tileLookup = new Map();
 			mapPins = [];
+			staticMapLabelDefs = [];
+			customMapLabelDefs = [];
 			mapLabels = [];
 			stopPinCloudSyncLoop();
 		} finally {
@@ -859,6 +905,18 @@
 		syncEditorsFromSelection();
 	}
 
+	function resetLabelEditor() {
+		editLabelId = "";
+		editLabelNameInput = "";
+		editLabelTypeInput = "region";
+		editLabelPriorityInput = "standard";
+		editLabelVariantInput = "land";
+		editLabelSizeInput = "1";
+		editLabelRotationInput = "0";
+		editLabelMinZoomInput = "";
+		editLabelMaxZoomInput = "";
+	}
+
 	function syncEditorsFromSelection() {
 		const tile = selectedTile;
 		if (!tile) {
@@ -870,6 +928,8 @@
 			editPinPrimaryHexInput = "#243746";
 			editPinSecondaryHexInput = "#f3d37f";
 			notesDraft = "";
+			resetLabelEditor();
+			labelStatus = "";
 			return;
 		}
 
@@ -883,6 +943,14 @@
 		editPinSecondaryInput = sanitizeHexColor(pin?.secondary, "#f3d37f");
 		editPinPrimaryHexInput = editPinPrimaryInput.toUpperCase();
 		editPinSecondaryHexInput = editPinSecondaryInput.toUpperCase();
+
+		const label = labelsForTile(tile)[0] || null;
+		if (label) {
+			loadLabelIntoEditor(label);
+		} else {
+			resetLabelEditor();
+		}
+		labelStatus = "";
 	}
 
 	function saveNotes() {
@@ -907,6 +975,128 @@
 		saveStorageJson(storageKey("notes"), notesByKey);
 		notesStatus = trimmed ? "Saved." : "Cleared.";
 		drawMap();
+	}
+
+	function refreshMapLabels() {
+		if (!baseData || !mapMetrics) {
+			mapLabels = [];
+			return;
+		}
+		const merged = normalizeMapLabels([...(Array.isArray(staticMapLabelDefs) ? staticMapLabelDefs : []), ...(Array.isArray(customMapLabelDefs) ? customMapLabelDefs : [])]);
+		mapLabels = materializeMapLabels(merged, {
+			baseData,
+			mapMetrics,
+			hexSize: Number(mapItem.mapConfig.hexSize || 14),
+		});
+	}
+
+	function labelsForTile(tile) {
+		if (!tile) {
+			return [];
+		}
+		return customMapLabelDefs.filter((label) => label.anchor && Number(label.anchor.col) === tile.col && Number(label.anchor.row) === tile.sourceRow).sort((a, b) => a.name.localeCompare(b.name));
+	}
+
+	function setCustomLabels(nextLabels, options = {}) {
+		const queueSync = options.queueSync !== false;
+		customMapLabelDefs = normalizeMapLabels(Array.isArray(nextLabels) ? nextLabels : []);
+		saveStorageJson(storageKey("labels"), customMapLabelDefs);
+		refreshMapLabels();
+		if (queueSync) {
+			labelCloudSyncDirty = true;
+		}
+	}
+
+	function addOrUpdateLabel() {
+		if (!canEdit) {
+			return;
+		}
+
+		const tile = selectedTile;
+		if (!tile) {
+			return;
+		}
+
+		const name = String(editLabelNameInput || "").trim();
+		if (!name) {
+			return;
+		}
+
+		const type = normalizeLabelTypeInput(editLabelTypeInput);
+		const priority = normalizeLabelPriorityInput(editLabelPriorityInput);
+		const variant = normalizeLabelVariantInput(editLabelVariantInput, type);
+		const size = parseNumberInput(editLabelSizeInput);
+		const rotation = parseNumberInput(editLabelRotationInput);
+		const minZoom = parseNumberInput(editLabelMinZoomInput);
+		const maxZoom = parseNumberInput(editLabelMaxZoomInput);
+
+		const nextLabel = {
+			id: editLabelId || `user-${slugifyLabelName(name)}-${type}-${tile.col}-${tile.sourceRow}-${Date.now().toString(36)}`,
+			name,
+			type,
+			priority,
+			variant,
+			anchor: {
+				col: tile.col,
+				row: tile.sourceRow,
+			},
+			rotation: Number.isFinite(rotation) ? rotation : 0,
+		};
+		if (Number.isFinite(size)) {
+			nextLabel.size = clamp(size, 0.6, 2.4);
+		}
+		if (priority !== "major" && Number.isFinite(minZoom)) {
+			nextLabel.minZoom = clamp(minZoom, 0, 10);
+		}
+		if (priority !== "major" && Number.isFinite(maxZoom)) {
+			nextLabel.maxZoom = clamp(maxZoom, 0, 10);
+		}
+
+		const existingIndex = customMapLabelDefs.findIndex((label) => label.id === nextLabel.id);
+		const nextLabels = [...customMapLabelDefs];
+		if (existingIndex >= 0) {
+			nextLabels[existingIndex] = nextLabel;
+		} else {
+			nextLabels.push(nextLabel);
+		}
+
+		setCustomLabels(nextLabels, { queueSync: true });
+		loadLabelIntoEditor(nextLabel);
+		labelStatus = existingIndex >= 0 ? "Label updated." : "Label added.";
+	}
+
+	function removeLabel() {
+		if (!canEdit || !editLabelId) {
+			return;
+		}
+		removeLabelById(editLabelId);
+	}
+
+	function removeLabelById(labelId) {
+		if (!canEdit || !labelId) {
+			return;
+		}
+		const nextLabels = customMapLabelDefs.filter((label) => label.id !== labelId);
+		setCustomLabels(nextLabels, { queueSync: true });
+		if (editLabelId === labelId) {
+			resetLabelEditor();
+		}
+		labelStatus = "Label removed.";
+	}
+
+	function loadLabelIntoEditor(label) {
+		if (!label) {
+			return;
+		}
+		editLabelId = String(label.id || "");
+		editLabelNameInput = String(label.name || "");
+		editLabelTypeInput = normalizeLabelTypeInput(label.type);
+		editLabelPriorityInput = normalizeLabelPriorityInput(label.priority);
+		editLabelVariantInput = normalizeLabelVariantInput(label.variant, editLabelTypeInput);
+		editLabelSizeInput = Number.isFinite(Number(label.size)) ? Number(label.size).toString() : "1";
+		editLabelRotationInput = Number.isFinite(Number(label.rotation)) ? Number(label.rotation).toString() : "0";
+		editLabelMinZoomInput = Number.isFinite(Number(label.minZoom)) ? Number(label.minZoom).toString() : "";
+		editLabelMaxZoomInput = Number.isFinite(Number(label.maxZoom)) ? Number(label.maxZoom).toString() : "";
 	}
 
 	function addOrUpdatePin() {
@@ -1124,14 +1314,6 @@
 		drawMap();
 	}
 
-	function setLabelDensity(value) {
-		settings = sanitizeSettings({
-			...settings,
-			labelDensity: value,
-		});
-		saveStorageJson(storageKey("settings"), settings);
-	}
-
 	function resetSettings() {
 		settings = sanitizeSettings({ ...DEFAULT_SETTINGS });
 		saveStorageJson(storageKey("settings"), settings);
@@ -1152,9 +1334,27 @@
 		});
 	}
 
+	function hasCloudLabelSyncConfig() {
+		return hasCloudPinSyncConfigUtil({
+			supabaseUrl: SUPABASE_URL,
+			supabaseAnonKey: SUPABASE_ANON_KEY,
+			supabasePinsTable: SUPABASE_LABELS_TABLE,
+			mapId: mapItem?.id,
+		});
+	}
+
 	function canPushCloudPins() {
 		return canPushCloudPinsUtil({
 			hasConfig: hasCloudPinSyncConfig(),
+			authAccessToken,
+			authUserEmail: authUser?.email,
+			canEdit,
+		});
+	}
+
+	function canPushCloudLabels() {
+		return canPushCloudPinsUtil({
+			hasConfig: hasCloudLabelSyncConfig(),
 			authAccessToken,
 			authUserEmail: authUser?.email,
 			canEdit,
@@ -1165,9 +1365,44 @@
 		return buildPinsSignatureUtil(input);
 	}
 
+	function buildLabelsSignature(input) {
+		if (!Array.isArray(input) || !input.length) {
+			return "[]";
+		}
+
+		return JSON.stringify(
+			[...input]
+				.map((label) => ({
+					id: String(label?.id || ""),
+					name: String(label?.name || ""),
+					type: String(label?.type || ""),
+					priority: String(label?.priority || ""),
+					variant: String(label?.variant || ""),
+					size: Number.isFinite(Number(label?.size)) ? Number(label.size) : null,
+					rotation: Number.isFinite(Number(label?.rotation)) ? Number(label.rotation) : 0,
+					minZoom: Number.isFinite(Number(label?.minZoom)) ? Number(label.minZoom) : null,
+					maxZoom: Number.isFinite(Number(label?.maxZoom)) ? Number(label.maxZoom) : null,
+					anchor: label?.anchor
+						? {
+								col: Number(label.anchor.col),
+								row: Number(label.anchor.row),
+							}
+						: null,
+					densityUnlock: label?.densityUnlock
+						? {
+								minimal: Number.isFinite(Number(label.densityUnlock.minimal)) ? Number(label.densityUnlock.minimal) : null,
+								standard: Number.isFinite(Number(label.densityUnlock.standard)) ? Number(label.densityUnlock.standard) : null,
+								detailed: Number.isFinite(Number(label.densityUnlock.detailed)) ? Number(label.densityUnlock.detailed) : null,
+							}
+						: null,
+				}))
+				.sort((a, b) => a.id.localeCompare(b.id)),
+		);
+	}
+
 	function startPinCloudSyncLoop() {
 		stopPinCloudSyncLoop();
-		if (!hasCloudPinSyncConfig() || typeof window === "undefined") {
+		if ((!hasCloudPinSyncConfig() && !hasCloudLabelSyncConfig()) || typeof window === "undefined") {
 			return;
 		}
 
@@ -1183,22 +1418,33 @@
 		pinCloudSyncTimer = null;
 		pinCloudSyncBusy = false;
 		pinCloudPullBusy = false;
+		labelCloudSyncBusy = false;
+		labelCloudPullBusy = false;
 	}
 
 	async function syncPinsCloudTick() {
-		const action = resolveCloudSyncAction({
+		const visibilityState = typeof document !== "undefined" ? document.visibilityState : "visible";
+		const pinAction = resolveCloudSyncAction({
 			hasConfig: hasCloudPinSyncConfig(),
-			visibilityState: typeof document !== "undefined" ? document.visibilityState : "visible",
+			visibilityState,
 			isDirty: pinCloudSyncDirty,
 		});
-		if (action === "none") {
-			return;
-		}
-		if (action === "push") {
+		if (pinAction === "push") {
 			await flushCloudPins();
-			return;
+		} else if (pinAction === "pull") {
+			await pullCloudPins({ forceApply: false });
 		}
-		await pullCloudPins({ forceApply: false });
+
+		const labelAction = resolveCloudSyncAction({
+			hasConfig: hasCloudLabelSyncConfig(),
+			visibilityState,
+			isDirty: labelCloudSyncDirty,
+		});
+		if (labelAction === "push") {
+			await flushCloudLabels();
+		} else if (labelAction === "pull") {
+			await pullCloudLabels({ forceApply: false });
+		}
 	}
 
 	async function flushCloudPins() {
@@ -1293,6 +1539,101 @@
 			console.error(pullError);
 		} finally {
 			pinCloudPullBusy = false;
+		}
+	}
+
+	async function flushCloudLabels() {
+		if (!labelCloudSyncDirty || labelCloudSyncBusy || !canPushCloudLabels()) {
+			return;
+		}
+
+		labelCloudSyncBusy = true;
+		try {
+			const body = [
+				{
+					map_id: String(mapItem.id),
+					labels: customMapLabelDefs,
+					updated_by: String(authUser?.email || ""),
+				},
+			];
+			const query = new URLSearchParams();
+			query.set("on_conflict", "map_id");
+
+			const response = await fetch(`${SUPABASE_URL}/rest/v1/${encodeURIComponent(SUPABASE_LABELS_TABLE)}?${query.toString()}`, {
+				method: "POST",
+				headers: {
+					apikey: SUPABASE_ANON_KEY,
+					Authorization: `Bearer ${authAccessToken}`,
+					"Content-Type": "application/json",
+					Prefer: "resolution=merge-duplicates,return=minimal",
+				},
+				body: JSON.stringify(body),
+			});
+
+			if (!response.ok) {
+				const text = await response.text().catch(() => "");
+				throw new Error(`Unable to sync map labels (${response.status}). ${text}`);
+			}
+
+			labelCloudSyncDirty = false;
+		} catch (syncError) {
+			console.error(syncError);
+		} finally {
+			labelCloudSyncBusy = false;
+		}
+	}
+
+	async function pullCloudLabels(options = {}) {
+		if (labelCloudPullBusy || !hasCloudLabelSyncConfig()) {
+			return;
+		}
+
+		const forceApply = Boolean(options.forceApply);
+		labelCloudPullBusy = true;
+		try {
+			const query = new URLSearchParams();
+			query.set("select", "map_id,labels,updated_at");
+			query.set("map_id", `eq.${String(mapItem.id)}`);
+			query.set("limit", "1");
+
+			const headers = {
+				apikey: SUPABASE_ANON_KEY,
+			};
+			if (authAccessToken) {
+				headers.Authorization = `Bearer ${authAccessToken}`;
+			}
+
+			const response = await fetch(`${SUPABASE_URL}/rest/v1/${encodeURIComponent(SUPABASE_LABELS_TABLE)}?${query.toString()}`, {
+				headers,
+			});
+
+			if (!response.ok) {
+				const text = await response.text().catch(() => "");
+				throw new Error(`Unable to fetch cloud labels (${response.status}). ${text}`);
+			}
+
+			const rows = await response.json().catch(() => []);
+			const row = Array.isArray(rows) && rows.length ? rows[0] : null;
+			if (!row || !Array.isArray(row.labels)) {
+				return;
+			}
+			if (!forceApply && labelCloudSyncDirty) {
+				return;
+			}
+
+			const nextLabels = normalizeMapLabels(row.labels);
+			if (buildLabelsSignature(nextLabels) === buildLabelsSignature(customMapLabelDefs)) {
+				return;
+			}
+
+			customMapLabelDefs = nextLabels;
+			saveStorageJson(storageKey("labels"), customMapLabelDefs);
+			refreshMapLabels();
+			syncEditorsFromSelection();
+		} catch (pullError) {
+			console.error(pullError);
+		} finally {
+			labelCloudPullBusy = false;
 		}
 	}
 
@@ -2155,20 +2496,67 @@
 		return Math.min(Math.max(value, min), max);
 	}
 
+	function parseNumberInput(value) {
+		const parsed = Number(value);
+		return Number.isFinite(parsed) ? parsed : null;
+	}
+
+	function normalizeLabelTypeInput(value) {
+		return String(value || "")
+			.trim()
+			.toLowerCase() === "river"
+			? "river"
+			: "region";
+	}
+
+	function normalizeLabelPriorityInput(value) {
+		const normalized = String(value || "")
+			.trim()
+			.toLowerCase();
+		if (normalized === "major" || normalized === "minor") {
+			return normalized;
+		}
+		return "standard";
+	}
+
+	function normalizeLabelVariantInput(value, type) {
+		const normalized = String(value || "")
+			.trim()
+			.toLowerCase();
+		if (normalized === "land" || normalized === "water") {
+			return normalized;
+		}
+		return type === "river" ? "water" : "land";
+	}
+
+	function slugifyLabelName(value) {
+		return String(value || "")
+			.trim()
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, "-")
+			.replace(/^-+|-+$/g, "");
+	}
+
+	function labelSummary(label) {
+		if (!label) {
+			return "";
+		}
+		const type = normalizeLabelTypeInput(label.type);
+		const priority = normalizeLabelPriorityInput(label.priority);
+		return `${type} • ${priority}`;
+	}
+
 	function isPlainObject(value) {
 		return value !== null && typeof value === "object" && !Array.isArray(value);
 	}
 
 	function sanitizeSettings(input) {
 		const source = isPlainObject(input) ? input : {};
-		const density = LABEL_DENSITY_VALUES.includes(String(source.labelDensity || "").toLowerCase()) ? String(source.labelDensity || "").toLowerCase() : DEFAULT_SETTINGS.labelDensity;
 		return {
 			showPins: Boolean(source.showPins),
 			showLabels: Boolean(source.showLabels),
 			showRiverLabels: Boolean(source.showRiverLabels),
 			showRegionLabels: Boolean(source.showRegionLabels),
-			autoHideLabels: Boolean(source.autoHideLabels),
-			labelDensity: density,
 			hideDecorations: Boolean(source.hideDecorations),
 			flattenLandWater: Boolean(source.flattenLandWater),
 			grayscaleTerrain: Boolean(source.grayscaleTerrain),
@@ -2456,6 +2844,7 @@
 			<aside id="map-tools-panel" class="side-panel" class:is-collapsed={panelCollapsed} aria-label="Map tools" aria-hidden={panelCollapsed}>
 				<div class="tab-row" role="tablist" aria-label="Map tool tabs">
 					<button type="button" role="tab" class:active={panelTab === "edit"} aria-selected={panelTab === "edit"} onclick={() => (panelTab = "edit")}> Pins </button>
+					<button type="button" role="tab" class:active={panelTab === "labels"} aria-selected={panelTab === "labels"} onclick={() => (panelTab = "labels")}> Labels </button>
 					<button type="button" role="tab" class:active={panelTab === "notes"} aria-selected={panelTab === "notes"} onclick={() => (panelTab = "notes")}> Notes </button>
 					<button type="button" role="tab" class:active={panelTab === "settings"} aria-selected={panelTab === "settings"} onclick={() => (panelTab = "settings")}> Settings </button>
 				</div>
@@ -2624,6 +3013,200 @@
 					</div>
 				{/if}
 
+				{#if panelTab === "labels"}
+					<div class="panel-body">
+						<h3>Map Labels</h3>
+						<!-- <p class="panel-intro">Create labels anchored to the selected tile. Non-major labels use minZoom to control zoom reveal levels.</p> -->
+						{#if canEdit}
+							<p class="auth-active">{authUser?.email ? `Editing as ${authUser.email}` : "Editing enabled"}</p>
+						{/if}
+						{#if selectedTile}
+							{#if !canEdit}
+								<p class="auth-hint">{editorHint}</p>
+							{/if}
+							<p class="tile-id">Anchor: {tileLabel(selectedTile)}</p>
+							<p class="pin-editor-state" data-mode={labelEditorMode}>{labelEditorStatus}</p>
+
+							<div class="pin-meta-row">
+								<label class="pin-meta-field">
+									Label Name
+									<input
+										type="text"
+										placeholder="e.g. Congo Basin"
+										value={editLabelNameInput}
+										oninput={(event) => (editLabelNameInput = event.currentTarget.value)}
+										disabled={!canEdit}
+									/>
+								</label>
+								<label class="pin-meta-field">
+									Type
+									<select
+										value={editLabelTypeInput}
+										onchange={(event) => {
+											editLabelTypeInput = normalizeLabelTypeInput(event.currentTarget.value);
+											editLabelVariantInput = normalizeLabelVariantInput("", editLabelTypeInput);
+										}}
+										disabled={!canEdit}
+									>
+										<option value="region">Region</option>
+										<option value="river">River</option>
+									</select>
+								</label>
+								<label class="pin-meta-field">
+									Priority
+									<select value={editLabelPriorityInput} onchange={(event) => (editLabelPriorityInput = normalizeLabelPriorityInput(event.currentTarget.value))} disabled={!canEdit}>
+										<option value="major">Major</option>
+										<option value="standard">Standard</option>
+										<option value="minor">Minor</option>
+									</select>
+								</label>
+								<label class="pin-meta-field">
+									Region Variant
+									<select
+										value={editLabelVariantInput}
+										onchange={(event) => (editLabelVariantInput = normalizeLabelVariantInput(event.currentTarget.value, editLabelTypeInput))}
+										disabled={!canEdit}
+									>
+										<option value="land">Land</option>
+										<option value="water">Water</option>
+									</select>
+								</label>
+							</div>
+
+							<div class="pin-meta-row">
+								<label class="pin-meta-field">
+									Size
+									<input
+										type="number"
+										step="0.05"
+										min="0.6"
+										max="2.4"
+										value={editLabelSizeInput}
+										oninput={(event) => (editLabelSizeInput = event.currentTarget.value)}
+										disabled={!canEdit}
+									/>
+								</label>
+								<label class="pin-meta-field">
+									Rotation
+									<input
+										type="number"
+										step="1"
+										min="-180"
+										max="180"
+										value={editLabelRotationInput}
+										oninput={(event) => (editLabelRotationInput = event.currentTarget.value)}
+										disabled={!canEdit}
+									/>
+								</label>
+								<label class="pin-meta-field">
+									Min Zoom
+									<input
+										type="number"
+										step="0.01"
+										min="0"
+										max="10"
+										placeholder="auto"
+										value={editLabelMinZoomInput}
+										oninput={(event) => (editLabelMinZoomInput = event.currentTarget.value)}
+										disabled={!canEdit}
+									/>
+								</label>
+								<label class="pin-meta-field">
+									Max Zoom
+									<input
+										type="number"
+										step="0.01"
+										min="0"
+										max="10"
+										placeholder="none"
+										value={editLabelMaxZoomInput}
+										oninput={(event) => (editLabelMaxZoomInput = event.currentTarget.value)}
+										disabled={!canEdit}
+									/>
+								</label>
+							</div>
+
+							<div class="button-row pin-action-row">
+								<button type="button" onclick={addOrUpdateLabel} disabled={!canEdit || labelEditorMode === "idle"}>{upsertLabelButtonLabel}</button>
+								<button
+									type="button"
+									class="danger-icon-button"
+									onclick={removeLabel}
+									disabled={!canEdit || !matchedSelectedCustomLabel}
+									aria-label="Remove label"
+									title="Remove label"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="18"
+										height="18"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										aria-hidden="true"
+									>
+										<path d="M10 11v6" />
+										<path d="M14 11v6" />
+										<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+										<path d="M3 6h18" />
+										<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+									</svg>
+								</button>
+							</div>
+
+							{#if labelStatus}
+								<p class="status-inline">{labelStatus}</p>
+							{/if}
+
+							{#if selectedTileCustomLabels.length}
+								<div class="tile-pin-list">
+									<p class="tile-pin-list-title">Custom labels on tile ({selectedTileCustomLabels.length})</p>
+									{#each selectedTileCustomLabels as label (label.id)}
+										<div class="tile-pin-item">
+											<button type="button" class="tile-pin-load" onclick={() => loadLabelIntoEditor(label)} disabled={!canEdit}>
+												<span>{label.name}</span>
+												<span class="tile-label-meta">{labelSummary(label)}</span>
+											</button>
+											<button
+												type="button"
+												class="tile-pin-remove danger-icon-button"
+												onclick={() => removeLabelById(label.id)}
+												disabled={!canEdit}
+												aria-label={`Remove ${label.name}`}
+												title={`Remove ${label.name}`}
+											>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="15"
+													height="15"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													aria-hidden="true"
+												>
+													<path d="M10 11v6" />
+													<path d="M14 11v6" />
+													<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+													<path d="M3 6h18" />
+													<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+												</svg>
+											</button>
+										</div>
+									{/each}
+								</div>
+							{/if}
+						{:else}
+							<p>Select a tile on the map to anchor a label.</p>
+						{/if}
+					</div>
+				{/if}
+
 				{#if panelTab === "notes"}
 					<div class="panel-body">
 						<h3>Tile Notes</h3>
@@ -2688,22 +3271,6 @@
 									<span class="check-row-title">Region Labels</span>
 									<span class="check-row-hint">Show area names like deserts and mountain ranges.</span>
 								</span>
-							</label>
-							<label class="check-row">
-								<input type="checkbox" checked={settings.autoHideLabels} onchange={() => toggleSetting("autoHideLabels")} disabled={!settings.showLabels} />
-								<span class="check-row-copy">
-									<span class="check-row-title">Auto-Hide at Low Zoom</span>
-									<span class="check-row-hint">Hide lower-priority labels until you zoom in.</span>
-								</span>
-							</label>
-							<label class="select-row">
-								<span class="select-row-title">Label Density</span>
-								<select value={settings.labelDensity} onchange={(event) => setLabelDensity(event.currentTarget.value)} disabled={!settings.showLabels}>
-									<option value="minimal">Minimal</option>
-									<option value="standard">Standard</option>
-									<option value="detailed">Detailed</option>
-								</select>
-								<span class="check-row-hint">Choose how many labels are shown on screen.</span>
 							</label>
 							<label class="check-row">
 								<input type="checkbox" checked={settings.hideDecorations} onchange={() => toggleSetting("hideDecorations")} />
@@ -3174,7 +3741,7 @@
 
 	.tab-row {
 		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-columns: repeat(4, minmax(0, 1fr));
 		gap: 0.25rem;
 		padding: 0.35rem;
 		background: var(--control-bg);
@@ -3234,7 +3801,8 @@
 	}
 
 	.panel-body input,
-	.panel-body textarea {
+	.panel-body textarea,
+	.panel-body select {
 		inline-size: 100%;
 		border: 1px solid var(--panel-border);
 		border-radius: 0.55rem;
@@ -3357,14 +3925,22 @@
 	}
 
 	.tile-pin-load {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.45rem;
+		display: grid;
+		justify-items: start;
+		gap: 0.18rem;
 		min-inline-size: 0;
 		max-inline-size: 100%;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		white-space: nowrap;
+		white-space: normal;
+	}
+
+	.tile-label-meta {
+		font-size: 0.72rem;
+		color: var(--muted-ink);
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
 	}
 
 	.tile-pin-swatch {
@@ -3388,8 +3964,13 @@
 	}
 
 	.pin-action-row {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+
+	.pin-action-row > :first-child {
+		flex: 1 1 12rem;
 	}
 
 	.panel-body button {
@@ -3443,35 +4024,6 @@
 		gap: 0.5rem;
 	}
 
-	.select-row {
-		display: grid;
-		gap: 0.35rem;
-		padding-block: 0.55rem;
-		padding-inline: 0.6rem;
-		border-radius: 0.62rem;
-		border: 1px solid var(--panel-border);
-		background: color-mix(in oklch, var(--input-bg) 62%, var(--panel-bg));
-		font-size: 0.86rem;
-		color: var(--ink);
-	}
-
-	.select-row-title {
-		font-size: 0.86rem;
-		font-weight: 600;
-		line-height: 1.3;
-		color: var(--ink);
-	}
-
-	.select-row select {
-		border: 1px solid var(--panel-border);
-		border-radius: 0.5rem;
-		background: var(--input-bg);
-		color: var(--ink);
-		padding-block: 0.38rem;
-		padding-inline: 0.45rem;
-		font: inherit;
-	}
-
 	.check-row {
 		display: grid;
 		grid-template-columns: auto minmax(0, 1fr);
@@ -3495,8 +4047,8 @@
 	.check-row input {
 		inline-size: 1rem;
 		block-size: 1rem;
-		margin-block-start: 0.1rem;
-		margin-inline: 0;
+		align-self: center;
+		margin-inline-end: 0.5rem;
 	}
 
 	.check-row-copy {
@@ -3625,11 +4177,6 @@
 	:global(:root[data-theme="dark"]) .tile-map .check-row:hover {
 		background: oklch(0.29 0.014 74 / 0.82);
 		border-color: oklch(0.57 0.045 78 / 0.52);
-	}
-
-	:global(:root[data-theme="dark"]) .tile-map .select-row {
-		background: oklch(0.26 0.01 74 / 0.75);
-		border-color: oklch(0.43 0.012 74 / 0.46);
 	}
 
 	@media (max-width: 1024px) {
