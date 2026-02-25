@@ -1,4 +1,6 @@
 <script>
+	import { onMount } from "svelte";
+
 	let {
 		themeMode = "light",
 		onToggleTheme = () => {},
@@ -20,9 +22,21 @@
 	let helpOpen = $state(false);
 	let userWrapEl = $state();
 	let helpWrapEl = $state();
+	let currentPath = $state("/");
 
 	const REDDIT_URL = "https://old.reddit.com/r/civbattleroyale/";
 	const DISCORD_URL = "https://discord.gg/565JwaMsuQ";
+
+	onMount(() => {
+		if (typeof window === "undefined") {
+			return;
+		}
+		currentPath = window.location.pathname || "/";
+	});
+
+	function isActivePath(pathname) {
+		return currentPath === pathname;
+	}
 
 	function isTypingTarget(target) {
 		return Boolean(target?.closest?.("input, textarea, select, [contenteditable='true']"));
@@ -83,7 +97,10 @@
 	</div>
 
 	<div class="nav-tools">
-		<a class="wiki-link" href="/wiki" aria-label="Civilization wiki (coming soon)">Civ Wiki Soon</a>
+		<nav class="page-nav" aria-label="Primary navigation">
+			<a class={`page-link ${isActivePath("/") ? "is-active" : ""}`} href="/" aria-current={isActivePath("/") ? "page" : undefined}>Map Viewer</a>
+			<a class={`page-link ${isActivePath("/wiki") ? "is-active" : ""}`} href="/wiki" aria-current={isActivePath("/wiki") ? "page" : undefined}>Wiki</a>
+		</nav>
 
 		<a class="social-trigger" href={REDDIT_URL} aria-label="Reddit" title="Reddit" target="_blank" rel="noopener noreferrer">
 			<svg class="social-icon" viewBox="0 0 512 512" aria-hidden="true">
@@ -273,7 +290,14 @@
 		font: inherit;
 	}
 
-	.wiki-link {
+	.page-nav {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		flex-wrap: wrap;
+	}
+
+	.page-link {
 		text-decoration: none;
 		font-size: 0.79rem;
 		color: var(--accent);
@@ -282,6 +306,16 @@
 		padding-inline: 0.62rem;
 		border-radius: 0.5rem;
 		border: 1px dashed color-mix(in oklch, var(--accent) 44%, var(--panel-border));
+	}
+
+	.page-link:hover {
+		background: color-mix(in oklch, var(--accent) 18%, transparent);
+	}
+
+	.page-link.is-active {
+		color: color-mix(in oklch, var(--accent) 76%, var(--ink));
+		background: color-mix(in oklch, var(--accent) 22%, var(--control-bg));
+		border-style: solid;
 	}
 
 	.social-trigger,
@@ -520,6 +554,15 @@
 
 		.nav-tools {
 			justify-content: flex-start;
+		}
+
+		.page-nav {
+			inline-size: 100%;
+		}
+
+		.page-link {
+			flex: 1 1 auto;
+			text-align: center;
 		}
 
 		.user-dropdown {

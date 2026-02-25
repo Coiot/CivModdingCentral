@@ -30,11 +30,11 @@ export function resolveTerrainColor(terrainName, featureName, elevation) {
 	}
 
 	if (Number(elevation) === 2) {
-		fill = blend(fill, "#eef3f8", 0.6);
+		fill = blend(fill, "#666", 0.4);
 	}
 
 	if (Number(elevation) === 1) {
-		fill = blend(fill, "#e4ebf0", 0.2);
+		fill = blend(fill, "#e4ebf0", 0.15);
 	}
 
 	return fill;

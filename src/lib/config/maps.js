@@ -11,6 +11,7 @@ export const maps = [
 			maxScale: 3,
 		},
 		pinsUrl: "/maps/afri-asia-aust.pins.json",
+		labelsUrl: "/maps/afri-asia-aust.labels.json",
 	},
 	{
 		id: "africa-large",
@@ -323,5 +324,6 @@ export const maps = [
 			maxScale: 3,
 		},
 		pinsUrl: "/maps/cbrx.pins.json",
+		// labelsUrl: "/maps/cbrx.labels.json",
 	},
 ];

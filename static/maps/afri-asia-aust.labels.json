@@ -1,0 +1,265 @@
+{
+	"version": 1,
+	"labels": [
+		{
+			"id": "atlas",
+			"name": "Atlas",
+			"type": "region",
+			"priority": "minor",
+			"variant": "land",
+			"size": 1.5,
+			"anchor": { "col": 18, "row": 65 },
+			"rotation": -12,
+			"minZoom": 1.22
+		},
+		{
+			"id": "hoggar",
+			"name": "Hoggar",
+			"type": "region",
+			"priority": "minor",
+			"variant": "land",
+			"anchor": { "col": 21, "row": 57 },
+			"rotation": -6,
+			"minZoom": 1.27
+		},
+		{
+			"id": "tibesti",
+			"name": "Tibesti",
+			"type": "region",
+			"priority": "minor",
+			"variant": "land",
+			"anchor": { "col": 30, "row": 58 },
+			"rotation": -8,
+			"minZoom": 1.29
+		},
+		{
+			"id": "sahara",
+			"name": "Sahara",
+			"type": "region",
+			"priority": "major",
+			"variant": "land",
+			"size": 3.5,
+			"anchor": { "col": 27, "row": 54 },
+			"rotation": -3
+		},
+		{
+			"id": "sahel",
+			"name": "Sahel",
+			"type": "region",
+			"priority": "major",
+			"variant": "land",
+			"size": 1.5,
+			"anchor": { "col": 26, "row": 46 },
+			"rotation": -5
+		},
+		{
+			"id": "libyan-desert",
+			"name": "Libyan Desert",
+			"type": "region",
+			"priority": "minor",
+			"variant": "land",
+			"anchor": { "col": 35, "row": 60 },
+			"rotation": 15,
+			"minZoom": 1.25
+		},
+		{
+			"id": "nubian-desert",
+			"name": "Nubian Desert",
+			"type": "region",
+			"priority": "minor",
+			"variant": "land",
+			"anchor": { "col": 42, "row": 52 },
+			"rotation": -20,
+			"minZoom": 1.24
+		},
+		{
+			"id": "darfur",
+			"name": "Darfur",
+			"type": "region",
+			"priority": "minor",
+			"variant": "land",
+			"anchor": { "col": 37, "row": 51 },
+			"rotation": -8,
+			"minZoom": 1.27
+		},
+		{
+			"id": "congo-basin",
+			"name": "Congo Basin",
+			"type": "region",
+			"priority": "standard",
+			"variant": "land",
+			"size": 1.28,
+			"anchor": { "col": 32, "row": 37 },
+			"rotation": -12,
+			"minZoom": 1.12
+		},
+		{
+			"id": "ethiopian-highlands",
+			"name": "Ethiopian Highlands",
+			"type": "region",
+			"priority": "standard",
+			"variant": "land",
+			"size": 0.8,
+			"anchor": { "col": 46, "row": 43 },
+			"rotation": -28,
+			"minZoom": 1.14
+		},
+		{
+			"id": "katanga-plateau",
+			"name": "Katanga Plateau",
+			"type": "region",
+			"priority": "minor",
+			"variant": "land",
+			"size": 1.15,
+			"anchor": { "col": 38, "row": 22 },
+			"rotation": 10,
+			"minZoom": 1.26
+		},
+		{
+			"id": "kalahari",
+			"name": "Kalahari",
+			"type": "region",
+			"priority": "standard",
+			"variant": "land",
+			"size": 1.08,
+			"anchor": { "col": 31, "row": 17 },
+			"rotation": -8,
+			"minZoom": 1.1
+		},
+		{
+			"id": "mediterranean-sea",
+			"name": "Mediterranean Sea",
+			"type": "region",
+			"priority": "minor",
+			"variant": "water",
+			"size": 1.08,
+			"anchor": { "col": 33, "row": 68 },
+			"rotation": 1,
+			"minZoom": 1.2
+		},
+		{
+			"id": "red-sea",
+			"name": "Red Sea",
+			"type": "region",
+			"priority": "minor",
+			"variant": "water",
+			"size": 1.2,
+			"anchor": { "col": 48, "row": 53 },
+			"rotation": 55,
+			"minZoom": 1.32
+		},
+		{
+			"id": "gulf-of-aden",
+			"name": "Gulf of Aden",
+			"type": "region",
+			"priority": "minor",
+			"variant": "water",
+			"size": 1.1,
+			"anchor": { "col": 55, "row": 47 },
+			"rotation": -12,
+			"minZoom": 1.34
+		},
+		{
+			"id": "gulf-of-guinea",
+			"name": "Gulf of Guinea",
+			"type": "region",
+			"priority": "minor",
+			"variant": "water",
+			"size": 1.3,
+			"anchor": { "col": 17, "row": 37 },
+			"rotation": -10,
+			"minZoom": 1.23
+		},
+		{
+			"id": "atlantic-ocean",
+			"name": "Atlantic Ocean",
+			"type": "region",
+			"priority": "standard",
+			"variant": "water",
+			"size": 3,
+			"anchor": { "col": 8, "row": 27 },
+			"rotation": -6,
+			"minZoom": 1.23
+		},
+		{
+			"id": "mozambique-channel",
+			"name": "Mozambique Channel",
+			"type": "region",
+			"priority": "minor",
+			"variant": "water",
+			"anchor": { "col": 47, "row": 16 },
+			"rotation": -65,
+			"minZoom": 1.35
+		},
+		{
+			"id": "lake-victoria",
+			"name": "Lake Victoria",
+			"type": "region",
+			"priority": "minor",
+			"variant": "water",
+			"size": 1.2,
+			"anchor": { "col": 42, "row": 35 },
+			"rotation": -8,
+			"minZoom": 1.33
+		},
+		{
+			"id": "lake-tanganyika",
+			"name": "Lake Tanganyika",
+			"type": "region",
+			"priority": "minor",
+			"variant": "water",
+			"anchor": { "col": 40, "row": 31 },
+			"rotation": 50,
+			"minZoom": 1.36
+		},
+		{
+			"id": "lake-malawi",
+			"name": "Lake Malawi",
+			"type": "region",
+			"priority": "minor",
+			"variant": "water",
+			"anchor": { "col": 43, "row": 25 },
+			"rotation": -76,
+			"minZoom": 1.37
+		},
+		{
+			"id": "nile",
+			"name": "Nile",
+			"type": "river",
+			"priority": "major",
+			"size": 1.6,
+			"anchor": { "col": 44, "row": 52 },
+			"rotation": -90
+		},
+		{
+			"id": "niger",
+			"name": "Niger",
+			"type": "river",
+			"priority": "standard",
+			"size": 1.3,
+			"anchor": { "col": 21, "row": 45 },
+			"rotation": 20,
+			"minZoom": 1.12
+		},
+		{
+			"id": "congo-river",
+			"name": "Congo",
+			"type": "river",
+			"priority": "standard",
+			"size": 1.26,
+			"anchor": { "col": 30, "row": 32 },
+			"rotation": -10,
+			"minZoom": 1.11
+		},
+		{
+			"id": "zambezi",
+			"name": "Zambezi",
+			"type": "river",
+			"priority": "standard",
+			"size": 1.16,
+			"anchor": { "col": 42, "row": 20 },
+			"rotation": 10,
+			"minZoom": 1.13
+		}
+	]
+}

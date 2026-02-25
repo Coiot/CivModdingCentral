@@ -4,6 +4,17 @@
 	import { resolveTerrainColor } from "../map/colors.js";
 	import { computeTooltipBridgeRect, computeTooltipCoords } from "../map/tooltip.js";
 	import { NOTE_PIN_PATHS } from "../map/glyphs.js";
+	import { buildLikelyMapPrefetchQueue } from "../map/prefetch.js";
+	import { findTileAtPoint } from "../map/hit-testing.js";
+	import { materializeMapLabels, normalizeMapLabels, selectVisibleMapLabels } from "../map/labels.js";
+	import {
+		buildPinsSignature as buildPinsSignatureUtil,
+		normalizePins as normalizePinsUtil,
+		normalizeToken as normalizeTokenUtil,
+		parseHexInput as parseHexInputUtil,
+		sanitizeHexColor as sanitizeHexColorUtil,
+	} from "../map/pins.js";
+	import { canPushCloudPins as canPushCloudPinsUtil, hasCloudPinSyncConfig as hasCloudPinSyncConfigUtil, resolveCloudSyncAction } from "../map/sync.js";
 
 	let { mapItem, maps = [], selectedMapId = "", onSelectMap = () => {}, canEdit = false, authUser = null, authAccessToken = "" } = $props();
 
@@ -11,6 +22,7 @@
 	const CBRX_PIN_RESET_VERSION = 1;
 	const BASE_CACHE_VERSION = 1;
 	const PIN_SYNC_INTERVAL_MS = 60 * 1000;
+	const BASE_PREFETCH_LIMIT = 3;
 	const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
 	const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 	const SUPABASE_PINS_TABLE = import.meta.env.VITE_SUPABASE_PINS_TABLE || "cmc_map_pins";
@@ -20,10 +32,16 @@
 		"M96 128C113.7 128 128 142.3 128 160L128 480C128 497.7 113.7 512 96 512C78.3 512 64 497.7 64 480L64 160C64 142.3 78.3 128 96 128zM569 303C578.4 312.4 578.4 327.6 569 336.9L425 481C418.1 487.9 407.8 489.9 398.8 486.2C389.8 482.5 384 473.7 384 464L384 384L240 384C213.5 384 192 362.5 192 336L192 304C192 277.5 213.5 256 240 256L384 256L384 176C384 166.3 389.8 157.5 398.8 153.8C407.8 150.1 418.1 152.2 425 159L569 303z";
 	const DEFAULT_SETTINGS = {
 		showPins: true,
+		showLabels: true,
+		showRiverLabels: true,
+		showRegionLabels: true,
+		autoHideLabels: true,
+		labelDensity: "standard",
 		hideDecorations: false,
 		flattenLandWater: false,
 		grayscaleTerrain: false,
 	};
+	const LABEL_DENSITY_VALUES = ["minimal", "standard", "detailed"];
 
 	let viewportEl = $state();
 	let canvasEl = $state();
@@ -39,6 +57,7 @@
 	let debugInfo = $state("");
 
 	let mapPins = $state([]);
+	let mapLabels = $state([]);
 	let notesByKey = $state({});
 	let settings = $state({ ...DEFAULT_SETTINGS });
 
@@ -60,6 +79,9 @@
 	let activePointers = new Map();
 	let isDragging = $state(false);
 	let dragMoved = $state(false);
+	let wheelZoomRafId = null;
+	let wheelZoomDelta = 0;
+	let wheelZoomFocus = null;
 	let dragStartX = $state(0);
 	let dragStartY = $state(0);
 	let dragTranslateX = $state(0);
@@ -84,6 +106,8 @@
 	let pinCloudSyncDirty = $state(false);
 	let pinCloudSyncBusy = $state(false);
 	let pinCloudPullBusy = $state(false);
+	let mapPrefetchIdleHandle = null;
+	let mapPrefetchTimeoutHandle = null;
 	const notePinPathCache = new Map();
 	const basePayloadMemoryCache = new Map();
 	let lastInitializedMapId = "";
@@ -145,6 +169,22 @@
 		}
 		return Math.round((scale / fitScaleLimit) * 100);
 	});
+	const zoomRatio = $derived.by(() => {
+		if (!fitScaleLimit) {
+			return 1;
+		}
+		return scale / fitScaleLimit;
+	});
+	const visibleMapLabels = $derived.by(() =>
+		selectVisibleMapLabels(mapLabels, {
+			showLabels: settings.showLabels,
+			showRiverLabels: settings.showRiverLabels,
+			showRegionLabels: settings.showRegionLabels,
+			density: settings.labelDensity,
+			zoomRatio,
+			autoHide: settings.autoHideLabels,
+		}),
+	);
 	const tooltipLayout = $derived.by(() => {
 		if (!hoveredTile || !hoverPointer || !viewportWidth || !viewportHeight) {
 			return null;
@@ -201,11 +241,14 @@
 	$effect(() => {
 		return () => {
 			stopPinCloudSyncLoop();
+			clearPrefetchSchedule();
+			clearWheelZoomFrame();
 		};
 	});
 
 	async function initializeMap() {
 		stopPinCloudSyncLoop();
+		clearPrefetchSchedule();
 		loading = true;
 		error = "";
 		debugInfo = "";
@@ -216,6 +259,7 @@
 		panelCollapsed = true;
 		notesStatus = "";
 		pinCloudSyncDirty = false;
+		mapLabels = [];
 		hasUserViewportInteraction = false;
 		isDragging = false;
 		dragMoved = false;
@@ -233,7 +277,8 @@
 
 			const baseUrl = resolveAssetUrl(mapItem.mapConfig.baseCacheUrl);
 			const pinsUrl = resolveAssetUrl(mapItem.pinsUrl);
-			debugInfo = `protocol=${window.location.protocol} base=${baseUrl} pins=${pinsUrl}`;
+			const labelsUrl = mapItem?.labelsUrl ? resolveAssetUrl(mapItem.labelsUrl) : "";
+			debugInfo = `protocol=${window.location.protocol} base=${baseUrl} pins=${pinsUrl}${labelsUrl ? ` labels=${labelsUrl}` : ""}`;
 
 			if (mapItem?.id === "cbrx" && typeof localStorage !== "undefined") {
 				try {
@@ -259,12 +304,20 @@
 				saveCachedBasePayload(mapItem?.id, basePayload);
 			}
 			const pinsPayload = Array.isArray(localPins) ? { pins: localPins } : await fetchJsonSafe(pinsUrl, "pins").catch(() => ({ pins: [] }));
+			const labelsPayload = labelsUrl ? await fetchJsonSafe(labelsUrl, "labels").catch(() => ({ labels: [] })) : { labels: [] };
+			const normalizedLabels = normalizeMapLabels(Array.isArray(labelsPayload) ? labelsPayload : labelsPayload?.labels);
+			const computedMetrics = computeMapMetrics(Number(basePayload.width), Number(basePayload.height), Number(mapItem.mapConfig.hexSize || 14));
 
 			baseData = basePayload;
-			mapMetrics = computeMapMetrics(Number(basePayload.width), Number(basePayload.height), Number(mapItem.mapConfig.hexSize || 14));
+			mapMetrics = computedMetrics;
 			notesByKey = isPlainObject(localNotes) ? localNotes : {};
-			settings = { ...DEFAULT_SETTINGS, ...(isPlainObject(localSettings) ? localSettings : {}) };
+			settings = sanitizeSettings({ ...DEFAULT_SETTINGS, ...(isPlainObject(localSettings) ? localSettings : {}) });
 			mapPins = normalizePins(Array.isArray(localPins) ? localPins : Array.isArray(pinsPayload?.pins) ? pinsPayload.pins : []);
+			mapLabels = materializeMapLabels(normalizedLabels, {
+				baseData: basePayload,
+				mapMetrics: computedMetrics,
+				hexSize: Number(mapItem.mapConfig.hexSize || 14),
+			});
 
 			await pullCloudPins({ forceApply: true });
 
@@ -275,6 +328,7 @@
 			fitToView(true);
 			drawMap();
 			startPinCloudSyncLoop();
+			scheduleBasePrefetch();
 		} catch (loadError) {
 			const name = loadError?.name ? `${loadError.name}: ` : "";
 			error = `${name}${loadError?.message || "Unable to load map data."}`;
@@ -286,6 +340,7 @@
 			mapTiles = [];
 			tileLookup = new Map();
 			mapPins = [];
+			mapLabels = [];
 			stopPinCloudSyncLoop();
 		} finally {
 			loading = false;
@@ -439,7 +494,7 @@
 				const fitScale = Math.min(viewportWidth / mapMetrics.width, viewportHeight / mapMetrics.height);
 				fitScaleLimit = fitScale;
 				minScale = fitScaleLimit;
-				maxScale = fitScaleLimit * 5;
+				maxScale = fitScaleLimit * 6;
 				scale = clamp(scale || fitScale, minScale, maxScale);
 			}
 
@@ -500,7 +555,7 @@
 		const fitScale = Math.min(viewportWidth / mapMetrics.width, viewportHeight / mapMetrics.height);
 		fitScaleLimit = fitScale;
 		minScale = fitScaleLimit;
-		maxScale = fitScaleLimit * 5;
+		maxScale = fitScaleLimit * 6;
 		scale = clamp(forceReset ? fitScale : scale || fitScale, minScale, maxScale);
 
 		const scaledWidth = mapMetrics.width * scale;
@@ -568,12 +623,47 @@
 		hasUserViewportInteraction = true;
 
 		const rect = viewportEl.getBoundingClientRect();
-		const focus = {
+		wheelZoomFocus = {
 			x: event.clientX - rect.left,
 			y: event.clientY - rect.top,
 		};
+		wheelZoomDelta += event.deltaY;
+		scheduleWheelZoomFrame();
+	}
 
-		zoomBy(event.deltaY < 0 ? 1.12 : 1 / 1.12, focus);
+	function scheduleWheelZoomFrame() {
+		if (typeof window === "undefined" || wheelZoomRafId !== null) {
+			return;
+		}
+		wheelZoomRafId = window.requestAnimationFrame(() => {
+			wheelZoomRafId = null;
+			flushWheelZoom();
+		});
+	}
+
+	function clearWheelZoomFrame() {
+		if (typeof window !== "undefined" && wheelZoomRafId !== null) {
+			window.cancelAnimationFrame(wheelZoomRafId);
+		}
+		wheelZoomRafId = null;
+		wheelZoomDelta = 0;
+		wheelZoomFocus = null;
+	}
+
+	function flushWheelZoom() {
+		if (!mapMetrics || !wheelZoomDelta) {
+			wheelZoomDelta = 0;
+			return;
+		}
+
+		const normalizedDelta = clamp(wheelZoomDelta / 120, -4, 4);
+		const multiplier = Math.pow(1.12, -normalizedDelta);
+		const focus = wheelZoomFocus || {
+			x: viewportWidth / 2,
+			y: viewportHeight / 2,
+		};
+		wheelZoomDelta = 0;
+		zoomBy(multiplier, focus);
 	}
 
 	function onViewportPointerDown(event) {
@@ -753,86 +843,15 @@
 	}
 
 	function findTileAt(worldX, worldY) {
-		if (!baseData || !mapMetrics || !Number.isFinite(worldX) || !Number.isFinite(worldY)) {
-			return null;
-		}
-
-		if (worldX < 0 || worldY < 0 || worldX > mapMetrics.width || worldY > mapMetrics.height) {
-			return null;
-		}
-
-		const hexSize = Number(mapItem.mapConfig.hexSize || 14);
-		const hexWidth = mapMetrics.hexWidth;
-		const verticalStep = hexSize * 1.5;
-		const originX = hexWidth / 2 - mapMetrics.minX;
-		const originY = hexSize - mapMetrics.minY;
-
-		const approxDisplayRow = (worldY - originY) / verticalStep;
-		const rowBase = Math.round(approxDisplayRow);
-		const candidates = [];
-
-		for (let rowOffset = -1; rowOffset <= 1; rowOffset += 1) {
-			const displayRow = rowBase + rowOffset;
-			if (displayRow < 0 || displayRow >= baseData.height) {
-				continue;
-			}
-
-			const rowShift = displayRow % 2 ? 0 : hexWidth / 2;
-			const approxCol = (worldX - (originX + rowShift)) / hexWidth;
-			const colBase = Math.round(approxCol);
-
-			for (let colOffset = -1; colOffset <= 1; colOffset += 1) {
-				const col = colBase + colOffset;
-				if (col < 0 || col >= baseData.width) {
-					continue;
-				}
-				const key = `${col},${displayRow}`;
-				const tile = tileLookup.get(key);
-				if (tile) {
-					candidates.push(tile);
-				}
-			}
-		}
-
-		if (!candidates.length) {
-			return null;
-		}
-
-		let best = null;
-		let bestDistance = Number.POSITIVE_INFINITY;
-		for (const tile of candidates) {
-			const dx = worldX - tile.x;
-			const dy = worldY - tile.y;
-			const distance = dx * dx + dy * dy;
-			if (distance < bestDistance) {
-				best = tile;
-				bestDistance = distance;
-			}
-		}
-
-		if (!best) {
-			return null;
-		}
-
-		const polygon = buildHexVertices(hexSize);
-		const localX = worldX - best.x;
-		const localY = worldY - best.y;
-		return pointInPolygon(localX, localY, polygon) ? best : null;
-	}
-
-	function pointInPolygon(x, y, polygon) {
-		let inside = false;
-		for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-			const xi = polygon[i].x;
-			const yi = polygon[i].y;
-			const xj = polygon[j].x;
-			const yj = polygon[j].y;
-			const intersects = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi || 1e-9) + xi;
-			if (intersects) {
-				inside = !inside;
-			}
-		}
-		return inside;
+		return findTileAtPoint({
+			worldX,
+			worldY,
+			baseWidth: Number(baseData?.width || 0),
+			baseHeight: Number(baseData?.height || 0),
+			mapMetrics,
+			hexSize: Number(mapItem.mapConfig.hexSize || 14),
+			tileLookup,
+		});
 	}
 
 	function selectTile(tileKey) {
@@ -1097,16 +1116,24 @@
 	}
 
 	function toggleSetting(key) {
-		settings = {
+		settings = sanitizeSettings({
 			...settings,
 			[key]: !settings[key],
-		};
+		});
 		saveStorageJson(storageKey("settings"), settings);
 		drawMap();
 	}
 
+	function setLabelDensity(value) {
+		settings = sanitizeSettings({
+			...settings,
+			labelDensity: value,
+		});
+		saveStorageJson(storageKey("settings"), settings);
+	}
+
 	function resetSettings() {
-		settings = { ...DEFAULT_SETTINGS };
+		settings = sanitizeSettings({ ...DEFAULT_SETTINGS });
 		saveStorageJson(storageKey("settings"), settings);
 		drawMap();
 	}
@@ -1117,18 +1144,25 @@
 	}
 
 	function hasCloudPinSyncConfig() {
-		return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_PINS_TABLE && mapItem?.id);
+		return hasCloudPinSyncConfigUtil({
+			supabaseUrl: SUPABASE_URL,
+			supabaseAnonKey: SUPABASE_ANON_KEY,
+			supabasePinsTable: SUPABASE_PINS_TABLE,
+			mapId: mapItem?.id,
+		});
 	}
 
 	function canPushCloudPins() {
-		return hasCloudPinSyncConfig() && Boolean(authAccessToken) && Boolean(authUser?.email) && canEdit;
+		return canPushCloudPinsUtil({
+			hasConfig: hasCloudPinSyncConfig(),
+			authAccessToken,
+			authUserEmail: authUser?.email,
+			canEdit,
+		});
 	}
 
 	function buildPinsSignature(input) {
-		return normalizePins(input)
-			.map((pin) => `${pin.col}|${pin.row}|${normalizeToken(pin.civ)}|${normalizeToken(pin.leader)}|${normalizeToken(pin.author)}|${pin.primary}|${pin.secondary}`)
-			.sort((a, b) => a.localeCompare(b))
-			.join(";");
+		return buildPinsSignatureUtil(input);
 	}
 
 	function startPinCloudSyncLoop() {
@@ -1152,13 +1186,15 @@
 	}
 
 	async function syncPinsCloudTick() {
-		if (!hasCloudPinSyncConfig()) {
+		const action = resolveCloudSyncAction({
+			hasConfig: hasCloudPinSyncConfig(),
+			visibilityState: typeof document !== "undefined" ? document.visibilityState : "visible",
+			isDirty: pinCloudSyncDirty,
+		});
+		if (action === "none") {
 			return;
 		}
-		if (typeof document !== "undefined" && document.visibilityState === "hidden") {
-			return;
-		}
-		if (pinCloudSyncDirty) {
+		if (action === "push") {
 			await flushCloudPins();
 			return;
 		}
@@ -1300,6 +1336,74 @@
 		saveStorageJson(baseCacheKey(mapId), payload);
 	}
 
+	function clearPrefetchSchedule() {
+		if (typeof window === "undefined") {
+			return;
+		}
+		if (mapPrefetchIdleHandle !== null && typeof window.cancelIdleCallback === "function") {
+			window.cancelIdleCallback(mapPrefetchIdleHandle);
+		}
+		if (mapPrefetchTimeoutHandle !== null) {
+			window.clearTimeout(mapPrefetchTimeoutHandle);
+		}
+		mapPrefetchIdleHandle = null;
+		mapPrefetchTimeoutHandle = null;
+	}
+
+	function scheduleBasePrefetch() {
+		if (typeof window === "undefined") {
+			return;
+		}
+		const queue = buildLikelyMapPrefetchQueue(maps, mapItem?.id, BASE_PREFETCH_LIMIT);
+		if (!queue.length) {
+			return;
+		}
+
+		clearPrefetchSchedule();
+		const runPrefetch = () => {
+			void prefetchBasePayloads(queue);
+		};
+
+		if (typeof window.requestIdleCallback === "function") {
+			mapPrefetchIdleHandle = window.requestIdleCallback(
+				() => {
+					mapPrefetchIdleHandle = null;
+					runPrefetch();
+				},
+				{ timeout: 1800 },
+			);
+			return;
+		}
+
+		mapPrefetchTimeoutHandle = window.setTimeout(() => {
+			mapPrefetchTimeoutHandle = null;
+			runPrefetch();
+		}, 450);
+	}
+
+	async function prefetchBasePayloads(queue) {
+		if (!Array.isArray(queue) || !queue.length) {
+			return;
+		}
+
+		for (const candidateMapId of queue) {
+			if (!candidateMapId || loadCachedBasePayload(candidateMapId)) {
+				continue;
+			}
+			const candidateMap = maps.find((entry) => entry?.id === candidateMapId);
+			const baseCacheUrl = candidateMap?.mapConfig?.baseCacheUrl;
+			if (!baseCacheUrl) {
+				continue;
+			}
+			try {
+				const payload = await fetchJsonSafe(resolveAssetUrl(baseCacheUrl), "base prefetch");
+				saveCachedBasePayload(candidateMapId, payload);
+			} catch {
+				// Ignore prefetch failures and keep user-visible map loading fast.
+			}
+		}
+	}
+
 	function resolveAssetUrl(path) {
 		if (!path) {
 			return path;
@@ -1363,20 +1467,11 @@
 	}
 
 	function sanitizeHexColor(color, fallback) {
-		if (typeof color === "string" && /^#[0-9a-fA-F]{6}$/.test(color)) {
-			return color;
-		}
-		return fallback;
+		return sanitizeHexColorUtil(color, fallback);
 	}
 
 	function parseHexInput(value) {
-		const normalized = String(value || "")
-			.trim()
-			.replace(/^#/, "");
-		if (!/^[0-9a-fA-F]{6}$/.test(normalized)) {
-			return null;
-		}
-		return `#${normalized.toUpperCase()}`;
+		return parseHexInputUtil(value);
 	}
 
 	function pinStyle(pin) {
@@ -1393,55 +1488,14 @@
 	}
 
 	function normalizeToken(value) {
-		return String(value || "")
-			.trim()
-			.toLowerCase()
-			.replace(/[^a-z0-9]+/g, "-");
+		return normalizeTokenUtil(value);
 	}
 
 	function normalizePins(input) {
-		if (!Array.isArray(input)) {
-			return [];
-		}
-
-		const seen = new Set();
-		const pins = [];
-
-		for (let index = 0; index < input.length; index += 1) {
-			const candidate = input[index];
-			if (!candidate || typeof candidate !== "object") {
-				continue;
-			}
-
-			const civ = String(candidate.civ || "").trim();
-			const col = Number(candidate.col);
-			const row = Number(candidate.row);
-			if (!civ || !Number.isFinite(col) || !Number.isFinite(row)) {
-				continue;
-			}
-
-			const normalizedCol = Math.floor(col);
-			const normalizedRow = Math.floor(row);
-			const civKey = normalizeToken(civ);
-			const dedupeKey = `${normalizedCol},${normalizedRow}:${civKey}`;
-			if (seen.has(dedupeKey)) {
-				continue;
-			}
-			seen.add(dedupeKey);
-
-			pins.push({
-				id: String(candidate.id || `${civKey}-${normalizedCol}-${normalizedRow}`),
-				civ,
-				leader: String(candidate.leader || "").trim(),
-				author: String(candidate.author || "").trim(),
-				col: normalizedCol,
-				row: normalizedRow,
-				primary: sanitizeHexColor(candidate.primary, "#243746"),
-				secondary: sanitizeHexColor(candidate.secondary, "#f3d37f"),
-			});
-		}
-
-		return pins;
+		return normalizePinsUtil(input, {
+			defaultPrimary: "#243746",
+			defaultSecondary: "#f3d37f",
+		});
 	}
 
 	function formatColorDisplay(color, fallback) {
@@ -2105,12 +2159,34 @@
 		return value !== null && typeof value === "object" && !Array.isArray(value);
 	}
 
+	function sanitizeSettings(input) {
+		const source = isPlainObject(input) ? input : {};
+		const density = LABEL_DENSITY_VALUES.includes(String(source.labelDensity || "").toLowerCase()) ? String(source.labelDensity || "").toLowerCase() : DEFAULT_SETTINGS.labelDensity;
+		return {
+			showPins: Boolean(source.showPins),
+			showLabels: Boolean(source.showLabels),
+			showRiverLabels: Boolean(source.showRiverLabels),
+			showRegionLabels: Boolean(source.showRegionLabels),
+			autoHideLabels: Boolean(source.autoHideLabels),
+			labelDensity: density,
+			hideDecorations: Boolean(source.hideDecorations),
+			flattenLandWater: Boolean(source.flattenLandWater),
+			grayscaleTerrain: Boolean(source.grayscaleTerrain),
+		};
+	}
+
 	function worldTransform() {
 		return `translate(${translateX}px, ${translateY}px) scale(${scale})`;
 	}
 
 	function tileLabel(tile) {
 		return tile ? `${tile.col}, ${tile.sourceRow}` : "-";
+	}
+
+	function mapLabelPathId(labelId) {
+		const mapId = String(mapItem?.id || "map").replace(/[^a-z0-9_-]/gi, "-");
+		const suffix = String(labelId || "label").replace(/[^a-z0-9_-]/gi, "-");
+		return `map-label-${mapId}-${suffix}`;
 	}
 
 	function elevationLabel(value) {
@@ -2157,7 +2233,7 @@
 				<h2>{mapItem.title}</h2>
 				<p>{mapItem.description}</p>
 				<p class="meta-line">
-					{baseData.width}x{baseData.height} tiles, {mapPins.length} Civilization pins
+					{baseData.width}x{baseData.height} tiles, {mapPins.length} Civilization pins, {mapLabels.length} map labels
 				</p>
 			</div>
 
@@ -2224,6 +2300,55 @@
 							{/if}
 							{#if selectedOutlinePoints()}
 								<polygon points={selectedOutlinePoints()} class="outline-selected"></polygon>
+							{/if}
+
+							{#if settings.showLabels}
+								<g class="label-layer" aria-hidden="true">
+									<defs>
+										{#each visibleMapLabels.rivers as label (label.id)}
+											{#if label.pathD}
+												<path id={mapLabelPathId(label.id)} d={label.pathD}></path>
+											{/if}
+										{/each}
+									</defs>
+
+									{#each visibleMapLabels.rivers as label (label.id)}
+										{#if label.pathD}
+											<text
+												class={`map-label map-label-river map-label-${label.priority} map-label-variant-${label.variant}`}
+												style={`font-size:${label.fontSize}px; letter-spacing:${label.letterSpacing}px;`}
+											>
+												<textPath href={`#${mapLabelPathId(label.id)}`} startOffset="50%" text-anchor="middle">{label.name}</textPath>
+											</text>
+										{:else}
+											<text
+												class={`map-label map-label-river map-label-${label.priority} map-label-variant-${label.variant}`}
+												x={label.x}
+												y={label.y}
+												text-anchor="middle"
+												dominant-baseline="middle"
+												transform={label.rotation ? `rotate(${label.rotation} ${label.x} ${label.y})` : undefined}
+												style={`font-size:${label.fontSize}px; letter-spacing:${label.letterSpacing}px;`}
+											>
+												{label.name}
+											</text>
+										{/if}
+									{/each}
+
+									{#each visibleMapLabels.regions as label (label.id)}
+										<text
+											class={`map-label map-label-region map-label-${label.priority} map-label-variant-${label.variant}`}
+											x={label.x}
+											y={label.y}
+											text-anchor="middle"
+											dominant-baseline="middle"
+											transform={label.rotation ? `rotate(${label.rotation} ${label.x} ${label.y})` : undefined}
+											style={`font-size:${label.fontSize}px; letter-spacing:${label.letterSpacing}px;`}
+										>
+											{label.name}
+										</text>
+									{/each}
+								</g>
 							{/if}
 
 							{#if settings.showPins}
@@ -2544,6 +2669,43 @@
 								</span>
 							</label>
 							<label class="check-row">
+								<input type="checkbox" checked={settings.showLabels} onchange={() => toggleSetting("showLabels")} />
+								<span class="check-row-copy">
+									<span class="check-row-title">Show Map Labels</span>
+									<span class="check-row-hint">Display named rivers and geographic regions.</span>
+								</span>
+							</label>
+							<label class="check-row">
+								<input type="checkbox" checked={settings.showRiverLabels} onchange={() => toggleSetting("showRiverLabels")} disabled={!settings.showLabels} />
+								<span class="check-row-copy">
+									<span class="check-row-title">River Labels</span>
+									<span class="check-row-hint">Follow major river paths with text labels.</span>
+								</span>
+							</label>
+							<label class="check-row">
+								<input type="checkbox" checked={settings.showRegionLabels} onchange={() => toggleSetting("showRegionLabels")} disabled={!settings.showLabels} />
+								<span class="check-row-copy">
+									<span class="check-row-title">Region Labels</span>
+									<span class="check-row-hint">Show area names like deserts and mountain ranges.</span>
+								</span>
+							</label>
+							<label class="check-row">
+								<input type="checkbox" checked={settings.autoHideLabels} onchange={() => toggleSetting("autoHideLabels")} disabled={!settings.showLabels} />
+								<span class="check-row-copy">
+									<span class="check-row-title">Auto-Hide at Low Zoom</span>
+									<span class="check-row-hint">Hide lower-priority labels until you zoom in.</span>
+								</span>
+							</label>
+							<label class="select-row">
+								<span class="select-row-title">Label Density</span>
+								<select value={settings.labelDensity} onchange={(event) => setLabelDensity(event.currentTarget.value)} disabled={!settings.showLabels}>
+									<option value="minimal">Minimal</option>
+									<option value="standard">Standard</option>
+									<option value="detailed">Detailed</option>
+								</select>
+								<span class="check-row-hint">Choose how many labels are shown on screen.</span>
+							</label>
+							<label class="check-row">
 								<input type="checkbox" checked={settings.hideDecorations} onchange={() => toggleSetting("hideDecorations")} />
 								<span class="check-row-copy">
 									<span class="check-row-title">Hide Decorations</span>
@@ -2764,7 +2926,7 @@
 
 	.viewport {
 		position: relative;
-		min-block-size: 540px;
+		min-block-size: 40rem;
 		border-radius: 1rem;
 		overflow: hidden;
 		border: 1px solid var(--panel-border);
@@ -2810,6 +2972,57 @@
 		fill: hsl(199deg 100% 88% / 0.14);
 		stroke: hsl(199deg 100% 88% / 0.75);
 		stroke-width: 0.9;
+	}
+
+	.label-layer {
+		pointer-events: none;
+	}
+
+	.map-label {
+		pointer-events: none;
+		paint-order: stroke fill;
+		stroke-linejoin: round;
+		text-rendering: geometricPrecision;
+	}
+
+	.map-label-river {
+		fill: hsl(210deg 47% 24% / 0.96);
+		stroke: hsl(196deg 36% 97% / 0.9);
+		stroke-width: 2.6;
+		font-weight: 600;
+		font-style: italic;
+		font-family: "Palatino Linotype", "Book Antiqua", serif;
+	}
+
+	.map-label-region {
+		fill: hsl(30deg 27% 24% / 0.85);
+		stroke: hsl(56deg 50% 98% / 0.75);
+		stroke-width: 3.2;
+		font-weight: 700;
+		font-family: "Avenir Next", "Gill Sans", sans-serif;
+		text-transform: uppercase;
+	}
+
+	.map-label-region.map-label-variant-water {
+		fill: hsl(211deg 69% 34% / 0.95);
+		stroke: hsl(208deg 100% 97% / 0.85);
+		stroke-width: 2.8;
+		font-weight: 600;
+		font-style: italic;
+		font-family: "Palatino Linotype", "Book Antiqua", serif;
+		text-transform: none;
+	}
+
+	.map-label-major {
+		opacity: 0.95;
+	}
+
+	.map-label-standard {
+		opacity: 0.88;
+	}
+
+	.map-label-minor {
+		opacity: 0.74;
 	}
 
 	.pin {
@@ -2860,8 +3073,14 @@
 
 	.pin-count-text {
 		fill: hsl(197deg 46% 17%);
-		font-size: 7px;
+		font-size: 7.5px;
 		font-weight: 700;
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-variant-numeric: tabular-nums;
+		text-rendering: geometricPrecision;
+		paint-order: stroke fill;
+		stroke: hsl(0deg 0% 100% / 0.45);
+		stroke-width: 0.55;
 		pointer-events: none;
 	}
 
@@ -3224,6 +3443,35 @@
 		gap: 0.5rem;
 	}
 
+	.select-row {
+		display: grid;
+		gap: 0.35rem;
+		padding-block: 0.55rem;
+		padding-inline: 0.6rem;
+		border-radius: 0.62rem;
+		border: 1px solid var(--panel-border);
+		background: color-mix(in oklch, var(--input-bg) 62%, var(--panel-bg));
+		font-size: 0.86rem;
+		color: var(--ink);
+	}
+
+	.select-row-title {
+		font-size: 0.86rem;
+		font-weight: 600;
+		line-height: 1.3;
+		color: var(--ink);
+	}
+
+	.select-row select {
+		border: 1px solid var(--panel-border);
+		border-radius: 0.5rem;
+		background: var(--input-bg);
+		color: var(--ink);
+		padding-block: 0.38rem;
+		padding-inline: 0.45rem;
+		font: inherit;
+	}
+
 	.check-row {
 		display: grid;
 		grid-template-columns: auto minmax(0, 1fr);
@@ -3350,6 +3598,21 @@
 		box-shadow: 0 14px 30px hsl(30deg 22% 5% / 0.45);
 	}
 
+	:global(:root[data-theme="dark"]) .tile-map .map-label-river {
+		fill: oklch(0.9 0.03 222);
+		stroke: oklch(0.19 0.01 72 / 0.92);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .map-label-region {
+		fill: oklch(0.84 0.03 82 / 0.9);
+		stroke: oklch(0.17 0.007 72 / 0.9);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .map-label-region.map-label-variant-water {
+		fill: oklch(0.86 0.06 236 / 0.92);
+		stroke: oklch(0.19 0.01 72 / 0.92);
+	}
+
 	:global(:root[data-theme="dark"]) .tile-map .tile-pin-list {
 		background: oklch(0.24 0.01 74 / 0.78);
 	}
@@ -3362,6 +3625,11 @@
 	:global(:root[data-theme="dark"]) .tile-map .check-row:hover {
 		background: oklch(0.29 0.014 74 / 0.82);
 		border-color: oklch(0.57 0.045 78 / 0.52);
+	}
+
+	:global(:root[data-theme="dark"]) .tile-map .select-row {
+		background: oklch(0.26 0.01 74 / 0.75);
+		border-color: oklch(0.43 0.012 74 / 0.46);
 	}
 
 	@media (max-width: 1024px) {
