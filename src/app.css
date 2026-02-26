@@ -9,8 +9,8 @@
 	--navbar-bg: oklch(0.1913 0 0 / 0.95);
 	--control-bg: oklch(0.2435 0 0 / 0.9);
 	--input-bg: oklch(0.1776 0 0 / 0.9);
-	--panel-border: oklch(0.325 0 0);
-	--shadow-soft: oklch(0 0 0 / 0.42);
+	--panel-border: oklch(0.35 0 0);
+	--shadow-soft: oklch(0 0 0 / 0.4);
 	--accent: oklch(0.72 0.195 39);
 	--accent-strong: oklch(0.63 0.205 37);
 	--accent-soft: oklch(0.82 0.12 52);
@@ -26,8 +26,8 @@
 	--navbar-bg: oklch(0.9862 0.0142 84.58 / 0.95);
 	--control-bg: oklch(0.9541 0.0188 83.06 / 0.96);
 	--input-bg: oklch(0.9964 0.0067 97.35 / 0.96);
-	--panel-border: oklch(0.8137 0.0617 82.44 / 0.65);
-	--shadow-soft: oklch(0.2393 0 0 / 0.16);
+	--panel-border: oklch(0.8137 0.0617 82.44 / 0.75);
+	--shadow-soft: oklch(0.2393 0 0 / 0.1);
 	--accent: oklch(0.72 0.195 39);
 	--accent-strong: oklch(0.63 0.205 37);
 	--accent-soft: oklch(0.82 0.12 52);
@@ -71,7 +71,7 @@ body {
 	border-radius: 1rem;
 	background: var(--panel-bg);
 	border: 1px solid color-mix(in oklch, var(--accent) 26%, var(--panel-border));
-	box-shadow: 0 12px 26px var(--shadow-soft);
+	box-shadow: 0 2px 4px var(--shadow-soft);
 	padding: 1.5rem;
 }
 

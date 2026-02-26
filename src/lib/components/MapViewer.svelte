@@ -3933,7 +3933,7 @@
 		border-radius: 1rem;
 		overflow: hidden;
 		border: 1px solid var(--panel-border);
-		box-shadow: 0 18px 42px hsl(203deg 44% 14% / 0.24);
+		box-shadow: 0 10px 20px hsl(203deg 44% 14% / 0.2);
 		background: oklch(0.8 0.06 232);
 		outline: none;
 		touch-action: none;
@@ -3942,7 +3942,7 @@
 	.viewport:focus-visible {
 		box-shadow:
 			0 0 0 2px oklch(0.84 0.15 80 / 0.92),
-			0 18px 42px hsl(203deg 44% 14% / 0.24);
+			0 10px 20px hsl(203deg 44% 14% / 0.24);
 	}
 
 	.map-world {
@@ -4738,7 +4738,7 @@
 
 	:global(:root[data-theme="dark"]) .tile-map .viewport {
 		background: oklch(0.23 0.012 80);
-		box-shadow: 0 18px 42px hsl(35deg 22% 4% / 0.38);
+		box-shadow: 0 18px 32px hsl(35deg 22% 4% / 0.38);
 	}
 
 	:global(:root[data-theme="dark"]) .tile-map .tab-row button.active {

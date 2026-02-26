@@ -233,7 +233,7 @@
 		border-radius: 0.85rem;
 		background: var(--navbar-bg);
 		border: 1px solid var(--panel-border);
-		box-shadow: 0 12px 26px var(--shadow-soft);
+		box-shadow: 0 2px 4px var(--shadow-soft);
 		position: relative;
 		z-index: 20;
 	}

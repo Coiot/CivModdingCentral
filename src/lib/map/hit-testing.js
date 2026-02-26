@@ -15,15 +15,7 @@ export function pointInPolygon(x, y, polygon) {
 	return inside;
 }
 
-export function findTileAtPoint({
-	worldX,
-	worldY,
-	baseWidth,
-	baseHeight,
-	mapMetrics,
-	hexSize,
-	tileLookup,
-}) {
+export function findTileAtPoint({ worldX, worldY, baseWidth, baseHeight, mapMetrics, hexSize, tileLookup }) {
 	if (!mapMetrics || !Number.isFinite(worldX) || !Number.isFinite(worldY)) {
 		return null;
 	}
@@ -54,7 +46,9 @@ export function findTileAtPoint({
 			continue;
 		}
 
-		const rowShift = displayRow % 2 ? 0 : hexWidth / 2;
+		const isOddHeight = mapHeight % 2 === 1;
+		const parityRow = isOddHeight ? displayRow + 1 : displayRow;
+		const rowShift = parityRow % 2 ? 0 : hexWidth / 2;
 		const approxCol = (worldX - (originX + rowShift)) / hexWidth;
 		const colBase = Math.round(approxCol);
 

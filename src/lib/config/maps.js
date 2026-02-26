@@ -353,7 +353,7 @@ export const maps = [
 	},
 	{
 		id: "lung-south-asia-1",
-		title: "Lung South Asia",
+		title: "Lung's South Asia",
 		mapConfig: {
 			viewWidth: 1400,
 			viewHeight: 840,
