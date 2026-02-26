@@ -1503,6 +1503,14 @@
 		}
 	}
 
+	function resetLocalPins() {
+		setLocalPins([]);
+		if (typeof localStorage !== "undefined") {
+			localStorage.removeItem(storageKey("pins-local"));
+		}
+		syncEditorsFromSelection();
+	}
+
 	function setSharedPins(nextPins, options = {}) {
 		sharedPins = normalizePins(nextPins);
 		if (options.persist !== false) {
@@ -3730,6 +3738,21 @@
 								</span>
 							</label>
 						</div>
+						<div class="pin-reset-row">
+							<button
+								type="button"
+								class="danger-text-button"
+								onclick={() => {
+									if (window.confirm(`Reset all local pins for ${mapItem?.title || "this map"}? This cannot be undone.`)) {
+										resetLocalPins();
+									}
+								}}
+								disabled={!localPins.length}
+							>
+								Reset Local Pins
+							</button>
+							<p class="pin-reset-hint">Clears locally saved pins for this map only.</p>
+						</div>
 						<!-- <div class="button-row">
 							<button type="button" onclick={resetSettings}>Reset Settings</button>
 						</div> -->
@@ -4194,8 +4217,9 @@
 	}
 
 	.tab-row button.active {
-		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
 		color: oklch(0.99 0.004 85);
+		text-shadow: 0 1px 2px oklch(0.19 0.2 85);
+		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
 		border-color: transparent;
 	}
 
@@ -4265,6 +4289,19 @@
 		background: color-mix(in oklch, var(--panel-bg) 86%, var(--accent) 6%);
 	}
 
+	.pin-reset-row {
+		display: grid;
+		gap: 0.35rem;
+		margin-top: 0.65rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.pin-reset-hint {
+		margin: 0;
+		font-size: 0.78rem;
+		color: var(--muted-ink);
+	}
+
 	.pin-edit-title {
 		margin-block: 0;
 		font-size: 0.8rem;
@@ -4290,9 +4327,25 @@
 	}
 
 	.pin-edit-buttons button.active {
-		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
 		color: oklch(0.99 0.004 85);
+		text-shadow: 0 1px 2px oklch(0.19 0.2 85);
+		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
 		border-color: transparent;
+	}
+
+	.danger-text-button {
+		border: 1px solid rgba(194, 68, 68, 0.55);
+		color: #c24444;
+		background: rgba(194, 68, 68, 0.1);
+	}
+
+	.danger-text-button:hover {
+		background: rgba(194, 68, 68, 0.18);
+	}
+
+	.danger-text-button:disabled {
+		opacity: 0.55;
+		cursor: not-allowed;
 	}
 
 	.pin-meta-field {
@@ -4651,8 +4704,9 @@
 	}
 
 	.pin-mode-buttons button.active {
-		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
 		color: oklch(0.99 0.004 85);
+		text-shadow: 0 1px 2px oklch(0.19 0.2 85);
+		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
 		border-color: transparent;
 	}
 
@@ -4742,8 +4796,9 @@
 	}
 
 	:global(:root[data-theme="dark"]) .tile-map .tab-row button.active {
-		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
 		color: oklch(0.98 0.004 85);
+		text-shadow: 0 1px 2px oklch(0.19 0.2 85);
+		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
 	}
 
 	:global(:root[data-theme="dark"]) .tile-map .tile-map-control-group {
