@@ -99,7 +99,7 @@
 	<div class="nav-tools">
 		<nav class="page-nav" aria-label="Primary navigation">
 			<a class={`page-link ${isActivePath("/") ? "is-active" : ""}`} href="/" aria-current={isActivePath("/") ? "page" : undefined}>Map Viewer</a>
-			<a class={`page-link ${isActivePath("/wiki") ? "is-active" : ""}`} href="/wiki" aria-current={isActivePath("/wiki") ? "page" : undefined}>Wiki</a>
+			<a class={`page-link ${isActivePath("/wiki") ? "is-active" : ""}`} href="/wiki" aria-current={isActivePath("/wiki") ? "page" : undefined}>Wiki Template</a>
 		</nav>
 
 		<a class="social-trigger" href={REDDIT_URL} aria-label="Reddit" title="Reddit" target="_blank" rel="noopener noreferrer">

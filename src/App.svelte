@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import MapViewer from "./lib/components/MapViewer.svelte";
-	import AppNavbar from "./lib/components/AppNavbar.svelte";
+	import Navbar from "./lib/components/Navbar.svelte";
 	import { maps } from "./lib/config/maps.js";
 
 	const THEME_STORAGE_KEY = "cmc-theme-mode";
@@ -294,7 +294,7 @@
 </script>
 
 <main class="page-shell">
-	<AppNavbar
+	<Navbar
 		{themeMode}
 		{authUser}
 		{authEmail}
