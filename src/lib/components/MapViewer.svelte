@@ -71,6 +71,7 @@
 
 	let panelTab = $state("edit");
 	let panelCollapsed = $state(true);
+	let panelCollapsedPreference = $state(true);
 	let selectedTileKey = $state("");
 	let hoveredTileKey = $state("");
 	let hoverPointer = $state(null);
@@ -317,6 +318,21 @@
 	});
 
 	$effect(() => {
+		if (!viewportWidth) {
+			return;
+		}
+		if (viewportWidth <= 640) {
+			if (panelCollapsed) {
+				setPanelCollapsed(false, { persist: false });
+			}
+			return;
+		}
+		if (panelCollapsed !== panelCollapsedPreference) {
+			panelCollapsed = panelCollapsedPreference;
+		}
+	});
+
+	$effect(() => {
 		if (!mapMetrics || !viewportWidth || !viewportHeight || hasUserViewportInteraction) {
 			return;
 		}
@@ -396,6 +412,7 @@
 			const localSettings = loadStorageJson(storageKey("settings"), {});
 			const storedPinViewMode = loadStorageJson(storageKey("pin-view-mode"), null);
 			const storedPinEditTarget = loadStorageJson(storageKey("pin-edit-target"), null);
+			const storedPanelCollapsed = loadStorageJson(storageKey("panel-collapsed"), null);
 
 			let basePayload = loadCachedBasePayload(mapItem?.id);
 			if (!basePayload) {
@@ -418,6 +435,8 @@
 			saveStorageJson(storageKey("pin-view-mode"), pinViewMode);
 			pinEditTarget = canEdit ? normalizePinEditTarget(storedPinEditTarget) : "local";
 			saveStorageJson(storageKey("pin-edit-target"), pinEditTarget);
+			panelCollapsedPreference = typeof storedPanelCollapsed === "boolean" ? storedPanelCollapsed : true;
+			panelCollapsed = panelCollapsedPreference;
 			localPins = normalizePins(Array.isArray(localPinsStored) ? localPinsStored : []);
 			sharedPins = normalizePins(fetchedSharedPins.length ? fetchedSharedPins : migratedSharedPins);
 			saveStorageJson(storageKey("pins-shared"), sharedPins);
@@ -1271,13 +1290,17 @@
 		syncEditorsFromSelection();
 	}
 
-	function removePinById(pinId) {
-		if (!canEditPins || !pinId) {
+	function removePinById(pinId, source) {
+		if (!pinId) {
 			return;
 		}
-		const editablePins = pinEditTarget === "shared" ? sharedPins : localPins;
+		const target = normalizePinEditTarget(source || pinEditTarget);
+		if (target === "shared" && !canEdit) {
+			return;
+		}
+		const editablePins = target === "shared" ? sharedPins : localPins;
 		const nextPins = editablePins.filter((pin) => pin.id !== pinId);
-		if (pinEditTarget === "shared") {
+		if (target === "shared") {
 			setSharedPins(nextPins, { queueSync: true });
 		} else {
 			setLocalPins(nextPins);
@@ -1285,9 +1308,13 @@
 		syncEditorsFromSelection();
 	}
 
-	function loadPinIntoEditor(pin) {
+	function loadPinIntoEditor(pin, source) {
 		if (!pin) {
 			return;
+		}
+		const target = normalizePinEditTarget(source || resolvePinSource(pin));
+		if (target === "local" || canEdit) {
+			setPinEditTarget(target);
 		}
 		editPinCivInput = pin.civ || "";
 		if (pin.gameDefineName) {
@@ -1351,6 +1378,29 @@
 		}
 
 		return mapPins.filter((pin) => Number(pin.col) === tile.col && Number(pin.row) === tile.sourceRow).sort((a, b) => a.civ.localeCompare(b.civ));
+	}
+
+	function pinMatches(a, b) {
+		if (!a || !b) {
+			return false;
+		}
+		if (a.id && b.id && a.id === b.id) {
+			return true;
+		}
+		return Number(a.col) === Number(b.col) && Number(a.row) === Number(b.row) && normalizeToken(a.civ) === normalizeToken(b.civ);
+	}
+
+	function resolvePinSource(pin) {
+		if (!pin) {
+			return pinEditTarget;
+		}
+		if (localPins.some((candidate) => pinMatches(candidate, pin))) {
+			return "local";
+		}
+		if (sharedPins.some((candidate) => pinMatches(candidate, pin))) {
+			return "shared";
+		}
+		return pinEditTarget;
 	}
 
 	function pinGroupPoint(group) {
@@ -1491,6 +1541,14 @@
 		pinEditTarget = canEdit ? normalized : "local";
 		saveStorageJson(storageKey("pin-edit-target"), pinEditTarget);
 		syncEditorsFromSelection();
+	}
+
+	function setPanelCollapsed(nextValue, options = {}) {
+		panelCollapsed = Boolean(nextValue);
+		if (options.persist !== false) {
+			panelCollapsedPreference = panelCollapsed;
+			saveStorageJson(storageKey("panel-collapsed"), panelCollapsedPreference);
+		}
 	}
 
 	function setLocalPins(nextPins, options = {}) {
@@ -2979,7 +3037,7 @@
 					<button
 						type="button"
 						class="tile-map-control tile-map-control-collapse"
-						onclick={() => (panelCollapsed = !panelCollapsed)}
+						onclick={() => setPanelCollapsed(!panelCollapsed)}
 						aria-expanded={!panelCollapsed}
 						aria-controls="map-tools-panel"
 						aria-label={panelCollapsed ? "Open editing interface" : "Collapse editing interface"}
@@ -3184,7 +3242,12 @@
 						<div class="pin-edit-target">
 							<p class="pin-edit-title">Edit Target</p>
 							<div class="pin-edit-buttons" role="group" aria-label="Pin edit target">
-								<button type="button" class:active={pinEditTarget === "shared"} onclick={() => setPinEditTarget("shared")} disabled={!canEdit}> Shared </button>
+								<button type="button" class:active={pinEditTarget === "shared"} onclick={() => setPinEditTarget("shared")} disabled={!canEdit}>
+									Shared
+									{#if !canEdit}
+										<span class="pin-edit-tooltip">Sign in to edit shared pins.</span>
+									{/if}
+								</button>
 								<button type="button" class:active={pinEditTarget === "local"} onclick={() => setPinEditTarget("local")} disabled={!canEdit}> Local </button>
 							</div>
 						</div>
@@ -3200,7 +3263,7 @@
 							<p class="pin-editor-state" data-mode={pinEditorMode}>{pinEditorStatus}</p>
 							<h4>Pin Colors</h4>
 							<div class="pin-meta-row">
-								<label class="pin-meta-field">
+								<label class="pin-meta-field ui-tooltip-anchor">
 									Civilization
 									<input
 										type="text"
@@ -3215,16 +3278,25 @@
 										}}
 										disabled={!canEditPins}
 									/>
+									{#if !canEditPins}
+										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
+									{/if}
 								</label>
-								<label class="pin-meta-field">
+								<label class="pin-meta-field ui-tooltip-anchor">
 									Leader
 									<input type="text" value={editPinLeaderInput} oninput={(event) => (editPinLeaderInput = event.currentTarget.value)} disabled={!canEditPins} />
+									{#if !canEditPins}
+										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
+									{/if}
 								</label>
-								<label class="pin-meta-field">
+								<label class="pin-meta-field ui-tooltip-anchor">
 									Author(s)
 									<input type="text" value={editPinAuthorInput} oninput={(event) => (editPinAuthorInput = event.currentTarget.value)} disabled={!canEditPins} />
+									{#if !canEditPins}
+										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
+									{/if}
 								</label>
-								<label class="pin-meta-field">
+								<label class="pin-meta-field ui-tooltip-anchor">
 									Game Define Name
 									<input
 										type="text"
@@ -3237,17 +3309,23 @@
 										spellcheck="false"
 										disabled={!canEditPins}
 									/>
+									{#if !canEditPins}
+										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
+									{/if}
 								</label>
-								<label class="pin-meta-field pin-meta-check">
+								<label class="pin-meta-field pin-meta-check ui-tooltip-anchor">
 									Island Start
 									<span class="pin-meta-toggle">
 										<input type="checkbox" checked={editPinIsIsland} onchange={(event) => (editPinIsIsland = event.currentTarget.checked)} disabled={!canEditPins} />
 										<span class="pin-meta-hint">Grant Optics + Boats in Lua</span>
 									</span>
+									{#if !canEditPins}
+										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
+									{/if}
 								</label>
 							</div>
 							<div class="color-row">
-								<label>
+								<label class="ui-tooltip-anchor">
 									Primary
 									<div class="color-picker-row">
 										<div class="color-swatch-control">
@@ -3275,8 +3353,11 @@
 									<span class="color-value">HEX {primaryColorDisplay.hex}</span>
 									<span class="color-value">RGB {primaryColorDisplay.rgb}</span>
 									<span class="color-value">HSL {primaryColorDisplay.hsl}</span>
+									{#if !canEditPins}
+										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
+									{/if}
 								</label>
-								<label>
+								<label class="ui-tooltip-anchor">
 									Secondary
 									<div class="color-picker-row">
 										<div class="color-swatch-control">
@@ -3304,77 +3385,97 @@
 									<span class="color-value">HEX {secondaryColorDisplay.hex}</span>
 									<span class="color-value">RGB {secondaryColorDisplay.rgb}</span>
 									<span class="color-value">HSL {secondaryColorDisplay.hsl}</span>
+									{#if !canEditPins}
+										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
+									{/if}
 								</label>
 							</div>
 							<div class="button-row pin-action-row">
-								<button type="button" onclick={addOrUpdatePin} disabled={!canEditPins || pinEditorMode === "idle"}>{upsertCivButtonLabel}</button>
-								<button
-									type="button"
-									class="danger-icon-button"
-									onclick={removePin}
-									disabled={!canEditPins || !matchedSelectedPin}
-									aria-label="Remove civilization"
-									title="Remove civilization"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="18"
-										height="18"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										aria-hidden="true"
+								<span class="ui-tooltip-wrap">
+									<button type="button" onclick={addOrUpdatePin} disabled={!canEditPins || pinEditorMode === "idle"}>{upsertCivButtonLabel}</button>
+								</span>
+								<span class="ui-tooltip-wrap">
+									<button
+										type="button"
+										class="danger-icon-button"
+										onclick={removePin}
+										disabled={!canEditPins || !matchedSelectedPin}
+										aria-label="Remove civilization"
+										title="Remove civilization"
 									>
-										<path d="M10 11v6" />
-										<path d="M14 11v6" />
-										<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-										<path d="M3 6h18" />
-										<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-									</svg>
-								</button>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="18"
+											height="18"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											aria-hidden="true"
+										>
+											<path d="M10 11v6" />
+											<path d="M14 11v6" />
+											<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+											<path d="M3 6h18" />
+											<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+										</svg>
+									</button>
+								</span>
 							</div>
 							{#if selectedTilePins.length}
 								<div class="tile-pin-list">
 									<p class="tile-pin-list-title">Civilizations on tile ({selectedTilePins.length})</p>
 									{#each selectedTilePins as pin (pin.id)}
+										{@const source = resolvePinSource(pin)}
+										{@const canEditSource = source === "shared" ? canEdit : true}
 										<div class="tile-pin-item">
-											<button type="button" class="tile-pin-load" onclick={() => loadPinIntoEditor(pin)} disabled={!canEditPins}>
-												<span class="tile-pin-swatch" style={pinStyle(pin)}></span>
-												<span>{pin.civ}</span>
-												{#if pin.isIsland}
-													<span class="tile-pin-meta">Island Start</span>
+											<span class="ui-tooltip-wrap">
+												<button type="button" class="tile-pin-load" onclick={() => loadPinIntoEditor(pin, source)} disabled={!canEditSource}>
+													<span class="tile-pin-swatch" style={pinStyle(pin)}></span>
+													<span>{pin.civ}</span>
+													<span class="tile-pin-meta">{source === "shared" ? "Shared" : "Local"}</span>
+													{#if pin.isIsland}
+														<span class="tile-pin-meta">Island Start</span>
+													{/if}
+												</button>
+												{#if !canEditSource}
+													<span class="ui-tooltip">Sign in to edit shared pins.</span>
 												{/if}
-											</button>
-											<button
-												type="button"
-												class="tile-pin-remove danger-icon-button"
-												onclick={() => removePinById(pin.id)}
-												disabled={!canEditPins}
-												aria-label={`Remove ${pin.civ}`}
-												title={`Remove ${pin.civ}`}
-											>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													width="15"
-													height="15"
-													viewBox="0 0 24 24"
-													fill="none"
-													stroke="currentColor"
-													stroke-width="2"
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													aria-hidden="true"
+											</span>
+											<span class="ui-tooltip-wrap">
+												<button
+													type="button"
+													class="tile-pin-remove danger-icon-button"
+													onclick={() => removePinById(pin.id, source)}
+													disabled={!canEditSource}
+													aria-label={`Remove ${pin.civ}`}
+													title={`Remove ${pin.civ}`}
 												>
-													<path d="M10 11v6" />
-													<path d="M14 11v6" />
-													<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-													<path d="M3 6h18" />
-													<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-												</svg>
-											</button>
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														width="15"
+														height="15"
+														viewBox="0 0 24 24"
+														fill="none"
+														stroke="currentColor"
+														stroke-width="2"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														aria-hidden="true"
+													>
+														<path d="M10 11v6" />
+														<path d="M14 11v6" />
+														<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+														<path d="M3 6h18" />
+														<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+													</svg>
+												</button>
+												{#if !canEditSource}
+													<span class="ui-tooltip">Sign in to edit shared pins.</span>
+												{/if}
+											</span>
 										</div>
 									{/each}
 								</div>
@@ -3400,7 +3501,7 @@
 							<p class="pin-editor-state" data-mode={labelEditorMode}>{labelEditorStatus}</p>
 
 							<div class="pin-meta-row">
-								<label class="pin-meta-field">
+								<label class="pin-meta-field ui-tooltip-anchor">
 									Label Name
 									<input
 										type="text"
@@ -3409,8 +3510,11 @@
 										oninput={(event) => (editLabelNameInput = event.currentTarget.value)}
 										disabled={!canEdit}
 									/>
+									{#if !canEdit}
+										<span class="ui-tooltip">Sign in to edit labels.</span>
+									{/if}
 								</label>
-								<label class="pin-meta-field">
+								<label class="pin-meta-field ui-tooltip-anchor">
 									Type
 									<select
 										value={editLabelTypeInput}
@@ -3423,16 +3527,22 @@
 										<option value="region">Region</option>
 										<option value="river">River</option>
 									</select>
+									{#if !canEdit}
+										<span class="ui-tooltip">Sign in to edit labels.</span>
+									{/if}
 								</label>
-								<label class="pin-meta-field">
+								<label class="pin-meta-field ui-tooltip-anchor">
 									Priority
 									<select value={editLabelPriorityInput} onchange={(event) => (editLabelPriorityInput = normalizeLabelPriorityInput(event.currentTarget.value))} disabled={!canEdit}>
 										<option value="major">Major</option>
 										<option value="standard">Standard</option>
 										<option value="minor">Minor</option>
 									</select>
+									{#if !canEdit}
+										<span class="ui-tooltip">Sign in to edit labels.</span>
+									{/if}
 								</label>
-								<label class="pin-meta-field">
+								<label class="pin-meta-field ui-tooltip-anchor">
 									Region Variant
 									<select
 										value={editLabelVariantInput}
@@ -3442,11 +3552,14 @@
 										<option value="land">Land</option>
 										<option value="water">Water</option>
 									</select>
+									{#if !canEdit}
+										<span class="ui-tooltip">Sign in to edit labels.</span>
+									{/if}
 								</label>
 							</div>
 
 							<div class="pin-meta-row">
-								<label class="pin-meta-field">
+								<label class="pin-meta-field ui-tooltip-anchor">
 									Size
 									<input
 										type="number"
@@ -3457,8 +3570,11 @@
 										oninput={(event) => (editLabelSizeInput = event.currentTarget.value)}
 										disabled={!canEdit}
 									/>
+									{#if !canEdit}
+										<span class="ui-tooltip">Sign in to edit labels.</span>
+									{/if}
 								</label>
-								<label class="pin-meta-field">
+								<label class="pin-meta-field ui-tooltip-anchor">
 									Rotation
 									<input
 										type="number"
@@ -3469,8 +3585,11 @@
 										oninput={(event) => (editLabelRotationInput = event.currentTarget.value)}
 										disabled={!canEdit}
 									/>
+									{#if !canEdit}
+										<span class="ui-tooltip">Sign in to edit labels.</span>
+									{/if}
 								</label>
-								<label class="pin-meta-field">
+								<label class="pin-meta-field ui-tooltip-anchor">
 									Min Zoom (%)
 									<input
 										type="number"
@@ -3482,8 +3601,11 @@
 										oninput={(event) => (editLabelMinZoomInput = event.currentTarget.value)}
 										disabled={!canEdit}
 									/>
+									{#if !canEdit}
+										<span class="ui-tooltip">Sign in to edit labels.</span>
+									{/if}
 								</label>
-								<label class="pin-meta-field">
+								<label class="pin-meta-field ui-tooltip-anchor">
 									Max Zoom (%)
 									<input
 										type="number"
@@ -3495,38 +3617,45 @@
 										oninput={(event) => (editLabelMaxZoomInput = event.currentTarget.value)}
 										disabled={!canEdit}
 									/>
+									{#if !canEdit}
+										<span class="ui-tooltip">Sign in to edit labels.</span>
+									{/if}
 								</label>
 							</div>
 
 							<div class="button-row pin-action-row">
-								<button type="button" onclick={addOrUpdateLabel} disabled={!canEdit || labelEditorMode === "idle"}>{upsertLabelButtonLabel}</button>
-								<button
-									type="button"
-									class="danger-icon-button"
-									onclick={removeLabel}
-									disabled={!canEdit || !matchedSelectedCustomLabel}
-									aria-label="Remove label"
-									title="Remove label"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="18"
-										height="18"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										aria-hidden="true"
+								<span class="ui-tooltip-wrap">
+									<button type="button" onclick={addOrUpdateLabel} disabled={!canEdit || labelEditorMode === "idle"}>{upsertLabelButtonLabel}</button>
+								</span>
+								<span class="ui-tooltip-wrap">
+									<button
+										type="button"
+										class="danger-icon-button"
+										onclick={removeLabel}
+										disabled={!canEdit || !matchedSelectedCustomLabel}
+										aria-label="Remove label"
+										title="Remove label"
 									>
-										<path d="M10 11v6" />
-										<path d="M14 11v6" />
-										<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-										<path d="M3 6h18" />
-										<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-									</svg>
-								</button>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="18"
+											height="18"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											aria-hidden="true"
+										>
+											<path d="M10 11v6" />
+											<path d="M14 11v6" />
+											<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+											<path d="M3 6h18" />
+											<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+										</svg>
+									</button>
+								</span>
 							</div>
 
 							{#if labelStatus}
@@ -3538,37 +3667,44 @@
 									<p class="tile-pin-list-title">Custom labels on tile ({selectedTileCustomLabels.length})</p>
 									{#each selectedTileCustomLabels as label (label.id)}
 										<div class="tile-pin-item">
-											<button type="button" class="tile-pin-load" onclick={() => loadLabelIntoEditor(label)} disabled={!canEdit}>
-												<span>{label.name}</span>
-												<span class="tile-label-meta">{labelSummary(label)}</span>
-											</button>
-											<button
-												type="button"
-												class="tile-pin-remove danger-icon-button"
-												onclick={() => removeLabelById(label.id)}
-												disabled={!canEdit}
-												aria-label={`Remove ${label.name}`}
-												title={`Remove ${label.name}`}
-											>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													width="15"
-													height="15"
-													viewBox="0 0 24 24"
-													fill="none"
-													stroke="currentColor"
-													stroke-width="2"
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													aria-hidden="true"
+											<span class="ui-tooltip-wrap">
+												<button type="button" class="tile-pin-load" onclick={() => loadLabelIntoEditor(label)} disabled={!canEdit}>
+													<span>{label.name}</span>
+													<span class="tile-label-meta">{labelSummary(label)}</span>
+												</button>
+												{#if !canEdit}
+													<span class="ui-tooltip">Sign in to edit labels.</span>
+												{/if}
+											</span>
+											<span class="ui-tooltip-wrap">
+												<button
+													type="button"
+													class="tile-pin-remove danger-icon-button"
+													onclick={() => removeLabelById(label.id)}
+													disabled={!canEdit}
+													aria-label={`Remove ${label.name}`}
+													title={`Remove ${label.name}`}
 												>
-													<path d="M10 11v6" />
-													<path d="M14 11v6" />
-													<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-													<path d="M3 6h18" />
-													<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-												</svg>
-											</button>
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														width="15"
+														height="15"
+														viewBox="0 0 24 24"
+														fill="none"
+														stroke="currentColor"
+														stroke-width="2"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														aria-hidden="true"
+													>
+														<path d="M10 11v6" />
+														<path d="M14 11v6" />
+														<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+														<path d="M3 6h18" />
+														<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+													</svg>
+												</button>
+											</span>
 										</div>
 									{/each}
 								</div>
@@ -3587,20 +3723,29 @@
 								<p class="auth-hint">{editorHint}</p>
 							{/if}
 							<p class="tile-id">Tile: {tileLabel(selectedTile)}</p>
-							<textarea rows="7" placeholder="Write map notes for this tile..." value={notesDraft} oninput={(event) => (notesDraft = event.currentTarget.value)} disabled={!canEdit}
-							></textarea>
+							<div class="ui-tooltip-wrap ui-tooltip-block">
+								<textarea rows="7" placeholder="Write map notes for this tile..." value={notesDraft} oninput={(event) => (notesDraft = event.currentTarget.value)} disabled={!canEdit}
+								></textarea>
+								{#if !canEdit}
+									<span class="ui-tooltip">Sign in to edit notes.</span>
+								{/if}
+							</div>
 							<div class="button-row">
-								<button type="button" onclick={saveNotes} disabled={!canEdit}>Save Notes</button>
-								<button
-									type="button"
-									disabled={!canEdit}
-									onclick={() => {
-										notesDraft = "";
-										saveNotes();
-									}}
-								>
-									Clear
-								</button>
+								<span class="ui-tooltip-wrap">
+									<button type="button" onclick={saveNotes} disabled={!canEdit}>Save Notes</button>
+								</span>
+								<span class="ui-tooltip-wrap">
+									<button
+										type="button"
+										disabled={!canEdit}
+										onclick={() => {
+											notesDraft = "";
+											saveNotes();
+										}}
+									>
+										Clear
+									</button>
+								</span>
 							</div>
 							{#if notesStatus}
 								<p class="status-inline">{notesStatus}</p>
@@ -3654,8 +3799,18 @@
 							<p class="status-inline">{exportStatus}</p>
 						{/if}
 						<div class="export-actions button-row">
-							<button type="button" onclick={downloadExportSql} disabled={!exportSqlText}>Download SQL</button>
-							<button type="button" onclick={downloadExportZip} disabled={!exportLuaText || !exportModInfoText}>Download Zip</button>
+							<span class="ui-tooltip-wrap">
+								<button type="button" onclick={downloadExportSql} disabled={!exportSqlText}>Download SQL</button>
+								{#if !exportSqlText}
+									<span class="ui-tooltip">Add pins to enable SQL export.</span>
+								{/if}
+							</span>
+							<span class="ui-tooltip-wrap">
+								<button type="button" onclick={downloadExportZip} disabled={!exportLuaText || !exportModInfoText}>Download Zip</button>
+								{#if !exportLuaText || !exportModInfoText}
+									<span class="ui-tooltip">Add pins to enable zip export.</span>
+								{/if}
+							</span>
 						</div>
 						<div class="export-preview">
 							<label>
@@ -3702,19 +3857,25 @@
 									<span class="check-row-hint">Display named rivers and geographic regions.</span>
 								</span>
 							</label>
-							<label class="check-row">
+							<label class="check-row ui-tooltip-anchor">
 								<input type="checkbox" checked={settings.showRiverLabels} onchange={() => toggleSetting("showRiverLabels")} disabled={!settings.showLabels} />
 								<span class="check-row-copy">
 									<span class="check-row-title">River Labels</span>
 									<span class="check-row-hint">Follow major river paths with text labels.</span>
 								</span>
+								{#if !settings.showLabels}
+									<span class="ui-tooltip">Enable labels to toggle river labels.</span>
+								{/if}
 							</label>
-							<label class="check-row">
+							<label class="check-row ui-tooltip-anchor">
 								<input type="checkbox" checked={settings.showRegionLabels} onchange={() => toggleSetting("showRegionLabels")} disabled={!settings.showLabels} />
 								<span class="check-row-copy">
 									<span class="check-row-title">Region Labels</span>
 									<span class="check-row-hint">Show area names like deserts and mountain ranges.</span>
 								</span>
+								{#if !settings.showLabels}
+									<span class="ui-tooltip">Enable labels to toggle region labels.</span>
+								{/if}
 							</label>
 							<label class="check-row">
 								<input type="checkbox" checked={settings.hideDecorations} onchange={() => toggleSetting("hideDecorations")} />
@@ -3739,18 +3900,23 @@
 							</label>
 						</div>
 						<div class="pin-reset-row">
-							<button
-								type="button"
-								class="danger-text-button"
-								onclick={() => {
-									if (window.confirm(`Reset all local pins for ${mapItem?.title || "this map"}? This cannot be undone.`)) {
-										resetLocalPins();
-									}
-								}}
-								disabled={!localPins.length}
-							>
-								Reset Local Pins
-							</button>
+							<span class="ui-tooltip-wrap">
+								<button
+									type="button"
+									class="danger-text-button"
+									onclick={() => {
+										if (window.confirm(`Reset all local pins for ${mapItem?.title || "this map"}? This cannot be undone.`)) {
+											resetLocalPins();
+										}
+									}}
+									disabled={!localPins.length}
+								>
+									Reset Local Pins
+								</button>
+								{#if !localPins.length}
+									<span class="ui-tooltip">No local pins to reset.</span>
+								{/if}
+							</span>
 							<p class="pin-reset-hint">Clears locally saved pins for this map only.</p>
 						</div>
 						<!-- <div class="button-row">
@@ -4317,6 +4483,7 @@
 	}
 
 	.pin-edit-buttons button {
+		position: relative;
 		border: 1px solid var(--panel-border);
 		border-radius: 0.55rem;
 		background: var(--control-bg);
@@ -4331,6 +4498,103 @@
 		text-shadow: 0 1px 2px oklch(0.19 0.2 85);
 		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
 		border-color: transparent;
+	}
+
+	.ui-tooltip-wrap {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		justify-content: flex-start;
+	}
+
+	.ui-tooltip-wrap.ui-tooltip-block {
+		display: block;
+	}
+
+	.ui-tooltip-anchor {
+		position: relative;
+	}
+
+	.ui-tooltip {
+		position: absolute;
+		z-index: 10;
+		padding: 0.45rem 0.6rem;
+		border-radius: 0.4rem;
+		border: 1px solid color-mix(in oklch, var(--accent) 25%, var(--panel-border));
+		background: var(--panel-bg);
+		color: var(--ink);
+		font-size: 0.75rem;
+		font-weight: 600;
+		white-space: nowrap;
+		opacity: 0;
+		pointer-events: none;
+		inset-block-end: 100%;
+		inset-inline-start: 50%;
+		transform: translate(-50%, -0.4rem);
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease;
+		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+	}
+
+	.ui-tooltip::after {
+		content: "";
+		position: absolute;
+		inline-size: 0;
+		block-size: 0;
+		border-left: 5px solid transparent;
+		border-right: 5px solid transparent;
+		border-top: 5px solid var(--panel-bg);
+		inset-block-start: 100%;
+		inset-inline-start: 50%;
+		transform: translateX(-50%);
+	}
+
+	.ui-tooltip-wrap:hover .ui-tooltip,
+	.ui-tooltip-anchor:hover .ui-tooltip {
+		opacity: 1;
+		transform: translate(-50%, -0.6rem);
+	}
+
+	.pin-edit-tooltip {
+		position: absolute;
+		z-index: 10;
+		padding: 0.45rem 0.6rem;
+		border-radius: 0.4rem;
+		border: 1px solid color-mix(in oklch, var(--accent) 25%, var(--panel-border));
+		background: var(--panel-bg);
+		color: var(--ink);
+		font-size: 0.75rem;
+		font-weight: 600;
+		white-space: nowrap;
+		opacity: 0;
+		pointer-events: none;
+		inset-block-end: 100%;
+		inset-inline-start: 50%;
+		transform: translate(-50%, -0.4rem);
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease;
+		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+	}
+
+	.pin-edit-tooltip::after {
+		content: "";
+		position: absolute;
+		inline-size: 0;
+		block-size: 0;
+		border-left: 5px solid transparent;
+		border-right: 5px solid transparent;
+		border-top: 5px solid var(--panel-bg);
+		filter: drop-shadow(0 1px 0px color-mix(in oklch, var(--accent) 25%, var(--panel-border)));
+		inset-block-start: 100%;
+		inset-inline-start: 50%;
+		transform: translateX(-50%);
+	}
+
+	.pin-edit-buttons button:disabled:hover .pin-edit-tooltip {
+		opacity: 1;
+		transform: translate(-50%, -0.6rem);
 	}
 
 	.danger-text-button {
@@ -4563,11 +4827,13 @@
 	}
 
 	.tile-pin-load {
-		display: grid;
-		justify-items: start;
-		gap: 0.18rem;
+		flex: 1;
 		min-inline-size: 0;
 		max-inline-size: 100%;
+		display: flex;
+		align-items: center;
+		justify-items: start;
+		gap: 0.25rem;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: normal;
@@ -4591,11 +4857,12 @@
 
 	.tile-pin-swatch {
 		display: inline-block;
-		inline-size: 0.78rem;
-		block-size: 0.78rem;
+		inline-size: 1rem;
+		block-size: 1rem;
 		border-radius: 999px;
 		background: var(--primary, hsl(204deg 33% 21%));
 		border: 2px solid var(--secondary, hsl(42deg 82% 72%));
+		margin-inline-end: 0.2rem;
 	}
 
 	.tile-pin-remove {

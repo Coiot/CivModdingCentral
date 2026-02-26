@@ -11,6 +11,8 @@
 	const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 	const SUPABASE_EDITOR_CHECK_FUNCTION = import.meta.env.VITE_SUPABASE_EDITOR_CHECK_FUNCTION || "check-kofi-subscriber";
 	const SUPABASE_EDITOR_CHECK_MAP_ID = import.meta.env.VITE_SUPABASE_EDITOR_CHECK_MAP_ID || "cmc";
+	const GOOGLE_SHEET_PUB_ID = import.meta.env.VITE_GOOGLE_SHEET_PUB_ID || "";
+	const GOOGLE_SHEET_PUB_URL = import.meta.env.VITE_GOOGLE_SHEET_PUB_URL || "";
 	const AUTH_ENABLED = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
 	let selectedMapId = $state(maps[0]?.id || "");
@@ -208,9 +210,39 @@
 			const email = String(user.email || "")
 				.trim()
 				.toLowerCase();
-			const allowed = await checkEditorAccessWithFunction(email, accessToken);
+			const allowlistChecks = [];
+			const errors = [];
 
-			authAccessAllowed = Boolean(allowed);
+			if (SUPABASE_EDITOR_CHECK_FUNCTION) {
+				allowlistChecks.push(
+					checkEditorAccessWithFunction(email, accessToken).catch((error) => {
+						errors.push(error);
+						return false;
+					}),
+				);
+			}
+
+			if (GOOGLE_SHEET_PUB_ID || GOOGLE_SHEET_PUB_URL) {
+				allowlistChecks.push(
+					checkEditorAccessWithSheet(email).catch((error) => {
+						errors.push(error);
+						return false;
+					}),
+				);
+			}
+
+			if (!allowlistChecks.length) {
+				throw new Error("Editor access checks are not configured.");
+			}
+
+			const results = await Promise.all(allowlistChecks);
+			const allowed = results.some(Boolean);
+
+			if (!allowed && errors.length === allowlistChecks.length) {
+				throw errors[0];
+			}
+
+			authAccessAllowed = allowed;
 			authAccessChecked = true;
 			authMessage = authAccessAllowed ? "Signed in. Editor access enabled." : "Signed in, but this email is not on the editor allowlist.";
 		} catch (error) {
@@ -248,6 +280,24 @@
 			throw new Error("Editor access function returned an invalid response.");
 		}
 		return payload.allowed;
+	}
+
+	async function checkEditorAccessWithSheet(email) {
+		const url = GOOGLE_SHEET_PUB_URL || (GOOGLE_SHEET_PUB_ID ? `https://docs.google.com/spreadsheets/d/${encodeURIComponent(GOOGLE_SHEET_PUB_ID)}/gviz/tq?tqx=out:csv` : "");
+		if (!url) {
+			throw new Error("Google Sheet allowlist is not configured.");
+		}
+
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`Unable to read allowlist sheet (${response.status}).`);
+		}
+
+		const csvText = await response.text();
+		const rows = parseCsv(csvText);
+		const emails = rows.map((row) => normalizeEmail(row?.[0])).filter(Boolean);
+
+		return emails.includes(normalizeEmail(email));
 	}
 
 	async function fetchAuthUser(accessToken) {
@@ -290,6 +340,68 @@
 		} catch {
 			// Ignore write failures.
 		}
+	}
+
+	function normalizeEmail(input) {
+		const value = String(input || "")
+			.trim()
+			.toLowerCase();
+		if (!value || !value.includes("@")) {
+			return "";
+		}
+		return value;
+	}
+
+	function parseCsv(input) {
+		const rows = [];
+		let row = [];
+		let cell = "";
+		let inQuotes = false;
+
+		for (let index = 0; index < input.length; index += 1) {
+			const char = input[index];
+			const next = input[index + 1];
+
+			if (inQuotes) {
+				if (char === '"' && next === '"') {
+					cell += '"';
+					index += 1;
+				} else if (char === '"') {
+					inQuotes = false;
+				} else {
+					cell += char;
+				}
+				continue;
+			}
+
+			if (char === '"') {
+				inQuotes = true;
+				continue;
+			}
+			if (char === ",") {
+				row.push(cell);
+				cell = "";
+				continue;
+			}
+			if (char === "\n") {
+				row.push(cell);
+				rows.push(row);
+				row = [];
+				cell = "";
+				continue;
+			}
+			if (char === "\r") {
+				continue;
+			}
+			cell += char;
+		}
+
+		row.push(cell);
+		if (row.length > 1 || row[0] !== "") {
+			rows.push(row);
+		}
+
+		return rows;
 	}
 </script>
 

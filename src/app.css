@@ -7,7 +7,7 @@
 	--bg-grad-c: oklch(0.1448 0 0);
 	--panel-bg: oklch(0.2178 0 0 / 0.92);
 	--navbar-bg: oklch(0.1913 0 0 / 0.95);
-	--control-bg: oklch(0.2435 0 0 / 0.9);
+	--control-bg: oklch(0.275 0 0 / 0.9);
 	--input-bg: oklch(0.1776 0 0 / 0.9);
 	--panel-border: oklch(0.35 0 0);
 	--shadow-soft: oklch(0 0 0 / 0.4);
@@ -24,7 +24,7 @@
 	--bg-grad-c: oklch(0.9066 0.0317 84.59);
 	--panel-bg: oklch(0.9788 0.0192 80.12 / 0.93);
 	--navbar-bg: oklch(0.9862 0.0142 84.58 / 0.95);
-	--control-bg: oklch(0.9541 0.0188 83.06 / 0.96);
+	--control-bg: oklch(0.9241 0.05 83.06 / 0.95);
 	--input-bg: oklch(0.9964 0.0067 97.35 / 0.96);
 	--panel-border: oklch(0.8137 0.0617 82.44 / 0.75);
 	--shadow-soft: oklch(0.2393 0 0 / 0.1);
