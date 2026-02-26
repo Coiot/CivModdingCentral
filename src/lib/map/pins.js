@@ -1,6 +1,23 @@
 const DEFAULT_PRIMARY_COLOR = "#243746";
 const DEFAULT_SECONDARY_COLOR = "#f3d37f";
 
+function normalizeIslandFlag(value) {
+	if (value === true) {
+		return true;
+	}
+	if (value === false || value === null || value === undefined) {
+		return false;
+	}
+	if (typeof value === "number") {
+		return value === 1;
+	}
+	if (typeof value === "string") {
+		const normalized = value.trim().toLowerCase();
+		return normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "y";
+	}
+	return false;
+}
+
 export function sanitizeHexColor(color, fallback) {
 	if (typeof color === "string" && /^#[0-9a-fA-F]{6}$/.test(color)) {
 		return color;
@@ -60,12 +77,14 @@ export function normalizePins(input, options = {}) {
 		pins.push({
 			id: String(candidate.id || `${civKey}-${normalizedCol}-${normalizedRow}`),
 			civ,
+			gameDefineName: String(candidate.gameDefineName || "").trim(),
 			leader: String(candidate.leader || "").trim(),
 			author: String(candidate.author || "").trim(),
 			col: normalizedCol,
 			row: normalizedRow,
 			primary: sanitizeHexColor(candidate.primary, primaryFallback),
 			secondary: sanitizeHexColor(candidate.secondary, secondaryFallback),
+			isIsland: normalizeIslandFlag(candidate.isIsland),
 		});
 	}
 
@@ -74,7 +93,12 @@ export function normalizePins(input, options = {}) {
 
 export function buildPinsSignature(input) {
 	return normalizePins(input)
-		.map((pin) => `${pin.col}|${pin.row}|${normalizeToken(pin.civ)}|${normalizeToken(pin.leader)}|${normalizeToken(pin.author)}|${pin.primary}|${pin.secondary}`)
+		.map(
+			(pin) =>
+				`${pin.col}|${pin.row}|${normalizeToken(pin.civ)}|${normalizeToken(pin.gameDefineName)}|${normalizeToken(pin.leader)}|${normalizeToken(
+					pin.author,
+				)}|${pin.primary}|${pin.secondary}|${pin.isIsland ? "1" : "0"}`,
+		)
 		.sort((a, b) => a.localeCompare(b))
 		.join(";");
 }

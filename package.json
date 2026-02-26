@@ -10,7 +10,8 @@
 		"test": "node --test tests/**/*.test.js",
 		"build:cache": "node scripts/build-community-map-cache.cjs",
 		"build:cache:all": "node scripts/build-all-community-map-caches.cjs",
-		"sync:editor-access": "node scripts/sync-editor-allowlist-sheet2.cjs"
+		"sync:editor-access": "node scripts/sync-editor-allowlist-sheet2.cjs",
+		"maps:update": "node scripts/update-maps.mjs"
 	},
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",

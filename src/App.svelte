@@ -313,7 +313,7 @@
 
 	<header class="hero">
 		<h1>Interactive Map Viewer</h1>
-		<p>Browse community Civ5 maps with tile hover details, civilization starting location pins, and view settings.</p>
+		<p>Browse community Civ5 maps with modded Civilization starting location pins.</p>
 	</header>
 
 	{#if selectedMap}

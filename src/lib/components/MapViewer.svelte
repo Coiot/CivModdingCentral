@@ -14,12 +14,15 @@
 		parseHexInput as parseHexInputUtil,
 		sanitizeHexColor as sanitizeHexColorUtil,
 	} from "../map/pins.js";
+	import { buildCbrxTslLua, buildCbrxTslSql, buildTslModInfo, findDuplicateCivs, normalizePinsForExport } from "../map/cbrx-export.js";
+	import { buildZipBlob } from "../map/zip.js";
 	import { canPushCloudPins as canPushCloudPinsUtil, hasCloudPinSyncConfig as hasCloudPinSyncConfigUtil, resolveCloudSyncAction } from "../map/sync.js";
 
 	let { mapItem, maps = [], selectedMapId = "", onSelectMap = () => {}, canEdit = false, authUser = null, authAccessToken = "" } = $props();
 
 	const STORAGE_PREFIX = "cmc-map";
 	const CBRX_PIN_RESET_VERSION = 1;
+	const DEFAULT_TSL_TABLE_NAME = "Civilization_TSLs";
 	const BASE_CACHE_VERSION = 1;
 	const PIN_SYNC_INTERVAL_MS = 60 * 1000;
 	const BASE_PREFETCH_LIMIT = 3;
@@ -55,11 +58,16 @@
 	let debugInfo = $state("");
 
 	let mapPins = $state([]);
+	let localPins = $state([]);
+	let sharedPins = $state([]);
 	let mapLabels = $state([]);
 	let staticMapLabelDefs = $state([]);
 	let customMapLabelDefs = $state([]);
 	let notesByKey = $state({});
 	let settings = $state({ ...DEFAULT_SETTINGS });
+
+	let pinViewMode = $state("combined");
+	let pinEditTarget = $state("local");
 
 	let panelTab = $state("edit");
 	let panelCollapsed = $state(true);
@@ -93,12 +101,15 @@
 	let hasUserViewportInteraction = $state(false);
 
 	let editPinCivInput = $state("");
+	let editPinGameDefineInput = $state("");
+	let editPinGameDefineAuto = $state(true);
 	let editPinLeaderInput = $state("");
 	let editPinAuthorInput = $state("");
 	let editPinPrimaryInput = $state("#243746");
 	let editPinSecondaryInput = $state("#f3d37f");
 	let editPinPrimaryHexInput = $state("#243746");
 	let editPinSecondaryHexInput = $state("#f3d37f");
+	let editPinIsIsland = $state(false);
 	let editLabelId = $state("");
 	let editLabelNameInput = $state("");
 	let editLabelTypeInput = $state("region");
@@ -111,6 +122,15 @@
 	let labelStatus = $state("");
 	let notesDraft = $state("");
 	let notesStatus = $state("");
+	let exportSortMode = $state("civ");
+	let exportSqlText = $state("");
+	let exportLuaText = $state("");
+	let exportModInfoText = $state("");
+	let exportModId = $state("");
+	let exportStatus = $state("");
+	let exportWarnings = $state([]);
+	let exportPinCount = $state(0);
+	let exportPinScope = $state("all");
 	let fitScaleLimit = $state(1);
 	let pinCloudSyncTimer = $state(null);
 	let pinCloudSyncDirty = $state(false);
@@ -161,6 +181,9 @@
 		}
 		return "idle";
 	});
+	const canEditPins = $derived.by(() => (pinEditTarget === "shared" ? canEdit : true));
+	const pinEditorHint = $derived.by(() => (canEditPins ? "" : "Sign in from the user menu to edit shared pins."));
+	const pinEditorBadge = $derived.by(() => (pinEditTarget === "shared" ? (canEdit ? "Editing shared pins" : "") : "Editing local pins"));
 	const editorHint = $derived(canEdit ? "" : "Sign in from the user menu to make edits.");
 	const canZoomIn = $derived(scale < maxScale - 0.0001);
 	const canZoomOut = $derived(scale > minScale + 0.0001);
@@ -271,6 +294,29 @@
 	});
 
 	$effect(() => {
+		if (!baseData) {
+			exportSqlText = "";
+			exportLuaText = "";
+			exportModInfoText = "";
+			exportStatus = "";
+			exportWarnings = [];
+			exportPinCount = 0;
+			return;
+		}
+		exportSortMode;
+		exportPinScope;
+		localPins;
+		sharedPins;
+		rebuildExportPayload();
+	});
+
+	$effect(() => {
+		if (!canEdit && pinEditTarget !== "local") {
+			setPinEditTarget("local");
+		}
+	});
+
+	$effect(() => {
 		if (!mapMetrics || !viewportWidth || !viewportHeight || hasUserViewportInteraction) {
 			return;
 		}
@@ -301,6 +347,9 @@
 		pinCloudSyncDirty = false;
 		labelCloudSyncDirty = false;
 		mapLabels = [];
+		mapPins = [];
+		localPins = [];
+		sharedPins = [];
 		staticMapLabelDefs = [];
 		customMapLabelDefs = [];
 		hasUserViewportInteraction = false;
@@ -330,6 +379,8 @@
 					const resetVersion = Number(resetState?.version || 0);
 					if (resetVersion < CBRX_PIN_RESET_VERSION) {
 						localStorage.removeItem(storageKey("pins"));
+						localStorage.removeItem(storageKey("pins-local"));
+						localStorage.removeItem(storageKey("pins-shared"));
 						localStorage.setItem(resetKey, JSON.stringify({ version: CBRX_PIN_RESET_VERSION }));
 					}
 				} catch {
@@ -338,16 +389,22 @@
 			}
 
 			const localNotes = loadStorageJson(storageKey("notes"), {});
-			const localPins = loadStorageJson(storageKey("pins"), null);
+			const legacyPinsStored = loadStorageJson(storageKey("pins"), null);
+			const localPinsStored = loadStorageJson(storageKey("pins-local"), null);
+			const sharedPinsStored = loadStorageJson(storageKey("pins-shared"), null);
 			const localLabels = loadStorageJson(storageKey("labels"), null);
 			const localSettings = loadStorageJson(storageKey("settings"), {});
+			const storedPinViewMode = loadStorageJson(storageKey("pin-view-mode"), null);
+			const storedPinEditTarget = loadStorageJson(storageKey("pin-edit-target"), null);
 
 			let basePayload = loadCachedBasePayload(mapItem?.id);
 			if (!basePayload) {
 				basePayload = await fetchJsonSafe(baseUrl, "base");
 				saveCachedBasePayload(mapItem?.id, basePayload);
 			}
-			const pinsPayload = Array.isArray(localPins) ? { pins: localPins } : await fetchJsonSafe(pinsUrl, "pins").catch(() => ({ pins: [] }));
+			const pinsPayload = await fetchJsonSafe(pinsUrl, "pins").catch(() => ({}));
+			const fetchedSharedPins = Array.isArray(pinsPayload) ? pinsPayload : Array.isArray(pinsPayload?.pins) ? pinsPayload.pins : [];
+			const migratedSharedPins = Array.isArray(sharedPinsStored) ? sharedPinsStored : Array.isArray(legacyPinsStored) ? legacyPinsStored : [];
 			const labelsPayload = labelsUrl ? await fetchJsonSafe(labelsUrl, "labels").catch(() => ({ labels: [] })) : { labels: [] };
 			const normalizedStaticLabels = normalizeMapLabels(Array.isArray(labelsPayload) ? labelsPayload : labelsPayload?.labels);
 			const normalizedCustomLabels = normalizeMapLabels(Array.isArray(localLabels) ? localLabels : []);
@@ -357,7 +414,17 @@
 			mapMetrics = computedMetrics;
 			notesByKey = isPlainObject(localNotes) ? localNotes : {};
 			settings = sanitizeSettings({ ...DEFAULT_SETTINGS, ...(isPlainObject(localSettings) ? localSettings : {}) });
-			mapPins = normalizePins(Array.isArray(localPins) ? localPins : Array.isArray(pinsPayload?.pins) ? pinsPayload.pins : []);
+			pinViewMode = normalizePinViewMode(storedPinViewMode);
+			saveStorageJson(storageKey("pin-view-mode"), pinViewMode);
+			pinEditTarget = canEdit ? normalizePinEditTarget(storedPinEditTarget) : "local";
+			saveStorageJson(storageKey("pin-edit-target"), pinEditTarget);
+			localPins = normalizePins(Array.isArray(localPinsStored) ? localPinsStored : []);
+			sharedPins = normalizePins(fetchedSharedPins.length ? fetchedSharedPins : migratedSharedPins);
+			saveStorageJson(storageKey("pins-shared"), sharedPins);
+			if (Array.isArray(legacyPinsStored) && typeof localStorage !== "undefined") {
+				localStorage.removeItem(storageKey("pins"));
+			}
+			refreshVisiblePins({ syncEditors: false, draw: false });
 			staticMapLabelDefs = normalizedStaticLabels;
 			customMapLabelDefs = normalizedCustomLabels;
 			refreshMapLabels();
@@ -384,6 +451,8 @@
 			mapTiles = [];
 			tileLookup = new Map();
 			mapPins = [];
+			localPins = [];
+			sharedPins = [];
 			staticMapLabelDefs = [];
 			customMapLabelDefs = [];
 			mapLabels = [];
@@ -917,16 +986,31 @@
 		editLabelMaxZoomInput = "";
 	}
 
+	function deriveGameDefineName(value) {
+		const trimmed = String(value || "").trim();
+		if (!trimmed) {
+			return "";
+		}
+		const normalized = trimmed
+			.toUpperCase()
+			.replace(/[^A-Z0-9]+/g, "_")
+			.replace(/^_+|_+$/g, "");
+		return `CIVILIZATION_${normalized}`;
+	}
+
 	function syncEditorsFromSelection() {
 		const tile = selectedTile;
 		if (!tile) {
 			editPinCivInput = "";
+			editPinGameDefineInput = "";
+			editPinGameDefineAuto = true;
 			editPinLeaderInput = "";
 			editPinAuthorInput = "";
 			editPinPrimaryInput = "#243746";
 			editPinSecondaryInput = "#f3d37f";
 			editPinPrimaryHexInput = "#243746";
 			editPinSecondaryHexInput = "#f3d37f";
+			editPinIsIsland = false;
 			notesDraft = "";
 			resetLabelEditor();
 			labelStatus = "";
@@ -937,12 +1021,20 @@
 
 		const pin = pinsForTile(tile)[0] || null;
 		editPinCivInput = pin?.civ || "";
+		if (pin?.gameDefineName) {
+			editPinGameDefineInput = pin.gameDefineName;
+			editPinGameDefineAuto = false;
+		} else {
+			editPinGameDefineInput = deriveGameDefineName(pin?.civ || "");
+			editPinGameDefineAuto = true;
+		}
 		editPinLeaderInput = pin?.leader || "";
 		editPinAuthorInput = pin?.author || "";
 		editPinPrimaryInput = sanitizeHexColor(pin?.primary, "#243746");
 		editPinSecondaryInput = sanitizeHexColor(pin?.secondary, "#f3d37f");
 		editPinPrimaryHexInput = editPinPrimaryInput.toUpperCase();
 		editPinSecondaryHexInput = editPinSecondaryInput.toUpperCase();
+		editPinIsIsland = Boolean(pin?.isIsland);
 
 		const label = labelsForTile(tile)[0] || null;
 		if (label) {
@@ -1102,7 +1194,7 @@
 	}
 
 	function addOrUpdatePin() {
-		if (!canEdit) {
+		if (!canEditPins) {
 			return;
 		}
 
@@ -1117,23 +1209,27 @@
 		}
 
 		const civKey = normalizeToken(civ);
+		const gameDefineName = String(editPinGameDefineInput || "").trim() || deriveGameDefineName(civ);
 		const leader = String(editPinLeaderInput || "").trim();
 		const author = String(editPinAuthorInput || "").trim();
 		const primary = sanitizeHexColor(editPinPrimaryInput, "#243746");
 		const secondary = sanitizeHexColor(editPinSecondaryInput, "#f3d37f");
 
-		const nextPins = [...mapPins];
+		const editablePins = pinEditTarget === "shared" ? sharedPins : localPins;
+		const nextPins = [...editablePins];
 		const existingIndex = nextPins.findIndex((pin) => Number(pin.col) === tile.col && Number(pin.row) === tile.sourceRow && normalizeToken(pin.civ) === civKey);
 
 		const nextPin = {
 			id: existingIndex >= 0 ? nextPins[existingIndex].id : `${civKey}-${tile.col}-${tile.sourceRow}`,
 			civ,
+			gameDefineName,
 			leader,
 			author,
 			col: tile.col,
 			row: tile.sourceRow,
 			primary,
 			secondary,
+			isIsland: Boolean(editPinIsIsland),
 		};
 
 		if (existingIndex >= 0) {
@@ -1142,13 +1238,16 @@
 			nextPins.push(nextPin);
 		}
 
-		mapPins = normalizePins(nextPins);
-		savePinsLocalAndQueueCloudSync();
+		if (pinEditTarget === "shared") {
+			setSharedPins(nextPins, { queueSync: true });
+		} else {
+			setLocalPins(nextPins);
+		}
 		syncEditorsFromSelection();
 	}
 
 	function removePin() {
-		if (!canEdit) {
+		if (!canEditPins) {
 			return;
 		}
 
@@ -1162,18 +1261,27 @@
 			return;
 		}
 
-		const nextPins = mapPins.filter((pin) => !(Number(pin.col) === tile.col && Number(pin.row) === tile.sourceRow && normalizeToken(pin.civ) === civKey));
-		mapPins = nextPins;
-		savePinsLocalAndQueueCloudSync();
+		const editablePins = pinEditTarget === "shared" ? sharedPins : localPins;
+		const nextPins = editablePins.filter((pin) => !(Number(pin.col) === tile.col && Number(pin.row) === tile.sourceRow && normalizeToken(pin.civ) === civKey));
+		if (pinEditTarget === "shared") {
+			setSharedPins(nextPins, { queueSync: true });
+		} else {
+			setLocalPins(nextPins);
+		}
 		syncEditorsFromSelection();
 	}
 
 	function removePinById(pinId) {
-		if (!canEdit || !pinId) {
+		if (!canEditPins || !pinId) {
 			return;
 		}
-		mapPins = mapPins.filter((pin) => pin.id !== pinId);
-		savePinsLocalAndQueueCloudSync();
+		const editablePins = pinEditTarget === "shared" ? sharedPins : localPins;
+		const nextPins = editablePins.filter((pin) => pin.id !== pinId);
+		if (pinEditTarget === "shared") {
+			setSharedPins(nextPins, { queueSync: true });
+		} else {
+			setLocalPins(nextPins);
+		}
 		syncEditorsFromSelection();
 	}
 
@@ -1182,12 +1290,20 @@
 			return;
 		}
 		editPinCivInput = pin.civ || "";
+		if (pin.gameDefineName) {
+			editPinGameDefineInput = pin.gameDefineName;
+			editPinGameDefineAuto = false;
+		} else {
+			editPinGameDefineInput = deriveGameDefineName(pin.civ || "");
+			editPinGameDefineAuto = true;
+		}
 		editPinLeaderInput = pin.leader || "";
 		editPinAuthorInput = pin.author || "";
 		editPinPrimaryInput = sanitizeHexColor(pin.primary, "#243746");
 		editPinSecondaryInput = sanitizeHexColor(pin.secondary, "#f3d37f");
 		editPinPrimaryHexInput = editPinPrimaryInput.toUpperCase();
 		editPinSecondaryHexInput = editPinSecondaryInput.toUpperCase();
+		editPinIsIsland = Boolean(pin.isIsland);
 	}
 
 	function updatePinColorFromPicker(kind, value) {
@@ -1322,9 +1438,82 @@
 		drawMap();
 	}
 
-	function savePinsLocalAndQueueCloudSync() {
-		saveStorageJson(storageKey("pins"), mapPins);
-		pinCloudSyncDirty = true;
+	function normalizePinViewMode(value) {
+		const mode = String(value || "")
+			.trim()
+			.toLowerCase();
+		if (mode === "all" || mode === "local" || mode === "combined") {
+			return mode;
+		}
+		return "combined";
+	}
+
+	function normalizePinEditTarget(value) {
+		const mode = String(value || "")
+			.trim()
+			.toLowerCase();
+		if (mode === "shared" || mode === "local") {
+			return mode;
+		}
+		return "local";
+	}
+
+	function getVisiblePins() {
+		if (pinViewMode === "local") {
+			return localPins;
+		}
+		if (pinViewMode === "all") {
+			return sharedPins;
+		}
+		return [...localPins, ...sharedPins];
+	}
+
+	function refreshVisiblePins(options = {}) {
+		const shouldSync = options.syncEditors !== false;
+		const shouldDraw = options.draw !== false;
+		mapPins = normalizePins(getVisiblePins());
+		if (shouldSync) {
+			syncEditorsFromSelection();
+		}
+		if (shouldDraw) {
+			drawMap();
+		}
+	}
+
+	function setPinViewMode(nextMode) {
+		pinViewMode = normalizePinViewMode(nextMode);
+		saveStorageJson(storageKey("pin-view-mode"), pinViewMode);
+		refreshVisiblePins({ syncEditors: false, draw: false });
+	}
+
+	function setPinEditTarget(nextTarget) {
+		const normalized = normalizePinEditTarget(nextTarget);
+		pinEditTarget = canEdit ? normalized : "local";
+		saveStorageJson(storageKey("pin-edit-target"), pinEditTarget);
+		syncEditorsFromSelection();
+	}
+
+	function setLocalPins(nextPins, options = {}) {
+		localPins = normalizePins(nextPins);
+		if (options.persist !== false) {
+			saveStorageJson(storageKey("pins-local"), localPins);
+		}
+		if (options.refresh !== false) {
+			refreshVisiblePins();
+		}
+	}
+
+	function setSharedPins(nextPins, options = {}) {
+		sharedPins = normalizePins(nextPins);
+		if (options.persist !== false) {
+			saveStorageJson(storageKey("pins-shared"), sharedPins);
+		}
+		if (options.queueSync) {
+			pinCloudSyncDirty = true;
+		}
+		if (options.refresh !== false) {
+			refreshVisiblePins();
+		}
 	}
 
 	function hasCloudPinSyncConfig() {
@@ -1402,6 +1591,126 @@
 		);
 	}
 
+	function sanitizeExportFilename(value, fallback) {
+		const trimmed = String(value || "").trim();
+		const safe = trimmed.replace(/[^a-z0-9._-]+/gi, "-").replace(/^-+|-+$/g, "");
+		return safe || fallback;
+	}
+
+	function generateModId() {
+		if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+			return crypto.randomUUID();
+		}
+		const template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
+		return template.replace(/[xy]/g, (char) => {
+			const rand = Math.floor(Math.random() * 16);
+			const value = char === "x" ? rand : (rand & 0x3) | 0x8;
+			return value.toString(16);
+		});
+	}
+
+	function downloadTextFile(filename, content) {
+		if (!content || typeof document === "undefined") {
+			return;
+		}
+		const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = filename;
+		document.body.appendChild(link);
+		link.click();
+		link.remove();
+		window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+	}
+
+	function rebuildExportPayload() {
+		const exportSourcePins = exportPinScope === "local" ? localPins : [...localPins, ...sharedPins];
+		const normalizedPins = normalizePinsForExport(exportSourcePins);
+		const width = Number(baseData?.width || 0);
+		const height = Number(baseData?.height || 0);
+		const warnings = [];
+		const baseName = "TSLs";
+		const sqlFile = `${baseName}.sql`;
+		const luaFile = `${baseName}_updated.lua`;
+		const modinfoFile = `${baseName}.modinfo`;
+
+		exportPinCount = normalizedPins.length;
+
+		if (!exportModId) {
+			exportModId = generateModId();
+		}
+
+		const duplicates = findDuplicateCivs(normalizedPins);
+		if (duplicates.length) {
+			warnings.push(`Duplicate civ entries: ${duplicates.map((entry) => `${entry.civ} (${entry.count})`).join(", ")}`);
+		}
+
+		const normalizedTableName = DEFAULT_TSL_TABLE_NAME;
+
+		if (width > 0 && height > 0) {
+			const outOfBounds = normalizedPins.filter((pin) => pin.col < 0 || pin.col >= width || pin.row < 0 || pin.row >= height);
+			if (outOfBounds.length) {
+				warnings.push(`${outOfBounds.length} pin(s) are outside the map bounds (${width}x${height}).`);
+			}
+		} else {
+			warnings.push("Map dimensions are unavailable; Lua export will use 0x0.");
+		}
+
+		exportWarnings = warnings;
+
+		exportSqlText = buildCbrxTslSql({
+			pins: normalizedPins,
+			tableName: normalizedTableName,
+			sortMode: exportSortMode,
+		});
+		exportLuaText = buildCbrxTslLua({ width, height, tableName: normalizedTableName });
+		exportModInfoText = buildTslModInfo({
+			modId: exportModId,
+			name: "CMC True Starting Location Script",
+			teaser: "TSL Bundle Mod",
+			description: "Generated by the CMC Website",
+			authors: "Coiot + JFD",
+			sqlFile,
+			luaFile,
+			sqlContent: exportSqlText,
+			luaContent: exportLuaText,
+		});
+
+		if (!normalizedPins.length) {
+			exportStatus = "No pins available yet. Add civilization pins to generate rows.";
+		} else {
+			exportStatus = `Ready: ${normalizedPins.length} pin(s).`;
+		}
+	}
+
+	function downloadExportSql() {
+		rebuildExportPayload();
+		const baseName = sanitizeExportFilename("TSLs", "TSLs");
+		downloadTextFile(`${baseName}.sql`, exportSqlText);
+	}
+
+	function downloadExportZip() {
+		rebuildExportPayload();
+		const baseName = sanitizeExportFilename("TSLs", "TSLs");
+		const zipBlob = buildZipBlob([
+			{ name: `${baseName}.sql`, content: exportSqlText },
+			{ name: `${baseName}.lua`, content: exportLuaText },
+			{ name: `${baseName}.modinfo`, content: exportModInfoText },
+		]);
+		if (typeof document === "undefined") {
+			return;
+		}
+		const url = URL.createObjectURL(zipBlob);
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = `CMC-TSL-Script.zip`;
+		document.body.appendChild(link);
+		link.click();
+		link.remove();
+		window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+	}
+
 	function startPinCloudSyncLoop() {
 		stopPinCloudSyncLoop();
 		if ((!hasCloudPinSyncConfig() && !hasCloudLabelSyncConfig()) || typeof window === "undefined") {
@@ -1459,7 +1768,7 @@
 			const body = [
 				{
 					map_id: String(mapItem.id),
-					pins: mapPins,
+					pins: sharedPins,
 					updated_by: String(authUser?.email || ""),
 				},
 			];
@@ -1529,14 +1838,11 @@
 			}
 
 			const nextPins = normalizePins(row.pins);
-			if (buildPinsSignature(nextPins) === buildPinsSignature(mapPins)) {
+			if (buildPinsSignature(nextPins) === buildPinsSignature(sharedPins)) {
 				return;
 			}
 
-			mapPins = nextPins;
-			saveStorageJson(storageKey("pins"), mapPins);
-			syncEditorsFromSelection();
-			drawMap();
+			setSharedPins(nextPins, { persist: true, refresh: true });
 		} catch (pullError) {
 			console.error(pullError);
 		} finally {
@@ -2635,7 +2941,7 @@
 				<h2>{mapItem.title}</h2>
 				<p>{mapItem.description}</p>
 				<p class="meta-line">
-					{baseData.width}x{baseData.height} tiles, {mapPins.length} Civilization pins, {mapLabels.length} map labels
+					{baseData.width}x{baseData.height} tiles, {mapPins.length} Civilization pins
 				</p>
 			</div>
 
@@ -2860,18 +3166,26 @@
 					<button type="button" role="tab" class:active={panelTab === "edit"} aria-selected={panelTab === "edit"} onclick={() => (panelTab = "edit")}> Pins </button>
 					<button type="button" role="tab" class:active={panelTab === "labels"} aria-selected={panelTab === "labels"} onclick={() => (panelTab = "labels")}> Labels </button>
 					<button type="button" role="tab" class:active={panelTab === "notes"} aria-selected={panelTab === "notes"} onclick={() => (panelTab = "notes")}> Notes </button>
+					<button type="button" role="tab" class:active={panelTab === "export"} aria-selected={panelTab === "export"} onclick={() => (panelTab = "export")}> Export </button>
 					<button type="button" role="tab" class:active={panelTab === "settings"} aria-selected={panelTab === "settings"} onclick={() => (panelTab = "settings")}> Settings </button>
 				</div>
 
 				{#if panelTab === "edit"}
 					<div class="panel-body">
 						<h3>Civilization Pins</h3>
-						{#if canEdit}
-							<p class="auth-active">{authUser?.email ? `Editing as ${authUser.email}` : "Editing enabled"}</p>
+						<div class="pin-edit-target">
+							<p class="pin-edit-title">Edit Target</p>
+							<div class="pin-edit-buttons" role="group" aria-label="Pin edit target">
+								<button type="button" class:active={pinEditTarget === "shared"} onclick={() => setPinEditTarget("shared")} disabled={!canEdit}> Shared </button>
+								<button type="button" class:active={pinEditTarget === "local"} onclick={() => setPinEditTarget("local")} disabled={!canEdit}> Local </button>
+							</div>
+						</div>
+						{#if pinEditorBadge}
+							<p class="auth-active">{pinEditorBadge}</p>
 						{/if}
 						{#if selectedTile}
-							{#if !canEdit}
-								<p class="auth-hint">{editorHint}</p>
+							{#if !canEditPins}
+								<p class="auth-hint">{pinEditorHint}</p>
 							{/if}
 							<p class="tile-id">Selected: {tileLabel(selectedTile)}</p>
 
@@ -2880,15 +3194,48 @@
 							<div class="pin-meta-row">
 								<label class="pin-meta-field">
 									Civilization
-									<input type="text" value={editPinCivInput} oninput={(event) => (editPinCivInput = event.currentTarget.value)} disabled={!canEdit} />
+									<input
+										type="text"
+										value={editPinCivInput}
+										oninput={(event) => {
+											const value = event.currentTarget.value;
+											editPinCivInput = value;
+											if (editPinGameDefineAuto || !editPinGameDefineInput) {
+												editPinGameDefineInput = deriveGameDefineName(value);
+												editPinGameDefineAuto = true;
+											}
+										}}
+										disabled={!canEditPins}
+									/>
 								</label>
 								<label class="pin-meta-field">
 									Leader
-									<input type="text" value={editPinLeaderInput} oninput={(event) => (editPinLeaderInput = event.currentTarget.value)} disabled={!canEdit} />
+									<input type="text" value={editPinLeaderInput} oninput={(event) => (editPinLeaderInput = event.currentTarget.value)} disabled={!canEditPins} />
 								</label>
 								<label class="pin-meta-field">
 									Author(s)
-									<input type="text" value={editPinAuthorInput} oninput={(event) => (editPinAuthorInput = event.currentTarget.value)} disabled={!canEdit} />
+									<input type="text" value={editPinAuthorInput} oninput={(event) => (editPinAuthorInput = event.currentTarget.value)} disabled={!canEditPins} />
+								</label>
+								<label class="pin-meta-field">
+									Game Define Name
+									<input
+										type="text"
+										value={editPinGameDefineInput}
+										oninput={(event) => {
+											editPinGameDefineInput = event.currentTarget.value;
+											editPinGameDefineAuto = false;
+										}}
+										placeholder="CIVILIZATION_..."
+										spellcheck="false"
+										disabled={!canEditPins}
+									/>
+								</label>
+								<label class="pin-meta-field pin-meta-check">
+									Island Start
+									<span class="pin-meta-toggle">
+										<input type="checkbox" checked={editPinIsIsland} onchange={(event) => (editPinIsIsland = event.currentTarget.checked)} disabled={!canEditPins} />
+										<span class="pin-meta-hint">Grant Optics + Boats in Lua</span>
+									</span>
 								</label>
 							</div>
 							<div class="color-row">
@@ -2900,7 +3247,7 @@
 												type="color"
 												value={editPinPrimaryInput}
 												oninput={(event) => updatePinColorFromPicker("primary", event.currentTarget.value)}
-												disabled={!canEdit}
+												disabled={!canEditPins}
 												aria-label="Primary color"
 											/>
 											<span class="color-preview" style={`--preview:${primaryColorDisplay.hex}`} aria-hidden="true"></span>
@@ -2914,7 +3261,7 @@
 											value={editPinPrimaryHexInput}
 											oninput={(event) => updatePinColorFromHex("primary", event.currentTarget.value)}
 											onblur={() => syncPinHexDraft("primary")}
-											disabled={!canEdit}
+											disabled={!canEditPins}
 										/>
 									</div>
 									<span class="color-value">HEX {primaryColorDisplay.hex}</span>
@@ -2929,7 +3276,7 @@
 												type="color"
 												value={editPinSecondaryInput}
 												oninput={(event) => updatePinColorFromPicker("secondary", event.currentTarget.value)}
-												disabled={!canEdit}
+												disabled={!canEditPins}
 												aria-label="Secondary color"
 											/>
 											<span class="color-preview" style={`--preview:${secondaryColorDisplay.hex}`} aria-hidden="true"></span>
@@ -2943,7 +3290,7 @@
 											value={editPinSecondaryHexInput}
 											oninput={(event) => updatePinColorFromHex("secondary", event.currentTarget.value)}
 											onblur={() => syncPinHexDraft("secondary")}
-											disabled={!canEdit}
+											disabled={!canEditPins}
 										/>
 									</div>
 									<span class="color-value">HEX {secondaryColorDisplay.hex}</span>
@@ -2952,12 +3299,12 @@
 								</label>
 							</div>
 							<div class="button-row pin-action-row">
-								<button type="button" onclick={addOrUpdatePin} disabled={!canEdit || pinEditorMode === "idle"}>{upsertCivButtonLabel}</button>
+								<button type="button" onclick={addOrUpdatePin} disabled={!canEditPins || pinEditorMode === "idle"}>{upsertCivButtonLabel}</button>
 								<button
 									type="button"
 									class="danger-icon-button"
 									onclick={removePin}
-									disabled={!canEdit || !matchedSelectedPin}
+									disabled={!canEditPins || !matchedSelectedPin}
 									aria-label="Remove civilization"
 									title="Remove civilization"
 								>
@@ -2986,15 +3333,18 @@
 									<p class="tile-pin-list-title">Civilizations on tile ({selectedTilePins.length})</p>
 									{#each selectedTilePins as pin (pin.id)}
 										<div class="tile-pin-item">
-											<button type="button" class="tile-pin-load" onclick={() => loadPinIntoEditor(pin)} disabled={!canEdit}>
+											<button type="button" class="tile-pin-load" onclick={() => loadPinIntoEditor(pin)} disabled={!canEditPins}>
 												<span class="tile-pin-swatch" style={pinStyle(pin)}></span>
-												{pin.civ}
+												<span>{pin.civ}</span>
+												{#if pin.isIsland}
+													<span class="tile-pin-meta">Island Start</span>
+												{/if}
 											</button>
 											<button
 												type="button"
 												class="tile-pin-remove danger-icon-button"
 												onclick={() => removePinById(pin.id)}
-												disabled={!canEdit}
+												disabled={!canEditPins}
 												aria-label={`Remove ${pin.civ}`}
 												title={`Remove ${pin.civ}`}
 											>
@@ -3253,6 +3603,69 @@
 					</div>
 				{/if}
 
+				{#if panelTab === "export"}
+					<div class="panel-body">
+						<h3>TSL Exporting</h3>
+						<p class="panel-intro">Generate SQL or TSL mod from the map's pins.</p>
+						<div class="export-summary">
+							<div class="export-metric">
+								<span class="export-label">Map Size</span>
+								<span class="export-value">{baseData ? `${baseData.width} x ${baseData.height}` : "-"}</span>
+							</div>
+							<div class="export-metric">
+								<span class="export-label">Pins</span>
+								<span class="export-value">{exportPinCount}</span>
+							</div>
+						</div>
+						<label>
+							Export Pins
+							<select value={exportPinScope} onchange={(event) => (exportPinScope = event.currentTarget.value)}>
+								<option value="all">All pins (shared + local)</option>
+								<option value="local">Local only</option>
+							</select>
+						</label>
+						<label>
+							Sort Order
+							<select value={exportSortMode} onchange={(event) => (exportSortMode = event.currentTarget.value)}>
+								<option value="civ">Civilization (A-Z)</option>
+								<option value="coords">Coordinates (X,Y)</option>
+								<option value="none">No Sorting</option>
+							</select>
+						</label>
+						{#if exportWarnings.length}
+							<div class="export-warnings">
+								<p class="export-warning-title">Checks</p>
+								<ul class="export-warning-list">
+									{#each exportWarnings as warning}
+										<li>{warning}</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
+						{#if exportStatus}
+							<p class="status-inline">{exportStatus}</p>
+						{/if}
+						<div class="export-actions button-row">
+							<button type="button" onclick={downloadExportSql} disabled={!exportSqlText}>Download SQL</button>
+							<button type="button" onclick={downloadExportZip} disabled={!exportLuaText || !exportModInfoText}>Download Zip</button>
+						</div>
+						<div class="export-preview">
+							<label>
+								SQL Preview
+								<textarea class="export-textarea" rows="8" readonly value={exportSqlText} spellcheck="false"></textarea>
+							</label>
+							<label>
+								Lua Preview
+								<textarea class="export-textarea" rows="8" readonly value={exportLuaText} spellcheck="false"></textarea>
+							</label>
+							<label>
+								Modinfo Preview
+								<textarea class="export-textarea" rows="8" readonly value={exportModInfoText} spellcheck="false"></textarea>
+							</label>
+						</div>
+					</div>
+				{/if}
+
 				{#if panelTab === "settings"}
 					<div class="panel-body">
 						<h3>Settings</h3>
@@ -3265,6 +3678,15 @@
 									<span class="check-row-hint">Display pin markers and civ names on the map.</span>
 								</span>
 							</label>
+							<div class="pin-mode-group">
+								<p class="pin-mode-title">Pin Visibility</p>
+								<div class="pin-mode-buttons" role="group" aria-label="Pin visibility">
+									<button type="button" class:active={pinViewMode === "all"} onclick={() => setPinViewMode("all")}>Shared Pins</button>
+									<button type="button" class:active={pinViewMode === "local"} onclick={() => setPinViewMode("local")}>Local Only</button>
+									<button type="button" class:active={pinViewMode === "combined"} style="grid-column: span 2" onclick={() => setPinViewMode("combined")}>Local + Shared</button>
+								</div>
+								<p class="pin-mode-hint">Local pins are saved to this browser. Shared pins come from the map data/cloud.</p>
+							</div>
 							<label class="check-row">
 								<input type="checkbox" checked={settings.showLabels} onchange={() => toggleSetting("showLabels")} />
 								<span class="check-row-copy">
@@ -3755,7 +4177,7 @@
 
 	.tab-row {
 		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(4.6rem, 1fr));
 		gap: 0.25rem;
 		padding: 0.35rem;
 		background: var(--control-bg);
@@ -3834,8 +4256,69 @@
 		min-inline-size: 0;
 	}
 
+	.pin-edit-target {
+		display: grid;
+		gap: 0.4rem;
+		padding: 0.6rem;
+		border: 1px solid var(--panel-border);
+		border-radius: 0.65rem;
+		background: color-mix(in oklch, var(--panel-bg) 86%, var(--accent) 6%);
+	}
+
+	.pin-edit-title {
+		margin-block: 0;
+		font-size: 0.8rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--muted-ink);
+	}
+
+	.pin-edit-buttons {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+		gap: 0.4rem;
+	}
+
+	.pin-edit-buttons button {
+		border: 1px solid var(--panel-border);
+		border-radius: 0.55rem;
+		background: var(--control-bg);
+		color: var(--ink);
+		font: inherit;
+		padding: 0.45rem 0.5rem;
+		cursor: pointer;
+	}
+
+	.pin-edit-buttons button.active {
+		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
+		color: oklch(0.99 0.004 85);
+		border-color: transparent;
+	}
+
 	.pin-meta-field {
 		min-inline-size: 0;
+	}
+
+	.pin-meta-check {
+		gap: 0.35rem;
+	}
+
+	.pin-meta-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.78rem;
+		color: var(--muted-ink);
+	}
+
+	.pin-meta-toggle input {
+		inline-size: 1rem;
+		block-size: 1rem;
+	}
+
+	.pin-meta-hint {
+		font-size: 0.74rem;
+		color: var(--muted-ink);
 	}
 
 	.color-row {
@@ -3924,6 +4407,94 @@
 		background: oklch(0.98 0.007 95 / 0.66);
 	}
 
+	.export-summary {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+		gap: 0.5rem;
+		border: 1px solid var(--panel-border);
+		border-radius: 0.6rem;
+		padding: 0.6rem;
+		background: color-mix(in oklch, var(--panel-bg) 82%, var(--accent) 6%);
+	}
+
+	.export-metric {
+		display: grid;
+		gap: 0.2rem;
+	}
+
+	.export-label {
+		font-size: 0.7rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--muted-ink);
+	}
+
+	.export-value {
+		font-size: 0.92rem;
+		font-weight: 600;
+		color: var(--ink);
+	}
+
+	.export-toggle-row {
+		display: grid;
+		gap: 0.45rem;
+	}
+
+	.export-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.82rem;
+		color: var(--ink);
+	}
+
+	.export-toggle input {
+		inline-size: 1rem;
+		block-size: 1rem;
+	}
+
+	.export-warnings {
+		border: 1px solid color-mix(in oklch, oklch(0.62 0.2 28) 40%, var(--panel-border));
+		background: color-mix(in oklch, oklch(0.8 0.18 30) 15%, var(--panel-bg));
+		padding: 0.55rem 0.6rem;
+		border-radius: 0.6rem;
+		display: grid;
+		gap: 0.4rem;
+	}
+
+	.export-warning-title {
+		margin-block: 0;
+		font-size: 0.78rem;
+		font-weight: 700;
+		color: oklch(0.5 0.17 28);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+	}
+
+	.export-warning-list {
+		margin: 0;
+		padding-inline-start: 1rem;
+		color: var(--ink);
+		font-size: 0.8rem;
+	}
+
+	.export-warning-list li + li {
+		margin-top: 0.2rem;
+	}
+
+	.export-preview {
+		display: grid;
+		gap: 0.65rem;
+	}
+
+	.export-textarea {
+		min-block-size: 8rem;
+		resize: vertical;
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.75rem;
+		line-height: 1.4;
+	}
+
 	.tile-pin-list-title {
 		margin-block: 0;
 		font-size: 0.78rem;
@@ -3947,6 +4518,14 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: normal;
+	}
+
+	.tile-pin-meta {
+		font-size: 0.7rem;
+		color: var(--muted-ink);
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
 	}
 
 	.tile-label-meta {
@@ -4036,6 +4615,51 @@
 	.settings-group {
 		display: grid;
 		gap: 0.5rem;
+	}
+
+	.pin-mode-group {
+		display: grid;
+		gap: 0.45rem;
+		padding: 0.6rem;
+		border: 1px solid var(--panel-border);
+		border-radius: 0.65rem;
+		background: color-mix(in oklch, var(--panel-bg) 86%, var(--accent) 6%);
+	}
+
+	.pin-mode-title {
+		margin-block: 0;
+		font-size: 0.82rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--muted-ink);
+	}
+
+	.pin-mode-buttons {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+		gap: 0.4rem;
+	}
+
+	.pin-mode-buttons button {
+		border: 1px solid var(--panel-border);
+		border-radius: 0.55rem;
+		background: var(--control-bg);
+		color: var(--ink);
+		font: inherit;
+		padding: 0.45rem 0.5rem;
+		cursor: pointer;
+	}
+
+	.pin-mode-buttons button.active {
+		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
+		color: oklch(0.99 0.004 85);
+		border-color: transparent;
+	}
+
+	.pin-mode-hint {
+		margin-block: 0;
+		font-size: 0.78rem;
+		color: var(--muted-ink);
 	}
 
 	.check-row {
