@@ -90,7 +90,7 @@
 
 <header class="navbar">
 	<div class="brand">
-		<img class="brand-logo" src="/brand/CMC-logo.jpg" alt="Civ Modding Central logo" width="256" height="256" />
+		<img class="brand-logo" src="/brand/cmc-navbar-logo.jpg" alt="Civ Modding Central logo" width="100" height="100" />
 		<div>
 			<p class="brand-overline">Community Web Tools</p>
 			<p class="brand-title">Civ Modding Central</p>
