@@ -11,6 +11,7 @@
 	const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 	const SUPABASE_EDITOR_CHECK_FUNCTION = import.meta.env.VITE_SUPABASE_EDITOR_CHECK_FUNCTION || "check-kofi-subscriber";
 	const SUPABASE_EDITOR_CHECK_MAP_ID = import.meta.env.VITE_SUPABASE_EDITOR_CHECK_MAP_ID || "cmc";
+	const SUPABASE_EDITOR_ALLOWLIST_TABLE = import.meta.env.VITE_SUPABASE_EDITOR_ALLOWLIST_TABLE || "cmc_editor_access";
 	const GOOGLE_SHEET_PUB_ID = import.meta.env.VITE_GOOGLE_SHEET_PUB_ID || "";
 	const GOOGLE_SHEET_PUB_URL = import.meta.env.VITE_GOOGLE_SHEET_PUB_URL || "";
 	const AUTH_ENABLED = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
@@ -26,6 +27,7 @@
 	let authAccessAllowed = $state(false);
 	let authAccessLoading = $state(false);
 	let authAccessChecked = $state(false);
+	let authAccessDebug = $state("");
 	let authSession = $state({
 		accessToken: "",
 		refreshToken: "",
@@ -194,6 +196,7 @@
 		authAccessAllowed = false;
 		authAccessLoading = false;
 		authAccessChecked = false;
+		authAccessDebug = "";
 	}
 
 	async function resolveUserEditorAccess(user, accessToken) {
@@ -210,36 +213,50 @@
 			const email = String(user.email || "")
 				.trim()
 				.toLowerCase();
-			const allowlistChecks = [];
-			const errors = [];
+			const checks = [];
 
-			if (SUPABASE_EDITOR_CHECK_FUNCTION) {
-				allowlistChecks.push(
-					checkEditorAccessWithFunction(email, accessToken).catch((error) => {
-						errors.push(error);
-						return false;
-					}),
-				);
+			if (SUPABASE_EDITOR_ALLOWLIST_TABLE) {
+				checks.push({ label: "table", run: () => checkEditorAccessWithTable(email, accessToken) });
 			}
 
 			if (GOOGLE_SHEET_PUB_ID || GOOGLE_SHEET_PUB_URL) {
-				allowlistChecks.push(
-					checkEditorAccessWithSheet(email).catch((error) => {
-						errors.push(error);
-						return false;
-					}),
-				);
+				checks.push({ label: "sheet", run: () => checkEditorAccessWithSheet(email) });
 			}
 
-			if (!allowlistChecks.length) {
+			if (SUPABASE_EDITOR_CHECK_FUNCTION) {
+				checks.push({ label: "fn", run: () => checkEditorAccessWithFunction(email, accessToken) });
+			}
+
+			if (!checks.length) {
 				throw new Error("Editor access checks are not configured.");
 			}
 
-			const results = await Promise.all(allowlistChecks);
-			const allowed = results.some(Boolean);
+			const results = await Promise.all(
+				checks.map((check) =>
+					check
+						.run()
+						.then((ok) => ({ label: check.label, ok: Boolean(ok) }))
+						.catch((error) => ({ label: check.label, error })),
+				),
+			);
+			const allowed = results.some((result) => result.ok);
+			const allErrored = results.every((result) => result.error);
 
-			if (!allowed && errors.length === allowlistChecks.length) {
-				throw errors[0];
+			authAccessDebug = results
+				.map((result) => {
+					if (result.ok) {
+						return `${result.label}=allow`;
+					}
+					if (result.error) {
+						const message = String(result.error?.message || "error");
+						return `${result.label}=error`;
+					}
+					return `${result.label}=deny`;
+				})
+				.join(" ");
+
+			if (!allowed && allErrored) {
+				throw results.find((result) => result.error)?.error;
 			}
 
 			authAccessAllowed = allowed;
@@ -280,6 +297,52 @@
 			throw new Error("Editor access function returned an invalid response.");
 		}
 		return payload.allowed;
+	}
+
+	async function checkEditorAccessWithTable(email, accessToken) {
+		if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+			throw new Error("Supabase allowlist is not configured.");
+		}
+		const normalized = normalizeEmail(email);
+		if (!normalized) {
+			return false;
+		}
+		const params = new URLSearchParams();
+		params.set("select", "email");
+		params.set("email", `eq.${normalized}`);
+		params.set("limit", "1");
+		const url = `${SUPABASE_URL}/rest/v1/${SUPABASE_EDITOR_ALLOWLIST_TABLE}?${params.toString()}`;
+
+		const baseHeaders = {
+			apikey: SUPABASE_ANON_KEY,
+		};
+
+		const fetchWithHeaders = async (headers) => {
+			const response = await fetch(url, { headers });
+			if (!response.ok) {
+				const text = await response.text().catch(() => "");
+				const error = new Error(text || `Allowlist lookup failed (${response.status}).`);
+				error.status = response.status;
+				throw error;
+			}
+			const payload = await response.json().catch(() => []);
+			return Array.isArray(payload) && payload.length > 0;
+		};
+
+		if (accessToken) {
+			try {
+				return await fetchWithHeaders({
+					...baseHeaders,
+					Authorization: `Bearer ${accessToken}`,
+				});
+			} catch (error) {
+				if (error?.status !== 401 && error?.status !== 403) {
+					throw error;
+				}
+			}
+		}
+
+		return await fetchWithHeaders(baseHeaders);
 	}
 
 	async function checkEditorAccessWithSheet(email) {
@@ -411,6 +474,7 @@
 		{authUser}
 		{authEmail}
 		{authMessage}
+		{authAccessDebug}
 		{authLoading}
 		{authAccessAllowed}
 		{authAccessLoading}

@@ -9,6 +9,7 @@
 		authUser = null,
 		authEmail = "",
 		authMessage = "",
+		authAccessDebug = "",
 		authLoading = false,
 		authAccessAllowed = false,
 		authAccessLoading = false,
@@ -174,6 +175,9 @@
 
 					{#if authMessage}
 						<p class="user-message">{authMessage}</p>
+					{/if}
+					{#if authAccessDebug}
+						<p class="user-message user-message--debug">Access checks: {authAccessDebug}</p>
 					{/if}
 				</div>
 			{/if}
@@ -544,6 +548,11 @@
 	.user-message {
 		font-size: 0.76rem;
 		color: var(--muted-ink);
+	}
+
+	.user-message--debug {
+		font-size: 0.72rem;
+		opacity: 0.8;
 	}
 
 	@media (max-width: 900px) {
