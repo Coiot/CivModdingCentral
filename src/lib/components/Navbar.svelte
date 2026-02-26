@@ -90,7 +90,7 @@
 
 <header class="navbar">
 	<div class="brand">
-		<img class="brand-logo" src="/brand/CMC-logo.png" alt="Civ Modding Central logo" width="300" height="300" />
+		<img class="brand-logo" src="/brand/CMC-logo.jpg" alt="Civ Modding Central logo" width="256" height="256" />
 		<div>
 			<p class="brand-overline">Community Web Tools</p>
 			<p class="brand-title">Civ Modding Central</p>
@@ -172,11 +172,12 @@
 							<p class="user-message">Supabase auth is not configured for this environment.</p>
 						{/if}
 					{/if}
-
+					<!--
 					{#if authMessage}
 						<p class="user-message">{authMessage}</p>
-					{/if}
-					{#if authAccessDebug}
+					{/if} -->
+
+					{#if !authEnabled && authAccessDebug}
 						<p class="user-message user-message--debug">Access checks: {authAccessDebug}</p>
 					{/if}
 				</div>
