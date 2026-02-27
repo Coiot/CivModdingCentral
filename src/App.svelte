@@ -233,24 +233,39 @@
 				checks.push({ label: "sheet", run: () => checkEditorAccessWithSheet(email) });
 			}
 
-			if (SUPABASE_EDITOR_CHECK_FUNCTION) {
-				checks.push({ label: "fn", run: () => checkEditorAccessWithFunction(email, accessToken) });
-			}
-
 			if (!checks.length) {
 				throw new Error("Editor access checks are not configured.");
 			}
 
-			const results = await Promise.all(
-				checks.map((check) =>
-					check
-						.run()
-						.then((ok) => ({ label: check.label, ok: Boolean(ok) }))
-						.catch((error) => ({ label: check.label, error })),
-				),
-			);
-			const allowed = results.some((result) => result.ok);
-			const allErrored = results.every((result) => result.error);
+			const results = [];
+			let allowed = false;
+			let allErrored = true;
+
+			for (const check of checks) {
+				try {
+					const ok = Boolean(await check.run());
+					results.push({ label: check.label, ok });
+					allErrored = false;
+					if (ok && check.label === "table") {
+						allowed = true;
+						break;
+					}
+					allowed = allowed || ok;
+				} catch (error) {
+					results.push({ label: check.label, error });
+				}
+			}
+
+			if (!allowed && SUPABASE_EDITOR_CHECK_FUNCTION) {
+				try {
+					const ok = Boolean(await checkEditorAccessWithFunction(email, accessToken));
+					results.push({ label: "fn", ok });
+					allErrored = false;
+					allowed = allowed || ok;
+				} catch (error) {
+					results.push({ label: "fn", error });
+				}
+			}
 
 			authAccessDebug = results
 				.map((result) => {

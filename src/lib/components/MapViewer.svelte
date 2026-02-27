@@ -3458,9 +3458,6 @@
 													<span class="tile-pin-swatch" style={pinStyle(pin)}></span>
 													<span>{pin.civ}</span>
 													<span class="tile-pin-meta">{source === "shared" ? "Shared" : "Local"}</span>
-													{#if pin.isIsland}
-														<span class="tile-pin-meta">Island Start</span>
-													{/if}
 												</button>
 												{#if !canEditSource}
 													<span class="ui-tooltip">Sign in to edit shared pins.</span>
