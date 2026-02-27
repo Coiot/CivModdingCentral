@@ -1,6 +1,4 @@
 <script>
-	import { onMount } from "svelte";
-
 	let {
 		themeMode = "light",
 		onToggleTheme = () => {},
@@ -17,23 +15,15 @@
 		onAuthEmailInput = () => {},
 		onSendMagicLink = () => {},
 		onLogout = () => {},
+		currentPath = "/",
 	} = $props();
 
 	let userOpen = $state(false);
 	let helpOpen = $state(false);
 	let userWrapEl = $state();
 	let helpWrapEl = $state();
-	let currentPath = $state("/");
-
 	const REDDIT_URL = "https://old.reddit.com/r/civmoddingcentral/";
 	const DISCORD_URL = "https://discord.gg/yf8jUXf";
-
-	onMount(() => {
-		if (typeof window === "undefined") {
-			return;
-		}
-		currentPath = window.location.pathname || "/";
-	});
 
 	function isActivePath(pathname) {
 		return currentPath === pathname;
@@ -247,15 +237,15 @@
 	.brand {
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
+		gap: 0.55rem;
 	}
 
 	.brand-logo {
-		inline-size: 2.25rem;
-		block-size: 2.25rem;
-		border-radius: 0.4rem;
-		object-fit: contain;
 		flex: 0 0 auto;
+		inline-size: 2.5rem;
+		block-size: 2.5rem;
+		border-radius: 0.5rem;
+		object-fit: contain;
 	}
 
 	.brand-overline,

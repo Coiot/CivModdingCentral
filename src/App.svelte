@@ -1,9 +1,8 @@
 <script>
 	import { onMount } from "svelte";
-	import MapViewer from "./lib/components/MapViewer.svelte";
+	import { fade } from "svelte/transition";
 	import Navbar from "./lib/components/Navbar.svelte";
 	import DirectoryPage from "./lib/components/DirectoryPage.svelte";
-	import { maps } from "./lib/config/maps.js";
 
 	const THEME_STORAGE_KEY = "cmc-theme-mode";
 	const AUTH_STORAGE_KEY = "cmc-auth-session";
@@ -17,9 +16,6 @@
 	const GOOGLE_SHEET_PUB_URL = import.meta.env.VITE_GOOGLE_SHEET_PUB_URL || "";
 	const AUTH_ENABLED = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
-	let selectedMapId = $state(maps[0]?.id || "");
-	const selectedMap = $derived(maps.find((mapItem) => mapItem.id === selectedMapId) || maps[0] || null);
-
 	let themeMode = $state("dark");
 	let authUser = $state(null);
 	let authEmail = $state("");
@@ -29,7 +25,10 @@
 	let authAccessLoading = $state(false);
 	let authAccessChecked = $state(false);
 	let authAccessDebug = $state("");
-	let currentPath = $state("/");
+	let currentPath = $state(typeof window !== "undefined" ? window.location.pathname || "/" : "/");
+	let MapViewerComponent = $state(null);
+	let mapViewerLoadError = $state("");
+	let authRestoreStarted = $state(false);
 	let authSession = $state({
 		accessToken: "",
 		refreshToken: "",
@@ -37,22 +36,128 @@
 
 	const canEdit = $derived(Boolean(authUser) && authAccessAllowed);
 
+	function normalizePathname(value) {
+		const path = String(value || "").trim();
+		return path || "/";
+	}
+
+	function runPageTransition(update) {
+		if (typeof document !== "undefined" && typeof document.startViewTransition === "function") {
+			document.startViewTransition(update);
+			return;
+		}
+		update();
+	}
+
+	function navigateTo(pathname, options = {}) {
+		if (typeof window === "undefined") {
+			return;
+		}
+
+		const normalizedPath = normalizePathname(pathname);
+		const replace = Boolean(options.replace);
+		if (normalizedPath === currentPath) {
+			return;
+		}
+
+		runPageTransition(() => {
+			if (replace) {
+				window.history.replaceState({}, "", normalizedPath);
+			} else {
+				window.history.pushState({}, "", normalizedPath);
+			}
+			currentPath = normalizedPath;
+		});
+	}
+
+	function isInternalNavClick(event) {
+		if (event.defaultPrevented || event.button !== 0) {
+			return null;
+		}
+		if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+			return null;
+		}
+
+		const anchor = event.target?.closest?.("a[href]");
+		if (!anchor) {
+			return null;
+		}
+		if (anchor.target && anchor.target !== "_self") {
+			return null;
+		}
+		if (anchor.hasAttribute("download")) {
+			return null;
+		}
+
+		const href = anchor.getAttribute("href") || "";
+		if (!href || href.startsWith("#")) {
+			return null;
+		}
+
+		try {
+			const url = new URL(anchor.href, window.location.href);
+			if (url.origin !== window.location.origin) {
+				return null;
+			}
+			return url;
+		} catch {
+			return null;
+		}
+	}
+
 	onMount(() => {
 		restoreTheme();
-		void restoreAuth();
 		if (typeof window !== "undefined") {
-			currentPath = window.location.pathname || "/";
 			const handlePopState = () => {
-				currentPath = window.location.pathname || "/";
+				const nextPath = normalizePathname(window.location.pathname);
+				if (nextPath === currentPath) {
+					return;
+				}
+				runPageTransition(() => {
+					currentPath = nextPath;
+				});
+			};
+			const handleDocumentClick = (event) => {
+				const url = isInternalNavClick(event);
+				if (!url) {
+					return;
+				}
+				const nextPath = normalizePathname(url.pathname);
+				if (nextPath === currentPath) {
+					return;
+				}
+				event.preventDefault();
+				navigateTo(nextPath);
 			};
 			window.addEventListener("popstate", handlePopState);
-			return () => window.removeEventListener("popstate", handlePopState);
+			window.addEventListener("click", handleDocumentClick);
+			return () => {
+				window.removeEventListener("popstate", handlePopState);
+				window.removeEventListener("click", handleDocumentClick);
+			};
 		}
 	});
 
-	function onMapSelect(mapId) {
-		selectedMapId = mapId;
-	}
+	$effect(() => {
+		if (currentPath === "/directory" || MapViewerComponent || mapViewerLoadError) {
+			return;
+		}
+		void import("./lib/components/MapViewer.svelte")
+			.then((module) => {
+				MapViewerComponent = module.default;
+			})
+			.catch((error) => {
+				mapViewerLoadError = error?.message || "Unable to load map viewer.";
+			});
+	});
+
+	$effect(() => {
+		if (currentPath === "/directory" || authRestoreStarted) {
+			return;
+		}
+		authRestoreStarted = true;
+		void restoreAuth();
+	});
 
 	function onAuthEmailInput(value) {
 		authEmail = value;
@@ -496,6 +601,7 @@
 <main class="page-shell">
 	<Navbar
 		{themeMode}
+		{currentPath}
 		{authUser}
 		{authEmail}
 		{authMessage}
@@ -512,15 +618,61 @@
 		onLogout={logout}
 	/>
 
-	{#if currentPath === "/directory"}
-		<DirectoryPage />
-	{:else}
-		<header class="hero">
-			<h1>Interactive Map Viewer</h1>
-			<p>Browse community Civ5 maps with modded Civilization starting location pins.</p>
-		</header>
-		{#if selectedMap}
-			<MapViewer mapItem={selectedMap} {maps} selectedMapId={selectedMap?.id || ""} onSelectMap={onMapSelect} {canEdit} {authUser} authAccessToken={authSession.accessToken} />
-		{/if}
-	{/if}
+	{#key currentPath}
+		<div class="route-shell" in:fade={{ duration: 180 }} out:fade={{ duration: 130 }}>
+			{#if currentPath === "/directory"}
+				<DirectoryPage />
+			{:else}
+				<header class="hero">
+					<h1>Interactive Map Viewer</h1>
+					<p>Browse community Civ5 maps with modded Civilization starting location pins.</p>
+				</header>
+				{#if mapViewerLoadError}
+					<p class="status error">{mapViewerLoadError}</p>
+				{:else if MapViewerComponent}
+					<MapViewerComponent {canEdit} {authUser} authAccessToken={authSession.accessToken} />
+				{:else}
+					<p class="status">Loading map viewer...</p>
+				{/if}
+			{/if}
+		</div>
+	{/key}
 </main>
+
+<style>
+	.route-shell {
+		view-transition-name: route-shell;
+	}
+
+	:global(::view-transition-old(route-shell)),
+	:global(::view-transition-new(route-shell)) {
+		animation-duration: 180ms;
+		animation-timing-function: ease;
+	}
+
+	:global(::view-transition-old(route-shell)) {
+		animation-name: app-route-fade-out;
+	}
+
+	:global(::view-transition-new(route-shell)) {
+		animation-name: app-route-fade-in;
+	}
+
+	@keyframes app-route-fade-out {
+		from {
+			opacity: 1;
+		}
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes app-route-fade-in {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+</style>

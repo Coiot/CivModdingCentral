@@ -7,6 +7,7 @@
 	import { buildLikelyMapPrefetchQueue } from "../map/prefetch.js";
 	import { findTileAtPoint } from "../map/hit-testing.js";
 	import { materializeMapLabels, normalizeMapLabels, selectVisibleMapLabels } from "../map/labels.js";
+	import { maps as defaultMaps } from "../config/maps.js";
 	import {
 		buildPinsSignature as buildPinsSignatureUtil,
 		normalizePins as normalizePinsUtil,
@@ -18,7 +19,7 @@
 	import { buildZipBlob } from "../map/zip.js";
 	import { canPushCloudPins as canPushCloudPinsUtil, hasCloudPinSyncConfig as hasCloudPinSyncConfigUtil, resolveCloudSyncAction } from "../map/sync.js";
 
-	let { mapItem, maps = [], selectedMapId = "", onSelectMap = () => {}, canEdit = false, authUser = null, authAccessToken = "" } = $props();
+	let { mapItem: providedMapItem = null, maps: providedMaps = defaultMaps, selectedMapId = "", onSelectMap = null, canEdit = false, authUser = null, authAccessToken = "" } = $props();
 
 	const STORAGE_PREFIX = "cmc-map";
 	const CBRX_PIN_RESET_VERSION = 1;
@@ -148,6 +149,50 @@
 	const notePinPathCache = new Map();
 	const basePayloadMemoryCache = new Map();
 	let lastInitializedMapId = "";
+	let activeMapId = $state("");
+	let mapPinCounts = $state({});
+
+	const maps = $derived.by(() => (Array.isArray(providedMaps) && providedMaps.length ? providedMaps : defaultMaps));
+	const mapsForSelect = $derived.by(() => {
+		if (!maps.length) {
+			return [];
+		}
+
+		return maps
+			.map((entry, index) => {
+				const rawCount = mapPinCounts?.[entry?.id];
+				const hasCount = Number.isFinite(rawCount);
+				return {
+					entry,
+					index,
+					count: hasCount ? Number(rawCount) : -1,
+					hasCount,
+				};
+			})
+			.sort((a, b) => {
+				if (a.hasCount && b.hasCount && a.count !== b.count) {
+					return b.count - a.count;
+				}
+				if (a.hasCount !== b.hasCount) {
+					return a.hasCount ? -1 : 1;
+				}
+				return a.index - b.index;
+			})
+			.map((item) => item.entry);
+	});
+	const currentMap = $derived.by(() => {
+		const normalizedId = String(activeMapId || "").trim();
+		if (normalizedId) {
+			const byId = maps.find((entry) => entry?.id === normalizedId);
+			if (byId) {
+				return byId;
+			}
+		}
+		if (providedMapItem?.id) {
+			return providedMapItem;
+		}
+		return maps[0] || null;
+	});
 
 	const selectedTile = $derived(selectedTileKey ? tileLookup.get(selectedTileKey) || null : null);
 	const hoveredTile = $derived(hoveredTileKey ? tileLookup.get(hoveredTileKey) || null : null);
@@ -280,7 +325,99 @@
 	});
 
 	$effect(() => {
-		const mapId = mapItem?.id || "";
+		const incomingId = String(selectedMapId || providedMapItem?.id || "").trim();
+		if (incomingId && incomingId !== activeMapId) {
+			activeMapId = incomingId;
+			return;
+		}
+		if (!incomingId && !activeMapId) {
+			const fallbackId = String(maps[0]?.id || "");
+			if (fallbackId) {
+				activeMapId = fallbackId;
+			}
+		}
+	});
+
+	$effect(() => {
+		if (!maps.length) {
+			if (activeMapId) {
+				activeMapId = "";
+			}
+			return;
+		}
+		const providedMapId = String(providedMapItem?.id || "");
+		if (maps.some((entry) => entry?.id === activeMapId) || (providedMapId && activeMapId === providedMapId)) {
+			return;
+		}
+		const fallbackId = String(maps[0]?.id || "");
+		if (fallbackId && fallbackId !== activeMapId) {
+			activeMapId = fallbackId;
+		}
+	});
+
+	$effect(() => {
+		if (!maps.length) {
+			if (Object.keys(mapPinCounts || {}).length) {
+				mapPinCounts = {};
+			}
+			return;
+		}
+
+		authAccessToken;
+		let cancelled = false;
+
+		void (async () => {
+			const cloudCounts = await fetchCloudPinCountsByMap().catch(() => null);
+			const nextCounts = {};
+
+			for (const entry of maps) {
+				const mapId = String(entry?.id || "").trim();
+				if (!mapId) {
+					continue;
+				}
+
+				const localCounts = loadStoredPinCountsForMap(mapId);
+				const cloudCount = cloudCounts && Number.isFinite(cloudCounts[mapId]) ? Number(cloudCounts[mapId]) : 0;
+				const sharedBase = localCounts.hasShared ? localCounts.shared : cloudCount;
+				nextCounts[mapId] = Math.max(0, sharedBase + localCounts.local);
+			}
+
+			if (!cancelled) {
+				mapPinCounts = nextCounts;
+			}
+		})();
+
+		return () => {
+			cancelled = true;
+		};
+	});
+
+	$effect(() => {
+		const mapId = String(currentMap?.id || "").trim();
+		if (!mapId) {
+			return;
+		}
+		const nextCount = Math.max(0, Number(localPins?.length || 0) + Number(sharedPins?.length || 0));
+		if (Number(mapPinCounts?.[mapId]) === nextCount) {
+			return;
+		}
+		mapPinCounts = {
+			...(mapPinCounts || {}),
+			[mapId]: nextCount,
+		};
+	});
+
+	$effect(() => {
+		if (maps.length) {
+			return;
+		}
+		loading = false;
+		error = "No maps are configured.";
+		debugInfo = "";
+	});
+
+	$effect(() => {
+		const mapId = currentMap?.id || "";
 		if (!mapId) {
 			return;
 		}
@@ -382,16 +519,20 @@
 		pinchCenter = { x: 0, y: 0 };
 
 		try {
+			if (!currentMap) {
+				throw new Error("No maps are configured.");
+			}
+
 			if (typeof window !== "undefined" && window.location?.protocol === "file:") {
 				throw new Error("Maps must be served over http(s). Run `npm run dev` and open that URL.");
 			}
 
-			const baseUrl = resolveAssetUrl(mapItem.mapConfig.baseCacheUrl);
-			const pinsUrl = resolveAssetUrl(mapItem.pinsUrl);
-			const labelsUrl = mapItem?.labelsUrl ? resolveAssetUrl(mapItem.labelsUrl) : "";
+			const baseUrl = resolveAssetUrl(currentMap.mapConfig.baseCacheUrl);
+			const pinsUrl = resolveAssetUrl(currentMap.pinsUrl);
+			const labelsUrl = currentMap?.labelsUrl ? resolveAssetUrl(currentMap.labelsUrl) : "";
 			debugInfo = `protocol=${window.location.protocol} base=${baseUrl} pins=${pinsUrl}${labelsUrl ? ` labels=${labelsUrl}` : ""}`;
 
-			if (mapItem?.id === "cbrx" && typeof localStorage !== "undefined") {
+			if (currentMap?.id === "cbrx" && typeof localStorage !== "undefined") {
 				try {
 					const resetKey = storageKey("pins-reset");
 					const resetState = loadStorageJson(resetKey, null);
@@ -417,10 +558,10 @@
 			const storedPinEditTarget = loadStorageJson(storageKey("pin-edit-target"), null);
 			const storedPanelCollapsed = loadStorageJson(storageKey("panel-collapsed"), null);
 
-			let basePayload = loadCachedBasePayload(mapItem?.id);
+			let basePayload = loadCachedBasePayload(currentMap?.id);
 			if (!basePayload) {
 				basePayload = await fetchJsonSafe(baseUrl, "base");
-				saveCachedBasePayload(mapItem?.id, basePayload);
+				saveCachedBasePayload(currentMap?.id, basePayload);
 			}
 			const pinsPayload = await fetchJsonSafe(pinsUrl, "pins").catch(() => ({}));
 			const fetchedSharedPins = Array.isArray(pinsPayload) ? pinsPayload : Array.isArray(pinsPayload?.pins) ? pinsPayload.pins : [];
@@ -428,7 +569,7 @@
 			const labelsPayload = labelsUrl ? await fetchJsonSafe(labelsUrl, "labels").catch(() => ({ labels: [] })) : { labels: [] };
 			const normalizedStaticLabels = normalizeMapLabels(Array.isArray(labelsPayload) ? labelsPayload : labelsPayload?.labels);
 			const normalizedCustomLabels = normalizeMapLabels(Array.isArray(localLabels) ? localLabels : []);
-			const computedMetrics = computeMapMetrics(Number(basePayload.width), Number(basePayload.height), Number(mapItem.mapConfig.hexSize || 14));
+			const computedMetrics = computeMapMetrics(Number(basePayload.width), Number(basePayload.height), Number(currentMap.mapConfig.hexSize || 14));
 
 			baseData = basePayload;
 			mapMetrics = computedMetrics;
@@ -491,7 +632,7 @@
 			return;
 		}
 
-		const hexSize = Number(mapItem.mapConfig.hexSize || 14);
+		const hexSize = Number(currentMap.mapConfig.hexSize || 14);
 		const built = [];
 		const lookup = new Map();
 
@@ -542,7 +683,7 @@
 
 		const width = Math.max(1, Math.ceil(mapMetrics.width));
 		const height = Math.max(1, Math.ceil(mapMetrics.height));
-		const hexSize = Number(mapItem.mapConfig.hexSize || 14);
+		const hexSize = Number(currentMap.mapConfig.hexSize || 14);
 		const vertices = buildHexVertices(hexSize);
 		const featureVertices = buildHexVertices(hexSize * 0.37);
 		canvasEl.width = width;
@@ -986,9 +1127,20 @@
 			baseWidth: Number(baseData?.width || 0),
 			baseHeight: Number(baseData?.height || 0),
 			mapMetrics,
-			hexSize: Number(mapItem.mapConfig.hexSize || 14),
+			hexSize: Number(currentMap.mapConfig.hexSize || 14),
 			tileLookup,
 		});
+	}
+
+	function handleSelectMap(nextMapId) {
+		const normalized = String(nextMapId || "").trim();
+		if (!normalized || normalized === activeMapId) {
+			return;
+		}
+		activeMapId = normalized;
+		if (typeof onSelectMap === "function") {
+			onSelectMap(normalized);
+		}
 	}
 
 	function selectTile(tileKey) {
@@ -1133,7 +1285,7 @@
 		mapLabels = materializeMapLabels(merged, {
 			baseData,
 			mapMetrics,
-			hexSize: Number(mapItem.mapConfig.hexSize || 14),
+			hexSize: Number(currentMap.mapConfig.hexSize || 14),
 		});
 	}
 
@@ -1450,7 +1602,7 @@
 			return null;
 		}
 
-		const center = tileCenter(col, sourceRow, baseData.height, Number(mapItem.mapConfig.hexSize || 14));
+		const center = tileCenter(col, sourceRow, baseData.height, Number(currentMap.mapConfig.hexSize || 14));
 
 		return {
 			x: center.x - mapMetrics.minX,
@@ -1497,7 +1649,7 @@
 		if (!selectedTile || !mapMetrics) {
 			return "";
 		}
-		const vertices = buildHexVertices(Number(mapItem.mapConfig.hexSize || 14));
+		const vertices = buildHexVertices(Number(currentMap.mapConfig.hexSize || 14));
 		return vertices.map((v) => `${selectedTile.x + v.x},${selectedTile.y + v.y}`).join(" ");
 	}
 
@@ -1505,7 +1657,7 @@
 		if (!hoveredTile || !mapMetrics || hoveredTile.key === selectedTileKey) {
 			return "";
 		}
-		const vertices = buildHexVertices(Number(mapItem.mapConfig.hexSize || 14));
+		const vertices = buildHexVertices(Number(currentMap.mapConfig.hexSize || 14));
 		return vertices.map((v) => `${hoveredTile.x + v.x},${hoveredTile.y + v.y}`).join(" ");
 	}
 
@@ -1642,7 +1794,7 @@
 			supabaseUrl: SUPABASE_URL,
 			supabaseAnonKey: SUPABASE_ANON_KEY,
 			supabasePinsTable: SUPABASE_PINS_TABLE,
-			mapId: mapItem?.id,
+			mapId: currentMap?.id,
 		});
 	}
 
@@ -1651,7 +1803,7 @@
 			supabaseUrl: SUPABASE_URL,
 			supabaseAnonKey: SUPABASE_ANON_KEY,
 			supabasePinsTable: SUPABASE_LABELS_TABLE,
-			mapId: mapItem?.id,
+			mapId: currentMap?.id,
 		});
 	}
 
@@ -1888,7 +2040,7 @@
 		try {
 			const body = [
 				{
-					map_id: String(mapItem.id),
+					map_id: String(currentMap.id),
 					pins: sharedPins,
 					updated_by: String(authUser?.email || ""),
 				},
@@ -1930,7 +2082,7 @@
 		try {
 			const query = new URLSearchParams();
 			query.set("select", "map_id,pins,updated_at");
-			query.set("map_id", `eq.${String(mapItem.id)}`);
+			query.set("map_id", `eq.${String(currentMap.id)}`);
 			query.set("limit", "1");
 
 			const headers = {
@@ -1980,7 +2132,7 @@
 		try {
 			const body = [
 				{
-					map_id: String(mapItem.id),
+					map_id: String(currentMap.id),
 					labels: customMapLabelDefs,
 					updated_by: String(authUser?.email || ""),
 				},
@@ -2022,7 +2174,7 @@
 		try {
 			const query = new URLSearchParams();
 			query.set("select", "map_id,labels,updated_at");
-			query.set("map_id", `eq.${String(mapItem.id)}`);
+			query.set("map_id", `eq.${String(currentMap.id)}`);
 			query.set("limit", "1");
 
 			const headers = {
@@ -2067,7 +2219,86 @@
 	}
 
 	function storageKey(type) {
-		return `${STORAGE_PREFIX}:${mapItem?.id || "unknown"}:${type}`;
+		return `${STORAGE_PREFIX}:${currentMap?.id || "unknown"}:${type}`;
+	}
+
+	function storageKeyForMap(mapId, type) {
+		return `${STORAGE_PREFIX}:${mapId || "unknown"}:${type}`;
+	}
+
+	function parsePinsArray(value) {
+		if (Array.isArray(value)) {
+			return value;
+		}
+		if (typeof value === "string") {
+			try {
+				const parsed = JSON.parse(value);
+				return Array.isArray(parsed) ? parsed : [];
+			} catch {
+				return [];
+			}
+		}
+		return [];
+	}
+
+	function loadStoredPinCountsForMap(mapId) {
+		const localStored = loadStorageJson(storageKeyForMap(mapId, "pins-local"), null);
+		const legacyStored = loadStorageJson(storageKeyForMap(mapId, "pins"), null);
+		const sharedStored = loadStorageJson(storageKeyForMap(mapId, "pins-shared"), null);
+
+		const localSource = Array.isArray(localStored) ? localStored : Array.isArray(legacyStored) ? legacyStored : [];
+		const localCount = normalizePins(localSource).length;
+		const sharedCount = normalizePins(Array.isArray(sharedStored) ? sharedStored : []).length;
+		const hasShared = Array.isArray(sharedStored);
+
+		return {
+			local: localCount,
+			shared: sharedCount,
+			hasShared,
+		};
+	}
+
+	async function fetchCloudPinCountsByMap() {
+		if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !SUPABASE_PINS_TABLE) {
+			return null;
+		}
+
+		const query = new URLSearchParams();
+		query.set("select", "map_id,pins");
+		query.set("limit", "500");
+
+		const headers = {
+			apikey: SUPABASE_ANON_KEY,
+		};
+		if (authAccessToken) {
+			headers.Authorization = `Bearer ${authAccessToken}`;
+		}
+
+		const response = await fetch(`${SUPABASE_URL}/rest/v1/${encodeURIComponent(SUPABASE_PINS_TABLE)}?${query.toString()}`, {
+			headers,
+		});
+
+		if (!response.ok) {
+			const text = await response.text().catch(() => "");
+			throw new Error(`Unable to fetch map pin counts (${response.status}). ${text}`);
+		}
+
+		const rows = await response.json().catch(() => []);
+		if (!Array.isArray(rows)) {
+			return {};
+		}
+
+		const counts = {};
+		for (const row of rows) {
+			const mapId = String(row?.map_id || "").trim();
+			if (!mapId) {
+				continue;
+			}
+			const count = normalizePins(parsePinsArray(row?.pins)).length;
+			counts[mapId] = Math.max(Number(counts[mapId] || 0), count);
+		}
+
+		return counts;
 	}
 
 	function baseCacheKey(mapId) {
@@ -2124,7 +2355,7 @@
 		if (typeof window === "undefined") {
 			return;
 		}
-		const queue = buildLikelyMapPrefetchQueue(maps, mapItem?.id, BASE_PREFETCH_LIMIT);
+		const queue = buildLikelyMapPrefetchQueue(maps, currentMap?.id, BASE_PREFETCH_LIMIT);
 		if (!queue.length) {
 			return;
 		}
@@ -3013,7 +3244,7 @@
 	}
 
 	function mapLabelPathId(labelId) {
-		const mapId = String(mapItem?.id || "map").replace(/[^a-z0-9_-]/gi, "-");
+		const mapId = String(currentMap?.id || "map").replace(/[^a-z0-9_-]/gi, "-");
 		const suffix = String(labelId || "label").replace(/[^a-z0-9_-]/gi, "-");
 		return `map-label-${mapId}-${suffix}`;
 	}
@@ -3050,7 +3281,7 @@
 
 <section class="viewer-wrap tile-map" aria-live="polite">
 	{#if loading}
-		<p class="status">Loading {mapItem.title}...</p>
+		<p class="status">Loading {currentMap?.title || "map"}...</p>
 	{:else if error}
 		<p class="status error">{error}</p>
 		{#if debugInfo}
@@ -3059,8 +3290,8 @@
 	{:else if baseData && mapMetrics}
 		<div class="viewer-header">
 			<div class="map-meta">
-				<h2>{mapItem.title}</h2>
-				<p>{mapItem.description}</p>
+				<h2>{currentMap?.title || "Map Viewer"}</h2>
+				<p>{currentMap?.description || "Browse map tiles and manage pins."}</p>
 				<p class="meta-line">
 					{baseData.width}x{baseData.height} tiles, {mapPins.length} Civilization pins
 				</p>
@@ -3069,8 +3300,8 @@
 			<div class="tile-map-controls" role="toolbar" aria-label="Map zoom controls">
 				<div class="tile-map-control-group">
 					<span class="tile-map-control-label">Map</span>
-					<select class="tile-map-select" value={selectedMapId || mapItem?.id || ""} onchange={(event) => onSelectMap(event.currentTarget.value)} aria-label="Select map">
-						{#each maps as option (option.id)}
+					<select class="tile-map-select" value={activeMapId || currentMap?.id || ""} onchange={(event) => handleSelectMap(event.currentTarget.value)} aria-label="Select map">
+						{#each mapsForSelect as option (option.id)}
 							<option value={option.id}>{option.title}</option>
 						{/each}
 					</select>
@@ -3121,7 +3352,7 @@
 					onmouseleave={onViewportLeave}
 				>
 					<div class="map-world" style={`width:${Math.ceil(mapMetrics.width)}px;height:${Math.ceil(mapMetrics.height)}px;transform:${worldTransform()}`}>
-						<canvas class="map-layer" use:mountCanvas aria-label={`${mapItem.title} tile layer`}></canvas>
+						<canvas class="map-layer" use:mountCanvas aria-label={`${currentMap?.title || "Map"} tile layer`}></canvas>
 
 						<svg class="overlay-layer" viewBox={`0 0 ${Math.ceil(mapMetrics.width)} ${Math.ceil(mapMetrics.height)}`} preserveAspectRatio="none" aria-label="Map overlays">
 							{#if hoveredOutlinePoints()}
@@ -3964,7 +4195,7 @@
 									type="button"
 									class="danger-text-button"
 									onclick={() => {
-										if (window.confirm(`Reset all local pins for ${mapItem?.title || "this map"}? This cannot be undone.`)) {
+										if (window.confirm(`Reset all local pins for ${currentMap?.title || "this map"}? This cannot be undone.`)) {
 											resetLocalPins();
 										}
 									}}
