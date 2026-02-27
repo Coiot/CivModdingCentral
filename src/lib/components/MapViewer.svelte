@@ -25,7 +25,7 @@
 	const CBRX_PIN_RESET_VERSION = 1;
 	const DEFAULT_TSL_TABLE_NAME = "Civilization_TSLs";
 	const BASE_CACHE_VERSION = 1;
-	const PIN_SYNC_INTERVAL_MS = 60 * 1000;
+	const PIN_SYNC_INTERVAL_MS = 60 * 3000;
 	const BASE_PREFETCH_LIMIT = 3;
 	const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
 	const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
@@ -160,6 +160,7 @@
 	let pinCloudSyncDirty = $state(false);
 	let pinCloudSyncBusy = $state(false);
 	let pinCloudPullBusy = $state(false);
+	let pinCloudSyncNeedsFeedback = $state(false);
 	let labelCloudSyncDirty = $state(false);
 	let labelCloudSyncBusy = $state(false);
 	let labelCloudPullBusy = $state(false);
@@ -1469,15 +1470,16 @@
 
 		if (pinEditTarget === "shared") {
 			setSharedPins(nextPins, { queueSync: true });
+			pinCloudSyncNeedsFeedback = true;
 		} else {
 			setLocalPins(nextPins);
 		}
 		if (existingIndex >= 0) {
 			editPinId = nextPin.id;
-			pinStatus = "Pin updated.";
+			pinStatus = pinEditTarget === "shared" ? "Pin updated. Syncing shared pins to cloud..." : "Pin updated.";
 		} else {
 			resetPinEditor({ clearStatus: false });
-			pinStatus = "Pin added. Enter another civilization to add the next pin.";
+			pinStatus = pinEditTarget === "shared" ? "Pin added. Syncing shared pins to cloud..." : "Pin added. Enter another civilization to add the next pin.";
 		}
 	}
 
@@ -1500,13 +1502,15 @@
 		const nextPins = editablePins.filter((pin) => String(pin.id || "") !== String(pinId));
 		if (target === "shared") {
 			setSharedPins(nextPins, { queueSync: true });
+			pinCloudSyncNeedsFeedback = true;
+			pinStatus = "Pin removed. Syncing shared pins to cloud...";
 		} else {
 			setLocalPins(nextPins);
+			pinStatus = "Pin removed.";
 		}
 		if (String(editPinId || "") === String(pinId)) {
 			resetPinEditor({ clearStatus: false });
 		}
-		pinStatus = "Pin removed.";
 	}
 
 	function loadPinIntoEditor(pin, source) {
@@ -2086,7 +2090,14 @@
 			}
 
 			pinCloudSyncDirty = false;
+			if (pinCloudSyncNeedsFeedback) {
+				pinStatus = "Shared pins saved to cloud.";
+				pinCloudSyncNeedsFeedback = false;
+			}
 		} catch (syncError) {
+			if (pinCloudSyncNeedsFeedback) {
+				pinStatus = `Shared pin sync failed. ${formatSyncErrorMessage(syncError, "Please try again.")}`;
+			}
 			console.error(syncError);
 		} finally {
 			pinCloudSyncBusy = false;
@@ -3226,6 +3237,19 @@
 	function parseNumberInput(value) {
 		const parsed = Number(value);
 		return Number.isFinite(parsed) ? parsed : null;
+	}
+
+	function formatSyncErrorMessage(error, fallback = "Request failed.") {
+		const raw = String(error?.message || "")
+			.replace(/\s+/g, " ")
+			.trim();
+		if (!raw) {
+			return fallback;
+		}
+		if (raw.length > 220) {
+			return `${raw.slice(0, 217)}...`;
+		}
+		return raw;
 	}
 
 	function formatZoomPercentInput(value) {

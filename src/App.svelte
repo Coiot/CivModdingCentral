@@ -218,11 +218,32 @@
 		saveStorageJson(AUTH_STORAGE_KEY, authSession);
 
 		try {
-			const user = await fetchAuthUser(authSession.accessToken);
+			const user = await restoreAuthUserWithRefresh();
 			authUser = user;
 			await resolveUserEditorAccess(user, authSession.accessToken);
-		} catch {
+		} catch (error) {
+			if (!error?.authInvalid) {
+				authMessage = "Unable to restore session right now.";
+				return;
+			}
 			clearAuthSession();
+		}
+	}
+
+	async function restoreAuthUserWithRefresh() {
+		try {
+			return await fetchAuthUser(authSession.accessToken);
+		} catch (error) {
+			const status = Number(error?.status || 0);
+			const canRefresh = Boolean(authSession.refreshToken);
+			if ((status !== 401 && status !== 403) || !canRefresh) {
+				throw error;
+			}
+
+			const refreshed = await refreshAuthSession(authSession.refreshToken);
+			authSession = refreshed;
+			saveStorageJson(AUTH_STORAGE_KEY, refreshed);
+			return await fetchAuthUser(refreshed.accessToken);
 		}
 	}
 
@@ -509,12 +530,40 @@
 
 		const payload = await response.json().catch(() => ({}));
 		if (!response.ok || !payload?.id) {
-			throw new Error(payload?.error_description || payload?.msg || "Unable to restore user session.");
+			const message = payload?.error_description || payload?.msg || "Unable to restore user session.";
+			const error = new Error(message);
+			error.status = response.status;
+			throw error;
 		}
 
 		return {
 			id: payload.id,
 			email: payload.email || "unknown",
+		};
+	}
+
+	async function refreshAuthSession(refreshToken) {
+		const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+			method: "POST",
+			headers: {
+				apikey: SUPABASE_ANON_KEY,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ refresh_token: refreshToken }),
+		});
+
+		const payload = await response.json().catch(() => ({}));
+		if (!response.ok || !payload?.access_token) {
+			const message = payload?.error_description || payload?.msg || payload?.error || "Unable to refresh user session.";
+			const error = new Error(message);
+			error.status = response.status;
+			error.authInvalid = response.status === 400 || response.status === 401 || response.status === 403;
+			throw error;
+		}
+
+		return {
+			accessToken: String(payload.access_token || ""),
+			refreshToken: String(payload.refresh_token || refreshToken || ""),
 		};
 	}
 
