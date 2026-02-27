@@ -59,6 +59,9 @@ export function normalizePins(input, options = {}) {
 		}
 
 		const civ = String(candidate.civ || "").trim();
+		const source = String(candidate.source || "")
+			.trim()
+			.toLowerCase();
 		const col = Number(candidate.col);
 		const row = Number(candidate.row);
 		if (!civ || !Number.isFinite(col) || !Number.isFinite(row)) {
@@ -68,7 +71,8 @@ export function normalizePins(input, options = {}) {
 		const normalizedCol = Math.floor(col);
 		const normalizedRow = Math.floor(row);
 		const civKey = normalizeToken(civ);
-		const dedupeKey = `${normalizedCol},${normalizedRow}:${civKey}`;
+		const sourceKey = source ? `:${source}` : "";
+		const dedupeKey = `${normalizedCol},${normalizedRow}:${civKey}${sourceKey}`;
 		if (seen.has(dedupeKey)) {
 			continue;
 		}
@@ -76,7 +80,9 @@ export function normalizePins(input, options = {}) {
 
 		pins.push({
 			id: String(candidate.id || `${civKey}-${normalizedCol}-${normalizedRow}`),
+			viewId: String(candidate.viewId || candidate.id || `${civKey}-${normalizedCol}-${normalizedRow}`),
 			civ,
+			source,
 			gameDefineName: String(candidate.gameDefineName || "").trim(),
 			leader: String(candidate.leader || "").trim(),
 			author: String(candidate.author || "").trim(),

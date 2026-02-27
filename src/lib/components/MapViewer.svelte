@@ -1394,6 +1394,9 @@
 		if (!pin) {
 			return pinEditTarget;
 		}
+		if (pin.source === "shared" || pin.source === "local") {
+			return pin.source;
+		}
 		if (localPins.some((candidate) => pinMatches(candidate, pin))) {
 			return "local";
 		}
@@ -1510,12 +1513,31 @@
 
 	function getVisiblePins() {
 		if (pinViewMode === "local") {
-			return localPins;
+			return localPins.map((pin) => ({
+				...pin,
+				source: "local",
+				viewId: `local:${pin.id || `${pin.civ}-${pin.col}-${pin.row}`}`,
+			}));
 		}
 		if (pinViewMode === "all") {
-			return sharedPins;
+			return sharedPins.map((pin) => ({
+				...pin,
+				source: "shared",
+				viewId: `shared:${pin.id || `${pin.civ}-${pin.col}-${pin.row}`}`,
+			}));
 		}
-		return [...localPins, ...sharedPins];
+		return [
+			...localPins.map((pin) => ({
+				...pin,
+				source: "local",
+				viewId: `local:${pin.id || `${pin.civ}-${pin.col}-${pin.row}`}`,
+			})),
+			...sharedPins.map((pin) => ({
+				...pin,
+				source: "shared",
+				viewId: `shared:${pin.id || `${pin.civ}-${pin.col}-${pin.row}`}`,
+			})),
+		];
 	}
 
 	function refreshVisiblePins(options = {}) {
@@ -3427,7 +3449,7 @@
 							{#if selectedTilePins.length}
 								<div class="tile-pin-list">
 									<p class="tile-pin-list-title">Civilizations on tile ({selectedTilePins.length})</p>
-									{#each selectedTilePins as pin (pin.id)}
+									{#each selectedTilePins as pin (pin.viewId || pin.id)}
 										{@const source = resolvePinSource(pin)}
 										{@const canEditSource = source === "shared" ? canEdit : true}
 										<div class="tile-pin-item">
