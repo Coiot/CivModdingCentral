@@ -25,8 +25,8 @@
 	let helpWrapEl = $state();
 	let currentPath = $state("/");
 
-	const REDDIT_URL = "https://old.reddit.com/r/civbattleroyale/";
-	const DISCORD_URL = "https://discord.gg/565JwaMsuQ";
+	const REDDIT_URL = "https://old.reddit.com/r/civmoddingcentral/";
+	const DISCORD_URL = "https://discord.gg/yf8jUXf";
 
 	onMount(() => {
 		if (typeof window === "undefined") {
@@ -100,7 +100,8 @@
 	<div class="nav-tools">
 		<nav class="page-nav" aria-label="Primary navigation">
 			<a class={`page-link ${isActivePath("/") ? "is-active" : ""}`} href="/" aria-current={isActivePath("/") ? "page" : undefined}>Map Viewer</a>
-			<a class={`page-link ${isActivePath("/wiki") ? "is-active" : ""}`} href="/wiki" aria-current={isActivePath("/wiki") ? "page" : undefined}>Wiki Template</a>
+			<!-- <a class={`page-link ${isActivePath("/wiki") ? "is-active" : ""}`} href="/wiki" aria-current={isActivePath("/wiki") ? "page" : undefined}>Wiki Template</a> -->
+			<a class={`page-link ${isActivePath("/directory") ? "is-active" : ""}`} href="/directory" aria-current={isActivePath("/directory") ? "page" : undefined}>Directory</a>
 		</nav>
 
 		<a class="social-trigger" href={REDDIT_URL} aria-label="Reddit" title="Reddit" target="_blank" rel="noopener noreferrer">
@@ -246,7 +247,7 @@
 	.brand {
 		display: flex;
 		align-items: center;
-		gap: 0.6rem;
+		gap: 0.75rem;
 	}
 
 	.brand-logo {
@@ -286,13 +287,13 @@
 	}
 
 	.user-dropdown input {
-		border: 1px solid var(--panel-border);
-		background: var(--input-bg);
 		color: var(--ink);
+		font: inherit;
+		background: var(--input-bg);
 		border-radius: 0.5rem;
+		border: 1px solid var(--panel-border);
 		padding-block: 0.36rem;
 		padding-inline: 0.45rem;
-		font: inherit;
 	}
 
 	.page-nav {
@@ -303,14 +304,14 @@
 	}
 
 	.page-link {
-		text-decoration: none;
-		font-size: 0.79rem;
+		font-size: 0.85rem;
 		color: var(--accent);
-		background: color-mix(in oklch, var(--accent) 10%, transparent);
-		padding-block: 0.4rem;
-		padding-inline: 0.62rem;
+		text-decoration: none;
+		background: color-mix(in oklch, var(--accent) 5%, transparent);
+		border: 1px solid color-mix(in oklch, var(--accent) 35%, var(--panel-border));
 		border-radius: 0.5rem;
-		border: 1px dashed color-mix(in oklch, var(--accent) 44%, var(--panel-border));
+		padding-block: 0.4rem;
+		padding-inline: 0.75rem;
 	}
 
 	.page-link:hover {
@@ -318,9 +319,10 @@
 	}
 
 	.page-link.is-active {
-		color: color-mix(in oklch, var(--accent) 76%, var(--ink));
-		background: color-mix(in oklch, var(--accent) 22%, var(--control-bg));
-		border-style: solid;
+		color: color-mix(in oklch, var(--accent) 10%, var(--ink));
+		text-shadow: 0 1px 1px color-mix(in oklch, var(--accent) 95%, var(--ink));
+		background: var(--accent);
+		border: 1px solid color-mix(in oklch, var(--accent) 5%, var(--panel-border));
 	}
 
 	.social-trigger,
@@ -398,14 +400,14 @@
 		top: calc(100% + 0.4rem);
 		right: 0;
 		inline-size: min(330px, 88vw);
-		padding-block: 0.65rem;
-		padding-inline: 0.65rem;
 		display: grid;
 		gap: 0.45rem;
-		border-radius: 0.75rem;
-		border: 1px solid var(--panel-border);
 		background: var(--panel-bg);
+		border: 1px solid var(--panel-border);
+		border-radius: 0.75rem;
 		box-shadow: 0 16px 34px var(--shadow-soft);
+		padding-block: 0.65rem;
+		padding-inline: 0.65rem;
 	}
 
 	.user-theme {
@@ -415,9 +417,9 @@
 	}
 
 	.user-label {
-		margin-block: 0;
-		font-size: 0.75rem;
 		color: var(--muted-ink);
+		font-size: 0.75rem;
+		margin-block: 0;
 	}
 
 	.user-toggle {
@@ -447,28 +449,28 @@
 		top: calc(100% + 0.4rem);
 		right: 0;
 		inline-size: min(360px, 92vw);
-		padding-block: 0.7rem;
-		padding-inline: 0.7rem;
 		display: grid;
 		gap: 0.5rem;
 		border-radius: 0.75rem;
 		border: 1px solid var(--panel-border);
 		background: var(--panel-bg);
 		box-shadow: 0 16px 34px var(--shadow-soft);
+		padding-block: 0.7rem;
+		padding-inline: 0.7rem;
 	}
 
 	.help-header {
+		color: var(--ink);
 		font-size: 0.84rem;
 		font-weight: 700;
 		letter-spacing: 0.02em;
-		color: var(--ink);
 	}
 
 	.help-section h4 {
-		margin-block: 0 0.3rem;
+		color: var(--muted-ink);
 		font-size: 0.8rem;
 		letter-spacing: 0.03em;
-		color: var(--muted-ink);
+		margin-block: 0 0.3rem;
 	}
 
 	.help-list {
@@ -484,8 +486,8 @@
 	.help-list kbd {
 		display: inline-block;
 		color: var(--ink);
-		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 		font-size: 0.75rem;
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 		border-radius: 0.25rem;
 		border: 1px solid color-mix(in oklch, var(--accent) 80%, var(--panel-border));
 		background: color-mix(in oklch, var(--accent) 25%, var(--control-bg));
@@ -520,9 +522,9 @@
 	}
 
 	.user-access {
-		margin-block: 0;
 		font-size: 0.76rem;
 		color: var(--muted-ink);
+		margin-block: 0;
 	}
 
 	.user-access.is-enabled {
@@ -536,8 +538,8 @@
 	.user-dropdown label {
 		display: grid;
 		gap: 0.25rem;
-		font-size: 0.78rem;
 		color: var(--muted-ink);
+		font-size: 0.78rem;
 	}
 
 	.user-actions {
@@ -547,8 +549,8 @@
 	}
 
 	.user-message {
-		font-size: 0.76rem;
 		color: var(--muted-ink);
+		font-size: 0.76rem;
 	}
 
 	.user-message--debug {

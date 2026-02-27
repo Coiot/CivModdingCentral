@@ -2,6 +2,7 @@
 	import { onMount } from "svelte";
 	import MapViewer from "./lib/components/MapViewer.svelte";
 	import Navbar from "./lib/components/Navbar.svelte";
+	import DirectoryPage from "./lib/components/DirectoryPage.svelte";
 	import { maps } from "./lib/config/maps.js";
 
 	const THEME_STORAGE_KEY = "cmc-theme-mode";
@@ -28,6 +29,7 @@
 	let authAccessLoading = $state(false);
 	let authAccessChecked = $state(false);
 	let authAccessDebug = $state("");
+	let currentPath = $state("/");
 	let authSession = $state({
 		accessToken: "",
 		refreshToken: "",
@@ -38,6 +40,14 @@
 	onMount(() => {
 		restoreTheme();
 		void restoreAuth();
+		if (typeof window !== "undefined") {
+			currentPath = window.location.pathname || "/";
+			const handlePopState = () => {
+				currentPath = window.location.pathname || "/";
+			};
+			window.addEventListener("popstate", handlePopState);
+			return () => window.removeEventListener("popstate", handlePopState);
+		}
 	});
 
 	function onMapSelect(mapId) {
@@ -487,12 +497,15 @@
 		onLogout={logout}
 	/>
 
-	<header class="hero">
-		<h1>Interactive Map Viewer</h1>
-		<p>Browse community Civ5 maps with modded Civilization starting location pins.</p>
-	</header>
-
-	{#if selectedMap}
-		<MapViewer mapItem={selectedMap} {maps} selectedMapId={selectedMap?.id || ""} onSelectMap={onMapSelect} {canEdit} {authUser} authAccessToken={authSession.accessToken} />
+	{#if currentPath === "/directory"}
+		<DirectoryPage />
+	{:else}
+		<header class="hero">
+			<h1>Interactive Map Viewer</h1>
+			<p>Browse community Civ5 maps with modded Civilization starting location pins.</p>
+		</header>
+		{#if selectedMap}
+			<MapViewer mapItem={selectedMap} {maps} selectedMapId={selectedMap?.id || ""} onSelectMap={onMapSelect} {canEdit} {authUser} authAccessToken={authSession.accessToken} />
+		{/if}
 	{/if}
 </main>

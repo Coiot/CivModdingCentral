@@ -3962,20 +3962,21 @@
 	.viewer-header {
 		display: flex;
 		justify-content: space-between;
-		align-items: flex-start;
+		align-items: center;
 		gap: 1rem;
 		flex-wrap: wrap;
 	}
 
 	.map-meta {
-		display: grid;
+		display: flex;
+		align-items: baseline;
 		gap: 0.3rem;
 	}
 
 	.map-meta h2 {
+		font-size: clamp(2rem, 2vw, 3rem);
+		letter-spacing: 0.025em;
 		margin-block: 0;
-		font-size: clamp(1.2rem, 1.8vw, 1.5rem);
-		letter-spacing: 0.02em;
 	}
 
 	.map-meta p {
@@ -4123,7 +4124,7 @@
 		overflow: hidden;
 		border: 1px solid var(--panel-border);
 		box-shadow: 0 10px 20px hsl(203deg 44% 14% / 0.2);
-		background: oklch(0.8 0.06 232);
+		background: oklch(0.45 0.005 300);
 		outline: none;
 		touch-action: none;
 	}
@@ -4380,6 +4381,11 @@
 		font: inherit;
 		color: var(--ink);
 		cursor: pointer;
+	}
+
+	.tab-row button:not(:disabled):hover {
+		border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+		background: color-mix(in oklch, var(--control-bg) 70%, var(--accent) 12%);
 	}
 
 	.tab-row button.active {
@@ -4898,6 +4904,11 @@
 		min-inline-size: 0;
 	}
 
+	.panel-body button:not(:disabled):hover {
+		border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+		background: color-mix(in oklch, var(--control-bg) 70%, var(--accent) 12%);
+	}
+
 	.pin-editor-state {
 		margin-block: 0;
 		padding-block: 0.42rem;
@@ -4968,6 +4979,11 @@
 		font: inherit;
 		padding: 0.45rem 0.5rem;
 		cursor: pointer;
+	}
+
+	.pin-mode-buttons button:not(:disabled):hover {
+		border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+		background: color-mix(in oklch, var(--control-bg) 70%, var(--accent) 12%);
 	}
 
 	.pin-mode-buttons button.active {
@@ -5058,7 +5074,7 @@
 	}
 
 	:global(:root[data-theme="dark"]) .tile-map .viewport {
-		background: oklch(0.23 0.012 80);
+		background: oklch(0.25 0.005 200);
 		box-shadow: 0 18px 32px hsl(35deg 22% 4% / 0.38);
 	}
 
