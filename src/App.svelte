@@ -70,6 +70,18 @@
 		});
 	}
 
+	async function ensureMapViewerLoaded() {
+		if (MapViewerComponent || mapViewerLoadError) {
+			return;
+		}
+		try {
+			const module = await import("./lib/components/MapViewer.svelte");
+			MapViewerComponent = module.default;
+		} catch (error) {
+			mapViewerLoadError = error?.message || "Unable to load map viewer.";
+		}
+	}
+
 	function isInternalNavClick(event) {
 		if (event.defaultPrevented || event.button !== 0) {
 			return null;
@@ -139,16 +151,10 @@
 	});
 
 	$effect(() => {
-		if (currentPath === "/directory" || MapViewerComponent || mapViewerLoadError) {
+		if (currentPath === "/directory") {
 			return;
 		}
-		void import("./lib/components/MapViewer.svelte")
-			.then((module) => {
-				MapViewerComponent = module.default;
-			})
-			.catch((error) => {
-				mapViewerLoadError = error?.message || "Unable to load map viewer.";
-			});
+		void ensureMapViewerLoaded();
 	});
 
 	$effect(() => {
@@ -622,18 +628,12 @@
 		<div class="route-shell" in:fade={{ duration: 180 }} out:fade={{ duration: 130 }}>
 			{#if currentPath === "/directory"}
 				<DirectoryPage />
+			{:else if mapViewerLoadError}
+				<p class="status error">{mapViewerLoadError}</p>
+			{:else if MapViewerComponent}
+				<MapViewerComponent {canEdit} {authUser} authAccessToken={authSession.accessToken} />
 			{:else}
-				<header class="hero">
-					<h1>Interactive Map Viewer</h1>
-					<p>Browse community Civ5 maps with modded Civilization starting location pins.</p>
-				</header>
-				{#if mapViewerLoadError}
-					<p class="status error">{mapViewerLoadError}</p>
-				{:else if MapViewerComponent}
-					<MapViewerComponent {canEdit} {authUser} authAccessToken={authSession.accessToken} />
-				{:else}
-					<p class="status">Loading map viewer...</p>
-				{/if}
+				<p class="status">Loading map viewer...</p>
 			{/if}
 		</div>
 	{/key}

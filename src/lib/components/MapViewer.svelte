@@ -45,6 +45,25 @@
 		flattenLandWater: false,
 		grayscaleTerrain: false,
 	};
+	const KNOWN_NATURAL_WONDER_FEATURES = new Set([
+		"FEATURE_CRATER",
+		"FEATURE_FUJI",
+		"FEATURE_MESA",
+		"FEATURE_REEF",
+		"FEATURE_VOLCANO",
+		"FEATURE_GIBRALTAR",
+		"FEATURE_GEYSER",
+		"FEATURE_FOUNTAIN_YOUTH",
+		"FEATURE_POTOSI",
+		"FEATURE_EL_DORADO",
+		"FEATURE_SRI_PADA",
+		"FEATURE_MT_SINAI",
+		"FEATURE_MT_KAILASH",
+		"FEATURE_ULURU",
+		"FEATURE_LAKE_VICTORIA",
+		"FEATURE_KILIMANJARO",
+		"FEATURE_SOLOMONS_MINES",
+	]);
 
 	let viewportEl = $state();
 	let canvasEl = $state();
@@ -654,6 +673,7 @@
 					y: center.y - mapMetrics.minY,
 					terrain: lookupString(baseData.terrainList, raw.terrainType),
 					feature: lookupString(baseData.featureTerrainList, raw.featureTerrainType),
+					naturalWonder: resolveNaturalWonder(baseData, raw),
 					resource: lookupString(baseData.resourceList, raw.resourceType),
 					improvement: raw && raw.improvementType !== undefined ? lookupString(baseData.improvementList, raw.improvementType) : null,
 					riverSegments: buildRiverSegments(raw.riverData, hexSize),
@@ -719,6 +739,7 @@
 			if (!settings.hideDecorations) {
 				drawFeatureGlyph(ctx, tile, featureVertices, hexSize);
 				drawElevationGlyph(ctx, tile, hexSize);
+				drawNaturalWonderGlyph(ctx, tile, hexSize);
 
 				if (tile.resource) {
 					ctx.fillStyle = settings.grayscaleTerrain ? "hsl(0deg 0% 18% / 0.48)" : "hsl(204deg 31% 20% / 0.34)";
@@ -2556,6 +2577,7 @@
 				terrainType: Number.isFinite(rawTile.terrainType) ? rawTile.terrainType : 0,
 				resourceType: Number.isFinite(rawTile.resourceType) ? rawTile.resourceType : 0xff,
 				featureTerrainType: Number.isFinite(rawTile.featureTerrainType) ? rawTile.featureTerrainType : 0xff,
+				featureWonderType: Number.isFinite(rawTile.featureWonderType) ? rawTile.featureWonderType : 0xff,
 				riverData: Number.isFinite(rawTile.riverData) ? rawTile.riverData : 0,
 				elevation: Number.isFinite(rawTile.elevation) ? rawTile.elevation : 0,
 				continent: Number.isFinite(rawTile.continent) ? rawTile.continent : 0,
@@ -2568,12 +2590,57 @@
 			terrainType: 0,
 			resourceType: 0xff,
 			featureTerrainType: 0xff,
+			featureWonderType: 0xff,
 			riverData: 0,
 			elevation: 0,
 			continent: 0,
 			resourceAmount: 0,
 			improvementType: 0xff,
 		};
+	}
+
+	function resolveNaturalWonder(payload, rawTile) {
+		const fromWonderList = lookupString(payload?.featureWonderList, rawTile?.featureWonderType);
+		if (fromWonderList) {
+			return fromWonderList;
+		}
+		const fromFeature = lookupString(payload?.featureTerrainList, rawTile?.featureTerrainType);
+		if (fromFeature && KNOWN_NATURAL_WONDER_FEATURES.has(String(fromFeature).toUpperCase())) {
+			return fromFeature;
+		}
+		return "";
+	}
+
+	function drawNaturalWonderGlyph(ctx, tile, hexSize) {
+		if (!tile?.naturalWonder) {
+			return;
+		}
+
+		const spikes = 5;
+		const outer = Math.max(2.7, hexSize * 0.4);
+		const inner = outer * 0.5;
+		const startAngle = -Math.PI / 2;
+
+		ctx.save();
+		ctx.beginPath();
+		for (let index = 0; index < spikes * 2; index += 1) {
+			const radius = index % 2 === 0 ? outer : inner;
+			const angle = startAngle + (index * Math.PI) / spikes;
+			const x = tile.x + Math.cos(angle) * radius;
+			const y = tile.y + Math.sin(angle) * radius;
+			if (index === 0) {
+				ctx.moveTo(x, y);
+			} else {
+				ctx.lineTo(x, y);
+			}
+		}
+		ctx.closePath();
+		ctx.fillStyle = "hsl(49deg 96% 59% / 0.92)";
+		ctx.strokeStyle = "hsl(31deg 92% 19% / 0.86)";
+		ctx.lineWidth = Math.max(0.7, hexSize * 0.045);
+		ctx.fill();
+		ctx.stroke();
+		ctx.restore();
 	}
 
 	function drawFeatureGlyph(ctx, tile, glyphVertices, hexSize) {
@@ -3277,9 +3344,21 @@
 			.map((token) => token.charAt(0).toUpperCase() + token.slice(1).toLowerCase())
 			.join(" ");
 	}
+
+	function formatNaturalWonderLabel(value) {
+		if (!value) {
+			return "None";
+		}
+		return formatMapLabel(String(value).replace(/^FEATURE_/, ""));
+	}
 </script>
 
-<section class="viewer-wrap tile-map" aria-live="polite">
+<section class="viewer-page tile-map" aria-live="polite">
+	<header class="hero">
+		<h1>Interactive Map Viewer</h1>
+		<p>Browse community Civ5 maps with modded Civilization starting location pins.</p>
+	</header>
+
 	{#if loading}
 		<p class="status">Loading {currentMap?.title || "map"}...</p>
 	{:else if error}
@@ -3291,7 +3370,6 @@
 		<div class="viewer-header">
 			<div class="map-meta">
 				<h2>{currentMap?.title || "Map Viewer"}</h2>
-				<p>{currentMap?.description || "Browse map tiles and manage pins."}</p>
 				<p class="meta-line">
 					{baseData.width}x{baseData.height} tiles, {mapPins.length} Civilization pins
 				</p>
@@ -3483,6 +3561,12 @@
 									<div class="tile-info-row">
 										<div class="tile-info-label">Feature</div>
 										<div class="tile-info-value">{formatMapLabel(hoveredTile.feature)}</div>
+									</div>
+								{/if}
+								{#if hoveredTile.naturalWonder}
+									<div class="tile-info-row">
+										<div class="tile-info-label">Natural Wonder</div>
+										<div class="tile-info-value">{formatNaturalWonderLabel(hoveredTile.naturalWonder)}</div>
 									</div>
 								{/if}
 								<div class="tile-info-row">
@@ -4220,9 +4304,9 @@
 </section>
 
 <style>
-	.viewer-wrap {
+	.viewer-page {
 		display: grid;
-		gap: 1rem;
+		gap: 1.25rem;
 	}
 
 	.status {
@@ -4260,7 +4344,7 @@
 	.map-meta {
 		display: flex;
 		align-items: baseline;
-		gap: 0.3rem;
+		gap: 0.5rem;
 	}
 
 	.map-meta h2 {
