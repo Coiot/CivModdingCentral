@@ -111,3 +111,9 @@ textarea {
 		padding-block: 0.75rem;
 	}
 }
+
+@media (min-width: 1440px) {
+	.page-shell {
+		inline-size: min(98vw, 2400px);
+	}
+}
