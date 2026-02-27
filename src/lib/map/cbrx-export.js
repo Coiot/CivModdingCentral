@@ -134,7 +134,11 @@ function sortPins(pins, sortMode) {
 			if (a.row !== b.row) {
 				return a.row - b.row;
 			}
-			return a.civ.localeCompare(b.civ);
+			const civCompare = a.civ.localeCompare(b.civ);
+			if (civCompare !== 0) {
+				return civCompare;
+			}
+			return String(a.leader || "").localeCompare(String(b.leader || ""));
 		});
 	}
 	if (mode === "none") {
@@ -144,6 +148,14 @@ function sortPins(pins, sortMode) {
 		const civCompare = a.civ.localeCompare(b.civ);
 		if (civCompare !== 0) {
 			return civCompare;
+		}
+		const leaderCompare = String(a.leader || "").localeCompare(String(b.leader || ""));
+		if (leaderCompare !== 0) {
+			return leaderCompare;
+		}
+		const capitalCompare = String(a.capital || "").localeCompare(String(b.capital || ""));
+		if (capitalCompare !== 0) {
+			return capitalCompare;
 		}
 		if (a.col !== b.col) {
 			return a.col - b.col;
@@ -172,6 +184,8 @@ export function normalizePinsForExport(input) {
 		}
 
 		const gameDefineName = String(candidate.gameDefineName || "").trim() || buildDefaultGameDefineName(civ);
+		const leader = String(candidate.leader || "").trim();
+		const capital = String(candidate.capital || "").trim();
 		const col = Number(candidate.col);
 		const row = Number(candidate.row);
 		if (!Number.isFinite(col) || !Number.isFinite(row)) {
@@ -181,7 +195,9 @@ export function normalizePinsForExport(input) {
 		const normalizedCol = Math.floor(col);
 		const normalizedRow = Math.floor(row);
 		const civKey = normalizeCivKey(civ);
-		const dedupeKey = `${normalizedCol},${normalizedRow}:${civKey}`;
+		const leaderKey = normalizeCivKey(leader);
+		const capitalKey = normalizeCivKey(capital);
+		const dedupeKey = `${normalizedCol},${normalizedRow}:${civKey}:${leaderKey}:${capitalKey}`;
 		if (seen.has(dedupeKey)) {
 			continue;
 		}
@@ -190,6 +206,8 @@ export function normalizePinsForExport(input) {
 		pins.push({
 			civ,
 			gameDefineName,
+			leader,
+			capital,
 			col: normalizedCol,
 			row: normalizedRow,
 			isIsland: parseIslandFlag(candidate.isIsland),
@@ -206,12 +224,19 @@ export function findDuplicateCivs(pins) {
 
 	const counts = new Map();
 	for (const pin of pins) {
-		const key = normalizeCivKey(pin?.civ || "");
+		const civ = String(pin?.civ || "").trim();
+		const leader = String(pin?.leader || "").trim();
+		const key = `${normalizeCivKey(civ)}::${normalizeCivKey(leader)}`;
 		if (!key) {
 			continue;
 		}
 		if (!counts.has(key)) {
-			counts.set(key, { civ: String(pin.civ || ""), count: 1 });
+			counts.set(key, {
+				civ,
+				leader,
+				label: leader ? `${civ} (${leader})` : civ,
+				count: 1,
+			});
 			continue;
 		}
 		const entry = counts.get(key);
@@ -220,7 +245,7 @@ export function findDuplicateCivs(pins) {
 
 	return Array.from(counts.values())
 		.filter((entry) => entry.count > 1)
-		.sort((a, b) => a.civ.localeCompare(b.civ));
+		.sort((a, b) => a.label.localeCompare(b.label));
 }
 
 export function buildCbrxTslSql(options = {}) {

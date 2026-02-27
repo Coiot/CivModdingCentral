@@ -71,21 +71,31 @@ export function normalizePins(input, options = {}) {
 		const normalizedCol = Math.floor(col);
 		const normalizedRow = Math.floor(row);
 		const civKey = normalizeToken(civ);
+		const leader = String(candidate.leader || "").trim();
+		const capital = String(candidate.capital || "").trim();
+		const author = String(candidate.author || "").trim();
+		const gameDefineName = String(candidate.gameDefineName || "").trim();
+		const leaderKey = normalizeToken(leader);
+		const capitalKey = normalizeToken(capital);
+		const explicitId = String(candidate.id || "").trim();
+		const fallbackId = `${civKey || "civ"}-${leaderKey || "leader"}-${capitalKey || "capital"}-${normalizedCol}-${normalizedRow}`;
+		const pinId = explicitId || fallbackId;
 		const sourceKey = source ? `:${source}` : "";
-		const dedupeKey = `${normalizedCol},${normalizedRow}:${civKey}${sourceKey}`;
+		const dedupeKey = explicitId ? `id:${explicitId}${sourceKey}` : `${normalizedCol},${normalizedRow}:${civKey}:${leaderKey}:${capitalKey}${sourceKey}`;
 		if (seen.has(dedupeKey)) {
 			continue;
 		}
 		seen.add(dedupeKey);
 
 		pins.push({
-			id: String(candidate.id || `${civKey}-${normalizedCol}-${normalizedRow}`),
-			viewId: String(candidate.viewId || candidate.id || `${civKey}-${normalizedCol}-${normalizedRow}`),
+			id: pinId,
+			viewId: String(candidate.viewId || pinId),
 			civ,
 			source,
-			gameDefineName: String(candidate.gameDefineName || "").trim(),
-			leader: String(candidate.leader || "").trim(),
-			author: String(candidate.author || "").trim(),
+			gameDefineName,
+			leader,
+			capital,
+			author,
 			col: normalizedCol,
 			row: normalizedRow,
 			primary: sanitizeHexColor(candidate.primary, primaryFallback),
@@ -102,8 +112,8 @@ export function buildPinsSignature(input) {
 		.map(
 			(pin) =>
 				`${pin.col}|${pin.row}|${normalizeToken(pin.civ)}|${normalizeToken(pin.gameDefineName)}|${normalizeToken(pin.leader)}|${normalizeToken(
-					pin.author,
-				)}|${pin.primary}|${pin.secondary}|${pin.isIsland ? "1" : "0"}`,
+					pin.capital,
+				)}|${normalizeToken(pin.author)}|${pin.primary}|${pin.secondary}|${pin.isIsland ? "1" : "0"}|${String(pin.id || "")}`,
 		)
 		.sort((a, b) => a.localeCompare(b))
 		.join(";");

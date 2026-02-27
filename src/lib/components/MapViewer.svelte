@@ -30,6 +30,7 @@
 	const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 	const SUPABASE_PINS_TABLE = import.meta.env.VITE_SUPABASE_PINS_TABLE || "cmc_map_pins";
 	const SUPABASE_LABELS_TABLE = import.meta.env.VITE_SUPABASE_LABELS_TABLE || "cmc_map_labels";
+	const DEFAULT_GAME_DEFINE_PREFIX = "CIVILIZATION_";
 	const PANEL_COLLAPSED_ICON_PATH =
 		"M544 512C526.3 512 512 497.7 512 480L512 160C512 142.3 526.3 128 544 128C561.7 128 576 142.3 576 160L576 480C576 497.7 561.7 512 544 512zM71 337C61.6 327.6 61.6 312.4 71 303.1L215 159C221.9 152.1 232.2 150.1 241.2 153.8C250.2 157.5 256 166.3 256 176L256 256L400 256C426.5 256 448 277.5 448 304L448 336C448 362.5 426.5 384 400 384L256 384L256 464C256 473.7 250.2 482.5 241.2 486.2C232.2 489.9 221.9 487.9 215 481L71 337z";
 	const PANEL_EXPANDED_ICON_PATH =
@@ -102,9 +103,10 @@
 	let hasUserViewportInteraction = $state(false);
 
 	let editPinCivInput = $state("");
+	let editPinId = $state("");
 	let editPinGameDefineInput = $state("");
-	let editPinGameDefineAuto = $state(true);
 	let editPinLeaderInput = $state("");
+	let editPinCapitalInput = $state("");
 	let editPinAuthorInput = $state("");
 	let editPinPrimaryInput = $state("#243746");
 	let editPinSecondaryInput = $state("#f3d37f");
@@ -120,6 +122,7 @@
 	let editLabelRotationInput = $state("0");
 	let editLabelMinZoomInput = $state("");
 	let editLabelMaxZoomInput = $state("");
+	let pinStatus = $state("");
 	let labelStatus = $state("");
 	let notesDraft = $state("");
 	let notesStatus = $state("");
@@ -153,10 +156,10 @@
 	const hoveredTilePins = $derived.by(() => (hoveredTile ? pinsForTile(hoveredTile) : []));
 	const selectedCivToken = $derived.by(() => normalizeToken(editPinCivInput));
 	const matchedSelectedPin = $derived.by(() => {
-		if (!selectedTilePins.length || !selectedCivToken) {
+		if (!selectedTilePins.length || !editPinId) {
 			return null;
 		}
-		return selectedTilePins.find((pin) => normalizeToken(pin.civ) === selectedCivToken) || null;
+		return selectedTilePins.find((pin) => String(pin.id || "") === String(editPinId)) || null;
 	});
 	const pinEditorMode = $derived.by(() => {
 		if (matchedSelectedPin) {
@@ -206,16 +209,16 @@
 	});
 	const primaryColorDisplay = $derived.by(() => formatColorDisplay(editPinPrimaryInput, "#243746"));
 	const secondaryColorDisplay = $derived.by(() => formatColorDisplay(editPinSecondaryInput, "#f3d37f"));
-	const upsertCivButtonLabel = $derived.by(() => (pinEditorMode === "edit" ? "Update Civilization" : "Add Civilization"));
+	const upsertCivButtonLabel = $derived.by(() => (pinEditorMode === "edit" ? "Update Pin" : "Add Pin"));
 	const upsertLabelButtonLabel = $derived.by(() => (labelEditorMode === "edit" ? "Update Label" : "Add Label"));
 	const pinEditorStatus = $derived.by(() => {
-		if (pinEditorMode === "edit") {
-			return `Editing "${matchedSelectedPin.civ}" on this tile.`;
+		if (pinEditorMode === "edit" && matchedSelectedPin) {
+			return `Editing "${pinDisplayName(matchedSelectedPin)}". Click "New Entry" to add another pin on this tile.`;
 		}
 		if (pinEditorMode === "add") {
-			return `Adding "${String(editPinCivInput || "").trim()}" to this tile.`;
+			return `Ready to add "${String(editPinCivInput || "").trim()}". Click "Add Civilization" to save.`;
 		}
-		return "Enter a civilization name to add to this tile.";
+		return "Type a civilization name to add a pin, or load one below to edit it.";
 	});
 	const labelEditorStatus = $derived.by(() => {
 		if (labelEditorMode === "edit" && matchedSelectedCustomLabel) {
@@ -989,6 +992,9 @@
 	}
 
 	function selectTile(tileKey) {
+		if (selectedTileKey !== tileKey) {
+			pinStatus = "";
+		}
 		selectedTileKey = tileKey;
 		syncEditorsFromSelection();
 	}
@@ -1005,31 +1011,71 @@
 		editLabelMaxZoomInput = "";
 	}
 
-	function deriveGameDefineName(value) {
-		const trimmed = String(value || "").trim();
-		if (!trimmed) {
-			return "";
+	function createPinId(civ, leader, tile) {
+		if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+			return `pin-${crypto.randomUUID()}`;
 		}
-		const normalized = trimmed
-			.toUpperCase()
-			.replace(/[^A-Z0-9]+/g, "_")
-			.replace(/^_+|_+$/g, "");
-		return `CIVILIZATION_${normalized}`;
+		const civKey = normalizeToken(civ) || "civ";
+		const leaderKey = normalizeToken(leader) || "leader";
+		const stamp = Date.now().toString(36);
+		const rand = Math.floor(Math.random() * 0xffffff)
+			.toString(36)
+			.padStart(4, "0");
+		return `${civKey}-${leaderKey}-${tile.col}-${tile.sourceRow}-${stamp}-${rand}`;
+	}
+
+	function resetPinEditor(options = {}) {
+		editPinId = "";
+		editPinCivInput = "";
+		editPinGameDefineInput = DEFAULT_GAME_DEFINE_PREFIX;
+		editPinLeaderInput = "";
+		editPinCapitalInput = "";
+		editPinAuthorInput = "";
+		editPinPrimaryInput = "#243746";
+		editPinSecondaryInput = "#f3d37f";
+		editPinPrimaryHexInput = "#243746";
+		editPinSecondaryHexInput = "#f3d37f";
+		editPinIsIsland = false;
+		if (options.clearStatus !== false) {
+			pinStatus = "";
+		}
+	}
+
+	function applyPinToEditor(pin) {
+		editPinId = String(pin.id || "");
+		editPinCivInput = pin.civ || "";
+		editPinGameDefineInput = pin.gameDefineName || DEFAULT_GAME_DEFINE_PREFIX;
+		editPinLeaderInput = pin.leader || "";
+		editPinCapitalInput = pin.capital || "";
+		editPinAuthorInput = pin.author || "";
+		editPinPrimaryInput = sanitizeHexColor(pin.primary, "#243746");
+		editPinSecondaryInput = sanitizeHexColor(pin.secondary, "#f3d37f");
+		editPinPrimaryHexInput = editPinPrimaryInput.toUpperCase();
+		editPinSecondaryHexInput = editPinSecondaryInput.toUpperCase();
+		editPinIsIsland = Boolean(pin.isIsland);
+	}
+
+	function pinDisplayName(pin) {
+		if (!pin) {
+			return "Civilization";
+		}
+		const civ = String(pin.civ || "").trim() || "Civilization";
+		const leader = String(pin.leader || "").trim();
+		return leader ? `${civ} (${leader})` : civ;
+	}
+
+	function startNewPinEntry() {
+		if (!selectedTile || !canEditPins) {
+			return;
+		}
+		resetPinEditor({ clearStatus: false });
+		pinStatus = "Ready to add a new civilization pin on this tile.";
 	}
 
 	function syncEditorsFromSelection() {
 		const tile = selectedTile;
 		if (!tile) {
-			editPinCivInput = "";
-			editPinGameDefineInput = "";
-			editPinGameDefineAuto = true;
-			editPinLeaderInput = "";
-			editPinAuthorInput = "";
-			editPinPrimaryInput = "#243746";
-			editPinSecondaryInput = "#f3d37f";
-			editPinPrimaryHexInput = "#243746";
-			editPinSecondaryHexInput = "#f3d37f";
-			editPinIsIsland = false;
+			resetPinEditor();
 			notesDraft = "";
 			resetLabelEditor();
 			labelStatus = "";
@@ -1038,22 +1084,12 @@
 
 		notesDraft = notesByKey[tile.key] || "";
 
-		const pin = pinsForTile(tile)[0] || null;
-		editPinCivInput = pin?.civ || "";
-		if (pin?.gameDefineName) {
-			editPinGameDefineInput = pin.gameDefineName;
-			editPinGameDefineAuto = false;
+		const activePin = editPinId ? pinsForTile(tile).find((pin) => String(pin.id || "") === String(editPinId)) || null : null;
+		if (activePin) {
+			applyPinToEditor(activePin);
 		} else {
-			editPinGameDefineInput = deriveGameDefineName(pin?.civ || "");
-			editPinGameDefineAuto = true;
+			resetPinEditor({ clearStatus: false });
 		}
-		editPinLeaderInput = pin?.leader || "";
-		editPinAuthorInput = pin?.author || "";
-		editPinPrimaryInput = sanitizeHexColor(pin?.primary, "#243746");
-		editPinSecondaryInput = sanitizeHexColor(pin?.secondary, "#f3d37f");
-		editPinPrimaryHexInput = editPinPrimaryInput.toUpperCase();
-		editPinSecondaryHexInput = editPinSecondaryInput.toUpperCase();
-		editPinIsIsland = Boolean(pin?.isIsland);
 
 		const label = labelsForTile(tile)[0] || null;
 		if (label) {
@@ -1227,22 +1263,23 @@
 			return;
 		}
 
-		const civKey = normalizeToken(civ);
-		const gameDefineName = String(editPinGameDefineInput || "").trim() || deriveGameDefineName(civ);
+		const gameDefineName = String(editPinGameDefineInput || "").trim() || DEFAULT_GAME_DEFINE_PREFIX;
 		const leader = String(editPinLeaderInput || "").trim();
+		const capital = String(editPinCapitalInput || "").trim();
 		const author = String(editPinAuthorInput || "").trim();
 		const primary = sanitizeHexColor(editPinPrimaryInput, "#243746");
 		const secondary = sanitizeHexColor(editPinSecondaryInput, "#f3d37f");
 
 		const editablePins = pinEditTarget === "shared" ? sharedPins : localPins;
 		const nextPins = [...editablePins];
-		const existingIndex = nextPins.findIndex((pin) => Number(pin.col) === tile.col && Number(pin.row) === tile.sourceRow && normalizeToken(pin.civ) === civKey);
+		const existingIndex = editPinId ? nextPins.findIndex((pin) => String(pin.id || "") === String(editPinId)) : -1;
 
 		const nextPin = {
-			id: existingIndex >= 0 ? nextPins[existingIndex].id : `${civKey}-${tile.col}-${tile.sourceRow}`,
+			id: existingIndex >= 0 ? String(nextPins[existingIndex].id || "") : createPinId(civ, leader, tile),
 			civ,
 			gameDefineName,
 			leader,
+			capital,
 			author,
 			col: tile.col,
 			row: tile.sourceRow,
@@ -1262,32 +1299,20 @@
 		} else {
 			setLocalPins(nextPins);
 		}
-		syncEditorsFromSelection();
+		if (existingIndex >= 0) {
+			editPinId = nextPin.id;
+			pinStatus = "Pin updated.";
+		} else {
+			resetPinEditor({ clearStatus: false });
+			pinStatus = "Pin added. Enter another civilization to add the next pin.";
+		}
 	}
 
 	function removePin() {
-		if (!canEditPins) {
+		if (!canEditPins || !editPinId) {
 			return;
 		}
-
-		const tile = selectedTile;
-		if (!tile) {
-			return;
-		}
-
-		const civKey = normalizeToken(editPinCivInput);
-		if (!civKey) {
-			return;
-		}
-
-		const editablePins = pinEditTarget === "shared" ? sharedPins : localPins;
-		const nextPins = editablePins.filter((pin) => !(Number(pin.col) === tile.col && Number(pin.row) === tile.sourceRow && normalizeToken(pin.civ) === civKey));
-		if (pinEditTarget === "shared") {
-			setSharedPins(nextPins, { queueSync: true });
-		} else {
-			setLocalPins(nextPins);
-		}
-		syncEditorsFromSelection();
+		removePinById(editPinId, pinEditTarget);
 	}
 
 	function removePinById(pinId, source) {
@@ -1299,13 +1324,16 @@
 			return;
 		}
 		const editablePins = target === "shared" ? sharedPins : localPins;
-		const nextPins = editablePins.filter((pin) => pin.id !== pinId);
+		const nextPins = editablePins.filter((pin) => String(pin.id || "") !== String(pinId));
 		if (target === "shared") {
 			setSharedPins(nextPins, { queueSync: true });
 		} else {
 			setLocalPins(nextPins);
 		}
-		syncEditorsFromSelection();
+		if (String(editPinId || "") === String(pinId)) {
+			resetPinEditor({ clearStatus: false });
+		}
+		pinStatus = "Pin removed.";
 	}
 
 	function loadPinIntoEditor(pin, source) {
@@ -1316,21 +1344,8 @@
 		if (target === "local" || canEdit) {
 			setPinEditTarget(target);
 		}
-		editPinCivInput = pin.civ || "";
-		if (pin.gameDefineName) {
-			editPinGameDefineInput = pin.gameDefineName;
-			editPinGameDefineAuto = false;
-		} else {
-			editPinGameDefineInput = deriveGameDefineName(pin.civ || "");
-			editPinGameDefineAuto = true;
-		}
-		editPinLeaderInput = pin.leader || "";
-		editPinAuthorInput = pin.author || "";
-		editPinPrimaryInput = sanitizeHexColor(pin.primary, "#243746");
-		editPinSecondaryInput = sanitizeHexColor(pin.secondary, "#f3d37f");
-		editPinPrimaryHexInput = editPinPrimaryInput.toUpperCase();
-		editPinSecondaryHexInput = editPinSecondaryInput.toUpperCase();
-		editPinIsIsland = Boolean(pin.isIsland);
+		applyPinToEditor(pin);
+		pinStatus = "";
 	}
 
 	function updatePinColorFromPicker(kind, value) {
@@ -1377,7 +1392,19 @@
 			return [];
 		}
 
-		return mapPins.filter((pin) => Number(pin.col) === tile.col && Number(pin.row) === tile.sourceRow).sort((a, b) => a.civ.localeCompare(b.civ));
+		return mapPins
+			.filter((pin) => Number(pin.col) === tile.col && Number(pin.row) === tile.sourceRow)
+			.sort((a, b) => {
+				const civCompare = String(a.civ || "").localeCompare(String(b.civ || ""));
+				if (civCompare !== 0) {
+					return civCompare;
+				}
+				const leaderCompare = String(a.leader || "").localeCompare(String(b.leader || ""));
+				if (leaderCompare !== 0) {
+					return leaderCompare;
+				}
+				return String(a.capital || "").localeCompare(String(b.capital || ""));
+			});
 	}
 
 	function pinMatches(a, b) {
@@ -1387,7 +1414,13 @@
 		if (a.id && b.id && a.id === b.id) {
 			return true;
 		}
-		return Number(a.col) === Number(b.col) && Number(a.row) === Number(b.row) && normalizeToken(a.civ) === normalizeToken(b.civ);
+		return (
+			Number(a.col) === Number(b.col) &&
+			Number(a.row) === Number(b.row) &&
+			normalizeToken(a.civ) === normalizeToken(b.civ) &&
+			normalizeToken(a.leader) === normalizeToken(b.leader) &&
+			normalizeToken(a.capital) === normalizeToken(b.capital)
+		);
 	}
 
 	function resolvePinSource(pin) {
@@ -1439,7 +1472,7 @@
 		if (!group || !Array.isArray(group.pins) || !group.pins.length) {
 			return "Pinned civilization location";
 		}
-		const civNames = group.pins.map((pin) => pin.civ).filter(Boolean);
+		const civNames = group.pins.map((pin) => pinDisplayName(pin)).filter(Boolean);
 		if (!civNames.length) {
 			return "Pinned civilization location";
 		}
@@ -1731,7 +1764,7 @@
 
 		const duplicates = findDuplicateCivs(normalizedPins);
 		if (duplicates.length) {
-			warnings.push(`Duplicate civ entries: ${duplicates.map((entry) => `${entry.civ} (${entry.count})`).join(", ")}`);
+			warnings.push(`Duplicate civ entries: ${duplicates.map((entry) => `${entry.label || entry.civ} (${entry.count})`).join(", ")}`);
 		}
 
 		const normalizedTableName = DEFAULT_TSL_TABLE_NAME;
@@ -3287,19 +3320,7 @@
 							<div class="pin-meta-row">
 								<label class="pin-meta-field ui-tooltip-anchor">
 									Civilization
-									<input
-										type="text"
-										value={editPinCivInput}
-										oninput={(event) => {
-											const value = event.currentTarget.value;
-											editPinCivInput = value;
-											if (editPinGameDefineAuto || !editPinGameDefineInput) {
-												editPinGameDefineInput = deriveGameDefineName(value);
-												editPinGameDefineAuto = true;
-											}
-										}}
-										disabled={!canEditPins}
-									/>
+									<input type="text" value={editPinCivInput} oninput={(event) => (editPinCivInput = event.currentTarget.value)} disabled={!canEditPins} />
 									{#if !canEditPins}
 										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
 									{/if}
@@ -3307,6 +3328,13 @@
 								<label class="pin-meta-field ui-tooltip-anchor">
 									Leader
 									<input type="text" value={editPinLeaderInput} oninput={(event) => (editPinLeaderInput = event.currentTarget.value)} disabled={!canEditPins} />
+									{#if !canEditPins}
+										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
+									{/if}
+								</label>
+								<label class="pin-meta-field ui-tooltip-anchor">
+									Capital
+									<input type="text" value={editPinCapitalInput} oninput={(event) => (editPinCapitalInput = event.currentTarget.value)} disabled={!canEditPins} />
 									{#if !canEditPins}
 										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
 									{/if}
@@ -3323,10 +3351,7 @@
 									<input
 										type="text"
 										value={editPinGameDefineInput}
-										oninput={(event) => {
-											editPinGameDefineInput = event.currentTarget.value;
-											editPinGameDefineAuto = false;
-										}}
+										oninput={(event) => (editPinGameDefineInput = event.currentTarget.value)}
 										placeholder="CIVILIZATION_..."
 										spellcheck="false"
 										disabled={!canEditPins}
@@ -3414,38 +3439,53 @@
 							</div>
 							<div class="button-row pin-action-row">
 								<span class="ui-tooltip-wrap">
-									<button type="button" onclick={addOrUpdatePin} disabled={!canEditPins || pinEditorMode === "idle"}>{upsertCivButtonLabel}</button>
+									<button type="button" onclick={startNewPinEntry} disabled={!canEditPins}>New Pin</button>
+									{#if !canEditPins}
+										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
+									{/if}
 								</span>
+
 								<span class="ui-tooltip-wrap">
-									<button
-										type="button"
-										class="danger-icon-button"
-										onclick={removePin}
-										disabled={!canEditPins || !matchedSelectedPin}
-										aria-label="Remove civilization"
-										title="Remove civilization"
-									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="18"
-											height="18"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											aria-hidden="true"
-										>
-											<path d="M10 11v6" />
-											<path d="M14 11v6" />
-											<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-											<path d="M3 6h18" />
-											<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-										</svg>
-									</button>
+									<button type="button" onclick={addOrUpdatePin} disabled={!canEditPins || pinEditorMode === "idle"}>{upsertCivButtonLabel}</button>
+									{#if !canEditPins}
+										<span class="ui-tooltip">Sign in or switch to local to edit pins.</span>
+									{:else if pinEditorMode === "idle"}
+										<span class="ui-tooltip">Enter a name before saving.</span>
+									{/if}
 								</span>
+
+								<button
+									type="button"
+									class="danger-icon-button"
+									style="flex-grow: 0; inline-size: fit-content;"
+									onclick={removePin}
+									disabled={!canEditPins || !matchedSelectedPin}
+									aria-label="Remove civilization"
+									title="Remove civilization"
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="18"
+										height="18"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										aria-hidden="true"
+									>
+										<path d="M10 11v6" />
+										<path d="M14 11v6" />
+										<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+										<path d="M3 6h18" />
+										<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+									</svg>
+								</button>
 							</div>
+							{#if pinStatus}
+								<p class="status-inline">{pinStatus}</p>
+							{/if}
 							{#if selectedTilePins.length}
 								<div class="tile-pin-list">
 									<p class="tile-pin-list-title">Civilizations on tile ({selectedTilePins.length})</p>
@@ -3456,7 +3496,7 @@
 											<span class="ui-tooltip-wrap">
 												<button type="button" class="tile-pin-load" onclick={() => loadPinIntoEditor(pin, source)} disabled={!canEditSource}>
 													<span class="tile-pin-swatch" style={pinStyle(pin)}></span>
-													<span>{pin.civ}</span>
+													<span>{pinDisplayName(pin)}</span>
 													<span class="tile-pin-meta">{source === "shared" ? "Shared" : "Local"}</span>
 												</button>
 												{#if !canEditSource}
@@ -3469,8 +3509,8 @@
 													class="tile-pin-remove danger-icon-button"
 													onclick={() => removePinById(pin.id, source)}
 													disabled={!canEditSource}
-													aria-label={`Remove ${pin.civ}`}
-													title={`Remove ${pin.civ}`}
+													aria-label={`Remove ${pinDisplayName(pin)}`}
+													title={`Remove ${pinDisplayName(pin)}`}
 												>
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
@@ -4902,16 +4942,23 @@
 	}
 
 	.pin-action-row {
+		inline-size: stretch;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-	}
 
-	.pin-action-row > :first-child {
-		flex: 1 1 12rem;
+		.ui-tooltip-wrap {
+			flex: 1;
+		}
+
+		button {
+			flex: 1;
+			text-wrap: nowrap;
+		}
 	}
 
 	.panel-body button {
+		min-inline-size: 0;
 		border: 1px solid var(--panel-border);
 		border-radius: 0.55rem;
 		background: var(--control-bg);
@@ -4920,7 +4967,6 @@
 		cursor: pointer;
 		padding-block: 0.42rem;
 		padding-inline: 0.62rem;
-		min-inline-size: 0;
 	}
 
 	.panel-body button:not(:disabled):hover {
