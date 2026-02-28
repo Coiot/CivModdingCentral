@@ -205,6 +205,7 @@
 	let atlasType = $state("icon");
 	let atlasCompressionEnabled = $state(true);
 	let atlasEncoderBackend = $state("dxtjs");
+	let atlasNativeQualityInput = $state("1");
 	let atlasResampleMode = $state("bicubic");
 	let atlasAlphaAware = $state(false);
 	let atlasSharpenAmountInput = $state("0");
@@ -246,6 +247,7 @@
 	const atlasHasSizeSelection = $derived(atlasSelectedSizes.length > 0);
 	const activeAtlasTypeConfig = $derived(BUNDLE_ATLAS_TYPES[atlasType] || BUNDLE_ATLAS_TYPES.icon);
 	const activeEncoderBackend = $derived(normalizeEncoderBackend(atlasEncoderBackend));
+	const activeNativeQuality = $derived(parseBoundedFloat(atlasNativeQualityInput, 0, 1, 1));
 	const activeAtlasResampleMode = $derived(normalizeResampleMode(atlasResampleMode));
 	const atlasSharpenAmount = $derived(parseBoundedFloat(atlasSharpenAmountInput, 0, 1, 0));
 	const activeAtlasEncoderMode = $derived(normalizeEncoderMode(atlasEncoderMode));
@@ -700,6 +702,7 @@
 				form.append("resizeSheet", "1");
 				form.append("padToMultipleOf4", "1");
 				form.append("encoderBackend", activeEncoderBackend);
+				form.append("nativeQuality", String(activeNativeQuality));
 				form.append("resampleMode", activeAtlasResampleMode);
 				form.append("alphaAware", atlasAlphaAware ? "1" : "0");
 				form.append("sharpenAmount", String(atlasSharpenAmount));
@@ -744,6 +747,7 @@
 				colorMetric: response.headers.get("x-color-metric") || "",
 				weightByAlpha: response.headers.get("x-weight-by-alpha") || "",
 				encoderBackend: response.headers.get("x-encoder-backend") || "",
+				nativeQuality: response.headers.get("x-native-quality") || "",
 			};
 
 			if (workflow === "icon_bundle") {
@@ -957,6 +961,12 @@
 								{/each}
 							</select>
 						</label>
+						{#if activeEncoderBackend === "native"}
+							<label>
+								Native Quality
+								<input type="number" min="0" max="1" step="0.05" value={String(activeNativeQuality)} oninput={(event) => (atlasNativeQualityInput = event.currentTarget.value)} />
+							</label>
+						{/if}
 						<label>
 							Resample Mode
 							<select value={activeAtlasResampleMode} onchange={(event) => (atlasResampleMode = event.currentTarget.value)}>
@@ -1167,6 +1177,9 @@
 					{/if}
 					{#if conversionMeta.encoderBackend}
 						<span>Backend: {conversionMeta.encoderBackend}</span>
+					{/if}
+					{#if conversionMeta.nativeQuality}
+						<span>Native quality: {conversionMeta.nativeQuality}</span>
 					{/if}
 					{#if conversionMeta.colorMetric}
 						<span>Metric: {conversionMeta.colorMetric}</span>

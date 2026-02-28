@@ -85,6 +85,7 @@ export async function handler(event) {
 			return json(400, { error: "PNG dimensions are invalid." });
 		}
 		const encoderBackend = normalizeEncoderBackend(form.fields.encoderBackend);
+		const nativeQuality = resolveNativeQuality(form.fields.nativeQuality ?? process.env.CMC_DDS_NATIVE_QUALITY, 1);
 
 		const workflow = normalizeWorkflow(form.fields.workflow);
 		if (workflow === "icon_bundle") {
@@ -94,6 +95,7 @@ export async function handler(event) {
 				sourceWidth,
 				sourceHeight,
 				encoderBackend,
+				nativeQuality,
 			});
 		}
 
@@ -116,6 +118,7 @@ export async function handler(event) {
 				format: chosenFormat,
 				backend: encoderBackend,
 				dxtFlags: dxt.flags[chosenFormat],
+				nativeQuality,
 			});
 		} catch (error) {
 			return json(500, { error: error?.message || "DDS compression failed." });
@@ -135,6 +138,7 @@ export async function handler(event) {
 				"X-Output-Height": String(padded.height),
 				"X-Compression-Format": chosenFormat,
 				"X-Encoder-Backend": encoderBackend,
+				"X-Native-Quality": encoderBackend === ENCODER_BACKEND_NATIVE ? String(nativeQuality) : "",
 			},
 			body: ddsPayload.toString("base64"),
 		};
@@ -144,7 +148,7 @@ export async function handler(event) {
 	}
 }
 
-async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, encoderBackend }) {
+async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, encoderBackend, nativeQuality }) {
 	const selectedSizes = parseSizeList(form.fields.selectedSizes);
 	if (!selectedSizes.length) {
 		return json(400, { error: "Select at least one output icon size." });
@@ -211,6 +215,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 				format: requestedFormat,
 				backend: encoderBackend,
 				dxtFlags: compressionFlags,
+				nativeQuality,
 			});
 			files.push({
 				name: `${filePrefix}_${fileSuffix}_${size}.dds`,
@@ -241,6 +246,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 			"X-Color-Metric": colorMetric,
 			"X-Weight-By-Alpha": weightColorByAlpha ? "1" : "0",
 			"X-Encoder-Backend": encoderBackend,
+			"X-Native-Quality": encoderBackend === ENCODER_BACKEND_NATIVE ? String(nativeQuality) : "",
 		},
 		body: zipBuffer.toString("base64"),
 	};
@@ -354,13 +360,14 @@ function normalizeEncoderBackend(input) {
 	return ENCODER_BACKEND_DXTJS;
 }
 
-async function encodeDdsWithBackend({ rgbaData, width, height, format, backend, dxtFlags }) {
+async function encodeDdsWithBackend({ rgbaData, width, height, format, backend, dxtFlags, nativeQuality }) {
 	if (backend === ENCODER_BACKEND_NATIVE) {
 		return await encodeDdsWithCompressonator({
 			rgbaData,
 			width,
 			height,
 			format,
+			nativeQuality,
 		});
 	}
 	return encodeDdsWithDxtJs({
@@ -383,7 +390,7 @@ function encodeDdsWithDxtJs({ rgbaData, width, height, format, dxtFlags }) {
 	});
 }
 
-async function encodeDdsWithCompressonator({ rgbaData, width, height, format }) {
+async function encodeDdsWithCompressonator({ rgbaData, width, height, format, nativeQuality = 1 }) {
 	const executable = await resolveNativeEncoderBinary();
 	if (!executable) {
 		throw new Error(`Native encoder selected but CompressonatorCLI is not configured. Set one of: ${NATIVE_BIN_ENV_KEYS.join(", ")} or ensure CLI exists under /opt/compressonator.`);
@@ -401,7 +408,8 @@ async function encodeDdsWithCompressonator({ rgbaData, width, height, format }) 
 	try {
 		await fs.writeFile(inputPngPath, pngBuffer);
 		const formatToken = compressonatorFormat(format);
-		const args = ["-fd", formatToken, inputPngPath, outputDdsPath];
+		const quality = resolveNativeQuality(nativeQuality, 1);
+		const args = ["-fd", formatToken, "-Quality", String(quality), inputPngPath, outputDdsPath];
 		const result = await runCommand(executable, args);
 		if (result.code !== 0) {
 			const stderr = String(result.stderr || "").trim();
@@ -495,15 +503,29 @@ async function findCompressonatorBinary(rootDir) {
 
 function compressonatorFormat(format) {
 	if (format === "DXT1") {
-		return "BC1";
+		return "DXT1";
 	}
 	if (format === "DXT3") {
-		return "BC2";
+		return "DXT3";
 	}
 	if (format === "DXT5") {
-		return "BC3";
+		return "DXT5";
 	}
 	throw new Error(`Unsupported native compression format: ${format}`);
+}
+
+function resolveNativeQuality(value, fallback = 1) {
+	const parsed = Number.parseFloat(String(value ?? ""));
+	if (!Number.isFinite(parsed)) {
+		return fallback;
+	}
+	if (parsed < 0) {
+		return 0;
+	}
+	if (parsed > 1) {
+		return 1;
+	}
+	return parsed;
 }
 
 async function runCommand(command, args) {
