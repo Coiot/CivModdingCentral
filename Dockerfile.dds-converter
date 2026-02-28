@@ -8,7 +8,7 @@ ENV PORT=8787
 # Optional build arg. Provide a direct Linux tarball URL that contains CompressonatorCLI.
 # Example on Render:
 # COMPRESSONATOR_TARBALL_URL=https://github.com/<...>/compressonator-linux.tar.gz
-ARG COMPRESSONATOR_TARBALL_URL=""
+ARG COMPRESSONATOR_TARBALL_URL="https://github.com/GPUOpen-Tools/compressonator/releases/download/V4.5.52/compressonatorcli-4.5.52-Linux.tar.gz"
 
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends ca-certificates curl tar unzip xz-utils \

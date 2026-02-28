@@ -60,10 +60,8 @@ Steps:
    - Optional: `CMC_DDS_NATIVE_BIN=/opt/compressonator/CompressonatorCLI` (usually auto-set by entrypoint if binary exists there)
 8. Optional build arg:
    - `COMPRESSONATOR_TARBALL_URL=<direct-linux-asset-url>`
-   - If omitted, the Docker build auto-resolves the latest Linux CLI asset from:
-     `https://github.com/GPUOpen-Tools/compressonator/releases`
-   - Known working example (as of 2026-02-28):
-     `https://github.com/GPUOpen-Tools/compressonator/releases/download/V4.5.52/Compressonator-4.5.52-Linux-x86_64.tgz`
+   - Default pinned URL (used automatically if you do not set the arg):
+     `https://github.com/GPUOpen-Tools/compressonator/releases/download/V4.5.52/compressonatorcli-4.5.52-Linux.tar.gz`
 9. Deploy.
 10. Verify health:
    - `https://<render-service>.onrender.com/healthz`
