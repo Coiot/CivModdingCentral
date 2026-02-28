@@ -54,8 +54,12 @@ case "$ASSET_URL" in
 	;;
 esac
 
-BIN_PATH="$(find "$TARGET_DIR" -type f -name 'CompressonatorCLI' | head -n 1 || true)"
+BIN_PATH="$(
+	find "$TARGET_DIR" -type f \( -iname 'CompressonatorCLI' -o -iname 'compressonatorcli' -o -iname '*compressonator*cli*' \) | head -n 1 || true
+)"
 if [ -z "$BIN_PATH" ]; then
+	echo "Contents extracted under $TARGET_DIR:"
+	find "$TARGET_DIR" -maxdepth 4 -type f | sed -n '1,120p' || true
 	echo "CompressonatorCLI binary was not found after extracting archive."
 	exit 1
 fi
