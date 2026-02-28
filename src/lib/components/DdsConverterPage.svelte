@@ -93,29 +93,21 @@
 	];
 
 	const ICON_ATLAS_SIZE_OPTIONS = [16, 22, 24, 32, 45, 48, 64, 80, 128, 214, 256];
-	const RESAMPLE_MODE_OPTIONS = [
-		{ id: "nearest", label: "Nearest (sharpest, hardest edges)" },
-		{ id: "bilinear", label: "Bilinear (smoother)" },
-		{ id: "bicubic", label: "Bicubic (balanced default)" },
-		{ id: "lanczos3", label: "Lanczos3 (smoothest for downscale)" },
-	];
-	const ENCODER_BACKEND_OPTIONS = [
-		{ id: "dxtjs", label: "Web encoder (dxt-js)" },
-		{ id: "native", label: "Native encoder (CompressonatorCLI)" },
-	];
-	const NATIVE_OUTPUT_MODE_OPTIONS = [
-		{ id: "dxt3", label: "DXT3 (BC2 compressed)" },
-		{ id: "rgba8", label: "RGBA8 (uncompressed, highest quality, larger files)" },
-	];
-	const ENCODER_MODE_OPTIONS = [
-		{ id: "rangefit", label: "RangeFit (fast, lower quality)" },
-		{ id: "clusterfit", label: "ClusterFit (high quality)" },
-		{ id: "iterative", label: "Iterative ClusterFit (highest quality, slower)" },
-	];
-	const COLOR_METRIC_OPTIONS = [
-		{ id: "uniform", label: "Uniform (GIMP-like for Civ5 icons)" },
-		{ id: "perceptual", label: "Perceptual" },
-	];
+	const ICON_BUNDLE_ENCODER_PRESET = {
+		backend: "native",
+		resampleMode: "lanczos3",
+		alphaAware: true,
+		nativeQuality: 1,
+		preBlurAmount: 0.25,
+		ditherAmount: 0.25,
+		alphaSmoothAmount: 0.25,
+		sharpenAmount: 0,
+		colorBoost: 1,
+		detailBoost: 0,
+		encoderMode: "iterative",
+		colorMetric: "uniform",
+		weightColorByAlpha: false,
+	};
 
 	const ICON_ATLAS_PRESETS = [
 		{
@@ -208,21 +200,6 @@
 	let atlasColsInput = $state(String(ICON_ATLAS_PRESETS[0].cols));
 	let atlasSelectedSizesMap = $state(buildSizeSelection(ICON_ATLAS_PRESETS[0].defaultSizes));
 	let atlasType = $state("icon");
-	let atlasCompressionEnabled = $state(true);
-	let atlasEncoderBackend = $state("dxtjs");
-	let atlasNativeOutputMode = $state("dxt3");
-	let atlasNativeQualityInput = $state("1");
-	let atlasResampleMode = $state("lanczos3");
-	let atlasAlphaAware = $state(false);
-	let atlasSharpenAmountInput = $state("0");
-	let atlasPreBlurAmountInput = $state("0");
-	let atlasColorBoostInput = $state("1");
-	let atlasDitherAmountInput = $state("0");
-	let atlasAlphaSmoothAmountInput = $state("0");
-	let atlasDetailBoostInput = $state("0");
-	let atlasEncoderMode = $state("clusterfit");
-	let atlasColorMetric = $state("uniform");
-	let atlasWeightColorByAlpha = $state(false);
 	let atlasExportName = $state("IconAtlas");
 	let strategicViewTypeInput = $state("");
 	let strategicTileTypeInput = $state("Unit");
@@ -257,18 +234,7 @@
 	const atlasSelectedSizes = $derived(ICON_ATLAS_SIZE_OPTIONS.filter((size) => Boolean(atlasSelectedSizesMap[size])).sort((a, b) => a - b));
 	const atlasHasSizeSelection = $derived(atlasSelectedSizes.length > 0);
 	const activeAtlasTypeConfig = $derived(BUNDLE_ATLAS_TYPES[atlasType] || BUNDLE_ATLAS_TYPES.icon);
-	const activeEncoderBackend = $derived(normalizeEncoderBackend(atlasEncoderBackend));
-	const activeNativeOutputMode = $derived(normalizeNativeOutputMode(atlasNativeOutputMode));
-	const activeNativeQuality = $derived(parseBoundedFloat(atlasNativeQualityInput, 0, 1, 1));
-	const activeAtlasResampleMode = $derived(normalizeResampleMode(atlasResampleMode));
-	const atlasSharpenAmount = $derived(parseBoundedFloat(atlasSharpenAmountInput, 0, 1, 0));
-	const atlasPreBlurAmount = $derived(parseBoundedFloat(atlasPreBlurAmountInput, 0, 2, 0));
-	const atlasColorBoost = $derived(parseBoundedFloat(atlasColorBoostInput, 0.8, 1.5, 1));
-	const atlasDitherAmount = $derived(parseBoundedFloat(atlasDitherAmountInput, 0, 1, 0));
-	const atlasAlphaSmoothAmount = $derived(parseBoundedFloat(atlasAlphaSmoothAmountInput, 0, 1, 0));
-	const atlasDetailBoost = $derived(parseBoundedFloat(atlasDetailBoostInput, 0, 1, 0));
-	const activeAtlasEncoderMode = $derived(normalizeEncoderMode(atlasEncoderMode));
-	const activeAtlasColorMetric = $derived(normalizeColorMetric(atlasColorMetric));
+	const activeNativeOutputMode = $derived(atlasType === "unit_flag" ? "dxt3" : "rgba8");
 	const atlasSqlToken = $derived(normalizeAtlasSqlToken(atlasExportName));
 	const atlasFilePrefix = $derived(buildAtlasFilePrefix(atlasSqlToken));
 	const atlasSqlName = $derived(`${atlasSqlToken}_${activeAtlasTypeConfig.atlasSuffix}`);
@@ -306,7 +272,7 @@
 		Boolean(expectedDimensions && selectedFileInfo && (expectedDimensions.width !== selectedFileInfo.width || expectedDimensions.height !== selectedFileInfo.height)),
 	);
 	const canConvertWithDimensions = $derived(Boolean(!expectedDimensions || (selectedFileInfo && !hasDimensionMismatch)));
-	const canSubmit = $derived(Boolean(selectedFile && canConvertWithDimensions && (workflow !== "icon_bundle" || (atlasHasSizeSelection && atlasCompressionEnabled))));
+	const canSubmit = $derived(Boolean(selectedFile && canConvertWithDimensions && (workflow !== "icon_bundle" || atlasHasSizeSelection)));
 
 	onDestroy(() => {
 		revokeDownloadUrl();
@@ -318,41 +284,6 @@
 
 	function normalizeAtlasType(value) {
 		return BUNDLE_ATLAS_TYPES[value] ? value : "icon";
-	}
-
-	function normalizeEncoderBackend(value) {
-		const backend = String(value || "")
-			.trim()
-			.toLowerCase();
-		return ENCODER_BACKEND_OPTIONS.some((option) => option.id === backend) ? backend : "dxtjs";
-	}
-
-	function normalizeNativeOutputMode(value) {
-		const mode = String(value || "")
-			.trim()
-			.toLowerCase();
-		return NATIVE_OUTPUT_MODE_OPTIONS.some((option) => option.id === mode) ? mode : "dxt3";
-	}
-
-	function normalizeResampleMode(value) {
-		const mode = String(value || "")
-			.trim()
-			.toLowerCase();
-		return RESAMPLE_MODE_OPTIONS.some((option) => option.id === mode) ? mode : "lanczos3";
-	}
-
-	function normalizeEncoderMode(value) {
-		const mode = String(value || "")
-			.trim()
-			.toLowerCase();
-		return ENCODER_MODE_OPTIONS.some((option) => option.id === mode) ? mode : "clusterfit";
-	}
-
-	function normalizeColorMetric(value) {
-		const metric = String(value || "")
-			.trim()
-			.toLowerCase();
-		return COLOR_METRIC_OPTIONS.some((option) => option.id === metric) ? metric : "uniform";
 	}
 
 	function normalizeAtlasSqlToken(value) {
@@ -487,20 +418,6 @@
 			return 1;
 		}
 		return Math.min(parsed, 64);
-	}
-
-	function parseBoundedFloat(value, min, max, fallback) {
-		const parsed = Number.parseFloat(String(value || "").trim());
-		if (!Number.isFinite(parsed)) {
-			return fallback;
-		}
-		if (parsed < min) {
-			return min;
-		}
-		if (parsed > max) {
-			return max;
-		}
-		return parsed;
 	}
 
 	function computeExpectedDimensions({ workflow: nextWorkflow, screenPreset, iconSize, iconRows, iconCols, atlasCurrentSize, atlasRows: rows, atlasCols: cols }) {
@@ -691,11 +608,6 @@
 			errorMessage = "Select at least one output icon size.";
 			return;
 		}
-		if (workflow === "icon_bundle" && !atlasCompressionEnabled) {
-			errorMessage = "DDS bundle export requires compression to remain enabled.";
-			return;
-		}
-
 		busy = true;
 		errorMessage = "";
 		successMessage = "";
@@ -725,20 +637,20 @@
 				form.append("gridCols", String(atlasCols));
 				form.append("resizeSheet", "1");
 				form.append("padToMultipleOf4", "1");
-				form.append("encoderBackend", activeEncoderBackend);
+				form.append("encoderBackend", ICON_BUNDLE_ENCODER_PRESET.backend);
 				form.append("nativeOutputMode", activeNativeOutputMode);
-				form.append("nativeQuality", String(activeNativeQuality));
-				form.append("resampleMode", activeAtlasResampleMode);
-				form.append("alphaAware", atlasAlphaAware ? "1" : "0");
-				form.append("sharpenAmount", String(atlasSharpenAmount));
-				form.append("preBlurAmount", String(atlasPreBlurAmount));
-				form.append("colorBoost", String(atlasColorBoost));
-				form.append("ditherAmount", String(atlasDitherAmount));
-				form.append("alphaSmoothAmount", String(atlasAlphaSmoothAmount));
-				form.append("detailBoost", String(atlasDetailBoost));
-				form.append("encoderMode", activeAtlasEncoderMode);
-				form.append("colorMetric", activeAtlasColorMetric);
-				form.append("weightColorByAlpha", atlasWeightColorByAlpha ? "1" : "0");
+				form.append("nativeQuality", String(ICON_BUNDLE_ENCODER_PRESET.nativeQuality));
+				form.append("resampleMode", ICON_BUNDLE_ENCODER_PRESET.resampleMode);
+				form.append("alphaAware", ICON_BUNDLE_ENCODER_PRESET.alphaAware ? "1" : "0");
+				form.append("sharpenAmount", String(ICON_BUNDLE_ENCODER_PRESET.sharpenAmount));
+				form.append("preBlurAmount", String(ICON_BUNDLE_ENCODER_PRESET.preBlurAmount));
+				form.append("colorBoost", String(ICON_BUNDLE_ENCODER_PRESET.colorBoost));
+				form.append("ditherAmount", String(ICON_BUNDLE_ENCODER_PRESET.ditherAmount));
+				form.append("alphaSmoothAmount", String(ICON_BUNDLE_ENCODER_PRESET.alphaSmoothAmount));
+				form.append("detailBoost", String(ICON_BUNDLE_ENCODER_PRESET.detailBoost));
+				form.append("encoderMode", ICON_BUNDLE_ENCODER_PRESET.encoderMode);
+				form.append("colorMetric", ICON_BUNDLE_ENCODER_PRESET.colorMetric);
+				form.append("weightColorByAlpha", ICON_BUNDLE_ENCODER_PRESET.weightColorByAlpha ? "1" : "0");
 				form.append("exportName", sanitizeExportBase(atlasExportName));
 				form.append("atlasType", normalizeAtlasType(atlasType));
 				form.append("atlasToken", atlasSqlToken);
@@ -772,15 +684,11 @@
 				bundleCount: response.headers.get("x-bundle-count") || "",
 				resampleMode: response.headers.get("x-resample-mode") || "",
 				alphaAware: response.headers.get("x-alpha-aware") || "",
-				sharpenAmount: response.headers.get("x-sharpen-amount") || "",
 				preBlurAmount: response.headers.get("x-pre-blur-amount") || "",
-				colorBoost: response.headers.get("x-color-boost") || "",
 				ditherAmount: response.headers.get("x-dither-amount") || "",
 				alphaSmoothAmount: response.headers.get("x-alpha-smooth-amount") || "",
-				detailBoost: response.headers.get("x-detail-boost") || "",
 				encoderMode: response.headers.get("x-encoder-mode") || "",
 				colorMetric: response.headers.get("x-color-metric") || "",
-				weightByAlpha: response.headers.get("x-weight-by-alpha") || "",
 				encoderBackend: response.headers.get("x-encoder-backend") || "",
 				nativeQuality: response.headers.get("x-native-quality") || "",
 				nativeOutputMode: response.headers.get("x-native-output-mode") || "",
@@ -983,152 +891,24 @@
 							{/each}
 						</div>
 					</div>
-
-					<div class="atlas-advanced-block">
-						<label class="check-row-inline">
-							<input type="checkbox" checked={atlasCompressionEnabled} onchange={(event) => (atlasCompressionEnabled = event.currentTarget.checked)} />
-							<span>Compress icon sheets (BC2 / DXT3)</span>
-						</label>
-						<label>
-							Encoder Backend
-							<select value={activeEncoderBackend} onchange={(event) => (atlasEncoderBackend = event.currentTarget.value)}>
-								{#each ENCODER_BACKEND_OPTIONS as option (option.id)}
-									<option value={option.id}>{option.label}</option>
-								{/each}
-							</select>
-						</label>
-						{#if activeEncoderBackend === "native"}
-							<label>
-								Native Output Mode
-								<select value={activeNativeOutputMode} onchange={(event) => (atlasNativeOutputMode = event.currentTarget.value)}>
-									{#each NATIVE_OUTPUT_MODE_OPTIONS as option (option.id)}
-										<option value={option.id}>{option.label}</option>
-									{/each}
-								</select>
-							</label>
-							<label>
-								Native Quality
-								<input type="number" min="0" max="1" step="0.05" value={String(activeNativeQuality)} oninput={(event) => (atlasNativeQualityInput = event.currentTarget.value)} />
-							</label>
-						{/if}
-						<label>
-							Resample Mode
-							<select value={activeAtlasResampleMode} onchange={(event) => (atlasResampleMode = event.currentTarget.value)}>
-								{#each RESAMPLE_MODE_OPTIONS as option (option.id)}
-									<option value={option.id}>{option.label}</option>
-								{/each}
-							</select>
-						</label>
-						<label>
-							DDS Encoder Mode
-							<select value={activeAtlasEncoderMode} onchange={(event) => (atlasEncoderMode = event.currentTarget.value)}>
-								{#each ENCODER_MODE_OPTIONS as option (option.id)}
-									<option value={option.id}>{option.label}</option>
-								{/each}
-							</select>
-						</label>
-						<label>
-							Color Metric
-							<select value={activeAtlasColorMetric} onchange={(event) => (atlasColorMetric = event.currentTarget.value)}>
-								{#each COLOR_METRIC_OPTIONS as option (option.id)}
-									<option value={option.id}>{option.label}</option>
-								{/each}
-							</select>
-						</label>
-						<label class="check-row-inline">
-							<input type="checkbox" checked={atlasAlphaAware} onchange={(event) => (atlasAlphaAware = event.currentTarget.checked)} />
-							<span>Alpha-aware sampling</span>
-						</label>
-						<label class="check-row-inline">
-							<input type="checkbox" checked={atlasWeightColorByAlpha} onchange={(event) => (atlasWeightColorByAlpha = event.currentTarget.checked)} />
-							<span>Weight color by alpha in DDS fit</span>
-						</label>
-						<div class="atlas-quality-row">
-							<label>
-								Sharpen
-								<input type="range" min="0" max="1" step="0.05" value={String(atlasSharpenAmount)} oninput={(event) => (atlasSharpenAmountInput = event.currentTarget.value)} />
-							</label>
-							<label>
-								Sharpen Amount
-								<input type="number" min="0" max="1" step="0.05" value={String(atlasSharpenAmount)} oninput={(event) => (atlasSharpenAmountInput = event.currentTarget.value)} />
-							</label>
-						</div>
-						<div class="atlas-quality-row">
-							<label>
-								Pre-Blur
-								<input type="range" min="0" max="2" step="0.05" value={String(atlasPreBlurAmount)} oninput={(event) => (atlasPreBlurAmountInput = event.currentTarget.value)} />
-							</label>
-							<label>
-								Pre-Blur Amount
-								<input type="number" min="0" max="2" step="0.05" value={String(atlasPreBlurAmount)} oninput={(event) => (atlasPreBlurAmountInput = event.currentTarget.value)} />
-							</label>
-						</div>
-						<div class="atlas-quality-row">
-							<label>
-								Color Boost
-								<input type="range" min="0.8" max="1.5" step="0.02" value={String(atlasColorBoost)} oninput={(event) => (atlasColorBoostInput = event.currentTarget.value)} />
-							</label>
-							<label>
-								Color Boost Amount
-								<input type="number" min="0.8" max="1.5" step="0.02" value={String(atlasColorBoost)} oninput={(event) => (atlasColorBoostInput = event.currentTarget.value)} />
-							</label>
-						</div>
-						<div class="atlas-quality-row">
-							<label>
-								Gradient Dither
-								<input type="range" min="0" max="1" step="0.05" value={String(atlasDitherAmount)} oninput={(event) => (atlasDitherAmountInput = event.currentTarget.value)} />
-							</label>
-							<label>
-								Gradient Dither Amount
-								<input type="number" min="0" max="1" step="0.05" value={String(atlasDitherAmount)} oninput={(event) => (atlasDitherAmountInput = event.currentTarget.value)} />
-							</label>
-						</div>
-						<div class="atlas-quality-row">
-							<label>
-								Alpha Edge Smooth
-								<input type="range" min="0" max="1" step="0.05" value={String(atlasAlphaSmoothAmount)} oninput={(event) => (atlasAlphaSmoothAmountInput = event.currentTarget.value)} />
-							</label>
-							<label>
-								Alpha Edge Smooth Amount
-								<input
-									type="number"
-									min="0"
-									max="1"
-									step="0.05"
-									value={String(atlasAlphaSmoothAmount)}
-									oninput={(event) => (atlasAlphaSmoothAmountInput = event.currentTarget.value)}
-								/>
-							</label>
-						</div>
-						<div class="atlas-quality-row">
-							<label>
-								Detail Boost
-								<input type="range" min="0" max="1" step="0.05" value={String(atlasDetailBoost)} oninput={(event) => (atlasDetailBoostInput = event.currentTarget.value)} />
-							</label>
-							<label>
-								Detail Boost Amount
-								<input type="number" min="0" max="1" step="0.05" value={String(atlasDetailBoost)} oninput={(event) => (atlasDetailBoostInput = event.currentTarget.value)} />
-							</label>
-						</div>
-						<span class="check-row-note">Upscale sheet dimensions to multiple of 4: Always enabled</span>
-						<span class="check-row-note">Resize icon sheet for selected output sizes: Always enabled</span>
-					</div>
 				{/if}
 
-				{#if compressionOptions.length > 1}
-					<label>
-						Compression
-						<select value={activeCompression} onchange={(event) => (compressionChoice = event.currentTarget.value)}>
-							{#each compressionOptions as format (format)}
-								<option value={format}>{format}</option>
-							{/each}
-						</select>
-					</label>
-				{:else}
-					<label>
-						Compression
-						<input type="text" value={activeCompression} readonly disabled />
-					</label>
+				{#if workflow !== "icon_bundle" || activeNativeOutputMode !== "rgba8"}
+					{#if compressionOptions.length > 1}
+						<label>
+							Compression
+							<select value={activeCompression} onchange={(event) => (compressionChoice = event.currentTarget.value)}>
+								{#each compressionOptions as format (format)}
+									<option value={format}>{format}</option>
+								{/each}
+							</select>
+						</label>
+					{:else}
+						<label>
+							Compression
+							<input type="text" value={activeCompression} readonly disabled />
+						</label>
+					{/if}
 				{/if}
 			</div>
 		</section>
@@ -1174,7 +954,12 @@
 				{#if workflow === "icon_bundle"}
 					<span>Selected sizes: {atlasSelectedSizes.join(", ") || "none"}</span>
 				{/if}
-				<span>Compression: {activeCompression}</span>
+				{#if workflow !== "icon_bundle" || activeNativeOutputMode !== "rgba8"}
+					<span>Compression: {workflow === "icon_bundle" ? "DXT3" : activeCompression}</span>
+				{/if}
+				{#if workflow === "icon_bundle"}
+					<span>Encoder profile: native + lanczos3 + alpha-aware</span>
+				{/if}
 				{#if selectedFileInfo}
 					<span>PNG: {selectedFileInfo.width}x{selectedFileInfo.height}</span>
 				{/if}
@@ -1234,10 +1019,6 @@
 				<p class="dds-warning">Select at least one output icon size for bundle export.</p>
 			{/if}
 
-			{#if workflow === "icon_bundle" && !atlasCompressionEnabled}
-				<p class="dds-warning">Compression must stay enabled for DDS bundle export.</p>
-			{/if}
-
 			{#if hasDimensionMismatch && expectedDimensions && selectedFileInfo}
 				<p class="dds-warning">
 					Selected preset requires {expectedDimensions.width}x{expectedDimensions.height}, but PNG is {selectedFileInfo.width}x{selectedFileInfo.height}. Conversion is blocked until
@@ -1270,23 +1051,14 @@
 					{#if conversionMeta.alphaAware}
 						<span>Alpha-aware: {conversionMeta.alphaAware === "1" ? "on" : "off"}</span>
 					{/if}
-					{#if conversionMeta.sharpenAmount}
-						<span>Sharpen: {conversionMeta.sharpenAmount}</span>
-					{/if}
 					{#if conversionMeta.preBlurAmount}
 						<span>Pre-blur: {conversionMeta.preBlurAmount}</span>
-					{/if}
-					{#if conversionMeta.colorBoost}
-						<span>Color boost: {conversionMeta.colorBoost}</span>
 					{/if}
 					{#if conversionMeta.ditherAmount}
 						<span>Dither: {conversionMeta.ditherAmount}</span>
 					{/if}
 					{#if conversionMeta.alphaSmoothAmount}
 						<span>Alpha smooth: {conversionMeta.alphaSmoothAmount}</span>
-					{/if}
-					{#if conversionMeta.detailBoost}
-						<span>Detail boost: {conversionMeta.detailBoost}</span>
 					{/if}
 					{#if conversionMeta.encoderMode}
 						<span>Encoder: {conversionMeta.encoderMode}</span>
@@ -1303,8 +1075,8 @@
 					{#if conversionMeta.colorMetric}
 						<span>Metric: {conversionMeta.colorMetric}</span>
 					{/if}
-					{#if conversionMeta.weightByAlpha}
-						<span>Weight-by-alpha: {conversionMeta.weightByAlpha === "1" ? "on" : "off"}</span>
+					{#if expectedDimensions && conversionMeta.outputWidth && conversionMeta.outputHeight && (Number(conversionMeta.outputWidth) > Number(expectedDimensions.width || 0) || Number(conversionMeta.outputHeight) > Number(expectedDimensions.height || 0))}
+						<span>Sheet dimensions were upscaled to a multiple of 4.</span>
 					{/if}
 					<span>Size: {formatBytes(conversionMeta.sizeBytes)}</span>
 				</div>
@@ -1433,8 +1205,7 @@
 		max-width: 100%;
 	}
 
-	.atlas-size-block,
-	.atlas-advanced-block {
+	.atlas-size-block {
 		grid-column: 1 / -1;
 		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
 		border-radius: 0.75rem;
@@ -1478,24 +1249,6 @@
 		align-items: center;
 		gap: 0.35rem;
 		font-size: 0.85rem;
-	}
-
-	.check-row-inline {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.45rem;
-		font-size: 0.9rem;
-	}
-
-	.check-row-note {
-		font-size: 0.86rem;
-		color: var(--muted-ink);
-	}
-
-	.atlas-quality-row {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-		gap: 0.55rem;
 	}
 
 	.dds-actions {
