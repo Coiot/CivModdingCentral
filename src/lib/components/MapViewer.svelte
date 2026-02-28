@@ -27,6 +27,7 @@
 	const BASE_CACHE_VERSION = 1;
 	const PIN_SYNC_INTERVAL_MS = 60 * 3000;
 	const BASE_PREFETCH_LIMIT = 3;
+	const LAST_MAP_STORAGE_KEY = `${STORAGE_PREFIX}:last-map-id`;
 	const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
 	const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 	const SUPABASE_PINS_TABLE = import.meta.env.VITE_SUPABASE_PINS_TABLE || "cmc_map_pins";
@@ -200,6 +201,13 @@
 			})
 			.map((item) => item.entry);
 	});
+	const preferredDefaultMapId = $derived.by(() => {
+		if (!maps.length) {
+			return "";
+		}
+		const earthMk3 = maps.find((entry) => entry?.id === "earth-mk3");
+		return String(earthMk3?.id || maps[0]?.id || "");
+	});
 	const currentMap = $derived.by(() => {
 		const normalizedId = String(activeMapId || "").trim();
 		if (normalizedId) {
@@ -210,6 +218,10 @@
 		}
 		if (providedMapItem?.id) {
 			return providedMapItem;
+		}
+		const fallbackId = preferredDefaultMapId;
+		if (fallbackId) {
+			return maps.find((entry) => entry?.id === fallbackId) || maps[0] || null;
 		}
 		return maps[0] || null;
 	});
@@ -281,7 +293,7 @@
 			return `Editing "${pinDisplayName(matchedSelectedPin)}". Click "New Entry" to add another pin on this tile.`;
 		}
 		if (pinEditorMode === "add") {
-			return `Ready to add "${String(editPinCivInput || "").trim()}". Click "Add Civilization" to save.`;
+			return `Ready to add "${String(editPinCivInput || "").trim()}". Click "Add Pin" to save.`;
 		}
 		return "Type a civilization name to add a pin, or load one below to edit it.";
 	});
@@ -351,7 +363,12 @@
 			return;
 		}
 		if (!incomingId && !activeMapId) {
-			const fallbackId = String(maps[0]?.id || "");
+			const storedId = String(loadStorageJson(LAST_MAP_STORAGE_KEY, "") || "").trim();
+			if (storedId && maps.some((entry) => entry?.id === storedId)) {
+				activeMapId = storedId;
+				return;
+			}
+			const fallbackId = String(preferredDefaultMapId || maps[0]?.id || "");
 			if (fallbackId) {
 				activeMapId = fallbackId;
 			}
@@ -369,10 +386,18 @@
 		if (maps.some((entry) => entry?.id === activeMapId) || (providedMapId && activeMapId === providedMapId)) {
 			return;
 		}
-		const fallbackId = String(maps[0]?.id || "");
+		const fallbackId = String(preferredDefaultMapId || maps[0]?.id || "");
 		if (fallbackId && fallbackId !== activeMapId) {
 			activeMapId = fallbackId;
 		}
+	});
+
+	$effect(() => {
+		const mapId = String(activeMapId || currentMap?.id || "").trim();
+		if (!mapId) {
+			return;
+		}
+		saveStorageJson(LAST_MAP_STORAGE_KEY, mapId);
 	});
 
 	$effect(() => {
