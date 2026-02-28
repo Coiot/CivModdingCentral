@@ -1470,16 +1470,28 @@
 
 		if (pinEditTarget === "shared") {
 			setSharedPins(nextPins, { queueSync: true });
-			pinCloudSyncNeedsFeedback = true;
+			const blocker = sharedPinSyncBlockerReason();
+			if (blocker) {
+				pinCloudSyncNeedsFeedback = false;
+				pinStatus = `Shared pin not saved to cloud. ${blocker}`;
+			} else {
+				pinCloudSyncNeedsFeedback = true;
+				pinStatus = existingIndex >= 0 ? "Pin updated. Saving shared pins to cloud..." : "Pin added. Saving shared pins to cloud...";
+				void flushCloudPins();
+			}
 		} else {
 			setLocalPins(nextPins);
 		}
 		if (existingIndex >= 0) {
 			editPinId = nextPin.id;
-			pinStatus = pinEditTarget === "shared" ? "Pin updated. Syncing shared pins to cloud..." : "Pin updated.";
+			if (pinEditTarget !== "shared") {
+				pinStatus = "Pin updated.";
+			}
 		} else {
 			resetPinEditor({ clearStatus: false });
-			pinStatus = pinEditTarget === "shared" ? "Pin added. Syncing shared pins to cloud..." : "Pin added. Enter another civilization to add the next pin.";
+			if (pinEditTarget !== "shared") {
+				pinStatus = "Pin added. Enter another civilization to add the next pin.";
+			}
 		}
 	}
 
@@ -1502,8 +1514,15 @@
 		const nextPins = editablePins.filter((pin) => String(pin.id || "") !== String(pinId));
 		if (target === "shared") {
 			setSharedPins(nextPins, { queueSync: true });
-			pinCloudSyncNeedsFeedback = true;
-			pinStatus = "Pin removed. Syncing shared pins to cloud...";
+			const blocker = sharedPinSyncBlockerReason();
+			if (blocker) {
+				pinCloudSyncNeedsFeedback = false;
+				pinStatus = `Shared pin removal not saved to cloud. ${blocker}`;
+			} else {
+				pinCloudSyncNeedsFeedback = true;
+				pinStatus = "Pin removed. Saving shared pins to cloud...";
+				void flushCloudPins();
+			}
 		} else {
 			setLocalPins(nextPins);
 			pinStatus = "Pin removed.";
@@ -1841,6 +1860,22 @@
 		});
 	}
 
+	function sharedPinSyncBlockerReason() {
+		if (!hasCloudPinSyncConfig()) {
+			return "Cloud sync is not configured for this map.";
+		}
+		if (!canEdit) {
+			return "Your account does not currently have shared edit access.";
+		}
+		if (!authUser?.email) {
+			return "You are not signed in.";
+		}
+		if (!authAccessToken) {
+			return "Your session token is missing or expired. Please sign in again.";
+		}
+		return "";
+	}
+
 	function canPushCloudLabels() {
 		return canPushCloudPinsUtil({
 			hasConfig: hasCloudLabelSyncConfig(),
@@ -2072,6 +2107,7 @@
 			];
 			const query = new URLSearchParams();
 			query.set("on_conflict", "map_id");
+			query.set("select", "map_id,updated_at");
 
 			const response = await fetch(`${SUPABASE_URL}/rest/v1/${encodeURIComponent(SUPABASE_PINS_TABLE)}?${query.toString()}`, {
 				method: "POST",
@@ -2079,14 +2115,25 @@
 					apikey: SUPABASE_ANON_KEY,
 					Authorization: `Bearer ${authAccessToken}`,
 					"Content-Type": "application/json",
-					Prefer: "resolution=merge-duplicates,return=minimal",
+					Prefer: "resolution=merge-duplicates,return=representation",
 				},
 				body: JSON.stringify(body),
 			});
 
+			const text = await response.text().catch(() => "");
 			if (!response.ok) {
-				const text = await response.text().catch(() => "");
 				throw new Error(`Unable to sync map pins (${response.status}). ${text}`);
+			}
+			let payload = [];
+			if (text) {
+				try {
+					payload = JSON.parse(text);
+				} catch {
+					throw new Error("Supabase returned an invalid response while confirming the cloud write.");
+				}
+			}
+			if (!Array.isArray(payload) || !payload.length) {
+				throw new Error("Cloud write was not confirmed by Supabase (no row returned). Check table RLS policies.");
 			}
 
 			pinCloudSyncDirty = false;
