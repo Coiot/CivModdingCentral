@@ -180,6 +180,8 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 	const preBlurAmount = parseBoundedFloat(form.fields.preBlurAmount, 0, 2, 0);
 	const colorBoost = parseBoundedFloat(form.fields.colorBoost, 0.8, 1.5, 1);
 	const ditherAmount = parseBoundedFloat(form.fields.ditherAmount, 0, 1, 0);
+	const alphaSmoothAmount = parseBoundedFloat(form.fields.alphaSmoothAmount, 0, 1, 0);
+	const detailBoost = parseBoundedFloat(form.fields.detailBoost, 0, 1, 0);
 	const encoderMode = normalizeEncoderMode(form.fields.encoderMode);
 	const colorMetric = normalizeColorMetric(form.fields.colorMetric);
 	const weightColorByAlpha = parseBooleanFlag(form.fields.weightColorByAlpha, false);
@@ -208,8 +210,14 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 		if (size < currentIconSize && preBlurAmount > 0) {
 			applyGaussianBlurRgba(atlas.data, atlas.width, atlas.height, preBlurAmount);
 		}
+		if (size < currentIconSize && alphaSmoothAmount > 0) {
+			applyAlphaEdgeSmoothingRgba(atlas.data, atlas.width, atlas.height, alphaSmoothAmount);
+		}
 		if (size < currentIconSize && colorBoost !== 1) {
 			applyColorBoostRgba(atlas.data, atlas.width, atlas.height, colorBoost);
+		}
+		if (size < currentIconSize && detailBoost > 0) {
+			applyDetailBoostRgba(atlas.data, atlas.width, atlas.height, detailBoost);
 		}
 		if (size < currentIconSize && ditherAmount > 0) {
 			applyGradientDitherRgba(atlas.data, atlas.width, atlas.height, ditherAmount);
@@ -260,6 +268,8 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 			"X-Pre-Blur-Amount": String(preBlurAmount),
 			"X-Color-Boost": String(colorBoost),
 			"X-Dither-Amount": String(ditherAmount),
+			"X-Alpha-Smooth-Amount": String(alphaSmoothAmount),
+			"X-Detail-Boost": String(detailBoost),
 			"X-Encoder-Mode": encoderMode,
 			"X-Color-Metric": colorMetric,
 			"X-Weight-By-Alpha": weightColorByAlpha ? "1" : "0",
@@ -1217,6 +1227,114 @@ function applyColorBoostRgba(rgba, width, height, boost = 1) {
 		rgba[i] = linearToSrgbByte(outR);
 		rgba[i + 1] = linearToSrgbByte(outG);
 		rgba[i + 2] = linearToSrgbByte(outB);
+	}
+}
+
+function applyDetailBoostRgba(rgba, width, height, amount = 0.2) {
+	if (!rgba || width < 2 || height < 2 || amount <= 0) {
+		return;
+	}
+	const source = Buffer.from(rgba);
+	const luma = new Float32Array(width * height);
+	const blurred = new Float32Array(width * height);
+
+	for (let y = 0; y < height; y += 1) {
+		for (let x = 0; x < width; x += 1) {
+			const index = y * width + x;
+			const offset = index * 4;
+			const alpha = source[offset + 3] / 255;
+			if (alpha <= 0) {
+				luma[index] = 0;
+				continue;
+			}
+			const r = SRGB_TO_LINEAR[source[offset]];
+			const g = SRGB_TO_LINEAR[source[offset + 1]];
+			const b = SRGB_TO_LINEAR[source[offset + 2]];
+			luma[index] = (0.2126 * r + 0.7152 * g + 0.0722 * b) * alpha;
+		}
+	}
+
+	for (let y = 0; y < height; y += 1) {
+		for (let x = 0; x < width; x += 1) {
+			let acc = 0;
+			let wsum = 0;
+			for (let ky = -1; ky <= 1; ky += 1) {
+				const sy = clampInt(y + ky, 0, height - 1);
+				for (let kx = -1; kx <= 1; kx += 1) {
+					const sx = clampInt(x + kx, 0, width - 1);
+					const weight = ky === 0 && kx === 0 ? 4 : ky === 0 || kx === 0 ? 2 : 1;
+					acc += luma[sy * width + sx] * weight;
+					wsum += weight;
+				}
+			}
+			blurred[y * width + x] = wsum > 0 ? acc / wsum : 0;
+		}
+	}
+
+	const strength = amount * 0.7;
+	const threshold = 0.0015;
+	for (let i = 0; i < width * height; i += 1) {
+		const offset = i * 4;
+		const alphaByte = rgba[offset + 3];
+		if (alphaByte === 0) {
+			continue;
+		}
+		const alpha = alphaByte / 255;
+		const detail = luma[i] - blurred[i];
+		if (Math.abs(detail) < threshold) {
+			continue;
+		}
+		const delta = (detail / Math.max(alpha, 1e-6)) * strength;
+		const r = SRGB_TO_LINEAR[rgba[offset]];
+		const g = SRGB_TO_LINEAR[rgba[offset + 1]];
+		const b = SRGB_TO_LINEAR[rgba[offset + 2]];
+		rgba[offset] = linearToSrgbByte(r + delta);
+		rgba[offset + 1] = linearToSrgbByte(g + delta);
+		rgba[offset + 2] = linearToSrgbByte(b + delta);
+	}
+}
+
+function applyAlphaEdgeSmoothingRgba(rgba, width, height, amount = 0.25) {
+	if (!rgba || width < 2 || height < 2 || amount <= 0) {
+		return;
+	}
+	const sigma = 0.2 + amount * 0.9;
+	const kernel = gaussianKernel1D(sigma);
+	const radius = (kernel.length - 1) >> 1;
+	const alphaSource = new Float32Array(width * height);
+	const alphaTmp = new Float32Array(width * height);
+
+	for (let i = 0; i < width * height; i += 1) {
+		alphaSource[i] = rgba[i * 4 + 3] / 255;
+	}
+
+	for (let y = 0; y < height; y += 1) {
+		for (let x = 0; x < width; x += 1) {
+			let acc = 0;
+			let wsum = 0;
+			for (let k = -radius; k <= radius; k += 1) {
+				const sx = clampInt(x + k, 0, width - 1);
+				const w = kernel[k + radius];
+				acc += alphaSource[y * width + sx] * w;
+				wsum += w;
+			}
+			alphaTmp[y * width + x] = wsum > 0 ? acc / wsum : 0;
+		}
+	}
+
+	for (let y = 0; y < height; y += 1) {
+		for (let x = 0; x < width; x += 1) {
+			let acc = 0;
+			let wsum = 0;
+			for (let k = -radius; k <= radius; k += 1) {
+				const sy = clampInt(y + k, 0, height - 1);
+				const w = kernel[k + radius];
+				acc += alphaTmp[sy * width + x] * w;
+				wsum += w;
+			}
+			const nextAlpha = wsum > 0 ? clamp01(acc / wsum) : 0;
+			rgba[(y * width + x) * 4 + 3] = clampByte(Math.round(nextAlpha * 255));
+		}
 	}
 }
 

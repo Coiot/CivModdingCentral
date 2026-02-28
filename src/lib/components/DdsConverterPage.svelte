@@ -213,6 +213,8 @@
 	let atlasPreBlurAmountInput = $state("0");
 	let atlasColorBoostInput = $state("1");
 	let atlasDitherAmountInput = $state("0");
+	let atlasAlphaSmoothAmountInput = $state("0");
+	let atlasDetailBoostInput = $state("0");
 	let atlasEncoderMode = $state("clusterfit");
 	let atlasColorMetric = $state("uniform");
 	let atlasWeightColorByAlpha = $state(false);
@@ -257,6 +259,8 @@
 	const atlasPreBlurAmount = $derived(parseBoundedFloat(atlasPreBlurAmountInput, 0, 2, 0));
 	const atlasColorBoost = $derived(parseBoundedFloat(atlasColorBoostInput, 0.8, 1.5, 1));
 	const atlasDitherAmount = $derived(parseBoundedFloat(atlasDitherAmountInput, 0, 1, 0));
+	const atlasAlphaSmoothAmount = $derived(parseBoundedFloat(atlasAlphaSmoothAmountInput, 0, 1, 0));
+	const atlasDetailBoost = $derived(parseBoundedFloat(atlasDetailBoostInput, 0, 1, 0));
 	const activeAtlasEncoderMode = $derived(normalizeEncoderMode(atlasEncoderMode));
 	const activeAtlasColorMetric = $derived(normalizeColorMetric(atlasColorMetric));
 	const atlasSqlToken = $derived(normalizeAtlasSqlToken(atlasExportName));
@@ -716,6 +720,8 @@
 				form.append("preBlurAmount", String(atlasPreBlurAmount));
 				form.append("colorBoost", String(atlasColorBoost));
 				form.append("ditherAmount", String(atlasDitherAmount));
+				form.append("alphaSmoothAmount", String(atlasAlphaSmoothAmount));
+				form.append("detailBoost", String(atlasDetailBoost));
 				form.append("encoderMode", activeAtlasEncoderMode);
 				form.append("colorMetric", activeAtlasColorMetric);
 				form.append("weightColorByAlpha", atlasWeightColorByAlpha ? "1" : "0");
@@ -756,6 +762,8 @@
 				preBlurAmount: response.headers.get("x-pre-blur-amount") || "",
 				colorBoost: response.headers.get("x-color-boost") || "",
 				ditherAmount: response.headers.get("x-dither-amount") || "",
+				alphaSmoothAmount: response.headers.get("x-alpha-smooth-amount") || "",
+				detailBoost: response.headers.get("x-detail-boost") || "",
 				encoderMode: response.headers.get("x-encoder-mode") || "",
 				colorMetric: response.headers.get("x-color-metric") || "",
 				weightByAlpha: response.headers.get("x-weight-by-alpha") || "",
@@ -1052,6 +1060,33 @@
 								<input type="number" min="0" max="1" step="0.05" value={String(atlasDitherAmount)} oninput={(event) => (atlasDitherAmountInput = event.currentTarget.value)} />
 							</label>
 						</div>
+						<div class="atlas-quality-row">
+							<label>
+								Alpha Edge Smooth
+								<input type="range" min="0" max="1" step="0.05" value={String(atlasAlphaSmoothAmount)} oninput={(event) => (atlasAlphaSmoothAmountInput = event.currentTarget.value)} />
+							</label>
+							<label>
+								Alpha Edge Smooth Amount
+								<input
+									type="number"
+									min="0"
+									max="1"
+									step="0.05"
+									value={String(atlasAlphaSmoothAmount)}
+									oninput={(event) => (atlasAlphaSmoothAmountInput = event.currentTarget.value)}
+								/>
+							</label>
+						</div>
+						<div class="atlas-quality-row">
+							<label>
+								Detail Boost
+								<input type="range" min="0" max="1" step="0.05" value={String(atlasDetailBoost)} oninput={(event) => (atlasDetailBoostInput = event.currentTarget.value)} />
+							</label>
+							<label>
+								Detail Boost Amount
+								<input type="number" min="0" max="1" step="0.05" value={String(atlasDetailBoost)} oninput={(event) => (atlasDetailBoostInput = event.currentTarget.value)} />
+							</label>
+						</div>
 						<span class="check-row-note">Upscale sheet dimensions to multiple of 4: Always enabled</span>
 						<span class="check-row-note">Resize icon sheet for selected output sizes: Always enabled</span>
 					</div>
@@ -1223,6 +1258,12 @@
 					{/if}
 					{#if conversionMeta.ditherAmount}
 						<span>Dither: {conversionMeta.ditherAmount}</span>
+					{/if}
+					{#if conversionMeta.alphaSmoothAmount}
+						<span>Alpha smooth: {conversionMeta.alphaSmoothAmount}</span>
+					{/if}
+					{#if conversionMeta.detailBoost}
+						<span>Detail boost: {conversionMeta.detailBoost}</span>
 					{/if}
 					{#if conversionMeta.encoderMode}
 						<span>Encoder: {conversionMeta.encoderMode}</span>
