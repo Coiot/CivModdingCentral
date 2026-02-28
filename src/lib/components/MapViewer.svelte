@@ -3454,7 +3454,11 @@
 	}
 
 	function parseNumberInput(value) {
-		const parsed = Number(value);
+		const raw = String(value ?? "").trim();
+		if (!raw) {
+			return null;
+		}
+		const parsed = Number(raw);
 		return Number.isFinite(parsed) ? parsed : null;
 	}
 
