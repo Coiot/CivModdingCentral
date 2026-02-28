@@ -3,7 +3,7 @@ import { PNG } from "pngjs";
 import dxt from "dxt-js";
 import os from "node:os";
 import path from "node:path";
-import { promises as fs } from "node:fs";
+import { promises as fs, constants as fsConstants } from "node:fs";
 import { spawn } from "node:child_process";
 
 const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
@@ -384,9 +384,9 @@ function encodeDdsWithDxtJs({ rgbaData, width, height, format, dxtFlags }) {
 }
 
 async function encodeDdsWithCompressonator({ rgbaData, width, height, format }) {
-	const executable = resolveNativeEncoderBinary();
+	const executable = await resolveNativeEncoderBinary();
 	if (!executable) {
-		throw new Error(`Native encoder selected but CompressonatorCLI is not configured. Set one of: ${NATIVE_BIN_ENV_KEYS.join(", ")}.`);
+		throw new Error(`Native encoder selected but CompressonatorCLI is not configured. Set one of: ${NATIVE_BIN_ENV_KEYS.join(", ")} or ensure CLI exists under /opt/compressonator.`);
 	}
 
 	const workDir = await fs.mkdtemp(path.join(os.tmpdir(), "cmc-dds-"));
@@ -419,14 +419,77 @@ async function encodeDdsWithCompressonator({ rgbaData, width, height, format }) 
 	}
 }
 
-function resolveNativeEncoderBinary() {
+async function resolveNativeEncoderBinary() {
 	for (const envKey of NATIVE_BIN_ENV_KEYS) {
 		const value = String(process.env[envKey] || "").trim();
-		if (value) {
+		if (value && (await isExecutablePath(value))) {
 			return value;
 		}
 	}
-	return NATIVE_BIN_CANDIDATES[0];
+
+	const commonPaths = ["/opt/compressonator/CompressonatorCLI", "/opt/compressonator/compressonatorcli", "/opt/compressonator/bin/CompressonatorCLI", "/opt/compressonator/bin/compressonatorcli"];
+	for (const candidate of commonPaths) {
+		if (await isExecutablePath(candidate)) {
+			return candidate;
+		}
+	}
+
+	const discovered = await findCompressonatorBinary("/opt/compressonator");
+	if (discovered) {
+		return discovered;
+	}
+
+	for (const candidate of NATIVE_BIN_CANDIDATES) {
+		if (await isExecutablePath(candidate)) {
+			return candidate;
+		}
+	}
+
+	return "";
+}
+
+async function isExecutablePath(targetPath) {
+	if (!targetPath) {
+		return false;
+	}
+	try {
+		await fs.access(targetPath, fsConstants.X_OK);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+async function findCompressonatorBinary(rootDir) {
+	try {
+		const queue = [rootDir];
+		while (queue.length) {
+			const current = queue.shift();
+			if (!current) {
+				continue;
+			}
+			const entries = await fs.readdir(current, { withFileTypes: true });
+			for (const entry of entries) {
+				const fullPath = path.join(current, entry.name);
+				if (entry.isDirectory()) {
+					queue.push(fullPath);
+					continue;
+				}
+				if (!entry.isFile()) {
+					continue;
+				}
+				if (!/compressonator.*cli/i.test(entry.name)) {
+					continue;
+				}
+				if (await isExecutablePath(fullPath)) {
+					return fullPath;
+				}
+			}
+		}
+		return "";
+	} catch {
+		return "";
+	}
 }
 
 function compressonatorFormat(format) {

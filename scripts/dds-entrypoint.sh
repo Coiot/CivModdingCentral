@@ -6,6 +6,9 @@ if [ "${CMC_DDS_NATIVE_BIN:-}" != "" ] && [ -x "${CMC_DDS_NATIVE_BIN}" ]; then
 	exec "$@"
 fi
 
+# Make common native encoder paths discoverable.
+export PATH="/opt/compressonator:/opt/compressonator/bin:${PATH}"
+
 # Fallback to bundled Compressonator path in the container.
 if [ -x "/opt/compressonator/CompressonatorCLI" ]; then
 	export CMC_DDS_NATIVE_BIN="/opt/compressonator/CompressonatorCLI"
