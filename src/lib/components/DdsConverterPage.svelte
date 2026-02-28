@@ -97,6 +97,7 @@
 		{ id: "nearest", label: "Nearest (sharpest, hardest edges)" },
 		{ id: "bilinear", label: "Bilinear (smoother)" },
 		{ id: "bicubic", label: "Bicubic (balanced default)" },
+		{ id: "lanczos3", label: "Lanczos3 (smoothest for downscale)" },
 	];
 	const ENCODER_BACKEND_OPTIONS = [
 		{ id: "dxtjs", label: "Web encoder (dxt-js)" },
@@ -206,7 +207,7 @@
 	let atlasCompressionEnabled = $state(true);
 	let atlasEncoderBackend = $state("dxtjs");
 	let atlasNativeQualityInput = $state("1");
-	let atlasResampleMode = $state("bicubic");
+	let atlasResampleMode = $state("lanczos3");
 	let atlasAlphaAware = $state(false);
 	let atlasSharpenAmountInput = $state("0");
 	let atlasEncoderMode = $state("clusterfit");
@@ -314,7 +315,7 @@
 		const mode = String(value || "")
 			.trim()
 			.toLowerCase();
-		return RESAMPLE_MODE_OPTIONS.some((option) => option.id === mode) ? mode : "bicubic";
+		return RESAMPLE_MODE_OPTIONS.some((option) => option.id === mode) ? mode : "lanczos3";
 	}
 
 	function normalizeEncoderMode(value) {

@@ -302,7 +302,7 @@ function normalizeResampleMode(input) {
 	const value = String(input || "")
 		.trim()
 		.toLowerCase();
-	if (value === "nearest" || value === "bilinear" || value === "bicubic") {
+	if (value === "nearest" || value === "bilinear" || value === "bicubic" || value === "lanczos3") {
 		return value;
 	}
 	return "bicubic";
@@ -695,6 +695,24 @@ function resizeIconAtlas({ sourceRgba, sourceWidth, sourceHeight, currentIconSiz
 					dstH: targetIconSize,
 					alphaAware,
 				});
+			} else if (resampleMode === "lanczos3") {
+				blitLanczos3({
+					sourceRgba,
+					sourceWidth,
+					sourceHeight,
+					srcX,
+					srcY,
+					srcW: currentIconSize,
+					srcH: currentIconSize,
+					destRgba: out,
+					destWidth: outWidth,
+					destHeight: outHeight,
+					dstX,
+					dstY,
+					dstW: targetIconSize,
+					dstH: targetIconSize,
+					alphaAware,
+				});
 			} else {
 				blitCubic({
 					sourceRgba,
@@ -900,6 +918,131 @@ function blitCubic({ sourceRgba, sourceWidth, sourceHeight, srcX, srcY, srcW, sr
 	}
 }
 
+function blitLanczos3({ sourceRgba, sourceWidth, sourceHeight, srcX, srcY, srcW, srcH, destRgba, destWidth, destHeight, dstX, dstY, dstW, dstH, alphaAware }) {
+	const maxSourceX = sourceWidth - 1;
+	const maxSourceY = sourceHeight - 1;
+	const regionMinX = srcX;
+	const regionMinY = srcY;
+	const regionMaxX = Math.min(srcX + srcW - 1, maxSourceX);
+	const regionMaxY = Math.min(srcY + srcH - 1, maxSourceY);
+
+	const scaleX = dstW / srcW;
+	const scaleY = dstH / srcH;
+	const supportX = scaleX < 1 ? 3 / scaleX : 3;
+	const supportY = scaleY < 1 ? 3 / scaleY : 3;
+	const kernelScaleX = scaleX < 1 ? scaleX : 1;
+	const kernelScaleY = scaleY < 1 ? scaleY : 1;
+
+	for (let y = 0; y < dstH; y += 1) {
+		const sourceYf = srcY + (y + 0.5) * (srcH / dstH) - 0.5;
+		const minY = Math.max(regionMinY, Math.floor(sourceYf - supportY));
+		const maxY = Math.min(regionMaxY, Math.ceil(sourceYf + supportY));
+		for (let x = 0; x < dstW; x += 1) {
+			const sourceXf = srcX + (x + 0.5) * (srcW / dstW) - 0.5;
+			const minX = Math.max(regionMinX, Math.floor(sourceXf - supportX));
+			const maxX = Math.min(regionMaxX, Math.ceil(sourceXf + supportX));
+
+			const targetX = dstX + x;
+			const targetY = dstY + y;
+			if (targetX < 0 || targetX >= destWidth || targetY < 0 || targetY >= destHeight) {
+				continue;
+			}
+
+			let weightSum = 0;
+			let alphaWeighted = 0;
+			let alphaStraightWeighted = 0;
+			let redWeighted = 0;
+			let greenWeighted = 0;
+			let blueWeighted = 0;
+
+			for (let sy = minY; sy <= maxY; sy += 1) {
+				const wy = lanczosKernel((sourceYf - sy) * kernelScaleY, 3);
+				if (Math.abs(wy) < 1e-9) {
+					continue;
+				}
+				for (let sx = minX; sx <= maxX; sx += 1) {
+					const wx = lanczosKernel((sourceXf - sx) * kernelScaleX, 3);
+					if (Math.abs(wx) < 1e-9) {
+						continue;
+					}
+					const weight = wx * wy;
+					const srcOffset = (sy * sourceWidth + sx) * 4;
+					const alpha = sourceRgba[srcOffset + 3] / 255;
+					const rLinear = SRGB_TO_LINEAR[sourceRgba[srcOffset]];
+					const gLinear = SRGB_TO_LINEAR[sourceRgba[srcOffset + 1]];
+					const bLinear = SRGB_TO_LINEAR[sourceRgba[srcOffset + 2]];
+
+					weightSum += weight;
+					alphaStraightWeighted += weight * alpha;
+
+					if (alphaAware) {
+						const weightedAlpha = weight * alpha;
+						alphaWeighted += weightedAlpha;
+						redWeighted += rLinear * weightedAlpha;
+						greenWeighted += gLinear * weightedAlpha;
+						blueWeighted += bLinear * weightedAlpha;
+					} else {
+						redWeighted += rLinear * weight;
+						greenWeighted += gLinear * weight;
+						blueWeighted += bLinear * weight;
+					}
+				}
+			}
+
+			const dstOffset = (targetY * destWidth + targetX) * 4;
+			if (Math.abs(weightSum) < 1e-9) {
+				destRgba[dstOffset] = 0;
+				destRgba[dstOffset + 1] = 0;
+				destRgba[dstOffset + 2] = 0;
+				destRgba[dstOffset + 3] = 0;
+				continue;
+			}
+
+			const alpha = clamp01(alphaStraightWeighted / weightSum);
+			destRgba[dstOffset + 3] = clampByte(Math.round(alpha * 255));
+
+			let rLinear;
+			let gLinear;
+			let bLinear;
+			if (alphaAware) {
+				if (Math.abs(alphaWeighted) < 1e-9) {
+					destRgba[dstOffset] = 0;
+					destRgba[dstOffset + 1] = 0;
+					destRgba[dstOffset + 2] = 0;
+					continue;
+				}
+				rLinear = redWeighted / alphaWeighted;
+				gLinear = greenWeighted / alphaWeighted;
+				bLinear = blueWeighted / alphaWeighted;
+			} else {
+				rLinear = redWeighted / weightSum;
+				gLinear = greenWeighted / weightSum;
+				bLinear = blueWeighted / weightSum;
+			}
+
+			destRgba[dstOffset] = linearToSrgbByte(rLinear);
+			destRgba[dstOffset + 1] = linearToSrgbByte(gLinear);
+			destRgba[dstOffset + 2] = linearToSrgbByte(bLinear);
+		}
+	}
+}
+
+function lanczosKernel(distance, a) {
+	const x = Math.abs(distance);
+	if (x < 1e-7) {
+		return 1;
+	}
+	if (x >= a) {
+		return 0;
+	}
+	return sinc(x) * sinc(x / a);
+}
+
+function sinc(x) {
+	const t = Math.PI * x;
+	return Math.sin(t) / t;
+}
+
 function applyUnsharpMaskRgba(rgba, width, height, amount = 0.35) {
 	if (!rgba || width < 2 || height < 2 || amount <= 0) {
 		return;
@@ -963,6 +1106,16 @@ function cubicWeight(distance) {
 	return -0.5 * x * x * x + 2.5 * x * x - 4 * x + 2;
 }
 
+function clamp01(value) {
+	if (value < 0) {
+		return 0;
+	}
+	if (value > 1) {
+		return 1;
+	}
+	return value;
+}
+
 function clampByte(value) {
 	if (value < 0) {
 		return 0;
@@ -972,6 +1125,27 @@ function clampByte(value) {
 	}
 	return value;
 }
+
+function linearToSrgbByte(value) {
+	const clamped = clamp01(value);
+	if (clamped <= 0.0031308) {
+		return clampByte(Math.round(clamped * 12.92 * 255));
+	}
+	return clampByte(Math.round((1.055 * Math.pow(clamped, 1 / 2.4) - 0.055) * 255));
+}
+
+const SRGB_TO_LINEAR = (() => {
+	const table = new Float32Array(256);
+	for (let i = 0; i < 256; i += 1) {
+		const s = i / 255;
+		if (s <= 0.04045) {
+			table[i] = s / 12.92;
+		} else {
+			table[i] = Math.pow((s + 0.055) / 1.055, 2.4);
+		}
+	}
+	return table;
+})();
 
 function buildDdsBuffer({ compressedData, width, height, format }) {
 	const fourCC = FOURCC_BY_FORMAT[format];
