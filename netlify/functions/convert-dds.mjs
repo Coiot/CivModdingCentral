@@ -175,6 +175,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 	const resampleMode = normalizeResampleMode(form.fields.resampleMode);
 	const alphaAware = parseBooleanFlag(form.fields.alphaAware, true);
 	const sharpenAmount = parseBoundedFloat(form.fields.sharpenAmount, 0, 1, 0);
+	const preBlurAmount = parseBoundedFloat(form.fields.preBlurAmount, 0, 2, 0);
 	const encoderMode = normalizeEncoderMode(form.fields.encoderMode);
 	const colorMetric = normalizeColorMetric(form.fields.colorMetric);
 	const weightColorByAlpha = parseBooleanFlag(form.fields.weightColorByAlpha, false);
@@ -199,6 +200,9 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 		});
 		if (size < currentIconSize && sharpenAmount > 0) {
 			applyUnsharpMaskRgba(atlas.data, atlas.width, atlas.height, sharpenAmount);
+		}
+		if (size < currentIconSize && preBlurAmount > 0) {
+			applyGaussianBlurRgba(atlas.data, atlas.width, atlas.height, preBlurAmount);
 		}
 
 		const prepared = padRgbaToDxtBlocks(atlas.data, atlas.width, atlas.height);
@@ -242,6 +246,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 			"X-Resample-Mode": resampleMode,
 			"X-Alpha-Aware": alphaAware ? "1" : "0",
 			"X-Sharpen-Amount": String(sharpenAmount),
+			"X-Pre-Blur-Amount": String(preBlurAmount),
 			"X-Encoder-Mode": encoderMode,
 			"X-Color-Metric": colorMetric,
 			"X-Weight-By-Alpha": weightColorByAlpha ? "1" : "0",
@@ -1083,6 +1088,113 @@ function applyUnsharpMaskRgba(rgba, width, height, amount = 0.35) {
 		rgba[i + 1] = clampByte(Math.round(original[i + 1] + amount * (original[i + 1] - blurred[i + 1])));
 		rgba[i + 2] = clampByte(Math.round(original[i + 2] + amount * (original[i + 2] - blurred[i + 2])));
 	}
+}
+
+function applyGaussianBlurRgba(rgba, width, height, sigma = 0.55) {
+	if (!rgba || width < 2 || height < 2 || sigma <= 0) {
+		return;
+	}
+	const kernel = gaussianKernel1D(sigma);
+	const radius = (kernel.length - 1) >> 1;
+	const source = Buffer.from(rgba);
+	const tmp = Buffer.alloc(source.length, 0);
+
+	// Horizontal pass
+	for (let y = 0; y < height; y += 1) {
+		for (let x = 0; x < width; x += 1) {
+			let alphaSum = 0;
+			let redSum = 0;
+			let greenSum = 0;
+			let blueSum = 0;
+			let alphaStraight = 0;
+			let weightSum = 0;
+
+			for (let k = -radius; k <= radius; k += 1) {
+				const sampleX = clampInt(x + k, 0, width - 1);
+				const weight = kernel[k + radius];
+				const srcOffset = (y * width + sampleX) * 4;
+				const alpha = source[srcOffset + 3] / 255;
+				const weightedAlpha = weight * alpha;
+				alphaSum += weightedAlpha;
+				alphaStraight += weight * alpha;
+				redSum += SRGB_TO_LINEAR[source[srcOffset]] * weightedAlpha;
+				greenSum += SRGB_TO_LINEAR[source[srcOffset + 1]] * weightedAlpha;
+				blueSum += SRGB_TO_LINEAR[source[srcOffset + 2]] * weightedAlpha;
+				weightSum += weight;
+			}
+
+			const dstOffset = (y * width + x) * 4;
+			const outAlpha = weightSum > 0 ? clamp01(alphaStraight / weightSum) : 0;
+			tmp[dstOffset + 3] = clampByte(Math.round(outAlpha * 255));
+			if (alphaSum > 1e-9) {
+				tmp[dstOffset] = linearToSrgbByte(redSum / alphaSum);
+				tmp[dstOffset + 1] = linearToSrgbByte(greenSum / alphaSum);
+				tmp[dstOffset + 2] = linearToSrgbByte(blueSum / alphaSum);
+			} else {
+				tmp[dstOffset] = 0;
+				tmp[dstOffset + 1] = 0;
+				tmp[dstOffset + 2] = 0;
+			}
+		}
+	}
+
+	// Vertical pass
+	for (let y = 0; y < height; y += 1) {
+		for (let x = 0; x < width; x += 1) {
+			let alphaSum = 0;
+			let redSum = 0;
+			let greenSum = 0;
+			let blueSum = 0;
+			let alphaStraight = 0;
+			let weightSum = 0;
+
+			for (let k = -radius; k <= radius; k += 1) {
+				const sampleY = clampInt(y + k, 0, height - 1);
+				const weight = kernel[k + radius];
+				const srcOffset = (sampleY * width + x) * 4;
+				const alpha = tmp[srcOffset + 3] / 255;
+				const weightedAlpha = weight * alpha;
+				alphaSum += weightedAlpha;
+				alphaStraight += weight * alpha;
+				redSum += SRGB_TO_LINEAR[tmp[srcOffset]] * weightedAlpha;
+				greenSum += SRGB_TO_LINEAR[tmp[srcOffset + 1]] * weightedAlpha;
+				blueSum += SRGB_TO_LINEAR[tmp[srcOffset + 2]] * weightedAlpha;
+				weightSum += weight;
+			}
+
+			const dstOffset = (y * width + x) * 4;
+			const outAlpha = weightSum > 0 ? clamp01(alphaStraight / weightSum) : 0;
+			rgba[dstOffset + 3] = clampByte(Math.round(outAlpha * 255));
+			if (alphaSum > 1e-9) {
+				rgba[dstOffset] = linearToSrgbByte(redSum / alphaSum);
+				rgba[dstOffset + 1] = linearToSrgbByte(greenSum / alphaSum);
+				rgba[dstOffset + 2] = linearToSrgbByte(blueSum / alphaSum);
+			} else {
+				rgba[dstOffset] = 0;
+				rgba[dstOffset + 1] = 0;
+				rgba[dstOffset + 2] = 0;
+			}
+		}
+	}
+}
+
+function gaussianKernel1D(sigma) {
+	const clampedSigma = Math.max(0.1, sigma);
+	const radius = Math.max(1, Math.ceil(clampedSigma * 2.5));
+	const size = radius * 2 + 1;
+	const kernel = new Float32Array(size);
+	let sum = 0;
+	for (let i = -radius; i <= radius; i += 1) {
+		const value = Math.exp(-(i * i) / (2 * clampedSigma * clampedSigma));
+		kernel[i + radius] = value;
+		sum += value;
+	}
+	if (sum > 0) {
+		for (let i = 0; i < size; i += 1) {
+			kernel[i] /= sum;
+		}
+	}
+	return kernel;
 }
 
 function clampInt(value, min, max) {

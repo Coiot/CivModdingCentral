@@ -210,6 +210,7 @@
 	let atlasResampleMode = $state("lanczos3");
 	let atlasAlphaAware = $state(false);
 	let atlasSharpenAmountInput = $state("0");
+	let atlasPreBlurAmountInput = $state("0");
 	let atlasEncoderMode = $state("clusterfit");
 	let atlasColorMetric = $state("uniform");
 	let atlasWeightColorByAlpha = $state(false);
@@ -251,6 +252,7 @@
 	const activeNativeQuality = $derived(parseBoundedFloat(atlasNativeQualityInput, 0, 1, 1));
 	const activeAtlasResampleMode = $derived(normalizeResampleMode(atlasResampleMode));
 	const atlasSharpenAmount = $derived(parseBoundedFloat(atlasSharpenAmountInput, 0, 1, 0));
+	const atlasPreBlurAmount = $derived(parseBoundedFloat(atlasPreBlurAmountInput, 0, 2, 0));
 	const activeAtlasEncoderMode = $derived(normalizeEncoderMode(atlasEncoderMode));
 	const activeAtlasColorMetric = $derived(normalizeColorMetric(atlasColorMetric));
 	const atlasSqlToken = $derived(normalizeAtlasSqlToken(atlasExportName));
@@ -707,6 +709,7 @@
 				form.append("resampleMode", activeAtlasResampleMode);
 				form.append("alphaAware", atlasAlphaAware ? "1" : "0");
 				form.append("sharpenAmount", String(atlasSharpenAmount));
+				form.append("preBlurAmount", String(atlasPreBlurAmount));
 				form.append("encoderMode", activeAtlasEncoderMode);
 				form.append("colorMetric", activeAtlasColorMetric);
 				form.append("weightColorByAlpha", atlasWeightColorByAlpha ? "1" : "0");
@@ -744,6 +747,7 @@
 				resampleMode: response.headers.get("x-resample-mode") || "",
 				alphaAware: response.headers.get("x-alpha-aware") || "",
 				sharpenAmount: response.headers.get("x-sharpen-amount") || "",
+				preBlurAmount: response.headers.get("x-pre-blur-amount") || "",
 				encoderMode: response.headers.get("x-encoder-mode") || "",
 				colorMetric: response.headers.get("x-color-metric") || "",
 				weightByAlpha: response.headers.get("x-weight-by-alpha") || "",
@@ -1010,6 +1014,16 @@
 								<input type="number" min="0" max="1" step="0.05" value={String(atlasSharpenAmount)} oninput={(event) => (atlasSharpenAmountInput = event.currentTarget.value)} />
 							</label>
 						</div>
+						<div class="atlas-quality-row">
+							<label>
+								Pre-Blur
+								<input type="range" min="0" max="2" step="0.05" value={String(atlasPreBlurAmount)} oninput={(event) => (atlasPreBlurAmountInput = event.currentTarget.value)} />
+							</label>
+							<label>
+								Pre-Blur Amount
+								<input type="number" min="0" max="2" step="0.05" value={String(atlasPreBlurAmount)} oninput={(event) => (atlasPreBlurAmountInput = event.currentTarget.value)} />
+							</label>
+						</div>
 						<span class="check-row-note">Upscale sheet dimensions to multiple of 4: Always enabled</span>
 						<span class="check-row-note">Resize icon sheet for selected output sizes: Always enabled</span>
 					</div>
@@ -1172,6 +1186,9 @@
 					{/if}
 					{#if conversionMeta.sharpenAmount}
 						<span>Sharpen: {conversionMeta.sharpenAmount}</span>
+					{/if}
+					{#if conversionMeta.preBlurAmount}
+						<span>Pre-blur: {conversionMeta.preBlurAmount}</span>
 					{/if}
 					{#if conversionMeta.encoderMode}
 						<span>Encoder: {conversionMeta.encoderMode}</span>
