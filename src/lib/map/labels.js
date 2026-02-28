@@ -59,8 +59,8 @@ function normalizeLabel(candidate, index) {
 	}
 
 	const priority = normalizePriority(candidate.priority);
-	const minZoom = numberOrNull(candidate.minZoom);
-	const maxZoom = numberOrNull(candidate.maxZoom);
+	const minZoom = normalizeZoomBound(candidate.minZoom);
+	const maxZoom = normalizeZoomBound(candidate.maxZoom);
 	const id = String(candidate.id || `${type}-${slugifyLabelName(name)}-${index}`).trim();
 	if (!id) {
 		return null;
@@ -201,6 +201,16 @@ function normalizeTilePoints(input) {
 function numberOrNull(value) {
 	const parsed = Number(value);
 	return Number.isFinite(parsed) ? parsed : null;
+}
+
+function normalizeZoomBound(value) {
+	const parsed = numberOrNull(value);
+	if (!Number.isFinite(parsed)) {
+		return null;
+	}
+	// Backward compatibility: some stored labels used percent values (e.g. 120 for 1.2x).
+	const normalized = parsed > 10 ? parsed / 100 : parsed;
+	return clampNumber(normalized, 0, 10);
 }
 
 function slugifyLabelName(value) {
