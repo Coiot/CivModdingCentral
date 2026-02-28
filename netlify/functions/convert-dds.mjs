@@ -34,6 +34,7 @@ const FORMAT_ALIASES = {
 	DXT1: "DXT1",
 	DXT3: "DXT3",
 	DXT5: "DXT5",
+	RGBA8: "RGBA8",
 };
 
 const FOURCC_BY_FORMAT = {
@@ -84,11 +85,13 @@ export async function handler(event) {
 		if (!sourceWidth || !sourceHeight) {
 			return json(400, { error: "PNG dimensions are invalid." });
 		}
-		const encoderBackend = normalizeEncoderBackend(form.fields.encoderBackend);
+		const workflow = normalizeWorkflow(form.fields.workflow);
+		const isScreenWorkflow = workflow === "screen";
+		const isIconSheetWorkflow = workflow === "icon_sheet";
+		const encoderBackend = isScreenWorkflow || isIconSheetWorkflow ? ENCODER_BACKEND_NATIVE : normalizeEncoderBackend(form.fields.encoderBackend);
 		const nativeQuality = resolveNativeQuality(form.fields.nativeQuality ?? process.env.CMC_DDS_NATIVE_QUALITY, 1);
 		const colorMetric = normalizeColorMetric(form.fields.colorMetric);
 
-		const workflow = normalizeWorkflow(form.fields.workflow);
 		if (workflow === "icon_bundle") {
 			return await convertIconAtlasBundle({
 				form,
@@ -102,8 +105,8 @@ export async function handler(event) {
 
 		const assetType = normalizeAssetType(form.fields.assetType);
 		const requestedFormat = normalizeCompressionFormat(form.fields.compressionFormat);
-		const chosenFormat = requestedFormat || DEFAULT_FORMAT_BY_ASSET[assetType];
-		if (!ASSET_FORMATS[assetType].includes(chosenFormat)) {
+		const chosenFormat = isScreenWorkflow || isIconSheetWorkflow ? "RGBA8" : requestedFormat || DEFAULT_FORMAT_BY_ASSET[assetType];
+		if (chosenFormat !== "RGBA8" && !ASSET_FORMATS[assetType].includes(chosenFormat)) {
 			return json(400, {
 				error: `Compression ${chosenFormat} is not valid for asset type "${assetType}".`,
 			});
@@ -252,6 +255,38 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 		} catch (error) {
 			return json(500, { error: `DDS compression failed for ${size}px export: ${error?.message || "unknown compression error"}` });
 		}
+	}
+
+	if (files.length === 1) {
+		const onlyFile = files[0];
+		return {
+			statusCode: 200,
+			isBase64Encoded: true,
+			headers: {
+				"Content-Type": "application/octet-stream",
+				"Content-Disposition": `attachment; filename="${onlyFile.name}"`,
+				"Cache-Control": "no-store",
+				"X-Source-Width": String(sourceWidth),
+				"X-Source-Height": String(sourceHeight),
+				"X-Compression-Format": outputFormat,
+				"X-Bundle-Count": "1",
+				"X-Resample-Mode": resampleMode,
+				"X-Alpha-Aware": alphaAware ? "1" : "0",
+				"X-Sharpen-Amount": String(sharpenAmount),
+				"X-Pre-Blur-Amount": String(preBlurAmount),
+				"X-Color-Boost": String(colorBoost),
+				"X-Dither-Amount": String(ditherAmount),
+				"X-Alpha-Smooth-Amount": String(alphaSmoothAmount),
+				"X-Detail-Boost": String(detailBoost),
+				"X-Encoder-Mode": encoderMode,
+				"X-Color-Metric": colorMetric,
+				"X-Weight-By-Alpha": weightColorByAlpha ? "1" : "0",
+				"X-Encoder-Backend": encoderBackend,
+				"X-Native-Quality": encoderBackend === ENCODER_BACKEND_NATIVE ? String(nativeQuality) : "",
+				"X-Native-Output-Mode": encoderBackend === ENCODER_BACKEND_NATIVE ? nativeOutputMode : "",
+			},
+			body: onlyFile.data.toString("base64"),
+		};
 	}
 
 	const zipBuffer = buildZipArchive(files);

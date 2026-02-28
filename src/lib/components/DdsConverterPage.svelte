@@ -12,6 +12,24 @@
 	}
 
 	const WORKFLOWS = {
+		screen: {
+			label: "Civ5 Screen Type",
+			description: "Uses fixed screen dimensions from your reference sheet.",
+			backendAssetType: "ui",
+			compressionOptions: ["DXT3"],
+		},
+		icon_bundle: {
+			label: "Icon Atlas Bundle",
+			description: "Generate one ZIP containing DDS icon sheets for multiple icon sizes.",
+			backendAssetType: "ui",
+			compressionOptions: ["DXT3"],
+		},
+		icon_sheet: {
+			label: "Single Icon Sheet",
+			description: "Single icon-sheet export for one chosen icon size.",
+			backendAssetType: "ui",
+			compressionOptions: ["DXT3"],
+		},
 		unit: {
 			label: "Unit Texture",
 			description: "Unit textures use DXT3 (BC2 style explicit alpha).",
@@ -25,35 +43,17 @@
 			compressionOptions: ["DXT1", "DXT5"],
 		},
 		ui: {
-			label: "UI / Icon Texture",
-			description: "UI and icon textures use DXT3 by default in this converter.",
+			label: "UI Texture",
+			description: "UI and icon textures use DXT3",
 			backendAssetType: "ui",
 			compressionOptions: ["DXT3"],
 		},
-		portraits: {
-			label: "Portrait / Icon Texture",
-			description: "Portraits and icon atlases commonly use DXT5.",
-			backendAssetType: "portraits",
-			compressionOptions: ["DXT5"],
-		},
-		screen: {
-			label: "Civ5 Screen Type",
-			description: "Uses fixed screen dimensions from your reference sheet.",
-			backendAssetType: "ui",
-			compressionOptions: ["DXT3"],
-		},
-		icon_sheet: {
-			label: "Single Icon Sheet",
-			description: "Single icon-sheet export for one chosen icon size.",
-			backendAssetType: "ui",
-			compressionOptions: ["DXT3"],
-		},
-		icon_bundle: {
-			label: "Icon Atlas Bundle",
-			description: "Generate one ZIP containing DDS icon sheets for multiple icon sizes.",
-			backendAssetType: "ui",
-			compressionOptions: ["DXT3"],
-		},
+		// portraits: {
+		// 	label: "Portrait / Icon Texture",
+		// 	description: "Portraits and icon atlases commonly",
+		// 	backendAssetType: "portraits",
+		// 	compressionOptions: ["DXT5"],
+		// },
 	};
 
 	const SCREEN_PRESETS = [
@@ -68,20 +68,6 @@
 		{ id: "city-state-bg", label: "City-State Bkgd.", width: 523, height: 300 },
 	];
 
-	const ALPHA_RADIUS_BY_SIZE = {
-		16: 11,
-		22: 18,
-		24: 17,
-		32: 22,
-		45: 31,
-		48: 33,
-		64: 43,
-		80: 52,
-		128: 86,
-		214: 144,
-		256: 172,
-	};
-
 	const ICON_PRESETS = [
 		{ id: "buildings", label: "Buildings", sizes: [256, 128, 80, 64, 45] },
 		{ id: "techs", label: "Techs", sizes: [256, 214, 128, 80, 64, 45] },
@@ -93,6 +79,7 @@
 	];
 
 	const ICON_ATLAS_SIZE_OPTIONS = [16, 22, 24, 32, 45, 48, 64, 80, 128, 214, 256];
+	const ICON_SOURCE_SIZE = 256;
 	const ICON_BUNDLE_ENCODER_PRESET = {
 		backend: "native",
 		resampleMode: "lanczos3",
@@ -112,7 +99,7 @@
 	const ICON_ATLAS_PRESETS = [
 		{
 			id: "mixed-core",
-			label: "Buildings + Units + Civs + Leaders",
+			label: "All",
 			defaultSizes: [32, 45, 64, 80, 128, 256],
 			currentSize: 256,
 			rows: 2,
@@ -185,17 +172,15 @@
 		return selection;
 	}
 
-	let workflow = $state("unit");
+	let workflow = $state("icon_bundle");
 	let compressionChoice = $state("");
 	let selectedScreenPresetId = $state(SCREEN_PRESETS[0].id);
 
 	let selectedIconPresetId = $state(ICON_PRESETS[0].id);
-	let selectedIconSizeChoice = $state("");
 	let iconSheetRowsInput = $state("1");
 	let iconSheetColsInput = $state("1");
 
 	let selectedAtlasPresetId = $state(ICON_ATLAS_PRESETS[0].id);
-	let atlasCurrentIconSizeChoice = $state(String(ICON_ATLAS_PRESETS[0].currentSize));
 	let atlasRowsInput = $state(String(ICON_ATLAS_PRESETS[0].rows));
 	let atlasColsInput = $state(String(ICON_ATLAS_PRESETS[0].cols));
 	let atlasSelectedSizesMap = $state(buildSizeSelection(ICON_ATLAS_PRESETS[0].defaultSizes));
@@ -223,12 +208,10 @@
 
 	const activeIconPreset = $derived(resolvePresetById(ICON_PRESETS, selectedIconPresetId));
 	const iconSizeOptions = $derived(activeIconPreset?.sizes || []);
-	const activeIconSize = $derived(resolveNumericOption(selectedIconSizeChoice, iconSizeOptions));
 	const iconSheetRows = $derived(parseGridCount(iconSheetRowsInput));
 	const iconSheetCols = $derived(parseGridCount(iconSheetColsInput));
 
 	const activeAtlasPreset = $derived(resolvePresetById(ICON_ATLAS_PRESETS, selectedAtlasPresetId));
-	const atlasCurrentIconSize = $derived(resolveNumericOption(atlasCurrentIconSizeChoice, ICON_ATLAS_SIZE_OPTIONS));
 	const atlasRows = $derived(parseGridCount(atlasRowsInput));
 	const atlasCols = $derived(parseGridCount(atlasColsInput));
 	const atlasSelectedSizes = $derived(ICON_ATLAS_SIZE_OPTIONS.filter((size) => Boolean(atlasSelectedSizesMap[size])).sort((a, b) => a - b));
@@ -260,10 +243,10 @@
 		computeExpectedDimensions({
 			workflow,
 			screenPreset: activeScreenPreset,
-			iconSize: activeIconSize,
+			iconSize: ICON_SOURCE_SIZE,
 			iconRows: iconSheetRows,
 			iconCols: iconSheetCols,
-			atlasCurrentSize: atlasCurrentIconSize,
+			atlasCurrentSize: ICON_SOURCE_SIZE,
 			atlasRows,
 			atlasCols,
 		}),
@@ -404,14 +387,6 @@
 		return options[0] || "";
 	}
 
-	function resolveNumericOption(choice, options) {
-		const parsed = Number(choice);
-		if (Number.isFinite(parsed) && options.includes(parsed)) {
-			return parsed;
-		}
-		return options[0] || null;
-	}
-
 	function parseGridCount(value) {
 		const parsed = Number.parseInt(String(value || "").trim(), 10);
 		if (!Number.isFinite(parsed) || parsed < 1) {
@@ -452,7 +427,6 @@
 	function onAtlasPresetChange(nextPresetId) {
 		const preset = resolvePresetById(ICON_ATLAS_PRESETS, nextPresetId);
 		selectedAtlasPresetId = preset.id;
-		atlasCurrentIconSizeChoice = String(preset.currentSize);
 		atlasRowsInput = String(preset.rows);
 		atlasColsInput = String(preset.cols);
 		atlasSelectedSizesMap = buildSizeSelection(preset.defaultSizes);
@@ -616,8 +590,9 @@
 			const form = new FormData();
 			form.append("file", selectedFile, selectedFile.name);
 			form.append("assetType", backendAssetType());
-			form.append("compressionFormat", activeCompression);
-			form.append("workflow", workflow);
+			const workflowForRequest = workflow === "icon_sheet" ? "icon_bundle" : workflow;
+			form.append("compressionFormat", workflow === "icon_sheet" ? "RGBA8" : activeCompression);
+			form.append("workflow", workflowForRequest);
 			form.append("preset", activePresetSummary());
 			if (expectedDimensions) {
 				form.append("targetWidth", String(expectedDimensions.width));
@@ -625,14 +600,32 @@
 			}
 
 			if (workflow === "icon_sheet") {
+				form.append("selectedSizes", iconSizeOptions.join(","));
+				form.append("currentIconSize", String(ICON_SOURCE_SIZE));
+				form.append("encoderBackend", ICON_BUNDLE_ENCODER_PRESET.backend);
+				form.append("nativeOutputMode", "rgba8");
+				form.append("nativeQuality", String(ICON_BUNDLE_ENCODER_PRESET.nativeQuality));
+				form.append("resampleMode", ICON_BUNDLE_ENCODER_PRESET.resampleMode);
+				form.append("alphaAware", ICON_BUNDLE_ENCODER_PRESET.alphaAware ? "1" : "0");
+				form.append("sharpenAmount", String(ICON_BUNDLE_ENCODER_PRESET.sharpenAmount));
+				form.append("preBlurAmount", String(ICON_BUNDLE_ENCODER_PRESET.preBlurAmount));
+				form.append("colorBoost", String(ICON_BUNDLE_ENCODER_PRESET.colorBoost));
+				form.append("ditherAmount", String(ICON_BUNDLE_ENCODER_PRESET.ditherAmount));
+				form.append("alphaSmoothAmount", String(ICON_BUNDLE_ENCODER_PRESET.alphaSmoothAmount));
+				form.append("detailBoost", String(ICON_BUNDLE_ENCODER_PRESET.detailBoost));
+				form.append("encoderMode", ICON_BUNDLE_ENCODER_PRESET.encoderMode);
+				form.append("colorMetric", ICON_BUNDLE_ENCODER_PRESET.colorMetric);
+				form.append("weightColorByAlpha", ICON_BUNDLE_ENCODER_PRESET.weightColorByAlpha ? "1" : "0");
 				form.append("gridRows", String(iconSheetRows));
 				form.append("gridCols", String(iconSheetCols));
-				form.append("iconCellSize", String(activeIconSize || ""));
+				form.append("resizeSheet", "1");
+				form.append("padToMultipleOf4", "1");
+				form.append("atlasType", "icon");
 			}
 
 			if (workflow === "icon_bundle") {
 				form.append("selectedSizes", atlasSelectedSizes.join(","));
-				form.append("currentIconSize", String(atlasCurrentIconSize));
+				form.append("currentIconSize", String(ICON_SOURCE_SIZE));
 				form.append("gridRows", String(atlasRows));
 				form.append("gridCols", String(atlasCols));
 				form.append("resizeSheet", "1");
@@ -669,7 +662,8 @@
 
 			const blob = await response.blob();
 			const contentDisposition = response.headers.get("content-disposition") || "";
-			const suggestedName = parseDownloadName(contentDisposition) || buildFallbackName(selectedFile.name, activeCompression, workflow === "icon_bundle");
+			const isBundleWorkflow = workflow === "icon_bundle" || workflow === "icon_sheet";
+			const suggestedName = parseDownloadName(contentDisposition) || buildFallbackName(selectedFile.name, activeCompression, isBundleWorkflow);
 
 			revokeDownloadUrl();
 			downloadUrl = URL.createObjectURL(blob);
@@ -717,6 +711,8 @@
 					})),
 				);
 				successMessage = `Bundle generated with ${conversionMeta.bundleCount || atlasSelectedSizes.length} DDS sheets.`;
+			} else if (workflow === "icon_sheet") {
+				successMessage = `Bundle generated with ${conversionMeta.bundleCount || iconSizeOptions.length} DDS sheets.`;
 			} else {
 				successMessage = `${activePresetSummary()} converted successfully.`;
 			}
@@ -754,14 +750,6 @@
 		}
 		const mb = kb / 1024;
 		return `${mb.toFixed(2)} MB`;
-	}
-
-	function iconSizeLabel(size) {
-		const alphaRadius = ALPHA_RADIUS_BY_SIZE[size];
-		if (alphaRadius) {
-			return `${size}px (alpha ${alphaRadius})`;
-		}
-		return `${size}px`;
 	}
 </script>
 
@@ -809,22 +797,6 @@
 						</select>
 					</label>
 
-					{#if iconSizeOptions.length > 1}
-						<label>
-							Icon Size
-							<select value={activeIconSize ? String(activeIconSize) : ""} onchange={(event) => (selectedIconSizeChoice = event.currentTarget.value)}>
-								{#each iconSizeOptions as size (size)}
-									<option value={String(size)}>{iconSizeLabel(size)}</option>
-								{/each}
-							</select>
-						</label>
-					{:else}
-						<label>
-							Icon Size
-							<input type="text" value={activeIconSize ? iconSizeLabel(activeIconSize) : "N/A"} readonly disabled />
-						</label>
-					{/if}
-
 					<label>
 						Icons per Row
 						<input type="number" min="1" max="64" step="1" value={String(iconSheetCols)} oninput={(event) => (iconSheetColsInput = event.currentTarget.value)} />
@@ -842,15 +814,6 @@
 						<select value={activeAtlasPreset?.id || ""} onchange={(event) => onAtlasPresetChange(event.currentTarget.value)}>
 							{#each ICON_ATLAS_PRESETS as preset (preset.id)}
 								<option value={preset.id}>{preset.label}</option>
-							{/each}
-						</select>
-					</label>
-
-					<label>
-						Current Icon Size
-						<select value={String(atlasCurrentIconSize)} onchange={(event) => (atlasCurrentIconSizeChoice = event.currentTarget.value)}>
-							{#each ICON_ATLAS_SIZE_OPTIONS as size (size)}
-								<option value={String(size)}>{iconSizeLabel(size)}</option>
 							{/each}
 						</select>
 					</label>
@@ -893,7 +856,7 @@
 					</div>
 				{/if}
 
-				{#if workflow !== "icon_bundle" || activeNativeOutputMode !== "rgba8"}
+				{#if workflow !== "screen" && workflow !== "icon_sheet" && (workflow !== "icon_bundle" || activeNativeOutputMode !== "rgba8")}
 					{#if compressionOptions.length > 1}
 						<label>
 							Compression
@@ -916,7 +879,12 @@
 		<section class="dds-section">
 			<div class="dds-section-head">
 				<h2 class="dds-section-title">2. Upload PNG</h2>
-				<p class="dds-section-copy">Drop your file here or click to choose from disk.</p>
+				<p class="dds-section-copy">Drop your file here or click to upload.</p>
+			</div>
+			<div class="dds-meta">
+				{#if expectedDimensions}
+					<span>Required PNG: {expectedDimensions.width} x {expectedDimensions.height}</span>
+				{/if}
 			</div>
 			<label
 				class="dds-file-dropzone"
@@ -947,21 +915,17 @@
 			</div>
 
 			<div class="dds-meta">
-				<span>Preset: {activePresetSummary()}</span>
-				{#if expectedDimensions}
-					<span>Required PNG: {expectedDimensions.width}x{expectedDimensions.height}</span>
-				{/if}
 				{#if workflow === "icon_bundle"}
 					<span>Selected sizes: {atlasSelectedSizes.join(", ") || "none"}</span>
 				{/if}
-				{#if workflow !== "icon_bundle" || activeNativeOutputMode !== "rgba8"}
+				{#if workflow === "icon_sheet"}
+					<span>Selected sizes: {iconSizeOptions.join(", ") || "none"}</span>
+				{/if}
+				{#if workflow !== "screen" && workflow !== "icon_sheet" && (workflow !== "icon_bundle" || activeNativeOutputMode !== "rgba8")}
 					<span>Compression: {workflow === "icon_bundle" ? "DXT3" : activeCompression}</span>
 				{/if}
-				{#if workflow === "icon_bundle"}
-					<span>Encoder profile: native + lanczos3 + alpha-aware</span>
-				{/if}
 				{#if selectedFileInfo}
-					<span>PNG: {selectedFileInfo.width}x{selectedFileInfo.height}</span>
+					<span>Uploaded PNG: {selectedFileInfo.width} x {selectedFileInfo.height}</span>
 				{/if}
 			</div>
 
@@ -1028,7 +992,7 @@
 
 			<div class="dds-actions">
 				<button type="button" onclick={convertToDds} disabled={busy || !canSubmit}>
-					{busy ? "Converting..." : workflow === "icon_bundle" ? "Generate DDS Bundle" : "Convert to DDS"}
+					{busy ? "Converting..." : workflow === "icon_bundle" || workflow === "icon_sheet" ? "Generate DDS Bundle" : "Convert to DDS"}
 				</button>
 				{#if downloadUrl}
 					<a class="dds-download" href={downloadUrl} download={downloadName}>Download {downloadName}</a>
@@ -1094,6 +1058,7 @@
 
 <style>
 	.dds-page {
+		inline-size: 100%;
 		display: grid;
 		gap: 1rem;
 	}
@@ -1103,22 +1068,49 @@
 	}
 
 	.dds-panel {
+		inline-size: 100%;
 		display: grid;
 		gap: 1rem;
-		background: var(--panel-bg);
+		color: var(--ink);
 		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
 		border-radius: 1rem;
-		padding: 1.1rem;
+		background: var(--panel-bg);
 		box-shadow: 0 8px 20px var(--shadow-soft);
+		padding-block: 1.1rem;
+		padding-inline: 1.1rem;
+
+		& label {
+			display: grid;
+			gap: 0.45rem;
+			font-size: 0.95rem;
+		}
+
+		& select,
+		& input[type="file"],
+		& input[type="text"],
+		& input[type="number"] {
+			color: var(--ink);
+			background: var(--input-bg);
+			border: 1px solid var(--panel-border);
+			border-radius: 0.65rem;
+			padding-block: 0.52rem;
+			padding-inline: 0.65rem;
+		}
+
+		& input[readonly] {
+			opacity: 0.8;
+		}
 	}
 
 	.dds-section {
+		inline-size: 100%;
 		display: grid;
 		gap: 0.75rem;
-		padding: 0.8rem;
 		border: 1px solid color-mix(in oklch, var(--accent) 16%, var(--panel-border));
 		border-radius: 0.9rem;
 		background: color-mix(in oklch, var(--panel-bg) 86%, var(--control-bg));
+		padding-block: 0.8rem;
+		padding-inline: 0.8rem;
 	}
 
 	.dds-section-head {
@@ -1132,9 +1124,9 @@
 	}
 
 	.dds-section-copy {
-		margin: 0;
 		color: var(--muted-ink);
 		font-size: 0.9rem;
+		margin: 0;
 	}
 
 	.dds-form-grid {
@@ -1143,50 +1135,39 @@
 		gap: 0.85rem;
 	}
 
-	.dds-panel label {
-		display: grid;
-		gap: 0.45rem;
-		font-size: 0.95rem;
-	}
-
-	.dds-panel select,
-	.dds-panel input[type="file"],
-	.dds-panel input[type="text"],
-	.dds-panel input[type="number"] {
-		border-radius: 0.65rem;
-		border: 1px solid var(--panel-border);
-		padding: 0.52rem 0.65rem;
-		background: var(--input-bg);
-		color: var(--ink);
-	}
-
-	.dds-panel input[readonly] {
-		opacity: 0.8;
-	}
-
 	.dds-file-dropzone {
 		grid-column: 1 / -1;
-		min-height: 150px;
-		border: 2px dashed color-mix(in oklch, var(--accent) 35%, var(--panel-border));
-		border-radius: 0.85rem;
-		background: color-mix(in oklch, var(--accent) 8%, var(--control-bg));
-		padding: 0.8rem;
+		min-block-size: 150px;
 		display: grid;
 		align-content: center;
 		justify-items: center;
-		text-align: center;
 		gap: 0.5rem;
+		color: var(--ink);
+		background: color-mix(in oklch, var(--accent) 8%, var(--control-bg));
+		border: 2px dashed color-mix(in oklch, var(--accent) 35%, var(--panel-border));
+		border-radius: 0.85rem;
+		text-align: center;
 		cursor: pointer;
+		padding-block: 0.8rem;
+		padding-inline: 0.8rem;
 		transition:
 			background 0.15s ease,
 			border-color 0.15s ease,
 			transform 0.15s ease;
-	}
 
-	.dds-file-dropzone.is-drag-over {
-		border-color: color-mix(in oklch, var(--accent) 62%, var(--panel-border));
-		background: color-mix(in oklch, var(--accent) 18%, var(--control-bg));
-		transform: translateY(-1px);
+		&.is-drag-over {
+			background: color-mix(in oklch, var(--accent) 18%, var(--control-bg));
+			border-color: color-mix(in oklch, var(--accent) 62%, var(--panel-border));
+			transform: translateY(-1px);
+		}
+
+		& input[type="file"] {
+			inline-size: 100%;
+			max-inline-size: 100%;
+			padding-block: 0.35rem;
+			padding-inline: 0.35rem;
+			margin-block-start: 0.2rem;
+		}
 	}
 
 	.dds-file-dropzone-title {
@@ -1199,20 +1180,16 @@
 		font-size: 0.92rem;
 	}
 
-	.dds-file-dropzone input[type="file"] {
-		margin-top: 0.2rem;
-		padding: 0.35rem;
-		max-width: 100%;
-	}
-
 	.atlas-size-block {
 		grid-column: 1 / -1;
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
-		border-radius: 0.75rem;
-		padding: 0.65rem;
-		background: var(--control-bg);
 		display: grid;
 		gap: 0.6rem;
+		color: var(--ink);
+		background: var(--control-bg);
+		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border-radius: 0.75rem;
+		padding-block: 0.65rem;
+		padding-inline: 0.65rem;
 	}
 
 	.atlas-size-header {
@@ -1220,6 +1197,7 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 0.6rem;
+		color: var(--ink);
 		font-size: 0.9rem;
 		font-weight: 600;
 	}
@@ -1230,11 +1208,13 @@
 	}
 
 	.tiny-action {
-		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
-		background: var(--panel-bg);
-		border-radius: 0.5rem;
-		padding: 0.2rem 0.45rem;
+		color: var(--ink);
 		font-size: 0.78rem;
+		background: var(--panel-bg);
+		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+		border-radius: 0.5rem;
+		padding-block: 0.2rem;
+		padding-inline: 0.45rem;
 		cursor: pointer;
 	}
 
@@ -1248,6 +1228,7 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.35rem;
+		color: var(--ink);
 		font-size: 0.85rem;
 	}
 
@@ -1258,26 +1239,27 @@
 		flex-wrap: wrap;
 	}
 
-	.dds-actions button {
-		border: 1px solid color-mix(in oklch, var(--accent) 28%, var(--panel-border));
-		background: var(--control-bg);
-		color: var(--ink);
-		border-radius: 0.65rem;
-		padding: 0.54rem 0.82rem;
-		cursor: pointer;
-	}
-
-	.dds-actions button:disabled {
-		opacity: 0.55;
-		cursor: not-allowed;
-	}
-
+	.dds-actions button,
 	.dds-download {
 		color: var(--ink);
 		text-decoration: none;
+		background: var(--control-bg);
 		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
 		border-radius: 0.65rem;
-		padding: 0.54rem 0.82rem;
+		padding-block: 0.54rem;
+		padding-inline: 0.82rem;
+	}
+
+	.dds-actions button {
+		cursor: pointer;
+
+		&:disabled {
+			opacity: 0.55;
+			cursor: not-allowed;
+		}
+	}
+
+	.dds-download {
 		background: color-mix(in oklch, var(--accent) 12%, var(--control-bg));
 	}
 
@@ -1285,32 +1267,41 @@
 		display: flex;
 		gap: 0.5rem;
 		flex-wrap: wrap;
-	}
 
-	.dds-meta span {
-		padding: 0.34rem 0.5rem;
-		border-radius: 0.55rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
-		background: var(--control-bg);
-		font-size: 0.85rem;
+		& span {
+			font-size: 0.85rem;
+			color: var(--ink);
+			background: var(--control-bg);
+			border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+			border-radius: 0.55rem;
+			padding-block: 0.34rem;
+			padding-inline: 0.5rem;
+		}
 	}
 
 	.dds-warning {
-		margin: 0;
-		padding: 0.55rem 0.65rem;
-		border-radius: 0.65rem;
-		border: 1px solid color-mix(in oklch, oklch(0.9 0.15 95) 50%, var(--panel-border));
-		background: color-mix(in oklch, oklch(0.93 0.08 100) 35%, var(--control-bg));
+		color: var(--ink);
 		font-size: 0.9rem;
+		background: color-mix(in oklch, oklch(0.93 0.08 100) 35%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, oklch(0.9 0.15 95) 50%, var(--panel-border));
+		border-radius: 0.65rem;
+		padding-block: 0.55rem;
+		padding-inline: 0.65rem;
+		margin: 0;
 	}
 
 	.dds-preview-block {
 		display: grid;
 		gap: 0.6rem;
-		padding: 0.65rem;
-		border-radius: 0.75rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		color: var(--ink);
 		background: var(--control-bg);
+		inline-size: 100%;
+		max-inline-size: 100%;
+		overflow: hidden;
+		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border-radius: 0.75rem;
+		padding-block: 0.65rem;
+		padding-inline: 0.65rem;
 	}
 
 	.dds-preview-list-wrap {
@@ -1319,34 +1310,38 @@
 	}
 
 	.dds-preview-title {
-		margin: 0;
-		font-size: 0.86rem;
 		color: var(--muted-ink);
+		font-size: 0.86rem;
+		margin: 0;
 	}
 
 	.dds-preview-list {
-		margin: 0;
-		padding-left: 1rem;
 		display: grid;
 		gap: 0.2rem;
 		font-size: 0.86rem;
+		padding-inline-start: 1rem;
+		margin: 0;
 	}
 
 	.dds-preview-empty {
-		margin: 0;
-		font-size: 0.86rem;
 		color: var(--muted-ink);
+		font-size: 0.86rem;
+		margin: 0;
 	}
 
 	.dds-sql-textarea {
-		width: 100%;
-		border-radius: 0.65rem;
-		border: 1px solid var(--panel-border);
-		background: var(--input-bg);
+		inline-size: 100%;
+		block-size: auto;
+		max-inline-size: 100%;
+		resize: vertical;
 		color: var(--ink);
-		padding: 0.6rem 0.7rem;
 		font-family: "Courier New", "SFMono-Regular", Menlo, monospace;
 		font-size: 0.8rem;
+		background: var(--input-bg);
+		border: 1px solid var(--panel-border);
+		border-radius: 0.65rem;
+		padding-block: 0.6rem;
+		padding-inline: 0.7rem;
 	}
 
 	.danger-action {
@@ -1354,8 +1349,8 @@
 	}
 
 	.dds-status {
-		margin: 0;
 		font-size: 0.92rem;
+		margin: 0;
 	}
 
 	.dds-error {
