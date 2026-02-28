@@ -103,6 +103,10 @@
 		{ id: "dxtjs", label: "Web encoder (dxt-js)" },
 		{ id: "native", label: "Native encoder (CompressonatorCLI)" },
 	];
+	const NATIVE_OUTPUT_MODE_OPTIONS = [
+		{ id: "dxt3", label: "DXT3 (BC2 compressed)" },
+		{ id: "rgba8", label: "RGBA8 (uncompressed, highest quality, larger files)" },
+	];
 	const ENCODER_MODE_OPTIONS = [
 		{ id: "rangefit", label: "RangeFit (fast, lower quality)" },
 		{ id: "clusterfit", label: "ClusterFit (high quality)" },
@@ -206,6 +210,7 @@
 	let atlasType = $state("icon");
 	let atlasCompressionEnabled = $state(true);
 	let atlasEncoderBackend = $state("dxtjs");
+	let atlasNativeOutputMode = $state("dxt3");
 	let atlasNativeQualityInput = $state("1");
 	let atlasResampleMode = $state("lanczos3");
 	let atlasAlphaAware = $state(false);
@@ -253,6 +258,7 @@
 	const atlasHasSizeSelection = $derived(atlasSelectedSizes.length > 0);
 	const activeAtlasTypeConfig = $derived(BUNDLE_ATLAS_TYPES[atlasType] || BUNDLE_ATLAS_TYPES.icon);
 	const activeEncoderBackend = $derived(normalizeEncoderBackend(atlasEncoderBackend));
+	const activeNativeOutputMode = $derived(normalizeNativeOutputMode(atlasNativeOutputMode));
 	const activeNativeQuality = $derived(parseBoundedFloat(atlasNativeQualityInput, 0, 1, 1));
 	const activeAtlasResampleMode = $derived(normalizeResampleMode(atlasResampleMode));
 	const atlasSharpenAmount = $derived(parseBoundedFloat(atlasSharpenAmountInput, 0, 1, 0));
@@ -319,6 +325,13 @@
 			.trim()
 			.toLowerCase();
 		return ENCODER_BACKEND_OPTIONS.some((option) => option.id === backend) ? backend : "dxtjs";
+	}
+
+	function normalizeNativeOutputMode(value) {
+		const mode = String(value || "")
+			.trim()
+			.toLowerCase();
+		return NATIVE_OUTPUT_MODE_OPTIONS.some((option) => option.id === mode) ? mode : "dxt3";
 	}
 
 	function normalizeResampleMode(value) {
@@ -713,6 +726,7 @@
 				form.append("resizeSheet", "1");
 				form.append("padToMultipleOf4", "1");
 				form.append("encoderBackend", activeEncoderBackend);
+				form.append("nativeOutputMode", activeNativeOutputMode);
 				form.append("nativeQuality", String(activeNativeQuality));
 				form.append("resampleMode", activeAtlasResampleMode);
 				form.append("alphaAware", atlasAlphaAware ? "1" : "0");
@@ -769,6 +783,7 @@
 				weightByAlpha: response.headers.get("x-weight-by-alpha") || "",
 				encoderBackend: response.headers.get("x-encoder-backend") || "",
 				nativeQuality: response.headers.get("x-native-quality") || "",
+				nativeOutputMode: response.headers.get("x-native-output-mode") || "",
 			};
 
 			if (workflow === "icon_bundle") {
@@ -983,6 +998,14 @@
 							</select>
 						</label>
 						{#if activeEncoderBackend === "native"}
+							<label>
+								Native Output Mode
+								<select value={activeNativeOutputMode} onchange={(event) => (atlasNativeOutputMode = event.currentTarget.value)}>
+									{#each NATIVE_OUTPUT_MODE_OPTIONS as option (option.id)}
+										<option value={option.id}>{option.label}</option>
+									{/each}
+								</select>
+							</label>
 							<label>
 								Native Quality
 								<input type="number" min="0" max="1" step="0.05" value={String(activeNativeQuality)} oninput={(event) => (atlasNativeQualityInput = event.currentTarget.value)} />
@@ -1273,6 +1296,9 @@
 					{/if}
 					{#if conversionMeta.nativeQuality}
 						<span>Native quality: {conversionMeta.nativeQuality}</span>
+					{/if}
+					{#if conversionMeta.nativeOutputMode}
+						<span>Native output: {conversionMeta.nativeOutputMode}</span>
 					{/if}
 					{#if conversionMeta.colorMetric}
 						<span>Metric: {conversionMeta.colorMetric}</span>

@@ -171,7 +171,12 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 	}
 
 	const requestedFormat = normalizeCompressionFormat(form.fields.compressionFormat) || "DXT3";
-	if (requestedFormat !== "DXT3") {
+	const nativeOutputMode = normalizeNativeOutputMode(form.fields.nativeOutputMode);
+	const outputFormat = encoderBackend === ENCODER_BACKEND_NATIVE && nativeOutputMode === "rgba8" ? "RGBA8" : requestedFormat;
+	if (outputFormat !== "DXT3" && outputFormat !== "RGBA8") {
+		return json(400, { error: `Unsupported icon atlas output format: ${outputFormat}` });
+	}
+	if (outputFormat !== "RGBA8" && requestedFormat !== "DXT3") {
 		return json(400, { error: "Icon atlas bundle currently supports DXT3 (BC2) compression only." });
 	}
 	const resampleMode = normalizeResampleMode(form.fields.resampleMode);
@@ -234,7 +239,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 				rgbaData: prepared.data,
 				width: prepared.width,
 				height: prepared.height,
-				format: requestedFormat,
+				format: outputFormat,
 				backend: encoderBackend,
 				dxtFlags: compressionFlags,
 				nativeQuality,
@@ -260,7 +265,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 			"Cache-Control": "no-store",
 			"X-Source-Width": String(sourceWidth),
 			"X-Source-Height": String(sourceHeight),
-			"X-Compression-Format": requestedFormat,
+			"X-Compression-Format": outputFormat,
 			"X-Bundle-Count": String(files.length),
 			"X-Resample-Mode": resampleMode,
 			"X-Alpha-Aware": alphaAware ? "1" : "0",
@@ -275,6 +280,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 			"X-Weight-By-Alpha": weightColorByAlpha ? "1" : "0",
 			"X-Encoder-Backend": encoderBackend,
 			"X-Native-Quality": encoderBackend === ENCODER_BACKEND_NATIVE ? String(nativeQuality) : "",
+			"X-Native-Output-Mode": encoderBackend === ENCODER_BACKEND_NATIVE ? nativeOutputMode : "",
 		},
 		body: zipBuffer.toString("base64"),
 	};
@@ -388,6 +394,16 @@ function normalizeEncoderBackend(input) {
 	return ENCODER_BACKEND_DXTJS;
 }
 
+function normalizeNativeOutputMode(input) {
+	const value = String(input || "")
+		.trim()
+		.toLowerCase();
+	if (value === "rgba8") {
+		return "rgba8";
+	}
+	return "dxt3";
+}
+
 async function encodeDdsWithBackend({ rgbaData, width, height, format, backend, dxtFlags, nativeQuality, nativeColorMetric }) {
 	if (backend === ENCODER_BACKEND_NATIVE) {
 		return await encodeDdsWithCompressonator({
@@ -409,6 +425,9 @@ async function encodeDdsWithBackend({ rgbaData, width, height, format, backend, 
 }
 
 function encodeDdsWithDxtJs({ rgbaData, width, height, format, dxtFlags }) {
+	if (format === "RGBA8") {
+		throw new Error("RGBA8 output requires native encoder backend.");
+	}
 	const flags = Number(dxtFlags || dxt.flags[format] || 0);
 	const compressed = dxt.compress(new Uint8Array(rgbaData.buffer, rgbaData.byteOffset, rgbaData.byteLength), width, height, flags);
 	return buildDdsBuffer({
@@ -537,6 +556,9 @@ async function findCompressonatorBinary(rootDir) {
 }
 
 function compressonatorFormat(format) {
+	if (format === "RGBA8") {
+		return "ARGB_8888";
+	}
 	if (format === "DXT1") {
 		return "DXT1";
 	}
