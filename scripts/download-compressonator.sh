@@ -65,8 +65,10 @@ if [ -z "$BIN_PATH" ]; then
 fi
 
 if [ "$BIN_PATH" != "$TARGET_DIR/CompressonatorCLI" ]; then
-	cp "$BIN_PATH" "$TARGET_DIR/CompressonatorCLI"
+	printf '%s\n' "$BIN_PATH" > "$TARGET_DIR/.cmc_bin_path"
+else
+	printf '%s\n' "$TARGET_DIR/CompressonatorCLI" > "$TARGET_DIR/.cmc_bin_path"
 fi
-chmod +x "$TARGET_DIR/CompressonatorCLI"
+chmod +x "$BIN_PATH"
 
-echo "CompressonatorCLI ready at $TARGET_DIR/CompressonatorCLI"
+echo "CompressonatorCLI ready at $BIN_PATH"

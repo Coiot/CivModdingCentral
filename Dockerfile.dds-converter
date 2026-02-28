@@ -30,11 +30,14 @@ RUN chmod +x /app/scripts/dds-entrypoint.sh /app/scripts/download-compressonator
 	fi \
 	&& if [ -f /vendor/CompressonatorCLI ]; then \
 		cp /vendor/CompressonatorCLI /opt/compressonator/CompressonatorCLI; \
-	fi \
-	&& BIN_PATH="$(find /opt/compressonator -type f \( -iname 'CompressonatorCLI' -o -iname 'compressonatorcli' -o -iname '*compressonator*cli*' \) | head -n 1 || true)" \
-	&& if [ -n "$BIN_PATH" ]; then \
-		cp "$BIN_PATH" /opt/compressonator/CompressonatorCLI; \
 		chmod +x /opt/compressonator/CompressonatorCLI; \
+		printf '%s\n' "/opt/compressonator/CompressonatorCLI" > /opt/compressonator/.cmc_bin_path; \
+	fi \
+	&& BIN_PATH="$(if [ -f /opt/compressonator/.cmc_bin_path ]; then head -n 1 /opt/compressonator/.cmc_bin_path; else find /opt/compressonator -type f \( -iname 'CompressonatorCLI' -o -iname 'compressonatorcli' -o -iname '*compressonator*cli*' \) | head -n 1 || true; fi)" \
+	&& if [ -n "$BIN_PATH" ]; then \
+		chmod +x "$BIN_PATH" || true; \
+		printf '%s\n' "$BIN_PATH" > /opt/compressonator/.cmc_bin_path; \
+		echo "Resolved Compressonator binary: $BIN_PATH"; \
 	else \
 		echo "CompressonatorCLI missing after build setup."; \
 		echo "Found files under /opt/compressonator:"; \

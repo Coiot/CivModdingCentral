@@ -409,9 +409,10 @@ async function encodeDdsWithCompressonator({ rgbaData, width, height, format }) 
 		}
 		return await fs.readFile(outputDdsPath);
 	} catch (error) {
+		const errorCode = String(error?.code || "");
 		const message = String(error?.message || "");
-		if (message.includes("ENOENT")) {
-			throw new Error(`Native encoder binary not found: ${executable}`);
+		if (errorCode === "ENOENT" || message.includes("ENOENT")) {
+			throw new Error(`Native encoder failed to start at ${executable}. This can indicate a missing binary or missing runtime dependencies in the container.`);
 		}
 		throw error;
 	} finally {
