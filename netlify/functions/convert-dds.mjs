@@ -86,6 +86,7 @@ export async function handler(event) {
 		}
 		const encoderBackend = normalizeEncoderBackend(form.fields.encoderBackend);
 		const nativeQuality = resolveNativeQuality(form.fields.nativeQuality ?? process.env.CMC_DDS_NATIVE_QUALITY, 1);
+		const colorMetric = normalizeColorMetric(form.fields.colorMetric);
 
 		const workflow = normalizeWorkflow(form.fields.workflow);
 		if (workflow === "icon_bundle") {
@@ -119,6 +120,7 @@ export async function handler(event) {
 				backend: encoderBackend,
 				dxtFlags: dxt.flags[chosenFormat],
 				nativeQuality,
+				nativeColorMetric: colorMetric,
 			});
 		} catch (error) {
 			return json(500, { error: error?.message || "DDS compression failed." });
@@ -176,6 +178,8 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 	const alphaAware = parseBooleanFlag(form.fields.alphaAware, true);
 	const sharpenAmount = parseBoundedFloat(form.fields.sharpenAmount, 0, 1, 0);
 	const preBlurAmount = parseBoundedFloat(form.fields.preBlurAmount, 0, 2, 0);
+	const colorBoost = parseBoundedFloat(form.fields.colorBoost, 0.8, 1.5, 1);
+	const ditherAmount = parseBoundedFloat(form.fields.ditherAmount, 0, 1, 0);
 	const encoderMode = normalizeEncoderMode(form.fields.encoderMode);
 	const colorMetric = normalizeColorMetric(form.fields.colorMetric);
 	const weightColorByAlpha = parseBooleanFlag(form.fields.weightColorByAlpha, false);
@@ -204,6 +208,12 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 		if (size < currentIconSize && preBlurAmount > 0) {
 			applyGaussianBlurRgba(atlas.data, atlas.width, atlas.height, preBlurAmount);
 		}
+		if (size < currentIconSize && colorBoost !== 1) {
+			applyColorBoostRgba(atlas.data, atlas.width, atlas.height, colorBoost);
+		}
+		if (size < currentIconSize && ditherAmount > 0) {
+			applyGradientDitherRgba(atlas.data, atlas.width, atlas.height, ditherAmount);
+		}
 
 		const prepared = padRgbaToDxtBlocks(atlas.data, atlas.width, atlas.height);
 		const compressionFlags = composeCompressionFlags(requestedFormat, {
@@ -220,6 +230,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 				backend: encoderBackend,
 				dxtFlags: compressionFlags,
 				nativeQuality,
+				nativeColorMetric: colorMetric,
 			});
 			files.push({
 				name: `${filePrefix}_${fileSuffix}_${size}.dds`,
@@ -247,6 +258,8 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 			"X-Alpha-Aware": alphaAware ? "1" : "0",
 			"X-Sharpen-Amount": String(sharpenAmount),
 			"X-Pre-Blur-Amount": String(preBlurAmount),
+			"X-Color-Boost": String(colorBoost),
+			"X-Dither-Amount": String(ditherAmount),
 			"X-Encoder-Mode": encoderMode,
 			"X-Color-Metric": colorMetric,
 			"X-Weight-By-Alpha": weightColorByAlpha ? "1" : "0",
@@ -365,7 +378,7 @@ function normalizeEncoderBackend(input) {
 	return ENCODER_BACKEND_DXTJS;
 }
 
-async function encodeDdsWithBackend({ rgbaData, width, height, format, backend, dxtFlags, nativeQuality }) {
+async function encodeDdsWithBackend({ rgbaData, width, height, format, backend, dxtFlags, nativeQuality, nativeColorMetric }) {
 	if (backend === ENCODER_BACKEND_NATIVE) {
 		return await encodeDdsWithCompressonator({
 			rgbaData,
@@ -373,6 +386,7 @@ async function encodeDdsWithBackend({ rgbaData, width, height, format, backend, 
 			height,
 			format,
 			nativeQuality,
+			nativeColorMetric,
 		});
 	}
 	return encodeDdsWithDxtJs({
@@ -395,7 +409,7 @@ function encodeDdsWithDxtJs({ rgbaData, width, height, format, dxtFlags }) {
 	});
 }
 
-async function encodeDdsWithCompressonator({ rgbaData, width, height, format, nativeQuality = 1 }) {
+async function encodeDdsWithCompressonator({ rgbaData, width, height, format, nativeQuality = 1, nativeColorMetric = "uniform" }) {
 	const executable = await resolveNativeEncoderBinary();
 	if (!executable) {
 		throw new Error(`Native encoder selected but CompressonatorCLI is not configured. Set one of: ${NATIVE_BIN_ENV_KEYS.join(", ")} or ensure CLI exists under /opt/compressonator.`);
@@ -414,7 +428,13 @@ async function encodeDdsWithCompressonator({ rgbaData, width, height, format, na
 		await fs.writeFile(inputPngPath, pngBuffer);
 		const formatToken = compressonatorFormat(format);
 		const quality = resolveNativeQuality(nativeQuality, 1);
-		const args = ["-fd", formatToken, "-Quality", String(quality), inputPngPath, outputDdsPath];
+		const args = ["-fd", formatToken, "-Quality", String(quality)];
+		if (nativeColorMetric === "perceptual") {
+			args.push("-UseChannelWeighting", "1", "-WeightR", "0.3086", "-WeightG", "0.6094", "-WeightB", "0.0820");
+		} else {
+			args.push("-UseChannelWeighting", "0");
+		}
+		args.push(inputPngPath, outputDdsPath);
 		const result = await runCommand(executable, args);
 		if (result.code !== 0) {
 			const stderr = String(result.stderr || "").trim();
@@ -1178,6 +1198,52 @@ function applyGaussianBlurRgba(rgba, width, height, sigma = 0.55) {
 	}
 }
 
+function applyColorBoostRgba(rgba, width, height, boost = 1) {
+	if (!rgba || width < 1 || height < 1 || Math.abs(boost - 1) < 1e-6) {
+		return;
+	}
+	for (let i = 0; i < rgba.length; i += 4) {
+		const alpha = rgba[i + 3];
+		if (alpha === 0) {
+			continue;
+		}
+		const r = SRGB_TO_LINEAR[rgba[i]];
+		const g = SRGB_TO_LINEAR[rgba[i + 1]];
+		const b = SRGB_TO_LINEAR[rgba[i + 2]];
+		const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+		const outR = luma + (r - luma) * boost;
+		const outG = luma + (g - luma) * boost;
+		const outB = luma + (b - luma) * boost;
+		rgba[i] = linearToSrgbByte(outR);
+		rgba[i + 1] = linearToSrgbByte(outG);
+		rgba[i + 2] = linearToSrgbByte(outB);
+	}
+}
+
+function applyGradientDitherRgba(rgba, width, height, amount = 0.2) {
+	if (!rgba || width < 1 || height < 1 || amount <= 0) {
+		return;
+	}
+	const clamped = clamp01(amount);
+	const amplitude = (2 / 255) * clamped;
+	for (let y = 0; y < height; y += 1) {
+		for (let x = 0; x < width; x += 1) {
+			const offset = (y * width + x) * 4;
+			if (rgba[offset + 3] === 0) {
+				continue;
+			}
+			const threshold = BAYER_8X8[y & 7][x & 7];
+			const noise = (threshold - 0.5) * 2 * amplitude;
+			const r = SRGB_TO_LINEAR[rgba[offset]];
+			const g = SRGB_TO_LINEAR[rgba[offset + 1]];
+			const b = SRGB_TO_LINEAR[rgba[offset + 2]];
+			rgba[offset] = linearToSrgbByte(r + noise);
+			rgba[offset + 1] = linearToSrgbByte(g + noise);
+			rgba[offset + 2] = linearToSrgbByte(b + noise);
+		}
+	}
+}
+
 function gaussianKernel1D(sigma) {
 	const clampedSigma = Math.max(0.1, sigma);
 	const radius = Math.max(1, Math.ceil(clampedSigma * 2.5));
@@ -1258,6 +1324,17 @@ const SRGB_TO_LINEAR = (() => {
 	}
 	return table;
 })();
+
+const BAYER_8X8 = [
+	[0, 48, 12, 60, 3, 51, 15, 63],
+	[32, 16, 44, 28, 35, 19, 47, 31],
+	[8, 56, 4, 52, 11, 59, 7, 55],
+	[40, 24, 36, 20, 43, 27, 39, 23],
+	[2, 50, 14, 62, 1, 49, 13, 61],
+	[34, 18, 46, 30, 33, 17, 45, 29],
+	[10, 58, 6, 54, 9, 57, 5, 53],
+	[42, 26, 38, 22, 41, 25, 37, 21],
+].map((row) => row.map((value) => value / 63));
 
 function buildDdsBuffer({ compressedData, width, height, format }) {
 	const fourCC = FOURCC_BY_FORMAT[format];
