@@ -1414,10 +1414,10 @@
 		if (Number.isFinite(size)) {
 			nextLabel.size = clamp(size, 0.6, 2.4);
 		}
-		if (priority !== "major" && Number.isFinite(minZoom)) {
+		if (Number.isFinite(minZoom)) {
 			nextLabel.minZoom = clamp(minZoom, 0, 10);
 		}
-		if (priority !== "major" && Number.isFinite(maxZoom)) {
+		if (Number.isFinite(maxZoom)) {
 			nextLabel.maxZoom = clamp(maxZoom, 0, 10);
 		}
 
