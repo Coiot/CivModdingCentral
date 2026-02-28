@@ -31,10 +31,14 @@ RUN chmod +x /app/scripts/dds-entrypoint.sh /app/scripts/download-compressonator
 	&& if [ -f /vendor/CompressonatorCLI ]; then \
 		cp /vendor/CompressonatorCLI /opt/compressonator/CompressonatorCLI; \
 	fi \
-	&& if [ -f /opt/compressonator/CompressonatorCLI ]; then \
+	&& BIN_PATH="$(find /opt/compressonator -type f \( -iname 'CompressonatorCLI' -o -iname 'compressonatorcli' -o -iname '*compressonator*cli*' \) | head -n 1 || true)" \
+	&& if [ -n "$BIN_PATH" ]; then \
+		cp "$BIN_PATH" /opt/compressonator/CompressonatorCLI; \
 		chmod +x /opt/compressonator/CompressonatorCLI; \
 	else \
 		echo "CompressonatorCLI missing after build setup."; \
+		echo "Found files under /opt/compressonator:"; \
+		find /opt/compressonator -maxdepth 4 -type f | sed -n '1,160p' || true; \
 		exit 1; \
 	fi
 
