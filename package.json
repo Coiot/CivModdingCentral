@@ -11,7 +11,8 @@
 		"build:cache": "node scripts/build-community-map-cache.cjs",
 		"build:cache:all": "node scripts/build-all-community-map-caches.cjs",
 		"sync:editor-access": "node scripts/sync-editor-allowlist-sheet2.cjs",
-		"maps:update": "node scripts/update-maps.mjs"
+		"maps:update": "node scripts/update-maps.mjs",
+		"dds:server": "node scripts/dds-converter-server.mjs"
 	},
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
@@ -19,6 +20,9 @@
 		"vite": "^5.4.0"
 	},
 	"dependencies": {
-		"@supabase/supabase-js": "^2.98.0"
+		"@supabase/supabase-js": "^2.98.0",
+		"busboy": "^1.6.0",
+		"dxt-js": "^0.0.3",
+		"pngjs": "^7.0.0"
 	}
 }

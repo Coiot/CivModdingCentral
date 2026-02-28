@@ -3,6 +3,7 @@
 	import { fade } from "svelte/transition";
 	import Navbar from "./lib/components/Navbar.svelte";
 	import DirectoryPage from "./lib/components/DirectoryPage.svelte";
+	import DdsConverterPage from "./lib/components/DdsConverterPage.svelte";
 
 	const THEME_STORAGE_KEY = "cmc-theme-mode";
 	const AUTH_STORAGE_KEY = "cmc-auth-session";
@@ -151,7 +152,7 @@
 	});
 
 	$effect(() => {
-		if (currentPath === "/directory") {
+		if (currentPath === "/directory" || currentPath === "/dds-converter") {
 			return;
 		}
 		void ensureMapViewerLoaded();
@@ -677,6 +678,8 @@
 		<div class="route-shell" in:fade={{ duration: 180 }} out:fade={{ duration: 130 }}>
 			{#if currentPath === "/directory"}
 				<DirectoryPage />
+			{:else if currentPath === "/dds-converter"}
+				<DdsConverterPage />
 			{:else if mapViewerLoadError}
 				<p class="status error">{mapViewerLoadError}</p>
 			{:else if MapViewerComponent}
