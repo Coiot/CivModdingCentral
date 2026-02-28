@@ -7,6 +7,7 @@
 	import { buildLikelyMapPrefetchQueue } from "../map/prefetch.js";
 	import { findTileAtPoint } from "../map/hit-testing.js";
 	import { materializeMapLabels, normalizeMapLabels, selectVisibleMapLabels } from "../map/labels.js";
+	import { createClient } from "@supabase/supabase-js";
 	import { maps as defaultMaps } from "../config/maps.js";
 	import {
 		buildPinsSignature as buildPinsSignatureUtil,
@@ -25,7 +26,6 @@
 	const CBRX_PIN_RESET_VERSION = 1;
 	const DEFAULT_TSL_TABLE_NAME = "Civilization_TSLs";
 	const BASE_CACHE_VERSION = 1;
-	const PIN_SYNC_INTERVAL_MS = 60 * 3000;
 	const BASE_PREFETCH_LIMIT = 3;
 	const LAST_MAP_STORAGE_KEY = `${STORAGE_PREFIX}:last-map-id`;
 	const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
@@ -157,7 +157,6 @@
 	let exportPinCount = $state(0);
 	let exportPinScope = $state("all");
 	let fitScaleLimit = $state(1);
-	let pinCloudSyncTimer = $state(null);
 	let pinCloudSyncDirty = $state(false);
 	let pinCloudSyncBusy = $state(false);
 	let pinCloudPullBusy = $state(false);
@@ -165,6 +164,13 @@
 	let labelCloudSyncDirty = $state(false);
 	let labelCloudSyncBusy = $state(false);
 	let labelCloudPullBusy = $state(false);
+	let cloudSyncQueued = false;
+	let cloudSyncVisibilityHandler = null;
+	let cloudSyncFocusHandler = null;
+	let realtimeClient = null;
+	let realtimePinsChannel = null;
+	let realtimeLabelsChannel = null;
+	let realtimeSubscribedMapId = "";
 	let mapPrefetchIdleHandle = null;
 	let mapPrefetchTimeoutHandle = null;
 	const notePinPathCache = new Map();
@@ -471,6 +477,20 @@
 		}
 		lastInitializedMapId = mapId;
 		void initializeMap();
+	});
+
+	$effect(() => {
+		authAccessToken;
+		const mapId = String(currentMap?.id || "").trim();
+		if (!mapId) {
+			return;
+		}
+		if (realtimeClient && typeof realtimeClient?.realtime?.setAuth === "function" && authAccessToken) {
+			realtimeClient.realtime.setAuth(authAccessToken);
+		}
+		if (cloudSyncFocusHandler || cloudSyncVisibilityHandler) {
+			void startRealtimeSubscriptions();
+		}
 	});
 
 	$effect(() => {
@@ -1350,6 +1370,7 @@
 		refreshMapLabels();
 		if (queueSync) {
 			labelCloudSyncDirty = true;
+			scheduleCloudSyncNow();
 		}
 	}
 
@@ -1852,6 +1873,7 @@
 		}
 		if (options.queueSync) {
 			pinCloudSyncDirty = true;
+			scheduleCloudSyncNow();
 		}
 		if (options.refresh !== false) {
 			refreshVisiblePins();
@@ -2069,22 +2091,147 @@
 		window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 	}
 
+	function scheduleCloudSyncNow() {
+		if (cloudSyncQueued) {
+			return;
+		}
+		cloudSyncQueued = true;
+		Promise.resolve().then(() => {
+			cloudSyncQueued = false;
+			void syncPinsCloudTick();
+		});
+	}
+
+	async function ensureRealtimeClient() {
+		if (realtimeClient || typeof window === "undefined" || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
+			return realtimeClient;
+		}
+		try {
+			realtimeClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+				auth: {
+					persistSession: false,
+					autoRefreshToken: false,
+					detectSessionInUrl: false,
+				},
+			});
+			if (authAccessToken && typeof realtimeClient?.realtime?.setAuth === "function") {
+				realtimeClient.realtime.setAuth(authAccessToken);
+			}
+			return realtimeClient;
+		} catch (error) {
+			console.warn("Realtime subscriptions are unavailable; using manual sync triggers.", error);
+			return null;
+		}
+	}
+
+	async function startRealtimeSubscriptions() {
+		const mapId = String(currentMap?.id || "").trim();
+		if (!mapId || typeof window === "undefined") {
+			return;
+		}
+		const wantsPins = hasCloudPinSyncConfig();
+		const wantsLabels = hasCloudLabelSyncConfig();
+		if (!wantsPins && !wantsLabels) {
+			stopRealtimeSubscriptions();
+			return;
+		}
+		if (realtimeSubscribedMapId === mapId) {
+			return;
+		}
+
+		stopRealtimeSubscriptions();
+		const client = await ensureRealtimeClient();
+		if (!client) {
+			return;
+		}
+		if (authAccessToken && typeof client?.realtime?.setAuth === "function") {
+			client.realtime.setAuth(authAccessToken);
+		}
+
+		if (wantsPins) {
+			realtimePinsChannel = client
+				.channel(`cmc-pins:${mapId}`)
+				.on(
+					"postgres_changes",
+					{
+						event: "*",
+						schema: "public",
+						table: SUPABASE_PINS_TABLE,
+						filter: `map_id=eq.${mapId}`,
+					},
+					() => {
+						void pullCloudPins({ forceApply: false });
+					},
+				)
+				.subscribe();
+		}
+
+		if (wantsLabels) {
+			realtimeLabelsChannel = client
+				.channel(`cmc-labels:${mapId}`)
+				.on(
+					"postgres_changes",
+					{
+						event: "*",
+						schema: "public",
+						table: SUPABASE_LABELS_TABLE,
+						filter: `map_id=eq.${mapId}`,
+					},
+					() => {
+						void pullCloudLabels({ forceApply: false });
+					},
+				)
+				.subscribe();
+		}
+
+		realtimeSubscribedMapId = mapId;
+	}
+
+	function stopRealtimeSubscriptions() {
+		if (realtimeClient && realtimePinsChannel) {
+			realtimeClient.removeChannel(realtimePinsChannel);
+		}
+		if (realtimeClient && realtimeLabelsChannel) {
+			realtimeClient.removeChannel(realtimeLabelsChannel);
+		}
+		realtimePinsChannel = null;
+		realtimeLabelsChannel = null;
+		realtimeSubscribedMapId = "";
+	}
+
 	function startPinCloudSyncLoop() {
 		stopPinCloudSyncLoop();
 		if ((!hasCloudPinSyncConfig() && !hasCloudLabelSyncConfig()) || typeof window === "undefined") {
 			return;
 		}
 
-		pinCloudSyncTimer = window.setInterval(() => {
-			void syncPinsCloudTick();
-		}, PIN_SYNC_INTERVAL_MS);
+		cloudSyncVisibilityHandler = () => {
+			if (typeof document === "undefined" || document.visibilityState === "visible") {
+				scheduleCloudSyncNow();
+			}
+		};
+		cloudSyncFocusHandler = () => {
+			scheduleCloudSyncNow();
+		};
+		if (typeof document !== "undefined") {
+			document.addEventListener("visibilitychange", cloudSyncVisibilityHandler);
+		}
+		window.addEventListener("focus", cloudSyncFocusHandler);
+		void startRealtimeSubscriptions();
+		scheduleCloudSyncNow();
 	}
 
 	function stopPinCloudSyncLoop() {
-		if (pinCloudSyncTimer && typeof window !== "undefined") {
-			window.clearInterval(pinCloudSyncTimer);
+		if (typeof document !== "undefined" && cloudSyncVisibilityHandler) {
+			document.removeEventListener("visibilitychange", cloudSyncVisibilityHandler);
 		}
-		pinCloudSyncTimer = null;
+		if (typeof window !== "undefined" && cloudSyncFocusHandler) {
+			window.removeEventListener("focus", cloudSyncFocusHandler);
+		}
+		cloudSyncVisibilityHandler = null;
+		cloudSyncFocusHandler = null;
+		stopRealtimeSubscriptions();
+		cloudSyncQueued = false;
 		pinCloudSyncBusy = false;
 		pinCloudPullBusy = false;
 		labelCloudSyncBusy = false;
