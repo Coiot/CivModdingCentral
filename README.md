@@ -58,8 +58,10 @@ Steps:
 7. Set environment variables:
    - `CMC_DDS_ALLOWED_ORIGINS=https://<your-netlify-site>.netlify.app`
    - Optional: `CMC_DDS_NATIVE_BIN=/opt/compressonator/CompressonatorCLI` (usually auto-set by entrypoint if binary exists there)
-8. If you have a direct Linux tarball URL for CompressonatorCLI, add build arg:
-   - `COMPRESSONATOR_TARBALL_URL=<direct-tarball-url>`
+8. Optional build arg:
+   - `COMPRESSONATOR_TARBALL_URL=<direct-linux-asset-url>`
+   - If omitted, the Docker build auto-resolves the latest Linux CLI asset from:
+     `https://github.com/GPUOpen-Tools/compressonator/releases`
 9. Deploy.
 10. Verify health:
    - `https://<render-service>.onrender.com/healthz`
@@ -68,8 +70,8 @@ Steps:
 12. Trigger a new Netlify deploy.
 
 Notes:
-- If no native binary is available, service still runs with `dxt-js`.
-- To bundle a binary from repo instead of URL, place executable at `vendor/CompressonatorCLI` before deploy.
+- Docker build now fails if `CompressonatorCLI` is not present after setup (prevents silent low-quality fallback in prod).
+- To bundle your own binary from repo, place executable at `vendor/CompressonatorCLI` before deploy.
 
 Netlify uses `netlify.toml`:
 - build command: `npm run build`

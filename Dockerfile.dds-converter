@@ -11,7 +11,7 @@ ENV PORT=8787
 ARG COMPRESSONATOR_TARBALL_URL=""
 
 RUN apt-get update \
-	&& apt-get install -y --no-install-recommends ca-certificates curl tar xz-utils \
+	&& apt-get install -y --no-install-recommends ca-certificates curl tar unzip xz-utils \
 	&& rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json ./
@@ -21,21 +21,22 @@ COPY netlify ./netlify
 COPY scripts ./scripts
 COPY vendor ./vendor
 
-RUN mkdir -p /opt/compressonator \
+RUN chmod +x /app/scripts/dds-entrypoint.sh /app/scripts/download-compressonator.sh \
+	&& mkdir -p /opt/compressonator \
 	&& if [ -n "$COMPRESSONATOR_TARBALL_URL" ]; then \
-		echo "Downloading Compressonator from $COMPRESSONATOR_TARBALL_URL"; \
-		curl -fL "$COMPRESSONATOR_TARBALL_URL" -o /tmp/compressonator.tar.gz; \
-		tar -xzf /tmp/compressonator.tar.gz -C /opt/compressonator --strip-components=1 || tar -xzf /tmp/compressonator.tar.gz -C /opt/compressonator; \
-		rm -f /tmp/compressonator.tar.gz; \
+		/app/scripts/download-compressonator.sh /opt/compressonator "$COMPRESSONATOR_TARBALL_URL"; \
+	else \
+		/app/scripts/download-compressonator.sh /opt/compressonator; \
 	fi \
 	&& if [ -f /vendor/CompressonatorCLI ]; then \
 		cp /vendor/CompressonatorCLI /opt/compressonator/CompressonatorCLI; \
 	fi \
 	&& if [ -f /opt/compressonator/CompressonatorCLI ]; then \
 		chmod +x /opt/compressonator/CompressonatorCLI; \
+	else \
+		echo "CompressonatorCLI missing after build setup."; \
+		exit 1; \
 	fi
-
-RUN chmod +x /app/scripts/dds-entrypoint.sh
 
 EXPOSE 8787
 
