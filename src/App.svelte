@@ -1,9 +1,9 @@
 <script>
-	import { onMount } from "svelte";
+	import { onMount, tick } from "svelte";
 	import { fade } from "svelte/transition";
 	import Navbar from "./lib/components/Navbar.svelte";
-	import DirectoryPage from "./lib/components/DirectoryPage.svelte";
-	import DdsConverterPage from "./lib/components/DdsConverterPage.svelte";
+	import Directory from "./lib/components/Directory.svelte";
+	import DdsConverter from "./lib/components/DdsConverter.svelte";
 
 	const THEME_STORAGE_KEY = "cmc-theme-mode";
 	const AUTH_STORAGE_KEY = "cmc-auth-session";
@@ -30,6 +30,9 @@
 	let MapViewerComponent = $state(null);
 	let mapViewerLoadError = $state("");
 	let authRestoreStarted = $state(false);
+	let routeShellEl = $state();
+	let shouldFocusRouteHeading = $state(false);
+	let shouldResetScroll = $state(false);
 	let authSession = $state({
 		accessToken: "",
 		refreshToken: "",
@@ -57,10 +60,13 @@
 
 		const normalizedPath = normalizePathname(pathname);
 		const replace = Boolean(options.replace);
+		const preserveScroll = Boolean(options.preserveScroll);
 		if (normalizedPath === currentPath) {
 			return;
 		}
 
+		shouldFocusRouteHeading = true;
+		shouldResetScroll = !preserveScroll;
 		runPageTransition(() => {
 			if (replace) {
 				window.history.replaceState({}, "", normalizedPath);
@@ -126,6 +132,8 @@
 				if (nextPath === currentPath) {
 					return;
 				}
+				shouldFocusRouteHeading = true;
+				shouldResetScroll = false;
 				runPageTransition(() => {
 					currentPath = nextPath;
 				});
@@ -164,6 +172,44 @@
 		}
 		authRestoreStarted = true;
 		void restoreAuth();
+	});
+
+	$effect(() => {
+		currentPath;
+		const shouldFocus = shouldFocusRouteHeading;
+		const shouldScroll = shouldResetScroll;
+		if (!shouldFocus && !shouldScroll) {
+			return;
+		}
+
+		let cancelled = false;
+		void (async () => {
+			await tick();
+			if (cancelled) {
+				return;
+			}
+
+			if (shouldScroll && typeof window !== "undefined") {
+				window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+			}
+
+			if (shouldFocus) {
+				const heading = routeShellEl?.querySelector?.("h1");
+				if (heading instanceof HTMLElement) {
+					if (!heading.hasAttribute("tabindex")) {
+						heading.setAttribute("tabindex", "-1");
+					}
+					heading.focus({ preventScroll: true });
+				}
+			}
+
+			shouldFocusRouteHeading = false;
+			shouldResetScroll = false;
+		})();
+
+		return () => {
+			cancelled = true;
+		};
 	});
 
 	function onAuthEmailInput(value) {
@@ -675,11 +721,11 @@
 	/>
 
 	{#key currentPath}
-		<div class="route-shell" in:fade={{ duration: 180 }} out:fade={{ duration: 130 }}>
+		<div class="route-shell" bind:this={routeShellEl} in:fade={{ duration: 180 }} out:fade={{ duration: 130 }}>
 			{#if currentPath === "/directory"}
-				<DirectoryPage />
+				<Directory />
 			{:else if currentPath === "/dds-converter"}
-				<DdsConverterPage />
+				<DdsConverter />
 			{:else if mapViewerLoadError}
 				<p class="status error">{mapViewerLoadError}</p>
 			{:else if MapViewerComponent}

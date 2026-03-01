@@ -90,7 +90,7 @@
 	<div class="nav-tools">
 		<nav class="page-nav" aria-label="Primary navigation">
 			<a class={`page-link ${isActivePath("/") ? "is-active" : ""}`} href="/" aria-current={isActivePath("/") ? "page" : undefined}>Map Viewer</a>
-			<!-- <a class={`page-link ${isActivePath("/dds-converter") ? "is-active" : ""}`} href="/dds-converter" aria-current={isActivePath("/dds-converter") ? "page" : undefined}>DDS Converter</a> -->
+			<a class={`page-link ${isActivePath("/dds-converter") ? "is-active" : ""}`} href="/dds-converter" aria-current={isActivePath("/dds-converter") ? "page" : undefined}>DDS Converter</a>
 			<!-- <a class={`page-link ${isActivePath("/wiki") ? "is-active" : ""}`} href="/wiki" aria-current={isActivePath("/wiki") ? "page" : undefined}>Wiki Template</a> -->
 			<a class={`page-link ${isActivePath("/directory") ? "is-active" : ""}`} href="/directory" aria-current={isActivePath("/directory") ? "page" : undefined}>Directory</a>
 		</nav>
@@ -164,10 +164,9 @@
 							<p class="user-message">Supabase auth is not configured for this environment.</p>
 						{/if}
 					{/if}
-					<!--
 					{#if authMessage}
-						<p class="user-message">{authMessage}</p>
-					{/if} -->
+						<p class="user-message" role="status" aria-live="polite">{authMessage}</p>
+					{/if}
 
 					{#if !authEnabled && authAccessDebug}
 						<p class="user-message user-message--debug">Access checks: {authAccessDebug}</p>

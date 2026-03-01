@@ -46,6 +46,7 @@
 		flattenLandWater: false,
 		grayscaleTerrain: false,
 	};
+	const PANEL_TAB_ORDER = ["edit", "labels", "notes", "export", "settings"];
 	const KNOWN_NATURAL_WONDER_FEATURES = new Set([
 		"FEATURE_CRATER",
 		"FEATURE_FUJI",
@@ -211,8 +212,8 @@
 		if (!maps.length) {
 			return "";
 		}
-		const earthMk3 = maps.find((entry) => entry?.id === "earth-mk3");
-		return String(earthMk3?.id || maps[0]?.id || "");
+		const cbrx = maps.find((entry) => entry?.id === "cbrx");
+		return String(cbrx?.id || maps[0]?.id || "");
 	});
 	const currentMap = $derived.by(() => {
 		const normalizedId = String(activeMapId || "").trim();
@@ -1838,6 +1839,56 @@
 		pinEditTarget = canEdit ? normalized : "local";
 		saveStorageJson(storageKey("pin-edit-target"), pinEditTarget);
 		syncEditorsFromSelection();
+	}
+
+	function normalizePanelTab(nextTab) {
+		const normalized = String(nextTab || "")
+			.trim()
+			.toLowerCase();
+		return PANEL_TAB_ORDER.includes(normalized) ? normalized : "edit";
+	}
+
+	function selectPanelTab(nextTab) {
+		panelTab = normalizePanelTab(nextTab);
+	}
+
+	function focusPanelTab(tab) {
+		if (typeof document === "undefined") {
+			return;
+		}
+		const trigger = document.getElementById(`map-tools-tab-${normalizePanelTab(tab)}`);
+		if (trigger instanceof HTMLButtonElement) {
+			trigger.focus();
+		}
+	}
+
+	function onPanelTabListKeydown(event) {
+		const key = String(event.key || "");
+		if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(key)) {
+			return;
+		}
+
+		event.preventDefault();
+		const activeTab = normalizePanelTab(panelTab);
+		const currentIndex = PANEL_TAB_ORDER.indexOf(activeTab);
+		if (currentIndex < 0) {
+			return;
+		}
+
+		let nextIndex = currentIndex;
+		if (key === "ArrowRight") {
+			nextIndex = (currentIndex + 1) % PANEL_TAB_ORDER.length;
+		} else if (key === "ArrowLeft") {
+			nextIndex = (currentIndex - 1 + PANEL_TAB_ORDER.length) % PANEL_TAB_ORDER.length;
+		} else if (key === "Home") {
+			nextIndex = 0;
+		} else if (key === "End") {
+			nextIndex = PANEL_TAB_ORDER.length - 1;
+		}
+
+		const nextTab = PANEL_TAB_ORDER[nextIndex];
+		selectPanelTab(nextTab);
+		focusPanelTab(nextTab);
 	}
 
 	function setPanelCollapsed(nextValue, options = {}) {
@@ -3845,16 +3896,71 @@
 			</div>
 
 			<aside id="map-tools-panel" class="side-panel" class:is-collapsed={panelCollapsed} aria-label="Map tools" aria-hidden={panelCollapsed}>
-				<div class="tab-row" role="tablist" aria-label="Map tool tabs">
-					<button type="button" role="tab" class:active={panelTab === "edit"} aria-selected={panelTab === "edit"} onclick={() => (panelTab = "edit")}> Pins </button>
-					<button type="button" role="tab" class:active={panelTab === "labels"} aria-selected={panelTab === "labels"} onclick={() => (panelTab = "labels")}> Labels </button>
-					<button type="button" role="tab" class:active={panelTab === "notes"} aria-selected={panelTab === "notes"} onclick={() => (panelTab = "notes")}> Notes </button>
-					<button type="button" role="tab" class:active={panelTab === "export"} aria-selected={panelTab === "export"} onclick={() => (panelTab = "export")}> Export </button>
-					<button type="button" role="tab" class:active={panelTab === "settings"} aria-selected={panelTab === "settings"} onclick={() => (panelTab = "settings")}> Settings </button>
+				<div class="tab-row" role="tablist" tabindex="0" aria-label="Map tool tabs" onkeydown={onPanelTabListKeydown}>
+					<button
+						id="map-tools-tab-edit"
+						type="button"
+						role="tab"
+						class:active={panelTab === "edit"}
+						aria-selected={panelTab === "edit"}
+						aria-controls="map-tools-panel-edit"
+						tabindex={panelTab === "edit" ? 0 : -1}
+						onclick={() => selectPanelTab("edit")}
+					>
+						Pins
+					</button>
+					<button
+						id="map-tools-tab-labels"
+						type="button"
+						role="tab"
+						class:active={panelTab === "labels"}
+						aria-selected={panelTab === "labels"}
+						aria-controls="map-tools-panel-labels"
+						tabindex={panelTab === "labels" ? 0 : -1}
+						onclick={() => selectPanelTab("labels")}
+					>
+						Labels
+					</button>
+					<button
+						id="map-tools-tab-notes"
+						type="button"
+						role="tab"
+						class:active={panelTab === "notes"}
+						aria-selected={panelTab === "notes"}
+						aria-controls="map-tools-panel-notes"
+						tabindex={panelTab === "notes" ? 0 : -1}
+						onclick={() => selectPanelTab("notes")}
+					>
+						Notes
+					</button>
+					<button
+						id="map-tools-tab-export"
+						type="button"
+						role="tab"
+						class:active={panelTab === "export"}
+						aria-selected={panelTab === "export"}
+						aria-controls="map-tools-panel-export"
+						tabindex={panelTab === "export" ? 0 : -1}
+						onclick={() => selectPanelTab("export")}
+					>
+						Export
+					</button>
+					<button
+						id="map-tools-tab-settings"
+						type="button"
+						role="tab"
+						class:active={panelTab === "settings"}
+						aria-selected={panelTab === "settings"}
+						aria-controls="map-tools-panel-settings"
+						tabindex={panelTab === "settings" ? 0 : -1}
+						onclick={() => selectPanelTab("settings")}
+					>
+						Settings
+					</button>
 				</div>
 
 				{#if panelTab === "edit"}
-					<div class="panel-body">
+					<div id="map-tools-panel-edit" class="panel-body" role="tabpanel" aria-labelledby="map-tools-tab-edit">
 						<h3>Civilization Pins</h3>
 						<div class="pin-edit-target">
 							<p class="pin-edit-title">Edit Target</p>
@@ -4108,7 +4214,7 @@
 				{/if}
 
 				{#if panelTab === "labels"}
-					<div class="panel-body">
+					<div id="map-tools-panel-labels" class="panel-body" role="tabpanel" aria-labelledby="map-tools-tab-labels">
 						<h3>Map Labels</h3>
 						<!-- <p class="panel-intro">Create labels anchored to the selected tile. Non-major labels use minZoom to control zoom reveal levels.</p> -->
 						{#if canEdit}
@@ -4337,7 +4443,7 @@
 				{/if}
 
 				{#if panelTab === "notes"}
-					<div class="panel-body">
+					<div id="map-tools-panel-notes" class="panel-body" role="tabpanel" aria-labelledby="map-tools-tab-notes">
 						<h3>Tile Notes</h3>
 						{#if selectedTile}
 							{#if !canEdit}
@@ -4378,7 +4484,7 @@
 				{/if}
 
 				{#if panelTab === "export"}
-					<div class="panel-body">
+					<div id="map-tools-panel-export" class="panel-body" role="tabpanel" aria-labelledby="map-tools-tab-export">
 						<h3>TSL Exporting</h3>
 						<p class="panel-intro">Generate SQL or TSL mod from the map's pins.</p>
 						<div class="export-summary">
@@ -4451,7 +4557,7 @@
 				{/if}
 
 				{#if panelTab === "settings"}
-					<div class="panel-body">
+					<div id="map-tools-panel-settings" class="panel-body" role="tabpanel" aria-labelledby="map-tools-tab-settings">
 						<h3>Settings</h3>
 						<p class="panel-intro">Adjust map visibility and rendering options for quick focus while reviewing tiles.</p>
 						<div class="settings-group">
@@ -4592,17 +4698,17 @@
 		display: flex;
 		align-items: baseline;
 		gap: 0.5rem;
-	}
 
-	.map-meta h2 {
-		font-size: clamp(2rem, 2vw, 3rem);
-		letter-spacing: 0.025em;
-		margin-block: 0;
-	}
+		& h2 {
+			margin-block: 0;
+			font-size: clamp(2rem, 2vw, 3rem);
+			letter-spacing: 0.025em;
+		}
 
-	.map-meta p {
-		margin-block: 0;
-		color: var(--muted-ink);
+		& p {
+			margin-block: 0;
+			color: var(--muted-ink);
+		}
 	}
 
 	.meta-line {
@@ -4666,19 +4772,24 @@
 	}
 
 	.tile-map-control {
-		border: 1px solid var(--panel-border);
-		background: var(--control-bg);
-		border-radius: 0.6rem;
-		padding-block: 0.42rem;
-		padding-inline: 0.7rem;
-		cursor: pointer;
 		color: var(--ink);
 		font: inherit;
 		line-height: 1;
-	}
+		padding-block: 0.42rem;
+		padding-inline: 0.7rem;
+		border: 1px solid var(--panel-border);
+		border-radius: 0.6rem;
+		background: var(--control-bg);
+		cursor: pointer;
 
-	.tile-map-control:hover {
-		background: color-mix(in oklch, var(--accent) 14%, var(--control-bg));
+		&:hover {
+			background: color-mix(in oklch, var(--accent) 14%, var(--control-bg));
+		}
+
+		&:disabled {
+			opacity: 0.48;
+			cursor: not-allowed;
+		}
 	}
 
 	.tile-map-control-ghost {
@@ -4716,11 +4827,6 @@
 		font-size: 0.82rem;
 		font-weight: 700;
 		font-variant-numeric: tabular-nums;
-	}
-
-	.tile-map-control:disabled {
-		opacity: 0.48;
-		cursor: not-allowed;
 	}
 
 	.workspace {
@@ -4992,50 +5098,88 @@
 		gap: 0.25rem;
 		padding: 0.35rem;
 		background: var(--control-bg);
-	}
 
-	.tab-row button {
-		border: 1px solid var(--panel-border);
-		border-radius: 0.55rem;
-		background: var(--control-bg);
-		padding: 0.45rem 0.4rem;
-		font: inherit;
-		color: var(--ink);
-		cursor: pointer;
-	}
+		& button {
+			color: var(--ink);
+			font: inherit;
+			padding: 0.45rem 0.4rem;
+			border: 1px solid var(--panel-border);
+			border-radius: 0.55rem;
+			background: var(--control-bg);
+			cursor: pointer;
 
-	.tab-row button:not(:disabled):hover {
-		border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
-		background: color-mix(in oklch, var(--control-bg) 70%, var(--accent) 12%);
-	}
+			&:not(:disabled):hover {
+				border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+				background: color-mix(in oklch, var(--control-bg) 70%, var(--accent) 12%);
+			}
 
-	.tab-row button.active {
-		color: oklch(0.99 0.004 85);
-		text-shadow: 0 1px 2px oklch(0.19 0.2 85);
-		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
-		border-color: transparent;
+			&.active {
+				color: oklch(0.99 0.004 85);
+				text-shadow: 0 1px 2px oklch(0.19 0.2 85);
+				border-color: transparent;
+				background: linear-gradient(145deg, var(--accent), var(--accent-strong));
+			}
+		}
 	}
 
 	.panel-body {
-		padding-block: 0.9rem;
-		padding-inline: 0.9rem;
 		display: grid;
+		min-inline-size: 0;
 		gap: 0.72rem;
 		align-content: start;
 		overflow: auto;
-		min-inline-size: 0;
-	}
+		padding-block: 0.9rem;
+		padding-inline: 0.9rem;
 
-	.panel-body h3,
-	.panel-body h4 {
-		margin-block: 0;
-		color: var(--ink);
+		& h3,
+		& h4 {
+			margin-block: 0;
+			color: var(--ink);
+		}
+
+		& label {
+			display: grid;
+			min-inline-size: 0;
+			gap: 0.28rem;
+			color: var(--muted-ink);
+			font-size: 0.84rem;
+		}
+
+		& input,
+		& textarea,
+		& select {
+			inline-size: 100%;
+			color: var(--ink);
+			font: inherit;
+			padding-block: 0.44rem;
+			padding-inline: 0.5rem;
+			border: 1px solid var(--panel-border);
+			border-radius: 0.55rem;
+			background: var(--input-bg);
+		}
+
+		& button {
+			min-inline-size: 0;
+			color: var(--ink);
+			font: inherit;
+			padding-block: 0.42rem;
+			padding-inline: 0.62rem;
+			border: 1px solid var(--panel-border);
+			border-radius: 0.55rem;
+			background: var(--control-bg);
+			cursor: pointer;
+
+			&:not(:disabled):hover {
+				border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+				background: color-mix(in oklch, var(--control-bg) 70%, var(--accent) 12%);
+			}
+		}
 	}
 
 	.panel-intro {
 		margin-block: 0;
-		font-size: 0.84rem;
 		color: var(--muted-ink);
+		font-size: 0.84rem;
 		line-height: 1.4;
 	}
 
@@ -5045,32 +5189,11 @@
 		font-size: 0.86rem;
 	}
 
-	.panel-body label {
-		display: grid;
-		gap: 0.28rem;
-		font-size: 0.84rem;
-		color: var(--muted-ink);
-		min-inline-size: 0;
-	}
-
-	.panel-body input,
-	.panel-body textarea,
-	.panel-body select {
-		inline-size: 100%;
-		border: 1px solid var(--panel-border);
-		border-radius: 0.55rem;
-		background: var(--input-bg);
-		padding-block: 0.44rem;
-		padding-inline: 0.5rem;
-		font: inherit;
-		color: var(--ink);
-	}
-
 	.pin-meta-row {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
-		gap: 0.45rem;
 		min-inline-size: 0;
+		gap: 0.45rem;
+		grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
 	}
 
 	.pin-edit-target {
@@ -5091,40 +5214,45 @@
 
 	.pin-reset-hint {
 		margin: 0;
-		font-size: 0.78rem;
 		color: var(--muted-ink);
+		font-size: 0.78rem;
 	}
 
 	.pin-edit-title {
 		margin-block: 0;
-		font-size: 0.8rem;
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
 		color: var(--muted-ink);
+		font-size: 0.8rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
 	}
 
 	.pin-edit-buttons {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
 		gap: 0.4rem;
-	}
+		grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
 
-	.pin-edit-buttons button {
-		position: relative;
-		border: 1px solid var(--panel-border);
-		border-radius: 0.55rem;
-		background: var(--control-bg);
-		color: var(--ink);
-		font: inherit;
-		padding: 0.45rem 0.5rem;
-		cursor: pointer;
-	}
+		& button {
+			position: relative;
+			color: var(--ink);
+			font: inherit;
+			padding: 0.45rem 0.5rem;
+			border: 1px solid var(--panel-border);
+			border-radius: 0.55rem;
+			background: var(--control-bg);
+			cursor: pointer;
 
-	.pin-edit-buttons button.active {
-		color: oklch(0.99 0.004 85);
-		text-shadow: 0 1px 2px oklch(0.19 0.2 85);
-		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
-		border-color: transparent;
+			&.active {
+				color: oklch(0.99 0.004 85);
+				text-shadow: 0 1px 2px oklch(0.19 0.2 85);
+				border-color: transparent;
+				background: linear-gradient(145deg, var(--accent), var(--accent-strong));
+			}
+
+			&:disabled:hover .pin-edit-tooltip {
+				opacity: 1;
+				transform: translate(-50%, -0.6rem);
+			}
+		}
 	}
 
 	.ui-tooltip-wrap {
@@ -5132,55 +5260,60 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: flex-start;
-	}
 
-	.ui-tooltip-wrap.ui-tooltip-block {
-		display: block;
+		&.ui-tooltip-block {
+			display: block;
+		}
+
+		&:hover .ui-tooltip {
+			opacity: 1;
+			transform: translate(-50%, -0.6rem);
+		}
 	}
 
 	.ui-tooltip-anchor {
 		position: relative;
+
+		&:hover .ui-tooltip {
+			opacity: 1;
+			transform: translate(-50%, -0.6rem);
+		}
 	}
 
 	.ui-tooltip {
 		position: absolute;
 		z-index: 10;
-		padding: 0.45rem 0.6rem;
-		border-radius: 0.4rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 25%, var(--panel-border));
-		background: var(--panel-bg);
+		inset-block-end: 100%;
+		inset-inline-start: 50%;
 		color: var(--ink);
 		font-size: 0.75rem;
 		font-weight: 600;
 		white-space: nowrap;
+		padding-block: 0.45rem;
+		padding-inline: 0.6rem;
+		border-radius: 0.4rem;
+		border: 1px solid color-mix(in oklch, var(--accent) 25%, var(--panel-border));
+		background: var(--panel-bg);
 		opacity: 0;
 		pointer-events: none;
-		inset-block-end: 100%;
-		inset-inline-start: 50%;
 		transform: translate(-50%, -0.4rem);
 		transition:
 			opacity 0.2s ease,
 			transform 0.2s ease;
 		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
-	}
 
-	.ui-tooltip::after {
-		content: "";
-		position: absolute;
-		inline-size: 0;
-		block-size: 0;
-		border-left: 5px solid transparent;
-		border-right: 5px solid transparent;
-		border-top: 5px solid var(--panel-bg);
-		inset-block-start: 100%;
-		inset-inline-start: 50%;
-		transform: translateX(-50%);
-	}
-
-	.ui-tooltip-wrap:hover .ui-tooltip,
-	.ui-tooltip-anchor:hover .ui-tooltip {
-		opacity: 1;
-		transform: translate(-50%, -0.6rem);
+		&::after {
+			content: "";
+			position: absolute;
+			inset-block-start: 100%;
+			inset-inline-start: 50%;
+			inline-size: 0;
+			block-size: 0;
+			border-top: 5px solid var(--panel-bg);
+			border-right: 5px solid transparent;
+			border-left: 5px solid transparent;
+			transform: translateX(-50%);
+		}
 	}
 
 	.pin-edit-tooltip {
@@ -5217,11 +5350,6 @@
 		inset-block-start: 100%;
 		inset-inline-start: 50%;
 		transform: translateX(-50%);
-	}
-
-	.pin-edit-buttons button:disabled:hover .pin-edit-tooltip {
-		opacity: 1;
-		transform: translate(-50%, -0.6rem);
 	}
 
 	.danger-text-button {
@@ -5281,49 +5409,49 @@
 
 	.color-swatch-control {
 		position: relative;
+		z-index: 0;
+		display: block;
+		flex: 0 0 2rem;
 		inline-size: 2rem;
 		block-size: 2rem;
 		min-inline-size: 2rem;
 		min-block-size: 2rem;
-		flex: 0 0 2rem;
-		display: block;
 		overflow: hidden;
 		border-radius: 0.45rem;
-		z-index: 0;
-	}
 
-	.color-swatch-control input[type="color"] {
-		position: absolute;
-		inset: 0;
-		inline-size: 100%;
-		block-size: 100%;
-		opacity: 0;
-		cursor: pointer;
-		z-index: 2;
-		appearance: none;
-		-webkit-appearance: none;
-		border: 0;
-		padding: 0;
-		margin: 0;
-		background: transparent;
-	}
+		& input[type="color"] {
+			position: absolute;
+			z-index: 2;
+			inset: 0;
+			inline-size: 100%;
+			block-size: 100%;
+			margin: 0;
+			padding: 0;
+			border: 0;
+			background: transparent;
+			opacity: 0;
+			cursor: pointer;
+			appearance: none;
+			-webkit-appearance: none;
 
-	.color-swatch-control input[type="color"]:disabled {
-		cursor: not-allowed;
-	}
+			&:disabled {
+				cursor: not-allowed;
+			}
+		}
 
-	.color-preview {
-		inline-size: 100%;
-		block-size: 100%;
-		position: absolute;
-		inset: 0;
-		display: block;
-		z-index: 1;
-		border: 1px solid var(--panel-border);
-		border-radius: inherit;
-		background: var(--preview, hsl(0deg 0% 0%));
-		box-shadow: inset 0 0 0 1px hsl(0deg 0% 100% / 0.3);
-		pointer-events: none;
+		& .color-preview {
+			position: absolute;
+			z-index: 1;
+			inset: 0;
+			display: block;
+			inline-size: 100%;
+			block-size: 100%;
+			border: 1px solid var(--panel-border);
+			border-radius: inherit;
+			background: var(--preview, hsl(0deg 0% 0%));
+			box-shadow: inset 0 0 0 1px hsl(0deg 0% 100% / 0.3);
+			pointer-events: none;
+		}
 	}
 
 	.color-hex-input {
@@ -5519,23 +5647,6 @@
 		}
 	}
 
-	.panel-body button {
-		min-inline-size: 0;
-		border: 1px solid var(--panel-border);
-		border-radius: 0.55rem;
-		background: var(--control-bg);
-		color: var(--ink);
-		font: inherit;
-		cursor: pointer;
-		padding-block: 0.42rem;
-		padding-inline: 0.62rem;
-	}
-
-	.panel-body button:not(:disabled):hover {
-		border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
-		background: color-mix(in oklch, var(--control-bg) 70%, var(--accent) 12%);
-	}
-
 	.pin-editor-state {
 		margin-block: 0;
 		padding-block: 0.42rem;
@@ -5594,30 +5705,30 @@
 
 	.pin-mode-buttons {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
 		gap: 0.4rem;
-	}
+		grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
 
-	.pin-mode-buttons button {
-		border: 1px solid var(--panel-border);
-		border-radius: 0.55rem;
-		background: var(--control-bg);
-		color: var(--ink);
-		font: inherit;
-		padding: 0.45rem 0.5rem;
-		cursor: pointer;
-	}
+		& button {
+			color: var(--ink);
+			font: inherit;
+			padding: 0.45rem 0.5rem;
+			border: 1px solid var(--panel-border);
+			border-radius: 0.55rem;
+			background: var(--control-bg);
+			cursor: pointer;
 
-	.pin-mode-buttons button:not(:disabled):hover {
-		border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
-		background: color-mix(in oklch, var(--control-bg) 70%, var(--accent) 12%);
-	}
+			&:not(:disabled):hover {
+				border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+				background: color-mix(in oklch, var(--control-bg) 70%, var(--accent) 12%);
+			}
 
-	.pin-mode-buttons button.active {
-		color: oklch(0.99 0.004 85);
-		text-shadow: 0 1px 2px oklch(0.19 0.2 85);
-		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
-		border-color: transparent;
+			&.active {
+				color: oklch(0.99 0.004 85);
+				text-shadow: 0 1px 2px oklch(0.19 0.2 85);
+				border-color: transparent;
+				background: linear-gradient(145deg, var(--accent), var(--accent-strong));
+			}
+		}
 	}
 
 	.pin-mode-hint {
@@ -5628,29 +5739,29 @@
 
 	.check-row {
 		display: grid;
-		grid-template-columns: auto minmax(0, 1fr);
 		align-items: start;
 		gap: 0.65rem;
+		grid-template-columns: auto minmax(0, 1fr);
 		padding-block: 0.55rem;
 		padding-inline: 0.6rem;
+		color: var(--ink);
+		font-size: 0.86rem;
 		border-radius: 0.62rem;
 		border: 1px solid var(--panel-border);
 		background: color-mix(in oklch, var(--input-bg) 62%, var(--panel-bg));
-		font-size: 0.86rem;
-		color: var(--ink);
 		cursor: pointer;
-	}
 
-	.check-row:hover {
-		border-color: color-mix(in oklch, var(--accent) 36%, var(--panel-border));
-		background: color-mix(in oklch, var(--accent) 7%, var(--input-bg));
-	}
+		&:hover {
+			border-color: color-mix(in oklch, var(--accent) 36%, var(--panel-border));
+			background: color-mix(in oklch, var(--accent) 7%, var(--input-bg));
+		}
 
-	.check-row input {
-		inline-size: 1rem;
-		block-size: 1rem;
-		align-self: center;
-		margin-inline-end: 0.5rem;
+		& input {
+			align-self: center;
+			inline-size: 1rem;
+			block-size: 1rem;
+			margin-inline-end: 0.5rem;
+		}
 	}
 
 	.check-row-copy {
@@ -5700,86 +5811,88 @@
 		font-size: 0.8rem;
 	}
 
-	:global(:root[data-theme="dark"]) .tile-map .viewport {
-		background: oklch(0.25 0.005 200);
-		box-shadow: 0 18px 32px hsl(35deg 22% 4% / 0.38);
-	}
+	:global(:root[data-theme="dark"]) .tile-map {
+		& .viewport {
+			background: oklch(0.25 0.005 200);
+			box-shadow: 0 18px 32px hsl(35deg 22% 4% / 0.38);
+		}
 
-	:global(:root[data-theme="dark"]) .tile-map .tab-row button.active {
-		color: oklch(0.98 0.004 85);
-		text-shadow: 0 1px 2px oklch(0.19 0.2 85);
-		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
-	}
+		& .tab-row button.active {
+			color: oklch(0.98 0.004 85);
+			text-shadow: 0 1px 2px oklch(0.19 0.2 85);
+			background: linear-gradient(145deg, var(--accent), var(--accent-strong));
+		}
 
-	:global(:root[data-theme="dark"]) .tile-map .tile-map-control-group {
-		background: transparent;
-		border-color: transparent;
-	}
+		& .tile-map-control-group {
+			border-color: transparent;
+			background: transparent;
+		}
 
-	:global(:root[data-theme="dark"]) .tile-map .tile-map-controls {
-		background: oklch(0.22 0.008 72 / 0.95);
-		border-color: oklch(0.42 0.012 74 / 0.5);
-	}
+		& .tile-map-controls {
+			border-color: oklch(0.42 0.012 74 / 0.5);
+			background: oklch(0.22 0.008 72 / 0.95);
+		}
 
-	:global(:root[data-theme="dark"]) .tile-map .tile-map-control {
-		background: oklch(0.255 0.01 72 / 0.96);
-		border-color: oklch(0.44 0.012 74 / 0.5);
-		color: oklch(0.95 0.004 85);
-	}
+		& .tile-map-control {
+			color: oklch(0.95 0.004 85);
+			border-color: oklch(0.44 0.012 74 / 0.5);
+			background: oklch(0.255 0.01 72 / 0.96);
 
-	:global(:root[data-theme="dark"]) .tile-map .tile-map-select {
-		background: oklch(0.255 0.01 72 / 0.96);
-		border-color: oklch(0.44 0.012 74 / 0.5);
-		color: oklch(0.95 0.004 85);
-	}
+			&:hover {
+				background: oklch(0.3 0.012 72 / 0.98);
+			}
+		}
 
-	:global(:root[data-theme="dark"]) .tile-map .tile-map-control:hover {
-		background: oklch(0.3 0.012 72 / 0.98);
-	}
+		& .tile-map-select {
+			color: oklch(0.95 0.004 85);
+			border-color: oklch(0.44 0.012 74 / 0.5);
+			background: oklch(0.255 0.01 72 / 0.96);
+		}
 
-	:global(:root[data-theme="dark"]) .tile-map .tile-map-toolbar-divider {
-		background: oklch(0.45 0.012 74 / 0.52);
-	}
+		& .tile-map-toolbar-divider {
+			background: oklch(0.45 0.012 74 / 0.52);
+		}
 
-	:global(:root[data-theme="dark"]) .tile-map .tile-map-control-pill {
-		background: oklch(0.34 0.016 74 / 0.98);
-		border-color: oklch(0.63 0.04 78 / 0.5);
-		color: oklch(0.97 0.006 85);
-	}
+		& .tile-map-control-pill {
+			color: oklch(0.97 0.006 85);
+			border-color: oklch(0.63 0.04 78 / 0.5);
+			background: oklch(0.34 0.016 74 / 0.98);
+		}
 
-	:global(:root[data-theme="dark"]) .tile-map .tile-tooltip {
-		background: oklch(0.2 0.008 74 / 0.95);
-		border-color: oklch(0.45 0.012 74 / 0.52);
-		box-shadow: 0 14px 30px hsl(30deg 22% 5% / 0.45);
-	}
+		& .tile-tooltip {
+			border-color: oklch(0.45 0.012 74 / 0.52);
+			background: oklch(0.2 0.008 74 / 0.95);
+			box-shadow: 0 14px 30px hsl(30deg 22% 5% / 0.45);
+		}
 
-	:global(:root[data-theme="dark"]) .tile-map .map-label-river {
-		fill: oklch(0.9 0.03 222);
-		stroke: oklch(0.19 0.01 72 / 0.92);
-	}
+		& .map-label-river {
+			fill: oklch(0.9 0.03 222);
+			stroke: oklch(0.19 0.01 72 / 0.92);
+		}
 
-	:global(:root[data-theme="dark"]) .tile-map .map-label-region {
-		fill: oklch(0.84 0.03 82 / 0.9);
-		stroke: oklch(0.17 0.007 72 / 0.9);
-	}
+		& .map-label-region {
+			fill: oklch(0.84 0.03 82 / 0.9);
+			stroke: oklch(0.17 0.007 72 / 0.9);
+		}
 
-	:global(:root[data-theme="dark"]) .tile-map .map-label-region.map-label-variant-water {
-		fill: oklch(0.86 0.06 236 / 0.92);
-		stroke: oklch(0.19 0.01 72 / 0.92);
-	}
+		& .map-label-region.map-label-variant-water {
+			fill: oklch(0.86 0.06 236 / 0.92);
+			stroke: oklch(0.19 0.01 72 / 0.92);
+		}
 
-	:global(:root[data-theme="dark"]) .tile-map .tile-pin-list {
-		background: oklch(0.24 0.01 74 / 0.78);
-	}
+		& .tile-pin-list {
+			background: oklch(0.24 0.01 74 / 0.78);
+		}
 
-	:global(:root[data-theme="dark"]) .tile-map .check-row {
-		background: oklch(0.26 0.01 74 / 0.75);
-		border-color: oklch(0.43 0.012 74 / 0.46);
-	}
+		& .check-row {
+			border-color: oklch(0.43 0.012 74 / 0.46);
+			background: oklch(0.26 0.01 74 / 0.75);
 
-	:global(:root[data-theme="dark"]) .tile-map .check-row:hover {
-		background: oklch(0.29 0.014 74 / 0.82);
-		border-color: oklch(0.57 0.045 78 / 0.52);
+			&:hover {
+				border-color: oklch(0.57 0.045 78 / 0.52);
+				background: oklch(0.29 0.014 74 / 0.82);
+			}
+		}
 	}
 
 	@media (max-width: 1024px) {
