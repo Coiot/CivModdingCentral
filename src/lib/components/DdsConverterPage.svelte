@@ -13,7 +13,7 @@
 
 	const WORKFLOWS = {
 		screen: {
-			label: "Civ5 Screen Type",
+			label: "Screen / Splash",
 			description: "Uses fixed screen dimensions from your reference sheet.",
 			backendAssetType: "ui",
 			compressionOptions: ["DXT3"],
@@ -90,7 +90,7 @@
 		{ id: "diplo-wide", label: "Leaderscene", width: 1600, height: 900 },
 		{ id: "map-load", label: "Map", width: 360, height: 412 },
 		{ id: "dom-standard", label: "Dawn of Man (DOM)", width: 1024, height: 768 },
-		{ id: "wonder-splash", label: "Wonder Splash", width: 972, height: 568 },
+		{ id: "wonder-splash", label: "Wonder", width: 972, height: 568 },
 		{ id: "city-state-bg", label: "City-State", width: 523, height: 300 },
 		{ id: "era-change", label: "Era Change", width: 924, height: 472 },
 		{ id: "ideology-tab", label: "Ideology Tab", width: 964, height: 668 },
@@ -1068,7 +1068,7 @@
 					{:else if selectedFile}
 						Loaded: {selectedFile.name}
 					{:else}
-						Drag and drop PNG here, or click to browse
+						Drag and drop PNG here, or click to Upload
 					{/if}
 				</span>
 				{#if sourcePreviewUrl}
@@ -1313,7 +1313,7 @@
 
 	.dds-form-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 		gap: 0.85rem;
 	}
 
@@ -1364,6 +1364,8 @@
 
 	.atlas-size-block {
 		grid-column: 1 / -1;
+		min-inline-size: 30rem;
+		inline-size: fit-content;
 		display: grid;
 		gap: 0.6rem;
 		color: var(--ink);
@@ -1386,7 +1388,11 @@
 
 	.atlas-size-actions {
 		display: inline-flex;
-		gap: 0.4rem;
+		gap: 0.5rem;
+
+		> button {
+			min-inline-size: 4rem;
+		}
 	}
 
 	.tiny-action {
@@ -1491,6 +1497,12 @@
 		border-radius: 0.75rem;
 		padding-block: 0.65rem;
 		padding-inline: 0.65rem;
+
+		input {
+			min-inline-size: 12rem;
+			inline-size: fit-content;
+			field-sizing: content;
+		}
 	}
 
 	.dds-preview-list-wrap {
