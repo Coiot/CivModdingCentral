@@ -87,8 +87,9 @@ export async function handler(event) {
 		}
 		const workflow = normalizeWorkflow(form.fields.workflow);
 		const isScreenWorkflow = workflow === "screen";
+		const isSvWorkflow = workflow === "sv";
 		const isIconSheetWorkflow = workflow === "icon_sheet";
-		const encoderBackend = isScreenWorkflow || isIconSheetWorkflow ? ENCODER_BACKEND_NATIVE : normalizeEncoderBackend(form.fields.encoderBackend);
+		const encoderBackend = isScreenWorkflow || isIconSheetWorkflow || isSvWorkflow ? ENCODER_BACKEND_NATIVE : normalizeEncoderBackend(form.fields.encoderBackend);
 		const nativeQuality = resolveNativeQuality(form.fields.nativeQuality ?? process.env.CMC_DDS_NATIVE_QUALITY, 1);
 		const colorMetric = normalizeColorMetric(form.fields.colorMetric);
 
@@ -105,12 +106,13 @@ export async function handler(event) {
 
 		const assetType = normalizeAssetType(form.fields.assetType);
 		const requestedFormat = normalizeCompressionFormat(form.fields.compressionFormat);
-		const chosenFormat = isScreenWorkflow || isIconSheetWorkflow ? "RGBA8" : requestedFormat || DEFAULT_FORMAT_BY_ASSET[assetType];
+		const chosenFormat = isScreenWorkflow || isIconSheetWorkflow || isSvWorkflow ? "RGBA8" : requestedFormat || DEFAULT_FORMAT_BY_ASSET[assetType];
 		if (chosenFormat !== "RGBA8" && !ASSET_FORMATS[assetType].includes(chosenFormat)) {
 			return json(400, {
 				error: `Compression ${chosenFormat} is not valid for asset type "${assetType}".`,
 			});
 		}
+		const generateMipmaps = isSvWorkflow || parseBooleanFlag(form.fields.generateMipmaps, false);
 
 		const padded = padRgbaToDxtBlocks(png.data, sourceWidth, sourceHeight);
 		let ddsPayload;
@@ -124,12 +126,13 @@ export async function handler(event) {
 				dxtFlags: dxt.flags[chosenFormat],
 				nativeQuality,
 				nativeColorMetric: colorMetric,
+				generateMipmaps,
 			});
 		} catch (error) {
 			return json(500, { error: error?.message || "DDS compression failed." });
 		}
 
-		const outputName = buildOutputFilename(form.filename, chosenFormat);
+		const outputName = resolveRequestedOutputFilename(form.fields) || buildOutputFilename(form.filename, chosenFormat);
 		return {
 			statusCode: 200,
 			isBase64Encoded: true,
@@ -144,6 +147,7 @@ export async function handler(event) {
 				"X-Compression-Format": chosenFormat,
 				"X-Encoder-Backend": encoderBackend,
 				"X-Native-Quality": encoderBackend === ENCODER_BACKEND_NATIVE ? String(nativeQuality) : "",
+				"X-MipMap-Enabled": generateMipmaps ? "1" : "0",
 			},
 			body: ddsPayload.toString("base64"),
 		};
@@ -158,6 +162,8 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 	if (!selectedSizes.length) {
 		return json(400, { error: "Select at least one output icon size." });
 	}
+	const mipmapSizes = parseSizeList(form.fields.mipmapSizes);
+	const mipmapSizeSet = new Set(mipmapSizes);
 	if (selectedSizes.length > MAX_BUNDLE_OUTPUTS) {
 		return json(400, { error: `Too many output sizes requested. Max is ${MAX_BUNDLE_OUTPUTS}.` });
 	}
@@ -237,6 +243,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 			colorMetric,
 			weightColorByAlpha,
 		});
+		const generateMipmaps = mipmapSizeSet.has(size);
 		try {
 			const ddsPayload = await encodeDdsWithBackend({
 				rgbaData: prepared.data,
@@ -247,6 +254,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 				dxtFlags: compressionFlags,
 				nativeQuality,
 				nativeColorMetric: colorMetric,
+				generateMipmaps,
 			});
 			files.push({
 				name: `${filePrefix}_${fileSuffix}_${size}.dds`,
@@ -284,6 +292,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 				"X-Encoder-Backend": encoderBackend,
 				"X-Native-Quality": encoderBackend === ENCODER_BACKEND_NATIVE ? String(nativeQuality) : "",
 				"X-Native-Output-Mode": encoderBackend === ENCODER_BACKEND_NATIVE ? nativeOutputMode : "",
+				"X-MipMap-Sizes": mipmapSizes.join(","),
 			},
 			body: onlyFile.data.toString("base64"),
 		};
@@ -316,6 +325,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 			"X-Encoder-Backend": encoderBackend,
 			"X-Native-Quality": encoderBackend === ENCODER_BACKEND_NATIVE ? String(nativeQuality) : "",
 			"X-Native-Output-Mode": encoderBackend === ENCODER_BACKEND_NATIVE ? nativeOutputMode : "",
+			"X-MipMap-Sizes": mipmapSizes.join(","),
 		},
 		body: zipBuffer.toString("base64"),
 	};
@@ -439,7 +449,7 @@ function normalizeNativeOutputMode(input) {
 	return "dxt3";
 }
 
-async function encodeDdsWithBackend({ rgbaData, width, height, format, backend, dxtFlags, nativeQuality, nativeColorMetric }) {
+async function encodeDdsWithBackend({ rgbaData, width, height, format, backend, dxtFlags, nativeQuality, nativeColorMetric, generateMipmaps = false }) {
 	if (backend === ENCODER_BACKEND_NATIVE) {
 		return await encodeDdsWithCompressonator({
 			rgbaData,
@@ -448,7 +458,11 @@ async function encodeDdsWithBackend({ rgbaData, width, height, format, backend, 
 			format,
 			nativeQuality,
 			nativeColorMetric,
+			generateMipmaps,
 		});
+	}
+	if (generateMipmaps) {
+		throw new Error("MipMap generation requires the native encoder backend.");
 	}
 	return encodeDdsWithDxtJs({
 		rgbaData,
@@ -473,7 +487,7 @@ function encodeDdsWithDxtJs({ rgbaData, width, height, format, dxtFlags }) {
 	});
 }
 
-async function encodeDdsWithCompressonator({ rgbaData, width, height, format, nativeQuality = 1, nativeColorMetric = "uniform" }) {
+async function encodeDdsWithCompressonator({ rgbaData, width, height, format, nativeQuality = 1, nativeColorMetric = "uniform", generateMipmaps = false }) {
 	const executable = await resolveNativeEncoderBinary();
 	if (!executable) {
 		throw new Error(`Native encoder selected but CompressonatorCLI is not configured. Set one of: ${NATIVE_BIN_ENV_KEYS.join(", ")} or ensure CLI exists under /opt/compressonator.`);
@@ -492,14 +506,20 @@ async function encodeDdsWithCompressonator({ rgbaData, width, height, format, na
 		await fs.writeFile(inputPngPath, pngBuffer);
 		const formatToken = compressonatorFormat(format);
 		const quality = resolveNativeQuality(nativeQuality, 1);
-		const args = ["-fd", formatToken, "-Quality", String(quality)];
+		const baseArgs = ["-fd", formatToken, "-Quality", String(quality)];
+		const mipArgs = generateMipmaps ? ["-mipsize", "1"] : ["-nomipmap"];
+		const metricArgs = [];
 		if (nativeColorMetric === "perceptual") {
-			args.push("-UseChannelWeighting", "1", "-WeightR", "0.3086", "-WeightG", "0.6094", "-WeightB", "0.0820");
+			metricArgs.push("-UseChannelWeighting", "1", "-WeightR", "0.3086", "-WeightG", "0.6094", "-WeightB", "0.0820");
 		} else {
-			args.push("-UseChannelWeighting", "0");
+			metricArgs.push("-UseChannelWeighting", "0");
 		}
-		args.push(inputPngPath, outputDdsPath);
-		const result = await runCommand(executable, args);
+		const args = [...baseArgs, ...mipArgs, ...metricArgs, inputPngPath, outputDdsPath];
+		let result = await runCommand(executable, args);
+		if (generateMipmaps && result.code !== 0 && /unknown|invalid|unrecognized/i.test(String(result.stderr || "")) && /mipsize/i.test(String(result.stderr || ""))) {
+			const fallbackArgs = [...baseArgs, "-miplevels", "20", ...metricArgs, inputPngPath, outputDdsPath];
+			result = await runCommand(executable, fallbackArgs);
+		}
 		if (result.code !== 0) {
 			const stderr = String(result.stderr || "").trim();
 			throw new Error(stderr || `CompressonatorCLI failed with exit code ${result.code}.`);
@@ -705,6 +725,16 @@ function sanitizeFilenameComponent(value) {
 		.replace(/[^a-z0-9._-]+/gi, "-")
 		.replace(/^-+|-+$/g, "");
 	return cleaned || "";
+}
+
+function resolveRequestedOutputFilename(fields) {
+	const filePrefix = sanitizeFilenameComponent(fields?.filePrefix || "");
+	const fileSuffix = sanitizeFilenameComponent(fields?.fileSuffix || "");
+	const outputSize = Number.parseInt(String(fields?.outputSize || ""), 10);
+	if (!filePrefix || !fileSuffix || !Number.isFinite(outputSize) || outputSize <= 0) {
+		return "";
+	}
+	return `${filePrefix}_${fileSuffix}_${outputSize}.dds`;
 }
 
 function isPngFile(buffer) {

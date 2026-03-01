@@ -24,27 +24,57 @@
 			backendAssetType: "ui",
 			compressionOptions: ["DXT3"],
 		},
-		icon_sheet: {
-			label: "Single Icon Sheet",
-			description: "Single icon-sheet export for one chosen icon size.",
+		unit_alpha_bundle: {
+			label: "Unit Alpha Atlas",
+			description: "Unit alpha atlas output.",
 			backendAssetType: "ui",
 			compressionOptions: ["DXT3"],
 		},
+		civ_alpha_bundle: {
+			label: "Civ Icon Alpha Atlas",
+			description: "Civ icon alpha atlas output.",
+			backendAssetType: "ui",
+			compressionOptions: ["DXT3"],
+		},
+		religion_alpha_bundle: {
+			label: "Religion Alpha Atlas",
+			description: "Religion alpha atlas output.",
+			backendAssetType: "ui",
+			compressionOptions: ["DXT3"],
+		},
+		// ui_bundle: {
+		// 	label: "UI Atlas Bundle",
+		// 	description: "Generate UI atlas DDS outputs with the same bundle features.",
+		// 	backendAssetType: "ui",
+		// 	compressionOptions: ["DXT3"],
+		// },
+		icon_sheet: {
+			label: "Single Icon Sheet",
+			description: "Single icon-sheet export for one chosen icon size",
+			backendAssetType: "ui",
+			compressionOptions: ["DXT3"],
+		},
+		sv: {
+			label: "Strategic View (SV)",
+			description: "Single-file SV output with mipmaps. Input and output stay the same fixed size",
+			backendAssetType: "ui",
+			compressionOptions: ["RGBA8"],
+		},
 		unit: {
 			label: "Unit Texture",
-			description: "Unit textures use DXT3 (BC2 style explicit alpha).",
+			description: "Unit textures use DXT3",
 			backendAssetType: "unit",
 			compressionOptions: ["DXT3"],
 		},
 		terrain: {
 			label: "Terrain Texture",
-			description: "Terrain textures can use DXT1 (opaque/simple alpha) or DXT5 (smoother alpha).",
+			description: "Terrain textures can use DXT1 (opaque/simple alpha) or DXT5 (smoother alpha)",
 			backendAssetType: "terrain",
 			compressionOptions: ["DXT1", "DXT5"],
 		},
 		ui: {
 			label: "UI Texture",
-			description: "UI and icon textures use DXT3",
+			description: "UI and Icon textures use DXT3",
 			backendAssetType: "ui",
 			compressionOptions: ["DXT3"],
 		},
@@ -57,25 +87,29 @@
 	};
 
 	const SCREEN_PRESETS = [
-		{ id: "era-change", label: "Era Change", width: 924, height: 472 },
-		{ id: "victory", label: "Victory", width: 956, height: 532 },
-		{ id: "policy-panel", label: "Policy Panel", width: 192, height: 292 },
-		{ id: "map-load", label: "Map (Load)", width: 360, height: 412 },
-		{ id: "diplo-wide", label: "Diplo (Widescreen)", width: 1600, height: 900 },
-		{ id: "dom-standard", label: "DOM (Standard)", width: 1024, height: 768 },
+		{ id: "diplo-wide", label: "Leaderscene", width: 1600, height: 900 },
+		{ id: "map-load", label: "Map", width: 360, height: 412 },
+		{ id: "dom-standard", label: "Dawn of Man (DOM)", width: 1024, height: 768 },
 		{ id: "wonder-splash", label: "Wonder Splash", width: 972, height: 568 },
+		{ id: "city-state-bg", label: "City-State", width: 523, height: 300 },
+		{ id: "era-change", label: "Era Change", width: 924, height: 472 },
 		{ id: "ideology-tab", label: "Ideology Tab", width: 964, height: 668 },
-		{ id: "city-state-bg", label: "City-State Bkgd.", width: 523, height: 300 },
+		{ id: "policy-panel", label: "Policy Panel", width: 192, height: 292 },
+		{ id: "victory", label: "Victory", width: 956, height: 532 },
 	];
 
 	const ICON_PRESETS = [
-		{ id: "buildings", label: "Buildings", sizes: [256, 128, 80, 64, 45] },
-		{ id: "techs", label: "Techs", sizes: [256, 214, 128, 80, 64, 45] },
-		{ id: "units", label: "Units", sizes: [256, 128, 80, 64, 45] },
-		{ id: "civs", label: "Civs", sizes: [256, 128, 80, 64, 45, 32] },
-		{ id: "leaders", label: "Leaders", sizes: [256, 128, 64] },
-		{ id: "religion-alpha", label: "Religion (Alpha)", sizes: [128, 80, 64, 48, 32, 24, 16] },
-		{ id: "resources", label: "Resources", sizes: [256, 80, 64, 45] },
+		{ id: "buildings", label: "Buildings", sizes: [256, 128, 80, 64, 45], mipmapSizes: [] },
+		{ id: "techs", label: "Techs", sizes: [256, 214, 128, 80, 64, 45], mipmapSizes: [] },
+		{ id: "units", label: "Units", sizes: [256, 128, 80, 64, 45], mipmapSizes: [] },
+		{ id: "civs", label: "Civs", sizes: [256, 128, 80, 64, 45, 32], mipmapSizes: [] },
+		{ id: "leaders", label: "Leaders", sizes: [256, 128, 64], mipmapSizes: [] },
+		{ id: "resources", label: "Resources", sizes: [256, 80, 64, 45], mipmapSizes: [] },
+	];
+	const SV_PRESETS = [
+		{ id: "unit-sv", label: "Unit SV", size: 128 },
+		{ id: "improvement-sv", label: "Improvement SV", size: 256 },
+		{ id: "resource-sv", label: "Resource SV", size: 256 },
 	];
 
 	const ICON_ATLAS_SIZE_OPTIONS = [16, 22, 24, 32, 45, 48, 64, 80, 128, 214, 256];
@@ -161,6 +195,40 @@
 			fileSuffix: "UnitFlagAtlas",
 		},
 	};
+	const BUNDLE_WORKFLOW_SETTINGS = {
+		icon_bundle: { atlasType: "icon", sourceSize: 256, sizeOptions: ICON_ATLAS_SIZE_OPTIONS, fixedSizes: false, showPreset: true, showSizePicker: true, minSelected: 1 },
+		ui_bundle: { atlasType: "ui", sourceSize: 256, sizeOptions: ICON_ATLAS_SIZE_OPTIONS, fixedSizes: false, showPreset: true, showSizePicker: true, minSelected: 1 },
+		unit_alpha_bundle: { atlasType: "alpha", sourceSize: 32, sizeOptions: [32], fixedSizes: true, showPreset: false, showSizePicker: false, defaultRows: 1, defaultCols: 1, minSelected: 1 },
+		civ_alpha_bundle: {
+			atlasType: "alpha",
+			sourceSize: 32,
+			sizeOptions: [24, 32],
+			fixedSizes: false,
+			showPreset: false,
+			showSizePicker: true,
+			defaultRows: 1,
+			defaultCols: 1,
+			minSelected: 2,
+			preselectAll: true,
+		},
+		religion_alpha_bundle: {
+			atlasType: "alpha",
+			sourceSize: 32,
+			sizeOptions: [16, 24, 32],
+			fixedSizes: false,
+			showPreset: false,
+			showSizePicker: true,
+			defaultRows: 1,
+			defaultCols: 1,
+			minSelected: 2,
+			preselectAll: true,
+		},
+	};
+	const SV_NAMING_CONFIG = {
+		"unit-sv": { label: "Unit SV", atlasSuffix: "UNIT_SV_ATLAS", fileSuffix: "UnitSV" },
+		"improvement-sv": { label: "Improvement SV", atlasSuffix: "IMPROVEMENT_SV_ATLAS", fileSuffix: "ImprovementSV" },
+		"resource-sv": { label: "Resource SV", atlasSuffix: "RESOURCE_SV_ATLAS", fileSuffix: "ResourceSV" },
+	};
 
 	const SQL_HISTORY_STORAGE_KEY = "cmc_dds_sql_history_v1";
 
@@ -175,17 +243,15 @@
 	let workflow = $state("icon_bundle");
 	let compressionChoice = $state("");
 	let selectedScreenPresetId = $state(SCREEN_PRESETS[0].id);
+	let selectedSvPresetId = $state(SV_PRESETS[0].id);
 
 	let selectedIconPresetId = $state(ICON_PRESETS[0].id);
-	let iconSheetRowsInput = $state("1");
-	let iconSheetColsInput = $state("1");
 
 	let selectedAtlasPresetId = $state(ICON_ATLAS_PRESETS[0].id);
 	let atlasRowsInput = $state(String(ICON_ATLAS_PRESETS[0].rows));
 	let atlasColsInput = $state(String(ICON_ATLAS_PRESETS[0].cols));
 	let atlasSelectedSizesMap = $state(buildSizeSelection(ICON_ATLAS_PRESETS[0].defaultSizes));
-	let atlasType = $state("icon");
-	let atlasExportName = $state("IconAtlas");
+	let atlasExportName = $state("");
 	let strategicViewTypeInput = $state("");
 	let strategicTileTypeInput = $state("Unit");
 
@@ -197,6 +263,7 @@
 	let successMessage = $state("");
 	let downloadUrl = $state("");
 	let downloadName = $state("");
+	let sourcePreviewUrl = $state("");
 	let conversionMeta = $state(null);
 	let sqlHistoryEntries = $state([]);
 
@@ -205,27 +272,42 @@
 	const activeCompression = $derived(resolveStringOption(compressionChoice, compressionOptions));
 
 	const activeScreenPreset = $derived(resolvePresetById(SCREEN_PRESETS, selectedScreenPresetId));
+	const activeSvPreset = $derived(resolvePresetById(SV_PRESETS, selectedSvPresetId));
 
 	const activeIconPreset = $derived(resolvePresetById(ICON_PRESETS, selectedIconPresetId));
 	const iconSizeOptions = $derived(activeIconPreset?.sizes || []);
-	const iconSheetRows = $derived(parseGridCount(iconSheetRowsInput));
-	const iconSheetCols = $derived(parseGridCount(iconSheetColsInput));
+	const activeIconMipmapSizes = $derived(activeIconPreset?.mipmapSizes || []);
+	const iconSheetRows = $derived(1);
+	const iconSheetCols = $derived(1);
 
 	const activeAtlasPreset = $derived(resolvePresetById(ICON_ATLAS_PRESETS, selectedAtlasPresetId));
+	const activeBundleWorkflowSettings = $derived(BUNDLE_WORKFLOW_SETTINGS[workflow] || null);
+	const isAtlasBundleWorkflow = $derived(Boolean(activeBundleWorkflowSettings));
+	const showBundlePreset = $derived(Boolean(activeBundleWorkflowSettings?.showPreset !== false));
+	const showBundleSizePicker = $derived(Boolean(activeBundleWorkflowSettings?.showSizePicker !== false));
+	const bundleMinSelectedSizes = $derived(Number(activeBundleWorkflowSettings?.minSelected || 1));
+	const activeBundleSizeOptions = $derived(activeBundleWorkflowSettings?.sizeOptions || ICON_ATLAS_SIZE_OPTIONS);
+	const activeBundleSourceSize = $derived(activeBundleWorkflowSettings?.sourceSize || ICON_SOURCE_SIZE);
 	const atlasRows = $derived(parseGridCount(atlasRowsInput));
 	const atlasCols = $derived(parseGridCount(atlasColsInput));
-	const atlasSelectedSizes = $derived(ICON_ATLAS_SIZE_OPTIONS.filter((size) => Boolean(atlasSelectedSizesMap[size])).sort((a, b) => a - b));
-	const atlasHasSizeSelection = $derived(atlasSelectedSizes.length > 0);
-	const activeAtlasTypeConfig = $derived(BUNDLE_ATLAS_TYPES[atlasType] || BUNDLE_ATLAS_TYPES.icon);
-	const activeNativeOutputMode = $derived(atlasType === "unit_flag" ? "dxt3" : "rgba8");
+	const atlasSelectedSizes = $derived(
+		activeBundleWorkflowSettings?.fixedSizes ? activeBundleSizeOptions : activeBundleSizeOptions.filter((size) => Boolean(atlasSelectedSizesMap[size])).sort((a, b) => a - b),
+	);
+	const activeBundleAtlasType = $derived(activeBundleWorkflowSettings?.atlasType || "icon");
+	const activeAtlasTypeConfig = $derived(BUNDLE_ATLAS_TYPES[activeBundleAtlasType] || BUNDLE_ATLAS_TYPES.icon);
+	const activeSvNamingConfig = $derived(SV_NAMING_CONFIG[activeSvPreset?.id] || SV_NAMING_CONFIG["unit-sv"]);
+	const activeSqlAtlasConfig = $derived(isAtlasBundleWorkflow ? activeAtlasTypeConfig : workflow === "icon_sheet" ? BUNDLE_ATLAS_TYPES.icon : workflow === "sv" ? activeSvNamingConfig : null);
+	const activeNativeOutputMode = $derived(activeBundleAtlasType === "unit_flag" ? "dxt3" : "rgba8");
 	const atlasSqlToken = $derived(normalizeAtlasSqlToken(atlasExportName));
 	const atlasFilePrefix = $derived(buildAtlasFilePrefix(atlasSqlToken));
-	const atlasSqlName = $derived(`${atlasSqlToken}_${activeAtlasTypeConfig.atlasSuffix}`);
+	const sqlWorkflowEnabled = $derived(isAtlasBundleWorkflow || workflow === "icon_sheet" || workflow === "sv");
+	const activeWorkflowSizes = $derived(isAtlasBundleWorkflow ? atlasSelectedSizes : workflow === "icon_sheet" ? iconSizeOptions : workflow === "sv" && activeSvPreset ? [activeSvPreset.size] : []);
+	const atlasSqlName = $derived(activeSqlAtlasConfig ? `${atlasSqlToken}_${activeSqlAtlasConfig.atlasSuffix}` : "");
 	const atlasPreviewFileNames = $derived(
-		atlasSelectedSizes.map((size) =>
+		activeWorkflowSizes.map((size) =>
 			buildAtlasDdsFilename({
 				filePrefix: atlasFilePrefix,
-				fileSuffix: activeAtlasTypeConfig.fileSuffix,
+				fileSuffix: activeSqlAtlasConfig?.fileSuffix || "IconAtlas",
 				size,
 			}),
 		),
@@ -243,10 +325,11 @@
 		computeExpectedDimensions({
 			workflow,
 			screenPreset: activeScreenPreset,
+			svPreset: activeSvPreset,
 			iconSize: ICON_SOURCE_SIZE,
 			iconRows: iconSheetRows,
 			iconCols: iconSheetCols,
-			atlasCurrentSize: ICON_SOURCE_SIZE,
+			atlasCurrentSize: activeBundleSourceSize,
 			atlasRows,
 			atlasCols,
 		}),
@@ -255,19 +338,16 @@
 		Boolean(expectedDimensions && selectedFileInfo && (expectedDimensions.width !== selectedFileInfo.width || expectedDimensions.height !== selectedFileInfo.height)),
 	);
 	const canConvertWithDimensions = $derived(Boolean(!expectedDimensions || (selectedFileInfo && !hasDimensionMismatch)));
-	const canSubmit = $derived(Boolean(selectedFile && canConvertWithDimensions && (workflow !== "icon_bundle" || atlasHasSizeSelection)));
+	const canSubmit = $derived(Boolean(selectedFile && canConvertWithDimensions && (!isAtlasBundleWorkflow || atlasSelectedSizes.length >= bundleMinSelectedSizes)));
 
 	onDestroy(() => {
+		revokeSourcePreviewUrl();
 		revokeDownloadUrl();
 	});
 
 	onMount(() => {
 		sqlHistoryEntries = loadSqlHistory();
 	});
-
-	function normalizeAtlasType(value) {
-		return BUNDLE_ATLAS_TYPES[value] ? value : "icon";
-	}
 
 	function normalizeAtlasSqlToken(value) {
 		const token = String(value || "")
@@ -395,11 +475,17 @@
 		return Math.min(parsed, 64);
 	}
 
-	function computeExpectedDimensions({ workflow: nextWorkflow, screenPreset, iconSize, iconRows, iconCols, atlasCurrentSize, atlasRows: rows, atlasCols: cols }) {
+	function computeExpectedDimensions({ workflow: nextWorkflow, screenPreset, svPreset, iconSize, iconRows, iconCols, atlasCurrentSize, atlasRows: rows, atlasCols: cols }) {
 		if (nextWorkflow === "screen" && screenPreset) {
 			return {
 				width: Number(screenPreset.width),
 				height: Number(screenPreset.height),
+			};
+		}
+		if (nextWorkflow === "sv" && svPreset) {
+			return {
+				width: Number(svPreset.size),
+				height: Number(svPreset.size),
 			};
 		}
 		if (nextWorkflow === "icon_sheet" && iconSize) {
@@ -408,7 +494,14 @@
 				height: Number(iconSize) * Number(iconRows || 1),
 			};
 		}
-		if (nextWorkflow === "icon_bundle" && atlasCurrentSize) {
+		if (
+			(nextWorkflow === "icon_bundle" ||
+				nextWorkflow === "ui_bundle" ||
+				nextWorkflow === "unit_alpha_bundle" ||
+				nextWorkflow === "civ_alpha_bundle" ||
+				nextWorkflow === "religion_alpha_bundle") &&
+			atlasCurrentSize
+		) {
 			return {
 				width: Number(atlasCurrentSize) * Number(cols || 1),
 				height: Number(atlasCurrentSize) * Number(rows || 1),
@@ -419,6 +512,18 @@
 
 	function onWorkflowChange(nextWorkflow) {
 		workflow = WORKFLOWS[nextWorkflow] ? nextWorkflow : "unit";
+		if (BUNDLE_WORKFLOW_SETTINGS[workflow]) {
+			const preset = resolvePresetById(ICON_ATLAS_PRESETS, selectedAtlasPresetId);
+			const workflowSizes = BUNDLE_WORKFLOW_SETTINGS[workflow].sizeOptions || ICON_ATLAS_SIZE_OPTIONS;
+			const defaultSizes = BUNDLE_WORKFLOW_SETTINGS[workflow].preselectAll
+				? workflowSizes
+				: BUNDLE_WORKFLOW_SETTINGS[workflow].fixedSizes
+					? workflowSizes
+					: (preset?.defaultSizes || []).filter((size) => workflowSizes.includes(size));
+			atlasSelectedSizesMap = buildSizeSelection(defaultSizes);
+			atlasRowsInput = String(BUNDLE_WORKFLOW_SETTINGS[workflow].defaultRows || atlasRowsInput || 1);
+			atlasColsInput = String(BUNDLE_WORKFLOW_SETTINGS[workflow].defaultCols || atlasColsInput || 1);
+		}
 		errorMessage = "";
 		successMessage = "";
 		conversionMeta = null;
@@ -429,7 +534,9 @@
 		selectedAtlasPresetId = preset.id;
 		atlasRowsInput = String(preset.rows);
 		atlasColsInput = String(preset.cols);
-		atlasSelectedSizesMap = buildSizeSelection(preset.defaultSizes);
+		const workflowSizes = activeBundleSizeOptions;
+		const defaultSizes = activeBundleWorkflowSettings?.fixedSizes ? workflowSizes : (preset.defaultSizes || []).filter((size) => workflowSizes.includes(size));
+		atlasSelectedSizesMap = buildSizeSelection(defaultSizes);
 		errorMessage = "";
 		successMessage = "";
 	}
@@ -444,7 +551,7 @@
 	}
 
 	function setAllAtlasSizes(enabled) {
-		atlasSelectedSizesMap = buildSizeSelection(enabled ? ICON_ATLAS_SIZE_OPTIONS : []);
+		atlasSelectedSizesMap = buildSizeSelection(enabled ? activeBundleSizeOptions : []);
 		errorMessage = "";
 		successMessage = "";
 	}
@@ -455,13 +562,15 @@
 		successMessage = "";
 		conversionMeta = null;
 		revokeDownloadUrl();
+		revokeSourcePreviewUrl();
 
 		if (!selectedFile) {
 			selectedFileInfo = null;
 			return;
 		}
+		sourcePreviewUrl = URL.createObjectURL(selectedFile);
 
-		if (workflow === "icon_bundle" && (!atlasExportName || atlasExportName === "IconAtlas")) {
+		if ((isAtlasBundleWorkflow || workflow === "icon_sheet" || workflow === "sv") && (!atlasExportName || atlasExportName === "IconAtlas")) {
 			atlasExportName = `${baseFileName(selectedFile.name)}_IconAtlas`;
 		}
 
@@ -531,6 +640,13 @@
 		}
 	}
 
+	function revokeSourcePreviewUrl() {
+		if (sourcePreviewUrl) {
+			URL.revokeObjectURL(sourcePreviewUrl);
+			sourcePreviewUrl = "";
+		}
+	}
+
 	function backendAssetType() {
 		return workflowConfig.backendAssetType || "ui";
 	}
@@ -539,10 +655,13 @@
 		if (workflow === "screen" && activeScreenPreset) {
 			return activeScreenPreset.label;
 		}
+		if (workflow === "sv" && activeSvPreset) {
+			return activeSvPreset.label;
+		}
 		if (workflow === "icon_sheet" && activeIconPreset) {
 			return activeIconPreset.label;
 		}
-		if (workflow === "icon_bundle" && activeAtlasPreset) {
+		if (isAtlasBundleWorkflow && showBundlePreset && activeAtlasPreset) {
 			return activeAtlasPreset.label;
 		}
 		return workflowConfig.label;
@@ -578,8 +697,8 @@
 			errorMessage = "Unable to verify PNG dimensions for this preset. Choose a valid PNG.";
 			return;
 		}
-		if (workflow === "icon_bundle" && !atlasHasSizeSelection) {
-			errorMessage = "Select at least one output icon size.";
+		if (isAtlasBundleWorkflow && atlasSelectedSizes.length < bundleMinSelectedSizes) {
+			errorMessage = bundleMinSelectedSizes > 1 ? `Select at least ${bundleMinSelectedSizes} output icon sizes.` : "Select at least one output icon size.";
 			return;
 		}
 		busy = true;
@@ -590,7 +709,7 @@
 			const form = new FormData();
 			form.append("file", selectedFile, selectedFile.name);
 			form.append("assetType", backendAssetType());
-			const workflowForRequest = workflow === "icon_sheet" ? "icon_bundle" : workflow;
+			const workflowForRequest = workflow === "icon_sheet" || isAtlasBundleWorkflow ? "icon_bundle" : workflow;
 			form.append("compressionFormat", workflow === "icon_sheet" ? "RGBA8" : activeCompression);
 			form.append("workflow", workflowForRequest);
 			form.append("preset", activePresetSummary());
@@ -601,6 +720,9 @@
 
 			if (workflow === "icon_sheet") {
 				form.append("selectedSizes", iconSizeOptions.join(","));
+				if (activeIconMipmapSizes.length) {
+					form.append("mipmapSizes", activeIconMipmapSizes.join(","));
+				}
 				form.append("currentIconSize", String(ICON_SOURCE_SIZE));
 				form.append("encoderBackend", ICON_BUNDLE_ENCODER_PRESET.backend);
 				form.append("nativeOutputMode", "rgba8");
@@ -620,12 +742,25 @@
 				form.append("gridCols", String(iconSheetCols));
 				form.append("resizeSheet", "1");
 				form.append("padToMultipleOf4", "1");
+				form.append("exportName", sanitizeExportBase(atlasExportName));
 				form.append("atlasType", "icon");
+				form.append("atlasToken", atlasSqlToken);
+				form.append("filePrefix", atlasFilePrefix);
+			}
+			if (workflow === "sv") {
+				form.append("encoderBackend", ICON_BUNDLE_ENCODER_PRESET.backend);
+				form.append("nativeOutputMode", "rgba8");
+				form.append("nativeQuality", String(ICON_BUNDLE_ENCODER_PRESET.nativeQuality));
+				form.append("colorMetric", ICON_BUNDLE_ENCODER_PRESET.colorMetric);
+				form.append("generateMipmaps", "1");
+				form.append("outputSize", String(activeSvPreset?.size || 256));
+				form.append("filePrefix", atlasFilePrefix);
+				form.append("fileSuffix", activeSvNamingConfig.fileSuffix);
 			}
 
-			if (workflow === "icon_bundle") {
+			if (isAtlasBundleWorkflow) {
 				form.append("selectedSizes", atlasSelectedSizes.join(","));
-				form.append("currentIconSize", String(ICON_SOURCE_SIZE));
+				form.append("currentIconSize", String(activeBundleSourceSize));
 				form.append("gridRows", String(atlasRows));
 				form.append("gridCols", String(atlasCols));
 				form.append("resizeSheet", "1");
@@ -645,7 +780,7 @@
 				form.append("colorMetric", ICON_BUNDLE_ENCODER_PRESET.colorMetric);
 				form.append("weightColorByAlpha", ICON_BUNDLE_ENCODER_PRESET.weightColorByAlpha ? "1" : "0");
 				form.append("exportName", sanitizeExportBase(atlasExportName));
-				form.append("atlasType", normalizeAtlasType(atlasType));
+				form.append("atlasType", activeBundleAtlasType);
 				form.append("atlasToken", atlasSqlToken);
 				form.append("filePrefix", atlasFilePrefix);
 			}
@@ -662,7 +797,7 @@
 
 			const blob = await response.blob();
 			const contentDisposition = response.headers.get("content-disposition") || "";
-			const isBundleWorkflow = workflow === "icon_bundle" || workflow === "icon_sheet";
+			const isBundleWorkflow = isAtlasBundleWorkflow || workflow === "icon_sheet";
 			const suggestedName = parseDownloadName(contentDisposition) || buildFallbackName(selectedFile.name, activeCompression, isBundleWorkflow);
 
 			revokeDownloadUrl();
@@ -686,9 +821,11 @@
 				encoderBackend: response.headers.get("x-encoder-backend") || "",
 				nativeQuality: response.headers.get("x-native-quality") || "",
 				nativeOutputMode: response.headers.get("x-native-output-mode") || "",
+				mipmapSizes: response.headers.get("x-mipmap-sizes") || "",
+				mipmapEnabled: response.headers.get("x-mipmap-enabled") || "",
 			};
 
-			if (workflow === "icon_bundle") {
+			if (isAtlasBundleWorkflow) {
 				const strategicAsset = buildAtlasDdsFilename({
 					filePrefix: atlasFilePrefix,
 					fileSuffix: BUNDLE_ATLAS_TYPES.unit_flag.fileSuffix,
@@ -705,14 +842,49 @@
 						}),
 						iconsPerRow: atlasCols,
 						iconsPerColumn: atlasRows,
-						strategicViewType: atlasType === "unit_flag" ? String(strategicViewTypeInput || "").trim() : "",
-						strategicTileType: atlasType === "unit_flag" ? String(strategicTileTypeInput || "Unit").trim() : "",
-						strategicAsset: atlasType === "unit_flag" && strategicViewTypeInput ? strategicAsset : "",
+						strategicViewType: activeBundleAtlasType === "unit_flag" ? String(strategicViewTypeInput || "").trim() : "",
+						strategicTileType: activeBundleAtlasType === "unit_flag" ? String(strategicTileTypeInput || "Unit").trim() : "",
+						strategicAsset: activeBundleAtlasType === "unit_flag" && strategicViewTypeInput ? strategicAsset : "",
 					})),
 				);
 				successMessage = `Bundle generated with ${conversionMeta.bundleCount || atlasSelectedSizes.length} DDS sheets.`;
 			} else if (workflow === "icon_sheet") {
+				mergeSqlHistory(
+					iconSizeOptions.map((size) => ({
+						atlas: atlasSqlName,
+						iconSize: size,
+						filename: buildAtlasDdsFilename({
+							filePrefix: atlasFilePrefix,
+							fileSuffix: BUNDLE_ATLAS_TYPES.icon.fileSuffix,
+							size,
+						}),
+						iconsPerRow: iconSheetCols,
+						iconsPerColumn: iconSheetRows,
+						strategicViewType: "",
+						strategicTileType: "",
+						strategicAsset: "",
+					})),
+				);
 				successMessage = `Bundle generated with ${conversionMeta.bundleCount || iconSizeOptions.length} DDS sheets.`;
+			} else if (workflow === "sv") {
+				const svSize = Number(activeSvPreset?.size || 256);
+				mergeSqlHistory([
+					{
+						atlas: atlasSqlName,
+						iconSize: svSize,
+						filename: buildAtlasDdsFilename({
+							filePrefix: atlasFilePrefix,
+							fileSuffix: activeSvNamingConfig.fileSuffix,
+							size: svSize,
+						}),
+						iconsPerRow: 1,
+						iconsPerColumn: 1,
+						strategicViewType: "",
+						strategicTileType: "",
+						strategicAsset: "",
+					},
+				]);
+				successMessage = `${activePresetSummary()} converted successfully.`;
 			} else {
 				successMessage = `${activePresetSummary()} converted successfully.`;
 			}
@@ -757,7 +929,7 @@
 	<header class="hero dds-hero">
 		<p class="eyebrow">Texture Tools</p>
 		<h1>PNG to DDS Converter</h1>
-		<p>Choose a workflow, validate required dimensions locally, and export Civ5-ready DDS outputs.</p>
+		<p>Choose a workflow and export Civ5-ready DDS outputs.</p>
 	</header>
 
 	<section class="dds-panel">
@@ -787,6 +959,17 @@
 					</label>
 				{/if}
 
+				{#if workflow === "sv"}
+					<label>
+						SV Type
+						<select value={activeSvPreset?.id || ""} onchange={(event) => (selectedSvPresetId = event.currentTarget.value)}>
+							{#each SV_PRESETS as preset (preset.id)}
+								<option value={preset.id}>{preset.label} ({preset.size}x{preset.size})</option>
+							{/each}
+						</select>
+					</label>
+				{/if}
+
 				{#if workflow === "icon_sheet"}
 					<label>
 						Icon Class
@@ -796,36 +979,19 @@
 							{/each}
 						</select>
 					</label>
-
-					<label>
-						Icons per Row
-						<input type="number" min="1" max="64" step="1" value={String(iconSheetCols)} oninput={(event) => (iconSheetColsInput = event.currentTarget.value)} />
-					</label>
-
-					<label>
-						Icons per Column
-						<input type="number" min="1" max="64" step="1" value={String(iconSheetRows)} oninput={(event) => (iconSheetRowsInput = event.currentTarget.value)} />
-					</label>
 				{/if}
 
-				{#if workflow === "icon_bundle"}
-					<label>
-						Atlas Preset
-						<select value={activeAtlasPreset?.id || ""} onchange={(event) => onAtlasPresetChange(event.currentTarget.value)}>
-							{#each ICON_ATLAS_PRESETS as preset (preset.id)}
-								<option value={preset.id}>{preset.label}</option>
-							{/each}
-						</select>
-					</label>
-
-					<label>
-						Atlas Type
-						<select value={atlasType} onchange={(event) => (atlasType = normalizeAtlasType(event.currentTarget.value))}>
-							{#each Object.entries(BUNDLE_ATLAS_TYPES) as [kindId, kind] (kindId)}
-								<option value={kindId}>{kind.label}</option>
-							{/each}
-						</select>
-					</label>
+				{#if isAtlasBundleWorkflow}
+					{#if showBundlePreset}
+						<label>
+							Atlas Preset
+							<select value={activeAtlasPreset?.id || ""} onchange={(event) => onAtlasPresetChange(event.currentTarget.value)}>
+								{#each ICON_ATLAS_PRESETS as preset (preset.id)}
+									<option value={preset.id}>{preset.label}</option>
+								{/each}
+							</select>
+						</label>
+					{/if}
 
 					<label>
 						Icons per Row
@@ -837,26 +1003,28 @@
 						<input type="number" min="1" max="64" step="1" value={String(atlasRows)} oninput={(event) => (atlasRowsInput = event.currentTarget.value)} />
 					</label>
 
-					<div class="atlas-size-block">
-						<div class="atlas-size-header">
-							<span>Icon Sizes</span>
-							<div class="atlas-size-actions">
-								<button type="button" class="tiny-action" onclick={() => setAllAtlasSizes(true)}>All</button>
-								<button type="button" class="tiny-action" onclick={() => setAllAtlasSizes(false)}>None</button>
+					{#if showBundleSizePicker}
+						<div class="atlas-size-block">
+							<div class="atlas-size-header">
+								<span>Icon Sizes</span>
+								<div class="atlas-size-actions">
+									<button type="button" class="tiny-action" onclick={() => setAllAtlasSizes(true)}>All</button>
+									<button type="button" class="tiny-action" onclick={() => setAllAtlasSizes(false)}>None</button>
+								</div>
+							</div>
+							<div class="atlas-size-grid">
+								{#each activeBundleSizeOptions as size (size)}
+									<label class="atlas-size-check">
+										<input type="checkbox" checked={Boolean(atlasSelectedSizesMap[size])} onchange={(event) => toggleAtlasSize(size, event.currentTarget.checked)} />
+										<span>{size}</span>
+									</label>
+								{/each}
 							</div>
 						</div>
-						<div class="atlas-size-grid">
-							{#each ICON_ATLAS_SIZE_OPTIONS as size (size)}
-								<label class="atlas-size-check">
-									<input type="checkbox" checked={Boolean(atlasSelectedSizesMap[size])} onchange={(event) => toggleAtlasSize(size, event.currentTarget.checked)} />
-									<span>{size}</span>
-								</label>
-							{/each}
-						</div>
-					</div>
+					{/if}
 				{/if}
 
-				{#if workflow !== "screen" && workflow !== "icon_sheet" && (workflow !== "icon_bundle" || activeNativeOutputMode !== "rgba8")}
+				{#if workflow !== "screen" && workflow !== "icon_sheet" && workflow !== "sv" && (!isAtlasBundleWorkflow || activeNativeOutputMode !== "rgba8")}
 					{#if compressionOptions.length > 1}
 						<label>
 							Compression
@@ -894,7 +1062,6 @@
 				ondragleave={onDropzoneDragLeave}
 				ondrop={onDropzoneDrop}
 			>
-				<span class="dds-file-dropzone-title">PNG Source</span>
 				<span class="dds-file-dropzone-copy">
 					{#if isDragOver}
 						Drop PNG here
@@ -904,6 +1071,9 @@
 						Drag and drop PNG here, or click to browse
 					{/if}
 				</span>
+				{#if sourcePreviewUrl}
+					<img class="dds-file-preview" src={sourcePreviewUrl} alt="Selected PNG preview" />
+				{/if}
 				<input type="file" accept="image/png" onchange={(event) => onFileChange(event.currentTarget.files)} />
 			</label>
 		</section>
@@ -915,33 +1085,37 @@
 			</div>
 
 			<div class="dds-meta">
-				{#if workflow === "icon_bundle"}
+				{#if isAtlasBundleWorkflow}
 					<span>Selected sizes: {atlasSelectedSizes.join(", ") || "none"}</span>
 				{/if}
 				{#if workflow === "icon_sheet"}
 					<span>Selected sizes: {iconSizeOptions.join(", ") || "none"}</span>
+					{#if activeIconMipmapSizes.length}
+						<span>MipMap sizes: {activeIconMipmapSizes.join(", ")}</span>
+					{/if}
 				{/if}
-				{#if workflow !== "screen" && workflow !== "icon_sheet" && (workflow !== "icon_bundle" || activeNativeOutputMode !== "rgba8")}
-					<span>Compression: {workflow === "icon_bundle" ? "DXT3" : activeCompression}</span>
+				{#if workflow === "sv" && activeSvPreset}
+					<span>SV size: {activeSvPreset.size}</span>
+					<span>MipMap</span>
 				{/if}
 				{#if selectedFileInfo}
 					<span>Uploaded PNG: {selectedFileInfo.width} x {selectedFileInfo.height}</span>
 				{/if}
 			</div>
 
-			{#if workflow === "icon_bundle"}
+			{#if sqlWorkflowEnabled}
 				<div class="dds-preview-block">
 					<label>
 						Export Name
-						<input type="text" value={atlasExportName} oninput={(event) => (atlasExportName = event.currentTarget.value)} placeholder="IconAtlas" />
+						<input type="text" value={atlasExportName} oninput={(event) => (atlasExportName = event.currentTarget.value)} />
 					</label>
-					<p class="dds-preview-title">Standard: `EXPORT_NAME` -> `EXPORT_NAME_{activeAtlasTypeConfig.atlasSuffix}` and `{atlasFilePrefix}_{activeAtlasTypeConfig.fileSuffix}_SIZE.dds`</p>
+					<p class="dds-preview-title">Standard: `EXPORT_NAME` -> `EXPORT_NAME_{activeSqlAtlasConfig?.atlasSuffix}` and `{atlasFilePrefix}_{activeSqlAtlasConfig?.fileSuffix}_SIZE.dds`</p>
 					<div class="dds-meta">
 						<span>Atlas SQL Name: {atlasSqlName}</span>
 						<span>Filename Prefix: {atlasFilePrefix}</span>
-						<span>Atlas Kind: {activeAtlasTypeConfig.label}</span>
+						<!-- <span>Atlas Kind: {activeSqlAtlasConfig?.label}</span> -->
 					</div>
-					{#if atlasType === "unit_flag"}
+					{#if isAtlasBundleWorkflow && activeBundleAtlasType === "unit_flag"}
 						<div class="dds-form-grid">
 							<label>
 								StrategicViewType (optional)
@@ -979,8 +1153,8 @@
 				</div>
 			{/if}
 
-			{#if workflow === "icon_bundle" && !atlasHasSizeSelection}
-				<p class="dds-warning">Select at least one output icon size for bundle export.</p>
+			{#if isAtlasBundleWorkflow && atlasSelectedSizes.length < bundleMinSelectedSizes}
+				<p class="dds-warning">Select at least {bundleMinSelectedSizes} output icon size{bundleMinSelectedSizes === 1 ? "" : "s"} for bundle export.</p>
 			{/if}
 
 			{#if hasDimensionMismatch && expectedDimensions && selectedFileInfo}
@@ -992,7 +1166,7 @@
 
 			<div class="dds-actions">
 				<button type="button" onclick={convertToDds} disabled={busy || !canSubmit}>
-					{busy ? "Converting..." : workflow === "icon_bundle" || workflow === "icon_sheet" ? "Generate DDS Bundle" : "Convert to DDS"}
+					{busy ? "Converting..." : isAtlasBundleWorkflow || workflow === "icon_sheet" ? "Generate DDS Bundle" : "Convert to DDS"}
 				</button>
 				{#if downloadUrl}
 					<a class="dds-download" href={downloadUrl} download={downloadName}>Download {downloadName}</a>
@@ -1039,6 +1213,12 @@
 					{#if conversionMeta.colorMetric}
 						<span>Metric: {conversionMeta.colorMetric}</span>
 					{/if}
+					{#if conversionMeta.mipmapSizes}
+						<span>MipMap sizes: {conversionMeta.mipmapSizes}</span>
+					{/if}
+					{#if conversionMeta.mipmapEnabled}
+						<span>MipMaps: {conversionMeta.mipmapEnabled === "1" ? "enabled" : "disabled"}</span>
+					{/if}
 					{#if expectedDimensions && conversionMeta.outputWidth && conversionMeta.outputHeight && (Number(conversionMeta.outputWidth) > Number(expectedDimensions.width || 0) || Number(conversionMeta.outputHeight) > Number(expectedDimensions.height || 0))}
 						<span>Sheet dimensions were upscaled to a multiple of 4.</span>
 					{/if}
@@ -1081,19 +1261,21 @@
 
 		& label {
 			display: grid;
-			gap: 0.45rem;
-			font-size: 0.95rem;
+			gap: 0.15rem;
+			font-size: 1rem;
 		}
 
 		& select,
 		& input[type="file"],
 		& input[type="text"],
 		& input[type="number"] {
+			min-block-size: 3ch;
 			color: var(--ink);
+			font-size: 0.95rem;
 			background: var(--input-bg);
 			border: 1px solid var(--panel-border);
 			border-radius: 0.65rem;
-			padding-block: 0.52rem;
+			padding-block: 0.35rem;
 			padding-inline: 0.65rem;
 		}
 
@@ -1162,22 +1344,22 @@
 		}
 
 		& input[type="file"] {
-			inline-size: 100%;
-			max-inline-size: 100%;
-			padding-block: 0.35rem;
-			padding-inline: 0.35rem;
-			margin-block-start: 0.2rem;
+			display: none;
 		}
-	}
-
-	.dds-file-dropzone-title {
-		font-size: 0.96rem;
-		font-weight: 700;
 	}
 
 	.dds-file-dropzone-copy {
 		color: var(--muted-ink);
-		font-size: 0.92rem;
+		font-size: 1.05rem;
+	}
+
+	.dds-file-preview {
+		inline-size: min(320px, 100%);
+		block-size: auto;
+		object-fit: contain;
+		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border-radius: 0.65rem;
+		margin-block-start: 0.5rem;
 	}
 
 	.atlas-size-block {
@@ -1220,16 +1402,23 @@
 
 	.atlas-size-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(4rem, 1fr));
 		gap: 0.35rem;
 	}
 
-	.atlas-size-check {
+	.atlas-size-grid > .atlas-size-check {
+		inline-size: auto;
 		display: inline-flex;
 		align-items: center;
 		gap: 0.35rem;
 		color: var(--ink);
 		font-size: 0.85rem;
+	}
+
+	.atlas-size-grid > .atlas-size-check input[type="checkbox"] {
+		inline-size: auto;
+		padding-block: 0;
+		padding-inline: 0;
 	}
 
 	.dds-actions {
