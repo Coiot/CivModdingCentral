@@ -139,6 +139,7 @@
 	let effectCanvasA = null;
 	let effectCanvasB = null;
 	let tintVersionCounter = 0;
+	let tintedColorCache = new Map();
 	let swiatloImageCache = new Map();
 	let swiatloAssetsVersion = $state(0);
 
@@ -150,6 +151,7 @@
 	let alphaBounds = $state(null);
 
 	let previewCanvasEl = $state();
+	let compareCanvasEl = $state();
 	let outputCanvasEl = $state();
 
 	let isDragOver = $state(false);
@@ -181,6 +183,17 @@
 	let suggestionBasePrimary = $state(DEFAULT_PRIMARY_COLOR);
 	let suggestionBaseIcon = $state(DEFAULT_ICON_COLOR);
 	let suggestionBaseLocked = $state(false);
+	let suggestionLockHue = $state(false);
+	let suggestionLockSaturation = $state(false);
+	let suggestionGeneratedCount = $state(3);
+	let suggestionSeed = $state(1);
+	let compareEnabled = $state(false);
+	let compareReference = $state(null);
+	let historyEntries = $state([]);
+	let redoEntries = $state([]);
+	let historyBaselineSignature = "";
+	let historyBaselineSnapshot = null;
+	let historySuspended = false;
 
 	const hasSource = $derived(Boolean(sourceCanvas));
 	const sourceWidth = $derived(sourceCanvas?.width || 0);
@@ -190,8 +203,15 @@
 	const outputName = $derived(buildOutputName(sourceName));
 	const primaryColorDisplay = $derived(formatColorDisplay(primaryColor, DEFAULT_PRIMARY_COLOR));
 	const iconColorDisplay = $derived(formatColorDisplay(iconColor, DEFAULT_ICON_COLOR));
+	const canUndo = $derived(historyEntries.length > 0);
+	const canRedo = $derived(redoEntries.length > 0);
 	const suggestedColorSchemes = $derived(
-		buildColorSuggestions(primaryColor, iconColor, suggestionBaseLocked ? suggestionBasePrimary : primaryColor, suggestionBaseLocked ? suggestionBaseIcon : iconColor).map((scheme) => ({
+		buildColorSuggestions(primaryColor, iconColor, suggestionBaseLocked ? suggestionBasePrimary : primaryColor, suggestionBaseLocked ? suggestionBaseIcon : iconColor, {
+			lockHue: suggestionLockHue,
+			lockSaturation: suggestionLockSaturation,
+			generatedCount: suggestionGeneratedCount,
+			seed: suggestionSeed,
+		}).map((scheme) => ({
 			...scheme,
 			primaryDisplay: formatColorDisplay(scheme.primary, DEFAULT_PRIMARY_COLOR),
 			iconDisplay: formatColorDisplay(scheme.icon, DEFAULT_ICON_COLOR),
@@ -206,6 +226,7 @@
 
 	$effect(() => {
 		previewCanvasEl;
+		compareCanvasEl;
 		outputCanvasEl;
 		tintedCanvas;
 		tintVersion;
@@ -217,6 +238,8 @@
 		swiatloEnabled;
 		swiatloLayerVisibility;
 		swiatloAssetsVersion;
+		compareEnabled;
+		compareReference;
 		renderCanvases();
 	});
 
@@ -232,6 +255,15 @@
 		swiatloPresetId;
 		swiatloActiveLayerId;
 		swiatloLayerVisibility;
+		suggestionBasePrimary;
+		suggestionBaseIcon;
+		suggestionBaseLocked;
+		suggestionLockHue;
+		suggestionLockSaturation;
+		suggestionGeneratedCount;
+		suggestionSeed;
+		compareEnabled;
+		compareReference;
 		if (!storageReady) {
 			return;
 		}
@@ -240,6 +272,20 @@
 			return;
 		}
 		persistState();
+	});
+
+	$effect(() => {
+		hasSource;
+		primaryColor;
+		iconColor;
+		iconOffsetX;
+		iconOffsetY;
+		iconScale;
+		swiatloEnabled;
+		swiatloPresetId;
+		swiatloActiveLayerId;
+		swiatloLayerVisibility;
+		commitHistoryCheckpoint();
 	});
 
 	onMount(() => {
@@ -342,7 +388,132 @@
 		return parsed ? parsed.toLowerCase() : null;
 	}
 
+	function createEditorSnapshot() {
+		return {
+			primaryColor: sanitizeHexColor(primaryColor, DEFAULT_PRIMARY_COLOR),
+			iconColor: sanitizeHexColor(iconColor, DEFAULT_ICON_COLOR),
+			iconOffsetX: clampOffset(iconOffsetX, 0),
+			iconOffsetY: clampOffset(iconOffsetY, 0),
+			iconScale: clampScale(iconScale),
+			swiatloEnabled: Boolean(swiatloEnabled),
+			swiatloPresetId: resolveSwiatloPreset(swiatloPresetId).id,
+			swiatloActiveLayerId,
+			swiatloLayerVisibility: normalizeSwiatloVisibility(swiatloLayerVisibility, swiatloPresetId),
+		};
+	}
+
+	function buildSnapshotSignature(snapshot) {
+		return JSON.stringify(snapshot);
+	}
+
+	function resetHistoryTracking() {
+		historyEntries = [];
+		redoEntries = [];
+		historyBaselineSignature = "";
+		historyBaselineSnapshot = null;
+	}
+
+	function syncHistoryBaselineToCurrent() {
+		if (!hasSource) {
+			resetHistoryTracking();
+			return;
+		}
+		const snapshot = createEditorSnapshot();
+		historyBaselineSnapshot = snapshot;
+		historyBaselineSignature = buildSnapshotSignature(snapshot);
+	}
+
+	function commitHistoryCheckpoint() {
+		if (!hasSource || historySuspended) {
+			return;
+		}
+		const snapshot = createEditorSnapshot();
+		const signature = buildSnapshotSignature(snapshot);
+		if (!historyBaselineSignature) {
+			historyBaselineSignature = signature;
+			historyBaselineSnapshot = snapshot;
+			return;
+		}
+		if (signature === historyBaselineSignature) {
+			return;
+		}
+		historyEntries = [...historyEntries, historyBaselineSnapshot].slice(-5);
+		redoEntries = [];
+		historyBaselineSignature = signature;
+		historyBaselineSnapshot = snapshot;
+	}
+
+	function applyEditorSnapshot(snapshot, message) {
+		if (!snapshot) {
+			return;
+		}
+		historySuspended = true;
+		try {
+			const nextPrimary = sanitizeHexColor(snapshot.primaryColor, DEFAULT_PRIMARY_COLOR);
+			const nextIcon = sanitizeHexColor(snapshot.iconColor, DEFAULT_ICON_COLOR);
+			primaryColor = nextPrimary;
+			iconColor = nextIcon;
+			primaryColorHexInput = nextPrimary;
+			iconColorHexInput = nextIcon;
+			iconOffsetX = clampOffset(snapshot.iconOffsetX, 0);
+			iconOffsetY = clampOffset(snapshot.iconOffsetY, 0);
+			iconScale = clampScale(snapshot.iconScale);
+			swiatloEnabled = snapshot.swiatloEnabled !== false;
+			swiatloPresetId = resolveSwiatloPreset(snapshot.swiatloPresetId).id;
+			swiatloActiveLayerId = SWIATLO_LAYER_DEFS.some((layer) => layer.id === snapshot.swiatloActiveLayerId)
+				? snapshot.swiatloActiveLayerId
+				: resolveSwiatloPreset(swiatloPresetId).selectedLayerId;
+			swiatloLayerVisibility = normalizeSwiatloVisibility(snapshot.swiatloLayerVisibility, swiatloPresetId);
+		} finally {
+			historySuspended = false;
+		}
+		syncHistoryBaselineToCurrent();
+		resetMessages();
+		statusMessage = message;
+	}
+
+	function undoChange() {
+		if (!historyEntries.length) {
+			return;
+		}
+		const previous = historyEntries[historyEntries.length - 1];
+		const current = createEditorSnapshot();
+		historyEntries = historyEntries.slice(0, -1);
+		redoEntries = [...redoEntries, current].slice(-5);
+		applyEditorSnapshot(previous, "Undid last change.");
+	}
+
+	function redoChange() {
+		if (!redoEntries.length) {
+			return;
+		}
+		const next = redoEntries[redoEntries.length - 1];
+		const current = createEditorSnapshot();
+		redoEntries = redoEntries.slice(0, -1);
+		historyEntries = [...historyEntries, current].slice(-5);
+		applyEditorSnapshot(next, "Redid change.");
+	}
+
+	function captureCompareReference() {
+		compareReference = createEditorSnapshot();
+		resetMessages();
+		statusMessage = "Captured compare reference.";
+	}
+
+	function onCompareToggle(checked) {
+		compareEnabled = checked;
+		if (checked && !compareReference) {
+			compareReference = createEditorSnapshot();
+		}
+	}
+
 	function persistState() {
+		const normalizedCompareReference = compareReference
+			? {
+					...compareReference,
+					swiatloLayerVisibility: normalizeSwiatloVisibility(compareReference.swiatloLayerVisibility, compareReference.swiatloPresetId),
+				}
+			: null;
 		const payload = {
 			version: STORAGE_VERSION,
 			sourceName,
@@ -356,6 +527,15 @@
 			swiatloPresetId,
 			swiatloActiveLayerId,
 			swiatloLayerVisibility: normalizeSwiatloVisibility(swiatloLayerVisibility, swiatloPresetId),
+			suggestionBasePrimary,
+			suggestionBaseIcon,
+			suggestionBaseLocked: Boolean(suggestionBaseLocked),
+			suggestionLockHue: Boolean(suggestionLockHue),
+			suggestionLockSaturation: Boolean(suggestionLockSaturation),
+			suggestionGeneratedCount: clamp(Math.round(suggestionGeneratedCount), 0, 24),
+			suggestionSeed: Math.max(1, Math.round(suggestionSeed || 1)),
+			compareEnabled: Boolean(compareEnabled),
+			compareReference: normalizedCompareReference,
 		};
 		try {
 			localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
@@ -389,6 +569,15 @@
 			swiatloPresetId = resolveSwiatloPreset(payload.swiatloPresetId).id;
 			swiatloActiveLayerId = SWIATLO_LAYER_DEFS.some((layer) => layer.id === payload.swiatloActiveLayerId) ? payload.swiatloActiveLayerId : resolveSwiatloPreset(swiatloPresetId).selectedLayerId;
 			swiatloLayerVisibility = normalizeSwiatloVisibility(payload.swiatloLayerVisibility, swiatloPresetId);
+			suggestionBasePrimary = sanitizeHexColor(payload.suggestionBasePrimary, primaryColor);
+			suggestionBaseIcon = sanitizeHexColor(payload.suggestionBaseIcon, iconColor);
+			suggestionBaseLocked = payload.suggestionBaseLocked === true;
+			suggestionLockHue = payload.suggestionLockHue === true;
+			suggestionLockSaturation = payload.suggestionLockSaturation === true;
+			suggestionGeneratedCount = clamp(parseNumber(payload.suggestionGeneratedCount, 3), 0, 24);
+			suggestionSeed = Math.max(1, Math.round(parseNumber(payload.suggestionSeed, 1)));
+			compareEnabled = payload.compareEnabled === true;
+			compareReference = payload.compareReference && typeof payload.compareReference === "object" ? payload.compareReference : null;
 
 			const storedDataUrl = typeof payload.sourceDataUrl === "string" ? payload.sourceDataUrl : "";
 			const storedName = typeof payload.sourceName === "string" ? payload.sourceName : "";
@@ -397,11 +586,16 @@
 				const restoredCanvas = buildCanvasFromImage(image);
 				const restoredBounds = computeAlphaBounds(restoredCanvas);
 				if (restoredBounds) {
+					clearTintCache();
 					sourceName = storedName || "restored_icon.png";
 					sourceCanvas = restoredCanvas;
 					alphaBounds = restoredBounds;
 					persistedSourceDataUrl = storedDataUrl;
 					captureSuggestionBase();
+					if (!compareReference) {
+						compareReference = createEditorSnapshot();
+					}
+					syncHistoryBaselineToCurrent();
 					statusMessage = "Restored saved icon session.";
 				}
 			}
@@ -423,6 +617,10 @@
 		nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
 		nextCtx.drawImage(image, 0, 0);
 		return nextCanvas;
+	}
+
+	function clearTintCache() {
+		tintedColorCache.clear();
 	}
 
 	function configureImageSmoothing(ctx) {
@@ -518,6 +716,7 @@
 
 	function resetToUpload() {
 		revokeSourceUrl();
+		clearTintCache();
 		sourceName = "";
 		sourceCanvas = null;
 		tintedCanvas = null;
@@ -528,13 +727,17 @@
 		dragPointerId = -1;
 		dragLastClientX = 0;
 		dragLastClientY = 0;
+		compareReference = null;
+		compareEnabled = false;
 		suggestionBaseLocked = false;
+		resetHistoryTracking();
 		resetMessages();
 		statusMessage = "Ready for another PNG. Current settings were kept.";
 	}
 
 	function resetAll() {
 		revokeSourceUrl();
+		clearTintCache();
 		sourceName = "";
 		sourceCanvas = null;
 		tintedCanvas = null;
@@ -552,13 +755,20 @@
 		iconOffsetX = 0;
 		iconOffsetY = 0;
 		iconScale = 1;
+		compareReference = null;
+		compareEnabled = false;
 		suggestionBasePrimary = DEFAULT_PRIMARY_COLOR;
 		suggestionBaseIcon = DEFAULT_ICON_COLOR;
 		suggestionBaseLocked = false;
+		suggestionLockHue = false;
+		suggestionLockSaturation = false;
+		suggestionGeneratedCount = 3;
+		suggestionSeed = 1;
 		swiatloEnabled = true;
 		swiatloPresetId = DEFAULT_SWIATLO_PRESET_ID;
 		swiatloActiveLayerId = DEFAULT_SWIATLO_ACTIVE_LAYER_ID;
 		swiatloLayerVisibility = normalizeSwiatloVisibility({}, DEFAULT_SWIATLO_PRESET_ID);
+		resetHistoryTracking();
 		resetMessages();
 		statusMessage = "Reset all settings and cleared saved session.";
 		skipPersist = true;
@@ -618,15 +828,18 @@
 			}
 
 			revokeSourceUrl();
+			clearTintCache();
 			sourceUrl = nextUrl;
 			sourceName = file.name;
 			sourceCanvas = nextCanvas;
 			alphaBounds = nextBounds;
 			persistedSourceDataUrl = nextCanvas.toDataURL("image/png");
-
 			applyFitScale();
 			autoCenterFromAlpha();
 			captureSuggestionBase();
+			compareReference = createEditorSnapshot();
+			resetHistoryTracking();
+			syncHistoryBaselineToCurrent();
 			statusMessage = "PNG loaded and centered by alpha bounds.";
 		} catch (error) {
 			if (nextUrl) {
@@ -711,6 +924,7 @@
 	function refreshTintedCanvas() {
 		if (!sourceCanvas) {
 			tintedCanvas = null;
+			clearTintCache();
 			tintVersionCounter += 1;
 			tintVersion = tintVersionCounter;
 			return;
@@ -739,12 +953,59 @@
 	}
 
 	function renderCanvases() {
-		drawComposite(outputCanvasEl, false, OUTPUT_SIZE);
-		drawComposite(previewCanvasEl, true, PREVIEW_SIZE);
+		const currentState = createEditorSnapshot();
+		drawComposite(outputCanvasEl, false, OUTPUT_SIZE, currentState);
+		drawComposite(previewCanvasEl, true, PREVIEW_SIZE, currentState);
+		if (compareEnabled && compareCanvasEl && compareReference) {
+			drawComposite(compareCanvasEl, true, PREVIEW_SIZE, compareReference);
+		} else if (compareCanvasEl) {
+			const ctx = compareCanvasEl.getContext("2d");
+			if (ctx) {
+				ctx.clearRect(0, 0, compareCanvasEl.width, compareCanvasEl.height);
+			}
+		}
 	}
 
-	function drawIconOuterShadow(ctx, drawX, drawY, drawWidth, drawHeight) {
-		if (!tintedCanvas || !ICON_EFFECT_SETTINGS.outerShadow.enabled) {
+	function buildTintedCanvasForColor(color) {
+		if (!sourceCanvas) {
+			return null;
+		}
+		const tint = document.createElement("canvas");
+		tint.width = sourceCanvas.width;
+		tint.height = sourceCanvas.height;
+		const tintCtx = tint.getContext("2d");
+		if (!tintCtx) {
+			return null;
+		}
+		configureImageSmoothing(tintCtx);
+		tintCtx.clearRect(0, 0, tint.width, tint.height);
+		tintCtx.drawImage(sourceCanvas, 0, 0);
+		tintCtx.globalCompositeOperation = "source-in";
+		tintCtx.fillStyle = color;
+		tintCtx.fillRect(0, 0, tint.width, tint.height);
+		tintCtx.globalCompositeOperation = "source-over";
+		return tint;
+	}
+
+	function getTintedCanvasForColor(color) {
+		const normalized = sanitizeHexColor(color, DEFAULT_ICON_COLOR);
+		if (normalized === sanitizeHexColor(iconColor, DEFAULT_ICON_COLOR) && tintedCanvas) {
+			return tintedCanvas;
+		}
+		const cached = tintedColorCache.get(normalized);
+		if (cached) {
+			return cached;
+		}
+		const built = buildTintedCanvasForColor(normalized);
+		if (!built) {
+			return null;
+		}
+		tintedColorCache.set(normalized, built);
+		return built;
+	}
+
+	function drawIconOuterShadow(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight) {
+		if (!tintCanvas || !ICON_EFFECT_SETTINGS.outerShadow.enabled) {
 			return;
 		}
 
@@ -765,20 +1026,20 @@
 		passCtx.shadowBlur = settings.blur * RENDER_SCALE;
 		passCtx.shadowOffsetX = offsetX;
 		passCtx.shadowOffsetY = offsetY;
-		passCtx.drawImage(tintedCanvas, drawX, drawY, drawWidth, drawHeight);
+		passCtx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
 		passCtx.shadowColor = "transparent";
 		passCtx.shadowBlur = 0;
 		passCtx.shadowOffsetX = 0;
 		passCtx.shadowOffsetY = 0;
 		passCtx.globalCompositeOperation = "destination-out";
-		passCtx.drawImage(tintedCanvas, drawX, drawY, drawWidth, drawHeight);
+		passCtx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
 		passCtx.globalCompositeOperation = "source-over";
 
 		ctx.drawImage(passCanvas, 0, 0);
 	}
 
-	function drawInnerBevelPass(ctx, drawX, drawY, drawWidth, drawHeight, options) {
-		if (!tintedCanvas) {
+	function drawInnerBevelPass(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight, options) {
+		if (!tintCanvas) {
 			return;
 		}
 
@@ -797,12 +1058,12 @@
 		configureImageSmoothing(passCtx);
 		passCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
 		passCtx.filter = `blur(${blurPx}px)`;
-		passCtx.drawImage(tintedCanvas, drawX + shiftX, drawY + shiftY, drawWidth, drawHeight);
+		passCtx.drawImage(tintCanvas, drawX + shiftX, drawY + shiftY, drawWidth, drawHeight);
 		passCtx.filter = "none";
 		passCtx.globalCompositeOperation = "destination-in";
-		passCtx.drawImage(tintedCanvas, drawX, drawY, drawWidth, drawHeight);
+		passCtx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
 		passCtx.globalCompositeOperation = "destination-out";
-		passCtx.drawImage(tintedCanvas, drawX - shiftX, drawY - shiftY, drawWidth, drawHeight);
+		passCtx.drawImage(tintCanvas, drawX - shiftX, drawY - shiftY, drawWidth, drawHeight);
 		passCtx.globalCompositeOperation = "source-in";
 		passCtx.fillStyle = colorToRgba(options.color, options.opacity);
 		passCtx.fillRect(0, 0, RENDER_SIZE, RENDER_SIZE);
@@ -814,13 +1075,13 @@
 		ctx.restore();
 	}
 
-	function drawIconBevelEffects(ctx, drawX, drawY, drawWidth, drawHeight) {
+	function drawIconBevelEffects(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight) {
 		if (!ICON_EFFECT_SETTINGS.bevel.enabled) {
 			return;
 		}
 
 		const bevel = ICON_EFFECT_SETTINGS.bevel;
-		drawInnerBevelPass(ctx, drawX, drawY, drawWidth, drawHeight, {
+		drawInnerBevelPass(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight, {
 			angleDeg: bevel.angleDeg,
 			distance: bevel.distance,
 			blur: bevel.blur,
@@ -829,7 +1090,7 @@
 			blendMode: bevel.highlightBlend,
 			invertDirection: true,
 		});
-		drawInnerBevelPass(ctx, drawX, drawY, drawWidth, drawHeight, {
+		drawInnerBevelPass(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight, {
 			angleDeg: bevel.angleDeg,
 			distance: bevel.distance,
 			blur: bevel.blur,
@@ -840,19 +1101,19 @@
 		});
 	}
 
-	function drawIconBase(ctx, drawX, drawY, drawWidth, drawHeight) {
-		if (!tintedCanvas) {
+	function drawIconBase(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight) {
+		if (!tintCanvas) {
 			return;
 		}
 		const blurPx = Math.max(0, ICON_EDGE_SOFTEN_PX * RENDER_SCALE);
 		if (blurPx <= 0) {
-			ctx.drawImage(tintedCanvas, drawX, drawY, drawWidth, drawHeight);
+			ctx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
 			return;
 		}
 		ctx.save();
 		configureImageSmoothing(ctx);
 		ctx.filter = `blur(${blurPx}px)`;
-		ctx.drawImage(tintedCanvas, drawX, drawY, drawWidth, drawHeight);
+		ctx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
 		ctx.filter = "none";
 		ctx.restore();
 	}
@@ -869,13 +1130,14 @@
 		ctx.drawImage(image, drawX, drawY, drawSize, drawSize);
 	}
 
-	function drawSwiatloOverlays(ctx) {
-		if (!swiatloEnabled) {
+	function drawSwiatloOverlays(ctx, options = {}) {
+		if (options.enabled === false) {
 			return;
 		}
+		const visibility = options.visibility || swiatloLayerVisibility;
 
 		for (const layer of SWIATLO_LAYER_DEFS) {
-			if (!isSwiatloLayerVisible(layer.id)) {
+			if (!visibility?.[layer.id]) {
 				continue;
 			}
 			ctx.save();
@@ -886,7 +1148,7 @@
 		}
 	}
 
-	function drawComposite(canvas, includeGuides, size = OUTPUT_SIZE) {
+	function drawComposite(canvas, includeGuides, size = OUTPUT_SIZE, snapshot = createEditorSnapshot()) {
 		if (!canvas) {
 			return;
 		}
@@ -907,10 +1169,20 @@
 		if (!renderCtx) {
 			return;
 		}
+		const resolvedSnapshot = {
+			primaryColor: sanitizeHexColor(snapshot?.primaryColor, primaryColor),
+			iconColor: sanitizeHexColor(snapshot?.iconColor, iconColor),
+			iconOffsetX: clampOffset(snapshot?.iconOffsetX, iconOffsetX),
+			iconOffsetY: clampOffset(snapshot?.iconOffsetY, iconOffsetY),
+			iconScale: clampScale(snapshot?.iconScale),
+			swiatloEnabled: snapshot?.swiatloEnabled !== false,
+			swiatloPresetId: resolveSwiatloPreset(snapshot?.swiatloPresetId || swiatloPresetId).id,
+			swiatloLayerVisibility: normalizeSwiatloVisibility(snapshot?.swiatloLayerVisibility, snapshot?.swiatloPresetId || swiatloPresetId),
+		};
 
 		configureImageSmoothing(renderCtx);
 		renderCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
-		renderCtx.fillStyle = primaryColor;
+		renderCtx.fillStyle = resolvedSnapshot.primaryColor;
 		renderCtx.beginPath();
 		renderCtx.arc(RENDER_CENTER, RENDER_CENTER, RENDER_INNER_RADIUS, 0, Math.PI * 2);
 		renderCtx.fill();
@@ -919,17 +1191,21 @@
 		renderCtx.beginPath();
 		renderCtx.arc(RENDER_CENTER, RENDER_CENTER, RENDER_INNER_RADIUS, 0, Math.PI * 2);
 		renderCtx.clip();
-		if (tintedCanvas) {
-			const drawWidth = tintedCanvas.width * iconScale * RENDER_SCALE;
-			const drawHeight = tintedCanvas.height * iconScale * RENDER_SCALE;
-			const drawX = RENDER_CENTER - drawWidth / 2 + iconOffsetX * RENDER_SCALE;
-			const drawY = RENDER_CENTER - drawHeight / 2 + iconOffsetY * RENDER_SCALE;
+		const tintCanvas = getTintedCanvasForColor(resolvedSnapshot.iconColor);
+		if (tintCanvas) {
+			const drawWidth = tintCanvas.width * resolvedSnapshot.iconScale * RENDER_SCALE;
+			const drawHeight = tintCanvas.height * resolvedSnapshot.iconScale * RENDER_SCALE;
+			const drawX = RENDER_CENTER - drawWidth / 2 + resolvedSnapshot.iconOffsetX * RENDER_SCALE;
+			const drawY = RENDER_CENTER - drawHeight / 2 + resolvedSnapshot.iconOffsetY * RENDER_SCALE;
 
-			drawIconOuterShadow(renderCtx, drawX, drawY, drawWidth, drawHeight);
-			drawIconBase(renderCtx, drawX, drawY, drawWidth, drawHeight);
-			drawIconBevelEffects(renderCtx, drawX, drawY, drawWidth, drawHeight);
+			drawIconOuterShadow(renderCtx, tintCanvas, drawX, drawY, drawWidth, drawHeight);
+			drawIconBase(renderCtx, tintCanvas, drawX, drawY, drawWidth, drawHeight);
+			drawIconBevelEffects(renderCtx, tintCanvas, drawX, drawY, drawWidth, drawHeight);
 		}
-		drawSwiatloOverlays(renderCtx);
+		drawSwiatloOverlays(renderCtx, {
+			enabled: resolvedSnapshot.swiatloEnabled,
+			visibility: resolvedSnapshot.swiatloLayerVisibility,
+		});
 		renderCtx.restore();
 
 		configureImageSmoothing(targetCtx);
@@ -975,6 +1251,7 @@
 		dragPointerId = event.pointerId;
 		dragLastClientX = event.clientX;
 		dragLastClientY = event.clientY;
+		historySuspended = true;
 		canvas.setPointerCapture(event.pointerId);
 		resetMessages();
 	}
@@ -1005,6 +1282,8 @@
 		isDragging = false;
 		previewCanvasEl.releasePointerCapture(event.pointerId);
 		dragPointerId = -1;
+		historySuspended = false;
+		commitHistoryCheckpoint();
 		statusMessage = "Icon position updated.";
 	}
 
@@ -1103,6 +1382,14 @@
 		suggestionBaseLocked = true;
 	}
 
+	function onSuggestionGeneratedCountInput(value) {
+		suggestionGeneratedCount = clamp(Math.round(parseNumber(value, suggestionGeneratedCount)), 0, 24);
+	}
+
+	function regenerateSuggestions() {
+		suggestionSeed = Math.max(1, Math.round(suggestionSeed + 1));
+	}
+
 	function wrapHue(value) {
 		const mod = value % 360;
 		return mod < 0 ? mod + 360 : mod;
@@ -1164,76 +1451,93 @@
 		return rgbToHex(nextRgb.r, nextRgb.g, nextRgb.b);
 	}
 
-	function buildColorSuggestions(primary, icon, originalPrimary, originalIcon) {
+	function applyColorLocks(baseHex, candidateHex, options = {}) {
+		if (!options.lockHue && !options.lockSaturation) {
+			return sanitizeHexColor(candidateHex, baseHex);
+		}
+		const baseRgb = hexToRgb(baseHex);
+		const baseHsl = rgbToHsl(baseRgb.r, baseRgb.g, baseRgb.b);
+		const candidateRgb = hexToRgb(candidateHex);
+		const candidateHsl = rgbToHsl(candidateRgb.r, candidateRgb.g, candidateRgb.b);
+		const lockedH = options.lockHue ? baseHsl.h : candidateHsl.h;
+		const lockedS = options.lockSaturation ? baseHsl.s : candidateHsl.s;
+		const nextRgb = hslToRgb(lockedH, lockedS, candidateHsl.l);
+		return rgbToHex(nextRgb.r, nextRgb.g, nextRgb.b);
+	}
+
+	function createRng(seed) {
+		let value = seed >>> 0;
+		return () => {
+			value += 0x6d2b79f5;
+			let t = value;
+			t = Math.imul(t ^ (t >>> 15), t | 1);
+			t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+			return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+		};
+	}
+
+	function buildColorSuggestions(primary, icon, originalPrimary, originalIcon, options = {}) {
 		const outer = sanitizeHexColor(primary, DEFAULT_PRIMARY_COLOR);
 		const inner = sanitizeHexColor(icon, DEFAULT_ICON_COLOR);
 		const originalOuter = sanitizeHexColor(originalPrimary, DEFAULT_PRIMARY_COLOR);
 		const originalInner = sanitizeHexColor(originalIcon, DEFAULT_ICON_COLOR);
+		const lockOptions = {
+			lockHue: options.lockHue === true,
+			lockSaturation: options.lockSaturation === true,
+		};
+		const withLocks = (base, candidate) => applyColorLocks(base, candidate, lockOptions);
 		const rows = [
 			{ id: "original", label: "Original", primary: originalOuter, icon: originalInner },
 			{ id: "current", label: "Current", primary: outer, icon: inner },
 			{ id: "swap", label: "Swap", primary: inner, icon: outer },
 			{
-				id: "analogous-warm",
-				label: "Analogous Warm",
-				primary: transformColor(outer, { hShift: 16, sAdd: 6, lAdd: -2 }),
-				icon: transformColor(inner, { hShift: 9, sAdd: 2, lAdd: 4 }),
+				id: "complement-pop",
+				label: "Complement Pop",
+				primary: withLocks(outer, transformColor(outer, { hShift: 24, sAdd: 7, lAdd: -5 })),
+				icon: withLocks(inner, transformColor(inner, { hShift: -24, sAdd: -6, lAdd: 10 })),
 			},
 			{
-				id: "analogous-cool",
-				label: "Analogous Cool",
-				primary: transformColor(outer, { hShift: -16, sAdd: 5, lAdd: -1 }),
-				icon: transformColor(inner, { hShift: -10, sAdd: 3, lAdd: 5 }),
+				id: "split-contrast-a",
+				label: "Split Contrast A",
+				primary: withLocks(outer, transformColor(outer, { hShift: 18, sAdd: 5, lAdd: -3 })),
+				icon: withLocks(inner, transformColor(inner, { hShift: -18, sAdd: -8, lAdd: 9 })),
 			},
 			{
-				id: "nearby-hue-a",
-				label: "Nearby Hue A",
-				primary: transformColor(outer, { hShift: 7, sMult: 1.02, lAdd: -3 }),
-				icon: transformColor(inner, { hShift: -5, sMult: 0.95, lAdd: 7 }),
+				id: "split-contrast-b",
+				label: "Split Contrast B",
+				primary: withLocks(outer, transformColor(outer, { hShift: -18, sAdd: 5, lAdd: -4 })),
+				icon: withLocks(inner, transformColor(inner, { hShift: 18, sAdd: -7, lAdd: 10 })),
 			},
 			{
-				id: "nearby-hue-b",
-				label: "Nearby Hue B",
-				primary: transformColor(outer, { hShift: -7, sMult: 1.03, lAdd: -4 }),
-				icon: transformColor(inner, { hShift: 5, sMult: 0.93, lAdd: 8 }),
+				id: "deep-contrast",
+				label: "Deep Contrast",
+				primary: withLocks(outer, transformColor(outer, { hShift: 10, lAdd: -12, sAdd: 8 })),
+				icon: withLocks(inner, transformColor(inner, { hShift: -10, lAdd: 14, sAdd: -5 })),
 			},
 			{
-				id: "warm-contrast",
-				label: "Warm Contrast",
-				primary: transformColor(outer, { hShift: 6, sMult: 1.06, lAdd: -4 }),
-				icon: transformColor(inner, { hShift: -4, sAdd: -6, lAdd: 8 }),
-			},
-			{
-				id: "rich-badge",
-				label: "Rich Badge",
-				primary: transformColor(outer, { sAdd: 8, lAdd: -7 }),
-				icon: transformColor(inner, { lAdd: 6, sMult: 0.92 }),
-			},
-			{
-				id: "soft-ivory",
-				label: "Soft Ivory",
-				primary: transformColor(outer, { sMult: 0.9, lAdd: 4 }),
-				icon: transformColor(inner, { hShift: -8, sMult: 0.8, lAdd: 10 }),
-			},
-			{
-				id: "muted-earth",
-				label: "Muted Earth",
-				primary: transformColor(outer, { hShift: 3, sMult: 0.84, lAdd: -2 }),
-				icon: transformColor(inner, { hShift: -6, sMult: 0.72, lAdd: 12 }),
-			},
-			{
-				id: "deep-pop",
-				label: "Deep Pop",
-				primary: transformColor(outer, { lAdd: -10, sAdd: 10 }),
-				icon: transformColor(inner, { lAdd: 4, sAdd: 6 }),
-			},
-			{
-				id: "crisp-contrast",
-				label: "Crisp Contrast",
-				primary: transformColor(outer, { lAdd: -12, sAdd: 12 }),
-				icon: transformColor(inner, { lAdd: 14, sAdd: -2 }),
+				id: "analogous-wide",
+				label: "Analogous Wide",
+				primary: withLocks(outer, transformColor(outer, { hShift: 14, sAdd: 4, lAdd: -2 })),
+				icon: withLocks(inner, transformColor(inner, { hShift: -14, sAdd: -5, lAdd: 8 })),
 			},
 		];
+		const generatedCount = clamp(Math.round(parseNumber(options.generatedCount, 0)), 0, 24);
+		const seed = Math.max(1, Math.round(parseNumber(options.seed, 1)));
+		const random = createRng(seed);
+		for (let index = 0; index < generatedCount; index += 1) {
+			const hueA = (random() > 0.5 ? 1 : -1) * (8 + random() * 28);
+			const hueB = (random() > 0.5 ? 1 : -1) * (8 + random() * 28);
+			const satA = (random() - 0.5) * 14;
+			const satB = (random() - 0.5) * 14;
+			const lightA = (random() - 0.5) * 14;
+			const lightB = (random() - 0.5) * 16;
+			rows.push({
+				id: `generated-${seed}-${index}`,
+				label: `Contrast ${index + 1}`,
+				primary: withLocks(outer, transformColor(outer, { hShift: hueA, sAdd: satA, lAdd: lightA })),
+				icon: withLocks(inner, transformColor(inner, { hShift: hueB, sAdd: satB, lAdd: lightB })),
+			});
+		}
 		const unique = [];
 		const seen = new Set();
 		for (const row of rows) {
@@ -1354,26 +1658,44 @@
 	{:else}
 		<section class="civ-icon-workspace">
 			<div class="civ-icon-preview-column">
-				<h1 class="civ-icon-title">Civ 5 Civ Icon Maker</h1>
+				<h1 class="civ-icon-title">Civ Icon Maker</h1>
 				<p class="civ-icon-copy">
 					{sourceName} - {sourceWidth} x {sourceHeight} px - alpha {alphaPixelWidth} x {alphaPixelHeight} px
 				</p>
 
 				<div class="civ-icon-preview-wrap">
-					<canvas
-						class={`civ-icon-preview ${isDragging ? "is-dragging" : ""}`}
-						bind:this={previewCanvasEl}
-						tabindex="0"
-						aria-label="Civ icon preview canvas"
-						onpointerdown={onPreviewPointerDown}
-						onpointermove={onPreviewPointerMove}
-						onpointerup={endPreviewDrag}
-						onpointercancel={endPreviewDrag}
-						onkeydown={onPreviewKeyDown}
-					></canvas>
+					<div class={`civ-icon-preview-stack ${compareEnabled ? "is-compare" : ""}`}>
+						<div class="civ-icon-preview-pane">
+							<span class="civ-icon-preview-pane-label">Current</span>
+							<canvas
+								class={`civ-icon-preview ${isDragging ? "is-dragging" : ""}`}
+								bind:this={previewCanvasEl}
+								tabindex="0"
+								aria-label="Civ icon preview canvas"
+								onpointerdown={onPreviewPointerDown}
+								onpointermove={onPreviewPointerMove}
+								onpointerup={endPreviewDrag}
+								onpointercancel={endPreviewDrag}
+								onkeydown={onPreviewKeyDown}
+							></canvas>
+						</div>
+						{#if compareEnabled}
+							<div class="civ-icon-preview-pane">
+								<span class="civ-icon-preview-pane-label">Reference</span>
+								<canvas class="civ-icon-preview civ-icon-preview-reference" bind:this={compareCanvasEl} tabindex="-1" aria-label="Reference compare preview"></canvas>
+							</div>
+						{/if}
+					</div>
 				</div>
 
 				<p class="civ-icon-copy">Drag to move icon. Arrow keys nudge by 1px, Shift+Arrow nudges by 10px.</p>
+
+				<div class="civ-icon-action-row">
+					<button type="button" class="civ-icon-button civ-icon-button-subtle" onclick={undoChange} disabled={!canUndo}>Undo</button>
+					<button type="button" class="civ-icon-button civ-icon-button-subtle" onclick={redoChange} disabled={!canRedo}>Redo</button>
+				</div>
+
+				<p class="civ-icon-copy">Undo stores up to 5 recent edits.</p>
 			</div>
 
 			<aside class="civ-icon-controls-panel" aria-label="Icon controls">
@@ -1445,6 +1767,13 @@
 								<span class="color-value">HSL {iconColorDisplay.hsl}</span>
 							</div>
 						</div>
+					</div>
+					<div class="civ-icon-action-row">
+						<button type="button" class="civ-icon-button civ-icon-button-ghost" onclick={captureCompareReference} disabled={!hasSource}>Set Reference</button>
+						<label class="civ-icon-inline-toggle">
+							<input type="checkbox" checked={compareEnabled} onchange={(event) => onCompareToggle(event.currentTarget.checked)} />
+							<span>A/B Compare</span>
+						</label>
 					</div>
 				</section>
 
@@ -1546,10 +1875,10 @@
 				</div>
 
 				{#if errorMessage}
-					<p class="civ-icon-status civ-icon-error">{errorMessage}</p>
+					<strong class="civ-icon-status civ-icon-error">{errorMessage}</strong>
 				{/if}
 				{#if statusMessage}
-					<p class="civ-icon-status civ-icon-success">{statusMessage}</p>
+					<strong class="civ-icon-status civ-icon-success">{statusMessage}</strong>
 				{/if}
 			</aside>
 
@@ -1560,6 +1889,21 @@
 			<div class="civ-icon-suggestions-head">
 				<h2 class="civ-icon-subtitle">Color Scheme Suggestions</h2>
 				<p class="civ-icon-copy">Click a pair to apply it to the icon. Outer color maps to circle, inner color maps to alpha.</p>
+			</div>
+			<div class="civ-icon-suggestion-controls">
+				<label class="civ-icon-inline-toggle">
+					<input type="checkbox" checked={suggestionLockHue} onchange={(event) => (suggestionLockHue = event.currentTarget.checked)} />
+					<span>Lock Hue</span>
+				</label>
+				<label class="civ-icon-inline-toggle">
+					<input type="checkbox" checked={suggestionLockSaturation} onchange={(event) => (suggestionLockSaturation = event.currentTarget.checked)} />
+					<span>Lock Saturation</span>
+				</label>
+				<label class="civ-icon-inline-number">
+					<span>Generated</span>
+					<input type="number" min="0" max="24" step="1" value={String(suggestionGeneratedCount)} oninput={(event) => onSuggestionGeneratedCountInput(event.currentTarget.value)} />
+				</label>
+				<button type="button" class="civ-icon-button civ-icon-button-subtle" onclick={regenerateSuggestions}>Generate Again</button>
 			</div>
 			<div class="civ-icon-scheme-grid" role="list" aria-label="Color scheme suggestions">
 				{#each suggestedColorSchemes as scheme (scheme.id)}
@@ -1603,7 +1947,7 @@
 	.civ-icon-workspace,
 	.civ-icon-suggestions {
 		display: grid;
-		gap: 0.95rem;
+		gap: 1rem;
 		padding: 1rem;
 		border-radius: 1rem;
 		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
@@ -1616,7 +1960,7 @@
 	}
 
 	.civ-icon-workspace {
-		grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+		grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
 		align-items: start;
 	}
 
@@ -1627,6 +1971,33 @@
 	.civ-icon-suggestions-head {
 		display: grid;
 		gap: 0.35rem;
+	}
+
+	.civ-icon-suggestion-controls {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 0.75rem;
+	}
+
+	.civ-icon-inline-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.82rem;
+		color: var(--muted-ink);
+	}
+
+	.civ-icon-inline-number {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.38rem;
+		font-size: 0.82rem;
+		color: var(--muted-ink);
+	}
+
+	.civ-icon-inline-number input[type="number"] {
+		inline-size: 72px;
 	}
 
 	.civ-icon-scheme-grid {
@@ -1767,6 +2138,31 @@
 		border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--panel-border));
 	}
 
+	.civ-icon-preview-stack {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0.6rem;
+		inline-size: 100%;
+	}
+
+	.civ-icon-preview-stack.is-compare {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.civ-icon-preview-pane {
+		display: grid;
+		gap: 0.35rem;
+		justify-items: center;
+	}
+
+	.civ-icon-preview-pane-label {
+		font-size: 0.74rem;
+		color: var(--muted-ink);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		font-weight: 600;
+	}
+
 	.civ-icon-preview {
 		inline-size: min(72vw, 560px);
 		block-size: min(72vw, 560px);
@@ -1781,6 +2177,15 @@
 		&.is-dragging {
 			cursor: grabbing;
 		}
+	}
+
+	.civ-icon-preview-reference {
+		cursor: default;
+	}
+
+	.civ-icon-preview-stack.is-compare .civ-icon-preview {
+		inline-size: min(34vw, 280px);
+		block-size: min(34vw, 280px);
 	}
 
 	.civ-icon-preview:focus-visible {
@@ -2115,12 +2520,108 @@
 		overflow-wrap: anywhere;
 	}
 
+	:global(:root[data-theme="light"]) .civ-icon-maker-page {
+		.civ-icon-swiatlo-group {
+			background: linear-gradient(180deg, color-mix(in oklch, white 88%, var(--panel-bg)), color-mix(in oklch, white 72%, var(--control-bg)));
+			border-color: color-mix(in oklch, var(--accent) 18%, var(--panel-border));
+		}
+
+		.civ-icon-swiatlo-head .civ-icon-subtitle,
+		.civ-icon-swiatlo-toggle,
+		.civ-icon-swiatlo-group .civ-icon-input-label {
+			color: color-mix(in oklch, var(--ink) 84%, black 10%);
+		}
+
+		.civ-icon-swiatlo-accordion,
+		.civ-icon-swiatlo-layers-accordion {
+			background: color-mix(in oklch, white 90%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--accent) 14%, var(--panel-border));
+		}
+
+		.civ-icon-swiatlo-accordion > summary,
+		.civ-icon-swiatlo-layers-accordion > summary {
+			color: color-mix(in oklch, var(--ink) 86%, black 8%);
+		}
+
+		.civ-icon-swiatlo-list {
+			border-color: color-mix(in oklch, var(--accent) 12%, var(--panel-border));
+		}
+
+		.civ-icon-swiatlo-row {
+			background: color-mix(in oklch, white 86%, var(--panel-bg));
+			border-top-color: color-mix(in oklch, var(--accent) 10%, var(--panel-border));
+		}
+
+		.civ-icon-swiatlo-row.is-active {
+			background: color-mix(in oklch, var(--accent) 24%, white 76%);
+		}
+
+		.civ-icon-swiatlo-main {
+			color: color-mix(in oklch, var(--ink) 88%, black 6%);
+		}
+
+		.civ-icon-swiatlo-eye {
+			background: color-mix(in oklch, white 82%, var(--control-bg));
+			border-left-color: color-mix(in oklch, var(--accent) 14%, var(--panel-border));
+			color: color-mix(in oklch, var(--ink) 64%, black 20%);
+		}
+
+		.civ-icon-swiatlo-eye.is-visible {
+			color: color-mix(in oklch, var(--accent) 60%, white 18%);
+		}
+
+		.civ-icon-preview-pane-label,
+		.civ-icon-inline-toggle,
+		.civ-icon-inline-number,
+		.civ-icon-scheme-color-title,
+		.color-value {
+			color: color-mix(in oklch, var(--ink) 78%, black 12%);
+		}
+
+		.civ-icon-preview-pane-label {
+			color: color-mix(in oklch, var(--ink) 86%, black 8%);
+			background: color-mix(in oklch, white 86%, var(--panel-bg));
+			border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--panel-border));
+			border-radius: 999px;
+			padding: 0.12rem 0.48rem;
+			line-height: 1.2;
+			box-shadow: 0 1px 2px color-mix(in oklch, black 8%, transparent);
+		}
+
+		.civ-icon-scheme-card {
+			background: color-mix(in oklch, var(--panel-bg) 94%, white 6%);
+			border-color: color-mix(in oklch, var(--accent) 26%, var(--panel-border));
+		}
+
+		.civ-icon-scheme-card:hover {
+			border-color: color-mix(in oklch, var(--accent) 46%, var(--panel-border));
+			box-shadow: 0 4px 10px color-mix(in oklch, black 10%, transparent);
+		}
+
+		.civ-icon-success {
+			color: oklch(0.56 0.13 145);
+		}
+
+		.civ-icon-error {
+			color: oklch(0.56 0.2 24);
+		}
+	}
+
 	@media (max-width: 980px) {
 		.civ-icon-workspace {
 			grid-template-columns: minmax(0, 1fr);
 		}
 
 		.civ-icon-preview {
+			inline-size: min(86vw, 560px);
+			block-size: min(86vw, 560px);
+		}
+
+		.civ-icon-preview-stack.is-compare {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.civ-icon-preview-stack.is-compare .civ-icon-preview {
 			inline-size: min(86vw, 560px);
 			block-size: min(86vw, 560px);
 		}
