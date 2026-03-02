@@ -4,6 +4,7 @@
 	import Navbar from "./lib/components/Navbar.svelte";
 	import Directory from "./lib/components/Directory.svelte";
 	import DdsConverter from "./lib/components/DdsConverter.svelte";
+	import CivIconMaker from "./lib/components/CivIconMaker.svelte";
 
 	const THEME_STORAGE_KEY = "cmc-theme-mode";
 	const AUTH_STORAGE_KEY = "cmc-auth-session";
@@ -160,7 +161,7 @@
 	});
 
 	$effect(() => {
-		if (currentPath === "/directory" || currentPath === "/dds-converter") {
+		if (currentPath === "/directory" || currentPath === "/dds-converter" || currentPath === "/civ-icon-maker") {
 			return;
 		}
 		void ensureMapViewerLoaded();
@@ -726,6 +727,8 @@
 				<Directory />
 			{:else if currentPath === "/dds-converter"}
 				<DdsConverter />
+			{:else if currentPath === "/civ-icon-maker"}
+				<CivIconMaker />
 			{:else if mapViewerLoadError}
 				<p class="status error">{mapViewerLoadError}</p>
 			{:else if MapViewerComponent}
