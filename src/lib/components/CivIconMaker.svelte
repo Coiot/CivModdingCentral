@@ -27,7 +27,7 @@
 			enabled: true,
 			color: "#000000",
 			opacity: 0.56,
-			blur: 1.1,
+			blur: 1,
 			distance: 2.15,
 			angleDeg: 300,
 		},
@@ -40,11 +40,11 @@
 			highlightOpacity: 0.5,
 			highlightBlend: "screen",
 			shadowColor: "#000000",
-			shadowOpacity: 0,
+			shadowOpacity: 0.1,
 			shadowBlend: "multiply",
 		},
 	};
-	const ICON_EDGE_SOFTEN_PX = 0.5;
+	const ICON_EDGE_SOFTEN_PX = 0.15;
 	const SWIATLO_LAYER_DEFS = [
 		{ id: "blik", label: "Top Glint", file: "blik.png", blendMode: "source-over", opacity: 1 },
 		{ id: "overlay_flash_3", label: "Arc Highlight", file: "overlay flash 3.png", blendMode: "screen", opacity: 1 },
@@ -1533,7 +1533,7 @@
 			const lightB = (random() - 0.5) * 16;
 			rows.push({
 				id: `generated-${seed}-${index}`,
-				label: `Contrast ${index + 1}`,
+				label: `Suggested ${index + 1}`,
 				primary: withLocks(outer, transformColor(outer, { hShift: hueA, sAdd: satA, lAdd: lightA })),
 				icon: withLocks(inner, transformColor(inner, { hShift: hueB, sAdd: satB, lAdd: lightB })),
 			});
