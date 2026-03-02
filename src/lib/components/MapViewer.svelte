@@ -135,6 +135,8 @@
 	let editPinPrimaryHexInput = $state("#243746");
 	let editPinSecondaryHexInput = $state("#f3d37f");
 	let editPinIsIsland = $state(false);
+	let copiedPinTemplate = $state(null);
+	let inspectedPinId = $state("");
 	let editLabelId = $state("");
 	let editLabelNameInput = $state("");
 	let editLabelTypeInput = $state("region");
@@ -245,6 +247,23 @@
 		}
 		return selectedTilePins.find((pin) => String(pin.id || "") === String(editPinId)) || null;
 	});
+	const inspectedTilePin = $derived.by(() => {
+		if (!selectedTilePins.length) {
+			return null;
+		}
+		const editorTarget = editPinId ? selectedTilePins.find((pin) => String(pin.id || "") === String(editPinId)) || null : null;
+		if (editorTarget) {
+			return editorTarget;
+		}
+		const inspectedTarget = inspectedPinId ? selectedTilePins.find((pin) => String(pin.id || "") === String(inspectedPinId)) || null : null;
+		if (inspectedTarget) {
+			return inspectedTarget;
+		}
+		return selectedTilePins[0];
+	});
+	const inspectedTilePinSource = $derived.by(() => (inspectedTilePin ? resolvePinSource(inspectedTilePin) : ""));
+	const inspectedTilePinPrimaryDisplay = $derived.by(() => formatColorDisplay(inspectedTilePin?.primary, "#243746"));
+	const inspectedTilePinSecondaryDisplay = $derived.by(() => formatColorDisplay(inspectedTilePin?.secondary, "#f3d37f"));
 	const pinEditorMode = $derived.by(() => {
 		if (matchedSelectedPin) {
 			return "edit";
@@ -270,6 +289,7 @@
 		return "idle";
 	});
 	const canEditPins = $derived.by(() => (pinEditTarget === "shared" ? canEdit : true));
+	const canPastePin = $derived.by(() => Boolean(copiedPinTemplate) && Boolean(selectedTile) && canEditPins);
 	const pinEditorHint = $derived.by(() => (canEditPins ? "" : "Sign in from the user menu to edit shared pins."));
 	const pinEditorBadge = $derived.by(() => (pinEditTarget === "shared" ? (canEdit ? "Editing shared pins" : "") : "Editing local pins"));
 	const editorHint = $derived(canEdit ? "" : "Sign in from the user menu to make edits.");
@@ -562,6 +582,7 @@
 		selectedTileKey = "";
 		hoveredTileKey = "";
 		hoverPointer = null;
+		inspectedPinId = "";
 		panelTab = "edit";
 		panelCollapsed = true;
 		notesStatus = "";
@@ -1214,6 +1235,7 @@
 	function selectTile(tileKey) {
 		if (selectedTileKey !== tileKey) {
 			pinStatus = "";
+			inspectedPinId = "";
 		}
 		selectedTileKey = tileKey;
 		syncEditorsFromSelection();
@@ -1290,6 +1312,65 @@
 		}
 		resetPinEditor({ clearStatus: false });
 		pinStatus = "Ready to add a new civilization pin on this tile.";
+	}
+
+	function copyPin() {
+		if (!matchedSelectedPin) {
+			return;
+		}
+		copiedPinTemplate = {
+			civ: String(matchedSelectedPin.civ || "").trim(),
+			gameDefineName: String(matchedSelectedPin.gameDefineName || "").trim() || DEFAULT_GAME_DEFINE_PREFIX,
+			leader: String(matchedSelectedPin.leader || "").trim(),
+			capital: String(matchedSelectedPin.capital || "").trim(),
+			author: String(matchedSelectedPin.author || "").trim(),
+			primary: sanitizeHexColor(matchedSelectedPin.primary, "#243746"),
+			secondary: sanitizeHexColor(matchedSelectedPin.secondary, "#f3d37f"),
+			isIsland: Boolean(matchedSelectedPin.isIsland),
+		};
+		pinStatus = `Copied "${pinDisplayName(matchedSelectedPin)}". Select another tile and paste.`;
+	}
+
+	function pastePin() {
+		if (!canPastePin || !copiedPinTemplate || !selectedTile) {
+			return;
+		}
+
+		const tile = selectedTile;
+		const editablePins = pinEditTarget === "shared" ? sharedPins : localPins;
+		const nextPins = [...editablePins];
+		const nextPin = {
+			id: createPinId(copiedPinTemplate.civ, copiedPinTemplate.leader, tile),
+			civ: copiedPinTemplate.civ,
+			gameDefineName: copiedPinTemplate.gameDefineName,
+			leader: copiedPinTemplate.leader,
+			capital: copiedPinTemplate.capital,
+			author: copiedPinTemplate.author,
+			col: tile.col,
+			row: tile.sourceRow,
+			primary: copiedPinTemplate.primary,
+			secondary: copiedPinTemplate.secondary,
+			isIsland: copiedPinTemplate.isIsland,
+		};
+		nextPins.push(nextPin);
+
+		if (pinEditTarget === "shared") {
+			setSharedPins(nextPins, { queueSync: true });
+			const blocker = sharedPinSyncBlockerReason();
+			if (blocker) {
+				pinCloudSyncNeedsFeedback = false;
+				pinStatus = `Shared pin not saved to cloud. ${blocker}`;
+			} else {
+				pinCloudSyncNeedsFeedback = true;
+				pinStatus = "Pin pasted. Saving shared pins to cloud...";
+				void flushCloudPins();
+			}
+		} else {
+			setLocalPins(nextPins);
+			pinStatus = "Pin pasted to selected tile.";
+		}
+
+		applyPinToEditor(nextPin);
 	}
 
 	function syncEditorsFromSelection() {
@@ -1588,7 +1669,16 @@
 			setPinEditTarget(target);
 		}
 		applyPinToEditor(pin);
+		inspectedPinId = String(pin.id || "");
 		pinStatus = "";
+	}
+
+	function selectInspectedPin(pinId) {
+		const normalized = String(pinId || "");
+		if (!normalized) {
+			return;
+		}
+		inspectedPinId = normalized;
 	}
 
 	function updatePinColorFromPicker(kind, value) {
@@ -3893,6 +3983,61 @@
 						</aside>
 					{/if}
 				</div>
+
+				<section class="tile-pin-inspector" aria-live="polite" aria-label="Selected tile pin details">
+					{#if selectedTile}
+						<div class="tile-pin-inspector-head">
+							<h3>Tile {selectedTile.col}, {selectedTile.sourceRow}</h3>
+							<span>{selectedTilePins.length} pin{selectedTilePins.length === 1 ? "" : "s"}</span>
+						</div>
+
+						{#if selectedTilePins.length}
+							<div class="tile-pin-inspector-tabs" role="tablist" aria-label="Pins on selected tile">
+								{#each selectedTilePins as pin (pin.viewId || pin.id)}
+									<button type="button" class:active={String(inspectedTilePin?.id || "") === String(pin.id || "")} onclick={() => selectInspectedPin(pin.id)}>
+										{pinDisplayName(pin)}
+									</button>
+								{/each}
+							</div>
+
+							{#if inspectedTilePin}
+								<div class="tile-pin-inspector-meta">
+									<div><span class="tile-pin-inspector-label">Civilization</span><strong>{inspectedTilePin.civ || "Unknown"}</strong></div>
+									<div><span class="tile-pin-inspector-label">Leader</span><strong>{inspectedTilePin.leader || "Unknown"}</strong></div>
+									<div><span class="tile-pin-inspector-label">Game Define</span><strong>{inspectedTilePin.gameDefineName || DEFAULT_GAME_DEFINE_PREFIX}</strong></div>
+									<div><span class="tile-pin-inspector-label">Capital</span><strong>{inspectedTilePin.capital || "Unknown"}</strong></div>
+									<div><span class="tile-pin-inspector-label">Author</span><strong>{inspectedTilePin.author || "Unknown"}</strong></div>
+									<div><span class="tile-pin-inspector-label">Source</span><strong>{inspectedTilePinSource === "shared" ? "Shared" : "Local"}</strong></div>
+									<div><span class="tile-pin-inspector-label">Island</span><strong>{inspectedTilePin.isIsland ? "Yes" : "No"}</strong></div>
+								</div>
+
+								<div class="tile-pin-inspector-color-inline">
+									<div class="tile-pin-color-line">
+										<span class="tile-pin-color-dot" style={`--color:${inspectedTilePinPrimaryDisplay.hex}`}></span>
+										<span class="tile-pin-inspector-label">Primary</span>
+										<strong>{inspectedTilePinPrimaryDisplay.hex}</strong>
+										<span class="tile-pin-color-meta">RGB {inspectedTilePinPrimaryDisplay.rgb}</span>
+										<span class="tile-pin-color-meta">HSL {inspectedTilePinPrimaryDisplay.hsl}</span>
+									</div>
+									<div class="tile-pin-color-line">
+										<span class="tile-pin-color-dot" style={`--color:${inspectedTilePinSecondaryDisplay.hex}`}></span>
+										<span class="tile-pin-inspector-label">Secondary</span>
+										<strong>{inspectedTilePinSecondaryDisplay.hex}</strong>
+										<span class="tile-pin-color-meta">RGB {inspectedTilePinSecondaryDisplay.rgb}</span>
+										<span class="tile-pin-color-meta">HSL {inspectedTilePinSecondaryDisplay.hsl}</span>
+									</div>
+								</div>
+							{/if}
+						{:else}
+							<p class="panel-intro">No civilization pins on the selected tile.</p>
+						{/if}
+					{:else}
+						<div class="tile-pin-inspector-head">
+							<h3>Pin Details</h3>
+						</div>
+						<p class="panel-intro">Select a tile on the map to inspect Civilization pin metadata.</p>
+					{/if}
+				</section>
 			</div>
 
 			<aside id="map-tools-panel" class="side-panel" class:is-collapsed={panelCollapsed} aria-label="Map tools" aria-hidden={panelCollapsed}>
@@ -4122,10 +4267,27 @@
 									{/if}
 								</span>
 
+								<span class="ui-tooltip-wrap">
+									<button type="button" onclick={copyPin} disabled={!matchedSelectedPin}>Copy Pin</button>
+									{#if !matchedSelectedPin}
+										<span class="ui-tooltip">Load a pin first to copy it.</span>
+									{/if}
+								</span>
+
+								<span class="ui-tooltip-wrap">
+									<button type="button" onclick={pastePin} disabled={!canPastePin}>Paste Pin</button>
+									{#if !copiedPinTemplate}
+										<span class="ui-tooltip">Copy a pin first.</span>
+									{:else if !canEditPins}
+										<span class="ui-tooltip">Sign in or switch to Local edit target to paste pins.</span>
+									{:else if !selectedTile}
+										<span class="ui-tooltip">Select a tile before pasting.</span>
+									{/if}
+								</span>
+
 								<button
 									type="button"
 									class="danger-icon-button"
-									style="flex-grow: 0; inline-size: fit-content;"
 									onclick={removePin}
 									disabled={!canEditPins || !matchedSelectedPin}
 									aria-label="Remove civilization"
@@ -4808,32 +4970,32 @@
 	}
 
 	.tile-map-control-icon {
-		width: 0.95rem;
-		height: 0.95rem;
+		inline-size: 0.95rem;
+		block-size: 0.95rem;
 		fill: currentColor;
 	}
 
 	.tile-map-control-pill {
+		min-inline-size: 3.25rem;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		min-inline-size: 3.25rem;
-		padding-block: 0.35rem;
-		padding-inline: 0.55rem;
-		border-radius: 999px;
-		border: 1px solid color-mix(in oklch, var(--accent) 44%, var(--panel-border));
-		background: color-mix(in oklch, var(--accent) 12%, var(--input-bg));
 		color: var(--ink);
 		font-size: 0.82rem;
 		font-weight: 700;
 		font-variant-numeric: tabular-nums;
+		border-radius: 999px;
+		border: 1px solid color-mix(in oklch, var(--accent) 44%, var(--panel-border));
+		background: color-mix(in oklch, var(--accent) 12%, var(--input-bg));
+		padding-block: 0.35rem;
+		padding-inline: 0.55rem;
 	}
 
 	.workspace {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) 320px;
-		gap: 1rem;
 		min-height: 520px;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 22rem;
+		gap: 1rem;
 	}
 
 	.workspace.panel-collapsed {
@@ -4842,6 +5004,127 @@
 
 	.stage-wrap {
 		min-inline-size: 0;
+		display: grid;
+		gap: 0.75rem;
+		align-content: start;
+	}
+
+	.tile-pin-inspector {
+		display: grid;
+		gap: 0.5rem;
+		border-radius: 0.85rem;
+		border: 1px solid var(--panel-border);
+		background: color-mix(in oklch, var(--panel-bg) 94%, var(--accent) 2%);
+		padding: 0.75rem;
+	}
+
+	.tile-pin-inspector-head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
+
+	.tile-pin-inspector-head h3 {
+		color: var(--ink);
+		font-size: 1, 05rem;
+		margin: 0;
+	}
+
+	.tile-pin-inspector-head span {
+		color: var(--muted-ink);
+		font-size: 0.8rem;
+	}
+
+	.tile-pin-inspector-tabs {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.tile-pin-inspector-tabs button {
+		min-inline-size: 0;
+		color: var(--ink);
+		font: inherit;
+		font-size: 0.72rem;
+		border-radius: 0.48rem;
+		border: 1px solid var(--panel-border);
+		background: var(--control-bg);
+		padding-block: 0.28rem;
+		padding-inline: 0.45rem;
+		cursor: pointer;
+	}
+
+	.tile-pin-inspector-tabs button.active {
+		color: color-mix(in oklch, #fff 80%, var(--accent) 20%);
+		text-shadow: 1px 1px color-mix(in oklch, #000 60%, var(--accent) 30%);
+		border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
+		background: color-mix(in oklch, var(--accent) 90%, var(--control-bg));
+	}
+
+	.tile-pin-inspector-meta {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+		gap: 0.25rem 0.5rem;
+		padding-block: 1rem;
+		border-block: 1px solid color-mix(in oklch, var(--panel-border) 74%, transparent);
+	}
+
+	.tile-pin-inspector-meta > div {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.25rem;
+		padding-block: 0.1rem;
+	}
+
+	.tile-pin-inspector-meta strong {
+		color: var(--ink);
+		font-size: 0.8rem;
+		font-weight: 600;
+		word-break: break-word;
+	}
+
+	.tile-pin-inspector-label {
+		color: var(--muted-ink);
+		font-size: 0.7rem;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	.tile-pin-inspector-color-inline {
+		display: grid;
+		gap: 0.24rem;
+	}
+
+	.tile-pin-color-line {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+		padding-block: 0.1rem;
+	}
+
+	.tile-pin-color-line strong {
+		color: var(--ink);
+		font-size: 0.9rem;
+		font-weight: 600;
+	}
+
+	.tile-pin-color-dot {
+		inline-size: 1rem;
+		block-size: 1rem;
+		border-radius: 999px;
+		border: 1px solid color-mix(in oklch, var(--panel-border) 84%, black 16%);
+		background: var(--color, #000000);
+	}
+
+	.tile-pin-color-meta {
+		color: var(--muted-ink);
+		font-size: 0.8rem;
+		font-variant-numeric: tabular-nums;
 	}
 
 	.viewport {
@@ -5095,8 +5378,8 @@
 	.tab-row {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(4.6rem, 1fr));
-		gap: 0.25rem;
-		padding: 0.35rem;
+		gap: 0.5rem;
+		padding: 0.5rem;
 		background: var(--control-bg);
 
 		& button {
@@ -5130,6 +5413,7 @@
 		overflow: auto;
 		padding-block: 0.9rem;
 		padding-inline: 0.9rem;
+		overflow: clip;
 
 		& h3,
 		& h4 {
@@ -5641,7 +5925,7 @@
 			flex: 1;
 		}
 
-		button {
+		button:not(.danger-icon-button) {
 			flex: 1;
 			text-wrap: nowrap;
 		}
@@ -5666,13 +5950,24 @@
 
 	.danger-icon-button {
 		display: inline-flex;
+		flex: 0 0 auto;
 		align-items: center;
 		justify-content: center;
+		min-inline-size: 2.2rem;
 		inline-size: 2.2rem;
 		padding-inline: 0;
 		color: oklch(0.62 0.2 28);
 		border-color: color-mix(in oklch, oklch(0.62 0.2 28) 55%, var(--panel-border));
 		background: color-mix(in oklch, oklch(0.62 0.2 28) 9%, var(--control-bg));
+	}
+
+	.danger-icon-button svg {
+		display: block;
+		inline-size: 1rem;
+		block-size: 1rem;
+		stroke: currentColor;
+		fill: none;
+		pointer-events: none;
 	}
 
 	.danger-icon-button:hover {
