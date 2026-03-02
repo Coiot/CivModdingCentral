@@ -14,6 +14,8 @@
 	const SWIATLO_SCALE = 1.008;
 	const SWIATLO_OFFSET_X = 0.65;
 	const SWIATLO_OFFSET_Y = -0.25;
+	const SWIATLO_PIXEL_SNAP = true;
+	const SWIATLO_SHARPEN_CONTRAST = 1.25;
 	const FIT_GUARD_PX = 15;
 	const FIT_DIAMETER = Math.max(1, INNER_DIAMETER - FIT_GUARD_PX * 2);
 	const MIN_OFFSET = -25;
@@ -26,25 +28,26 @@
 		outerShadow: {
 			enabled: true,
 			color: "#000000",
-			opacity: 0.56,
-			blur: 0.5,
-			distance: 2.15,
+			opacity: 0.8,
+			blur: 1.5,
+			distance: 2,
 			angleDeg: 300,
+			blendMode: "multiply",
 		},
 		bevel: {
 			enabled: true,
 			angleDeg: 108,
 			distance: 0.62,
-			blur: 0.5,
+			blur: 0.75,
 			highlightColor: "#FFFFFF",
-			highlightOpacity: 0.5,
-			highlightBlend: "screen",
+			highlightOpacity: 0.25,
+			highlightBlend: "overlay",
 			shadowColor: "#000000",
-			shadowOpacity: 0.1,
+			shadowOpacity: 0.4,
 			shadowBlend: "multiply",
 		},
 	};
-	const ICON_EDGE_SOFTEN_PX = 0.5;
+	const ICON_EDGE_SOFTEN_PX = 0.1;
 	const SWIATLO_LAYER_DEFS = [
 		{ id: "blik", label: "Top Glint", file: "blik.png", blendMode: "source-over", opacity: 1 },
 		{ id: "overlay_flash_3", label: "Arc Highlight", file: "overlay flash 3.png", blendMode: "screen", opacity: 1 },
@@ -1035,7 +1038,10 @@
 		passCtx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
 		passCtx.globalCompositeOperation = "source-over";
 
+		ctx.save();
+		ctx.globalCompositeOperation = settings.blendMode || "source-over";
 		ctx.drawImage(passCanvas, 0, 0);
+		ctx.restore();
 	}
 
 	function drawInnerBevelPass(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight, options) {
@@ -1123,11 +1129,19 @@
 		if (!image.complete || !image.naturalWidth || !image.naturalHeight) {
 			return;
 		}
+		let drawSize = RENDER_SIZE * SWIATLO_SCALE;
+		let drawX = (RENDER_SIZE - drawSize) * 0.5 + SWIATLO_OFFSET_X * RENDER_SCALE;
+		let drawY = (RENDER_SIZE - drawSize) * 0.5 + SWIATLO_OFFSET_Y * RENDER_SCALE;
+		if (SWIATLO_PIXEL_SNAP) {
+			drawSize = Math.round(drawSize);
+			drawX = Math.round(drawX);
+			drawY = Math.round(drawY);
+		}
+		ctx.save();
 		configureImageSmoothing(ctx);
-		const drawSize = RENDER_SIZE * SWIATLO_SCALE;
-		const drawX = (RENDER_SIZE - drawSize) * 0.5 + SWIATLO_OFFSET_X * RENDER_SCALE;
-		const drawY = (RENDER_SIZE - drawSize) * 0.5 + SWIATLO_OFFSET_Y * RENDER_SCALE;
+		ctx.filter = `contrast(${SWIATLO_SHARPEN_CONTRAST})`;
 		ctx.drawImage(image, drawX, drawY, drawSize, drawSize);
+		ctx.restore();
 	}
 
 	function drawSwiatloOverlays(ctx, options = {}) {
@@ -1195,8 +1209,10 @@
 		if (tintCanvas) {
 			const drawWidth = tintCanvas.width * resolvedSnapshot.iconScale * RENDER_SCALE;
 			const drawHeight = tintCanvas.height * resolvedSnapshot.iconScale * RENDER_SCALE;
-			const drawX = RENDER_CENTER - drawWidth / 2 + resolvedSnapshot.iconOffsetX * RENDER_SCALE;
-			const drawY = RENDER_CENTER - drawHeight / 2 + resolvedSnapshot.iconOffsetY * RENDER_SCALE;
+			const drawXRaw = RENDER_CENTER - drawWidth / 2 + resolvedSnapshot.iconOffsetX * RENDER_SCALE;
+			const drawYRaw = RENDER_CENTER - drawHeight / 2 + resolvedSnapshot.iconOffsetY * RENDER_SCALE;
+			const drawX = Math.round(drawXRaw * 2) / 2;
+			const drawY = Math.round(drawYRaw * 2) / 2;
 
 			drawIconOuterShadow(renderCtx, tintCanvas, drawX, drawY, drawWidth, drawHeight);
 			drawIconBase(renderCtx, tintCanvas, drawX, drawY, drawWidth, drawHeight);
