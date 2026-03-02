@@ -1785,7 +1785,7 @@
 	{#if !hasSource}
 		<section class="civ-icon-upload-panel">
 			<h1 class="civ-icon-title">Civ Icon Maker</h1>
-			<p class="civ-icon-copy">Upload a transparent PNG to start.</p>
+			<p class="civ-icon-copy">Upload a transparent PNG at least 256 x 256 in size to start.</p>
 
 			<label
 				class="civ-icon-dropzone"
@@ -1821,7 +1821,7 @@
 				</p>
 
 				<div class="civ-icon-preview-wrap">
-					<p class="civ-icon-preview-note" role="note">Web Preview is approximate styling. Downloaded PNG accurate post-processing.</p>
+					<p class="civ-icon-preview-note" role="note">Web Preview is approximate styling. Download PNG for accurate post-processing.</p>
 					<div class={`civ-icon-preview-stack ${compareEnabled ? "is-compare" : ""}`}>
 						<div class="civ-icon-preview-pane">
 							<span class="civ-icon-preview-pane-label">Current</span>

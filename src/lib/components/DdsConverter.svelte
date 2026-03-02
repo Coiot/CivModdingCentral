@@ -935,7 +935,7 @@
 	<section class="dds-panel">
 		<section class="dds-section">
 			<div class="dds-section-head">
-				<h2 class="dds-section-title">1. Configure Export</h2>
+				<h2 class="dds-section-title">1. Configure Workflow</h2>
 				<p class="dds-section-copy">Choose workflow, atlas settings, and output options.</p>
 			</div>
 			<div class="dds-form-grid">

@@ -80,7 +80,9 @@
 
 <header class="navbar">
 	<div class="brand">
-		<img class="brand-logo" src="/brand/cmc-navbar-logo.jpg" alt="Civ Modding Central logo" width="100" height="100" />
+		<a href="/" class="brand-link">
+			<img class="brand-logo" src="/brand/cmc-navbar-logo.jpg" alt="Civ Modding Central logo" width="100" height="100" />
+		</a>
 		<div>
 			<p class="brand-overline">Community Web Tools</p>
 			<p class="brand-title">Civ Modding Central</p>
@@ -225,8 +227,8 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 1.15rem;
-		padding-block: 0.82rem;
-		padding-inline: 1.05rem;
+		padding-block: 0.75rem 0.615rem;
+		padding-inline: 1rem;
 		border-radius: 0.85rem;
 		background: var(--navbar-bg);
 		border: 1px solid var(--panel-border);
@@ -238,7 +240,12 @@
 	.brand {
 		display: flex;
 		align-items: center;
-		gap: 0.55rem;
+		gap: 0.75rem;
+
+		a {
+			display: flex;
+			align-items: center;
+		}
 	}
 
 	.brand-logo {

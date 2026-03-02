@@ -39,12 +39,6 @@
 					tagline: "Legacy community hub.",
 				},
 				{
-					name: "Civ Mod Designs",
-					url: "https://docs.google.com/spreadsheets/d/1kop88EnlIpj_zeNBathtna7n8VWyDutJYWvpkLe3lmM/edit?gid=1361367536#gid=1361367536",
-					tagline: "Civ design references.",
-					kind: "spreadsheet",
-				},
-				{
 					name: "Civ Mod Google Map",
 					url: "https://www.google.com/maps/d/u/0/viewer?mid=1bfxc1WS-cwFqfKmfeNcNir6z5Hs&ll=-3.81666561775622e-14%2C108.23139769111206&z=1",
 					tagline: "Mapped modded civs.",
@@ -55,6 +49,12 @@
 					url: "https://civilization-v-customisation.fandom.com/wiki/Custom_Historical_Civilizations",
 					tagline: "Fandom wiki for modded civs.",
 					kind: "fandom",
+				},
+				{
+					name: "Civ Mod Designs",
+					url: "https://docs.google.com/spreadsheets/d/1kop88EnlIpj_zeNBathtna7n8VWyDutJYWvpkLe3lmM/edit?gid=1361367536#gid=1361367536",
+					tagline: "Civ design references.",
+					kind: "spreadsheet",
 				},
 			],
 		},
