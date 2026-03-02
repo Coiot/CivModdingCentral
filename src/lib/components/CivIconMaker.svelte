@@ -27,7 +27,7 @@
 			enabled: true,
 			color: "#000000",
 			opacity: 0.56,
-			blur: 1,
+			blur: 0.5,
 			distance: 2.15,
 			angleDeg: 300,
 		},
@@ -44,7 +44,7 @@
 			shadowBlend: "multiply",
 		},
 	};
-	const ICON_EDGE_SOFTEN_PX = 0.15;
+	const ICON_EDGE_SOFTEN_PX = 0.5;
 	const SWIATLO_LAYER_DEFS = [
 		{ id: "blik", label: "Top Glint", file: "blik.png", blendMode: "source-over", opacity: 1 },
 		{ id: "overlay_flash_3", label: "Arc Highlight", file: "overlay flash 3.png", blendMode: "screen", opacity: 1 },
