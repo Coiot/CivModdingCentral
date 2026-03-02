@@ -124,7 +124,7 @@
 
 <section class="directory-page">
 	<header class="hero directory-hero">
-		<p class="eyebrow">Community Directory</p>
+		<p class="eyebrow">Community Links</p>
 		<h1>Find the right place to ask, share, or collaborate.</h1>
 		<p>Quick links to support channels and related Civ communities.</p>
 	</header>

@@ -93,7 +93,7 @@
 			<a class={`page-link ${isActivePath("/dds-converter") ? "is-active" : ""}`} href="/dds-converter" aria-current={isActivePath("/dds-converter") ? "page" : undefined}>DDS Converter</a>
 			<!-- <a class={`page-link ${isActivePath("/civ-icon-maker") ? "is-active" : ""}`} href="/civ-icon-maker" aria-current={isActivePath("/civ-icon-maker") ? "page" : undefined}>Civ Icon Maker</a> -->
 			<!-- <a class={`page-link ${isActivePath("/wiki") ? "is-active" : ""}`} href="/wiki" aria-current={isActivePath("/wiki") ? "page" : undefined}>Wiki Template</a> -->
-			<a class={`page-link ${isActivePath("/directory") ? "is-active" : ""}`} href="/directory" aria-current={isActivePath("/directory") ? "page" : undefined}>Directory</a>
+			<a class={`page-link ${isActivePath("/links") ? "is-active" : ""}`} href="/links" aria-current={isActivePath("/links") ? "page" : undefined}>Links</a>
 		</nav>
 
 		<a class="social-trigger" href={REDDIT_URL} aria-label="Reddit" title="Reddit" target="_blank" rel="noopener noreferrer">

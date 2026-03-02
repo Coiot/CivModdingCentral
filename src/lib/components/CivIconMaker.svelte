@@ -28,22 +28,34 @@
 		outerShadow: {
 			enabled: true,
 			color: "#000000",
-			opacity: 0.8,
-			blur: 1.5,
-			distance: 2,
+			opacity: 0.9,
+			blur: 3,
+			distance: 1.1,
 			angleDeg: 300,
 			blendMode: "multiply",
+			coreOpacity: 0.5,
+			coreBlurMultiplier: 3,
+			falloffOpacity: 0.3,
+			falloffBlurMultiplier: 6,
+			falloffDistanceMultiplier: 2.35,
+			tintFromIcon: true,
+			tintOpacity: 0.5,
+			tintBlurMultiplier: 3,
+			tintDistanceMultiplier: 1,
+			tintSaturationMultiplier: 1,
+			tintSaturationAdd: 0,
+			tintLightnessAdd: 20,
 		},
 		bevel: {
 			enabled: true,
 			angleDeg: 108,
 			distance: 0.62,
-			blur: 0.75,
+			blur: 1,
 			highlightColor: "#FFFFFF",
-			highlightOpacity: 0.25,
+			highlightOpacity: 0.4,
 			highlightBlend: "overlay",
 			shadowColor: "#000000",
-			shadowOpacity: 0.4,
+			shadowOpacity: 0.5,
 			shadowBlend: "multiply",
 		},
 	};
@@ -141,8 +153,10 @@
 	let renderCanvas = null;
 	let effectCanvasA = null;
 	let effectCanvasB = null;
+	let effectCanvasC = null;
 	let tintVersionCounter = 0;
 	let tintedColorCache = new Map();
+	let scaledTintCache = new Map();
 	let swiatloImageCache = new Map();
 	let swiatloAssetsVersion = $state(0);
 
@@ -624,6 +638,7 @@
 
 	function clearTintCache() {
 		tintedColorCache.clear();
+		scaledTintCache.clear();
 	}
 
 	function configureImageSmoothing(ctx) {
@@ -658,6 +673,15 @@
 		return effectCanvasB;
 	}
 
+	function ensureEffectCanvasC() {
+		if (!effectCanvasC || effectCanvasC.width !== RENDER_SIZE || effectCanvasC.height !== RENDER_SIZE) {
+			effectCanvasC = document.createElement("canvas");
+			effectCanvasC.width = RENDER_SIZE;
+			effectCanvasC.height = RENDER_SIZE;
+		}
+		return effectCanvasC;
+	}
+
 	function angleToVector(angleDeg) {
 		const radians = (angleDeg * Math.PI) / 180;
 		return {
@@ -671,6 +695,14 @@
 	function colorToRgba(color, opacity) {
 		const rgb = hexToRgb(color);
 		return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${clamp(opacity, 0, 1)})`;
+	}
+
+	function deriveShadowTintColor(iconHex, settings) {
+		const rgb = hexToRgb(iconHex);
+		const hsl = rgbToHsl(rgb);
+		const saturation = clamp(hsl.s * (settings.tintSaturationMultiplier ?? 1.2) + (settings.tintSaturationAdd ?? 0), 0, 100);
+		const lightness = clamp(hsl.l + (settings.tintLightnessAdd ?? -24), 0, 100);
+		return rgbToHex(hslToRgb({ h: hsl.h, s: saturation, l: lightness }));
 	}
 
 	function swiatloAssetPath(filename) {
@@ -1007,14 +1039,88 @@
 		return built;
 	}
 
-	function drawIconOuterShadow(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight) {
+	function buildProgressiveScaledTintCanvas(source, targetWidth, targetHeight) {
+		if (source.width === targetWidth && source.height === targetHeight) {
+			return source;
+		}
+		let currentCanvas = source;
+		let currentWidth = source.width;
+		let currentHeight = source.height;
+
+		while (currentWidth * 0.5 >= targetWidth || currentHeight * 0.5 >= targetHeight) {
+			const nextWidth = Math.max(targetWidth, Math.round(currentWidth * 0.5));
+			const nextHeight = Math.max(targetHeight, Math.round(currentHeight * 0.5));
+			const nextCanvas = document.createElement("canvas");
+			nextCanvas.width = nextWidth;
+			nextCanvas.height = nextHeight;
+			const nextCtx = nextCanvas.getContext("2d");
+			if (!nextCtx) {
+				break;
+			}
+			configureImageSmoothing(nextCtx);
+			nextCtx.clearRect(0, 0, nextWidth, nextHeight);
+			nextCtx.drawImage(currentCanvas, 0, 0, currentWidth, currentHeight, 0, 0, nextWidth, nextHeight);
+			currentCanvas = nextCanvas;
+			currentWidth = nextWidth;
+			currentHeight = nextHeight;
+		}
+
+		if (currentWidth === targetWidth && currentHeight === targetHeight) {
+			return currentCanvas;
+		}
+
+		const finalCanvas = document.createElement("canvas");
+		finalCanvas.width = targetWidth;
+		finalCanvas.height = targetHeight;
+		const finalCtx = finalCanvas.getContext("2d");
+		if (!finalCtx) {
+			return currentCanvas;
+		}
+		configureImageSmoothing(finalCtx);
+		finalCtx.clearRect(0, 0, targetWidth, targetHeight);
+		finalCtx.drawImage(currentCanvas, 0, 0, currentWidth, currentHeight, 0, 0, targetWidth, targetHeight);
+		return finalCanvas;
+	}
+
+	function getScaledTintCanvas(tintCanvas, color, targetWidth, targetHeight) {
+		const normalizedColor = sanitizeHexColor(color, DEFAULT_ICON_COLOR);
+		const key = `${normalizedColor}:${targetWidth}x${targetHeight}:v${tintVersion}`;
+		const cached = scaledTintCache.get(key);
+		if (cached) {
+			return cached;
+		}
+		const built = buildProgressiveScaledTintCanvas(tintCanvas, targetWidth, targetHeight);
+		scaledTintCache.set(key, built);
+		return built;
+	}
+
+	function resolveIconRaster(tintCanvas, color, drawXRaw, drawYRaw, drawWidthRaw, drawHeightRaw) {
+		const rasterWidth = Math.max(1, Math.round(drawWidthRaw));
+		const rasterHeight = Math.max(1, Math.round(drawHeightRaw));
+		const rasterX = Math.round((drawXRaw + (drawWidthRaw - rasterWidth) * 0.5) * 2) / 2;
+		const rasterY = Math.round((drawYRaw + (drawHeightRaw - rasterHeight) * 0.5) * 2) / 2;
+		const rasterCanvas = getScaledTintCanvas(tintCanvas, color, rasterWidth, rasterHeight);
+		return {
+			canvas: rasterCanvas,
+			x: rasterX,
+			y: rasterY,
+			width: rasterWidth,
+			height: rasterHeight,
+		};
+	}
+
+	function drawIconOuterShadow(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight, iconHexColor) {
 		if (!tintCanvas || !ICON_EFFECT_SETTINGS.outerShadow.enabled) {
 			return;
 		}
 
-		const passCanvas = ensureEffectCanvasA();
-		const passCtx = passCanvas.getContext("2d");
-		if (!passCtx) {
+		const maskCanvas = ensureEffectCanvasA();
+		const maskCtx = maskCanvas.getContext("2d");
+		const tintMaskCanvas = ensureEffectCanvasB();
+		const tintMaskCtx = tintMaskCanvas.getContext("2d");
+		const shadowCanvas = ensureEffectCanvasC();
+		const shadowCtx = shadowCanvas.getContext("2d");
+		if (!maskCtx || !tintMaskCtx || !shadowCtx) {
 			return;
 		}
 
@@ -1022,25 +1128,61 @@
 		const vector = angleToVector(settings.angleDeg);
 		const offsetX = vector.x * settings.distance * RENDER_SCALE;
 		const offsetY = vector.y * settings.distance * RENDER_SCALE;
+		const baseBlur = Math.max(0, settings.blur * RENDER_SCALE);
+		const coreOpacity = clamp((settings.coreOpacity ?? 1) * settings.opacity, 0, 1);
+		const coreBlur = Math.max(0, baseBlur * (settings.coreBlurMultiplier ?? 1));
+		const falloffOpacity = clamp((settings.falloffOpacity ?? 0.4) * settings.opacity, 0, 1);
+		const falloffBlur = Math.max(0, baseBlur * (settings.falloffBlurMultiplier ?? 2));
+		const falloffDistance = settings.falloffDistanceMultiplier ?? 1;
+		const tintedColor = settings.tintFromIcon === false ? settings.color : deriveShadowTintColor(iconHexColor, settings);
+		const tintOpacity = clamp((settings.tintOpacity ?? 0.42) * settings.opacity, 0, 1);
+		const tintBlur = Math.max(0, baseBlur * (settings.tintBlurMultiplier ?? 3.2));
+		const tintDistance = settings.tintDistanceMultiplier ?? 1.24;
 
-		configureImageSmoothing(passCtx);
-		passCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
-		passCtx.shadowColor = colorToRgba(settings.color, settings.opacity);
-		passCtx.shadowBlur = settings.blur * RENDER_SCALE;
-		passCtx.shadowOffsetX = offsetX;
-		passCtx.shadowOffsetY = offsetY;
-		passCtx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
-		passCtx.shadowColor = "transparent";
-		passCtx.shadowBlur = 0;
-		passCtx.shadowOffsetX = 0;
-		passCtx.shadowOffsetY = 0;
-		passCtx.globalCompositeOperation = "destination-out";
-		passCtx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
-		passCtx.globalCompositeOperation = "source-over";
+		configureImageSmoothing(maskCtx);
+		maskCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
+		maskCtx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
+		maskCtx.globalCompositeOperation = "source-in";
+		maskCtx.fillStyle = colorToRgba(settings.color, 1);
+		maskCtx.fillRect(0, 0, RENDER_SIZE, RENDER_SIZE);
+		maskCtx.globalCompositeOperation = "source-over";
+
+		configureImageSmoothing(tintMaskCtx);
+		tintMaskCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
+		tintMaskCtx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
+		tintMaskCtx.globalCompositeOperation = "source-in";
+		tintMaskCtx.fillStyle = colorToRgba(tintedColor, 1);
+		tintMaskCtx.fillRect(0, 0, RENDER_SIZE, RENDER_SIZE);
+		tintMaskCtx.globalCompositeOperation = "source-over";
+
+		configureImageSmoothing(shadowCtx);
+		shadowCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
+
+		shadowCtx.save();
+		shadowCtx.globalAlpha = coreOpacity;
+		shadowCtx.filter = coreBlur > 0 ? `blur(${coreBlur}px)` : "none";
+		shadowCtx.drawImage(maskCanvas, offsetX, offsetY);
+		shadowCtx.restore();
+
+		shadowCtx.save();
+		shadowCtx.globalAlpha = falloffOpacity;
+		shadowCtx.filter = falloffBlur > 0 ? `blur(${falloffBlur}px)` : "none";
+		shadowCtx.drawImage(maskCanvas, offsetX * falloffDistance, offsetY * falloffDistance);
+		shadowCtx.restore();
+
+		shadowCtx.save();
+		shadowCtx.globalAlpha = tintOpacity;
+		shadowCtx.filter = tintBlur > 0 ? `blur(${tintBlur}px)` : "none";
+		shadowCtx.drawImage(tintMaskCanvas, offsetX * tintDistance, offsetY * tintDistance);
+		shadowCtx.restore();
+
+		shadowCtx.globalCompositeOperation = "destination-out";
+		shadowCtx.drawImage(maskCanvas, 0, 0);
+		shadowCtx.globalCompositeOperation = "source-over";
 
 		ctx.save();
 		ctx.globalCompositeOperation = settings.blendMode || "source-over";
-		ctx.drawImage(passCanvas, 0, 0);
+		ctx.drawImage(shadowCanvas, 0, 0);
 		ctx.restore();
 	}
 
@@ -1207,16 +1349,15 @@
 		renderCtx.clip();
 		const tintCanvas = getTintedCanvasForColor(resolvedSnapshot.iconColor);
 		if (tintCanvas) {
-			const drawWidth = tintCanvas.width * resolvedSnapshot.iconScale * RENDER_SCALE;
-			const drawHeight = tintCanvas.height * resolvedSnapshot.iconScale * RENDER_SCALE;
-			const drawXRaw = RENDER_CENTER - drawWidth / 2 + resolvedSnapshot.iconOffsetX * RENDER_SCALE;
-			const drawYRaw = RENDER_CENTER - drawHeight / 2 + resolvedSnapshot.iconOffsetY * RENDER_SCALE;
-			const drawX = Math.round(drawXRaw * 2) / 2;
-			const drawY = Math.round(drawYRaw * 2) / 2;
+			const drawWidthRaw = tintCanvas.width * resolvedSnapshot.iconScale * RENDER_SCALE;
+			const drawHeightRaw = tintCanvas.height * resolvedSnapshot.iconScale * RENDER_SCALE;
+			const drawXRaw = RENDER_CENTER - drawWidthRaw / 2 + resolvedSnapshot.iconOffsetX * RENDER_SCALE;
+			const drawYRaw = RENDER_CENTER - drawHeightRaw / 2 + resolvedSnapshot.iconOffsetY * RENDER_SCALE;
+			const iconRaster = resolveIconRaster(tintCanvas, resolvedSnapshot.iconColor, drawXRaw, drawYRaw, drawWidthRaw, drawHeightRaw);
 
-			drawIconOuterShadow(renderCtx, tintCanvas, drawX, drawY, drawWidth, drawHeight);
-			drawIconBase(renderCtx, tintCanvas, drawX, drawY, drawWidth, drawHeight);
-			drawIconBevelEffects(renderCtx, tintCanvas, drawX, drawY, drawWidth, drawHeight);
+			drawIconOuterShadow(renderCtx, tintCanvas, drawXRaw, drawYRaw, drawWidthRaw, drawHeightRaw, resolvedSnapshot.iconColor);
+			drawIconBase(renderCtx, iconRaster.canvas, iconRaster.x, iconRaster.y, iconRaster.width, iconRaster.height);
+			drawIconBevelEffects(renderCtx, iconRaster.canvas, iconRaster.x, iconRaster.y, iconRaster.width, iconRaster.height);
 		}
 		drawSwiatloOverlays(renderCtx, {
 			enabled: resolvedSnapshot.swiatloEnabled,
@@ -1680,6 +1821,7 @@
 				</p>
 
 				<div class="civ-icon-preview-wrap">
+					<p class="civ-icon-preview-note" role="note">Web Preview is approximate styling. Downloaded PNG accurate post-processing.</p>
 					<div class={`civ-icon-preview-stack ${compareEnabled ? "is-compare" : ""}`}>
 						<div class="civ-icon-preview-pane">
 							<span class="civ-icon-preview-pane-label">Current</span>
@@ -2142,6 +2284,7 @@
 	.civ-icon-preview-wrap {
 		display: grid;
 		place-items: center;
+		gap: 0.6rem;
 		padding: 1rem;
 		border-radius: 0.7rem;
 		background:
@@ -2152,6 +2295,20 @@
 			0 0,
 			13px 13px;
 		border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--panel-border));
+	}
+
+	.civ-icon-preview-note {
+		margin: 0;
+		padding: 0.24rem 0.62rem;
+		border-radius: 999px;
+		font-size: 0.72rem;
+		line-height: 1.2;
+		letter-spacing: 0.01em;
+		font-weight: 600;
+		color: color-mix(in oklch, white 88%, var(--ink));
+		background: color-mix(in oklch, var(--panel-bg) 62%, black 38%);
+		border: 1px solid color-mix(in oklch, white 16%, var(--panel-border));
+		box-shadow: 0 1px 2px color-mix(in oklch, black 30%, transparent);
 	}
 
 	.civ-icon-preview-stack {
@@ -2601,6 +2758,13 @@
 			border-radius: 999px;
 			padding: 0.12rem 0.48rem;
 			line-height: 1.2;
+			box-shadow: 0 1px 2px color-mix(in oklch, black 8%, transparent);
+		}
+
+		.civ-icon-preview-note {
+			color: color-mix(in oklch, var(--ink) 88%, black 12%);
+			background: color-mix(in oklch, white 92%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--accent) 24%, var(--panel-border));
 			box-shadow: 0 1px 2px color-mix(in oklch, black 8%, transparent);
 		}
 

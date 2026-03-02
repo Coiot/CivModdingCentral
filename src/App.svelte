@@ -161,14 +161,14 @@
 	});
 
 	$effect(() => {
-		if (currentPath === "/directory" || currentPath === "/dds-converter" || currentPath === "/civ-icon-maker") {
+		if (currentPath === "/links" || currentPath === "/dds-converter" || currentPath === "/civ-icon-maker") {
 			return;
 		}
 		void ensureMapViewerLoaded();
 	});
 
 	$effect(() => {
-		if (currentPath === "/directory" || authRestoreStarted) {
+		if (currentPath === "/links" || authRestoreStarted) {
 			return;
 		}
 		authRestoreStarted = true;
@@ -723,7 +723,7 @@
 
 	{#key currentPath}
 		<div class="route-shell" bind:this={routeShellEl} in:fade={{ duration: 180 }} out:fade={{ duration: 130 }}>
-			{#if currentPath === "/directory"}
+			{#if currentPath === "/links"}
 				<Directory />
 			{:else if currentPath === "/dds-converter"}
 				<DdsConverter />
