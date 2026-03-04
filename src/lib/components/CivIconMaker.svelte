@@ -7,55 +7,57 @@
 	const CENTER = OUTPUT_SIZE / 2;
 	const INNER_DIAMETER = 172;
 	const INNER_RADIUS = INNER_DIAMETER / 2;
-	const RENDER_SCALE = 4;
+	const RENDER_SCALE = 8;
 	const RENDER_SIZE = OUTPUT_SIZE * RENDER_SCALE;
 	const RENDER_CENTER = CENTER * RENDER_SCALE;
 	const RENDER_INNER_RADIUS = INNER_RADIUS * RENDER_SCALE;
-	const SWIATLO_SCALE = 1.008;
+	const SWIATLO_SCALE = 1;
 	const SWIATLO_OFFSET_X = 0.65;
 	const SWIATLO_OFFSET_Y = -0.25;
 	const SWIATLO_PIXEL_SNAP = true;
-	const SWIATLO_SHARPEN_CONTRAST = 1.25;
+	const SWIATLO_SHARPEN_CONTRAST = 2;
 	const FIT_GUARD_PX = 15;
 	const FIT_DIAMETER = Math.max(1, INNER_DIAMETER - FIT_GUARD_PX * 2);
+	const CIRCLE_EDGE_AA_PX = 2;
 	const MIN_OFFSET = -25;
 	const MAX_OFFSET = 25;
 	const DEFAULT_PRIMARY_COLOR = "#1F4F99";
 	const DEFAULT_ICON_COLOR = "#F4DE9A";
+	const COLOR_PICKER_DEBOUNCE_MS = 180;
 	const STORAGE_KEY = "cmc:civ-icon-maker:v1";
 	const STORAGE_VERSION = 1;
 	const ICON_EFFECT_SETTINGS = {
 		outerShadow: {
 			enabled: true,
 			color: "#000000",
-			opacity: 0.9,
-			blur: 3,
-			distance: 1.1,
+			opacity: 1,
+			blur: 0.1,
+			distance: 1,
 			angleDeg: 300,
 			blendMode: "multiply",
 			coreOpacity: 0.5,
 			coreBlurMultiplier: 3,
-			falloffOpacity: 0.3,
-			falloffBlurMultiplier: 6,
-			falloffDistanceMultiplier: 2.35,
+			falloffOpacity: 0.5,
+			falloffBlurMultiplier: 2,
+			falloffDistanceMultiplier: 2,
 			tintFromIcon: true,
 			tintOpacity: 0.5,
-			tintBlurMultiplier: 3,
-			tintDistanceMultiplier: 1,
+			tintBlurMultiplier: 0.25,
+			tintDistanceMultiplier: 0.5,
 			tintSaturationMultiplier: 1,
 			tintSaturationAdd: 0,
 			tintLightnessAdd: 20,
 		},
 		bevel: {
 			enabled: true,
-			angleDeg: 108,
-			distance: 0.62,
-			blur: 1,
+			angleDeg: 300,
+			distance: 0.5,
+			blur: 1.5,
 			highlightColor: "#FFFFFF",
-			highlightOpacity: 0.4,
-			highlightBlend: "overlay",
+			highlightOpacity: 0.75,
+			highlightBlend: "source-over",
 			shadowColor: "#000000",
-			shadowOpacity: 0.5,
+			shadowOpacity: 1,
 			shadowBlend: "multiply",
 		},
 	};
@@ -68,7 +70,7 @@
 		{ id: "overlay_flash_copy_2", label: "Lower Sweep", file: "overlay flash copy 2.png", blendMode: "soft-light", opacity: 1 },
 		{ id: "overlay_flash", label: "Soft Flash", file: "overlay flash.png", blendMode: "hard-light", opacity: 1 },
 		{ id: "overlay_light_2", label: "Crown Glow", file: "overlay light 2.png", blendMode: "hard-light", opacity: 1 },
-		{ id: "overlay_light", label: "Face Glow", file: "overlay light.png", blendMode: "soft-light", opacity: 1 },
+		{ id: "overlay_light", label: "Face Glow", file: "overlay light.png", blendMode: "overlay", opacity: 1 },
 		{ id: "overlay_shadow_2", label: "Edge Shade", file: "overlay shadow 2.png", blendMode: "soft-light", opacity: 1 },
 		{ id: "overlay_blue", label: "Cyan Shade", file: "overlay blue.png", blendMode: "hard-light", opacity: 1 },
 		{
@@ -211,6 +213,8 @@
 	let historyBaselineSignature = "";
 	let historyBaselineSnapshot = null;
 	let historySuspended = false;
+	let primaryColorPickerDebounceId = 0;
+	let iconColorPickerDebounceId = 0;
 
 	const hasSource = $derived(Boolean(sourceCanvas));
 	const sourceWidth = $derived(sourceCanvas?.width || 0);
@@ -311,6 +315,12 @@
 	});
 
 	onDestroy(() => {
+		if (primaryColorPickerDebounceId) {
+			clearTimeout(primaryColorPickerDebounceId);
+		}
+		if (iconColorPickerDebounceId) {
+			clearTimeout(iconColorPickerDebounceId);
+		}
 		revokeSourceUrl();
 	});
 
@@ -1304,6 +1314,26 @@
 		}
 	}
 
+	function applyCircleEdgeAntiAliasing(ctx) {
+		const feather = Math.max(0, CIRCLE_EDGE_AA_PX * RENDER_SCALE);
+		if (feather <= 0) {
+			return;
+		}
+		const innerRadius = Math.max(0, RENDER_INNER_RADIUS - feather);
+		const outerRadius = RENDER_INNER_RADIUS + feather;
+		const edgeMask = ctx.createRadialGradient(RENDER_CENTER, RENDER_CENTER, innerRadius, RENDER_CENTER, RENDER_CENTER, outerRadius);
+		edgeMask.addColorStop(0, "rgba(0, 0, 0, 1)");
+		edgeMask.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+		ctx.save();
+		ctx.globalCompositeOperation = "destination-in";
+		ctx.fillStyle = edgeMask;
+		ctx.beginPath();
+		ctx.arc(RENDER_CENTER, RENDER_CENTER, outerRadius + 1, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.restore();
+	}
+
 	function drawComposite(canvas, includeGuides, size = OUTPUT_SIZE, snapshot = createEditorSnapshot()) {
 		if (!canvas) {
 			return;
@@ -1364,6 +1394,7 @@
 			visibility: resolvedSnapshot.swiatloLayerVisibility,
 		});
 		renderCtx.restore();
+		applyCircleEdgeAntiAliasing(renderCtx);
 
 		configureImageSmoothing(targetCtx);
 		targetCtx.clearRect(0, 0, size, size);
@@ -1482,9 +1513,7 @@
 		iconOffsetY = clampOffset(value, iconOffsetY);
 	}
 
-	function updateColorFromPicker(kind, value) {
-		const fallback = kind === "primary" ? DEFAULT_PRIMARY_COLOR : DEFAULT_ICON_COLOR;
-		const normalized = sanitizeHexColor(value, fallback);
+	function applyColorFromPicker(kind, normalized) {
 		if (kind === "primary") {
 			primaryColor = normalized;
 			primaryColorHexInput = normalized;
@@ -1492,6 +1521,43 @@
 		}
 		iconColor = normalized;
 		iconColorHexInput = normalized;
+	}
+
+	function clearColorPickerDebounce(kind) {
+		if (kind === "primary") {
+			if (primaryColorPickerDebounceId) {
+				clearTimeout(primaryColorPickerDebounceId);
+				primaryColorPickerDebounceId = 0;
+			}
+			return;
+		}
+		if (iconColorPickerDebounceId) {
+			clearTimeout(iconColorPickerDebounceId);
+			iconColorPickerDebounceId = 0;
+		}
+	}
+
+	function updateColorFromPicker(kind, value, immediate = false) {
+		const fallback = kind === "primary" ? DEFAULT_PRIMARY_COLOR : DEFAULT_ICON_COLOR;
+		const normalized = sanitizeHexColor(value, fallback);
+		clearColorPickerDebounce(kind);
+		if (immediate) {
+			applyColorFromPicker(kind, normalized);
+			return;
+		}
+		const nextId = setTimeout(() => {
+			applyColorFromPicker(kind, normalized);
+			if (kind === "primary") {
+				primaryColorPickerDebounceId = 0;
+			} else {
+				iconColorPickerDebounceId = 0;
+			}
+		}, COLOR_PICKER_DEBOUNCE_MS);
+		if (kind === "primary") {
+			primaryColorPickerDebounceId = nextId;
+		} else {
+			iconColorPickerDebounceId = nextId;
+		}
 	}
 
 	function updateColorFromHex(kind, value) {
@@ -1869,7 +1935,7 @@
 											type="color"
 											value={primaryColor}
 											oninput={(event) => updateColorFromPicker("primary", event.currentTarget.value)}
-											onchange={(event) => updateColorFromPicker("primary", event.currentTarget.value)}
+											onchange={(event) => updateColorFromPicker("primary", event.currentTarget.value, true)}
 											aria-label="Primary color"
 										/>
 										<span class="color-preview" style={`--preview:${primaryColorDisplay.hex}`} aria-hidden="true"></span>
@@ -1902,7 +1968,7 @@
 											type="color"
 											value={iconColor}
 											oninput={(event) => updateColorFromPicker("icon", event.currentTarget.value)}
-											onchange={(event) => updateColorFromPicker("icon", event.currentTarget.value)}
+											onchange={(event) => updateColorFromPicker("icon", event.currentTarget.value, true)}
 											aria-label="Icon color"
 										/>
 										<span class="color-preview" style={`--preview:${iconColorDisplay.hex}`} aria-hidden="true"></span>

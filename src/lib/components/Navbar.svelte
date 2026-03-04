@@ -93,6 +93,7 @@
 		<nav class="page-nav" aria-label="Primary navigation">
 			<a class={`page-link ${isActivePath("/") ? "is-active" : ""}`} href="/" aria-current={isActivePath("/") ? "page" : undefined}>Map Viewer</a>
 			<a class={`page-link ${isActivePath("/dds-converter") ? "is-active" : ""}`} href="/dds-converter" aria-current={isActivePath("/dds-converter") ? "page" : undefined}>DDS Converter</a>
+			<!-- <a class={`page-link ${isActivePath("/workshop-vdf") ? "is-active" : ""}`} href="/workshop-vdf" aria-current={isActivePath("/workshop-vdf") ? "page" : undefined}>Workshop VDF</a> -->
 			<!-- <a class={`page-link ${isActivePath("/civ-icon-maker") ? "is-active" : ""}`} href="/civ-icon-maker" aria-current={isActivePath("/civ-icon-maker") ? "page" : undefined}>Civ Icon Maker</a> -->
 			<!-- <a class={`page-link ${isActivePath("/wiki") ? "is-active" : ""}`} href="/wiki" aria-current={isActivePath("/wiki") ? "page" : undefined}>Wiki Template</a> -->
 			<a class={`page-link ${isActivePath("/links") ? "is-active" : ""}`} href="/links" aria-current={isActivePath("/links") ? "page" : undefined}>Links</a>

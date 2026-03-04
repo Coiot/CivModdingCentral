@@ -202,7 +202,7 @@
 		civ_alpha_bundle: {
 			atlasType: "alpha",
 			sourceSize: 32,
-			sizeOptions: [24, 32],
+			sizeOptions: [24, 32, 48, 64, 128, 256],
 			fixedSizes: false,
 			showPreset: false,
 			showSizePicker: true,
@@ -214,7 +214,7 @@
 		religion_alpha_bundle: {
 			atlasType: "alpha",
 			sourceSize: 32,
-			sizeOptions: [16, 24, 32],
+			sizeOptions: [16, 24, 32, 48, 64, 80, 128],
 			fixedSizes: false,
 			showPreset: false,
 			showSizePicker: true,
@@ -1175,11 +1175,11 @@
 
 			{#if conversionMeta}
 				<div class="dds-meta">
-					<span>Input: {conversionMeta.sourceWidth}x{conversionMeta.sourceHeight}</span>
+					<!-- <span>Input: {conversionMeta.sourceWidth}x{conversionMeta.sourceHeight}</span> -->
 					{#if conversionMeta.outputWidth && conversionMeta.outputHeight}
 						<span>Output: {conversionMeta.outputWidth}x{conversionMeta.outputHeight}</span>
 					{/if}
-					<span>Format: {conversionMeta.format}</span>
+					<!-- <span>Format: {conversionMeta.format}</span> -->
 					{#if conversionMeta.bundleCount}
 						<span>Sheets: {conversionMeta.bundleCount}</span>
 					{/if}
