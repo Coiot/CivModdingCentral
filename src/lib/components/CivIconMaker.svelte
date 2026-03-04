@@ -51,10 +51,11 @@
 		bevel: {
 			enabled: true,
 			angleDeg: 300,
-			distance: 0.5,
-			blur: 1.5,
+			distance: 0.75,
+			blur: 2,
+			edgeSoftenPx: 0.5,
 			highlightColor: "#FFFFFF",
-			highlightOpacity: 0.75,
+			highlightOpacity: 0.9,
 			highlightBlend: "source-over",
 			shadowColor: "#000000",
 			shadowOpacity: 1,
@@ -69,7 +70,7 @@
 		{ id: "overlay_flash_copy", label: "Upper Sweep", file: "overlay flash copy.png", blendMode: "overlay", opacity: 1 },
 		{ id: "overlay_flash_copy_2", label: "Lower Sweep", file: "overlay flash copy 2.png", blendMode: "soft-light", opacity: 1 },
 		{ id: "overlay_flash", label: "Soft Flash", file: "overlay flash.png", blendMode: "hard-light", opacity: 1 },
-		{ id: "overlay_light_2", label: "Crown Glow", file: "overlay light 2.png", blendMode: "hard-light", opacity: 1 },
+		{ id: "overlay_light_2", label: "Crown Glow", file: "overlay light 2.png", blendMode: "hard-light", opacity: 0.75 },
 		{ id: "overlay_light", label: "Face Glow", file: "overlay light.png", blendMode: "overlay", opacity: 1 },
 		{ id: "overlay_shadow_2", label: "Edge Shade", file: "overlay shadow 2.png", blendMode: "soft-light", opacity: 1 },
 		{ id: "overlay_blue", label: "Cyan Shade", file: "overlay blue.png", blendMode: "hard-light", opacity: 1 },
@@ -1212,6 +1213,8 @@
 		const shiftX = vector.x * options.distance * RENDER_SCALE * direction;
 		const shiftY = vector.y * options.distance * RENDER_SCALE * direction;
 		const blurPx = Math.max(0, options.blur * RENDER_SCALE);
+		const edgeSoftenPx = Math.max(0, (options.edgeSoftenPx ?? 0) * RENDER_SCALE);
+		const edgeSoftenFilter = edgeSoftenPx > 0 ? `blur(${edgeSoftenPx}px)` : "none";
 
 		configureImageSmoothing(passCtx);
 		passCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
@@ -1219,9 +1222,12 @@
 		passCtx.drawImage(tintCanvas, drawX + shiftX, drawY + shiftY, drawWidth, drawHeight);
 		passCtx.filter = "none";
 		passCtx.globalCompositeOperation = "destination-in";
+		passCtx.filter = edgeSoftenFilter;
 		passCtx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
 		passCtx.globalCompositeOperation = "destination-out";
+		passCtx.filter = edgeSoftenFilter;
 		passCtx.drawImage(tintCanvas, drawX - shiftX, drawY - shiftY, drawWidth, drawHeight);
+		passCtx.filter = "none";
 		passCtx.globalCompositeOperation = "source-in";
 		passCtx.fillStyle = colorToRgba(options.color, options.opacity);
 		passCtx.fillRect(0, 0, RENDER_SIZE, RENDER_SIZE);
@@ -1243,6 +1249,7 @@
 			angleDeg: bevel.angleDeg,
 			distance: bevel.distance,
 			blur: bevel.blur,
+			edgeSoftenPx: bevel.edgeSoftenPx,
 			color: bevel.highlightColor,
 			opacity: bevel.highlightOpacity,
 			blendMode: bevel.highlightBlend,
@@ -1252,6 +1259,7 @@
 			angleDeg: bevel.angleDeg,
 			distance: bevel.distance,
 			blur: bevel.blur,
+			edgeSoftenPx: bevel.edgeSoftenPx,
 			color: bevel.shadowColor,
 			opacity: bevel.shadowOpacity,
 			blendMode: bevel.shadowBlend,
