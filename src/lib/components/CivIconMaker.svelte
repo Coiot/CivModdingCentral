@@ -37,7 +37,7 @@
 			blendMode: "multiply",
 			coreOpacity: 0.5,
 			coreBlurMultiplier: 3,
-			falloffOpacity: 0.5,
+			falloffOpacity: 0.85,
 			falloffBlurMultiplier: 2,
 			falloffDistanceMultiplier: 2,
 			tintFromIcon: true,
@@ -2180,11 +2180,11 @@
 	.civ-icon-suggestions {
 		display: grid;
 		gap: 1rem;
-		padding: 1rem;
-		border-radius: 1rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
 		background: var(--panel-bg);
 		box-shadow: 0 2px 4px var(--shadow-soft);
+		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border-radius: 1rem;
+		padding: 1rem;
 	}
 
 	.civ-icon-upload-panel {
@@ -2192,8 +2192,8 @@
 	}
 
 	.civ-icon-workspace {
-		grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
 		align-items: start;
+		grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
 	}
 
 	.civ-icon-suggestions {
@@ -2206,26 +2206,26 @@
 	}
 
 	.civ-icon-suggestion-controls {
+		align-items: center;
 		display: flex;
 		flex-wrap: wrap;
-		align-items: center;
 		gap: 0.5rem 0.75rem;
 	}
 
 	.civ-icon-inline-toggle {
-		display: inline-flex;
 		align-items: center;
+		display: inline-flex;
 		gap: 0.35rem;
-		font-size: 0.82rem;
 		color: var(--muted-ink);
+		font-size: 0.82rem;
 	}
 
 	.civ-icon-inline-number {
-		display: inline-flex;
 		align-items: center;
+		display: inline-flex;
 		gap: 0.38rem;
-		font-size: 0.82rem;
 		color: var(--muted-ink);
+		font-size: 0.82rem;
 	}
 
 	.civ-icon-inline-number input[type="number"] {
@@ -2234,20 +2234,20 @@
 
 	.civ-icon-scheme-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
 		gap: 0.65rem;
+		grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
 	}
 
 	.civ-icon-scheme-card {
+		cursor: pointer;
 		display: grid;
 		gap: 0.44rem;
-		padding: 0.62rem;
-		border-radius: 0.7rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
-		background: color-mix(in oklch, var(--panel-bg) 90%, var(--control-bg));
-		text-align: left;
 		color: var(--ink);
-		cursor: pointer;
+		text-align: left;
+		background: color-mix(in oklch, var(--panel-bg) 90%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border-radius: 0.7rem;
+		padding: 0.62rem;
 		transition:
 			transform 0.12s ease,
 			border-color 0.12s ease,
@@ -2256,8 +2256,8 @@
 
 	.civ-icon-scheme-card:hover {
 		transform: translateY(-1px);
-		border-color: color-mix(in oklch, var(--accent) 44%, var(--panel-border));
 		box-shadow: 0 4px 10px color-mix(in oklch, var(--shadow-soft) 70%, transparent);
+		border-color: color-mix(in oklch, var(--accent) 44%, var(--panel-border));
 	}
 
 	.civ-icon-scheme-title {
@@ -2266,22 +2266,22 @@
 	}
 
 	.civ-icon-scheme-preview {
-		display: block;
 		position: relative;
-		inline-size: 8rem;
 		block-size: 8rem;
-		border-radius: 0.35rem;
+		inline-size: 8rem;
+		display: block;
 		background: var(--scheme-outer);
 		border: 1px solid color-mix(in oklch, var(--accent) 14%, var(--panel-border));
+		border-radius: 0.35rem;
 		overflow: hidden;
 	}
 
 	.civ-icon-scheme-inner-square {
-		position: absolute;
-		inline-size: 4rem;
-		block-size: 4rem;
-		inset-inline-start: 2rem;
 		inset-block-start: 2rem;
+		inset-inline-start: 2rem;
+		position: absolute;
+		block-size: 4rem;
+		inline-size: 4rem;
 		border-left: 4rem solid var(--scheme-inner);
 	}
 
@@ -2291,30 +2291,30 @@
 	}
 
 	.civ-icon-scheme-color-title {
-		font-size: 0.72rem;
-		font-weight: 600;
 		color: var(--ink);
 		opacity: 0.88;
+		font-size: 0.72rem;
+		font-weight: 600;
 	}
 
 	.civ-icon-title {
-		margin: 0;
-		font-size: clamp(1.08rem, 1.4vw, 1.35rem);
 		font-family: "Rockwell", "Palatino Linotype", serif;
+		font-size: clamp(1.08rem, 1.4vw, 1.35rem);
 		text-box: trim-both cap alphabetic;
+		margin: 0;
 	}
 
 	.civ-icon-subtitle {
-		margin: 0;
-		font-size: 0.98rem;
 		font-family: "Rockwell", "Palatino Linotype", serif;
+		font-size: 0.98rem;
+		margin: 0;
 	}
 
 	.civ-icon-copy {
-		margin: 0;
+		color: var(--muted-ink);
 		font-size: 0.88rem;
 		line-height: 1.35;
-		color: var(--muted-ink);
+		margin: 0;
 	}
 
 	.civ-icon-dropzone {
@@ -2344,10 +2344,10 @@
 	}
 
 	.civ-icon-dropzone input[type="file"] {
-		position: absolute;
 		inset: 0;
-		opacity: 0;
+		position: absolute;
 		cursor: pointer;
+		opacity: 0;
 	}
 
 	.civ-icon-preview-column {
@@ -2357,39 +2357,39 @@
 
 	.civ-icon-preview-wrap {
 		display: grid;
-		place-items: center;
 		gap: 0.6rem;
-		padding: 1rem;
+		place-items: center;
+		background-size: 26px 26px;
+		border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--panel-border));
 		border-radius: 0.7rem;
+		padding: 1rem;
 		background:
 			linear-gradient(45deg, color-mix(in oklch, var(--control-bg) 78%, black) 25%, transparent 25%, transparent 75%, color-mix(in oklch, var(--control-bg) 78%, black) 75%),
 			linear-gradient(45deg, color-mix(in oklch, var(--control-bg) 86%, black) 25%, transparent 25%, transparent 75%, color-mix(in oklch, var(--control-bg) 86%, black) 75%);
-		background-size: 26px 26px;
 		background-position:
 			0 0,
 			13px 13px;
-		border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--panel-border));
 	}
 
 	.civ-icon-preview-note {
-		margin: 0;
-		padding: 0.24rem 0.62rem;
-		border-radius: 999px;
-		font-size: 0.72rem;
-		line-height: 1.2;
-		letter-spacing: 0.01em;
-		font-weight: 600;
 		color: color-mix(in oklch, white 88%, var(--ink));
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.01em;
+		line-height: 1.2;
 		background: color-mix(in oklch, var(--panel-bg) 62%, black 38%);
-		border: 1px solid color-mix(in oklch, white 16%, var(--panel-border));
 		box-shadow: 0 1px 2px color-mix(in oklch, black 30%, transparent);
+		border: 1px solid color-mix(in oklch, white 16%, var(--panel-border));
+		border-radius: 999px;
+		padding: 0.24rem 0.62rem;
+		margin: 0;
 	}
 
 	.civ-icon-preview-stack {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		gap: 0.6rem;
 		inline-size: 100%;
+		display: grid;
+		gap: 0.6rem;
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	.civ-icon-preview-stack.is-compare {
@@ -2403,11 +2403,11 @@
 	}
 
 	.civ-icon-preview-pane-label {
-		font-size: 0.74rem;
 		color: var(--muted-ink);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
+		font-size: 0.74rem;
 		font-weight: 600;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
 	}
 
 	.civ-icon-preview {
@@ -2431,8 +2431,8 @@
 	}
 
 	.civ-icon-preview-stack.is-compare .civ-icon-preview {
-		inline-size: min(34vw, 280px);
 		block-size: min(34vw, 280px);
+		inline-size: min(34vw, 280px);
 	}
 
 	.civ-icon-preview:focus-visible {
@@ -2442,10 +2442,10 @@
 	.civ-icon-controls-panel {
 		display: grid;
 		gap: 1.25rem;
-		padding: 1rem;
-		border-radius: 0.8rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 16%, var(--panel-border));
 		background: color-mix(in oklch, var(--panel-bg) 88%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, var(--accent) 16%, var(--panel-border));
+		border-radius: 0.8rem;
+		padding: 1rem;
 	}
 
 	.civ-icon-control-group {
@@ -2456,8 +2456,8 @@
 	.civ-icon-controls-panel .civ-icon-input-label {
 		display: grid;
 		gap: 0.35rem;
-		font-size: 0.86rem;
 		color: var(--muted-ink);
+		font-size: 0.86rem;
 	}
 
 	.civ-icon-controls-panel input[type="number"],
@@ -2468,32 +2468,32 @@
 
 	.civ-icon-controls-panel input[type="number"],
 	.civ-icon-controls-panel input[type="text"] {
-		background: var(--input-bg);
 		color: var(--ink);
+		background: var(--input-bg);
 		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
 		border-radius: 0.5rem;
 		padding: 0.42rem 0.58rem;
 	}
 
 	.civ-icon-controls-panel select {
-		background: var(--input-bg);
 		color: var(--ink);
+		background: var(--input-bg);
 		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
 		border-radius: 0.5rem;
 		padding: 0.42rem 0.58rem;
 	}
 
 	.civ-icon-scale-row {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) 86px;
-		gap: 0.45rem;
 		align-items: center;
+		display: grid;
+		gap: 0.45rem;
+		grid-template-columns: minmax(0, 1fr) 86px;
 	}
 
 	.civ-icon-offset-row {
 		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 0.45rem;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
 	.civ-icon-actions {
@@ -2508,18 +2508,18 @@
 	}
 
 	.civ-icon-button {
-		text-decoration: none;
-		display: inline-flex;
 		align-items: center;
+		cursor: pointer;
+		display: inline-flex;
 		justify-content: center;
-		border-radius: 0.6rem;
-		padding: 0.5rem 0.75rem;
+		color: var(--ink);
 		font-size: 0.84rem;
 		font-weight: 550;
+		text-decoration: none;
 		background: color-mix(in oklch, var(--accent) 10%, var(--control-bg));
 		border: 1px solid color-mix(in oklch, var(--accent) 28%, var(--panel-border));
-		color: var(--ink);
-		cursor: pointer;
+		border-radius: 0.6rem;
+		padding: 0.5rem 0.75rem;
 		transition:
 			transform 0.12s ease,
 			background-color 0.12s ease,
@@ -2531,15 +2531,15 @@
 	}
 
 	.civ-icon-button:disabled {
-		opacity: 0.55;
-		cursor: not-allowed;
 		transform: none;
+		cursor: not-allowed;
+		opacity: 0.55;
 	}
 
 	.civ-icon-button-primary {
+		font-weight: 640;
 		background: color-mix(in oklch, var(--accent) 28%, var(--control-bg));
 		border-color: color-mix(in oklch, var(--accent) 44%, var(--panel-border));
-		font-weight: 640;
 	}
 
 	.civ-icon-button-subtle {
@@ -2556,17 +2556,17 @@
 	}
 
 	.civ-icon-swiatlo-group {
+		background: linear-gradient(180deg, hsl(220deg 10% 20% / 0.9), hsl(220deg 10% 13% / 0.92)), color-mix(in oklch, var(--panel-bg) 85%, var(--control-bg));
 		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
 		border-radius: 0.68rem;
 		padding: 1rem;
-		background: linear-gradient(180deg, hsl(220deg 10% 20% / 0.9), hsl(220deg 10% 13% / 0.92)), color-mix(in oklch, var(--panel-bg) 85%, var(--control-bg));
 	}
 
 	.civ-icon-swiatlo-head {
-		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		display: flex;
 		gap: 0.45rem;
+		justify-content: space-between;
 	}
 
 	.civ-icon-swiatlo-head .civ-icon-subtitle {
@@ -2574,27 +2574,27 @@
 	}
 
 	.civ-icon-swiatlo-toggle {
-		display: inline-flex;
 		align-items: center;
+		display: inline-flex;
 		gap: 0.35rem;
-		font-size: 0.78rem;
 		color: color-mix(in oklch, white 72%, var(--ink));
+		font-size: 0.78rem;
 	}
 
 	.civ-icon-swiatlo-accordion,
 	.civ-icon-swiatlo-layers-accordion {
+		background: hsl(220deg 10% 14% / 0.88);
 		border: 1px solid hsl(0deg 0% 100% / 0.09);
 		border-radius: 0.55rem;
-		background: hsl(220deg 10% 14% / 0.88);
 	}
 
 	.civ-icon-swiatlo-accordion > summary,
 	.civ-icon-swiatlo-layers-accordion > summary {
 		cursor: pointer;
-		padding: 0.45rem 0.58rem;
+		color: color-mix(in oklch, white 78%, var(--ink));
 		font-size: 0.82rem;
 		font-weight: 600;
-		color: color-mix(in oklch, white 78%, var(--ink));
+		padding: 0.45rem 0.58rem;
 	}
 
 	.civ-icon-swiatlo-accordion-body {
@@ -2630,37 +2630,37 @@
 	}
 
 	.civ-icon-swiatlo-main {
-		display: flex;
 		align-items: center;
+		cursor: pointer;
+		display: flex;
 		gap: 0.46rem;
-		background: transparent;
-		border: 0;
 		color: color-mix(in oklch, white 82%, var(--ink));
 		text-align: left;
+		background: transparent;
+		border: 0;
 		padding: 0.42rem 0.45rem;
-		cursor: pointer;
 	}
 
 	.civ-icon-swiatlo-thumb {
-		display: block;
-		inline-size: 2.1rem;
 		block-size: 1.35rem;
-		border-radius: 0.42rem;
-		border: 1px solid hsl(0deg 0% 100% / 0.15);
+		inline-size: 2.1rem;
+		display: block;
 		background-position: center;
-		background-size: cover;
 		background-repeat: no-repeat;
+		background-size: cover;
 		box-shadow: inset 0 0 0 1px hsl(0deg 0% 100% / 0.04);
+		border: 1px solid hsl(0deg 0% 100% / 0.15);
+		border-radius: 0.42rem;
 	}
 
 	.civ-icon-swiatlo-eye {
 		inline-size: 2rem;
+		cursor: pointer;
+		color: hsl(0deg 0% 74%);
+		font-size: 0.8rem;
+		background: hsl(220deg 10% 14% / 0.95);
 		border: 0;
 		border-left: 1px solid hsl(0deg 0% 100% / 0.08);
-		background: hsl(220deg 10% 14% / 0.95);
-		color: hsl(0deg 0% 74%);
-		cursor: pointer;
-		font-size: 0.8rem;
 	}
 
 	.civ-icon-swiatlo-eye.is-visible {
@@ -2672,8 +2672,8 @@
 	}
 
 	.civ-icon-status {
-		margin: 0;
 		font-size: 0.88rem;
+		margin: 0;
 	}
 
 	.civ-icon-error {
@@ -2685,10 +2685,10 @@
 	}
 
 	.color-row {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		gap: 0.5rem;
 		min-inline-size: 0;
+		display: grid;
+		gap: 0.5rem;
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	.color-field {
@@ -2703,10 +2703,10 @@
 	}
 
 	.color-picker-row {
-		display: flex;
-		align-items: center;
-		gap: 0.45rem;
 		min-inline-size: 0;
+		align-items: center;
+		display: flex;
+		gap: 0.45rem;
 	}
 
 	.color-swatch-control {
@@ -2722,47 +2722,47 @@
 		border-radius: 0.45rem;
 
 		& input[type="color"] {
+			inset: 0;
 			position: absolute;
 			z-index: 2;
-			inset: 0;
-			inline-size: 100%;
 			block-size: 100%;
-			margin: 0;
-			padding: 0;
-			border: 0;
-			background: transparent;
-			opacity: 0;
+			inline-size: 100%;
 			cursor: pointer;
-			appearance: none;
+			opacity: 0;
+			background: transparent;
+			border: 0;
+			padding: 0;
+			margin: 0;
 			-webkit-appearance: none;
+			appearance: none;
 		}
 
 		& .color-preview {
+			inset: 0;
 			position: absolute;
 			z-index: 1;
-			inset: 0;
-			display: block;
-			inline-size: 100%;
 			block-size: 100%;
-			border: 1px solid var(--panel-border);
-			border-radius: inherit;
+			inline-size: 100%;
+			display: block;
+			pointer-events: none;
 			background: var(--preview, hsl(0deg 0% 0%));
 			box-shadow: inset 0 0 0 1px hsl(0deg 0% 100% / 0.3);
-			pointer-events: none;
+			border: 1px solid var(--panel-border);
+			border-radius: inherit;
 		}
 	}
 
 	.color-hex-input {
-		flex: 1;
 		min-inline-size: 0;
+		flex: 1;
 		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 		text-transform: uppercase;
 	}
 
 	.color-value {
-		font-size: 0.74rem;
 		color: var(--muted-ink);
 		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.74rem;
 		line-height: 1.2;
 		overflow-wrap: anywhere;
 	}
@@ -2808,9 +2808,9 @@
 		}
 
 		.civ-icon-swiatlo-eye {
+			color: color-mix(in oklch, var(--ink) 64%, black 20%);
 			background: color-mix(in oklch, white 82%, var(--control-bg));
 			border-left-color: color-mix(in oklch, var(--accent) 14%, var(--panel-border));
-			color: color-mix(in oklch, var(--ink) 64%, black 20%);
 		}
 
 		.civ-icon-swiatlo-eye.is-visible {
@@ -2827,19 +2827,19 @@
 
 		.civ-icon-preview-pane-label {
 			color: color-mix(in oklch, var(--ink) 86%, black 8%);
+			line-height: 1.2;
 			background: color-mix(in oklch, white 86%, var(--panel-bg));
+			box-shadow: 0 1px 2px color-mix(in oklch, black 8%, transparent);
 			border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--panel-border));
 			border-radius: 999px;
 			padding: 0.12rem 0.48rem;
-			line-height: 1.2;
-			box-shadow: 0 1px 2px color-mix(in oklch, black 8%, transparent);
 		}
 
 		.civ-icon-preview-note {
 			color: color-mix(in oklch, var(--ink) 88%, black 12%);
 			background: color-mix(in oklch, white 92%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--accent) 24%, var(--panel-border));
 			box-shadow: 0 1px 2px color-mix(in oklch, black 8%, transparent);
+			border-color: color-mix(in oklch, var(--accent) 24%, var(--panel-border));
 		}
 
 		.civ-icon-scheme-card {
@@ -2848,8 +2848,8 @@
 		}
 
 		.civ-icon-scheme-card:hover {
-			border-color: color-mix(in oklch, var(--accent) 46%, var(--panel-border));
 			box-shadow: 0 4px 10px color-mix(in oklch, black 10%, transparent);
+			border-color: color-mix(in oklch, var(--accent) 46%, var(--panel-border));
 		}
 
 		.civ-icon-success {
@@ -2867,8 +2867,8 @@
 		}
 
 		.civ-icon-preview {
-			inline-size: min(86vw, 560px);
 			block-size: min(86vw, 560px);
+			inline-size: min(86vw, 560px);
 		}
 
 		.civ-icon-preview-stack.is-compare {
@@ -2876,8 +2876,8 @@
 		}
 
 		.civ-icon-preview-stack.is-compare .civ-icon-preview {
-			inline-size: min(86vw, 560px);
 			block-size: min(86vw, 560px);
+			inline-size: min(86vw, 560px);
 		}
 	}
 

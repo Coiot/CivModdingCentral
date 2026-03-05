@@ -927,7 +927,6 @@
 
 <section class="dds-page">
 	<header class="hero dds-hero">
-		<p class="eyebrow">Texture Tools</p>
 		<h1>PNG to DDS Converter</h1>
 		<p>Choose a workflow and export Civ5-ready DDS outputs.</p>
 	</header>

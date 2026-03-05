@@ -93,7 +93,6 @@ body {
 }
 
 .hero p {
-	max-inline-size: 90ch;
 	color: var(--muted-ink);
 	margin-block: 0;
 }

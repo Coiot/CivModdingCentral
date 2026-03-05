@@ -6,6 +6,8 @@
 	import DdsConverter from "./lib/components/DdsConverter.svelte";
 	import CivIconMaker from "./lib/components/CivIconMaker.svelte";
 	import WorkshopVdfBuilder from "./lib/components/WorkshopVdfBuilder.svelte";
+	import ModInfoBuilder from "./lib/components/ModInfoBuilder.svelte";
+	import Civ5ModMaker from "./lib/components/Civ5ModMaker.svelte";
 
 	const THEME_STORAGE_KEY = "cmc-theme-mode";
 	const AUTH_STORAGE_KEY = "cmc-auth-session";
@@ -162,7 +164,14 @@
 	});
 
 	$effect(() => {
-		if (currentPath === "/links" || currentPath === "/dds-converter" || currentPath === "/civ-icon-maker" || currentPath === "/workshop-vdf") {
+		if (
+			currentPath === "/links" ||
+			currentPath === "/dds-converter" ||
+			currentPath === "/civ-icon-maker" ||
+			currentPath === "/workshop-vdf" ||
+			currentPath === "/modinfo-builder" ||
+			currentPath === "/civ5mod-maker"
+		) {
 			return;
 		}
 		void ensureMapViewerLoaded();
@@ -732,6 +741,10 @@
 				<CivIconMaker />
 			{:else if currentPath === "/workshop-vdf"}
 				<WorkshopVdfBuilder />
+			{:else if currentPath === "/modinfo-builder"}
+				<ModInfoBuilder />
+			{:else if currentPath === "/civ5mod-maker"}
+				<Civ5ModMaker />
 			{:else if mapViewerLoadError}
 				<p class="status error">{mapViewerLoadError}</p>
 			{:else if MapViewerComponent}
