@@ -1,6 +1,4 @@
 <script>
-	import { buildZipBlob } from "../map/zip.js";
-
 	let fileInputEl = $state(null);
 	let sourceFiles = $state([]);
 	let outputFileName = $state("my-mod.civ5mod");
@@ -28,6 +26,20 @@
 		return safe.toLowerCase().endsWith(".civ5mod") ? safe : `${safe}.civ5mod`;
 	}
 
+	function sanitizeArchiveSegment(value, fallback = "mod") {
+		const raw = String(value || "")
+			.replace(/[\\/]+/g, " ")
+			.trim();
+		const next = raw
+			.replace(/[^a-zA-Z0-9._ -]+/g, "_")
+			.replace(/\s+/g, " ")
+			.trim();
+		if (!next || next === "." || next === "..") {
+			return fallback;
+		}
+		return next;
+	}
+
 	function deriveArchivePath(file) {
 		const raw = String(file?.webkitRelativePath || file?.name || "").replace(/\\/g, "/");
 		if (!raw) {
@@ -44,6 +56,19 @@
 		}
 
 		return parts.join("/");
+	}
+
+	function deriveTopLevelFolderName(filesList, archiveName) {
+		const first = filesList[0];
+		const relative = String(first?.webkitRelativePath || "").replace(/\\/g, "/");
+		const fromSource = relative.split("/").filter(Boolean)[0];
+		if (fromSource) {
+			return sanitizeArchiveSegment(fromSource, "mod");
+		}
+		const fromArchive = String(archiveName || "")
+			.replace(/\.civ5mod$/i, "")
+			.trim();
+		return sanitizeArchiveSegment(fromArchive || "mod", "mod");
 	}
 
 	function suggestOutputName(filesList) {
@@ -113,13 +138,44 @@
 		}
 	}
 
+	async function parseBuildError(response) {
+		try {
+			const payload = await response.json();
+			if (payload?.error) {
+				return String(payload.error);
+			}
+		} catch {
+			// Ignore JSON parse errors.
+		}
+		return `Build failed with status ${response.status}.`;
+	}
+
+	async function buildCiv5modBlob(entries, archiveName, rootFolderName) {
+		const formData = new FormData();
+		formData.set("outputFileName", archiveName);
+		formData.set("rootFolderName", rootFolderName);
+		for (let index = 0; index < entries.length; index += 1) {
+			const entry = entries[index];
+			formData.set(`entryPath_${index}`, entry.name);
+			formData.set(`entryFile_${index}`, entry.file, entry.file.name || `entry-${index}`);
+		}
+		const response = await fetch("/.netlify/functions/build-civ5mod", {
+			method: "POST",
+			body: formData,
+		});
+		if (!response.ok) {
+			throw new Error(await parseBuildError(response));
+		}
+		return await response.blob();
+	}
+
 	async function buildCiv5mod() {
 		if (!canBuild) {
 			return;
 		}
 
 		buildBusy = true;
-		buildStatus = "Building archive...";
+		buildStatus = "Preparing files...";
 		try {
 			const entries = [];
 			for (const file of sourceFiles) {
@@ -127,8 +183,7 @@
 				if (!name) {
 					continue;
 				}
-				const bytes = new Uint8Array(await file.arrayBuffer());
-				entries.push({ name, content: bytes });
+				entries.push({ name, file });
 			}
 
 			if (!entries.length) {
@@ -136,15 +191,17 @@
 				return;
 			}
 
-			const zipBlob = buildZipBlob(entries);
 			const archiveName = normalizeOutputFileName(outputFileName);
-			const url = URL.createObjectURL(zipBlob);
+			const rootFolderName = deriveTopLevelFolderName(sourceFiles, archiveName);
+			buildStatus = "Uploading and building 7z archive...";
+			const archiveBlob = await buildCiv5modBlob(entries, archiveName, rootFolderName);
+			const url = URL.createObjectURL(archiveBlob);
 			const link = document.createElement("a");
 			link.href = url;
 			link.download = archiveName;
 			link.click();
 			URL.revokeObjectURL(url);
-			buildStatus = `Built ${archiveName} with ${entries.length} files.`;
+			buildStatus = `Built ${archiveName} with ${entries.length} files (7z format).`;
 		} catch (error) {
 			buildStatus = error?.message || "Unable to build .civ5mod archive right now.";
 		} finally {
@@ -156,7 +213,7 @@
 <section class="civ5mod-page">
 	<header class="hero civ5mod-hero">
 		<h1>.civ5mod Ziper</h1>
-		<p>Pack a local mod folder into a .civ5mod archive directly in browser. The archive uses zip format with a .civ5mod extension.</p>
+		<p>Pack a local mod folder into a true <code>7z</code>-format <code>.civ5mod</code> archive.</p>
 	</header>
 
 	<div class="civ5mod-guide-row">
@@ -172,7 +229,7 @@
 		<section class="civ5mod-guide">
 			<h2>About .civ5mod Files</h2>
 			<ul>
-				<li>A ".civ5mod" is just a zipped mod package with a different extension.</li>
+				<li>A ".civ5mod" is just a compressed 7z archives package with a unique extension name.</li>
 				<li>The generated file can be used directly in this uploader’s <strong>New Upload</strong> or <strong>Update Existing</strong> tabs.</li>
 				<li>The game reads ".civ5mod" files in your "MODS" directory and any directory with a valid ".modinfo" file.</li>
 			</ul>
@@ -426,6 +483,6 @@
 	@media (max-width: 900px) {
 		.civ5mod-guide-row {
 			grid-template-columns: 1fr;
-	}
+		}
 	}
 </style>
