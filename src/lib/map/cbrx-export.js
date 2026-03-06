@@ -1,3 +1,5 @@
+import { md5HexText } from "../civ5mod/modinfo.js";
+
 const DEFAULT_TABLE_NAME = "Civilization_TSLs";
 
 function normalizeCivKey(value) {
@@ -19,86 +21,7 @@ function buildDefaultGameDefineName(value) {
 }
 
 function md5Hex(input) {
-	const data = new TextEncoder().encode(String(input || ""));
-	const bytes = Array.from(data);
-	const toHex = (value) => value.toString(16).padStart(2, "0");
-
-	const rotateLeft = (value, shift) => ((value << shift) | (value >>> (32 - shift))) >>> 0;
-	const add32 = (a, b) => (a + b) >>> 0;
-
-	const s = [
-		7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 6, 10, 15, 21,
-		6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21,
-	];
-
-	const k = new Array(64).fill(0).map((_, i) => Math.floor(Math.abs(Math.sin(i + 1)) * 0x100000000) >>> 0);
-
-	const originalBitLen = bytes.length * 8;
-	bytes.push(0x80);
-	while (bytes.length % 64 !== 56) {
-		bytes.push(0);
-	}
-	for (let i = 0; i < 8; i += 1) {
-		bytes.push((originalBitLen >>> (8 * i)) & 0xff);
-	}
-
-	let a0 = 0x67452301;
-	let b0 = 0xefcdab89;
-	let c0 = 0x98badcfe;
-	let d0 = 0x10325476;
-
-	for (let offset = 0; offset < bytes.length; offset += 64) {
-		const m = new Array(16).fill(0);
-		for (let i = 0; i < 16; i += 1) {
-			const start = offset + i * 4;
-			m[i] = bytes[start] | (bytes[start + 1] << 8) | (bytes[start + 2] << 16) | (bytes[start + 3] << 24);
-		}
-
-		let a = a0;
-		let b = b0;
-		let c = c0;
-		let d = d0;
-
-		for (let i = 0; i < 64; i += 1) {
-			let f = 0;
-			let g = 0;
-
-			if (i < 16) {
-				f = (b & c) | (~b & d);
-				g = i;
-			} else if (i < 32) {
-				f = (d & b) | (~d & c);
-				g = (5 * i + 1) % 16;
-			} else if (i < 48) {
-				f = b ^ c ^ d;
-				g = (3 * i + 5) % 16;
-			} else {
-				f = c ^ (b | ~d);
-				g = (7 * i) % 16;
-			}
-
-			const temp = d;
-			d = c;
-			c = b;
-			const sum = add32(add32(a, f), add32(k[i], m[g]));
-			b = add32(b, rotateLeft(sum, s[i]));
-			a = temp;
-		}
-
-		a0 = add32(a0, a);
-		b0 = add32(b0, b);
-		c0 = add32(c0, c);
-		d0 = add32(d0, d);
-	}
-
-	const result = [a0, b0, c0, d0]
-		.map((value) => [value & 0xff, (value >>> 8) & 0xff, (value >>> 16) & 0xff, (value >>> 24) & 0xff])
-		.flat()
-		.map(toHex)
-		.join("")
-		.toUpperCase();
-
-	return result;
+	return md5HexText(input);
 }
 
 function parseIslandFlag(value) {

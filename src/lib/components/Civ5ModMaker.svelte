@@ -30,20 +30,6 @@
 		return safe.toLowerCase().endsWith(".civ5mod") ? safe : `${safe}.civ5mod`;
 	}
 
-	function sanitizeArchiveSegment(value, fallback = "mod") {
-		const raw = String(value || "")
-			.replace(/[\\/]+/g, " ")
-			.trim();
-		const next = raw
-			.replace(/[^a-zA-Z0-9._ -]+/g, "_")
-			.replace(/\s+/g, " ")
-			.trim();
-		if (!next || next === "." || next === "..") {
-			return fallback;
-		}
-		return next;
-	}
-
 	function deriveArchivePath(file) {
 		const raw = String(file?.webkitRelativePath || file?.name || "").replace(/\\/g, "/");
 		if (!raw) {
@@ -61,20 +47,6 @@
 
 		return parts.join("/");
 	}
-
-	function deriveTopLevelFolderName(filesList, archiveName) {
-		const first = filesList[0];
-		const relative = String(first?.webkitRelativePath || "").replace(/\\/g, "/");
-		const fromSource = relative.split("/").filter(Boolean)[0];
-		if (fromSource) {
-			return sanitizeArchiveSegment(fromSource, "mod");
-		}
-		const fromArchive = String(archiveName || "")
-			.replace(/\.civ5mod$/i, "")
-			.trim();
-		return sanitizeArchiveSegment(fromArchive || "mod", "mod");
-	}
-
 	function suggestOutputName(filesList) {
 		const first = filesList[0];
 		if (!first) {
@@ -154,7 +126,7 @@
 		return buildWorker;
 	}
 
-	function buildCiv5modBlob(entries, archiveName, rootFolderName) {
+	function buildCiv5modBlob(entries, archiveName) {
 		return new Promise((resolve, reject) => {
 			const worker = ensureBuildWorker();
 
@@ -196,7 +168,6 @@
 			worker.postMessage({
 				type: "build",
 				archiveName,
-				rootFolderName,
 				entries: entries.map((entry) => ({
 					path: entry.name,
 					file: entry.file,
@@ -228,9 +199,8 @@
 			}
 
 			const archiveName = normalizeOutputFileName(outputFileName);
-			const rootFolderName = deriveTopLevelFolderName(sourceFiles, archiveName);
 			buildStatus = "Starting local 7z build...";
-			const archiveBlob = await buildCiv5modBlob(entries, archiveName, rootFolderName);
+			const archiveBlob = await buildCiv5modBlob(entries, archiveName);
 			const url = URL.createObjectURL(archiveBlob);
 			const link = document.createElement("a");
 			link.href = url;
