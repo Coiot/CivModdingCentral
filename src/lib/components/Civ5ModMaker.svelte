@@ -139,15 +139,20 @@
 	}
 
 	async function parseBuildError(response) {
+		let textFallback = "";
 		try {
 			const payload = await response.json();
 			if (payload?.error) {
 				return String(payload.error);
 			}
 		} catch {
-			// Ignore JSON parse errors.
+			try {
+				textFallback = (await response.text()) || "";
+			} catch {
+				// Ignore text parse errors.
+			}
 		}
-		return `Build failed with status ${response.status}.`;
+		return textFallback.trim() || `Build failed with status ${response.status}.`;
 	}
 
 	async function buildCiv5modBlob(entries, archiveName, rootFolderName) {

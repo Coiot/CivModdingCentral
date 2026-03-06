@@ -230,10 +230,9 @@ async function build7zArchive({ cwd, rootFolderName, outputFileName }) {
 		throw createHttpError(500, "7zip binary is not available in this deployment.");
 	}
 	try {
-		await fs.access(path7za, fsConstants.F_OK);
-		await fs.chmod(path7za, 0o755);
+		await fs.access(path7za, fsConstants.X_OK);
 	} catch (error) {
-		throw createHttpError(500, `7zip binary is missing or not executable at "${path7za}". Ensure Netlify includes node_modules/7zip-bin/**.`);
+		throw createHttpError(500, `7zip binary is missing or not executable at "${path7za}". Ensure Netlify includes node_modules/7zip-bin/** and preserves executable permissions.`);
 	}
 
 	const args = ["a", "-t7z", "-mx=9", "-bd", outputFileName, rootFolderName];
