@@ -1,12 +1,16 @@
 <script>
+	import { onDestroy } from "svelte";
+
 	let fileInputEl = $state(null);
 	let sourceFiles = $state([]);
 	let outputFileName = $state("my-mod.civ5mod");
 	let buildBusy = $state(false);
 	let buildStatus = $state("");
 	let dragOver = $state(false);
+	let buildWorker = null;
 
 	const fileCount = $derived.by(() => sourceFiles.length);
+	const totalSourceBytes = $derived.by(() => sourceFiles.reduce((sum, file) => sum + Number(file?.size || 0), 0));
 	const rootModinfoFound = $derived.by(() => sourceFiles.map((file) => deriveArchivePath(file)).some((path) => path && !path.includes("/") && path.toLowerCase().endsWith(".modinfo")));
 	const requiredIssues = $derived.by(() => {
 		const issues = [];
@@ -138,40 +142,67 @@
 		}
 	}
 
-	async function parseBuildError(response) {
-		let textFallback = "";
-		try {
-			const payload = await response.json();
-			if (payload?.error) {
-				return String(payload.error);
-			}
-		} catch {
-			try {
-				textFallback = (await response.text()) || "";
-			} catch {
-				// Ignore text parse errors.
-			}
+	function ensureBuildWorker() {
+		if (buildWorker) {
+			return buildWorker;
 		}
-		return textFallback.trim() || `Build failed with status ${response.status}.`;
+
+		buildWorker = new Worker(new URL("../workers/civ5mod-7z.worker.js", import.meta.url), {
+			type: "module",
+		});
+
+		return buildWorker;
 	}
 
-	async function buildCiv5modBlob(entries, archiveName, rootFolderName) {
-		const formData = new FormData();
-		formData.set("outputFileName", archiveName);
-		formData.set("rootFolderName", rootFolderName);
-		for (let index = 0; index < entries.length; index += 1) {
-			const entry = entries[index];
-			formData.set(`entryPath_${index}`, entry.name);
-			formData.set(`entryFile_${index}`, entry.file, entry.file.name || `entry-${index}`);
-		}
-		const response = await fetch("/.netlify/functions/build-civ5mod", {
-			method: "POST",
-			body: formData,
+	function buildCiv5modBlob(entries, archiveName, rootFolderName) {
+		return new Promise((resolve, reject) => {
+			const worker = ensureBuildWorker();
+
+			const cleanup = () => {
+				worker.removeEventListener("message", onMessage);
+				worker.removeEventListener("error", onError);
+			};
+
+			const onMessage = (event) => {
+				const payload = event?.data;
+				if (!payload || typeof payload !== "object") {
+					return;
+				}
+
+				if (payload.type === "status") {
+					buildStatus = payload.message || "";
+					return;
+				}
+
+				if (payload.type === "result") {
+					cleanup();
+					resolve(new Blob([payload.archiveBytes], { type: "application/x-7z-compressed" }));
+					return;
+				}
+
+				if (payload.type === "error") {
+					cleanup();
+					reject(new Error(payload.message || "Unable to build the archive in this browser."));
+				}
+			};
+
+			const onError = () => {
+				cleanup();
+				reject(new Error("The browser worker failed while building the archive."));
+			};
+
+			worker.addEventListener("message", onMessage);
+			worker.addEventListener("error", onError);
+			worker.postMessage({
+				type: "build",
+				archiveName,
+				rootFolderName,
+				entries: entries.map((entry) => ({
+					path: entry.name,
+					file: entry.file,
+				})),
+			});
 		});
-		if (!response.ok) {
-			throw new Error(await parseBuildError(response));
-		}
-		return await response.blob();
 	}
 
 	async function buildCiv5mod() {
@@ -198,7 +229,7 @@
 
 			const archiveName = normalizeOutputFileName(outputFileName);
 			const rootFolderName = deriveTopLevelFolderName(sourceFiles, archiveName);
-			buildStatus = "Uploading and building 7z archive...";
+			buildStatus = "Starting local 7z build...";
 			const archiveBlob = await buildCiv5modBlob(entries, archiveName, rootFolderName);
 			const url = URL.createObjectURL(archiveBlob);
 			const link = document.createElement("a");
@@ -206,19 +237,24 @@
 			link.download = archiveName;
 			link.click();
 			URL.revokeObjectURL(url);
-			buildStatus = `Built ${archiveName} with ${entries.length} files (7z format).`;
+			buildStatus = `Built ${archiveName} locally with ${entries.length} files (7z format).`;
 		} catch (error) {
 			buildStatus = error?.message || "Unable to build .civ5mod archive right now.";
 		} finally {
 			buildBusy = false;
 		}
 	}
+
+	onDestroy(() => {
+		buildWorker?.terminate?.();
+		buildWorker = null;
+	});
 </script>
 
 <section class="civ5mod-page">
 	<header class="hero civ5mod-hero">
 		<h1>.civ5mod Ziper</h1>
-		<p>Pack a local mod folder into a true <code>7z</code>-format <code>.civ5mod</code> archive.</p>
+		<p>Pack a local mod folder into a true <code>7z</code>-format <code>.civ5mod</code> archive, built directly in your browser.</p>
 	</header>
 
 	<div class="civ5mod-guide-row">
@@ -244,6 +280,7 @@
 			<ul>
 				<li>Directory selection uses browser support for folder uploads.</li>
 				<li>If your browser blocks folder upload, pick individual files as a fallback.</li>
+				<li>The archive is built locally on your device, so large mods are no longer limited by Netlify upload size.</li>
 				<li>This page does not upload to Steam directly. It only builds the archive file.</li>
 				<li>You can download and use our custom Workshop Uploader to share your mod.</li>
 			</ul>
@@ -264,12 +301,9 @@
 			ondrop={onDropzoneDrop}
 		>
 			<p class="civ5mod-drop-title">Drop files here or choose a source folder</p>
-			<div class="civ5mod-actions-row">
-				<button type="button" class="civ5mod-btn ghost" onclick={openPicker}>Choose Folder / Files</button>
-				<button type="button" class="civ5mod-btn ghost" onclick={clearSelectedFiles} disabled={!fileCount}>Clear</button>
-			</div>
 			<input bind:this={fileInputEl} class="civ5mod-hidden-input" type="file" multiple webkitdirectory onchange={onFileInputChange} />
 			<p class="civ5mod-hint">Selected files: {fileCount}</p>
+			<p class="civ5mod-hint">Total size: {(totalSourceBytes / (1024 * 1024)).toFixed(2)} MB</p>
 		</div>
 
 		<label class="civ5mod-output-name">
