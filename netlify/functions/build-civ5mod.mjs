@@ -2,7 +2,7 @@ import Busboy from "busboy";
 import { path7za } from "7zip-bin";
 import os from "node:os";
 import path from "node:path";
-import { promises as fs } from "node:fs";
+import { promises as fs, constants as fsConstants } from "node:fs";
 import { spawn } from "node:child_process";
 
 const MAX_TOTAL_UPLOAD_BYTES = 250 * 1024 * 1024;
@@ -13,8 +13,24 @@ const ENTRY_PATH_FIELD_RE = /^entryPath_(\d+)$/;
 const ENTRY_FILE_FIELD_RE = /^entryFile_(\d+)$/;
 
 export async function handler(event) {
+	if (event.httpMethod === "GET") {
+		return json(200, {
+			ok: true,
+			message: "build-civ5mod is alive. Use POST multipart/form-data to build archives.",
+		});
+	}
+	if (event.httpMethod === "OPTIONS") {
+		return {
+			statusCode: 204,
+			headers: {
+				Allow: "GET,POST,OPTIONS",
+			},
+			body: "",
+		};
+	}
+
 	if (event.httpMethod !== "POST") {
-		return json(405, { error: "Method not allowed. Use POST." });
+		return json(405, { error: `Method ${event.httpMethod} not allowed. Use POST.` });
 	}
 
 	let parsed;
@@ -212,6 +228,12 @@ async function parseMultipartEntries(event) {
 async function build7zArchive({ cwd, rootFolderName, outputFileName }) {
 	if (!path7za) {
 		throw createHttpError(500, "7zip binary is not available in this deployment.");
+	}
+	try {
+		await fs.access(path7za, fsConstants.F_OK);
+		await fs.chmod(path7za, 0o755);
+	} catch (error) {
+		throw createHttpError(500, `7zip binary is missing or not executable at "${path7za}". Ensure Netlify includes node_modules/7zip-bin/**.`);
 	}
 
 	const args = ["a", "-t7z", "-mx=9", "-bd", outputFileName, rootFolderName];
