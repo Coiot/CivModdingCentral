@@ -181,6 +181,7 @@
 	const basePayloadMemoryCache = new Map();
 	let lastInitializedMapId = "";
 	let activeMapId = $state("");
+	let mapLoadToken = 0;
 	let mapPinCounts = $state({});
 
 	const maps = $derived.by(() => (Array.isArray(providedMaps) && providedMaps.length ? providedMaps : defaultMaps));
@@ -575,6 +576,9 @@
 	});
 
 	async function initializeMap() {
+		const targetMapId = String(currentMap?.id || "").trim();
+		const loadToken = ++mapLoadToken;
+
 		stopPinCloudSyncLoop();
 		clearPrefetchSchedule();
 		loading = true;
@@ -618,6 +622,8 @@
 			const baseUrl = resolveAssetUrl(currentMap.mapConfig.baseCacheUrl);
 			const pinsUrl = resolveAssetUrl(currentMap.pinsUrl);
 			const labelsUrl = currentMap?.labelsUrl ? resolveAssetUrl(currentMap.labelsUrl) : "";
+			const pinsRequest = fetchJsonSafe(pinsUrl, "pins").catch(() => ({}));
+			const labelsRequest = labelsUrl ? fetchJsonSafe(labelsUrl, "labels").catch(() => ({ labels: [] })) : Promise.resolve({ labels: [] });
 			debugInfo = `protocol=${window.location.protocol} base=${baseUrl} pins=${pinsUrl}${labelsUrl ? ` labels=${labelsUrl}` : ""}`;
 
 			if (currentMap?.id === "cbrx" && typeof localStorage !== "undefined") {
@@ -651,11 +657,11 @@
 				basePayload = await fetchJsonSafe(baseUrl, "base");
 				await saveCachedBasePayload(currentMap?.id, baseUrl, basePayload);
 			}
-			const pinsPayload = await fetchJsonSafe(pinsUrl, "pins").catch(() => ({}));
-			const fetchedSharedPins = Array.isArray(pinsPayload) ? pinsPayload : Array.isArray(pinsPayload?.pins) ? pinsPayload.pins : [];
+			if (!isActiveMapLoad(targetMapId, loadToken)) {
+				return;
+			}
+
 			const migratedSharedPins = Array.isArray(sharedPinsStored) ? sharedPinsStored : Array.isArray(legacyPinsStored) ? legacyPinsStored : [];
-			const labelsPayload = labelsUrl ? await fetchJsonSafe(labelsUrl, "labels").catch(() => ({ labels: [] })) : { labels: [] };
-			const normalizedStaticLabels = normalizeMapLabels(Array.isArray(labelsPayload) ? labelsPayload : labelsPayload?.labels);
 			const normalizedCustomLabels = normalizeMapLabels(Array.isArray(localLabels) ? localLabels : []);
 			const computedMetrics = computeMapMetrics(Number(basePayload.width), Number(basePayload.height), Number(currentMap.mapConfig.hexSize || 14));
 
@@ -670,28 +676,40 @@
 			panelCollapsedPreference = typeof storedPanelCollapsed === "boolean" ? storedPanelCollapsed : true;
 			panelCollapsed = panelCollapsedPreference;
 			localPins = normalizePins(Array.isArray(localPinsStored) ? localPinsStored : []);
-			sharedPins = normalizePins(fetchedSharedPins.length ? fetchedSharedPins : migratedSharedPins);
+			sharedPins = normalizePins(migratedSharedPins);
 			saveStorageJson(storageKey("pins-shared"), sharedPins);
 			if (Array.isArray(legacyPinsStored) && typeof localStorage !== "undefined") {
 				localStorage.removeItem(storageKey("pins"));
 			}
 			refreshVisiblePins({ syncEditors: false, draw: false });
-			staticMapLabelDefs = normalizedStaticLabels;
+			staticMapLabelDefs = [];
 			customMapLabelDefs = normalizedCustomLabels;
 			refreshMapLabels();
-
-			await pullCloudPins({ forceApply: true });
-			await pullCloudLabels({ forceApply: true });
 
 			rebuildTiles();
 
 			await tick();
+			if (!isActiveMapLoad(targetMapId, loadToken)) {
+				return;
+			}
 			await ensureViewportSizeReady();
+			if (!isActiveMapLoad(targetMapId, loadToken)) {
+				return;
+			}
 			fitToView(true);
 			drawMap();
 			startPinCloudSyncLoop();
 			scheduleBasePrefetch();
+			void hydrateMapRemoteState({
+				mapId: targetMapId,
+				loadToken,
+				pinsRequest,
+				labelsRequest,
+			});
 		} catch (loadError) {
+			if (!isActiveMapLoad(targetMapId, loadToken)) {
+				return;
+			}
 			const name = loadError?.name ? `${loadError.name}: ` : "";
 			error = `${name}${loadError?.message || "Unable to load map data."}`;
 			if (loadError?.stack) {
@@ -710,6 +728,33 @@
 			stopPinCloudSyncLoop();
 		} finally {
 			loading = false;
+		}
+	}
+
+	function isActiveMapLoad(mapId, loadToken) {
+		return String(currentMap?.id || "").trim() === String(mapId || "").trim() && loadToken === mapLoadToken;
+	}
+
+	async function hydrateMapRemoteState({ mapId, loadToken, pinsRequest, labelsRequest }) {
+		try {
+			const [pinsPayload, labelsPayload] = await Promise.all([pinsRequest, labelsRequest]);
+			if (!isActiveMapLoad(mapId, loadToken)) {
+				return;
+			}
+
+			const fetchedSharedPins = Array.isArray(pinsPayload) ? pinsPayload : Array.isArray(pinsPayload?.pins) ? pinsPayload.pins : [];
+			if (fetchedSharedPins.length) {
+				setSharedPins(fetchedSharedPins, { persist: true, refresh: true });
+			}
+
+			const normalizedStaticLabels = normalizeMapLabels(Array.isArray(labelsPayload) ? labelsPayload : labelsPayload?.labels);
+			staticMapLabelDefs = normalizedStaticLabels;
+			refreshMapLabels();
+			syncEditorsFromSelection();
+
+			await Promise.allSettled([pullCloudPins({ forceApply: true, mapId }), pullCloudLabels({ forceApply: true, mapId })]);
+		} catch {
+			// Keep the initially rendered map visible even if background hydration fails.
 		}
 	}
 
@@ -2022,21 +2067,21 @@
 		}
 	}
 
-	function hasCloudPinSyncConfig() {
+	function hasCloudPinSyncConfig(mapId = currentMap?.id) {
 		return hasCloudPinSyncConfigUtil({
 			supabaseUrl: SUPABASE_URL,
 			supabaseAnonKey: SUPABASE_ANON_KEY,
 			supabasePinsTable: SUPABASE_PINS_TABLE,
-			mapId: currentMap?.id,
+			mapId,
 		});
 	}
 
-	function hasCloudLabelSyncConfig() {
+	function hasCloudLabelSyncConfig(mapId = currentMap?.id) {
 		return hasCloudPinSyncConfigUtil({
 			supabaseUrl: SUPABASE_URL,
 			supabaseAnonKey: SUPABASE_ANON_KEY,
 			supabasePinsTable: SUPABASE_LABELS_TABLE,
-			mapId: currentMap?.id,
+			mapId,
 		});
 	}
 
@@ -2466,7 +2511,8 @@
 	}
 
 	async function pullCloudPins(options = {}) {
-		if (pinCloudPullBusy || !hasCloudPinSyncConfig()) {
+		const targetMapId = String(options.mapId || currentMap?.id || "").trim();
+		if (pinCloudPullBusy || !hasCloudPinSyncConfig(targetMapId)) {
 			return;
 		}
 
@@ -2475,7 +2521,7 @@
 		try {
 			const query = new URLSearchParams();
 			query.set("select", "map_id,pins,updated_at");
-			query.set("map_id", `eq.${String(currentMap.id)}`);
+			query.set("map_id", `eq.${targetMapId}`);
 			query.set("limit", "1");
 
 			const headers = {
@@ -2500,6 +2546,9 @@
 				return;
 			}
 			if (!forceApply && pinCloudSyncDirty) {
+				return;
+			}
+			if (String(currentMap?.id || "").trim() !== targetMapId) {
 				return;
 			}
 
@@ -2558,7 +2607,8 @@
 	}
 
 	async function pullCloudLabels(options = {}) {
-		if (labelCloudPullBusy || !hasCloudLabelSyncConfig()) {
+		const targetMapId = String(options.mapId || currentMap?.id || "").trim();
+		if (labelCloudPullBusy || !hasCloudLabelSyncConfig(targetMapId)) {
 			return;
 		}
 
@@ -2567,7 +2617,7 @@
 		try {
 			const query = new URLSearchParams();
 			query.set("select", "map_id,labels,updated_at");
-			query.set("map_id", `eq.${String(currentMap.id)}`);
+			query.set("map_id", `eq.${targetMapId}`);
 			query.set("limit", "1");
 
 			const headers = {
@@ -2592,6 +2642,9 @@
 				return;
 			}
 			if (!forceApply && labelCloudSyncDirty) {
+				return;
+			}
+			if (String(currentMap?.id || "").trim() !== targetMapId) {
 				return;
 			}
 
