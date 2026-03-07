@@ -26,6 +26,9 @@
 	const DISCORD_URL = "https://discord.gg/yf8jUXf";
 
 	function isActivePath(pathname) {
+		if (pathname === "/workshop-uploader") {
+			return currentPath === "/" || currentPath === "/workshop-uploader";
+		}
 		return currentPath === pathname;
 	}
 
@@ -91,13 +94,15 @@
 
 	<div class="nav-tools">
 		<nav class="page-nav" aria-label="Primary navigation">
-			<a class={`page-link ${isActivePath("/") ? "is-active" : ""}`} href="/" aria-current={isActivePath("/") ? "page" : undefined}>Map Viewer</a>
-			<a class={`page-link ${isActivePath("/dds-converter") ? "is-active" : ""}`} href="/dds-converter" aria-current={isActivePath("/dds-converter") ? "page" : undefined}>DDS Converter</a>
+			<a class={`page-link ${isActivePath("/workshop-uploader") ? "is-active" : ""}`} href="/workshop-uploader" aria-current={isActivePath("/workshop-uploader") ? "page" : undefined}
+				>Workshop Uploader</a
+			>
 			<a class={`page-link ${isActivePath("/modinfo-builder") ? "is-active" : ""}`} href="/modinfo-builder" aria-current={isActivePath("/modinfo-builder") ? "page" : undefined}
 				>.modinfo Builder</a
 			>
-			<a class={`page-link ${isActivePath("/civ5mod-maker") ? "is-active" : ""}`} href="/civ5mod-maker" aria-current={isActivePath("/civ5mod-maker") ? "page" : undefined}>.civ5mod Ziper</a>
-			<!-- <a class={`page-link ${isActivePath("/workshop-vdf") ? "is-active" : ""}`} href="/workshop-vdf" aria-current={isActivePath("/workshop-vdf") ? "page" : undefined}>Workshop VDF</a> -->
+			<a class={`page-link ${isActivePath("/civ5mod-ziper") ? "is-active" : ""}`} href="/civ5mod-ziper" aria-current={isActivePath("/civ5mod-ziper") ? "page" : undefined}>.civ5mod Ziper</a>
+			<a class={`page-link ${isActivePath("/map-viewer") ? "is-active" : ""}`} href="/map-viewer" aria-current={isActivePath("/map-viewer") ? "page" : undefined}>Map Viewer</a>
+			<a class={`page-link ${isActivePath("/dds-converter") ? "is-active" : ""}`} href="/dds-converter" aria-current={isActivePath("/dds-converter") ? "page" : undefined}>DDS Converter</a>
 			<!-- <a class={`page-link ${isActivePath("/civ-icon-maker") ? "is-active" : ""}`} href="/civ-icon-maker" aria-current={isActivePath("/civ-icon-maker") ? "page" : undefined}>Civ Icon Maker</a> -->
 			<!-- <a class={`page-link ${isActivePath("/wiki") ? "is-active" : ""}`} href="/wiki" aria-current={isActivePath("/wiki") ? "page" : undefined}>Wiki Template</a> -->
 			<a class={`page-link ${isActivePath("/links") ? "is-active" : ""}`} href="/links" aria-current={isActivePath("/links") ? "page" : undefined}>Links</a>

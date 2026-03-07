@@ -1,13 +1,14 @@
 <script>
 	import { onMount, tick } from "svelte";
 	import { fade } from "svelte/transition";
+	import { applyDocumentSeo, normalizeSeoPath } from "./lib/seo/routes.js";
 	import Navbar from "./lib/components/Navbar.svelte";
 	import Directory from "./lib/components/Directory.svelte";
 	import DdsConverter from "./lib/components/DdsConverter.svelte";
 	import CivIconMaker from "./lib/components/CivIconMaker.svelte";
-	import WorkshopVdfBuilder from "./lib/components/WorkshopVdfBuilder.svelte";
+	import WorkshopUploader from "./lib/components/WorkshopUploader.svelte";
 	import ModInfoBuilder from "./lib/components/ModInfoBuilder.svelte";
-	import Civ5ModMaker from "./lib/components/Civ5ModMaker.svelte";
+	import Civ5ModZiper from "./lib/components/Civ5ModZiper.svelte";
 
 	const THEME_STORAGE_KEY = "cmc-theme-mode";
 	const AUTH_STORAGE_KEY = "cmc-auth-session";
@@ -30,13 +31,14 @@
 	let authAccessLoading = $state(false);
 	let authAccessChecked = $state(false);
 	let authAccessDebug = $state("");
-	let currentPath = $state(typeof window !== "undefined" ? window.location.pathname || "/" : "/");
+	let currentPath = $state(typeof window !== "undefined" ? normalizePathname(window.location.pathname || "/") : "/");
 	let MapViewerComponent = $state(null);
 	let mapViewerLoadError = $state("");
 	let authRestoreStarted = $state(false);
 	let routeShellEl = $state();
 	let shouldFocusRouteHeading = $state(false);
 	let shouldResetScroll = $state(false);
+	const currentYear = new Date().getFullYear();
 	let authSession = $state({
 		accessToken: "",
 		refreshToken: "",
@@ -45,8 +47,7 @@
 	const canEdit = $derived(Boolean(authUser) && authAccessAllowed);
 
 	function normalizePathname(value) {
-		const path = String(value || "").trim();
-		return path || "/";
+		return normalizeSeoPath(value);
 	}
 
 	function runPageTransition(update) {
@@ -165,12 +166,13 @@
 
 	$effect(() => {
 		if (
+			currentPath === "/" ||
 			currentPath === "/links" ||
 			currentPath === "/dds-converter" ||
 			currentPath === "/civ-icon-maker" ||
-			currentPath === "/workshop-vdf" ||
+			currentPath === "/workshop-uploader" ||
 			currentPath === "/modinfo-builder" ||
-			currentPath === "/civ5mod-maker"
+			currentPath === "/civ5mod-ziper"
 		) {
 			return;
 		}
@@ -221,6 +223,10 @@
 		return () => {
 			cancelled = true;
 		};
+	});
+
+	$effect(() => {
+		applyDocumentSeo(currentPath);
 	});
 
 	function onAuthEmailInput(value) {
@@ -739,26 +745,54 @@
 				<DdsConverter />
 			{:else if currentPath === "/civ-icon-maker"}
 				<CivIconMaker />
-			{:else if currentPath === "/workshop-vdf"}
-				<WorkshopVdfBuilder />
+			{:else if currentPath === "/" || currentPath === "/workshop-uploader"}
+				<WorkshopUploader />
 			{:else if currentPath === "/modinfo-builder"}
 				<ModInfoBuilder />
-			{:else if currentPath === "/civ5mod-maker"}
-				<Civ5ModMaker />
-			{:else if mapViewerLoadError}
+			{:else if currentPath === "/civ5mod-ziper"}
+				<Civ5ModZiper />
+			{:else if currentPath === "/map-viewer" && mapViewerLoadError}
 				<p class="status error">{mapViewerLoadError}</p>
-			{:else if MapViewerComponent}
+			{:else if currentPath === "/map-viewer" && MapViewerComponent}
 				<MapViewerComponent {canEdit} {authUser} authAccessToken={authSession.accessToken} />
-			{:else}
+			{:else if currentPath === "/map-viewer"}
 				<p class="status">Loading map viewer...</p>
+			{:else if mapViewerLoadError}
+				<p class="status error">Page not found. {mapViewerLoadError}</p>
+			{:else}
+				<p class="status error">Page not found.</p>
 			{/if}
 		</div>
 	{/key}
+
+	<footer class="site-footer">
+		<p>
+			© {currentYear} Coiot. Shoutout if you found this useful {"<3"} or ping me if it is borked!
+			<!-- <a href="/workshop-uploader">Workshop Uploader</a>,
+			<a href="/modinfo-builder">.modinfo Builder</a>,
+			<a href="/civ5mod-ziper">.civ5mod Ziper</a>,
+			<a href="/dds-converter">DDS Converter</a>,
+			<a href="/map-viewer">Map Viewer</a>, and
+			<a href="/links">community links</a>. -->
+		</p>
+	</footer>
 </main>
 
 <style>
 	.route-shell {
 		view-transition-name: route-shell;
+	}
+
+	.site-footer {
+		padding-block: 0.5rem 0.15rem;
+		border-top: 1px solid color-mix(in oklch, var(--panel-border) 72%, transparent);
+	}
+
+	.site-footer p {
+		color: var(--muted-ink);
+		font-size: 0.85rem;
+		line-height: 1.5;
+		margin-block-start: 0.25rem;
 	}
 
 	:global(::view-transition-old(route-shell)),

@@ -1,23 +1,33 @@
 # Civ Modding Central
 
-Civ Modding Central is a web app for exploring community Civilization maps, viewing tile metadata, and managing collaborative civilization pins.
+> Civilization V modding tools, with the cross-platform CMC Workshop Uploader and companion web utilities.
 
-## Main URLs
-- Home: https://civmoddingcentral.dev/
-- Wiki: https://civmoddingcentral.dev/wiki
+Civ Modding Central provides the standalone CMC Workshop Uploader for Windows, macOS, and Linux plus web tools for working with Civilization V mod files, textures, archives, and map data.
 
-## Content summary
-- Interactive Civilization map viewer
-- Tile hover and terrain/resource/feature info
-- Community civilization pins with color metadata
-- Map notes and visualization settings
+## Main pages
 
-## Crawl guidance
-- Public content can be summarized.
-- Preserve attribution to Civ Modding Central when quoting or summarizing.
-- Do not imply official affiliation with Firaxis/2K.
+- Home / Workshop Uploader landing page: https://civmoddingcentral.dev/
+- CMC Workshop Uploader: https://civmoddingcentral.dev/workshop-uploader
+- DDS Converter: https://civmoddingcentral.dev/dds-converter
+- .modinfo Builder: https://civmoddingcentral.dev/modinfo-builder
+- .civ5mod Ziper: https://civmoddingcentral.dev/civ5mod-ziper
+- Map Viewer: https://civmoddingcentral.dev/map-viewer
+- Community Links: https://civmoddingcentral.dev/links
 
-## Technical
-- SPA built with Svelte + Vite
-- robots.txt: https://civmoddingcentral.dev/robots.txt
-- sitemap.xml: https://civmoddingcentral.dev/sitemap.xml
+## What the site offers
+
+- Desktop upload and update guidance for the standalone cross-platform CMC Workshop Uploader app
+- Interactive Civilization V map viewing and community map exploration
+- DDS conversion for Civ V UI, icon, unit, and terrain textures
+- `.modinfo` file generation and editing, including MD5 handling
+- `.civ5mod` browser-side packaging for Civilization V mods
+- Curated links to Civ V modding communities and references
+
+## Audience
+
+- Civilization V modders
+- Civ V scenario and map creators
+- Workshop maintainers publishing and updating Steam items
+- Modders working across Windows, macOS, and Linux
+- Artists preparing DDS or icon assets for Civ V
+- Players browsing community maps and modding resources

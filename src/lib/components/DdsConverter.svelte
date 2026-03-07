@@ -339,6 +339,26 @@
 	);
 	const canConvertWithDimensions = $derived(Boolean(!expectedDimensions || (selectedFileInfo && !hasDimensionMismatch)));
 	const canSubmit = $derived(Boolean(selectedFile && canConvertWithDimensions && (!isAtlasBundleWorkflow || atlasSelectedSizes.length >= bundleMinSelectedSizes)));
+	const copySqlDisabledReason = $derived(!sqlIconTextureAtlasesText && !sqlStrategicRowsText ? "Generate SQL output first by completing a DDS export workflow." : "");
+	const resetSqlHistoryDisabledReason = $derived(!sqlHistoryEntries.length ? "SQL history is empty." : "");
+	const convertDisabledReason = $derived.by(() => {
+		if (busy) {
+			return "A conversion is already running.";
+		}
+		if (!selectedFile) {
+			return "Upload a PNG source file first.";
+		}
+		if (isAtlasBundleWorkflow && atlasSelectedSizes.length < bundleMinSelectedSizes) {
+			return `Select at least ${bundleMinSelectedSizes} output icon size${bundleMinSelectedSizes === 1 ? "" : "s"} for this bundle.`;
+		}
+		if (!canConvertWithDimensions && expectedDimensions && selectedFileInfo) {
+			return `Preset requires ${expectedDimensions.width}x${expectedDimensions.height}, but the uploaded PNG is ${selectedFileInfo.width}x${selectedFileInfo.height}.`;
+		}
+		if (!canConvertWithDimensions) {
+			return "Source PNG dimensions do not match the selected preset.";
+		}
+		return "";
+	});
 
 	onDestroy(() => {
 		revokeSourcePreviewUrl();
@@ -1146,8 +1166,18 @@
 						<textarea class="dds-sql-textarea" rows="11" readonly value={[sqlIconTextureAtlasesText, sqlStrategicRowsText].filter(Boolean).join("\n\n")}></textarea>
 					</div>
 					<div class="dds-actions">
-						<button type="button" onclick={copySqlToClipboard} disabled={!sqlIconTextureAtlasesText && !sqlStrategicRowsText}>Copy SQL</button>
-						<button type="button" class="danger-action" onclick={resetSqlHistory} disabled={!sqlHistoryEntries.length}>Reset SQL History</button>
+						<span class="dds-tooltip-wrap">
+							<button type="button" onclick={copySqlToClipboard} disabled={Boolean(copySqlDisabledReason)}>Copy SQL</button>
+							{#if copySqlDisabledReason}
+								<span class="dds-tooltip">{copySqlDisabledReason}</span>
+							{/if}
+						</span>
+						<span class="dds-tooltip-wrap">
+							<button type="button" class="danger-action" onclick={resetSqlHistory} disabled={Boolean(resetSqlHistoryDisabledReason)}>Reset SQL History</button>
+							{#if resetSqlHistoryDisabledReason}
+								<span class="dds-tooltip">{resetSqlHistoryDisabledReason}</span>
+							{/if}
+						</span>
 					</div>
 				</div>
 			{/if}
@@ -1164,9 +1194,14 @@
 			{/if}
 
 			<div class="dds-actions">
-				<button type="button" onclick={convertToDds} disabled={busy || !canSubmit}>
-					{busy ? "Converting..." : isAtlasBundleWorkflow || workflow === "icon_sheet" ? "Generate DDS Bundle" : "Convert to DDS"}
-				</button>
+				<span class="dds-tooltip-wrap">
+					<button type="button" onclick={convertToDds} disabled={Boolean(convertDisabledReason)}>
+						{busy ? "Converting..." : isAtlasBundleWorkflow || workflow === "icon_sheet" ? "Generate DDS Bundle" : "Convert to DDS"}
+					</button>
+					{#if convertDisabledReason}
+						<span class="dds-tooltip">{convertDisabledReason}</span>
+					{/if}
+				</span>
 				{#if downloadUrl}
 					<a class="dds-download" href={downloadUrl} download={downloadName}>Download {downloadName}</a>
 				{/if}
@@ -1397,11 +1432,12 @@
 	.tiny-action {
 		color: var(--ink);
 		font-size: 0.78rem;
+		text-box: trim-both cap alphabetic;
 		background: var(--panel-bg);
 		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
 		border-radius: 0.5rem;
-		padding-block: 0.2rem;
-		padding-inline: 0.45rem;
+		padding-block: 0.35rem;
+		padding-inline: 0.25rem;
 		cursor: pointer;
 	}
 
@@ -1455,6 +1491,36 @@
 
 	.dds-download {
 		background: color-mix(in oklch, var(--accent) 12%, var(--control-bg));
+	}
+
+	.dds-tooltip-wrap {
+		position: relative;
+		display: inline-flex;
+	}
+
+	.dds-tooltip {
+		position: absolute;
+		inset-inline-start: 50%;
+		inset-block-end: calc(100% + 0.45rem);
+		transform: translateX(-50%);
+		min-inline-size: 14rem;
+		max-inline-size: 24rem;
+		color: var(--ink);
+		font-size: 0.76rem;
+		line-height: 1.35;
+		background: oklch(0.2 0 0 / 0.96);
+		border: 1px solid color-mix(in oklch, var(--accent) 45%, var(--panel-border));
+		border-radius: 0.55rem;
+		padding-block: 0.45rem;
+		padding-inline: 0.6rem;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 120ms ease-in-out;
+		z-index: 2;
+	}
+
+	.dds-tooltip-wrap:hover .dds-tooltip {
+		opacity: 1;
 	}
 
 	.dds-meta {
@@ -1559,5 +1625,64 @@
 
 	.dds-success {
 		color: oklch(0.82 0.14 145);
+	}
+
+	:global(:root[data-theme="light"]) .dds-page {
+		.dds-panel {
+			background: color-mix(in oklch, white 88%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--panel-border) 86%, var(--accent) 14%);
+		}
+
+		.dds-section,
+		.atlas-size-block,
+		.dds-preview-block {
+			background: color-mix(in oklch, white 80%, var(--control-bg));
+			border-color: color-mix(in oklch, var(--panel-border) 84%, var(--accent) 16%);
+		}
+
+		.dds-file-dropzone {
+			background: color-mix(in oklch, white 74%, var(--accent) 6%);
+			border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+		}
+
+		.dds-file-dropzone:hover {
+			background: color-mix(in oklch, white 68%, var(--accent) 10%);
+		}
+
+		.dds-file-dropzone.is-drag-over {
+			background: color-mix(in oklch, white 62%, var(--accent) 16%);
+			border-color: color-mix(in oklch, var(--accent) 46%, var(--panel-border));
+		}
+
+		.dds-actions button,
+		.dds-download,
+		.tiny-action,
+		.dds-meta span {
+			background: color-mix(in oklch, white 84%, var(--control-bg));
+			border-color: color-mix(in oklch, var(--panel-border) 84%, var(--accent) 16%);
+		}
+
+		.dds-download {
+			background: color-mix(in oklch, white 72%, var(--accent) 12%);
+		}
+
+		.dds-warning {
+			background: color-mix(in oklch, white 70%, oklch(0.93 0.08 100));
+			border-color: color-mix(in oklch, oklch(0.85 0.1 95) 55%, var(--panel-border));
+		}
+
+		.dds-tooltip {
+			background: color-mix(in oklch, white 92%, var(--control-bg));
+			border-color: color-mix(in oklch, var(--panel-border) 80%, var(--accent) 20%);
+			color: color-mix(in oklch, var(--ink) 90%, black);
+			box-shadow: 0 8px 18px var(--shadow-soft);
+		}
+
+		.dds-section-copy,
+		.dds-preview-title,
+		.dds-preview-empty,
+		.dds-file-dropzone-copy {
+			color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
+		}
 	}
 </style>

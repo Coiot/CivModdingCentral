@@ -26,6 +26,7 @@
 	const CBRX_PIN_RESET_VERSION = 1;
 	const DEFAULT_TSL_TABLE_NAME = "Civilization_TSLs";
 	const BASE_CACHE_VERSION = 1;
+	const BASE_CACHE_NAME = `${STORAGE_PREFIX}-base-v${BASE_CACHE_VERSION}`;
 	const BASE_PREFETCH_LIMIT = 3;
 	const LAST_MAP_STORAGE_KEY = `${STORAGE_PREFIX}:last-map-id`;
 	const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
@@ -645,10 +646,10 @@
 			const storedPinEditTarget = loadStorageJson(storageKey("pin-edit-target"), null);
 			const storedPanelCollapsed = loadStorageJson(storageKey("panel-collapsed"), null);
 
-			let basePayload = loadCachedBasePayload(currentMap?.id);
+			let basePayload = await loadCachedBasePayload(currentMap?.id, baseUrl);
 			if (!basePayload) {
 				basePayload = await fetchJsonSafe(baseUrl, "base");
-				saveCachedBasePayload(currentMap?.id, basePayload);
+				await saveCachedBasePayload(currentMap?.id, baseUrl, basePayload);
 			}
 			const pinsPayload = await fetchJsonSafe(pinsUrl, "pins").catch(() => ({}));
 			const fetchedSharedPins = Array.isArray(pinsPayload) ? pinsPayload : Array.isArray(pinsPayload?.pins) ? pinsPayload.pins : [];
@@ -2701,7 +2702,7 @@
 		return Boolean(payload && typeof payload === "object" && Number.isFinite(Number(payload.width)) && Number.isFinite(Number(payload.height)) && Array.isArray(payload.mapTiles));
 	}
 
-	function loadCachedBasePayload(mapId) {
+	async function loadCachedBasePayload(mapId, sourceUrl = "") {
 		if (!mapId) {
 			return null;
 		}
@@ -2709,6 +2710,12 @@
 		const memoryCached = basePayloadMemoryCache.get(mapId);
 		if (isValidBasePayload(memoryCached)) {
 			return memoryCached;
+		}
+
+		const cacheStored = await loadBasePayloadFromBrowserCache(mapId, sourceUrl);
+		if (isValidBasePayload(cacheStored)) {
+			basePayloadMemoryCache.set(mapId, cacheStored);
+			return cacheStored;
 		}
 
 		const stored = loadStorageJson(baseCacheKey(mapId), null);
@@ -2720,13 +2727,14 @@
 		return stored;
 	}
 
-	function saveCachedBasePayload(mapId, payload) {
+	async function saveCachedBasePayload(mapId, sourceUrl = "", payload) {
 		if (!mapId || !isValidBasePayload(payload)) {
 			return;
 		}
 
 		basePayloadMemoryCache.set(mapId, payload);
 		saveStorageJson(baseCacheKey(mapId), payload);
+		await saveBasePayloadToBrowserCache(mapId, sourceUrl, payload);
 	}
 
 	function clearPrefetchSchedule() {
@@ -2780,7 +2788,7 @@
 		}
 
 		for (const candidateMapId of queue) {
-			if (!candidateMapId || loadCachedBasePayload(candidateMapId)) {
+			if (!candidateMapId) {
 				continue;
 			}
 			const candidateMap = maps.find((entry) => entry?.id === candidateMapId);
@@ -2788,12 +2796,67 @@
 			if (!baseCacheUrl) {
 				continue;
 			}
+			const resolvedBaseUrl = resolveAssetUrl(baseCacheUrl);
+			if (await loadCachedBasePayload(candidateMapId, resolvedBaseUrl)) {
+				continue;
+			}
 			try {
-				const payload = await fetchJsonSafe(resolveAssetUrl(baseCacheUrl), "base prefetch");
-				saveCachedBasePayload(candidateMapId, payload);
+				const payload = await fetchJsonSafe(resolvedBaseUrl, "base prefetch");
+				await saveCachedBasePayload(candidateMapId, resolvedBaseUrl, payload);
 			} catch {
 				// Ignore prefetch failures and keep user-visible map loading fast.
 			}
+		}
+	}
+
+	function browserBaseCacheRequestKey(mapId, sourceUrl = "") {
+		if (!mapId) {
+			return "";
+		}
+		const normalizedSource = String(sourceUrl || "local").replace(/[^a-z0-9/_-]+/gi, "_");
+		return `/__cmc_cache__/base/${BASE_CACHE_VERSION}/${encodeURIComponent(mapId)}/${normalizedSource}`;
+	}
+
+	function canUseBrowserCache() {
+		return typeof window !== "undefined" && typeof caches !== "undefined";
+	}
+
+	async function loadBasePayloadFromBrowserCache(mapId, sourceUrl = "") {
+		if (!canUseBrowserCache() || !mapId) {
+			return null;
+		}
+
+		try {
+			const cache = await caches.open(BASE_CACHE_NAME);
+			const response = await cache.match(browserBaseCacheRequestKey(mapId, sourceUrl));
+			if (!response) {
+				return null;
+			}
+			const payload = await response.json();
+			return isValidBasePayload(payload) ? payload : null;
+		} catch {
+			return null;
+		}
+	}
+
+	async function saveBasePayloadToBrowserCache(mapId, sourceUrl = "", payload) {
+		if (!canUseBrowserCache() || !mapId || !isValidBasePayload(payload)) {
+			return;
+		}
+
+		try {
+			const cache = await caches.open(BASE_CACHE_NAME);
+			await cache.put(
+				browserBaseCacheRequestKey(mapId, sourceUrl),
+				new Response(JSON.stringify(payload), {
+					headers: {
+						"Content-Type": "application/json",
+						"Cache-Control": "max-age=31536000",
+					},
+				}),
+			);
+		} catch {
+			// Ignore browser cache write failures and keep localStorage as fallback.
 		}
 	}
 

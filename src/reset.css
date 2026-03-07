@@ -1,0 +1,191 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	background-repeat: no-repeat;
+}
+
+* {
+	padding: 0;
+	margin: 0;
+}
+
+html,
+body {
+	min-block-size: 100%;
+}
+
+html {
+	-moz-text-size-adjust: none;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
+}
+
+html:focus-within {
+	scroll-behavior: smooth;
+}
+
+body {
+	min-block-size: 100vh;
+	line-height: 1.5;
+	text-rendering: optimizeSpeed;
+	-webkit-font-smoothing: antialiased;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol,
+menu,
+figure,
+blockquote,
+dl,
+dd {
+	margin: 0;
+	margin-block: 0;
+	margin-inline: 0;
+}
+
+ul,
+ol,
+menu {
+	padding: 0;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+	display: block;
+	max-inline-size: 100%;
+}
+
+:where(svg):where(:not([fill])) {
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+input,
+button,
+textarea,
+select {
+	color: inherit;
+	font: inherit;
+	font-size: inherit;
+	letter-spacing: inherit;
+}
+
+dialog {
+	border: none;
+	padding: 0;
+}
+
+::placeholder {
+	color: unset;
+	opacity: 1;
+}
+
+menu {
+	list-style: none;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+meter {
+	-webkit-appearance: revert;
+	appearance: revert;
+}
+
+textarea {
+	white-space: revert;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+li {
+	overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	line-height: 1.15;
+}
+
+a:not([class]) {
+	text-decoration-skip-ink: auto;
+	text-decoration-thickness: max(0em, 1px);
+	text-underline-offset: 0.15em;
+}
+
+a,
+button {
+	cursor: revert;
+}
+
+:where(a[href], area, button, input, label[for], select, summary, textarea, [tabindex]:not([tabindex*="-"])) {
+	cursor: pointer;
+	touch-action: manipulation;
+}
+
+:where(input[type="file"]) {
+	cursor: auto;
+}
+
+:where(input[type="file"])::-webkit-file-upload-button,
+:where(input[type="file"])::file-selector-button {
+	cursor: pointer;
+}
+
+:where(button, button[type], input[type="button"], input[type="submit"], input[type="reset"]),
+:where(input[type="file"])::-webkit-file-upload-button,
+:where(input[type="file"])::file-selector-button {
+	-webkit-tap-highlight-color: transparent;
+	-webkit-touch-callout: none;
+	user-select: none;
+	text-align: center;
+}
+
+:where(button, button[type], input[type="button"], input[type="submit"], input[type="reset"])[disabled] {
+	cursor: not-allowed;
+}
+
+:where([hidden]) {
+	display: none;
+}
+
+:where([draggable="true"]) {
+	-webkit-user-drag: element;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html:focus-within {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0ms !important;
+		scroll-behavior: auto !important;
+	}
+}

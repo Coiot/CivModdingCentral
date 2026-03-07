@@ -210,6 +210,23 @@
 		{ type: "Dlc", id: "6DA07636-4123-4018-B643-6575B4EC336B", minversion: "0", maxversion: "999", title: "Gods and Kings" },
 		{ type: "Dlc", id: "0E3751A1-F840-4e1b-9706-519BF484E59D", minversion: "0", maxversion: "999", title: "Brave New World" },
 	];
+	const companionTools = [
+		{
+			title: ".civ5mod Ziper",
+			href: "/civ5mod-ziper",
+			copy: "Package the finalized mod folder into a Civ V-compatible .civ5mod archive after the .modinfo is built.",
+		},
+		{
+			title: "Workshop Uploader",
+			href: "/workshop-uploader",
+			copy: "Use the standalone uploader to publish or update the mod once you have your mod files and .modinfo ready.",
+		},
+		{
+			title: "Community Links",
+			href: "/links",
+			copy: "Find Discord communities, release hubs, and troubleshooting help for dependencies and launch issues.",
+		},
+	];
 
 	interface Props {
 		onNotify?: (result: SteamActionResult<unknown>) => void;
@@ -1060,9 +1077,6 @@
 				</button>
 			</div>
 			<span class="field-hint">Includes recursive files and computes MD5 values automatically.</span>
-			{#if !api}
-				<span class="field-hint">Running in browser mode: choose folder/import uses local file inputs instead of desktop bridge.</span>
-			{/if}
 			<input bind:this={sourceDirectoryInputEl} class="hidden-file-input" type="file" webkitdirectory multiple onchange={onSourceDirectoryInputChange} />
 			<input bind:this={importModinfoInputEl} class="hidden-file-input" type="file" accept=".modinfo,.xml,text/xml,application/xml" onchange={onImportModinfoInputChange} />
 		</section>
@@ -1351,6 +1365,23 @@
 			</div>
 			<pre>{modinfoXml}</pre>
 		</section>
+
+		<section class="modinfo-companion-panel">
+			<div class="modinfo-companion-head">
+				<div>
+					<h2>Use alongside the Web Tools</h2>
+					<p>This builder handles the .modinfo layer. Continue with packaging and publishing tools once the manifest is ready.</p>
+				</div>
+			</div>
+			<div class="companion-grid">
+				{#each companionTools as tool (tool.title)}
+					<a class="companion-card" href={tool.href}>
+						<h3>{tool.title}</h3>
+						<p>{tool.copy}</p>
+					</a>
+				{/each}
+			</div>
+		</section>
 	</div>
 </section>
 </section>
@@ -1452,18 +1483,6 @@
 
 	h2 {
 		font-family: "Rockwell", "Palatino Linotype", serif;
-		font-size: 1.4rem;
-		margin: 0;
-	}
-
-	h3 {
-		font-size: 1rem;
-		margin: 0;
-	}
-
-	.hint {
-		color: var(--muted-ink);
-		margin-block: 0.5rem 0.9rem;
 	}
 
 	.block {
@@ -1497,6 +1516,15 @@
 		display: flex;
 		gap: 0.6rem;
 		justify-content: space-between;
+	}
+
+	.row-head-stack {
+		align-items: start;
+
+		& > div {
+			display: grid;
+			gap: 0.35rem;
+		}
 	}
 
 	.row-actions {
@@ -1771,6 +1799,74 @@
 		color: color-mix(in oklch, oklch(0.72 0.14 150) 85%, var(--ink));
 	}
 
+	.companion-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.8rem;
+	}
+
+	.modinfo-companion-panel {
+		display: grid;
+		gap: 1rem;
+		background: var(--panel-bg);
+		box-shadow: 0 10px 26px var(--shadow-soft);
+		border: 1px solid color-mix(in oklch, var(--panel-border) 78%, transparent);
+		border-radius: 1rem;
+		padding: 1.25rem;
+	}
+
+	.modinfo-companion-head {
+		display: grid;
+		gap: 0.35rem;
+
+		& > div {
+			display: grid;
+			gap: 0.35rem;
+		}
+
+		& h2 {
+			margin: 0;
+			font-family: "Rockwell", "Palatino Linotype", serif;
+		}
+
+		& p {
+			margin: 0;
+			color: var(--muted-ink);
+		}
+	}
+
+	.companion-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		color: var(--ink);
+		text-decoration: none;
+		border-radius: 0.9rem;
+		border: 1px solid color-mix(in oklch, var(--panel-border) 76%, transparent);
+		background: color-mix(in oklch, var(--panel-bg) 88%, black);
+		padding: 1.25rem;
+		transition:
+			transform 140ms ease,
+			border-color 140ms ease,
+			background 140ms ease;
+
+		& h3 {
+			margin: 0;
+			font-family: "Rockwell", "Palatino Linotype", serif;
+		}
+
+		& p {
+			margin: 0;
+			color: var(--muted-ink);
+		}
+
+		&:hover {
+			transform: translateY(-1px);
+			border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
+			background: color-mix(in oklch, var(--panel-bg) 82%, var(--accent) 6%);
+		}
+	}
+
 	pre {
 		max-block-size: 52vh;
 		font-size: 0.8rem;
@@ -1809,6 +1905,67 @@
 		opacity: 1;
 	}
 
+	:global(:root[data-theme="light"]) .modinfo-page {
+		.block,
+		.preset-details,
+		.color-helper,
+		.color-helper-details {
+			background: color-mix(in oklch, white 78%, var(--control-bg));
+			border-color: color-mix(in oklch, var(--panel-border) 88%, var(--accent) 12%);
+		}
+
+		.preset-chip,
+		.color-chip,
+		.color-example,
+		pre {
+			background: color-mix(in oklch, white 88%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--panel-border) 86%, var(--accent) 14%);
+			color: var(--ink);
+		}
+
+		.preset-details > summary,
+		.color-helper-details > summary,
+		.field-hint,
+		.hint,
+		.label {
+			color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
+		}
+
+		.preset-chip,
+		.color-chip {
+			color: color-mix(in oklch, var(--ink) 74%, var(--muted-ink));
+		}
+
+		.tooltip {
+			color: var(--ink);
+			background: color-mix(in oklch, white 94%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--accent) 28%, var(--panel-border));
+			box-shadow: 0 14px 28px var(--shadow-soft);
+		}
+
+		.companion-card {
+			background: color-mix(in oklch, white 84%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--panel-border) 84%, var(--accent) 16%);
+
+			& p {
+				color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
+			}
+
+			&:hover {
+				background: color-mix(in oklch, white 78%, var(--accent) 10%);
+			}
+		}
+
+		.modinfo-companion-panel {
+			background: color-mix(in oklch, white 86%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--panel-border) 88%, var(--accent) 12%);
+		}
+
+		.modinfo-companion-head p {
+			color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
+		}
+	}
+
 	@media (max-width: 980px) {
 		.cols-2 {
 			grid-template-columns: minmax(0, 1fr);
@@ -1821,5 +1978,9 @@
 		.path-row {
 			grid-template-columns: minmax(0, 1fr);
 	}
+
+		.companion-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

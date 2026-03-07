@@ -8,6 +8,24 @@
 	let buildStatus = $state("");
 	let dragOver = $state(false);
 	let buildWorker = null;
+	let lastSuggestedOutputFileName = $state("my-mod.civ5mod");
+	const companionTools = [
+		{
+			title: ".modinfo Builder",
+			href: "/modinfo-builder",
+			copy: "Generate file lists, MD5 hashes, actions, references, and dependencies before packaging.",
+		},
+		{
+			title: "Workshop Uploader",
+			href: "/workshop-uploader",
+			copy: "Use the standalone uploader once the archive is ready to publish a new mod or update an existing Workshop item.",
+		},
+		{
+			title: "Community Links",
+			href: "/links",
+			copy: "Find Discord communities, troubleshooting help, and release channels for Civ V modding.",
+		},
+	];
 
 	const fileCount = $derived.by(() => sourceFiles.length);
 	const totalSourceBytes = $derived.by(() => sourceFiles.reduce((sum, file) => sum + Number(file?.size || 0), 0));
@@ -60,10 +78,15 @@
 
 	function setSelectedFiles(fileList) {
 		const next = Array.from(fileList || []);
+		const nextSuggestedOutputFileName = suggestOutputName(next);
+		const currentOutputFileName = String(outputFileName || "").trim();
+		const shouldRefreshSuggestedOutput = !currentOutputFileName || currentOutputFileName === "my-mod.civ5mod" || currentOutputFileName === lastSuggestedOutputFileName;
+
 		sourceFiles = next;
-		if (!String(outputFileName || "").trim() || String(outputFileName || "").trim() === "my-mod.civ5mod") {
-			outputFileName = suggestOutputName(next);
+		if (shouldRefreshSuggestedOutput) {
+			outputFileName = nextSuggestedOutputFileName;
 		}
+		lastSuggestedOutputFileName = nextSuggestedOutputFileName;
 		buildStatus = "";
 	}
 
@@ -224,16 +247,16 @@
 <section class="civ5mod-page">
 	<header class="hero civ5mod-hero">
 		<h1>.civ5mod Ziper</h1>
-		<p>Pack a local mod folder into a true <code>7z</code>-format <code>.civ5mod</code> archive, built directly in your browser.</p>
+		<p>Package a mod folder into a legacy <code>7z</code>-format <code>.civ5mod</code> archive.</p>
 	</header>
 
 	<div class="civ5mod-guide-row">
 		<section class="civ5mod-guide">
 			<h2>How It Works</h2>
 			<ol>
-				<li>Select your source mod folder using the picker (folder upload).</li>
+				<li>Select your source mod folder using the input below.</li>
 				<li>Confirm your .modinfo is at the package root (not inside a nested folder).</li>
-				<li>Click Build .civ5mod to download the archive.</li>
+				<li>Click <strong>Build .civ5mod</strong> to download the archive.</li>
 				<li>Use the output with our tools or in your Civ V MODS directory.</li>
 			</ol>
 		</section>
@@ -241,8 +264,8 @@
 			<h2>About .civ5mod Files</h2>
 			<ul>
 				<li>A ".civ5mod" is just a compressed 7z archives package with a unique extension name.</li>
-				<li>The generated file can be used directly in this uploader’s <strong>New Upload</strong> or <strong>Update Existing</strong> tabs.</li>
-				<li>The game reads ".civ5mod" files in your "MODS" directory and any directory with a valid ".modinfo" file.</li>
+				<li>The game reads a correctly formatted ".civ5mod" file in your "MODS" directory, or any folder, with a valid ".modinfo" file.</li>
+				<li>The generated file can be used directly in our <a href="/workshop-uploader">Workshop Uploader's</a> <strong>New Upload</strong> or <strong>Update Existing</strong> tabs.</li>
 			</ul>
 		</section>
 		<section class="civ5mod-guide">
@@ -250,13 +273,10 @@
 			<ul>
 				<li>Directory selection uses browser support for folder uploads.</li>
 				<li>If your browser blocks folder upload, pick individual files as a fallback.</li>
-				<li>The archive is built locally on your device, so large mods are no longer limited by Netlify upload size.</li>
-				<li>This page does not upload to Steam directly. It only builds the archive file.</li>
-				<li>You can download and use our custom Workshop Uploader to share your mod.</li>
+				<li>This page does not upload to Steam directly. It only builds the file with the correct settings.</li>
 			</ul>
 		</section>
 	</div>
-
 	<section class="civ5mod-panel">
 		<div
 			class={`civ5mod-dropzone ${dragOver ? "is-drag-over" : ""}`}
@@ -270,8 +290,9 @@
 			ondragleave={onDropzoneDragLeave}
 			ondrop={onDropzoneDrop}
 		>
-			<p class="civ5mod-drop-title">Drop files here or choose a source folder</p>
+			<p class="civ5mod-drop-title">{dragOver ? "Release to add folder" : "Drop files here or choose a source folder"}</p>
 			<input bind:this={fileInputEl} class="civ5mod-hidden-input" type="file" multiple webkitdirectory onchange={onFileInputChange} />
+			<p class="civ5mod-drop-feedback">{dragOver ? "Drop now to load the folder into the builder." : ""}</p>
 			<p class="civ5mod-hint">Selected files: {fileCount}</p>
 			<p class="civ5mod-hint">Total size: {(totalSourceBytes / (1024 * 1024)).toFixed(2)} MB</p>
 		</div>
@@ -298,6 +319,22 @@
 			{/if}
 		</div>
 	</section>
+
+	<section class="civ5mod-panel">
+		<div class="civ5mod-section-head">
+			<h2>Use alongside the Web Tools</h2>
+			<p>This builder is one part of the Civ V workflow. Use the related tools before or after packaging as needed.</p>
+		</div>
+
+		<div class="civ5mod-companion-grid">
+			{#each companionTools as tool (tool.title)}
+				<a class="civ5mod-companion-card" href={tool.href}>
+					<h3>{tool.title}</h3>
+					<p>{tool.copy}</p>
+				</a>
+			{/each}
+		</div>
+	</section>
 </section>
 
 <style>
@@ -313,43 +350,71 @@
 
 	.civ5mod-guide-row {
 		display: grid;
-		gap: 0.8rem;
+		gap: 1rem;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
 
 	.civ5mod-guide {
-		display: grid;
+		display: flex;
+		flex-direction: column;
 		gap: 0.5rem;
 		background: color-mix(in oklch, var(--panel-bg) 92%, var(--accent) 4%);
 		border: 1px solid color-mix(in oklch, var(--panel-border) 74%, transparent);
-		border-radius: 0.9rem;
-		padding: 0.9rem 1rem;
-	}
+		border-radius: 1rem;
+		padding: 1.25rem;
 
-	.civ5mod-guide h2 {
-		font-family: "Rockwell", "Palatino Linotype", serif;
-		font-size: 0.96rem;
-		margin: 0;
-	}
+		& h2 {
+			align-self: start;
+			font-size: 1.25rem;
+			font-family: "Rockwell", "Palatino Linotype", serif;
+			line-height: 1.05;
+		}
 
-	.civ5mod-guide ol,
-	.civ5mod-guide ul {
-		display: grid;
-		gap: 0.35rem;
-		color: var(--muted-ink);
-		font-size: 0.83rem;
-		padding-inline-start: 1.1rem;
-		margin: 0;
+		& ol,
+		& ul {
+			display: grid;
+			gap: 0.35rem;
+			color: var(--muted-ink);
+			font-size: 0.83rem;
+			padding-inline-start: 1.1rem;
+			margin: 0;
+		}
 	}
 
 	.civ5mod-panel {
 		display: grid;
-		gap: 0.8rem;
+		gap: 1rem;
 		background: var(--panel-bg);
 		box-shadow: 0 10px 26px var(--shadow-soft);
 		border: 1px solid color-mix(in oklch, var(--panel-border) 78%, transparent);
 		border-radius: 1rem;
-		padding: 1rem;
+		padding: 1.25rem;
+
+		& input {
+			inline-size: 100%;
+			color: var(--ink);
+			font: inherit;
+			background: var(--input-bg);
+			border: 1px solid var(--panel-border);
+			border-radius: 0.6rem;
+			padding-block: 0.46rem;
+			padding-inline: 0.58rem;
+		}
+	}
+
+	.civ5mod-section-head {
+		display: grid;
+		gap: 0.35rem;
+
+		& h2 {
+			margin: 0;
+			font-family: "Rockwell", "Palatino Linotype", serif;
+		}
+
+		& p {
+			margin: 0;
+			color: var(--muted-ink);
+		}
 	}
 
 	.civ5mod-dropzone {
@@ -359,11 +424,38 @@
 		border: 1px dashed color-mix(in oklch, var(--panel-border) 75%, transparent);
 		border-radius: 0.8rem;
 		padding: 0.9rem;
-	}
+		cursor: pointer;
+		transition:
+			background 140ms ease,
+			border-color 140ms ease,
+			box-shadow 140ms ease,
+			transform 140ms ease;
 
-	.civ5mod-dropzone.is-drag-over {
-		background: color-mix(in oklch, var(--accent) 10%, var(--panel-bg));
-		border-color: color-mix(in oklch, var(--accent) 68%, var(--panel-border));
+		& > p {
+			pointer-events: none;
+			user-select: none;
+		}
+
+		&:hover {
+			background: color-mix(in oklch, var(--panel-bg) 84%, var(--accent) 6%);
+			border-color: color-mix(in oklch, var(--accent) 42%, var(--panel-border));
+			box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 22%, transparent);
+			transform: translateY(-1px);
+		}
+
+		&:focus-visible {
+			outline: 2px solid color-mix(in oklch, var(--accent) 72%, white);
+			outline-offset: 2px;
+		}
+
+		&.is-drag-over {
+			background: color-mix(in oklch, var(--accent) 14%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--accent) 78%, var(--panel-border));
+			box-shadow:
+				0 0 0 1px color-mix(in oklch, var(--accent) 55%, transparent),
+				0 10px 24px color-mix(in oklch, var(--accent) 12%, transparent);
+			transform: translateY(-2px) scale(1.005);
+		}
 	}
 
 	.civ5mod-drop-title {
@@ -374,6 +466,13 @@
 	.civ5mod-hint {
 		color: color-mix(in oklch, var(--muted-ink) 88%, var(--ink) 12%);
 		font-size: 0.79rem;
+		margin: 0;
+	}
+
+	.civ5mod-drop-feedback {
+		color: color-mix(in oklch, var(--accent) 46%, var(--muted-ink));
+		font-size: 0.82rem;
+		font-weight: 500;
 		margin: 0;
 	}
 
@@ -408,14 +507,14 @@
 		border: 1px solid color-mix(in oklch, var(--panel-border) 80%, transparent);
 		border-radius: 0.55rem;
 		padding: 0.35rem 0.45rem;
-	}
 
-	.civ5mod-check.ok {
-		background: color-mix(in oklch, oklch(0.72 0.12 150) 18%, transparent);
-	}
+		&.ok {
+			background: color-mix(in oklch, oklch(0.72 0.12 150) 18%, transparent);
+		}
 
-	.civ5mod-check.warn {
-		background: color-mix(in oklch, oklch(0.72 0.12 35) 14%, transparent);
+		&.warn {
+			background: color-mix(in oklch, oklch(0.72 0.12 35) 14%, transparent);
+		}
 	}
 
 	.civ5mod-build-row {
@@ -440,57 +539,132 @@
 		border-radius: 0.62rem;
 		padding-block: 0.42rem;
 		padding-inline: 0.72rem;
-	}
 
-	.civ5mod-btn.ghost {
-		background: var(--control-bg);
-	}
+		&.ghost {
+			background: var(--control-bg);
+		}
 
-	.civ5mod-btn:disabled {
-		cursor: not-allowed;
-		opacity: 0.55;
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.55;
+		}
 	}
 
 	.civ5mod-tooltip-wrap {
 		position: relative;
 		display: inline-flex;
+
+		& .civ5mod-tooltip {
+			inset-block-end: calc(100% + 0.45rem);
+			inset-inline-start: 50%;
+			position: absolute;
+			transform: translateX(-50%);
+			max-inline-size: 24rem;
+			min-inline-size: 15rem;
+			pointer-events: none;
+			color: var(--ink);
+			opacity: 0;
+			font-size: 0.76rem;
+			background: oklch(0.2 0 0 / 0.96);
+			border: 1px solid color-mix(in oklch, var(--accent) 45%, var(--panel-border));
+			border-radius: 0.55rem;
+			padding: 0.45rem 0.6rem;
+			transition: opacity 120ms ease-in-out;
+		}
+
+		&:hover .civ5mod-tooltip {
+			opacity: 1;
+		}
 	}
 
-	.civ5mod-tooltip {
-		inset-block-end: calc(100% + 0.45rem);
-		inset-inline-start: 50%;
-		position: absolute;
-		transform: translateX(-50%);
-		max-inline-size: 24rem;
-		min-inline-size: 15rem;
-		pointer-events: none;
+	.civ5mod-companion-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.8rem;
+	}
+
+	.civ5mod-companion-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
 		color: var(--ink);
-		opacity: 0;
-		font-size: 0.76rem;
-		background: oklch(0.2 0 0 / 0.96);
-		border: 1px solid color-mix(in oklch, var(--accent) 45%, var(--panel-border));
-		border-radius: 0.55rem;
-		padding: 0.45rem 0.6rem;
-		transition: opacity 120ms ease-in-out;
+		text-decoration: none;
+		background: color-mix(in oklch, var(--panel-bg) 88%, black);
+		border: 1px solid color-mix(in oklch, var(--panel-border) 76%, transparent);
+		border-radius: 0.9rem;
+		padding: 1.25rem;
+		transition:
+			transform 140ms ease,
+			border-color 140ms ease,
+			background 140ms ease;
+
+		& h3 {
+			margin: 0;
+			font-family: "Rockwell", "Palatino Linotype", serif;
+		}
+
+		& p {
+			margin: 0;
+			color: var(--muted-ink);
+		}
+
+		&:hover {
+			transform: translateY(-1px);
+			border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
+			background: color-mix(in oklch, var(--panel-bg) 82%, var(--accent) 6%);
+		}
 	}
 
-	.civ5mod-tooltip-wrap:hover .civ5mod-tooltip {
-		opacity: 1;
-	}
+	:global(:root[data-theme="light"]) .civ5mod-page {
+		.civ5mod-guide,
+		.civ5mod-panel {
+			border-color: color-mix(in oklch, var(--panel-border) 86%, var(--accent) 14%);
+		}
 
-	.civ5mod-panel input {
-		inline-size: 100%;
-		color: var(--ink);
-		font: inherit;
-		background: var(--input-bg);
-		border: 1px solid var(--panel-border);
-		border-radius: 0.6rem;
-		padding-block: 0.46rem;
-		padding-inline: 0.58rem;
+		.civ5mod-guide,
+		.civ5mod-dropzone {
+			background: color-mix(in oklch, white 82%, var(--panel-bg));
+		}
+
+		.civ5mod-dropzone:hover {
+			background: color-mix(in oklch, white 76%, var(--accent) 8%);
+		}
+
+		.civ5mod-dropzone.is-drag-over {
+			background: color-mix(in oklch, white 72%, var(--accent) 14%);
+		}
+
+		.civ5mod-drop-feedback {
+			color: color-mix(in oklch, var(--accent) 56%, var(--ink));
+		}
+
+		.civ5mod-tooltip {
+			color: var(--ink);
+			background: color-mix(in oklch, white 94%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+			box-shadow: 0 14px 28px var(--shadow-soft);
+		}
+
+		.civ5mod-companion-card {
+			background: color-mix(in oklch, white 84%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--panel-border) 84%, var(--accent) 16%);
+
+			& p {
+				color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
+			}
+
+			&:hover {
+				background: color-mix(in oklch, white 78%, var(--accent) 10%);
+			}
+		}
 	}
 
 	@media (max-width: 900px) {
 		.civ5mod-guide-row {
+			grid-template-columns: 1fr;
+		}
+
+		.civ5mod-companion-grid {
 			grid-template-columns: 1fr;
 		}
 	}
