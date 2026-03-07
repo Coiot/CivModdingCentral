@@ -5,8 +5,12 @@
 
 	const featureCards = [
 		{
+			title: "OS Agnostic",
+			copy: "The app is cross-platform, offering access to uploading Civ V mods for the first time to macOS and Linux with a streamlined Steam Workshop upload process.",
+		},
+		{
 			title: "New Upload",
-			copy: "Create a brand new Civilization V legacy Workshop item with local .civ5mod content, preview image, title, description, visibility, and tags.",
+			copy: "Create a brand new Civilization V Workshop item with your own.civ5mod, preview image, title, description, visibility, and tags.",
 		},
 		{
 			title: "Update Existing",
@@ -23,10 +27,6 @@
 		{
 			title: "Contemporary Steam Uploading",
 			copy: "A faster and more feature-rich ModBuddy replacement for Workshop uploads now that the 2010-era tool is unsupported with no longer public components.",
-		},
-		{
-			title: "Logs and Validation",
-			copy: "The uploader surfaces validation issues and Steam-side errors so you can see what happened during publish or update.",
 		},
 	];
 

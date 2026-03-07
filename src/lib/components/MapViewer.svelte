@@ -78,6 +78,8 @@
 	let tileLookup = $state(new Map());
 
 	let loading = $state(true);
+	let loadingMessage = $state("Loading map...");
+	let mapTransitioning = $state(false);
 	let error = $state("");
 	let debugInfo = $state("");
 
@@ -179,6 +181,7 @@
 	let mapPrefetchTimeoutHandle = null;
 	const notePinPathCache = new Map();
 	const basePayloadMemoryCache = new Map();
+	const baseLayerRenderCache = new Map();
 	let lastInitializedMapId = "";
 	let activeMapId = $state("");
 	let mapLoadToken = 0;
@@ -578,10 +581,14 @@
 	async function initializeMap() {
 		const targetMapId = String(currentMap?.id || "").trim();
 		const loadToken = ++mapLoadToken;
+		const nextMapTitle = currentMap?.title || "map";
+		const hasRenderedMap = Boolean(baseData && mapMetrics);
 
 		stopPinCloudSyncLoop();
 		clearPrefetchSchedule();
-		loading = true;
+		loadingMessage = `${hasRenderedMap ? "Switching to" : "Loading"} ${nextMapTitle}...`;
+		loading = !hasRenderedMap;
+		mapTransitioning = hasRenderedMap;
 		error = "";
 		debugInfo = "";
 		selectedTileKey = "";
@@ -728,6 +735,7 @@
 			stopPinCloudSyncLoop();
 		} finally {
 			loading = false;
+			mapTransitioning = false;
 		}
 	}
 
@@ -818,8 +826,6 @@
 		const width = Math.max(1, Math.ceil(mapMetrics.width));
 		const height = Math.max(1, Math.ceil(mapMetrics.height));
 		const hexSize = Number(currentMap.mapConfig.hexSize || 14);
-		const vertices = buildHexVertices(hexSize);
-		const featureVertices = buildHexVertices(hexSize * 0.37);
 		canvasEl.width = width;
 		canvasEl.height = height;
 
@@ -828,6 +834,82 @@
 			return;
 		}
 
+		ctx.clearRect(0, 0, width, height);
+		const cachedBaseLayer = getCachedBaseLayerCanvas(width, height, hexSize);
+		if (cachedBaseLayer) {
+			ctx.drawImage(cachedBaseLayer, 0, 0);
+		}
+
+		if (!settings.hideDecorations) {
+			for (const tile of mapTiles) {
+				if (notesByKey[tile.key]) {
+					drawNotePinGlyph(ctx, tile, hexSize);
+				}
+			}
+		}
+	}
+
+	function baseLayerRenderCacheKey(width, height, hexSize) {
+		return JSON.stringify({
+			version: BASE_CACHE_VERSION,
+			mapId: String(currentMap?.id || ""),
+			width,
+			height,
+			hexSize,
+			hideDecorations: Boolean(settings.hideDecorations),
+			flattenLandWater: Boolean(settings.flattenLandWater),
+			grayscaleTerrain: Boolean(settings.grayscaleTerrain),
+		});
+	}
+
+	function createLayerCanvas(width, height) {
+		if (typeof document === "undefined") {
+			return null;
+		}
+		const canvas = document.createElement("canvas");
+		canvas.width = width;
+		canvas.height = height;
+		return canvas;
+	}
+
+	function pruneBaseLayerRenderCache(limit = 12) {
+		if (baseLayerRenderCache.size <= limit) {
+			return;
+		}
+		const oldestKey = baseLayerRenderCache.keys().next().value;
+		if (oldestKey) {
+			baseLayerRenderCache.delete(oldestKey);
+		}
+	}
+
+	function getCachedBaseLayerCanvas(width, height, hexSize) {
+		const cacheKey = baseLayerRenderCacheKey(width, height, hexSize);
+		const cached = baseLayerRenderCache.get(cacheKey);
+		if (cached) {
+			baseLayerRenderCache.delete(cacheKey);
+			baseLayerRenderCache.set(cacheKey, cached);
+			return cached;
+		}
+
+		const rendered = renderBaseLayerCanvas(width, height, hexSize);
+		if (!rendered) {
+			return null;
+		}
+
+		baseLayerRenderCache.set(cacheKey, rendered);
+		pruneBaseLayerRenderCache();
+		return rendered;
+	}
+
+	function renderBaseLayerCanvas(width, height, hexSize) {
+		const layerCanvas = createLayerCanvas(width, height);
+		const ctx = layerCanvas?.getContext?.("2d");
+		if (!layerCanvas || !ctx) {
+			return null;
+		}
+
+		const vertices = buildHexVertices(hexSize);
+		const featureVertices = buildHexVertices(hexSize * 0.37);
 		ctx.clearRect(0, 0, width, height);
 		ctx.lineWidth = 0.5;
 		ctx.strokeStyle = "rgba(8, 23, 36, 0.22)";
@@ -866,14 +948,9 @@
 
 		if (!settings.hideDecorations) {
 			drawRiverOverlay(ctx, hexSize);
-
-			// Keep note pins above the river overlay.
-			for (const tile of mapTiles) {
-				if (notesByKey[tile.key]) {
-					drawNotePinGlyph(ctx, tile, hexSize);
-				}
-			}
 		}
+
+		return layerCanvas;
 	}
 
 	function adjustedTerrainColor(tile) {
@@ -3864,13 +3941,22 @@
 	</header>
 
 	{#if loading}
-		<p class="status">Loading {currentMap?.title || "map"}...</p>
+		<p class="status status-loading" role="status" aria-live="polite">
+			<span class="status-spinner" aria-hidden="true"></span>
+			<span>{loadingMessage}</span>
+		</p>
 	{:else if error}
 		<p class="status error">{error}</p>
 		{#if debugInfo}
 			<p class="status debug">{debugInfo}</p>
 		{/if}
 	{:else if baseData && mapMetrics}
+		{#if mapTransitioning}
+			<p class="status status-loading status-transition" role="status" aria-live="polite">
+				<span class="status-spinner" aria-hidden="true"></span>
+				<span>{loadingMessage}</span>
+			</p>
+		{/if}
 		<div class="viewer-header">
 			<div class="map-meta">
 				<h2>{currentMap?.title || "Map Viewer"}</h2>
@@ -4945,8 +5031,31 @@
 		padding-block: 0.8rem;
 		padding-inline: 1rem;
 		border-radius: 0.7rem;
-		background: oklch(0.965 0.018 85 / 0.92);
-		border: 1px solid oklch(0.79 0.05 82 / 0.38);
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		color: var(--ink);
+		background: color-mix(in oklch, var(--panel-bg) 92%, var(--accent) 8%);
+		border: 1px solid color-mix(in oklch, var(--panel-border) 76%, var(--accent) 24%);
+		box-shadow: 0 8px 20px var(--shadow-soft);
+	}
+
+	.status-loading {
+		font-weight: 600;
+	}
+
+	.status-transition {
+		margin-block-end: 0.85rem;
+	}
+
+	.status-spinner {
+		inline-size: 1rem;
+		block-size: 1rem;
+		border-radius: 999px;
+		border: 2px solid color-mix(in oklch, var(--panel-border) 78%, transparent);
+		border-top-color: var(--accent);
+		flex: 0 0 auto;
+		animation: map-status-spin 850ms linear infinite;
 	}
 
 	.status.error {
@@ -4962,6 +5071,15 @@
 		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 		font-size: 0.78rem;
 		overflow-wrap: anywhere;
+	}
+
+	@keyframes map-status-spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 
 	.viewer-header {
