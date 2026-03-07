@@ -6038,11 +6038,6 @@
 		color: var(--ink);
 	}
 
-	.export-toggle input {
-		inline-size: 1rem;
-		block-size: 1rem;
-	}
-
 	.export-warnings {
 		border: 1px solid color-mix(in oklch, oklch(0.62 0.2 28) 40%, var(--panel-border));
 		background: color-mix(in oklch, oklch(0.8 0.18 30) 15%, var(--panel-bg));

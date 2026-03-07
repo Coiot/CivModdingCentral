@@ -50,7 +50,7 @@
 			title: "macOS",
 			formats: "ZIP / DMG",
 			status: "Available now",
-			copy: `The current working release is the macOS build. Version ${CURRENT_VERSION} is the latest macOS uploader project.`,
+			copy: `The current stable release is the macOS build. Version ${CURRENT_VERSION} is the latest macOS uploader.`,
 			actionLabel: "Download macOS Build",
 			href: resolveReleaseLink(RELEASE_ASSET_FILENAMES.macos),
 			available: macOsAvailable,
@@ -216,18 +216,19 @@
 	}
 
 	.workshop-app-button {
+		min-block-size: 2.75rem;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		gap: 0.35rem;
-		min-block-size: 2.75rem;
-		padding-inline: 0.95rem;
-		border-radius: 0.75rem;
-		border: 1px solid color-mix(in oklch, var(--panel-border) 80%, transparent);
-		background: color-mix(in oklch, var(--control-bg) 72%, black);
 		color: var(--ink);
 		font-weight: 600;
 		text-decoration: none;
+		border-radius: 0.75rem;
+		border: 1px solid color-mix(in oklch, var(--panel-border) 80%, transparent);
+		background: color-mix(in oklch, var(--control-bg) 72%, black);
+		padding-inline: 0.95rem;
+		margin-block-start: auto;
 		transition:
 			transform 140ms ease,
 			border-color 140ms ease,
@@ -260,16 +261,17 @@
 	}
 
 	.workshop-app-kicker {
-		font-size: 0.74rem;
+		color: color-mix(in oklch, var(--accent) 68%, var(--ink));
+		font-size: 0.75rem;
 		font-weight: 700;
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
-		color: color-mix(in oklch, var(--accent) 68%, var(--ink));
+		margin-block-end: 0.25rem;
 	}
 
 	.workshop-app-section-head {
 		display: grid;
-		gap: 0.35rem;
+		gap: 0.25rem;
 
 		& h2 {
 			font-family: "Rockwell", "Palatino Linotype", serif;
@@ -285,7 +287,7 @@
 	.workshop-app-companion-grid,
 	.workshop-app-meta-grid {
 		display: grid;
-		gap: 0.8rem;
+		gap: 1rem;
 	}
 
 	.workshop-app-feature-grid {
@@ -296,6 +298,10 @@
 	.workshop-app-release-card,
 	.workshop-app-meta-card,
 	.workshop-app-companion-card {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
 		border-radius: 0.9rem;
 		border: 1px solid color-mix(in oklch, var(--panel-border) 76%, transparent);
 		background: color-mix(in oklch, var(--panel-bg) 88%, black);
@@ -303,10 +309,10 @@
 	}
 
 	.workshop-app-feature-card {
-		display: grid;
-		gap: 0.45rem;
+		gap: 0.5rem;
 
 		& h3 {
+			font-size: 1.25rem;
 			font-family: "Rockwell", "Palatino Linotype", serif;
 		}
 
@@ -394,7 +400,7 @@
 
 	.workshop-app-release-head {
 		display: grid;
-		gap: 0.75rem;
+		gap: 1rem;
 	}
 
 	.workshop-app-release-title-row {
@@ -433,7 +439,6 @@
 		}
 
 		& ul {
-			margin-block-start: 0.8rem;
 			padding-inline-start: 1.1rem;
 			display: grid;
 			gap: 0.4rem;
@@ -459,8 +464,9 @@
 	}
 
 	.workshop-app-companion-card {
-		display: grid;
-		gap: 0.45rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
 		color: var(--ink);
 		text-decoration: none;
 		transition:

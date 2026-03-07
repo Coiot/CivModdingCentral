@@ -2560,35 +2560,36 @@
 				</label>
 				<button type="button" class="civ-icon-button civ-icon-button-subtle" onclick={regenerateSuggestions}>Generate Again</button>
 			</div>
-			<div class="civ-icon-scheme-grid" role="list" aria-label="Color scheme suggestions">
+			<ul class="civ-icon-scheme-grid" aria-label="Color scheme suggestions">
 				{#each suggestedColorSchemes as scheme (scheme.id)}
-					<button
-						type="button"
-						role="listitem"
-						class="civ-icon-scheme-card"
-						onclick={() => applyColorScheme(scheme)}
-						style={`--scheme-outer:${scheme.primary};--scheme-inner:${scheme.icon};`}
-						aria-label={`Apply ${scheme.label} scheme`}
-					>
-						<span class="civ-icon-scheme-title">{scheme.label}</span>
-						<span class="civ-icon-scheme-preview" aria-hidden="true">
-							<span class="civ-icon-scheme-inner-square"></span>
-						</span>
-						<span class="civ-icon-scheme-values">
-							<span class="civ-icon-scheme-color-title">Background</span>
-							<span class="color-value">HEX {scheme.primaryDisplay.hex}</span>
-							<span class="color-value">RGB {scheme.primaryDisplay.rgb}</span>
-							<span class="color-value">HSL {scheme.primaryDisplay.hsl}</span>
-						</span>
-						<span class="civ-icon-scheme-values">
-							<span class="civ-icon-scheme-color-title">Icon</span>
-							<span class="color-value">HEX {scheme.iconDisplay.hex}</span>
-							<span class="color-value">RGB {scheme.iconDisplay.rgb}</span>
-							<span class="color-value">HSL {scheme.iconDisplay.hsl}</span>
-						</span>
-					</button>
+					<li class="civ-icon-scheme-item">
+						<button
+							type="button"
+							class="civ-icon-scheme-card"
+							onclick={() => applyColorScheme(scheme)}
+							style={`--scheme-outer:${scheme.primary};--scheme-inner:${scheme.icon};`}
+							aria-label={`Apply ${scheme.label} scheme`}
+						>
+							<span class="civ-icon-scheme-title">{scheme.label}</span>
+							<span class="civ-icon-scheme-preview" aria-hidden="true">
+								<span class="civ-icon-scheme-inner-square"></span>
+							</span>
+							<span class="civ-icon-scheme-values">
+								<span class="civ-icon-scheme-color-title">Background</span>
+								<span class="color-value">HEX {scheme.primaryDisplay.hex}</span>
+								<span class="color-value">RGB {scheme.primaryDisplay.rgb}</span>
+								<span class="color-value">HSL {scheme.primaryDisplay.hsl}</span>
+							</span>
+							<span class="civ-icon-scheme-values">
+								<span class="civ-icon-scheme-color-title">Icon</span>
+								<span class="color-value">HEX {scheme.iconDisplay.hex}</span>
+								<span class="color-value">RGB {scheme.iconDisplay.rgb}</span>
+								<span class="color-value">HSL {scheme.iconDisplay.hsl}</span>
+							</span>
+						</button>
+					</li>
 				{/each}
-			</div>
+			</ul>
 		</section>
 	{/if}
 </section>
@@ -2659,6 +2660,13 @@
 		display: grid;
 		gap: 0.65rem;
 		grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.civ-icon-scheme-item {
+		min-inline-size: 0;
 	}
 
 	.civ-icon-scheme-card {

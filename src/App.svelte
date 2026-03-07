@@ -717,7 +717,9 @@
 	}
 </script>
 
-<main class="page-shell">
+<a class="skip-link" href="#main-content">Skip to content</a>
+
+<div class="app-shell">
 	<Navbar
 		{themeMode}
 		{currentPath}
@@ -737,33 +739,35 @@
 		onLogout={logout}
 	/>
 
-	{#key currentPath}
-		<div class="route-shell" bind:this={routeShellEl} in:fade={{ duration: 180 }} out:fade={{ duration: 130 }}>
-			{#if currentPath === "/links"}
-				<Directory />
-			{:else if currentPath === "/dds-converter"}
-				<DdsConverter />
-			{:else if currentPath === "/civ-icon-maker"}
-				<CivIconMaker />
-			{:else if currentPath === "/" || currentPath === "/workshop-uploader"}
-				<WorkshopUploader />
-			{:else if currentPath === "/modinfo-builder"}
-				<ModInfoBuilder />
-			{:else if currentPath === "/civ5mod-ziper"}
-				<Civ5ModZiper />
-			{:else if currentPath === "/map-viewer" && mapViewerLoadError}
-				<p class="status error">{mapViewerLoadError}</p>
-			{:else if currentPath === "/map-viewer" && MapViewerComponent}
-				<MapViewerComponent {canEdit} {authUser} authAccessToken={authSession.accessToken} />
-			{:else if currentPath === "/map-viewer"}
-				<p class="status">Loading map viewer...</p>
-			{:else if mapViewerLoadError}
-				<p class="status error">Page not found. {mapViewerLoadError}</p>
-			{:else}
-				<p class="status error">Page not found.</p>
-			{/if}
-		</div>
-	{/key}
+	<main id="main-content" class="page-shell" tabindex="-1">
+		{#key currentPath}
+			<div class="route-shell" bind:this={routeShellEl} in:fade={{ duration: 180 }} out:fade={{ duration: 130 }}>
+				{#if currentPath === "/links"}
+					<Directory />
+				{:else if currentPath === "/dds-converter"}
+					<DdsConverter />
+				{:else if currentPath === "/civ-icon-maker"}
+					<CivIconMaker />
+				{:else if currentPath === "/" || currentPath === "/workshop-uploader"}
+					<WorkshopUploader />
+				{:else if currentPath === "/modinfo-builder"}
+					<ModInfoBuilder />
+				{:else if currentPath === "/civ5mod-ziper"}
+					<Civ5ModZiper />
+				{:else if currentPath === "/map-viewer" && mapViewerLoadError}
+					<p class="status error">{mapViewerLoadError}</p>
+				{:else if currentPath === "/map-viewer" && MapViewerComponent}
+					<MapViewerComponent {canEdit} {authUser} authAccessToken={authSession.accessToken} />
+				{:else if currentPath === "/map-viewer"}
+					<p class="status">Loading map viewer...</p>
+				{:else if mapViewerLoadError}
+					<p class="status error">Page not found. {mapViewerLoadError}</p>
+				{:else}
+					<p class="status error">Page not found.</p>
+				{/if}
+			</div>
+		{/key}
+	</main>
 
 	<footer class="site-footer">
 		<p>
@@ -776,15 +780,57 @@
 			<a href="/links">community links</a>. -->
 		</p>
 	</footer>
-</main>
+</div>
 
 <style>
 	.route-shell {
 		view-transition-name: route-shell;
 	}
 
+	.app-shell {
+		inline-size: min(95vw, 1540px);
+		display: grid;
+		gap: 1rem;
+		padding-inline: clamp(1rem, 2.1vw, 1.5rem);
+		padding-block: clamp(1rem, 2.2vw, 2.5rem) 1rem;
+		margin-inline: auto;
+	}
+
+	.skip-link {
+		position: absolute;
+		inset-block-start: 0.75rem;
+		inset-inline-start: 50%;
+		z-index: 40;
+		padding: 0.6rem 0.95rem;
+		border-radius: 0.75rem;
+		border: 1px solid color-mix(in oklch, var(--accent) 45%, var(--panel-border));
+		background: color-mix(in oklch, var(--panel-bg) 88%, var(--accent) 12%);
+		color: var(--ink);
+		font-weight: 700;
+		text-decoration: none;
+		transform: translate(-50%, -140%);
+		transition: transform 140ms ease;
+	}
+
+	.skip-link:focus-visible {
+		transform: translate(-50%, 0);
+		outline: 2px solid color-mix(in oklch, white 78%, var(--accent));
+		outline-offset: 2px;
+	}
+
+	:global(#main-content:focus) {
+		outline: none;
+	}
+
+	.page-shell {
+		inline-size: 100%;
+		padding: 0;
+		margin: 0;
+	}
+
 	.site-footer {
-		padding-block: 0.5rem 0.15rem;
+		padding-block-start: 0;
+		padding-block-end: 0.15rem;
 		border-top: 1px solid color-mix(in oklch, var(--panel-border) 72%, transparent);
 	}
 
@@ -792,7 +838,7 @@
 		color: var(--muted-ink);
 		font-size: 0.85rem;
 		line-height: 1.5;
-		margin-block-start: 0.25rem;
+		margin-block-start: 0.5rem;
 	}
 
 	:global(::view-transition-old(route-shell)),
@@ -824,6 +870,20 @@
 		}
 		to {
 			opacity: 1;
+		}
+	}
+
+	@media (max-width: 900px) {
+		.app-shell {
+			inline-size: 100%;
+			padding-inline: 0.75rem;
+			padding-block: 0.75rem;
+		}
+	}
+
+	@media (min-width: 1440px) {
+		.app-shell {
+			inline-size: min(98vw, 2400px);
 		}
 	}
 </style>

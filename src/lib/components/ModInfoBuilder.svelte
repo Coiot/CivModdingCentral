@@ -1518,15 +1518,6 @@
 		justify-content: space-between;
 	}
 
-	.row-head-stack {
-		align-items: start;
-
-		& > div {
-			display: grid;
-			gap: 0.35rem;
-		}
-	}
-
 	.row-actions {
 		display: inline-flex;
 		gap: 0.5rem;
@@ -1926,7 +1917,6 @@
 		.preset-details > summary,
 		.color-helper-details > summary,
 		.field-hint,
-		.hint,
 		.label {
 			color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
 		}
