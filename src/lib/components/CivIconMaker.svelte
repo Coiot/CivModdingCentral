@@ -7,7 +7,7 @@
 	const CENTER = OUTPUT_SIZE / 2;
 	const INNER_DIAMETER = 172;
 	const INNER_RADIUS = INNER_DIAMETER / 2;
-	const RENDER_SCALE = 8;
+	const RENDER_SCALE = 6;
 	const RENDER_SIZE = OUTPUT_SIZE * RENDER_SCALE;
 	const RENDER_CENTER = CENTER * RENDER_SCALE;
 	const RENDER_INNER_RADIUS = INNER_RADIUS * RENDER_SCALE;
@@ -25,7 +25,7 @@
 	});
 	const FIT_GUARD_PX = 15;
 	const FIT_DIAMETER = Math.max(1, INNER_DIAMETER - FIT_GUARD_PX * 2);
-	const CIRCLE_EDGE_AA_PX = 2;
+	const CIRCLE_EDGE_AA_PX = 1;
 	const ALPHA_BOUNDS_MIN_ALPHA = 8;
 	const STABLE_FILTER_STEP_PX = 1;
 	const STABLE_OFFSET_STEP_PX = 1;
@@ -74,7 +74,7 @@
 			shadowBlend: "source-over",
 		},
 	};
-	const ICON_EDGE_SOFTEN_PX = 0.05;
+	const ICON_EDGE_SOFTEN_PX = 0.01;
 	const SWIATLO_LAYER_DEFS = [
 		{ id: "blik", label: "Top Glint", file: "blik.png", blendMode: "source-over", opacity: 1 },
 		{ id: "overlay_flash_3", label: "Arc Highlight", file: "overlay flash 3.png", blendMode: "screen", opacity: 1 },
@@ -240,6 +240,7 @@
 	const outputName = $derived(buildOutputName(sourceName));
 	const primaryColorDisplay = $derived(formatColorDisplay(primaryColor, DEFAULT_PRIMARY_COLOR));
 	const iconColorDisplay = $derived(formatColorDisplay(iconColor, DEFAULT_ICON_COLOR));
+	const colorLegibilityWarning = $derived(buildColorLegibilityWarning(primaryColor, iconColor));
 	const canUndo = $derived(historyEntries.length > 0);
 	const canRedo = $derived(redoEntries.length > 0);
 	const suggestedColorSchemes = $derived(
@@ -1842,6 +1843,58 @@
 		};
 	}
 
+	function relativeLuminanceChannel(channel) {
+		const normalized = clamp(channel, 0, 255) / 255;
+		return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+	}
+
+	function relativeLuminance(hex) {
+		const rgb = hexToRgb(hex);
+		return 0.2126 * relativeLuminanceChannel(rgb.r) + 0.7152 * relativeLuminanceChannel(rgb.g) + 0.0722 * relativeLuminanceChannel(rgb.b);
+	}
+
+	function contrastRatio(hexA, hexB) {
+		const luminanceA = relativeLuminance(hexA);
+		const luminanceB = relativeLuminance(hexB);
+		const lighter = Math.max(luminanceA, luminanceB);
+		const darker = Math.min(luminanceA, luminanceB);
+		return (lighter + 0.05) / (darker + 0.05);
+	}
+
+	function hueDistance(hueA, hueB) {
+		const delta = Math.abs(Number(hueA || 0) - Number(hueB || 0));
+		return Math.min(delta, 360 - delta);
+	}
+
+	function buildColorLegibilityWarning(backgroundColor, foregroundColor) {
+		const backgroundHex = sanitizeHexColor(backgroundColor, DEFAULT_PRIMARY_COLOR);
+		const foregroundHex = sanitizeHexColor(foregroundColor, DEFAULT_ICON_COLOR);
+		const contrast = contrastRatio(backgroundHex, foregroundHex);
+		const backgroundRgb = hexToRgb(backgroundHex);
+		const foregroundRgb = hexToRgb(foregroundHex);
+		const backgroundHsl = rgbToHsl(backgroundRgb.r, backgroundRgb.g, backgroundRgb.b);
+		const foregroundHsl = rgbToHsl(foregroundRgb.r, foregroundRgb.g, foregroundRgb.b);
+		const lightnessGap = Math.abs(backgroundHsl.l - foregroundHsl.l);
+		const saturationGap = Math.abs(backgroundHsl.s - foregroundHsl.s);
+		const hueGap = hueDistance(backgroundHsl.h, foregroundHsl.h);
+
+		if (contrast < 1.45 || (lightnessGap < 8 && saturationGap < 18 && hueGap < 20)) {
+			return {
+				tone: "error",
+				text: `Warning: these colors are extremely close (${contrast.toFixed(2)}:1 contrast). The icon may disappear against the background.`,
+			};
+		}
+
+		if (contrast < 2.1 && lightnessGap < 18) {
+			return {
+				tone: "warn",
+				text: `Low contrast (${contrast.toFixed(2)}:1). Consider separating the background and icon colors more.`,
+			};
+		}
+
+		return null;
+	}
+
 	function captureSuggestionBase() {
 		suggestionBasePrimary = sanitizeHexColor(primaryColor, DEFAULT_PRIMARY_COLOR);
 		suggestionBaseIcon = sanitizeHexColor(iconColor, DEFAULT_ICON_COLOR);
@@ -2171,7 +2224,7 @@
 					<div class="color-row">
 						<div class="color-field">
 							<label class="civ-icon-input-label">
-								Primary (Circle)
+								Background (Circle)
 								<div class="color-picker-row">
 									<div class="color-swatch-control">
 										<input
@@ -2235,6 +2288,11 @@
 							</div>
 						</div>
 					</div>
+					{#if colorLegibilityWarning}
+						<p class={`civ-icon-status civ-icon-legibility-warning civ-icon-legibility-warning-${colorLegibilityWarning.tone}`}>
+							{colorLegibilityWarning.text}
+						</p>
+					{/if}
 					<div class="civ-icon-action-row">
 						<button type="button" class="civ-icon-button civ-icon-button-ghost" onclick={captureCompareReference} disabled={!hasSource}>Set Reference</button>
 						<label class="civ-icon-inline-toggle">
@@ -2387,13 +2445,13 @@
 							<span class="civ-icon-scheme-inner-square"></span>
 						</span>
 						<span class="civ-icon-scheme-values">
-							<span class="civ-icon-scheme-color-title">Outer</span>
+							<span class="civ-icon-scheme-color-title">Background</span>
 							<span class="color-value">HEX {scheme.primaryDisplay.hex}</span>
 							<span class="color-value">RGB {scheme.primaryDisplay.rgb}</span>
 							<span class="color-value">HSL {scheme.primaryDisplay.hsl}</span>
 						</span>
 						<span class="civ-icon-scheme-values">
-							<span class="civ-icon-scheme-color-title">Inner</span>
+							<span class="civ-icon-scheme-color-title">Icon</span>
 							<span class="color-value">HEX {scheme.iconDisplay.hex}</span>
 							<span class="color-value">RGB {scheme.iconDisplay.rgb}</span>
 							<span class="color-value">HSL {scheme.iconDisplay.hsl}</span>
@@ -2599,8 +2657,8 @@
 		border-radius: 0.7rem;
 		padding: 1rem;
 		background:
-			linear-gradient(45deg, color-mix(in oklch, var(--control-bg) 78%, black) 25%, transparent 25%, transparent 75%, color-mix(in oklch, var(--control-bg) 78%, black) 75%),
-			linear-gradient(45deg, color-mix(in oklch, var(--control-bg) 86%, black) 25%, transparent 25%, transparent 75%, color-mix(in oklch, var(--control-bg) 86%, black) 75%);
+			linear-gradient(45deg, color-mix(in oklch, var(--control-bg) 70%, black) 25%, transparent 25%, transparent 75%, color-mix(in oklch, var(--control-bg) 70%, black) 75%),
+			linear-gradient(45deg, color-mix(in oklch, var(--control-bg) 90%, black) 25%, transparent 25%, transparent 75%, color-mix(in oklch, var(--control-bg) 90%, black) 75%);
 		background-position:
 			0 0,
 			13px 13px;
@@ -2919,6 +2977,26 @@
 		color: oklch(0.82 0.14 145);
 	}
 
+	.civ-icon-legibility-warning {
+		padding: 0.7rem 0.85rem;
+		border-radius: 0.7rem;
+		border: 1px solid color-mix(in oklch, var(--panel-border) 72%, transparent);
+		font-size: 0.85rem;
+		line-height: 1.4;
+	}
+
+	.civ-icon-legibility-warning-warn {
+		color: oklch(0.82 0.09 82);
+		background: color-mix(in oklch, oklch(0.46 0.08 80) 18%, transparent);
+		border-color: color-mix(in oklch, oklch(0.72 0.09 82) 45%, var(--panel-border));
+	}
+
+	.civ-icon-legibility-warning-error {
+		color: oklch(0.77 0.14 28);
+		background: color-mix(in oklch, oklch(0.55 0.14 28) 16%, transparent);
+		border-color: color-mix(in oklch, oklch(0.72 0.16 28) 48%, var(--panel-border));
+	}
+
 	.color-row {
 		min-inline-size: 0;
 		display: grid;
@@ -3003,6 +3081,23 @@
 	}
 
 	:global(:root[data-theme="light"]) .civ-icon-maker-page {
+		.civ-icon-preview-wrap {
+			border-color: color-mix(in oklch, var(--accent) 12%, var(--panel-border));
+			background:
+				linear-gradient(45deg, color-mix(in oklch, white 40%, var(--control-bg)) 25%, transparent 25%, transparent 75%, color-mix(in oklch, white 40%, var(--control-bg)) 75%),
+				linear-gradient(45deg, color-mix(in oklch, white 95%, var(--panel-border)) 25%, transparent 25%, transparent 75%, color-mix(in oklch, white 90%, var(--panel-border)) 75%);
+			background-position:
+				0 0,
+				13px 13px;
+		}
+
+		.civ-icon-preview-note {
+			color: color-mix(in oklch, var(--ink) 78%, black 8%);
+			background: color-mix(in oklch, white 90%, var(--panel-bg));
+			box-shadow: 0 1px 2px color-mix(in oklch, var(--shadow-soft) 50%, transparent);
+			border-color: color-mix(in oklch, var(--accent) 14%, var(--panel-border));
+		}
+
 		.civ-icon-swiatlo-group {
 			background: linear-gradient(180deg, color-mix(in oklch, white 88%, var(--panel-bg)), color-mix(in oklch, white 72%, var(--control-bg)));
 			border-color: color-mix(in oklch, var(--accent) 18%, var(--panel-border));
@@ -3093,6 +3188,18 @@
 
 		.civ-icon-error {
 			color: oklch(0.56 0.2 24);
+		}
+
+		.civ-icon-legibility-warning-warn {
+			color: oklch(0.45 0.11 82);
+			background: color-mix(in oklch, white 76%, oklch(0.78 0.1 84) 24%);
+			border-color: color-mix(in oklch, oklch(0.68 0.1 84) 38%, var(--panel-border));
+		}
+
+		.civ-icon-legibility-warning-error {
+			color: oklch(0.43 0.16 28);
+			background: color-mix(in oklch, white 78%, oklch(0.76 0.12 28) 22%);
+			border-color: color-mix(in oklch, oklch(0.68 0.14 28) 40%, var(--panel-border));
 		}
 	}
 

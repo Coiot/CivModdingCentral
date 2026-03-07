@@ -767,7 +767,7 @@
 
 	<footer class="site-footer">
 		<p>
-			© {currentYear} Coiot. Shoutout if you found this useful {"<3"} or ping me if it is borked!
+			© {currentYear} Coiot. Shoutout if you found the tools useful {"<3"} or ping me if anything is borked!
 			<!-- <a href="/workshop-uploader">Workshop Uploader</a>,
 			<a href="/modinfo-builder">.modinfo Builder</a>,
 			<a href="/civ5mod-ziper">.civ5mod Ziper</a>,
