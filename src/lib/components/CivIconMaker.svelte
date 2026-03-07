@@ -7,7 +7,7 @@
 	const CENTER = OUTPUT_SIZE / 2;
 	const INNER_DIAMETER = 172;
 	const INNER_RADIUS = INNER_DIAMETER / 2;
-	const RENDER_SCALE = 6;
+	const RENDER_SCALE = 16;
 	const RENDER_SIZE = OUTPUT_SIZE * RENDER_SCALE;
 	const RENDER_CENTER = CENTER * RENDER_SCALE;
 	const RENDER_INNER_RADIUS = INNER_RADIUS * RENDER_SCALE;
@@ -65,12 +65,12 @@
 			angleDeg: 300,
 			distance: 1,
 			blur: 1,
-			edgeSoftenPx: 0.2,
+			edgeSoftenPx: 0.5,
 			highlightColor: "#FFFFFF",
 			highlightOpacity: 0.6,
 			highlightBlend: "source-over",
 			shadowColor: "#000000",
-			shadowOpacity: 1,
+			shadowOpacity: 0.8,
 			shadowBlend: "source-over",
 		},
 	};
@@ -82,7 +82,7 @@
 		{ id: "overlay_flash_copy", label: "Upper Sweep", file: "overlay flash copy.png", blendMode: "overlay", opacity: 1 },
 		{ id: "overlay_flash_copy_2", label: "Lower Sweep", file: "overlay flash copy 2.png", blendMode: "soft-light", opacity: 1 },
 		{ id: "overlay_flash", label: "Soft Flash", file: "overlay flash.png", blendMode: "hard-light", opacity: 1 },
-		{ id: "overlay_light_2", label: "Crown Glow", file: "overlay light 2.png", blendMode: "hard-light", opacity: 0.55 },
+		{ id: "overlay_light_2", label: "Crown Glow", file: "overlay light 2.png", blendMode: "hard-light", opacity: 0.75 },
 		{ id: "overlay_light", label: "Face Glow", file: "overlay light.png", blendMode: "overlay", opacity: 1 },
 		{ id: "overlay_shadow_2", label: "Edge Shade", file: "overlay shadow 2.png", blendMode: "soft-light", opacity: 1 },
 		{ id: "overlay_blue", label: "Cyan Shade", file: "overlay blue.png", blendMode: "hard-light", opacity: 1 },
@@ -231,6 +231,10 @@
 	let historySuspended = false;
 	let primaryColorPickerDebounceId = 0;
 	let iconColorPickerDebounceId = 0;
+	let renderFrameId = 0;
+	let pendingRenderOutput = false;
+	let pendingRenderCompare = false;
+	let pendingFastPreview = false;
 
 	const hasSource = $derived(Boolean(sourceCanvas));
 	const sourceWidth = $derived(sourceCanvas?.width || 0);
@@ -278,7 +282,12 @@
 		swiatloAssetsVersion;
 		compareEnabled;
 		compareReference;
-		renderCanvases();
+		isDragging;
+		scheduleCanvasRender({
+			includeOutput: !isDragging,
+			includeCompare: !isDragging,
+			fastPreview: isDragging,
+		});
 	});
 
 	$effect(() => {
@@ -337,6 +346,9 @@
 		}
 		if (iconColorPickerDebounceId) {
 			clearTimeout(iconColorPickerDebounceId);
+		}
+		if (renderFrameId) {
+			cancelAnimationFrame(renderFrameId);
 		}
 		revokeSourceUrl();
 	});
@@ -1168,13 +1180,38 @@
 		tintVersion = tintVersionCounter;
 	}
 
-	function renderCanvases() {
+	function scheduleCanvasRender(options = {}) {
+		pendingRenderOutput = pendingRenderOutput || options.includeOutput !== false;
+		pendingRenderCompare = pendingRenderCompare || options.includeCompare !== false;
+		pendingFastPreview = options.fastPreview === true;
+		if (renderFrameId) {
+			return;
+		}
+		renderFrameId = requestAnimationFrame(() => {
+			renderFrameId = 0;
+			const includeOutput = pendingRenderOutput;
+			const includeCompare = pendingRenderCompare;
+			const fastPreview = pendingFastPreview;
+			pendingRenderOutput = false;
+			pendingRenderCompare = false;
+			pendingFastPreview = false;
+			renderCanvases({ includeOutput, includeCompare, fastPreview });
+		});
+	}
+
+	function renderCanvases(options = {}) {
 		const currentState = createEditorSnapshot();
-		drawComposite(outputCanvasEl, false, OUTPUT_SIZE, currentState);
-		drawComposite(previewCanvasEl, true, PREVIEW_SIZE, currentState);
-		if (compareEnabled && compareCanvasEl && compareReference) {
+		if (options.fastPreview) {
+			drawFastPreview(previewCanvasEl, true, PREVIEW_SIZE, currentState);
+		} else {
+			drawComposite(previewCanvasEl, true, PREVIEW_SIZE, currentState);
+		}
+		if (options.includeOutput !== false) {
+			drawComposite(outputCanvasEl, false, OUTPUT_SIZE, currentState);
+		}
+		if (options.includeCompare !== false && compareEnabled && compareCanvasEl && compareReference) {
 			drawComposite(compareCanvasEl, true, PREVIEW_SIZE, compareReference);
-		} else if (compareCanvasEl) {
+		} else if (compareCanvasEl && !compareEnabled) {
 			const ctx = getCanvas2dContext(compareCanvasEl);
 			if (ctx) {
 				ctx.clearRect(0, 0, compareCanvasEl.width, compareCanvasEl.height);
@@ -1579,6 +1616,69 @@
 		ctx.restore();
 	}
 
+	function resolveRenderSnapshot(snapshot = createEditorSnapshot()) {
+		return {
+			primaryColor: sanitizeHexColor(snapshot?.primaryColor, primaryColor),
+			iconColor: sanitizeHexColor(snapshot?.iconColor, iconColor),
+			iconOffsetX: clampOffset(snapshot?.iconOffsetX, iconOffsetX),
+			iconOffsetY: clampOffset(snapshot?.iconOffsetY, iconOffsetY),
+			iconScale: clampScale(snapshot?.iconScale),
+			swiatloEnabled: snapshot?.swiatloEnabled !== false,
+			swiatloPresetId: resolveSwiatloPreset(snapshot?.swiatloPresetId || swiatloPresetId).id,
+			swiatloLayerVisibility: normalizeSwiatloVisibility(snapshot?.swiatloLayerVisibility, snapshot?.swiatloPresetId || swiatloPresetId),
+		};
+	}
+
+	function drawFastPreview(canvas, includeGuides, size = PREVIEW_SIZE, snapshot = createEditorSnapshot()) {
+		if (!canvas) {
+			return;
+		}
+		if (canvas.width !== size) {
+			canvas.width = size;
+		}
+		if (canvas.height !== size) {
+			canvas.height = size;
+		}
+
+		const targetCtx = getCanvas2dContext(canvas);
+		if (!targetCtx) {
+			return;
+		}
+
+		const resolvedSnapshot = resolveRenderSnapshot(snapshot);
+		const scale = size / OUTPUT_SIZE;
+		const center = size / 2;
+		const radius = INNER_RADIUS * scale;
+		const tintCanvas = getTintedCanvasForColor(resolvedSnapshot.iconColor);
+
+		configureImageSmoothing(targetCtx);
+		targetCtx.globalAlpha = 1;
+		targetCtx.globalCompositeOperation = "source-over";
+		targetCtx.filter = "none";
+		targetCtx.clearRect(0, 0, size, size);
+
+		targetCtx.save();
+		targetCtx.beginPath();
+		targetCtx.arc(center, center, radius, 0, Math.PI * 2);
+		targetCtx.closePath();
+		targetCtx.clip();
+		targetCtx.fillStyle = resolvedSnapshot.primaryColor;
+		targetCtx.fillRect(0, 0, size, size);
+
+		if (tintCanvas) {
+			const drawWidth = tintCanvas.width * resolvedSnapshot.iconScale * scale;
+			const drawHeight = tintCanvas.height * resolvedSnapshot.iconScale * scale;
+			const drawX = center - drawWidth / 2 + resolvedSnapshot.iconOffsetX * scale;
+			const drawY = center - drawHeight / 2 + resolvedSnapshot.iconOffsetY * scale;
+			targetCtx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
+		}
+		targetCtx.restore();
+
+		if (includeGuides) {
+			drawGuides(targetCtx, size);
+		}
+	}
+
 	function drawComposite(canvas, includeGuides, size = OUTPUT_SIZE, snapshot = createEditorSnapshot()) {
 		if (!canvas) {
 			return;
@@ -1600,16 +1700,7 @@
 		if (!renderCtx) {
 			return;
 		}
-		const resolvedSnapshot = {
-			primaryColor: sanitizeHexColor(snapshot?.primaryColor, primaryColor),
-			iconColor: sanitizeHexColor(snapshot?.iconColor, iconColor),
-			iconOffsetX: clampOffset(snapshot?.iconOffsetX, iconOffsetX),
-			iconOffsetY: clampOffset(snapshot?.iconOffsetY, iconOffsetY),
-			iconScale: clampScale(snapshot?.iconScale),
-			swiatloEnabled: snapshot?.swiatloEnabled !== false,
-			swiatloPresetId: resolveSwiatloPreset(snapshot?.swiatloPresetId || swiatloPresetId).id,
-			swiatloLayerVisibility: normalizeSwiatloVisibility(snapshot?.swiatloLayerVisibility, snapshot?.swiatloPresetId || swiatloPresetId),
-		};
+		const resolvedSnapshot = resolveRenderSnapshot(snapshot);
 
 		configureImageSmoothing(renderCtx);
 		renderCtx.globalAlpha = 1;
