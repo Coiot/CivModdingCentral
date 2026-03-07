@@ -189,7 +189,7 @@
 
 	<section class="workshop-app-panel">
 		<div class="workshop-app-section-head">
-			<h2>Use alongside the Web Tools</h2>
+			<h2>Use alongside the other Tools</h2>
 			<p>The app comes bundled with everything you need, but you can use some of the tools here independently.</p>
 		</div>
 

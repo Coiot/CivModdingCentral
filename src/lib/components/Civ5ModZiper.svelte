@@ -322,7 +322,7 @@
 
 	<section class="civ5mod-panel">
 		<div class="civ5mod-section-head">
-			<h2>Use alongside the Web Tools</h2>
+			<h2>Use alongside the other Tools</h2>
 			<p>This builder is one part of the Civ V workflow. Use the related tools before or after packaging as needed.</p>
 		</div>
 

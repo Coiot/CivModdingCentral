@@ -1369,7 +1369,7 @@
 		<section class="modinfo-companion-panel">
 			<div class="modinfo-companion-head">
 				<div>
-					<h2>Use alongside the Web Tools</h2>
+					<h2>Use alongside the other Tools</h2>
 					<p>This builder handles the .modinfo layer. Continue with packaging and publishing tools once the manifest is ready.</p>
 				</div>
 			</div>
