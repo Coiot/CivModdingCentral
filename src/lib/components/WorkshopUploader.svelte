@@ -1,7 +1,22 @@
 <script>
-	const DISCORD_URL = "https://discord.gg/yf8jUXf";
-	const REDDIT_URL = "https://old.reddit.com/r/civmoddingcentral/";
-	const CURRENT_VERSION = "0.1.14";
+	const RELEASES_REPO_URL = "https://github.com/Coiot/cmc-workshop-uploader";
+	const CURRENT_VERSION = "1.1.0";
+	const RELEASE_TAG = `v${CURRENT_VERSION}`;
+	const RELEASE_PAGE_URL = `${RELEASES_REPO_URL}/releases/tag/${RELEASE_TAG}`;
+
+	// Optional: set exact asset filenames from the GitHub release to enable direct one-click downloads.
+	// If left blank, cards link to the release page (or stay "Coming soon" for unavailable platforms).
+	const RELEASE_ASSET_FILENAMES = {
+		macos: "",
+		linux: "",
+		windows: "",
+	};
+
+	const resolveReleaseLink = (assetFileName) => (assetFileName ? `${RELEASES_REPO_URL}/releases/download/${RELEASE_TAG}/${assetFileName}` : RELEASE_PAGE_URL);
+
+	const macOsAvailable = true;
+	const linuxAvailable = Boolean(RELEASE_ASSET_FILENAMES.linux);
+	const windowsAvailable = Boolean(RELEASE_ASSET_FILENAMES.windows);
 
 	const featureCards = [
 		{
@@ -37,26 +52,26 @@
 			status: "Available now",
 			copy: `The current working release is the macOS build. Version ${CURRENT_VERSION} is the latest macOS uploader project.`,
 			actionLabel: "Download macOS Build",
-			href: DISCORD_URL,
-			available: true,
+			href: resolveReleaseLink(RELEASE_ASSET_FILENAMES.macos),
+			available: macOsAvailable,
 		},
 		{
 			title: "Linux",
 			formats: "AppImage / DEB / TAR.GZ",
-			status: "Coming soon",
-			copy: "Linux version is currently being tested and is not ready to ship yet.",
-			actionLabel: "Coming Soon",
-			href: "",
-			available: false,
+			status: linuxAvailable ? "Available now" : "Coming soon",
+			copy: linuxAvailable ? `Version ${CURRENT_VERSION} is available on the GitHub release page.` : "Linux version is currently being tested and is not ready to ship yet.",
+			actionLabel: linuxAvailable ? "Download Linux Build" : "Coming Soon",
+			href: resolveReleaseLink(RELEASE_ASSET_FILENAMES.linux),
+			available: linuxAvailable,
 		},
 		{
 			title: "Windows",
 			formats: "EXE / ZIP",
-			status: "Coming soon",
-			copy: "Windows version is currently being tested and is not ready to ship yet.",
-			actionLabel: "Coming Soon",
-			href: "",
-			available: false,
+			status: windowsAvailable ? "Available now" : "Coming soon",
+			copy: windowsAvailable ? `Version ${CURRENT_VERSION} is available on the GitHub release page.` : "Windows version is currently being tested and is not ready to ship yet.",
+			actionLabel: windowsAvailable ? "Download Windows Build" : "Coming Soon",
+			href: resolveReleaseLink(RELEASE_ASSET_FILENAMES.windows),
+			available: windowsAvailable,
 		},
 	];
 
@@ -125,21 +140,29 @@
 
 		<div class="workshop-app-release-grid">
 			{#each downloadCards as card (card.title)}
-				<article class="workshop-app-release-card">
-					<div class="workshop-app-release-head">
-						<div>
-							<h3>{card.title}</h3>
+				{#if card.available}
+					<a class="workshop-app-release-card workshop-app-release-link-card" href={card.href} target="_blank" rel="noopener noreferrer">
+						<div class="workshop-app-release-head">
+							<div class="workshop-app-release-title-row">
+								<h3>{card.title}</h3>
+								<span class="workshop-app-pill">{card.formats}</span>
+							</div>
 							<p>{card.copy}</p>
 						</div>
-						<span class="workshop-app-pill">{card.formats}</span>
-					</div>
-					<p class="workshop-app-release-status">{card.status}</p>
-					{#if card.available}
-						<a class="workshop-app-button is-full" href={card.href} target="_blank" rel="noopener noreferrer">{card.actionLabel}</a>
-					{:else}
+						<span class="workshop-app-button is-full" aria-hidden="true">{card.actionLabel}</span>
+					</a>
+				{:else}
+					<article class="workshop-app-release-card">
+						<div class="workshop-app-release-head">
+							<div class="workshop-app-release-title-row">
+								<h3>{card.title}</h3>
+								<span class="workshop-app-pill">{card.formats}</span>
+							</div>
+							<p>{card.copy}</p>
+						</div>
 						<span class="workshop-app-button is-full is-disabled" aria-disabled="true">{card.actionLabel}</span>
-					{/if}
-				</article>
+					</article>
+				{/if}
 			{/each}
 		</div>
 
@@ -297,10 +320,25 @@
 	}
 
 	.workshop-app-release-card {
+		position: relative;
+		overflow: clip;
 		display: grid;
 		gap: 0.8rem;
+		border-color: color-mix(in oklch, var(--accent) 26%, var(--panel-border));
+		background:
+			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 7%, transparent) 0%, transparent 58%),
+			linear-gradient(165deg, color-mix(in oklch, var(--panel-bg) 87%, var(--accent) 3%) 0%, color-mix(in oklch, var(--panel-bg) 91%, black) 100%);
+		box-shadow:
+			0 1px 0 color-mix(in oklch, var(--accent) 16%, transparent),
+			0 4px 8px color-mix(in oklch, black 80%, var(--accent) 20%);
+		transition:
+			transform 170ms ease,
+			border-color 170ms ease,
+			background 170ms ease,
+			box-shadow 170ms ease;
 
 		& h3 {
+			font-size: 1.5rem;
 			font-family: "Rockwell", "Palatino Linotype", serif;
 		}
 
@@ -309,17 +347,72 @@
 		}
 	}
 
+	.workshop-app-release-link-card {
+		color: var(--ink);
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.workshop-app-release-card::after {
+		content: "";
+		position: absolute;
+		inset: auto -25% -42% auto;
+		inline-size: 12rem;
+		aspect-ratio: 1;
+		background: radial-gradient(circle, color-mix(in oklch, var(--accent) 12%, transparent) 0%, transparent 70%);
+		pointer-events: none;
+		opacity: 0.25;
+		transition: opacity 170ms ease;
+	}
+
+	.workshop-app-release-card:hover,
+	.workshop-app-release-card:focus-within,
+	.workshop-app-release-card:has(.workshop-app-button:hover),
+	.workshop-app-release-card:has(.workshop-app-button:focus-visible) {
+		transform: translateY(-2px);
+		border-color: color-mix(in oklch, var(--accent) 50%, var(--panel-border));
+		background:
+			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 10%, transparent) 0%, transparent 60%),
+			linear-gradient(165deg, color-mix(in oklch, var(--panel-bg) 84%, var(--accent) 5%) 0%, color-mix(in oklch, var(--panel-bg) 90%, black) 100%);
+		box-shadow:
+			0 1px 0 color-mix(in oklch, var(--accent) 24%, transparent),
+			0 12px 16px color-mix(in oklch, black 76%, var(--accent) 24%);
+	}
+
+	.workshop-app-release-card:hover::after,
+	.workshop-app-release-card:focus-within::after,
+	.workshop-app-release-card:has(.workshop-app-button:hover)::after,
+	.workshop-app-release-card:has(.workshop-app-button:focus-visible)::after {
+		opacity: 0.45;
+	}
+
+	.workshop-app-release-card:has(.workshop-app-button:hover) .workshop-app-pill,
+	.workshop-app-release-card:has(.workshop-app-button:focus-visible) .workshop-app-pill {
+		border-color: color-mix(in oklch, var(--accent) 68%, var(--panel-border));
+		background: color-mix(in oklch, var(--accent) 22%, transparent);
+	}
+
 	.workshop-app-release-head {
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	.workshop-app-release-title-row {
 		display: flex;
-		justify-content: space-between;
+		align-items: center;
 		gap: 1rem;
-		align-items: start;
+
+		& h3 {
+			text-box: trim-both cap alphabetic;
+		}
 	}
 
 	.workshop-app-pill {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		margin-inline-start: auto;
+		flex: 0 0 auto;
 		padding: 0.22rem 0.55rem;
 		border-radius: 999px;
 		border: 1px solid color-mix(in oklch, var(--accent) 50%, var(--panel-border));
@@ -328,12 +421,6 @@
 		font-size: 0.76rem;
 		font-weight: 700;
 		white-space: nowrap;
-	}
-
-	.workshop-app-release-status {
-		margin: 0;
-		font-size: 0.82rem;
-		color: color-mix(in oklch, var(--accent) 70%, var(--ink));
 	}
 
 	.workshop-app-meta-grid {
@@ -415,6 +502,34 @@
 			border-color: color-mix(in oklch, var(--panel-border) 86%, var(--accent) 14%);
 		}
 
+		.workshop-app-release-card {
+			background:
+				radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 10%, white 90%) 0%, transparent 58%),
+				linear-gradient(165deg, color-mix(in oklch, white 86%, var(--accent) 5%) 0%, color-mix(in oklch, white 81%, var(--panel-bg)) 100%);
+			border-color: color-mix(in oklch, var(--accent) 32%, var(--panel-border));
+			box-shadow:
+				0 1px 0 color-mix(in oklch, var(--accent) 14%, white 86%),
+				0 10px 20px color-mix(in oklch, var(--panel-border) 46%, transparent);
+		}
+
+		.workshop-app-release-card::after {
+			background: radial-gradient(circle, color-mix(in oklch, var(--accent) 12%, white 88%) 0%, transparent 70%);
+			opacity: 0.35;
+		}
+
+		.workshop-app-release-card:hover,
+		.workshop-app-release-card:focus-within,
+		.workshop-app-release-card:has(.workshop-app-button:hover),
+		.workshop-app-release-card:has(.workshop-app-button:focus-visible) {
+			border-color: color-mix(in oklch, var(--accent) 48%, var(--panel-border));
+			background:
+				radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 16%, white 84%) 0%, transparent 60%),
+				linear-gradient(165deg, color-mix(in oklch, white 84%, var(--accent) 7%) 0%, color-mix(in oklch, white 79%, var(--panel-bg)) 100%);
+			box-shadow:
+				0 1px 0 color-mix(in oklch, var(--accent) 18%, white 82%),
+				0 14px 24px color-mix(in oklch, var(--panel-border) 52%, transparent);
+		}
+
 		.workshop-app-button {
 			background: color-mix(in oklch, white 76%, var(--control-bg));
 			border-color: color-mix(in oklch, var(--panel-border) 86%, var(--accent) 14%);
@@ -439,8 +554,7 @@
 		.workshop-app-release-card p,
 		.workshop-app-meta-card li,
 		.workshop-app-companion-card p,
-		.workshop-app-step-list li,
-		.workshop-app-release-status {
+		.workshop-app-step-list li {
 			color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
 		}
 	}
@@ -455,11 +569,6 @@
 	}
 
 	@media (max-width: 640px) {
-		.workshop-app-release-head {
-			flex-direction: column;
-			align-items: start;
-		}
-
 		.workshop-app-button {
 			inline-size: 100%;
 		}

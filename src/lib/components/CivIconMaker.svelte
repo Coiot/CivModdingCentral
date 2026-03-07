@@ -7,7 +7,7 @@
 	const CENTER = OUTPUT_SIZE / 2;
 	const INNER_DIAMETER = 172;
 	const INNER_RADIUS = INNER_DIAMETER / 2;
-	const RENDER_SCALE = 16;
+	const RENDER_SCALE = 20;
 	const RENDER_SIZE = OUTPUT_SIZE * RENDER_SCALE;
 	const RENDER_CENTER = CENTER * RENDER_SCALE;
 	const RENDER_INNER_RADIUS = INNER_RADIUS * RENDER_SCALE;
@@ -21,7 +21,7 @@
 		overlay_light_2: "hard-light",
 	});
 	const SWIATLO_CUSTOM_BLEND_STRENGTH_BY_LAYER_ID = Object.freeze({
-		overlay_light: 1.05,
+		overlay_light: 1.15,
 	});
 	const FIT_GUARD_PX = 15;
 	const FIT_DIAMETER = Math.max(1, INNER_DIAMETER - FIT_GUARD_PX * 2);
@@ -42,7 +42,7 @@
 		outerShadow: {
 			enabled: true,
 			color: "#000000",
-			opacity: 0.4,
+			opacity: 0.375,
 			blur: 0.2,
 			distance: 1,
 			angleDeg: 300,
