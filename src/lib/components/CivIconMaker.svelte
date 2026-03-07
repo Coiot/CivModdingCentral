@@ -11,17 +11,17 @@
 	const RENDER_SIZE = OUTPUT_SIZE * RENDER_SCALE;
 	const RENDER_CENTER = CENTER * RENDER_SCALE;
 	const RENDER_INNER_RADIUS = INNER_RADIUS * RENDER_SCALE;
-	const SWIATLO_SCALE = 1.005;
+	const SWIATLO_SCALE = 1.0025;
 	const SWIATLO_OFFSET_X = 0.65;
 	const SWIATLO_OFFSET_Y = -0.25;
 	const SWIATLO_PIXEL_SNAP = true;
-	const SWIATLO_SHARPEN_CONTRAST = 2;
+	const SWIATLO_SHARPEN_CONTRAST = 16;
 	const SWIATLO_CUSTOM_BLEND_MODE_BY_LAYER_ID = Object.freeze({
 		overlay_light: "overlay",
 		overlay_light_2: "hard-light",
 	});
 	const SWIATLO_CUSTOM_BLEND_STRENGTH_BY_LAYER_ID = Object.freeze({
-		overlay_light: 1.15,
+		overlay_light: 1.05,
 	});
 	const FIT_GUARD_PX = 15;
 	const FIT_DIAMETER = Math.max(1, INNER_DIAMETER - FIT_GUARD_PX * 2);
@@ -42,39 +42,45 @@
 		outerShadow: {
 			enabled: true,
 			color: "#000000",
-			opacity: 0.5,
+			opacity: 0.4,
 			blur: 0.2,
 			distance: 1,
 			angleDeg: 300,
 			blendMode: "source-over",
-			coreOpacity: 0.2,
+			coreOpacity: 0.3,
 			coreBlurMultiplier: 3,
-			falloffOpacity: 0.85,
+			falloffOpacity: 0.9,
 			falloffBlurMultiplier: 3,
-			falloffDistanceMultiplier: 2,
+			falloffDistanceMultiplier: 1.75,
 			tintFromIcon: true,
-			tintOpacity: 0.5,
-			tintBlurMultiplier: 0.25,
+			tintOpacity: 0.75,
+			tintBlurMultiplier: 0.2,
 			tintDistanceMultiplier: 0.5,
-			tintSaturationMultiplier: 1,
+			tintSaturationMultiplier: 2,
 			tintSaturationAdd: 0,
-			tintLightnessAdd: 40,
+			tintLightnessAdd: 45,
 		},
 		bevel: {
 			enabled: true,
-			angleDeg: 300,
-			distance: 1,
-			blur: 1,
-			edgeSoftenPx: 0.5,
-			highlightColor: "#FFFFFF",
-			highlightOpacity: 0.6,
-			highlightBlend: "source-over",
-			shadowColor: "#000000",
-			shadowOpacity: 0.8,
-			shadowBlend: "source-over",
+			angleDeg: 285,
+			highlight: {
+				color: "#ffffff",
+				opacity: 0.725,
+				distance: 0.95,
+				samples: 16,
+				soften: 0.4,
+				blendMode: "source-over",
+			},
+			shadow: {
+				color: "#000000",
+				opacity: 0.36,
+				distance: 0.85,
+				samples: 16,
+				blendMode: "source-over",
+			},
 		},
 	};
-	const ICON_EDGE_SOFTEN_PX = 0.01;
+	const ICON_EDGE_SOFTEN_PX = 0.08;
 	const SWIATLO_LAYER_DEFS = [
 		{ id: "blik", label: "Top Glint", file: "blik.png", blendMode: "source-over", opacity: 1 },
 		{ id: "overlay_flash_3", label: "Arc Highlight", file: "overlay flash 3.png", blendMode: "screen", opacity: 1 },
@@ -82,8 +88,8 @@
 		{ id: "overlay_flash_copy", label: "Upper Sweep", file: "overlay flash copy.png", blendMode: "overlay", opacity: 1 },
 		{ id: "overlay_flash_copy_2", label: "Lower Sweep", file: "overlay flash copy 2.png", blendMode: "soft-light", opacity: 1 },
 		{ id: "overlay_flash", label: "Soft Flash", file: "overlay flash.png", blendMode: "hard-light", opacity: 1 },
-		{ id: "overlay_light_2", label: "Crown Glow", file: "overlay light 2.png", blendMode: "hard-light", opacity: 0.75 },
-		{ id: "overlay_light", label: "Face Glow", file: "overlay light.png", blendMode: "overlay", opacity: 1 },
+		{ id: "overlay_light_2", label: "Crown Glow", file: "overlay light 2.png", blendMode: "hard-light", opacity: 0.625 },
+		{ id: "overlay_light", label: "Face Glow", file: "overlay light.png", blendMode: "hard-light", opacity: 0.95 },
 		{ id: "overlay_shadow_2", label: "Edge Shade", file: "overlay shadow 2.png", blendMode: "soft-light", opacity: 1 },
 		{ id: "overlay_blue", label: "Cyan Shade", file: "overlay blue.png", blendMode: "hard-light", opacity: 1 },
 		{
@@ -1315,15 +1321,13 @@
 	function resolveIconRaster(tintCanvas, color, drawXRaw, drawYRaw, drawWidthRaw, drawHeightRaw) {
 		const rasterWidth = Math.max(1, Math.round(drawWidthRaw));
 		const rasterHeight = Math.max(1, Math.round(drawHeightRaw));
-		const rasterX = Math.round(drawXRaw + (drawWidthRaw - rasterWidth) * 0.5);
-		const rasterY = Math.round(drawYRaw + (drawHeightRaw - rasterHeight) * 0.5);
 		const rasterCanvas = getScaledTintCanvas(tintCanvas, color, rasterWidth, rasterHeight);
 		return {
 			canvas: rasterCanvas,
-			x: rasterX,
-			y: rasterY,
-			width: rasterWidth,
-			height: rasterHeight,
+			x: drawXRaw,
+			y: drawYRaw,
+			width: drawWidthRaw,
+			height: drawHeightRaw,
 		};
 	}
 
@@ -1413,40 +1417,76 @@
 			return;
 		}
 
-		const passCanvas = ensureEffectCanvasB();
-		const passCtx = getCanvas2dContext(passCanvas);
-		if (!passCtx) {
+		const resultCanvas = ensureEffectCanvasA();
+		const resultCtx = getCanvas2dContext(resultCanvas);
+		const sampleCanvas = ensureEffectCanvasB();
+		const sampleCtx = getCanvas2dContext(sampleCanvas);
+		if (!resultCtx || !sampleCtx) {
+			return;
+		}
+
+		const opacity = clamp(options.opacity ?? 0, 0, 1);
+		const sampleCount = Math.max(1, Math.round(Number(options.samples) || 1));
+		const distancePx = Math.max(0, Number(options.distance) || 0) * RENDER_SCALE;
+		const softenPx = Math.max(0, Number(options.soften) || 0) * RENDER_SCALE;
+		if (opacity <= 0 || distancePx <= 0) {
 			return;
 		}
 
 		const vector = angleToVector(options.angleDeg);
 		const direction = options.invertDirection ? -1 : 1;
-		const shiftX = toStableOffsetPx(vector.x * options.distance * RENDER_SCALE * direction);
-		const shiftY = toStableOffsetPx(vector.y * options.distance * RENDER_SCALE * direction);
-		const blurPx = toStableBlurPx(options.blur * RENDER_SCALE);
-		const edgeSoftenPx = toStableBlurPx((options.edgeSoftenPx ?? 0) * RENDER_SCALE);
-		const edgeSoftenFilter = blurFilter(edgeSoftenPx);
+		const baseShiftX = vector.x * distancePx * direction;
+		const baseShiftY = vector.y * distancePx * direction;
+		const totalWeight = (sampleCount * (sampleCount + 1)) / 2;
 
-		configureImageSmoothing(passCtx);
-		passCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
-		passCtx.filter = blurFilter(blurPx);
-		passCtx.drawImage(tintCanvas, drawX + shiftX, drawY + shiftY, drawWidth, drawHeight);
-		passCtx.filter = "none";
-		passCtx.globalCompositeOperation = "destination-in";
-		passCtx.filter = edgeSoftenFilter;
-		passCtx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
-		passCtx.globalCompositeOperation = "destination-out";
-		passCtx.filter = edgeSoftenFilter;
-		passCtx.drawImage(tintCanvas, drawX - shiftX, drawY - shiftY, drawWidth, drawHeight);
-		passCtx.filter = "none";
-		passCtx.globalCompositeOperation = "source-in";
-		passCtx.fillStyle = colorToRgba(options.color, options.opacity);
-		passCtx.fillRect(0, 0, RENDER_SIZE, RENDER_SIZE);
-		passCtx.globalCompositeOperation = "source-over";
+		configureImageSmoothing(resultCtx);
+		resultCtx.globalAlpha = 1;
+		resultCtx.globalCompositeOperation = "source-over";
+		resultCtx.filter = "none";
+		resultCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
+
+		configureImageSmoothing(sampleCtx);
+
+		// Build the bevel from several fractional edge samples instead of blur filters.
+		// This is more predictable across browsers and naturally smooths the rim.
+		for (let index = 0; index < sampleCount; index += 1) {
+			const step = (index + 1) / sampleCount;
+			const weight = (index + 1) / totalWeight;
+			const shiftX = baseShiftX * step;
+			const shiftY = baseShiftY * step;
+
+			sampleCtx.globalAlpha = 1;
+			sampleCtx.globalCompositeOperation = "source-over";
+			sampleCtx.filter = "none";
+			sampleCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
+			sampleCtx.drawImage(tintCanvas, drawX + shiftX, drawY + shiftY, drawWidth, drawHeight);
+			sampleCtx.globalCompositeOperation = "destination-in";
+			sampleCtx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
+			sampleCtx.globalCompositeOperation = "destination-out";
+			sampleCtx.drawImage(tintCanvas, drawX - shiftX, drawY - shiftY, drawWidth, drawHeight);
+			sampleCtx.globalCompositeOperation = "source-in";
+			sampleCtx.fillStyle = colorToRgba(options.color, opacity * weight);
+			sampleCtx.fillRect(0, 0, RENDER_SIZE, RENDER_SIZE);
+			sampleCtx.globalCompositeOperation = "source-over";
+
+			if (softenPx > 0) {
+				resultCtx.save();
+				resultCtx.globalAlpha = 0.5;
+				resultCtx.drawImage(sampleCanvas, 0, 0);
+				resultCtx.globalAlpha = 0.125;
+				resultCtx.drawImage(sampleCanvas, softenPx, 0);
+				resultCtx.drawImage(sampleCanvas, -softenPx, 0);
+				resultCtx.drawImage(sampleCanvas, 0, softenPx);
+				resultCtx.drawImage(sampleCanvas, 0, -softenPx);
+				resultCtx.restore();
+			} else {
+				resultCtx.drawImage(sampleCanvas, 0, 0);
+			}
+		}
 
 		ctx.save();
 		ctx.globalCompositeOperation = resolveIconBlendMode(options.blendMode);
-		ctx.drawImage(passCanvas, 0, 0);
+		ctx.drawImage(resultCanvas, 0, 0);
 		ctx.restore();
 	}
 
@@ -1458,23 +1498,22 @@
 		const bevel = ICON_EFFECT_SETTINGS.bevel;
 		drawInnerBevelPass(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight, {
 			angleDeg: bevel.angleDeg,
-			distance: bevel.distance,
-			blur: bevel.blur,
-			edgeSoftenPx: bevel.edgeSoftenPx,
-			color: bevel.highlightColor,
-			opacity: bevel.highlightOpacity,
-			blendMode: bevel.highlightBlend,
-			invertDirection: true,
+			distance: bevel.shadow?.distance,
+			samples: bevel.shadow?.samples,
+			color: bevel.shadow?.color,
+			opacity: bevel.shadow?.opacity,
+			blendMode: bevel.shadow?.blendMode,
+			invertDirection: false,
 		});
 		drawInnerBevelPass(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight, {
 			angleDeg: bevel.angleDeg,
-			distance: bevel.distance,
-			blur: bevel.blur,
-			edgeSoftenPx: bevel.edgeSoftenPx,
-			color: bevel.shadowColor,
-			opacity: bevel.shadowOpacity,
-			blendMode: bevel.shadowBlend,
-			invertDirection: false,
+			distance: bevel.highlight?.distance,
+			samples: bevel.highlight?.samples,
+			soften: bevel.highlight?.soften,
+			color: bevel.highlight?.color,
+			opacity: bevel.highlight?.opacity,
+			blendMode: bevel.highlight?.blendMode,
+			invertDirection: true,
 		});
 	}
 
