@@ -1,7 +1,7 @@
 <script>
 	const DISCORD_URL = "https://discord.gg/yf8jUXf";
 	const REDDIT_URL = "https://old.reddit.com/r/civmoddingcentral/";
-	const CURRENT_VERSION = "0.1.13";
+	const CURRENT_VERSION = "0.1.14";
 
 	const featureCards = [
 		{
@@ -35,7 +35,7 @@
 			title: "macOS",
 			formats: "ZIP / DMG",
 			status: "Available now",
-			copy: `The current working release is the macOS build. Version ${CURRENT_VERSION} is the latest verified local package in the uploader project.`,
+			copy: `The current working release is the macOS build. Version ${CURRENT_VERSION} is the latest macOS uploader project.`,
 			actionLabel: "Download macOS Build",
 			href: DISCORD_URL,
 			available: true,
@@ -44,7 +44,7 @@
 			title: "Linux",
 			formats: "AppImage / DEB / TAR.GZ",
 			status: "Coming soon",
-			copy: "Linux downloads are currently being tested and are not ready to ship yet.",
+			copy: "Linux version is currently being tested and is not ready to ship yet.",
 			actionLabel: "Coming Soon",
 			href: "",
 			available: false,
@@ -53,7 +53,7 @@
 			title: "Windows",
 			formats: "EXE / ZIP",
 			status: "Coming soon",
-			copy: "Windows downloads are planned, but the release is still being tested and is not ready yet.",
+			copy: "Windows version is currently being tested and is not ready to ship yet.",
 			actionLabel: "Coming Soon",
 			href: "",
 			available: false,
