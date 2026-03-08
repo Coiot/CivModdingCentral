@@ -24,7 +24,7 @@
 			kicker: "Publish",
 			label: "Build & Publish",
 			description: "Package, format, and ship finished mods.",
-			panelTitle: "Build Compiling",
+			panelTitle: "Compiling Mods",
 			panelCopy: "Use these when the mod is ready to package, format, and push into a distributable form.",
 			links: [
 				{
@@ -1004,7 +1004,7 @@
 		}
 
 		.nav-menu-copy {
-			display: none;
+			font-size: 0.55rem;
 		}
 
 		.nav-actions {
