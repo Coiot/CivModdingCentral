@@ -1,5 +1,5 @@
 <script>
-	import { onDestroy, onMount } from "svelte";
+	import { onDestroy, onMount, tick } from "svelte";
 	import { parseHexInput as parseHexInputUtil, sanitizeHexColor as sanitizeHexColorUtil } from "../map/pins.js";
 
 	const OUTPUT_SIZE = 256;
@@ -7,7 +7,7 @@
 	const CENTER = OUTPUT_SIZE / 2;
 	const INNER_DIAMETER = 172;
 	const INNER_RADIUS = INNER_DIAMETER / 2;
-	const RENDER_SCALE = 20;
+	const RENDER_SCALE = 16;
 	const RENDER_SIZE = OUTPUT_SIZE * RENDER_SCALE;
 	const RENDER_CENTER = CENTER * RENDER_SCALE;
 	const RENDER_INNER_RADIUS = INNER_RADIUS * RENDER_SCALE;
@@ -36,13 +36,16 @@
 	const DEFAULT_PRIMARY_COLOR = "#1F4F99";
 	const DEFAULT_ICON_COLOR = "#F4DE9A";
 	const COLOR_PICKER_DEBOUNCE_MS = 180;
-	const STORAGE_KEY = "cmc:civ-icon-maker:v1";
-	const STORAGE_VERSION = 1;
+	const INTERACTION_SETTLE_MS = 180;
+	const SETTINGS_STORAGE_KEY = "cmc:civ-icon-maker:settings:v2";
+	const SOURCE_STORAGE_KEY = "cmc:civ-icon-maker:source:v2";
+	const LEGACY_STORAGE_KEY = "cmc:civ-icon-maker:v1";
+	const STORAGE_VERSION = 2;
 	const ICON_EFFECT_SETTINGS = {
 		outerShadow: {
 			enabled: true,
 			color: "#000000",
-			opacity: 0.375,
+			opacity: 0.365,
 			blur: 0.2,
 			distance: 1,
 			angleDeg: 300,
@@ -50,7 +53,7 @@
 			coreOpacity: 0.3,
 			coreBlurMultiplier: 3,
 			falloffOpacity: 0.9,
-			falloffBlurMultiplier: 3,
+			falloffBlurMultiplier: 3.5,
 			falloffDistanceMultiplier: 1.75,
 			tintFromIcon: true,
 			tintOpacity: 0.75,
@@ -65,10 +68,10 @@
 			angleDeg: 285,
 			highlight: {
 				color: "#ffffff",
-				opacity: 0.725,
-				distance: 0.95,
+				opacity: 0.85,
+				distance: 0.925,
 				samples: 16,
-				soften: 0.4,
+				soften: 0.5,
 				blendMode: "source-over",
 			},
 			shadow: {
@@ -88,7 +91,7 @@
 		{ id: "overlay_flash_copy", label: "Upper Sweep", file: "overlay flash copy.png", blendMode: "overlay", opacity: 1 },
 		{ id: "overlay_flash_copy_2", label: "Lower Sweep", file: "overlay flash copy 2.png", blendMode: "soft-light", opacity: 1 },
 		{ id: "overlay_flash", label: "Soft Flash", file: "overlay flash.png", blendMode: "hard-light", opacity: 1 },
-		{ id: "overlay_light_2", label: "Crown Glow", file: "overlay light 2.png", blendMode: "hard-light", opacity: 0.625 },
+		{ id: "overlay_light_2", label: "Crown Glow", file: "overlay light 2.png", blendMode: "hard-light", opacity: 0.65 },
 		{ id: "overlay_light", label: "Face Glow", file: "overlay light.png", blendMode: "hard-light", opacity: 0.95 },
 		{ id: "overlay_shadow_2", label: "Edge Shade", file: "overlay shadow 2.png", blendMode: "soft-light", opacity: 1 },
 		{ id: "overlay_blue", label: "Cyan Shade", file: "overlay blue.png", blendMode: "hard-light", opacity: 1 },
@@ -237,10 +240,15 @@
 	let historySuspended = false;
 	let primaryColorPickerDebounceId = 0;
 	let iconColorPickerDebounceId = 0;
+	let interactionPreviewTimeoutId = 0;
 	let renderFrameId = 0;
 	let pendingRenderOutput = false;
 	let pendingRenderCompare = false;
 	let pendingFastPreview = false;
+	let interactivePreviewMode = $state(false);
+	let renderBusy = $state(false);
+	let renderBusyLabel = $state("");
+	let exportBusy = $state(false);
 
 	const hasSource = $derived(Boolean(sourceCanvas));
 	const sourceWidth = $derived(sourceCanvas?.width || 0);
@@ -253,6 +261,7 @@
 	const colorLegibilityWarning = $derived(buildColorLegibilityWarning(primaryColor, iconColor));
 	const canUndo = $derived(historyEntries.length > 0);
 	const canRedo = $derived(redoEntries.length > 0);
+	const activityMessage = $derived(exportBusy ? "Exporting PNG..." : renderBusy ? renderBusyLabel || "Loading effects..." : "");
 	const suggestedColorSchemes = $derived(
 		buildColorSuggestions(primaryColor, iconColor, suggestionBaseLocked ? suggestionBasePrimary : primaryColor, suggestionBaseLocked ? suggestionBaseIcon : iconColor, {
 			lockHue: suggestionLockHue,
@@ -275,7 +284,6 @@
 	$effect(() => {
 		previewCanvasEl;
 		compareCanvasEl;
-		outputCanvasEl;
 		tintedCanvas;
 		tintVersion;
 		sourceCanvas;
@@ -289,10 +297,13 @@
 		compareEnabled;
 		compareReference;
 		isDragging;
+		interactivePreviewMode;
+		const previewOnly = isDragging || interactivePreviewMode;
 		scheduleCanvasRender({
-			includeOutput: !isDragging,
-			includeCompare: !isDragging,
-			fastPreview: isDragging,
+			includeOutput: false,
+			includeCompare: !previewOnly,
+			fastPreview: previewOnly,
+			label: isDragging ? "Updating position..." : previewOnly ? "Applying changes..." : "Loading effects...",
 		});
 	});
 
@@ -303,7 +314,6 @@
 		iconOffsetY;
 		iconScale;
 		sourceName;
-		persistedSourceDataUrl;
 		swiatloEnabled;
 		swiatloPresetId;
 		swiatloActiveLayerId;
@@ -352,6 +362,9 @@
 		}
 		if (iconColorPickerDebounceId) {
 			clearTimeout(iconColorPickerDebounceId);
+		}
+		if (interactionPreviewTimeoutId) {
+			clearTimeout(interactionPreviewTimeoutId);
 		}
 		if (renderFrameId) {
 			cancelAnimationFrame(renderFrameId);
@@ -600,6 +613,25 @@
 		}
 	}
 
+	function persistSourceState() {
+		try {
+			if (!persistedSourceDataUrl) {
+				localStorage.removeItem(SOURCE_STORAGE_KEY);
+				return;
+			}
+			localStorage.setItem(
+				SOURCE_STORAGE_KEY,
+				JSON.stringify({
+					version: STORAGE_VERSION,
+					sourceName,
+					sourceDataUrl: persistedSourceDataUrl,
+				}),
+			);
+		} catch {
+			// Ignore localStorage write failures.
+		}
+	}
+
 	function persistState() {
 		const normalizedCompareReference = compareReference
 			? {
@@ -609,8 +641,6 @@
 			: null;
 		const payload = {
 			version: STORAGE_VERSION,
-			sourceName,
-			sourceDataUrl: persistedSourceDataUrl,
 			primaryColor: sanitizeHexColor(primaryColor, DEFAULT_PRIMARY_COLOR),
 			iconColor: sanitizeHexColor(iconColor, DEFAULT_ICON_COLOR),
 			iconOffsetX: clampOffset(iconOffsetX, 0),
@@ -631,7 +661,7 @@
 			compareReference: normalizedCompareReference,
 		};
 		try {
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+			localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(payload));
 		} catch {
 			// Ignore localStorage write failures.
 		}
@@ -639,41 +669,39 @@
 
 	async function restorePersistedState() {
 		try {
-			const raw = localStorage.getItem(STORAGE_KEY);
-			if (!raw) {
-				storageReady = true;
-				return;
+			const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+			const legacyRaw = raw ? "" : localStorage.getItem(LEGACY_STORAGE_KEY);
+			const sourceRaw = localStorage.getItem(SOURCE_STORAGE_KEY);
+			const payload = raw ? JSON.parse(raw) : legacyRaw ? JSON.parse(legacyRaw) : null;
+			const isLegacyPayload = !raw && Boolean(legacyRaw);
+			if (payload && typeof payload === "object" && (isLegacyPayload || payload.version === STORAGE_VERSION)) {
+				primaryColor = sanitizeHexColor(payload.primaryColor, DEFAULT_PRIMARY_COLOR);
+				iconColor = sanitizeHexColor(payload.iconColor, DEFAULT_ICON_COLOR);
+				primaryColorHexInput = primaryColor;
+				iconColorHexInput = iconColor;
+				iconOffsetX = clampOffset(payload.iconOffsetX, 0);
+				iconOffsetY = clampOffset(payload.iconOffsetY, 0);
+				iconScale = clampScale(payload.iconScale);
+				swiatloEnabled = payload.swiatloEnabled !== false;
+				swiatloPresetId = resolveSwiatloPreset(payload.swiatloPresetId).id;
+				swiatloActiveLayerId = SWIATLO_LAYER_DEFS.some((layer) => layer.id === payload.swiatloActiveLayerId)
+					? payload.swiatloActiveLayerId
+					: resolveSwiatloPreset(swiatloPresetId).selectedLayerId;
+				swiatloLayerVisibility = normalizeSwiatloVisibility(payload.swiatloLayerVisibility, swiatloPresetId);
+				suggestionBasePrimary = sanitizeHexColor(payload.suggestionBasePrimary, primaryColor);
+				suggestionBaseIcon = sanitizeHexColor(payload.suggestionBaseIcon, iconColor);
+				suggestionBaseLocked = payload.suggestionBaseLocked === true;
+				suggestionLockHue = payload.suggestionLockHue === true;
+				suggestionLockSaturation = payload.suggestionLockSaturation === true;
+				suggestionGeneratedCount = clamp(parseNumber(payload.suggestionGeneratedCount, 3), 0, 24);
+				suggestionSeed = Math.max(1, Math.round(parseNumber(payload.suggestionSeed, 1)));
+				compareEnabled = payload.compareEnabled === true;
+				compareReference = payload.compareReference && typeof payload.compareReference === "object" ? payload.compareReference : null;
 			}
 
-			const payload = JSON.parse(raw);
-			if (!payload || typeof payload !== "object" || payload.version !== STORAGE_VERSION) {
-				storageReady = true;
-				return;
-			}
-
-			primaryColor = sanitizeHexColor(payload.primaryColor, DEFAULT_PRIMARY_COLOR);
-			iconColor = sanitizeHexColor(payload.iconColor, DEFAULT_ICON_COLOR);
-			primaryColorHexInput = primaryColor;
-			iconColorHexInput = iconColor;
-			iconOffsetX = clampOffset(payload.iconOffsetX, 0);
-			iconOffsetY = clampOffset(payload.iconOffsetY, 0);
-			iconScale = clampScale(payload.iconScale);
-			swiatloEnabled = payload.swiatloEnabled !== false;
-			swiatloPresetId = resolveSwiatloPreset(payload.swiatloPresetId).id;
-			swiatloActiveLayerId = SWIATLO_LAYER_DEFS.some((layer) => layer.id === payload.swiatloActiveLayerId) ? payload.swiatloActiveLayerId : resolveSwiatloPreset(swiatloPresetId).selectedLayerId;
-			swiatloLayerVisibility = normalizeSwiatloVisibility(payload.swiatloLayerVisibility, swiatloPresetId);
-			suggestionBasePrimary = sanitizeHexColor(payload.suggestionBasePrimary, primaryColor);
-			suggestionBaseIcon = sanitizeHexColor(payload.suggestionBaseIcon, iconColor);
-			suggestionBaseLocked = payload.suggestionBaseLocked === true;
-			suggestionLockHue = payload.suggestionLockHue === true;
-			suggestionLockSaturation = payload.suggestionLockSaturation === true;
-			suggestionGeneratedCount = clamp(parseNumber(payload.suggestionGeneratedCount, 3), 0, 24);
-			suggestionSeed = Math.max(1, Math.round(parseNumber(payload.suggestionSeed, 1)));
-			compareEnabled = payload.compareEnabled === true;
-			compareReference = payload.compareReference && typeof payload.compareReference === "object" ? payload.compareReference : null;
-
-			const storedDataUrl = typeof payload.sourceDataUrl === "string" ? payload.sourceDataUrl : "";
-			const storedName = typeof payload.sourceName === "string" ? payload.sourceName : "";
+			const sourcePayload = sourceRaw ? JSON.parse(sourceRaw) : null;
+			const storedDataUrl = typeof sourcePayload?.sourceDataUrl === "string" ? sourcePayload.sourceDataUrl : typeof payload?.sourceDataUrl === "string" ? payload.sourceDataUrl : "";
+			const storedName = typeof sourcePayload?.sourceName === "string" ? sourcePayload.sourceName : typeof payload?.sourceName === "string" ? payload.sourceName : "";
 			if (storedDataUrl) {
 				const image = await loadImage(storedDataUrl);
 				const restoredCanvas = buildCanvasFromImage(image);
@@ -690,6 +718,9 @@
 					}
 					syncHistoryBaselineToCurrent();
 					statusMessage = "Restored saved icon session.";
+					if (!sourceRaw) {
+						persistSourceState();
+					}
 				}
 			}
 		} catch {
@@ -967,6 +998,7 @@
 		resetHistoryTracking();
 		resetMessages();
 		statusMessage = "Ready for another PNG. Current settings were kept.";
+		persistSourceState();
 	}
 
 	function resetAll() {
@@ -1007,7 +1039,9 @@
 		statusMessage = "Reset all settings and cleared saved session.";
 		skipPersist = true;
 		try {
-			localStorage.removeItem(STORAGE_KEY);
+			localStorage.removeItem(SETTINGS_STORAGE_KEY);
+			localStorage.removeItem(SOURCE_STORAGE_KEY);
+			localStorage.removeItem(LEGACY_STORAGE_KEY);
 		} catch {
 			// Ignore localStorage write failures.
 		}
@@ -1068,6 +1102,7 @@
 			sourceCanvas = nextCanvas;
 			alphaBounds = nextBounds;
 			persistedSourceDataUrl = nextCanvas.toDataURL("image/png");
+			persistSourceState();
 			applyFitScale();
 			autoCenterFromAlpha();
 			captureSuggestionBase();
@@ -1190,19 +1225,82 @@
 		pendingRenderOutput = pendingRenderOutput || options.includeOutput !== false;
 		pendingRenderCompare = pendingRenderCompare || options.includeCompare !== false;
 		pendingFastPreview = options.fastPreview === true;
+		renderBusy = true;
+		renderBusyLabel = options.label || (options.fastPreview ? "Updating preview..." : "Loading effects...");
 		if (renderFrameId) {
 			return;
 		}
 		renderFrameId = requestAnimationFrame(() => {
-			renderFrameId = 0;
-			const includeOutput = pendingRenderOutput;
-			const includeCompare = pendingRenderCompare;
-			const fastPreview = pendingFastPreview;
-			pendingRenderOutput = false;
-			pendingRenderCompare = false;
-			pendingFastPreview = false;
-			renderCanvases({ includeOutput, includeCompare, fastPreview });
+			renderFrameId = requestAnimationFrame(() => {
+				renderFrameId = 0;
+				const includeOutput = pendingRenderOutput;
+				const includeCompare = pendingRenderCompare;
+				const fastPreview = pendingFastPreview;
+				pendingRenderOutput = false;
+				pendingRenderCompare = false;
+				pendingFastPreview = false;
+				try {
+					renderCanvases({ includeOutput, includeCompare, fastPreview });
+				} finally {
+					renderBusy = false;
+					renderBusyLabel = "";
+				}
+			});
 		});
+	}
+
+	function waitForPaint() {
+		return new Promise((resolve) => {
+			requestAnimationFrame(() => {
+				requestAnimationFrame(resolve);
+			});
+		});
+	}
+
+	function clearInteractionPreviewTimeout() {
+		if (interactionPreviewTimeoutId) {
+			clearTimeout(interactionPreviewTimeoutId);
+			interactionPreviewTimeoutId = 0;
+		}
+	}
+
+	function queueInteractivePreview() {
+		interactivePreviewMode = true;
+		clearInteractionPreviewTimeout();
+		interactionPreviewTimeoutId = setTimeout(() => {
+			interactionPreviewTimeoutId = 0;
+			interactivePreviewMode = false;
+		}, INTERACTION_SETTLE_MS);
+	}
+
+	function cancelScheduledCanvasRender() {
+		if (renderFrameId) {
+			cancelAnimationFrame(renderFrameId);
+			renderFrameId = 0;
+		}
+		pendingRenderOutput = false;
+		pendingRenderCompare = false;
+		pendingFastPreview = false;
+		renderBusy = false;
+		renderBusyLabel = "";
+	}
+
+	function flushRender(options = {}) {
+		clearInteractionPreviewTimeout();
+		interactivePreviewMode = false;
+		cancelScheduledCanvasRender();
+		renderBusy = true;
+		renderBusyLabel = options.label || (options.includeOutput === true ? "Preparing export..." : "Loading effects...");
+		try {
+			renderCanvases({
+				includeOutput: options.includeOutput === true,
+				includeCompare: options.includeCompare ?? compareEnabled,
+				fastPreview: false,
+			});
+		} finally {
+			renderBusy = false;
+			renderBusyLabel = "";
+		}
 	}
 
 	function renderCanvases(options = {}) {
@@ -1877,24 +1975,28 @@
 
 	function onScaleInput(value) {
 		iconScale = clampScale(value);
+		queueInteractivePreview();
 	}
 
 	function onOffsetXInput(value) {
 		iconOffsetX = clampOffset(value, iconOffsetX);
+		queueInteractivePreview();
 	}
 
 	function onOffsetYInput(value) {
 		iconOffsetY = clampOffset(value, iconOffsetY);
+		queueInteractivePreview();
 	}
 
 	function applyColorFromPicker(kind, normalized) {
 		if (kind === "primary") {
 			primaryColor = normalized;
 			primaryColorHexInput = normalized;
-			return;
+		} else {
+			iconColor = normalized;
+			iconColorHexInput = normalized;
 		}
-		iconColor = normalized;
-		iconColorHexInput = normalized;
+		queueInteractivePreview();
 	}
 
 	function clearColorPickerDebounce(kind) {
@@ -1952,6 +2054,7 @@
 		} else {
 			iconColor = parsed;
 		}
+		queueInteractivePreview();
 	}
 
 	function syncColorHexDraft(kind) {
@@ -2207,6 +2310,7 @@
 		iconColor = nextIcon;
 		primaryColorHexInput = nextPrimary;
 		iconColorHexInput = nextIcon;
+		queueInteractivePreview();
 		resetMessages();
 		statusMessage = `Applied color scheme: ${scheme?.label || "Custom"}.`;
 	}
@@ -2251,16 +2355,29 @@
 		};
 	}
 
-	function downloadPng() {
+	async function downloadPng() {
+		if (exportBusy) {
+			return;
+		}
 		if (!outputCanvasEl) {
 			errorMessage = "Preview is not ready.";
 			return;
 		}
-		outputCanvasEl.toBlob((blob) => {
-			if (!blob) {
-				errorMessage = "PNG export failed.";
-				return;
-			}
+		exportBusy = true;
+		errorMessage = "";
+		await tick();
+		await waitForPaint();
+		try {
+			flushRender({ includeOutput: true, includeCompare: false, label: "Preparing export..." });
+			const blob = await new Promise((resolve, reject) => {
+				outputCanvasEl.toBlob((nextBlob) => {
+					if (!nextBlob) {
+						reject(new Error("PNG export failed."));
+						return;
+					}
+					resolve(nextBlob);
+				}, "image/png");
+			});
 			const url = URL.createObjectURL(blob);
 			const anchor = document.createElement("a");
 			anchor.href = url;
@@ -2269,7 +2386,11 @@
 			setTimeout(() => URL.revokeObjectURL(url), 0);
 			resetMessages();
 			statusMessage = `Exported ${outputName}.`;
-		}, "image/png");
+		} catch (error) {
+			errorMessage = error?.message || "PNG export failed.";
+		} finally {
+			exportBusy = false;
+		}
 	}
 </script>
 
@@ -2314,6 +2435,14 @@
 
 				<div class="civ-icon-preview-wrap">
 					<p class="civ-icon-preview-note" role="note">Web Preview is approximate styling. Download PNG for accurate post-processing.</p>
+					{#if activityMessage}
+						<div class="civ-icon-activity-overlay" role="status" aria-live="polite">
+							<p class="civ-icon-activity">
+								<span class="civ-icon-spinner" aria-hidden="true"></span>
+								{activityMessage}
+							</p>
+						</div>
+					{/if}
 					<div class={`civ-icon-preview-stack ${compareEnabled ? "is-compare" : ""}`}>
 						<div class="civ-icon-preview-pane">
 							<span class="civ-icon-preview-pane-label">Current</span>
@@ -2523,7 +2652,9 @@
 
 				<div class="civ-icon-actions">
 					<div class="civ-icon-action-row">
-						<button type="button" class="civ-icon-button civ-icon-button-primary" onclick={downloadPng}>Download</button>
+						<button type="button" class="civ-icon-button civ-icon-button-primary" onclick={downloadPng} disabled={exportBusy}>
+							{exportBusy ? "Exporting..." : "Download"}
+						</button>
 						<button type="button" class="civ-icon-button civ-icon-button-ghost" onclick={resetToUpload}>Upload New</button>
 						<button type="button" class="civ-icon-button civ-icon-button-danger" onclick={resetAll}>Reset Settings</button>
 					</div>
@@ -2659,7 +2790,7 @@
 	.civ-icon-scheme-grid {
 		display: grid;
 		gap: 0.65rem;
-		grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 		list-style: none;
 		padding: 0;
 		margin: 0;
@@ -2671,14 +2802,15 @@
 
 	.civ-icon-scheme-card {
 		cursor: pointer;
+		inline-size: 100%;
 		display: grid;
-		gap: 0.44rem;
+		gap: 0.5rem;
 		color: var(--ink);
 		text-align: left;
 		background: color-mix(in oklch, var(--panel-bg) 90%, var(--control-bg));
 		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
 		border-radius: 0.7rem;
-		padding: 0.62rem;
+		padding: 1.25rem;
 		transition:
 			transform 0.12s ease,
 			border-color 0.12s ease,
@@ -2692,28 +2824,27 @@
 	}
 
 	.civ-icon-scheme-title {
-		font-size: 0.85rem;
+		font-size: 1.125rem;
 		font-weight: 620;
 	}
 
 	.civ-icon-scheme-preview {
 		position: relative;
-		block-size: 8rem;
-		inline-size: 8rem;
+		block-size: 12rem;
+		inline-size: 12rem;
 		display: block;
 		background: var(--scheme-outer);
-		border: 1px solid color-mix(in oklch, var(--accent) 14%, var(--panel-border));
 		border-radius: 0.35rem;
 		overflow: hidden;
 	}
 
 	.civ-icon-scheme-inner-square {
-		inset-block-start: 2rem;
-		inset-inline-start: 2rem;
+		inset-block-start: 3rem;
+		inset-inline-start: 3rem;
 		position: absolute;
-		block-size: 4rem;
-		inline-size: 4rem;
-		border-left: 4rem solid var(--scheme-inner);
+		block-size: 6rem;
+		inline-size: 6rem;
+		border-left: 6rem solid var(--scheme-inner);
 	}
 
 	.civ-icon-scheme-values {
@@ -2790,6 +2921,7 @@
 		display: grid;
 		gap: 0.6rem;
 		place-items: center;
+		position: relative;
 		background-size: 26px 26px;
 		border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--panel-border));
 		border-radius: 0.7rem;
@@ -2814,6 +2946,47 @@
 		border-radius: 999px;
 		padding: 0.24rem 0.62rem;
 		margin: 0;
+	}
+
+	.civ-icon-activity-overlay {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		padding: 1rem;
+		background: color-mix(in oklch, var(--panel-bg) 34%, transparent);
+		backdrop-filter: blur(2px);
+		border-radius: inherit;
+		z-index: 2;
+		pointer-events: none;
+	}
+
+	.civ-icon-activity {
+		align-items: center;
+		display: inline-flex;
+		gap: 0.5rem;
+		color: color-mix(in oklch, white 92%, var(--ink));
+		font-size: 0.78rem;
+		font-weight: 600;
+		line-height: 1.2;
+		background: color-mix(in oklch, var(--accent) 18%, var(--panel-bg));
+		border: 1px solid color-mix(in oklch, var(--accent) 42%, var(--panel-border));
+		box-shadow:
+			0 10px 30px color-mix(in oklch, black 28%, transparent),
+			0 0 0 1px color-mix(in oklch, white 8%, transparent) inset;
+		border-radius: 999px;
+		padding: 0.6rem 0.95rem;
+		margin: 0;
+	}
+
+	.civ-icon-spinner {
+		inline-size: 0.8rem;
+		block-size: 0.8rem;
+		border: 2px solid color-mix(in oklch, white 18%, transparent);
+		border-top-color: color-mix(in oklch, white 88%, var(--ink));
+		border-radius: 999px;
+		animation: civ-icon-spin 0.8s linear infinite;
+		flex: 0 0 auto;
 	}
 
 	.civ-icon-preview-stack {
@@ -2984,6 +3157,12 @@
 	.civ-icon-button-danger {
 		background: color-mix(in oklch, oklch(0.7 0.14 25) 14%, var(--control-bg));
 		border-color: color-mix(in oklch, oklch(0.68 0.16 25) 36%, var(--panel-border));
+	}
+
+	@keyframes civ-icon-spin {
+		to {
+			transform: rotate(360deg);
+		}
 	}
 
 	.civ-icon-swiatlo-group {
