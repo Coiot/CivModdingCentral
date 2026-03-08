@@ -13,7 +13,7 @@ export default defineConfig({
 				modinfoBuilder: resolve(__dirname, "modinfo-builder/index.html"),
 				civ5modZiper: resolve(__dirname, "civ5mod-ziper/index.html"),
 				workshopUploader: resolve(__dirname, "workshop-uploader/index.html"),
-				links: resolve(__dirname, "links/index.html"),
+				communityLinks: resolve(__dirname, "community-links/index.html"),
 			},
 		},
 	},
