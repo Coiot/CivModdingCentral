@@ -780,12 +780,6 @@
 	<footer class="site-footer">
 		<p>
 			© {currentYear} Coiot. Shoutout if you found the tools useful {"<3"} or ping me if anything is borked! Special thanks for testers TopHatPaladin, Orange, DarthKyofu, and NopeCopter.
-			<!-- <a href="/workshop-uploader">Workshop Uploader</a>,
-			<a href="/modinfo-builder">.modinfo Builder</a>,
-			<a href="/civ5mod-ziper">.civ5mod Ziper</a>,
-			<a href="/dds-converter">DDS Converter</a>,
-			<a href="/map-viewer">Map Viewer</a>, and
-			<a href="/community-links">community links</a>. -->
 		</p>
 	</footer>
 </div>

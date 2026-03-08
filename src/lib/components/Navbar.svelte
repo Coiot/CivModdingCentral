@@ -83,6 +83,11 @@
 					label: "DDS Converter",
 					description: "Convert icons, screens, and textures into game-ready DDS files using helpful presets.",
 				},
+				{
+					href: "/civ-icon-maker",
+					label: "Icon Maker",
+					description: "Upload a civ icon alpha and have it styled and formatted for use in icon sheets for mods.",
+				},
 			],
 		},
 		{
