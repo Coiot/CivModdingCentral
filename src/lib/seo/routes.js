@@ -44,6 +44,19 @@ const ROUTE_SEO = {
 		keywords: "Civilization V modding links, Civ 5 Discord, Civ modding resources, community hubs",
 		pageType: "CollectionPage",
 	},
+	"/recipe-library": {
+		title: "Recipe Library Roadmap for Civ V Modding Patterns | Civ Modding Central",
+		description:
+			"Preview the planned Recipe Library for Civilization V modding, including copy-pasteable patterns for yields, units, Lua events, persistence, notifications, and text markup helpers.",
+		keywords: "Civilization V recipe library, Civ 5 patterns, dummy building helper, notification builder, persistent data helper",
+		pageType: "CollectionPage",
+	},
+	"/wizard-generators": {
+		title: "Wizard Generator Roadmap for Civ V Content Creation | Civ Modding Central",
+		description: "Preview the planned wizard generators for Civilization V modding, including unit, building, resource, tile improvement, civilization, leader, and atlas registration builders.",
+		keywords: "Civilization V wizard generator, Civ 5 unit wizard, building wizard, civilization wizard, atlas registration builder",
+		pageType: "CollectionPage",
+	},
 	"/civ-icon-maker": {
 		title: "Civ V Icon Maker and Alpha Atlas Tool | Civ Modding Central",
 		description: "Create Civilization V-style icon renders with layered lighting, color controls, drag positioning, and export-ready alpha atlas styling.",

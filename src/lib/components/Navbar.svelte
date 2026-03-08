@@ -44,13 +44,39 @@
 				},
 			],
 		},
+		// {
+		// 	id: "generate",
+		// 	kicker: "Scaffold",
+		// 	label: "Generators & Recipes",
+		// 	description: "Spin up common Civ V patterns and starter content.",
+		// 	panelTitle: "Starter Builders",
+		// 	panelCopy: "Use these pages when you need repeatable modding patterns, starter scaffolds, or guided content generation.",
+		// 	links: [
+		// 		{
+		// 			href: "/recipe-library",
+		// 			label: "Recipe Library",
+		// 			description: "Planned copy-pasteable Civ V patterns, helper generators, and markup utilities in one hub.",
+		// 		},
+		// 		{
+		// 			href: "/wizard-generators",
+		// 			label: "Wizard Generators",
+		// 			description: "Overview for the upcoming guided builders for units, buildings, civs, leaders, resources, and art registration.",
+		// 		},
+		// 		{
+		// 			label: "Project Skeleton Generator",
+		// 			description: "Generate a clean starter mod with wired XML, SQL, Lua, UI folders, and actions.",
+		// 			disabled: true,
+		// 			statusLabel: "Coming Soon",
+		// 		},
+		// 	],
+		// },
 		{
 			id: "assets",
 			kicker: "Art",
 			label: "Asset Pipeline",
 			description: "Prep art assets for in-game use.",
 			panelTitle: "Art Tools",
-			panelCopy: "Use this group when you are preparing art and need outputs that fit the game's texture pipeline.",
+			panelCopy: "Helpful tools when you are preparing art and need outputs that fit the game's style and texture pipeline.",
 			links: [
 				{
 					href: "/dds-converter",
@@ -67,6 +93,18 @@
 			panelTitle: "Lookup & Reference",
 			panelCopy: "Open these when you need to inspect map data, refresh your memory, or jump into community references quickly.",
 			links: [
+				{
+					label: "Schema Browser",
+					description: "Search Civ V tables, columns, foreign keys, and common companion tables from an offline graph.",
+					disabled: true,
+					statusLabel: "Coming Soon",
+				},
+				{
+					label: "Lua API Explorer",
+					description: "Search GameEvents, Events, LuaEvents, and GameInfoTypes with examples and documentation.",
+					disabled: true,
+					statusLabel: "Coming Soon",
+				},
 				{
 					href: "/map-viewer",
 					label: "Map Viewer",
@@ -98,10 +136,17 @@
 	});
 
 	function isActivePath(pathname) {
+		if (!pathname) {
+			return false;
+		}
 		if (pathname === "/workshop-uploader") {
 			return currentPath === "/" || currentPath === "/workshop-uploader";
 		}
 		return currentPath === pathname;
+	}
+
+	function navLinkKey(groupId, link, index) {
+		return `${groupId}-${link.href || link.label}-${index}`;
 	}
 
 	function isTypingTarget(target) {
@@ -254,16 +299,28 @@
 								<p class="nav-group-panel-copy">{group.panelCopy}</p>
 							</div>
 							<div class="nav-group-links">
-								{#each group.links as link (link.href)}
-									<a
-										class={`nav-entry ${isActivePath(link.href) ? "is-active" : ""}`}
-										href={link.href}
-										aria-current={isActivePath(link.href) ? "page" : undefined}
-										onclick={closeNavMenus}
-									>
-										<span class="nav-entry-title">{link.label}</span>
-										<span class="nav-entry-copy">{link.description}</span>
-									</a>
+								{#each group.links as link, index (navLinkKey(group.id, link, index))}
+									{#if link.disabled}
+										<div class="nav-entry is-disabled" aria-disabled="true">
+											<span class="nav-entry-head">
+												<span class="nav-entry-title">{link.label}</span>
+												<span class="nav-entry-status">{link.statusLabel || "Coming Soon"}</span>
+											</span>
+											<span class="nav-entry-copy">{link.description}</span>
+										</div>
+									{:else}
+										<a
+											class={`nav-entry ${isActivePath(link.href) ? "is-active" : ""}`}
+											href={link.href}
+											aria-current={isActivePath(link.href) ? "page" : undefined}
+											onclick={closeNavMenus}
+										>
+											<span class="nav-entry-head">
+												<span class="nav-entry-title">{link.label}</span>
+											</span>
+											<span class="nav-entry-copy">{link.description}</span>
+										</a>
+									{/if}
 								{/each}
 							</div>
 						</div>
@@ -743,6 +800,32 @@
 			background: color-mix(in oklch, var(--panel-bg) 75%, var(--control-bg));
 			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
 		}
+
+		&.is-disabled {
+			background: color-mix(in oklch, var(--panel-bg) 88%, transparent);
+			border-color: color-mix(in oklch, var(--panel-border) 86%, transparent);
+			opacity: 0.82;
+			cursor: default;
+		}
+	}
+
+	.nav-entry-head {
+		display: flex;
+		align-items: start;
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
+
+	.nav-entry-status {
+		flex: 0 0 auto;
+		color: var(--muted-ink);
+		font-size: 0.65rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		border: 1px solid color-mix(in oklch, var(--panel-border) 78%, var(--accent) 22%);
+		border-radius: 999px;
+		padding: 0.18rem 0.46rem;
 	}
 
 	.nav-actions {
@@ -1145,5 +1228,10 @@
 	:global(:root[data-theme="light"]) .nav-entry.is-active {
 		background: color-mix(in oklch, white 72%, var(--accent) 14%);
 		border-color: color-mix(in oklch, var(--panel-border) 50%, var(--accent) 50%);
+	}
+
+	:global(:root[data-theme="light"]) .nav-entry.is-disabled {
+		background: color-mix(in oklch, white 90%, var(--panel-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 82%, transparent);
 	}
 </style>

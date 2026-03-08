@@ -9,6 +9,8 @@
 	import WorkshopUploader from "./lib/components/WorkshopUploader.svelte";
 	import ModInfoBuilder from "./lib/components/ModInfoBuilder.svelte";
 	import Civ5ModZiper from "./lib/components/Civ5ModZiper.svelte";
+	import RecipeLibrary from "./lib/components/RecipeLibrary.svelte";
+	import WizardGenerators from "./lib/components/WizardGenerators.svelte";
 
 	const THEME_STORAGE_KEY = "cmc-theme-mode";
 	const AUTH_STORAGE_KEY = "cmc-auth-session";
@@ -172,7 +174,9 @@
 			currentPath === "/civ-icon-maker" ||
 			currentPath === "/workshop-uploader" ||
 			currentPath === "/modinfo-builder" ||
-			currentPath === "/civ5mod-ziper"
+			currentPath === "/civ5mod-ziper" ||
+			currentPath === "/recipe-library" ||
+			currentPath === "/wizard-generators"
 		) {
 			return;
 		}
@@ -754,6 +758,10 @@
 					<ModInfoBuilder />
 				{:else if currentPath === "/civ5mod-ziper"}
 					<Civ5ModZiper />
+				{:else if currentPath === "/recipe-library"}
+					<RecipeLibrary />
+				{:else if currentPath === "/wizard-generators"}
+					<WizardGenerators />
 				{:else if currentPath === "/map-viewer" && mapViewerLoadError}
 					<p class="status error">{mapViewerLoadError}</p>
 				{:else if currentPath === "/map-viewer" && MapViewerComponent}
