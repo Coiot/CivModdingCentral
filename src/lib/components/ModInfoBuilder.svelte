@@ -223,7 +223,7 @@
 		},
 		{
 			title: "Community Links",
-			href: "/links",
+			href: "/community-links",
 			copy: "Find Discord communities, release hubs, and troubleshooting help for dependencies and launch issues.",
 		},
 	];
@@ -1487,11 +1487,11 @@
 
 	.block {
 		display: grid;
-		gap: 0.55rem;
+		gap: 0.5rem;
 		background: color-mix(in oklch, var(--control-bg) 62%, black);
 		border: 1px solid var(--panel-border);
 		border-radius: 0.78rem;
-		padding: 0.75rem;
+		padding: 1rem;
 		margin-block-end: 0.8rem;
 	}
 
@@ -1781,7 +1781,7 @@
 	}
 
 	.issues p {
-		color: color-mix(in oklch, oklch(0.72 0.17 35) 90%, var(--ink));
+		color: color-mix(in oklch, oklch(0.6 0.2 35) 95%, var(--ink));
 		font-size: 0.85rem;
 		margin: 0.1rem 0;
 	}
@@ -1853,8 +1853,8 @@
 
 		&:hover {
 			transform: translateY(-1px);
-			border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
-			background: color-mix(in oklch, var(--panel-bg) 82%, var(--accent) 6%);
+			border-color: color-mix(in oklch, var(--accent) 85%, var(--panel-border));
+			background: color-mix(in oklch, var(--panel-bg) 88%, var(--accent) 1%);
 		}
 	}
 

@@ -3,7 +3,7 @@
 	import { fade } from "svelte/transition";
 	import { applyDocumentSeo, normalizeSeoPath } from "./lib/seo/routes.js";
 	import Navbar from "./lib/components/Navbar.svelte";
-	import Directory from "./lib/components/Directory.svelte";
+	import CommunityLinks from "./lib/components/CommunityLinks.svelte";
 	import DdsConverter from "./lib/components/DdsConverter.svelte";
 	import CivIconMaker from "./lib/components/CivIconMaker.svelte";
 	import WorkshopUploader from "./lib/components/WorkshopUploader.svelte";
@@ -167,7 +167,7 @@
 	$effect(() => {
 		if (
 			currentPath === "/" ||
-			currentPath === "/links" ||
+			currentPath === "/community-links" ||
 			currentPath === "/dds-converter" ||
 			currentPath === "/civ-icon-maker" ||
 			currentPath === "/workshop-uploader" ||
@@ -180,7 +180,7 @@
 	});
 
 	$effect(() => {
-		if (currentPath === "/links" || authRestoreStarted) {
+		if (currentPath === "/community-links" || authRestoreStarted) {
 			return;
 		}
 		authRestoreStarted = true;
@@ -742,8 +742,8 @@
 	<main id="main-content" class="page-shell" tabindex="-1">
 		{#key currentPath}
 			<div class="route-shell" bind:this={routeShellEl} in:fade={{ duration: 180 }} out:fade={{ duration: 130 }}>
-				{#if currentPath === "/links"}
-					<Directory />
+				{#if currentPath === "/community-links"}
+					<CommunityLinks />
 				{:else if currentPath === "/dds-converter"}
 					<DdsConverter />
 				{:else if currentPath === "/civ-icon-maker"}
@@ -777,7 +777,7 @@
 			<a href="/civ5mod-ziper">.civ5mod Ziper</a>,
 			<a href="/dds-converter">DDS Converter</a>,
 			<a href="/map-viewer">Map Viewer</a>, and
-			<a href="/links">community links</a>. -->
+			<a href="/community-links">community links</a>. -->
 		</p>
 	</footer>
 </div>

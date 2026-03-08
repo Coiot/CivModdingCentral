@@ -103,7 +103,7 @@
 		},
 		{
 			title: "Community Links",
-			href: "/links",
+			href: "/community-links",
 			copy: "Use the Discord and other community hubs for release announcements, troubleshooting, and upload help.",
 		},
 	];
@@ -211,8 +211,8 @@
 	}
 
 	.workshop-app-hero {
-		border-color: color-mix(in oklch, var(--accent) 18%, var(--panel-border));
-		background: linear-gradient(135deg, color-mix(in oklch, var(--panel-bg) 90%, black) 0%, color-mix(in oklch, var(--panel-bg) 82%, var(--accent) 8%) 100%);
+		border-color: color-mix(in oklch, var(--accent) 50%, var(--panel-border));
+		background: linear-gradient(135deg, color-mix(in oklch, var(--panel-bg) 80%, black) 0%, color-mix(in oklch, var(--panel-bg) 90%, var(--accent) 5%) 100%);
 	}
 
 	.workshop-app-button {
@@ -261,7 +261,7 @@
 	}
 
 	.workshop-app-kicker {
-		color: color-mix(in oklch, var(--accent) 68%, var(--ink));
+		color: color-mix(in oklch, var(--accent) 90%, var(--ink));
 		font-size: 0.75rem;
 		font-weight: 700;
 		letter-spacing: 0.16em;
@@ -330,10 +330,10 @@
 		overflow: clip;
 		display: grid;
 		gap: 0.8rem;
-		border-color: color-mix(in oklch, var(--accent) 26%, var(--panel-border));
+		border-color: color-mix(in oklch, var(--accent) 80%, var(--panel-border));
 		background:
-			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 7%, transparent) 0%, transparent 58%),
-			linear-gradient(165deg, color-mix(in oklch, var(--panel-bg) 87%, var(--accent) 3%) 0%, color-mix(in oklch, var(--panel-bg) 91%, black) 100%);
+			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 5%, transparent) 0%, transparent 58%),
+			linear-gradient(165deg, color-mix(in oklch, var(--panel-bg) 88%, var(--accent) 2%) 0%, color-mix(in oklch, var(--panel-bg) 90%, black) 100%);
 		box-shadow:
 			0 1px 0 color-mix(in oklch, var(--accent) 16%, transparent),
 			0 4px 8px color-mix(in oklch, black 80%, var(--accent) 20%);
@@ -365,7 +365,7 @@
 		inset: auto -25% -42% auto;
 		inline-size: 12rem;
 		aspect-ratio: 1;
-		background: radial-gradient(circle, color-mix(in oklch, var(--accent) 12%, transparent) 0%, transparent 70%);
+		background: radial-gradient(circle, color-mix(in oklch, var(--accent) 4%, transparent) 0%, transparent 70%);
 		pointer-events: none;
 		opacity: 0.25;
 		transition: opacity 170ms ease;
@@ -378,11 +378,11 @@
 		transform: translateY(-2px);
 		border-color: color-mix(in oklch, var(--accent) 50%, var(--panel-border));
 		background:
-			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 10%, transparent) 0%, transparent 60%),
+			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 7%, transparent) 0%, transparent 60%),
 			linear-gradient(165deg, color-mix(in oklch, var(--panel-bg) 84%, var(--accent) 5%) 0%, color-mix(in oklch, var(--panel-bg) 90%, black) 100%);
 		box-shadow:
-			0 1px 0 color-mix(in oklch, var(--accent) 24%, transparent),
-			0 12px 16px color-mix(in oklch, black 76%, var(--accent) 24%);
+			0 1px 0 color-mix(in oklch, var(--accent) 20%, transparent),
+			0 12px 16px color-mix(in oklch, black 76%, var(--accent) 20%);
 	}
 
 	.workshop-app-release-card:hover::after,
@@ -394,7 +394,7 @@
 
 	.workshop-app-release-card:has(.workshop-app-button:hover) .workshop-app-pill,
 	.workshop-app-release-card:has(.workshop-app-button:focus-visible) .workshop-app-pill {
-		border-color: color-mix(in oklch, var(--accent) 68%, var(--panel-border));
+		border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
 		background: color-mix(in oklch, var(--accent) 22%, transparent);
 	}
 
@@ -421,8 +421,8 @@
 		flex: 0 0 auto;
 		padding: 0.22rem 0.55rem;
 		border-radius: 999px;
-		border: 1px solid color-mix(in oklch, var(--accent) 50%, var(--panel-border));
-		background: color-mix(in oklch, var(--accent) 12%, transparent);
+		border: 1px solid color-mix(in oklch, var(--accent) 70%, var(--panel-border));
+		background: color-mix(in oklch, var(--accent) 20%, transparent);
 		color: var(--ink);
 		font-size: 0.76rem;
 		font-weight: 700;
@@ -485,8 +485,8 @@
 
 	.workshop-app-companion-card:hover {
 		transform: translateY(-1px);
-		border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
-		background: color-mix(in oklch, var(--panel-bg) 82%, var(--accent) 6%);
+		border-color: color-mix(in oklch, var(--accent) 85%, var(--panel-border));
+		background: color-mix(in oklch, var(--panel-bg) 85%, var(--accent) 1%);
 	}
 
 	:global(:root[data-theme="light"]) .workshop-app-page {

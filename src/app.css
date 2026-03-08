@@ -62,8 +62,8 @@ body {
 	display: grid;
 	gap: 1rem;
 	border-radius: 1rem;
-	background: var(--panel-bg);
-	border: 1px solid color-mix(in oklch, var(--accent) 26%, var(--panel-border));
+	background: linear-gradient(135deg, color-mix(in oklch, var(--panel-bg) 90%, black) 0%, color-mix(in oklch, var(--panel-bg) 90%, var(--accent) 2%) 100%);
+	border: 1px solid color-mix(in oklch, var(--accent) 60%, var(--panel-border));
 	box-shadow: 0 2px 4px var(--shadow-soft);
 	padding: 1.5rem;
 }
@@ -120,9 +120,10 @@ figcaption a {
 	color: var(--ink);
 	font-weight: 600;
 	text-decoration: none;
-	background: color-mix(in oklch, var(--control-bg) 80%, var(--accent));
-	border: 1px solid var(--accent);
+	background: color-mix(in oklch, #000 75%, var(--accent) 15%);
+	border: 1px solid color-mix(in oklch, #000 10%, var(--accent) 70%);
 	padding: 0.2rem 0.45rem;
+	margin: 0.25rem 0.05rem;
 	transition:
 		color 130ms ease,
 		background 130ms ease,
@@ -134,8 +135,9 @@ p a:hover,
 li a:hover,
 dd a:hover,
 figcaption a:hover {
-	background: color-mix(in oklch, var(--control-bg) 60%, oklch(0.8 0.12 235 / 0.5));
-	border-color: color-mix(in oklch, var(--control-bg) 20%, var(--accent));
+	text-shadow: 1px 1px 1px #000;
+	background: color-mix(in oklch, var(--panel-bg) 70%, var(--accent));
+	border-color: color-mix(in oklch, var(--control-bg) 10%, var(--accent));
 	transform: translateY(-1px);
 }
 

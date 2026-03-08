@@ -12,7 +12,7 @@ Civ Modding Central provides the standalone CMC Workshop Uploader for Windows, m
 - .modinfo Builder: https://civmoddingcentral.dev/modinfo-builder
 - .civ5mod Ziper: https://civmoddingcentral.dev/civ5mod-ziper
 - Map Viewer: https://civmoddingcentral.dev/map-viewer
-- Community Links: https://civmoddingcentral.dev/links
+- Community Links: https://civmoddingcentral.dev/community-links
 
 ## What the site offers
 

@@ -205,11 +205,6 @@
 		gap: 1.25rem;
 	}
 
-	.directory-hero {
-		background: var(--panel-bg);
-		border-color: color-mix(in oklch, var(--accent) 10%, var(--panel-border));
-	}
-
 	.directory-grid {
 		display: grid;
 		gap: 1rem;
@@ -241,13 +236,13 @@
 	.directory-card {
 		display: grid;
 		grid-template-rows: auto auto 1fr auto;
-		gap: 0.45rem;
+		gap: 0.5rem;
 		color: var(--ink);
 		text-decoration: none;
 		border-radius: 0.85rem;
 		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
 		background: var(--control-bg);
-		padding: 0.9rem;
+		padding: 1rem;
 		transition:
 			transform 0.2s ease,
 			box-shadow 0.2s ease,
@@ -256,8 +251,8 @@
 
 	.directory-card:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 12px 22px var(--shadow-soft);
-		border-color: color-mix(in oklch, var(--accent) 38%, var(--panel-border));
+		box-shadow: 0 8px 14px var(--shadow-soft);
+		border-color: color-mix(in oklch, var(--accent) 70%, var(--panel-border));
 	}
 
 	.directory-card-top {
@@ -271,7 +266,7 @@
 		display: grid;
 		place-items: center;
 		background: var(--panel-bg);
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border: 1px solid color-mix(in oklch, var(--accent) 10%, var(--panel-border));
 		border-radius: 0.75rem;
 		overflow: hidden;
 	}

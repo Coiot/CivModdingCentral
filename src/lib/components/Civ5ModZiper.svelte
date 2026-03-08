@@ -22,7 +22,7 @@
 		},
 		{
 			title: "Community Links",
-			href: "/links",
+			href: "/community-links",
 			copy: "Find Discord communities, troubleshooting help, and release channels for Civ V modding.",
 		},
 	];
@@ -34,6 +34,9 @@
 		const issues = [];
 		if (!fileCount) {
 			issues.push("Select a source folder (or files) first.");
+		}
+		if (fileCount && !rootModinfoFound) {
+			issues.push("Add a .modinfo file at the package root.");
 		}
 		if (!String(outputFileName || "").trim()) {
 			issues.push("Output file name is required.");
@@ -343,11 +346,6 @@
 		gap: 1rem;
 	}
 
-	.civ5mod-hero {
-		background: var(--panel-bg);
-		border-color: color-mix(in oklch, var(--accent) 16%, var(--panel-border));
-	}
-
 	.civ5mod-guide-row {
 		display: grid;
 		gap: 1rem;
@@ -358,8 +356,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
-		background: color-mix(in oklch, var(--panel-bg) 92%, var(--accent) 4%);
-		border: 1px solid color-mix(in oklch, var(--panel-border) 74%, transparent);
+		background: color-mix(in oklch, var(--panel-bg) 98%, var(--accent) 1%);
+		border: 1px solid color-mix(in oklch, var(--panel-border) 95%, transparent);
 		border-radius: 1rem;
 		padding: 1.25rem;
 
@@ -384,9 +382,9 @@
 	.civ5mod-panel {
 		display: grid;
 		gap: 1rem;
-		background: var(--panel-bg);
+		background: color-mix(#000, var(--panel-bg) 90%);
 		box-shadow: 0 10px 26px var(--shadow-soft);
-		border: 1px solid color-mix(in oklch, var(--panel-border) 78%, transparent);
+		border: 1px solid color-mix(in oklch, var(--panel-border) 85%, transparent);
 		border-radius: 1rem;
 		padding: 1.25rem;
 
@@ -437,9 +435,9 @@
 		}
 
 		&:hover {
-			background: color-mix(in oklch, var(--panel-bg) 84%, var(--accent) 6%);
-			border-color: color-mix(in oklch, var(--accent) 42%, var(--panel-border));
-			box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 22%, transparent);
+			background: color-mix(in oklch, var(--panel-bg) 90%, var(--accent) 5%);
+			border-color: color-mix(in oklch, var(--accent) 80%, var(--panel-border));
+			box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 80%, transparent);
 			transform: translateY(-1px);
 		}
 
@@ -449,11 +447,11 @@
 		}
 
 		&.is-drag-over {
-			background: color-mix(in oklch, var(--accent) 14%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--accent) 78%, var(--panel-border));
+			background: color-mix(in oklch, var(--accent) 5%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
 			box-shadow:
-				0 0 0 1px color-mix(in oklch, var(--accent) 55%, transparent),
-				0 10px 24px color-mix(in oklch, var(--accent) 12%, transparent);
+				0 0 0 1px color-mix(in oklch, var(--accent) 40%, transparent),
+				0 10px 24px color-mix(in oklch, var(--accent) 10%, transparent);
 			transform: translateY(-2px) scale(1.005);
 		}
 	}
@@ -470,7 +468,7 @@
 	}
 
 	.civ5mod-drop-feedback {
-		color: color-mix(in oklch, var(--accent) 46%, var(--muted-ink));
+		color: color-mix(in oklch, var(--accent) 90%, var(--muted-ink));
 		font-size: 0.82rem;
 		font-weight: 500;
 		margin: 0;

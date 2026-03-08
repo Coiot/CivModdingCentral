@@ -1286,7 +1286,7 @@
 		display: grid;
 		gap: 1rem;
 		color: var(--ink);
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border: 1px solid color-mix(in oklch, var(--accent) 5%, var(--panel-border));
 		border-radius: 1rem;
 		background: var(--panel-bg);
 		box-shadow: 0 8px 20px var(--shadow-soft);
@@ -1322,9 +1322,9 @@
 		inline-size: 100%;
 		display: grid;
 		gap: 0.75rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 16%, var(--panel-border));
+		border: 1px solid color-mix(in oklch, var(--accent) 5%, var(--panel-border));
 		border-radius: 0.9rem;
-		background: color-mix(in oklch, var(--panel-bg) 86%, var(--control-bg));
+		background: color-mix(in oklch, var(--panel-bg) 95%, var(--control-bg));
 		padding-block: 0.8rem;
 		padding-inline: 0.8rem;
 	}
@@ -1359,8 +1359,8 @@
 		justify-items: center;
 		gap: 0.5rem;
 		color: var(--ink);
-		background: color-mix(in oklch, var(--accent) 8%, var(--control-bg));
-		border: 2px dashed color-mix(in oklch, var(--accent) 35%, var(--panel-border));
+		background: color-mix(in oklch, var(--accent) 4%, var(--control-bg));
+		border: 2px dashed color-mix(in oklch, var(--accent) 80%, var(--panel-border));
 		border-radius: 0.85rem;
 		text-align: center;
 		cursor: pointer;
@@ -1372,8 +1372,8 @@
 			transform 0.15s ease;
 
 		&.is-drag-over {
-			background: color-mix(in oklch, var(--accent) 18%, var(--control-bg));
-			border-color: color-mix(in oklch, var(--accent) 62%, var(--panel-border));
+			background: color-mix(in oklch, var(--accent) 10%, var(--control-bg));
+			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
 			transform: translateY(-1px);
 		}
 
@@ -1391,8 +1391,9 @@
 		inline-size: min(320px, 100%);
 		block-size: auto;
 		object-fit: contain;
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border: 1px solid color-mix(in oklch, var(--accent) 40%, var(--panel-border));
 		border-radius: 0.65rem;
+		box-shadow: 1px 1px 4px var(--panel-bg);
 		margin-block-start: 0.5rem;
 	}
 
@@ -1404,7 +1405,7 @@
 		gap: 0.6rem;
 		color: var(--ink);
 		background: var(--control-bg);
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
 		border-radius: 0.75rem;
 		padding-block: 0.65rem;
 		padding-inline: 0.65rem;
@@ -1434,7 +1435,7 @@
 		font-size: 0.78rem;
 		text-box: trim-both cap alphabetic;
 		background: var(--panel-bg);
-		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+		border: 1px solid color-mix(in oklch, var(--accent) 60%, var(--panel-border));
 		border-radius: 0.5rem;
 		padding-block: 0.35rem;
 		padding-inline: 0.25rem;
@@ -1474,7 +1475,7 @@
 		color: var(--ink);
 		text-decoration: none;
 		background: var(--control-bg);
-		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+		border: 1px solid color-mix(in oklch, var(--accent) 60%, var(--panel-border));
 		border-radius: 0.65rem;
 		padding-block: 0.54rem;
 		padding-inline: 0.82rem;
@@ -1490,7 +1491,7 @@
 	}
 
 	.dds-download {
-		background: color-mix(in oklch, var(--accent) 12%, var(--control-bg));
+		background: color-mix(in oklch, var(--accent) 30%, var(--control-bg));
 	}
 
 	.dds-tooltip-wrap {
@@ -1509,7 +1510,7 @@
 		font-size: 0.76rem;
 		line-height: 1.35;
 		background: oklch(0.2 0 0 / 0.96);
-		border: 1px solid color-mix(in oklch, var(--accent) 45%, var(--panel-border));
+		border: 1px solid color-mix(in oklch, var(--accent) 65%, var(--panel-border));
 		border-radius: 0.55rem;
 		padding-block: 0.45rem;
 		padding-inline: 0.6rem;
@@ -1532,7 +1533,7 @@
 			font-size: 0.85rem;
 			color: var(--ink);
 			background: var(--control-bg);
-			border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+			border: 1px solid color-mix(in oklch, var(--accent) 70%, var(--panel-border));
 			border-radius: 0.55rem;
 			padding-block: 0.34rem;
 			padding-inline: 0.5rem;
@@ -1611,7 +1612,7 @@
 	}
 
 	.danger-action {
-		border-color: color-mix(in oklch, oklch(0.72 0.2 25) 50%, var(--panel-border)) !important;
+		border-color: color-mix(in oklch, oklch(0.72 0.2 25) 70%, var(--panel-border)) !important;
 	}
 
 	.dds-status {

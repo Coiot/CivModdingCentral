@@ -18,12 +18,84 @@
 		currentPath = "/",
 	} = $props();
 
-	let userOpen = $state(false);
-	let helpOpen = $state(false);
-	let userWrapEl = $state();
-	let helpWrapEl = $state();
+	const NAV_GROUPS = [
+		{
+			id: "ship",
+			kicker: "Publish",
+			label: "Build & Publish",
+			description: "Package, format, and ship finished mods.",
+			panelTitle: "Build Compiling",
+			panelCopy: "Use these when the mod is ready to package, format, and push into a distributable form.",
+			links: [
+				{
+					href: "/workshop-uploader",
+					label: "Workshop Uploader",
+					description: "OS agnostic desktop app for streamlined Steam Workshop publishing.",
+				},
+				{
+					href: "/modinfo-builder",
+					label: ".modinfo Builder",
+					description: "Generate mod actions, references, and metadata without hand-editing the project XML.",
+				},
+				{
+					href: "/civ5mod-ziper",
+					label: ".civ5mod Ziper",
+					description: "Bundle a mod folder into Civ V's distributable archive format for publishing and sharing.",
+				},
+			],
+		},
+		{
+			id: "assets",
+			kicker: "Art",
+			label: "Asset Pipeline",
+			description: "Prep art assets for in-game use.",
+			panelTitle: "Art Tools",
+			panelCopy: "Use this group when you are preparing art and need outputs that fit the game's texture pipeline.",
+			links: [
+				{
+					href: "/dds-converter",
+					label: "DDS Converter",
+					description: "Convert icons, screens, and textures into game-ready DDS files using helpful presets.",
+				},
+			],
+		},
+		{
+			id: "explore",
+			kicker: "Reference",
+			label: "Explore & Learn",
+			description: "Inspect data and jump into curated docs.",
+			panelTitle: "Lookup & Reference",
+			panelCopy: "Open these when you need to inspect map data, refresh your memory, or jump into community references quickly.",
+			links: [
+				{
+					href: "/map-viewer",
+					label: "Map Viewer",
+					description: "Inspect plots, terrain, ownership, and other map data visually for mod support or CPU-only game setup.",
+				},
+				{
+					href: "/community-links",
+					label: "Community Links",
+					description: "Open the curated collection of Civ V modding references, utilities, and community resources.",
+				},
+			],
+		},
+	];
+	const NAV_PAGE_COUNT = NAV_GROUPS.reduce((count, group) => count + group.links.length, 0);
 	const REDDIT_URL = "https://old.reddit.com/r/civmoddingcentral/";
 	const DISCORD_URL = "https://discord.gg/yf8jUXf";
+
+	let userOpen = $state(false);
+	let helpOpen = $state(false);
+	let navMenuOpen = $state(false);
+	let openNavGroupId = $state(null);
+	let userWrapEl = $state();
+	let helpWrapEl = $state();
+	let navWrapEl = $state();
+
+	$effect(() => {
+		currentPath;
+		closeNavMenus();
+	});
 
 	function isActivePath(pathname) {
 		if (pathname === "/workshop-uploader") {
@@ -36,10 +108,58 @@
 		return Boolean(target?.closest?.("input, textarea, select, [contenteditable='true']"));
 	}
 
+	function isGroupActive(group) {
+		return group.links.some((link) => isActivePath(link.href));
+	}
+
+	function getDefaultNavGroupId() {
+		return NAV_GROUPS.find((group) => isGroupActive(group))?.id ?? NAV_GROUPS[0]?.id ?? null;
+	}
+
+	function openNavMenu(groupId = openNavGroupId ?? getDefaultNavGroupId()) {
+		navMenuOpen = true;
+		openNavGroupId = groupId;
+		userOpen = false;
+		helpOpen = false;
+	}
+
+	function closeNavMenus() {
+		navMenuOpen = false;
+		openNavGroupId = null;
+	}
+
+	function toggleNavMenu() {
+		if (navMenuOpen) {
+			closeNavMenus();
+			return;
+		}
+
+		openNavMenu();
+	}
+
+	function toggleNavGroup(groupId) {
+		if (openNavGroupId === groupId) {
+			openNavGroupId = null;
+			navMenuOpen = true;
+			return;
+		}
+
+		openNavMenu(groupId);
+	}
+
+	function handleNavShellFocusOut(event) {
+		const nextTarget = event.relatedTarget;
+		if (nextTarget && navWrapEl?.contains(nextTarget)) {
+			return;
+		}
+		closeNavMenus();
+	}
+
 	function handleWindowKeyDown(event) {
 		if (event.key === "Escape") {
 			userOpen = false;
 			helpOpen = false;
+			closeNavMenus();
 			return;
 		}
 
@@ -51,6 +171,7 @@
 			event.preventDefault();
 			helpOpen = !helpOpen;
 			userOpen = false;
+			closeNavMenus();
 			return;
 		}
 
@@ -58,13 +179,13 @@
 			event.preventDefault();
 			userOpen = !userOpen;
 			helpOpen = false;
+			closeNavMenus();
 			return;
 		}
 
 		if (event.key.toLowerCase() === "t") {
 			event.preventDefault();
 			onToggleTheme();
-			return;
 		}
 	}
 
@@ -75,6 +196,9 @@
 		}
 		if (helpOpen && helpWrapEl && !helpWrapEl.contains(target)) {
 			helpOpen = false;
+		}
+		if (navWrapEl && !navWrapEl.contains(target)) {
+			closeNavMenus();
 		}
 	}
 </script>
@@ -93,20 +217,58 @@
 	</div>
 
 	<div class="nav-tools">
-		<div class="page-nav-shell">
-			<nav class="page-nav" aria-label="Primary navigation">
-				<a class={`page-link ${isActivePath("/workshop-uploader") ? "is-active" : ""}`} href="/workshop-uploader" aria-current={isActivePath("/workshop-uploader") ? "page" : undefined}
-					>Workshop Uploader</a
-				>
-				<a class={`page-link ${isActivePath("/modinfo-builder") ? "is-active" : ""}`} href="/modinfo-builder" aria-current={isActivePath("/modinfo-builder") ? "page" : undefined}
-					>.modinfo Builder</a
-				>
-				<a class={`page-link ${isActivePath("/civ5mod-ziper") ? "is-active" : ""}`} href="/civ5mod-ziper" aria-current={isActivePath("/civ5mod-ziper") ? "page" : undefined}>.civ5mod Ziper</a>
-				<a class={`page-link ${isActivePath("/map-viewer") ? "is-active" : ""}`} href="/map-viewer" aria-current={isActivePath("/map-viewer") ? "page" : undefined}>Map Viewer</a>
-				<a class={`page-link ${isActivePath("/dds-converter") ? "is-active" : ""}`} href="/dds-converter" aria-current={isActivePath("/dds-converter") ? "page" : undefined}>DDS Converter</a>
-				<!-- <a class={`page-link ${isActivePath("/civ-icon-maker") ? "is-active" : ""}`} href="/civ-icon-maker" aria-current={isActivePath("/civ-icon-maker") ? "page" : undefined}>Civ Icon Maker</a> -->
-				<!-- <a class={`page-link ${isActivePath("/wiki") ? "is-active" : ""}`} href="/wiki" aria-current={isActivePath("/wiki") ? "page" : undefined}>Wiki Template</a> -->
-				<a class={`page-link ${isActivePath("/links") ? "is-active" : ""}`} href="/links" aria-current={isActivePath("/links") ? "page" : undefined}>Links</a>
+		<div class="page-nav-shell" bind:this={navWrapEl} role="group" aria-label="Tool navigation" onfocusout={handleNavShellFocusOut}>
+			<button
+				type="button"
+				class={`nav-menu-trigger nav-menu-trigger-primary ${navMenuOpen ? "is-open" : ""}`}
+				aria-expanded={navMenuOpen ? "true" : "false"}
+				aria-controls="primary-navigation"
+				onclick={toggleNavMenu}
+			>
+				<span class="nav-menu-label">Browse Tools & Resources</span>
+				<span class="nav-menu-copy">{NAV_GROUPS.length} categories, {NAV_PAGE_COUNT} pages</span>
+			</button>
+
+			<nav id="primary-navigation" class={`page-nav ${navMenuOpen ? "is-open" : ""}`} aria-label="Primary navigation">
+				{#each NAV_GROUPS as group (group.id)}
+					<section class={`nav-group ${openNavGroupId === group.id ? "is-open" : ""} ${isGroupActive(group) ? "is-active" : ""}`}>
+						<button
+							type="button"
+							class="nav-group-trigger"
+							aria-expanded={openNavGroupId === group.id ? "true" : "false"}
+							aria-controls={`nav-panel-${group.id}`}
+							onclick={() => toggleNavGroup(group.id)}
+						>
+							<span class="nav-group-kicker">{group.kicker}</span>
+							<span class="nav-group-title-row">
+								<span class="nav-group-title">{group.label}</span>
+								<span class="nav-group-count">{group.links.length}</span>
+							</span>
+							<span class="nav-group-copy">{group.description}</span>
+						</button>
+
+						<div id={`nav-panel-${group.id}`} class="nav-group-panel">
+							<div class="nav-group-panel-head">
+								<p class="nav-group-panel-kicker">{group.kicker}</p>
+								<p class="nav-group-panel-title">{group.panelTitle}</p>
+								<p class="nav-group-panel-copy">{group.panelCopy}</p>
+							</div>
+							<div class="nav-group-links">
+								{#each group.links as link (link.href)}
+									<a
+										class={`nav-entry ${isActivePath(link.href) ? "is-active" : ""}`}
+										href={link.href}
+										aria-current={isActivePath(link.href) ? "page" : undefined}
+										onclick={closeNavMenus}
+									>
+										<span class="nav-entry-title">{link.label}</span>
+										<span class="nav-entry-copy">{link.description}</span>
+									</a>
+								{/each}
+							</div>
+						</div>
+					</section>
+				{/each}
 			</nav>
 		</div>
 
@@ -128,7 +290,18 @@
 			</a>
 
 			<div class="user-wrap" bind:this={userWrapEl}>
-				<button type="button" class="user-trigger" aria-label="User menu" aria-haspopup="true" aria-expanded={userOpen ? "true" : "false"} onclick={() => (userOpen = !userOpen)}>
+				<button
+					type="button"
+					class="user-trigger"
+					aria-label="User menu"
+					aria-haspopup="true"
+					aria-expanded={userOpen ? "true" : "false"}
+					onclick={() => {
+						userOpen = !userOpen;
+						helpOpen = false;
+						closeNavMenus();
+					}}
+				>
 					<svg class="user-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" aria-hidden="true">
 						<path d="M18 20a6 6 0 0 0-12 0" />
 						<circle cx="12" cy="10" r="4" />
@@ -201,6 +374,7 @@
 					onclick={() => {
 						helpOpen = !helpOpen;
 						userOpen = false;
+						closeNavMenus();
 					}}
 				>
 					<svg class="help-icon" viewBox="0 0 640 640" aria-hidden="true">
@@ -237,37 +411,40 @@
 
 <style>
 	.navbar {
+		position: relative;
+		z-index: 20;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 1.15rem;
-		padding-block: 0.75rem 0.615rem;
-		padding-inline: 1rem;
-		border-radius: 0.85rem;
+		gap: clamp(0.75rem, 1.5cqi, 1.15rem);
 		background: var(--navbar-bg);
-		border: 1px solid var(--panel-border);
 		box-shadow: 0 2px 4px var(--shadow-soft);
-		position: relative;
-		z-index: 20;
+		border-radius: 0.85rem;
+		border: 1px solid var(--panel-border);
+		padding-block: 0.75rem 0.615rem;
+		padding-inline: clamp(0.8rem, 1.75cqi, 1rem);
+		container: navbar / inline-size;
 	}
 
 	.brand {
+		min-inline-size: 0;
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
+		flex: 0 1 auto;
+	}
 
-		a {
-			display: flex;
-			align-items: center;
-		}
+	.brand-link {
+		display: flex;
+		align-items: center;
 	}
 
 	.brand-logo {
-		flex: 0 0 40px;
 		inline-size: 40px;
 		block-size: 40px;
 		min-inline-size: 40px;
 		min-block-size: 40px;
+		flex: 0 0 40px;
 		border-radius: 0.5rem;
 		object-fit: contain;
 	}
@@ -281,9 +458,9 @@
 
 	.brand-overline {
 		color: var(--muted-ink);
+		text-transform: uppercase;
 		font-size: 0.75rem;
 		letter-spacing: 0.12em;
-		text-transform: uppercase;
 	}
 
 	.brand-title {
@@ -294,17 +471,284 @@
 	}
 
 	.nav-tools {
+		min-inline-size: 0;
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
-		flex-wrap: wrap;
 		justify-content: flex-end;
+		gap: clamp(0.45rem, 1cqi, 0.7rem);
+		flex: 1 1 auto;
+	}
+
+	.page-nav-shell {
+		position: relative;
+		z-index: 5;
+		min-inline-size: 0;
+		flex: 0 1 auto;
+	}
+
+	.page-nav {
+		position: absolute;
+		top: calc(100% + 0.65rem);
+		right: 0;
+		left: auto;
+		inline-size: min(44rem, calc(100cqi - 1rem));
+		max-inline-size: calc(100cqi - 1rem);
+		display: none;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.55rem;
+		align-items: start;
+		background: color-mix(in oklch, var(--panel-bg) 88%, black);
+		box-shadow: 0 12px 24px color-mix(in oklch, var(--shadow-soft) 90%, transparent);
+		border-radius: 0.95rem;
+		border: 1px solid color-mix(in oklch, var(--accent) 52%, var(--panel-border));
+		padding: 0.8rem;
+
+		&.is-open {
+			display: grid;
+		}
+	}
+
+	.nav-group {
+		position: static;
+
+		&.is-open .nav-group-trigger {
+			background: color-mix(in oklch, var(--control-bg) 75%, black);
+			box-shadow: 0 8px 12px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
+			border-color: color-mix(in oklch, var(--accent) 82%, var(--panel-border));
+			transform: translateY(-1px);
+		}
+
+		&.is-open .nav-group-panel {
+			display: grid;
+		}
+
+		&.is-active .nav-group-trigger {
+			background: color-mix(in oklch, var(--control-bg) 99%, var(--accent));
+			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
+		}
+	}
+
+	.nav-group-trigger {
+		min-block-size: 6rem;
+		inline-size: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.25rem;
+		color: var(--ink);
+		text-align: left;
+		font: inherit;
+		background: color-mix(in oklch, var(--control-bg) 92%, black);
+		border-radius: 0.78rem;
+		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+		padding-block: 0.56rem;
+		padding-inline: 0.72rem;
+		transition:
+			background 160ms ease,
+			border-color 160ms ease,
+			transform 160ms ease,
+			box-shadow 160ms ease;
+		cursor: pointer;
+
+		&:hover {
+			background: color-mix(in oklch, var(--control-bg) 88%, black);
+			box-shadow: 0 8px 12px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
+			border-color: color-mix(in oklch, var(--accent) 68%, var(--panel-border));
+			transform: translateY(-1px);
+		}
+	}
+
+	.nav-group-kicker,
+	.nav-menu-copy,
+	.nav-group-copy,
+	.nav-entry-copy,
+	.nav-group-panel-kicker,
+	.nav-group-panel-copy,
+	.user-label,
+	.help-section h4,
+	.user-meta,
+	.user-message,
+	.user-access,
+	.help-copy,
+	.help-list {
+		color: color-mix(in oklch, var(--muted-ink) 72%, var(--ink));
+	}
+
+	.nav-group-kicker,
+	.nav-group-panel-kicker,
+	.nav-menu-copy {
+		text-transform: uppercase;
+		font-size: 0.68rem;
+		letter-spacing: 0.12em;
+	}
+
+	.nav-menu-trigger {
+		inline-size: fit-content;
+		min-inline-size: 0;
+		max-inline-size: 100%;
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.75rem;
+		color: var(--ink);
+		text-align: left;
+		font: inherit;
+		border-radius: 0.78rem;
+		padding-block: 0.56rem;
+		padding-inline: 0.72rem;
+		transition:
+			background 160ms ease,
+			border-color 160ms ease,
+			transform 160ms ease,
+			box-shadow 160ms ease;
+		cursor: pointer;
+
+		.nav-menu-copy {
+			display: inline;
+			flex: 0 0 auto;
+			white-space: nowrap;
+			font-size: 0.63rem;
+			letter-spacing: 0.1em;
+		}
+
+		&.nav-menu-trigger-primary {
+			background: color-mix(in oklch, var(--control-bg) 82%, black);
+			box-shadow: inset 0 1px 0 color-mix(in oklch, white 10%, transparent);
+			border: 1px solid color-mix(in oklch, var(--accent) 80%, var(--panel-border));
+			border-radius: 0.9rem;
+		}
+
+		&.nav-menu-trigger-primary:hover {
+			background: color-mix(in oklch, var(--control-bg) 80%, black) !important;
+			box-shadow:
+				inset 0 1px 0 color-mix(in oklch, white 12%, transparent),
+				0 8px 12px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
+			border-color: color-mix(in oklch, var(--accent) 80%, var(--panel-border));
+			transform: translateY(0) !important;
+		}
+
+		&.nav-menu-trigger-primary.is-open {
+			background: color-mix(in oklch, var(--control-bg) 70%, black);
+			box-shadow:
+				inset 0 1px 0 color-mix(in oklch, white 14%, transparent),
+				0 8px 12px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
+			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
+			transform: translateY(-1px);
+		}
+	}
+
+	.nav-group-title-row {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+	}
+
+	.nav-group-title,
+	.nav-menu-label,
+	.nav-group-panel-title,
+	.nav-entry-title,
+	.help-header,
+	.user-heading {
+		color: var(--ink);
+		font-weight: 700;
+	}
+
+	.nav-group-title,
+	.nav-menu-label {
+		font-size: 0.95rem;
+		white-space: pre;
+	}
+
+	.nav-group-count {
+		line-height: 1.2;
+		flex: 0 0 auto;
+		color: color-mix(in oklch, var(--accent) 25%, var(--ink));
+		font-size: 0.68rem;
+		background: color-mix(in oklch, var(--control-bg) 90%, black);
+		border-radius: 999px;
+		border: 1px solid color-mix(in oklch, var(--accent) 58%, var(--panel-border));
+		padding-block: 0.04rem;
+		padding-inline: 0.42rem;
+	}
+
+	.nav-group-copy,
+	.nav-entry-copy,
+	.nav-group-panel-copy {
+		line-height: 1.34;
+		font-size: 0.77rem;
+		margin-block: 0;
+	}
+
+	.nav-group-panel {
+		position: absolute;
+		top: calc(100% + 0.45rem);
+		right: 0;
+		left: auto;
+		z-index: 30;
+		inline-size: min(36rem, calc(100cqi - 1rem));
+		max-inline-size: calc(100cqi - 1rem);
+		display: none;
+		grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+		gap: 0.85rem;
+		background: color-mix(in oklch, var(--panel-bg) 90%, black);
+		box-shadow: 0 18px 36px color-mix(in oklch, var(--shadow-soft) 90%, transparent);
+		border-radius: 0.95rem;
+		border: 1px solid color-mix(in oklch, var(--accent) 54%, var(--panel-border));
+		padding: 0.85rem;
+	}
+
+	.nav-group-panel-head {
+		display: grid;
+		align-content: start;
+		gap: 0.35rem;
+		padding-inline-end: 0.25rem;
+	}
+
+	.nav-group-panel-title,
+	.nav-group-panel-kicker {
+		margin-block: 0;
+	}
+
+	.nav-group-panel-title {
+		font-size: 1rem;
+	}
+
+	.nav-group-links {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+		gap: 0.65rem;
+	}
+
+	.nav-entry {
+		display: grid;
+		gap: 0.3rem;
+		text-decoration: none;
+		background: color-mix(in oklch, var(--panel-bg) 84%, var(--control-bg));
+		border-radius: 0.78rem;
+		border: 1px solid color-mix(in oklch, var(--accent) 46%, var(--panel-border));
+		padding: 0.7rem;
+		transition:
+			background 160ms ease,
+			border-color 160ms ease,
+			transform 160ms ease;
+
+		&:hover,
+		&:focus-visible {
+			background: color-mix(in oklch, var(--panel-bg) 78%, var(--control-bg));
+			border-color: color-mix(in oklch, var(--accent) 68%, var(--panel-border));
+			transform: translateY(-1px);
+		}
+
+		&.is-active {
+			background: color-mix(in oklch, var(--panel-bg) 75%, var(--control-bg));
+			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
+		}
 	}
 
 	.nav-actions {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: clamp(0.35rem, 0.8cqi, 0.5rem);
 		flex: 0 0 auto;
 	}
 
@@ -318,33 +762,9 @@
 		padding-inline: 0.45rem;
 	}
 
-	.page-nav {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.35rem;
-		flex-wrap: wrap;
-	}
-
-	.page-nav-shell {
-		min-inline-size: 0;
-	}
-
-	.page-link {
-		font-size: 0.85rem;
-		color: var(--accent);
-		text-decoration: none;
-		background: color-mix(in oklch, var(--accent) 5%, transparent);
-		border: 1px solid color-mix(in oklch, var(--accent) 35%, var(--panel-border));
-		border-radius: 0.5rem;
-		padding-block: 0.4rem;
-		padding-inline: 0.75rem;
-	}
-
-	.page-link:hover {
-		background: color-mix(in oklch, var(--accent) 18%, transparent);
-	}
-
-	.page-link:focus-visible,
+	.nav-group-trigger:focus-visible,
+	.nav-menu-trigger:focus-visible,
+	.nav-entry:focus-visible,
 	.social-trigger:focus-visible,
 	.help-trigger:focus-visible,
 	.user-trigger:focus-visible,
@@ -356,41 +776,34 @@
 		border-color: color-mix(in oklch, var(--accent) 60%, var(--panel-border));
 	}
 
-	.page-link.is-active {
-		color: color-mix(in oklch, var(--accent) 10%, var(--ink));
-		text-shadow: 0 1px 1px color-mix(in oklch, var(--accent) 95%, var(--ink));
-		background: var(--accent);
-		border: 1px solid color-mix(in oklch, var(--accent) 5%, var(--panel-border));
-	}
-
 	.social-trigger,
 	.help-trigger,
 	.user-trigger,
 	.user-actions button {
-		border: 1px solid var(--panel-border);
-		background: var(--control-bg);
 		color: var(--ink);
+		font: inherit;
+		background: var(--control-bg);
+		border: 1px solid var(--panel-border);
 		border-radius: 0.55rem;
 		padding-block: 0.42rem;
 		padding-inline: 0.62rem;
-		font: inherit;
-		cursor: pointer;
 		transition:
 			background 150ms ease,
 			border-color 150ms ease,
 			color 150ms ease;
+		cursor: pointer;
 	}
 
 	.user-actions button:hover {
-		border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
 		background: color-mix(in oklch, var(--accent) 14%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
 	}
 
 	.social-trigger:hover,
 	.help-trigger:hover,
 	.user-trigger:hover {
-		border-color: var(--panel-border);
 		background: color-mix(in oklch, var(--ink) 8%, var(--control-bg));
+		border-color: var(--panel-border);
 	}
 
 	.user-wrap,
@@ -410,8 +823,8 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		padding-inline: 0.48rem;
 		text-decoration: none;
+		padding-inline: 0.48rem;
 	}
 
 	.user-icon {
@@ -441,9 +854,9 @@
 		display: grid;
 		gap: 0.45rem;
 		background: var(--panel-bg);
+		box-shadow: 0 16px 34px var(--shadow-soft);
 		border: 1px solid var(--panel-border);
 		border-radius: 0.75rem;
-		box-shadow: 0 16px 34px var(--shadow-soft);
 		padding-block: 0.65rem;
 		padding-inline: 0.65rem;
 	}
@@ -455,7 +868,6 @@
 	}
 
 	.user-label {
-		color: var(--muted-ink);
 		font-size: 0.75rem;
 		margin-block: 0;
 	}
@@ -475,11 +887,11 @@
 		padding-block: 0.25rem;
 		padding-inline: 1rem;
 		cursor: pointer;
-	}
 
-	.user-chip.is-active {
-		border-color: color-mix(in oklch, var(--accent) 65%, var(--panel-border));
-		background: color-mix(in oklch, var(--accent) 18%, var(--control-bg));
+		&.is-active {
+			background: color-mix(in oklch, var(--accent) 25%, var(--control-bg));
+			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
+		}
 	}
 
 	.help-dropdown {
@@ -489,23 +901,20 @@
 		inline-size: min(360px, 92vw);
 		display: grid;
 		gap: 0.5rem;
-		border-radius: 0.75rem;
-		border: 1px solid var(--panel-border);
 		background: var(--panel-bg);
 		box-shadow: 0 16px 34px var(--shadow-soft);
+		border-radius: 0.75rem;
+		border: 1px solid var(--panel-border);
 		padding-block: 0.7rem;
 		padding-inline: 0.7rem;
 	}
 
 	.help-header {
-		color: var(--ink);
 		font-size: 0.84rem;
-		font-weight: 700;
 		letter-spacing: 0.02em;
 	}
 
 	.help-section h4 {
-		color: var(--muted-ink);
 		font-size: 0.8rem;
 		letter-spacing: 0.03em;
 		margin-block: 0 0.3rem;
@@ -514,11 +923,10 @@
 	.help-list {
 		display: grid;
 		gap: 0.5rem;
-		color: var(--muted-ink);
 		font-size: 0.76rem;
-		list-style: none;
 		padding: 0;
 		margin-block: 0;
+		list-style: none;
 	}
 
 	.help-list kbd {
@@ -526,18 +934,17 @@
 		color: var(--ink);
 		font-size: 0.75rem;
 		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		background: color-mix(in oklch, var(--accent) 25%, var(--control-bg));
 		border-radius: 0.25rem;
 		border: 1px solid color-mix(in oklch, var(--accent) 80%, var(--panel-border));
-		background: color-mix(in oklch, var(--accent) 25%, var(--control-bg));
 		padding-block: 0.15rem;
 		padding-inline: 0.5rem;
 		margin-inline-end: 0.5rem;
 	}
 
 	.help-copy {
-		color: var(--muted-ink);
-		font-size: 0.78rem;
 		line-height: 1.34;
+		font-size: 0.78rem;
 		margin-block: 0;
 	}
 
@@ -548,20 +955,16 @@
 	}
 
 	.user-heading {
-		color: var(--ink);
 		font-size: 0.84rem;
-		font-weight: 700;
 		margin-block-start: 0.5rem;
 	}
 
 	.user-meta {
 		font-size: 0.78rem;
-		color: var(--muted-ink);
 	}
 
 	.user-access {
 		font-size: 0.76rem;
-		color: var(--muted-ink);
 		margin-block: 0;
 	}
 
@@ -587,114 +990,133 @@
 	}
 
 	.user-message {
-		color: var(--muted-ink);
 		font-size: 0.76rem;
 	}
 
 	.user-message--debug {
-		font-size: 0.72rem;
 		opacity: 0.8;
+		font-size: 0.72rem;
 	}
 
-	@media (max-width: 1200px) and (min-width: 901px) {
+	@media (width <= 980px) {
 		.navbar {
 			display: grid;
-			grid-template-columns: 1fr;
-			align-items: stretch;
-			gap: 0.8rem;
+			grid-template-columns: minmax(0, 1fr) auto;
+			grid-template-areas:
+				"brand actions"
+				"trigger trigger";
+			align-items: start;
+		}
+
+		.brand {
+			grid-area: brand;
+			gap: clamp(0.55rem, 1.4vw, 0.75rem);
+		}
+
+		.brand-overline {
+			font-size: clamp(0.68rem, 0.9vw, 0.75rem);
+			letter-spacing: clamp(0.08em, 0.18vw, 0.12em);
+		}
+
+		.brand-title {
+			font-size: clamp(1rem, 2.2vw, 1.125rem);
+			padding-block-start: clamp(0.22rem, 0.6vw, 0.5rem);
 		}
 
 		.nav-tools {
-			display: flex;
-			flex-direction: column;
-			align-items: stretch;
-			justify-content: flex-start;
-			gap: 0.45rem;
-			flex-wrap: nowrap;
-		}
-
-		.nav-actions {
-			justify-content: flex-end;
-			align-self: flex-end;
-			align-items: center;
-		}
-
-		.page-nav {
-			min-inline-size: 0;
-			flex-wrap: nowrap;
-			overflow-x: auto;
-			scrollbar-width: thin;
-			padding-block-end: 0.1rem;
-			/*mask-image: linear-gradient(to right, transparent 0, black 1rem, black calc(100% - 1rem), transparent 100%);*/
+			display: contents;
 		}
 
 		.page-nav-shell {
-			position: relative;
+			inline-size: 100%;
+			grid-area: trigger;
+			justify-self: stretch;
 		}
 
-		/*.page-nav-shell::before,
-		.page-nav-shell::after {
-			content: "";
-			position: absolute;
-			inset-block: 0 0.1rem;
-			inline-size: 1.35rem;
-			pointer-events: none;
-			z-index: 1;
-		}
-
-		.page-nav-shell::before {
-			inset-inline-start: 0;
-			background: linear-gradient(to right, var(--navbar-bg), transparent);
-		}
-
-		.page-nav-shell::after {
-			inset-inline-end: 0;
-			background: linear-gradient(to left, var(--navbar-bg), transparent);
-		}*/
-
-		.page-link {
-			white-space: nowrap;
-			flex: 0 0 auto;
-		}
-	}
-
-	@media (max-width: 900px) {
-		.navbar {
-			flex-direction: column;
-			align-items: stretch;
-		}
-
-		.nav-tools {
-			justify-content: flex-start;
-		}
-
-		.nav-actions {
-			justify-content: flex-start;
-			flex-wrap: wrap;
-		}
-
-		.page-nav {
+		.nav-menu-trigger {
 			inline-size: 100%;
 		}
 
-		.page-nav-shell::before,
-		.page-nav-shell::after {
-			display: none;
+		.nav-menu-trigger .nav-menu-copy {
+			display: block;
 		}
 
-		.page-link {
-			flex: 1 1 auto;
-			text-align: center;
+		.page-nav {
+			position: static;
+			inline-size: auto;
+			max-inline-size: none;
+			grid-template-columns: 1fr;
+			box-shadow: none;
+			padding: 0.75rem;
+			margin-block-start: 0.55rem;
 		}
 
-		.user-dropdown {
-			left: 0;
-			right: auto;
+		.nav-group-panel {
+			position: static;
+			inline-size: auto;
+			max-inline-size: none;
+			grid-template-columns: 1fr;
+			box-shadow: none;
+			padding: 0.75rem;
+			margin-block-start: 0.5rem;
 		}
 
-		.help-dropdown {
-			left: 0;
-			right: auto;
+		.nav-group-links {
+			grid-template-columns: 1fr;
 		}
+
+		.nav-actions {
+			grid-area: actions;
+			justify-content: flex-end;
+			flex-wrap: wrap;
+			padding-block-start: 0.15rem;
+		}
+	}
+
+	:global(:root[data-theme="light"]) .page-nav,
+	:global(:root[data-theme="light"]) .nav-group-panel {
+		background: color-mix(in oklch, var(--panel-bg) 96%, white);
+	}
+
+	:global(:root[data-theme="light"]) .nav-group-trigger,
+	:global(:root[data-theme="light"]) .nav-menu-trigger {
+		background: color-mix(in oklch, var(--control-bg) 96%, white);
+	}
+
+	:global(:root[data-theme="light"]) .nav-menu-trigger-primary {
+		background: color-mix(in oklch, var(--control-bg) 92%, white);
+	}
+
+	:global(:root[data-theme="light"]) .nav-group-trigger:hover,
+	:global(:root[data-theme="light"]) .nav-group.is-open .nav-group-trigger,
+	:global(:root[data-theme="light"]) .nav-menu-trigger:hover,
+	:global(:root[data-theme="light"]) .nav-menu-trigger.is-open {
+		background: color-mix(in oklch, var(--control-bg) 92%, white);
+	}
+
+	:global(:root[data-theme="light"]) .nav-menu-trigger-primary:hover,
+	:global(:root[data-theme="light"]) .nav-menu-trigger-primary.is-open {
+		background: color-mix(in oklch, var(--control-bg) 88%, white);
+	}
+
+	:global(:root[data-theme="light"]) .nav-group.is-active .nav-group-trigger {
+		background: color-mix(in oklch, var(--control-bg) 90%, white);
+	}
+
+	:global(:root[data-theme="light"]) .nav-group-count {
+		background: color-mix(in oklch, var(--control-bg) 95%, white);
+	}
+
+	:global(:root[data-theme="light"]) .nav-entry {
+		background: color-mix(in oklch, var(--control-bg) 94%, white);
+	}
+
+	:global(:root[data-theme="light"]) .nav-entry:hover,
+	:global(:root[data-theme="light"]) .nav-entry:focus-visible {
+		background: color-mix(in oklch, var(--control-bg) 90%, white);
+	}
+
+	:global(:root[data-theme="light"]) .nav-entry.is-active {
+		background: color-mix(in oklch, var(--control-bg) 88%, white);
 	}
 </style>

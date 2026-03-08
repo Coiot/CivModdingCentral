@@ -38,7 +38,7 @@ const ROUTE_SEO = {
 		pageType: "WebApplication",
 		applicationCategory: "DeveloperApplication",
 	},
-	"/links": {
+	"/community-links": {
 		title: "Civ V Modding Links and Community Resources | Civ Modding Central",
 		description: "Browse community links for Civilization V modding, including Discord servers, Reddit communities, design references, and shared resource hubs.",
 		keywords: "Civilization V modding links, Civ 5 Discord, Civ modding resources, community hubs",
