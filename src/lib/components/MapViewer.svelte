@@ -5368,7 +5368,7 @@
 		overflow: hidden;
 		border: 1px solid var(--panel-border);
 		box-shadow: 0 10px 20px hsl(203deg 44% 14% / 0.2);
-		background: oklch(0.45 0.005 300);
+		background: oklch(0.3 0.005 300);
 		outline: none;
 		touch-action: none;
 	}
@@ -6415,6 +6415,37 @@
 			&:hover {
 				border-color: oklch(0.57 0.045 78 / 0.52);
 				background: oklch(0.29 0.014 74 / 0.82);
+			}
+		}
+	}
+
+	:global(:root[data-theme="light"]) .tile-map {
+		& .tile-pin-inspector-tabs button.active,
+		& .tab-row button.active,
+		& .pin-edit-buttons button.active,
+		& .pin-mode-buttons button.active {
+			color: color-mix(in oklch, var(--ink) 92%, black 8%);
+			text-shadow: none;
+			border-color: color-mix(in oklch, var(--panel-border) 42%, var(--accent) 58%);
+			background: linear-gradient(145deg, color-mix(in oklch, white 28%, var(--accent)), color-mix(in oklch, white 18%, var(--accent-strong)));
+		}
+
+		& .tile-pin-inspector,
+		& .pin-edit-target,
+		& .pin-mode-group,
+		& .pin-editor-state,
+		& .export-summary {
+			border-color: color-mix(in oklch, var(--panel-border) 82%, var(--accent) 18%);
+			background: color-mix(in oklch, white 84%, var(--panel-bg));
+		}
+
+		& .check-row {
+			border-color: color-mix(in oklch, var(--panel-border) 82%, var(--accent) 18%);
+			background: color-mix(in oklch, white 82%, var(--input-bg));
+
+			&:hover {
+				border-color: color-mix(in oklch, var(--panel-border) 64%, var(--accent) 36%);
+				background: color-mix(in oklch, white 74%, var(--accent) 12%);
 			}
 		}
 	}

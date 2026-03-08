@@ -149,6 +149,28 @@ figcaption a:focus-visible {
 	outline-offset: 2px;
 }
 
+:root[data-theme="light"] .hero {
+	background: linear-gradient(135deg, color-mix(in oklch, var(--panel-bg) 90%, white) 0%, color-mix(in oklch, var(--panel-bg) 90%, var(--accent) 2%) 100%);
+}
+
+:root[data-theme="light"] p a,
+:root[data-theme="light"] li a,
+:root[data-theme="light"] dd a,
+:root[data-theme="light"] figcaption a {
+	color: var(--ink);
+	background: color-mix(in oklch, white 86%, var(--control-bg));
+	border-color: color-mix(in oklch, var(--panel-border) 82%, var(--accent) 18%);
+}
+
+:root[data-theme="light"] p a:hover,
+:root[data-theme="light"] li a:hover,
+:root[data-theme="light"] dd a:hover,
+:root[data-theme="light"] figcaption a:hover {
+	text-shadow: none;
+	background: color-mix(in oklch, white 78%, var(--accent) 12%);
+	border-color: color-mix(in oklch, var(--panel-border) 70%, var(--accent) 30%);
+}
+
 @media (max-width: 900px) {
 	.page-shell {
 		inline-size: 100%;

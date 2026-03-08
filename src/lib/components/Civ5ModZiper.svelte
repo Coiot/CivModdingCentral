@@ -624,6 +624,10 @@
 			background: color-mix(in oklch, white 82%, var(--panel-bg));
 		}
 
+		.civ5mod-panel {
+			background: color-mix(in oklch, white 88%, var(--panel-bg));
+		}
+
 		.civ5mod-dropzone:hover {
 			background: color-mix(in oklch, white 76%, var(--accent) 8%);
 		}

@@ -998,6 +998,24 @@
 		font-size: 0.72rem;
 	}
 
+	@media (width <= 550px) {
+		.navbar {
+			padding: 0.5rem;
+		}
+
+		.nav-menu-copy {
+			display: none;
+		}
+
+		.nav-actions {
+			gap: 0.25rem;
+
+			.social-trigger {
+				padding: 0.3rem;
+			}
+		}
+	}
+
 	@media (width <= 980px) {
 		.navbar {
 			display: grid;
@@ -1075,32 +1093,38 @@
 
 	:global(:root[data-theme="light"]) .page-nav,
 	:global(:root[data-theme="light"]) .nav-group-panel {
-		background: color-mix(in oklch, var(--panel-bg) 96%, white);
+		background: color-mix(in oklch, white 88%, var(--panel-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 74%, var(--accent) 26%);
 	}
 
 	:global(:root[data-theme="light"]) .nav-group-trigger,
 	:global(:root[data-theme="light"]) .nav-menu-trigger {
-		background: color-mix(in oklch, var(--control-bg) 96%, white);
+		background: color-mix(in oklch, white 82%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 76%, var(--accent) 24%);
 	}
 
 	:global(:root[data-theme="light"]) .nav-menu-trigger-primary {
-		background: color-mix(in oklch, var(--control-bg) 92%, white);
+		background: color-mix(in oklch, white 78%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 64%, var(--accent) 36%);
 	}
 
 	:global(:root[data-theme="light"]) .nav-group-trigger:hover,
 	:global(:root[data-theme="light"]) .nav-group.is-open .nav-group-trigger,
 	:global(:root[data-theme="light"]) .nav-menu-trigger:hover,
 	:global(:root[data-theme="light"]) .nav-menu-trigger.is-open {
-		background: color-mix(in oklch, var(--control-bg) 92%, white);
+		background: color-mix(in oklch, white 74%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 60%, var(--accent) 40%);
 	}
 
 	:global(:root[data-theme="light"]) .nav-menu-trigger-primary:hover,
 	:global(:root[data-theme="light"]) .nav-menu-trigger-primary.is-open {
-		background: color-mix(in oklch, var(--control-bg) 88%, white);
+		background: color-mix(in oklch, white 70%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 54%, var(--accent) 46%);
 	}
 
 	:global(:root[data-theme="light"]) .nav-group.is-active .nav-group-trigger {
-		background: color-mix(in oklch, var(--control-bg) 90%, white);
+		background: color-mix(in oklch, white 68%, var(--accent) 32%);
+		border-color: color-mix(in oklch, var(--panel-border) 48%, var(--accent) 52%);
 	}
 
 	:global(:root[data-theme="light"]) .nav-group-count {
@@ -1108,15 +1132,18 @@
 	}
 
 	:global(:root[data-theme="light"]) .nav-entry {
-		background: color-mix(in oklch, var(--control-bg) 94%, white);
+		background: color-mix(in oklch, white 84%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 74%, var(--accent) 26%);
 	}
 
 	:global(:root[data-theme="light"]) .nav-entry:hover,
 	:global(:root[data-theme="light"]) .nav-entry:focus-visible {
-		background: color-mix(in oklch, var(--control-bg) 90%, white);
+		background: color-mix(in oklch, white 76%, var(--accent) 10%);
+		border-color: color-mix(in oklch, var(--panel-border) 60%, var(--accent) 40%);
 	}
 
 	:global(:root[data-theme="light"]) .nav-entry.is-active {
-		background: color-mix(in oklch, var(--control-bg) 88%, white);
+		background: color-mix(in oklch, white 72%, var(--accent) 14%);
+		border-color: color-mix(in oklch, var(--panel-border) 50%, var(--accent) 50%);
 	}
 </style>

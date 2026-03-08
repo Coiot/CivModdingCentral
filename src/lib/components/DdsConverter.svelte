@@ -1628,6 +1628,12 @@
 		color: oklch(0.82 0.14 145);
 	}
 
+	@media (width <= 550px) {
+		.atlas-size-block {
+			min-inline-size: 20rem;
+		}
+	}
+
 	:global(:root[data-theme="light"]) .dds-page {
 		.dds-panel {
 			background: color-mix(in oklch, white 88%, var(--panel-bg));
