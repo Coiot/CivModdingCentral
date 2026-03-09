@@ -86,7 +86,7 @@ export const recipeLaunchRecipes = [
 		},
 		touchpoints: [
 			linkToLua("GameEvents.PlayerCanTrain", "game-event-playercantrain-70", "gameEvents", "Empire-wide production veto hook with a real callback signature."),
-			linkToLua("Player:CanTrain", "player-cantrain-42", "methods", "Method-side legality check that complements the event hook."),
+			linkToLua("Player:CanTrain", "player-cantrain-42", "methods", "Method-side validation that complements the event hook."),
 			linkToLua("GameEvents.CanDeclareWar", "game-event-candeclarewar-2", "gameEvents", "Different hook bucket for diplomacy-side veto logic."),
 			linkToLua("GameEvents.CityBoughtPlot", "game-event-cityboughtplot-17", "gameEvents", "Hook-style callback that resolves map coordinates after border growth."),
 			linkToSchema("Units", "Inspect unit rows behind the enum passed into the hook."),

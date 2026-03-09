@@ -291,7 +291,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Improvements",
+					"note": "This method uses ImprovementTypes values backed by Improvements; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -336,7 +341,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -632,7 +642,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -730,7 +745,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -765,7 +785,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -891,7 +916,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-citycanbuyanyplot-20",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "city-canbuyplot-9",
@@ -909,7 +939,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-citycanbuyplot-21",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "city-canbuyplotat-10",
@@ -1021,7 +1056,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-citycanconstruct-22",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "city-canconstructtooltip-13",
@@ -1047,7 +1087,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -1142,7 +1187,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-citycancreate-23",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "city-canhurry-16",
@@ -1230,7 +1280,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-citycanmaintain-24",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "city-canplaceunithere-19",
@@ -1292,7 +1347,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-citycanprepare-25",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "city-canrangestrike-21",
@@ -1422,7 +1482,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-citycantrain-26",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "city-cantraintooltip-25",
@@ -1448,7 +1513,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -1537,7 +1607,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -1572,7 +1647,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -1607,7 +1687,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -1642,7 +1727,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -1677,7 +1767,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -2436,7 +2531,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes and eFromReligion values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -2535,7 +2635,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -2562,7 +2667,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -2721,7 +2831,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -2766,7 +2881,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -2997,7 +3117,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3024,7 +3149,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3051,7 +3181,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3078,7 +3213,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3105,7 +3245,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3132,7 +3277,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3167,7 +3317,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3212,7 +3367,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3255,7 +3415,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3282,7 +3451,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3416,7 +3590,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3443,7 +3622,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3585,7 +3769,20 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3628,7 +3825,20 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -3869,7 +4079,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -4002,7 +4217,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -4029,7 +4249,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -4083,7 +4308,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -4126,7 +4356,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes and eIndex values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -4261,7 +4500,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -4288,7 +4532,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -4351,7 +4600,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -4378,7 +4632,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -4405,7 +4664,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -4432,7 +4696,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -4567,7 +4836,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitPromotions",
+					"note": "This method uses PromotionTypes values backed by UnitPromotions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -5008,7 +5282,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -5043,7 +5322,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -5096,7 +5384,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -5249,7 +5542,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -5361,7 +5659,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -5649,7 +5952,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -5676,7 +5984,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitAIInfos",
+					"note": "This method uses UnitAITypes values backed by UnitAIInfos; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -5856,7 +6169,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -5937,7 +6255,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -6024,7 +6347,20 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -6177,7 +6513,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -6204,7 +6545,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -6319,7 +6665,20 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -6362,7 +6721,20 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -6389,7 +6761,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -6416,7 +6793,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -6567,7 +6949,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -6602,7 +6989,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -6726,7 +7122,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes and eIndex values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -6753,7 +7158,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -6780,7 +7190,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -6987,7 +7402,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -7102,7 +7522,20 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -7164,7 +7597,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -7380,7 +7822,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitCombatInfos",
+					"note": "This method uses UnitCombatTypes values backed by UnitCombatInfos; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -7423,7 +7870,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -7477,7 +7933,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -7504,7 +7965,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -7619,7 +8085,20 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -7662,7 +8141,20 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -7761,7 +8253,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -7788,7 +8285,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -7823,7 +8325,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -7850,7 +8357,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -7885,7 +8397,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -8143,7 +8660,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -8273,7 +8795,20 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -8453,7 +8988,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitPromotions",
+					"note": "This method uses PromotionTypes values backed by UnitPromotions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -8480,7 +9020,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -8587,7 +9132,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -9099,7 +9649,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -10033,7 +10588,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-setpopulation-78",
+					"note": "GameEvents callback touching the same state change."
+				}
+			]
 		},
 		{
 			"id": "city-setproduction-359",
@@ -10148,7 +10708,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -10684,7 +11249,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -11108,7 +11678,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -11433,7 +12008,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -11704,7 +12284,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -12319,7 +12904,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Civilizations",
+					"note": "This method uses CivilizationTypes values backed by Civilizations; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -12382,7 +12972,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Controls",
+					"note": "This method uses ControlTypes values backed by Controls; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -12661,7 +13256,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -12704,7 +13308,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -12747,7 +13360,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -12949,7 +13571,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -13159,7 +13786,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Controls",
+					"note": "This method uses ControlTypes values backed by Controls; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -13530,7 +14162,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Beliefs",
+					"note": "This method uses BeliefTypes and eBelief2 values backed by Beliefs; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -13565,7 +14206,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Beliefs",
+					"note": "This method uses BeliefTypes values backed by Beliefs; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -13648,7 +14294,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Beliefs",
+					"note": "This method uses BeliefTypes and eBelief2 values backed by Beliefs; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -13810,7 +14465,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Victories",
+					"note": "This method uses VictoryTypes values backed by Victories; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -13837,7 +14497,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Victories",
+					"note": "This method uses VictoryTypes values backed by Victories; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -14161,7 +14826,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -14196,7 +14866,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -14231,7 +14910,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -14445,7 +15133,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -14480,7 +15173,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -14508,7 +15206,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-getfounderbenefitsreligion-40",
+					"note": "GameEvents hook for supplying or altering the same resolved value."
+				}
+			]
 		},
 		{
 			"id": "game-getgamespeedtype-78",
@@ -14953,7 +15656,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -14988,7 +15696,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Improvements",
+					"note": "This method uses ImprovementTypes values backed by Improvements; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -15456,7 +16169,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "PolicyBranchTypes",
+					"note": "This method uses PolicyBranchTypes values backed by PolicyBranchTypes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -15617,7 +16335,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -15652,7 +16379,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -15931,7 +16667,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -16012,7 +16753,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -16128,7 +16874,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -16434,7 +17185,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -16461,7 +17217,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -16506,7 +17267,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -16757,7 +17523,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -16784,7 +17555,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -16819,7 +17595,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -16864,7 +17645,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Civilizations",
+					"note": "This method uses CivilizationTypes values backed by Civilizations; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -17062,7 +17848,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "MultiplayerOptions",
+					"note": "This method uses MultiplayerOptionTypes values backed by MultiplayerOptions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -17250,7 +18041,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -17285,7 +18081,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -17348,7 +18149,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "SpecialUnits",
+					"note": "This method uses SpecialUnitTypes values backed by SpecialUnits; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -17419,7 +18225,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -17490,7 +18301,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -17535,7 +18351,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -17570,7 +18391,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -17597,7 +18423,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Victories",
+					"note": "This method uses VictoryTypes values backed by Victories; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -17669,7 +18500,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "SpecialUnits",
+					"note": "This method uses SpecialUnitTypes values backed by SpecialUnits; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -18434,7 +19270,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -18523,7 +19364,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -18833,7 +19679,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19003,7 +19854,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Victories",
+					"note": "This method uses VictoryTypes values backed by Victories; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19038,7 +19894,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Victories",
+					"note": "This method uses VictoryTypes values backed by Victories; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19137,7 +19998,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Victories",
+					"note": "This method uses VictoryTypes values backed by Victories; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19261,7 +20127,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resolutions",
+					"note": "This method uses ResolutionTypes values backed by Resolutions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19296,7 +20167,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resolutions",
+					"note": "This method uses ResolutionTypes values backed by Resolutions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19429,7 +20305,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "ResolutionDecisions",
+					"note": "This method uses ResolutionDecisionTypes values backed by ResolutionDecisions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19464,7 +20345,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "LeagueProjects",
+					"note": "This method uses LeagueProjectTypes values backed by LeagueProjects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19572,7 +20458,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19661,7 +20552,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "LeagueSpecialSessions",
+					"note": "This method uses LeagueSpecialSessionTypes values backed by LeagueSpecialSessions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19696,7 +20592,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "LeagueSpecialSessions",
+					"note": "This method uses LeagueSpecialSessionTypes values backed by LeagueSpecialSessions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19731,7 +20632,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "LeagueSpecialSessions",
+					"note": "This method uses LeagueSpecialSessionTypes values backed by LeagueSpecialSessions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19766,7 +20672,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "LeagueSpecialSessions",
+					"note": "This method uses LeagueSpecialSessionTypes values backed by LeagueSpecialSessions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19801,7 +20712,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "LeagueProjects",
+					"note": "This method uses LeagueProjectTypes values backed by LeagueProjects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19836,7 +20752,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "LeagueProjects",
+					"note": "This method uses LeagueProjectTypes values backed by LeagueProjects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19916,7 +20837,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19943,7 +20869,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "LeagueProjects",
+					"note": "This method uses LeagueProjectTypes values backed by LeagueProjects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -19970,7 +20901,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "LeagueProjects",
+					"note": "This method uses LeagueProjectTypes values backed by LeagueProjects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -20005,7 +20941,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "LeagueProjects",
+					"note": "This method uses LeagueProjectTypes values backed by LeagueProjects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -20048,7 +20989,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "LeagueProjects",
+					"note": "This method uses LeagueProjectTypes values backed by LeagueProjects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -20189,7 +21135,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resolutions",
+					"note": "This method uses ResolutionTypes values backed by Resolutions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -20240,7 +21191,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resolutions",
+					"note": "This method uses ResolutionTypes values backed by Resolutions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -20320,7 +21276,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "ResolutionDecisions",
+					"note": "This method uses ResolutionDecisionTypes values backed by ResolutionDecisions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -20491,7 +21452,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "LeagueProjects",
+					"note": "This method uses LeagueProjectTypes values backed by LeagueProjects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -20518,7 +21484,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "LeagueProjects",
+					"note": "This method uses LeagueProjectTypes values backed by LeagueProjects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -20983,7 +21954,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -21010,7 +21986,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -21150,7 +22131,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -21604,7 +22590,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -21960,7 +22951,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -21987,7 +22983,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -22059,7 +23060,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-playercanadoptpolicy-60",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "player-canbuild-19",
@@ -22117,7 +23123,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Builds",
+					"note": "This method uses BuildTypes values backed by Builds; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -22196,7 +23207,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-playercanconstruct-62",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "player-cancreate-22",
@@ -22238,8 +23254,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "game-event-playercancreate-63",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "player-cancreatepantheon-23",
@@ -22292,8 +23318,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "game-event-playercaneverresearch-64",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "player-canfound-25",
@@ -22413,8 +23449,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Processes",
+					"note": "This method uses ProcessTypes values backed by Processes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "game-event-playercanmaintain-67",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "player-canmajorbullygold-28",
@@ -22680,8 +23726,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "game-event-playercanprepare-68",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "player-canraze-37",
@@ -22716,7 +23772,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-canraze-10",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "player-canreceivegoody-38",
@@ -22793,8 +23854,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "game-event-playercanresearch-69",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "player-canresearchforfree-40",
@@ -22820,7 +23891,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -22905,7 +23981,7 @@
 			"summary": "Checks whether a player is currently allowed to train a unit type under the present game state.",
 			"notes": [
 				"Use this before exposing custom production shortcuts or auto-queue logic that assumes the player can legally build a unit.",
-				"This is a player-wide legality check, so it is a good fit for civ-wide rules, policy locks, and resource gate logic.",
+				"This is a player-wide validation, so it is a good fit for civ-wide rules, policy locks, and resource gate logic.",
 				"If you need city-specific availability checks, pair it with city-side production logic instead of relying on this call alone."
 			],
 			"example": {
@@ -22933,7 +24009,6 @@
 					"note": "Event-side veto hook for adding extra train rules."
 				},
 				{
-					"table": "Units",
 					"note": "Inspect the unit rows and prereqs behind the queried type."
 				}
 			]
@@ -22962,7 +24037,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "PolicyBranchTypes",
+					"note": "This method uses PolicyBranchTypes values backed by PolicyBranchTypes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -23839,7 +24919,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -24098,7 +25183,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -24161,7 +25251,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Features",
+					"note": "This method uses FeatureTypes values backed by Features; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -24188,7 +25283,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -24231,7 +25331,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -24312,7 +25417,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Policies",
+					"note": "This method uses PolicyTypes values backed by Policies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -24357,7 +25467,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -24606,7 +25721,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -24719,7 +25839,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -24797,7 +25922,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Improvements",
+					"note": "This method uses ImprovementTypes values backed by Improvements; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -24893,7 +26023,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Routes",
+					"note": "This method uses RouteTypes values backed by Routes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -24928,7 +26063,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -24971,7 +26111,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -25375,7 +26520,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -25402,7 +26552,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -25429,7 +26584,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -25472,7 +26632,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -25560,7 +26729,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -25587,7 +26761,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -25730,7 +26909,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -27023,7 +28207,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -27104,7 +28293,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -28622,7 +29816,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Improvements",
+					"note": "This method uses ImprovementTypes values backed by Improvements; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -29059,7 +30258,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -29188,7 +30392,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -29285,7 +30494,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -29397,7 +30611,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -29448,7 +30667,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -29499,7 +30723,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -29550,7 +30779,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -29601,7 +30835,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -31202,7 +32441,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -31561,7 +32805,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -31750,7 +32999,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "PolicyBranchTypes",
+					"note": "This method uses PolicyBranchTypes values backed by PolicyBranchTypes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -31839,7 +33093,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -31874,7 +33133,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -31901,7 +33165,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -32468,7 +33737,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -32503,7 +33777,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -32682,7 +33965,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -32717,7 +34009,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -32762,7 +34063,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Policies",
+					"note": "This method uses PolicyTypes values backed by Policies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -32789,7 +34095,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Policies",
+					"note": "This method uses PolicyTypes values backed by Policies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -33104,7 +34415,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -33131,7 +34447,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -33388,7 +34709,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -33586,7 +34912,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -33613,7 +34944,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -33648,7 +34984,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -33675,7 +35016,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -33702,7 +35048,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -33729,7 +35080,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -34205,7 +35561,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -34276,7 +35637,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -34303,7 +35673,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -34508,7 +35883,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "PolicyBranchTypes",
+					"note": "This method uses PolicyBranchTypes values backed by PolicyBranchTypes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -34741,7 +36121,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -34840,7 +36225,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -35499,7 +36889,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -35553,7 +36948,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -35580,7 +36980,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -35607,7 +37012,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -35652,7 +37062,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -35679,7 +37094,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -35922,7 +37342,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -36111,7 +37536,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Policies",
+					"note": "This method uses PolicyTypes values backed by Policies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -36201,7 +37631,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This method uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -36383,7 +37818,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -36450,7 +37890,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -36800,7 +38245,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Builds",
+					"note": "This method uses BuildTypes values backed by Builds; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Features",
+					"note": "This method uses FeatureTypes values backed by Features; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -36835,7 +38289,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -36862,7 +38321,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -36948,7 +38412,20 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -38007,7 +39484,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "PlayerOptions",
+					"note": "This method uses PlayerOptionTypes values backed by PlayerOptions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -38835,7 +40317,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Policies",
+					"note": "This method uses PolicyTypes values backed by Policies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -38862,7 +40349,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "PolicyBranchTypes",
+					"note": "This method uses PolicyBranchTypes values backed by PolicyBranchTypes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -38916,7 +40408,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "PolicyBranchTypes",
+					"note": "This method uses PolicyBranchTypes values backed by PolicyBranchTypes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -38951,7 +40448,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -38978,7 +40480,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -39005,7 +40512,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -39131,7 +40643,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -39346,7 +40863,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -39508,7 +41030,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -39543,7 +41070,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -39640,7 +41172,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -40134,7 +41671,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Policies",
+					"note": "This method uses PolicyTypes values backed by Policies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -40188,7 +41730,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -40509,7 +42056,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "PlayerOptions",
+					"note": "This method uses PlayerOptionTypes values backed by PlayerOptions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -40606,7 +42158,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "PolicyBranchTypes",
+					"note": "This method uses PolicyBranchTypes values backed by PolicyBranchTypes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -40684,7 +42241,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -40773,7 +42335,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -40987,7 +42558,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -41046,7 +42622,20 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Improvements",
+					"note": "This method uses ImprovementTypes values backed by Improvements; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Routes",
+					"note": "This method uses RouteTypes values backed by Routes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -41089,7 +42678,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -41151,7 +42745,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -41202,7 +42801,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Builds",
+					"note": "This method uses BuildTypes values backed by Builds; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -41272,7 +42876,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Improvements",
+					"note": "This method uses ImprovementTypes values backed by Improvements; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -41307,7 +42916,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -41401,7 +43015,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Builds",
+					"note": "This method uses BuildTypes values backed by Builds; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -41955,7 +43574,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Builds",
+					"note": "This method uses BuildTypes values backed by Builds; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -41990,7 +43614,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Builds",
+					"note": "This method uses BuildTypes values backed by Builds; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -42041,7 +43670,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Builds",
+					"note": "This method uses BuildTypes values backed by Builds; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -42076,7 +43710,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Builds",
+					"note": "This method uses BuildTypes values backed by Builds; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -42183,7 +43822,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Builds",
+					"note": "This method uses BuildTypes values backed by Builds; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -43214,7 +44858,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Improvements",
+					"note": "This method uses ImprovementTypes values backed by Improvements; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -43340,7 +44989,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -43391,7 +45045,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Builds",
+					"note": "This method uses BuildTypes values backed by Builds; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -43829,7 +45492,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Builds",
+					"note": "This method uses BuildTypes values backed by Builds; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -44394,7 +46062,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Improvements",
+					"note": "This method uses ImprovementTypes values backed by Improvements; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -45349,7 +47022,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Improvements",
+					"note": "This method uses ImprovementTypes values backed by Improvements; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -45618,7 +47296,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -45696,7 +47379,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Routes",
+					"note": "This method uses RouteTypes values backed by Routes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -46027,7 +47715,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-candeclarewar-2",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "team-candefensiveembark-4",
@@ -46089,7 +47782,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Victories",
+					"note": "This method uses VictoryTypes values backed by Victories; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -46232,7 +47930,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -46294,7 +47997,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "VoteSources",
+					"note": "This method uses VoteSourceTypes values backed by VoteSources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -46364,7 +48072,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Improvements",
+					"note": "This method uses ImprovementTypes values backed by Improvements; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -46507,7 +48224,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -46542,7 +48264,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Routes",
+					"note": "This method uses RouteTypes values backed by Routes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -46802,7 +48529,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-declarewar-34",
+					"note": "Related GameEvents callback touching the same operation."
+				}
+			]
 		},
 		{
 			"id": "team-getallowembassytradingallowedcount-31",
@@ -46909,7 +48641,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -46936,7 +48673,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -46963,7 +48705,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -47071,7 +48818,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -47116,7 +48868,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "VoteSources",
+					"note": "This method uses VoteSourceTypes values backed by VoteSources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -47232,7 +48989,16 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Improvements",
+					"note": "This method uses ImprovementTypes values backed by Improvements; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Yields",
+					"note": "This method uses YieldTypes values backed by Yields; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -47466,7 +49232,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -47555,7 +49326,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -47582,7 +49358,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -47609,7 +49390,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -47690,7 +49476,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -47717,7 +49508,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Routes",
+					"note": "This method uses RouteTypes values backed by Routes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -47933,7 +49729,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -47960,7 +49761,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -47987,7 +49793,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -48014,7 +49825,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Victories",
+					"note": "This method uses VictoryTypes values backed by Victories; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -48041,7 +49857,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Victories",
+					"note": "This method uses VictoryTypes values backed by Victories; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -48301,7 +50122,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "BuildingClasses",
+					"note": "This method uses BuildingClassTypes values backed by BuildingClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -48463,7 +50289,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "VoteSources",
+					"note": "This method uses VoteSourceTypes values backed by VoteSources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -48760,7 +50591,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -48877,7 +50713,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -48912,7 +50753,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49055,7 +50901,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49117,7 +50968,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-makepeace-50",
+					"note": "Related GameEvents callback touching the same operation."
+				}
+			]
 		},
 		{
 			"id": "team-meet-134",
@@ -49152,7 +51008,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-teammeet-79",
+					"note": "Related GameEvents callback touching the same operation."
+				}
+			]
 		},
 		{
 			"id": "team-setcurrentera-135",
@@ -49178,7 +51039,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Eras",
+					"note": "This method uses EraTypes values backed by Eras; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49237,8 +51103,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "game-event-teamsethastech-81",
+					"note": "GameEvents callback touching the same state change."
+				}
+			]
 		},
 		{
 			"id": "team-setmapcentering-137",
@@ -49342,7 +51218,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49377,7 +51258,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This method uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49438,7 +51324,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49481,7 +51372,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49524,7 +51420,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49587,7 +51488,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49614,7 +51520,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49641,7 +51552,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49668,7 +51584,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49695,7 +51616,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49740,7 +51666,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49767,7 +51698,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49794,7 +51730,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49829,7 +51770,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49864,7 +51810,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49907,7 +51858,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -49950,7 +51906,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This method uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -50111,7 +52072,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitPromotions",
+					"note": "This method uses PromotionTypes values backed by UnitPromotions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -50242,7 +52208,7 @@
 			"displaySignature": "Unit:CanAirliftAt(Plot:pkPlot, int:x, int:y)",
 			"summary": "Tests whether a unit can airlift to the target location right now.",
 			"notes": [
-				"Use this as a legality check before issuing scripted relocation behavior that depends on airport-style movement.",
+				"Use this as a validation before issuing scripted relocation behavior that depends on airport-style movement.",
 				"The plot object and x or y coordinates together give you both the destination context and the map position the game will validate.",
 				"This is best used as a yes or no gate before you attempt any UI or mission-side follow-up."
 			],
@@ -50314,7 +52280,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Automates",
+					"note": "This method uses AutomateTypes values backed by Automates; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -50365,7 +52336,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Builds",
+					"note": "This method uses BuildTypes values backed by Builds; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -50533,7 +52509,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This method uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -50708,7 +52689,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Commands",
+					"note": "This method uses CommandTypes values backed by Commands; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -51061,7 +53047,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Specialists",
+					"note": "This method uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -51553,7 +53544,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitPromotions",
+					"note": "This method uses PromotionTypes values backed by UnitPromotions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -51894,7 +53890,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-canstartmission-15",
+					"note": "GameEvents hook for overriding or observing the same validation."
+				}
+			]
 		},
 		{
 			"id": "unit-cantrade-64",
@@ -52406,7 +54407,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Commands",
+					"note": "This method uses CommandTypes values backed by Commands; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -52451,7 +54457,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -52568,7 +54579,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Features",
+					"note": "This method uses FeatureTypes values backed by Features; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -52595,7 +54611,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Features",
+					"note": "This method uses FeatureTypes values backed by Features; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -52694,7 +54715,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Flavors",
+					"note": "This method uses FlavorTypes values backed by Flavors; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -53138,7 +55164,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Civilizations",
+					"note": "This method uses CivilizationTypes values backed by Civilizations; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -53664,7 +55695,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Domains",
+					"note": "This method uses DomainTypes values backed by Domains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -53727,7 +55763,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Features",
+					"note": "This method uses FeatureTypes values backed by Features; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -53754,7 +55795,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Features",
+					"note": "This method uses FeatureTypes values backed by Features; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -54033,7 +56079,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Terrains",
+					"note": "This method uses TerrainTypes values backed by Terrains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -54060,7 +56111,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Terrains",
+					"note": "This method uses TerrainTypes values backed by Terrains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -54087,7 +56143,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitCombatInfos",
+					"note": "This method uses UnitCombatTypes values backed by UnitCombatInfos; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -54912,7 +56973,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Resources",
+					"note": "This method uses ResourceTypes values backed by Resources; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -55468,7 +57534,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitAIInfos",
+					"note": "This method uses UnitAITypes values backed by UnitAIInfos; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -55513,7 +57584,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -56384,7 +58460,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Features",
+					"note": "This method uses FeatureTypes values backed by Features; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -56564,7 +58645,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitPromotions",
+					"note": "This method uses PromotionTypes values backed by UnitPromotions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -56609,7 +58695,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -57074,7 +59165,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitPromotions",
+					"note": "This method uses PromotionTypes values backed by UnitPromotions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -57281,7 +59377,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Terrains",
+					"note": "This method uses TerrainTypes values backed by Terrains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -57666,7 +59767,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitPromotions",
+					"note": "This method uses PromotionTypes values backed by UnitPromotions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -58115,7 +60221,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitPromotions",
+					"note": "This method uses PromotionTypes values backed by UnitPromotions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -58169,7 +60280,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -58466,7 +60582,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitAIInfos",
+					"note": "This method uses UnitAITypes values backed by UnitAIInfos; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -58534,7 +60655,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-unitsetxy-88",
+					"note": "GameEvents callback touching the same state change."
+				}
+			]
 		},
 		{
 			"id": "unit-specialcargo-364",
@@ -58578,7 +60704,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Terrains",
+					"note": "This method uses TerrainTypes values backed by Terrains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -58605,7 +60736,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Terrains",
+					"note": "This method uses TerrainTypes values backed by Terrains; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -58632,7 +60768,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -58659,7 +60800,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitClasses",
+					"note": "This method uses UnitClassTypes values backed by UnitClasses; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -58686,7 +60832,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitCombatInfos",
+					"note": "This method uses UnitCombatTypes values backed by UnitCombatInfos; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -58713,7 +60864,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This method uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -58849,8 +61005,15 @@
 			],
 			"seeAlso": [
 				{
-					"table": "Builds",
 					"note": "Cross-check build actions when the finished improvement alone is not enough context."
+				},
+				{
+					"entryId": "unit-canstartmission-63",
+					"note": "Upstream mission validation before the worker build resolves into a finished improvement."
+				},
+				{
+					"entryId": "plot-getimprovementtype-45",
+					"note": "Resolve the completed plot state once the improvement has actually landed on the map."
 				}
 			]
 		},
@@ -58900,6 +61063,10 @@
 				{
 					"entryId": "team-ishastech-110",
 					"note": "Useful when war permissions depend on tech ownership at the team level."
+				},
+				{
+					"entryId": "team-candeclarewar-3",
+					"note": "Method-side validation for the same rule path."
 				}
 			]
 		},
@@ -59095,7 +61262,7 @@
 				},
 				{
 					"entryId": "player-cantrain-42",
-					"note": "Related legality check on the production side for unit access."
+					"note": "Related validation on the production side for unit access."
 				}
 			]
 		},
@@ -59273,7 +61440,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "player-canraze-37",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-canrazeoverride-11",
@@ -59472,8 +61644,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Missions",
+					"note": "This hook uses MissionTypes values backed by Missions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "unit-canstartmission-63",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-circumnavigatedglobe-16",
@@ -59497,7 +61679,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-iscircumnavigated-180",
+					"note": "Read the global circumnavigation state after this hook fires."
+				},
+				{
+					"entryId": "game-makecircumnavigated-215",
+					"note": "Method-side trigger for the same world-state milestone."
+				}
+			]
 		},
 		{
 			"id": "game-event-cityboughtplot-17",
@@ -59608,7 +61799,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This hook uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -59689,7 +61885,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "city-canbuyanyplot-8",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-citycanbuyplot-21",
@@ -59737,7 +61938,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "city-canbuyplot-9",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-citycanconstruct-22",
@@ -59805,6 +62011,10 @@
 				{
 					"entryId": "city-getnumbuilding-178",
 					"note": "Common helper when the construct rule depends on existing building counts."
+				},
+				{
+					"entryId": "city-canconstruct-12",
+					"note": "Method-side validation for the same rule path."
 				}
 			]
 		},
@@ -59845,8 +62055,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This hook uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "city-cancreate-15",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-citycanmaintain-24",
@@ -59885,8 +62105,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Processes",
+					"note": "This hook uses ProcessTypes values backed by Processes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "city-canmaintain-18",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-citycanprepare-25",
@@ -59925,8 +62155,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Specialists",
+					"note": "This hook uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "city-canprepare-20",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-citycantrain-26",
@@ -59965,8 +62205,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This hook uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "city-cantrain-24",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-citycapturecomplete-27",
@@ -60054,7 +62304,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "player-acquirecity-1",
+					"note": "Method-side city transfer path related to conquest and post-capture ownership changes."
+				},
+				{
+					"entryId": "city-isoccupied-309",
+					"note": "Useful for checking the captured city's occupation state after the takeover resolves."
+				}
+			]
 		},
 		{
 			"id": "game-event-cityconstructed-28",
@@ -60109,8 +62368,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This hook uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "city-getnumbuilding-178",
+					"note": "Confirm the finished building row on the city after construction completes."
+				},
+				{
+					"entryId": "game-event-citycanconstruct-22",
+					"note": "Earlier veto hook for the same city-level building pipeline."
+				}
+			]
 		},
 		{
 			"id": "game-event-cityconvertsreligion-29",
@@ -60157,8 +62430,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This hook uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "city-adoptreligionfully-2",
+					"note": "Method-side full conversion path for the same city religion state change."
+				},
+				{
+					"entryId": "city-convertpercentfollowers-60",
+					"note": "Useful when follow-up logic depends on how follower counts were shifted during conversion."
+				}
+			]
 		},
 		{
 			"id": "game-event-citycreated-30",
@@ -60213,8 +62500,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This hook uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "player-initcity-613",
+					"note": "Method-side city creation path before the post-create hook runs."
+				},
+				{
+					"entryId": "city-getgameturnfounded-144",
+					"note": "Helpful once you resolve the new city object from the owning player and city ID."
+				}
+			]
 		},
 		{
 			"id": "game-event-citysoldbuilding-31",
@@ -60253,8 +62554,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Buildings",
+					"note": "This hook uses BuildingTypes values backed by Buildings; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "city-isbuildingsellable-286",
+					"note": "Pre-sale validation for the same building row."
+				},
+				{
+					"entryId": "city-getsellbuildingrefund-241",
+					"note": "Inspect the refund math tied to the building that was just sold."
+				}
+			]
 		},
 		{
 			"id": "game-event-citystrategycanactivate-32",
@@ -60349,8 +62664,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This hook uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "city-cantrain-24",
+					"note": "City-side validation before the completed unit reaches this hook."
+				},
+				{
+					"entryId": "game-event-playercantrain-70",
+					"note": "Player-wide train veto hook for the same unit access pipeline."
+				}
+			]
 		},
 		{
 			"id": "game-event-declarewar-34",
@@ -60382,7 +62711,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "team-declarewar-30",
+					"note": "Method-side API touching the same operation."
+				}
+			]
 		},
 		{
 			"id": "game-event-economicstrategycanactivate-35",
@@ -60429,7 +62763,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-isvictoryvalid-214",
+					"note": "Check or gate the victory condition being evaluated by this test pass."
+				},
+				{
+					"entryId": "game-getwinner-171",
+					"note": "Inspect the resolved winner once victory logic succeeds."
+				}
+			]
 		},
 		{
 			"id": "game-event-gamecoreupdatebegin-37",
@@ -60444,7 +62787,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-getgameturn-80",
+					"note": "Useful for once-per-turn bookkeeping at the start of the core update cycle."
+				},
+				{
+					"entryId": "game-event-gamecoreupdateend-38",
+					"note": "Paired post-update hook after the same core tick finishes."
+				}
+			]
 		},
 		{
 			"id": "game-event-gamecoreupdateend-38",
@@ -60459,7 +62811,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-updatescore-261",
+					"note": "Common follow-up when the end of the core tick should refresh score-related state."
+				},
+				{
+					"entryId": "game-event-gamecoreupdatebegin-37",
+					"note": "Paired pre-update hook for the same core tick."
+				}
+			]
 		},
 		{
 			"id": "game-event-gatherperturnreplaystats-39",
@@ -60483,7 +62844,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "player-setreplaydatavalue-777",
+					"note": "Write custom per-turn replay values while the replay snapshot is being gathered."
+				},
+				{
+					"entryId": "player-getreplaydata-491",
+					"note": "Read back the custom replay channel when validating or rendering stored data."
+				}
+			]
 		},
 		{
 			"id": "game-event-getfounderbenefitsreligion-40",
@@ -60507,7 +62877,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-getfounderbenefitsreligion-77",
+					"note": "Method-side accessor for the same resolved value."
+				}
+			]
 		},
 		{
 			"id": "game-event-getreligiontofound-41",
@@ -60546,7 +62921,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Religions",
+					"note": "This hook uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -60698,7 +63078,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This hook uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -60730,8 +63115,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This hook uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "player-dogoody-96",
+					"note": "Upstream goody-resolution method when tracing how the reward was selected."
+				},
+				{
+					"entryId": "team-sethastech-136",
+					"note": "Method-side tech grant path tied to the same hut reward result."
+				}
+			]
 		},
 		{
 			"id": "game-event-greatpersonexpended-48",
@@ -60762,8 +63161,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This hook uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "unit-isgreatperson-280",
+					"note": "Useful when follow-up logic needs to confirm the expended unit was treated as a great person."
+				},
+				{
+					"entryId": "game-event-unitprekill-86",
+					"note": "Sibling hook if you also need the exact unit ID or plot during removal."
+				}
+			]
 		},
 		{
 			"id": "game-event-isabletomakepeace-49",
@@ -60827,7 +63240,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "team-makepeace-133",
+					"note": "Method-side API touching the same operation."
+				}
+			]
 		},
 		{
 			"id": "game-event-militarystrategycanactivate-51",
@@ -60915,7 +63333,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "player-getally-116",
+					"note": "Resolve the city-state's current ally after the transition."
+				},
+				{
+					"entryId": "team-getprojectedvotesfromminorallies-70",
+					"note": "Useful when ally changes should feed World Congress vote math."
+				}
+			]
 		},
 		{
 			"id": "game-event-minorfriendschanged-53",
@@ -60971,7 +63398,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "player-getminorcivfriendshipwithmajor-359",
+					"note": "Check the updated friendship total between the major and minor civ."
+				},
+				{
+					"entryId": "player-changeminorcivfriendshipwithmajor-64",
+					"note": "Method-side relationship mutation for the same friendship track."
+				}
+			]
 		},
 		{
 			"id": "game-event-naturalwonderdiscovered-54",
@@ -61026,8 +63462,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Features",
+					"note": "This hook uses FeatureTypes values backed by Features; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "player-gethappinessfromnaturalwonders-270",
+					"note": "Natural-wonder discovery often feeds directly into wonder-based happiness logic."
+				},
+				{
+					"entryId": "player-getnaturalwonderyieldmodifier-370",
+					"note": "Useful when discovery should branch on the player's natural-wonder yield modifiers."
+				}
+			]
 		},
 		{
 			"id": "game-event-nucleardetonation-55",
@@ -61083,7 +63533,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "plot-nukeexplosion-162",
+					"note": "Method-side plot blast resolution for the same detonation."
+				},
+				{
+					"entryId": "unit-cannukeat-49",
+					"note": "Pre-fire validation for the strike path that leads into this hook."
+				}
+			]
 		},
 		{
 			"id": "game-event-pantheonfounded-56",
@@ -61130,8 +63589,26 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Beliefs",
+					"note": "This hook uses BeliefTypes values backed by Beliefs; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Religions",
+					"note": "This hook uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "player-cancreatepantheon-23",
+					"note": "Method-side pantheon eligibility check before founding resolves."
+				},
+				{
+					"entryId": "game-foundpantheon-39",
+					"note": "Method-side creation path for the same pantheon milestone."
+				}
+			]
 		},
 		{
 			"id": "game-event-paradropat-57",
@@ -61195,7 +63672,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "unit-canparadrop-50",
+					"note": "General paradrop legality gate before target-specific checks run."
+				},
+				{
+					"entryId": "unit-canparadropat-51",
+					"note": "Target-specific paradrop check for the same move."
+				}
+			]
 		},
 		{
 			"id": "game-event-playeradoptpolicy-58",
@@ -61226,8 +63712,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Policies",
+					"note": "This hook uses PolicyTypes values backed by Policies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "player-canadoptpolicy-18",
+					"note": "Method-side precondition check before the policy is taken."
+				},
+				{
+					"entryId": "player-doadoptpolicy-91",
+					"note": "Method-side adoption path for the same policy acquisition."
+				}
+			]
 		},
 		{
 			"id": "game-event-playeradoptpolicybranch-59",
@@ -61258,8 +63758,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "PolicyBranchTypes",
+					"note": "This hook uses PolicyBranchTypes values backed by PolicyBranchTypes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "player-canunlockpolicybranch-43",
+					"note": "Method-side unlock gate for the same policy branch."
+				},
+				{
+					"entryId": "game-event-playercanadoptpolicybranch-61",
+					"note": "Earlier event-layer veto hook for whether the branch may be opened."
+				}
+			]
 		},
 		{
 			"id": "game-event-playercanadoptpolicy-60",
@@ -61290,8 +63804,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Policies",
+					"note": "This hook uses PolicyTypes values backed by Policies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "player-canadoptpolicy-18",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-playercanadoptpolicybranch-61",
@@ -61322,7 +63846,12 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
+			"relatedSchemaNotes": [
+				{
+					"table": "PolicyBranchTypes",
+					"note": "This hook uses PolicyBranchTypes values backed by PolicyBranchTypes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
 			"seeAlso": []
 		},
 		{
@@ -61383,6 +63912,10 @@
 				{
 					"entryId": "city-getnumbuilding-178",
 					"note": "Useful follow-up when validating city state around existing building counts."
+				},
+				{
+					"entryId": "player-canconstruct-21",
+					"note": "Method-side validation for the same rule path."
 				}
 			]
 		},
@@ -61415,8 +63948,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Projects",
+					"note": "This hook uses ProjectTypes values backed by Projects; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "player-cancreate-22",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-playercaneverresearch-64",
@@ -61447,8 +63990,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This hook uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "player-caneverresearch-24",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-playercanfoundpantheon-65",
@@ -61535,8 +64088,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Processes",
+					"note": "This hook uses ProcessTypes values backed by Processes; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "player-canmaintain-27",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-playercanprepare-68",
@@ -61567,8 +64130,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Specialists",
+					"note": "This hook uses SpecialistTypes values backed by Specialists; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "player-canprepare-36",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-playercanresearch-69",
@@ -61599,8 +64172,18 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This hook uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "player-canresearch-39",
+					"note": "Method-side validation for the same rule path."
+				}
+			]
 		},
 		{
 			"id": "game-event-playercantrain-70",
@@ -61655,7 +64238,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-cantrain-42",
-					"note": "Method-side legality check for the same production question."
+					"note": "Method-side validation for the same production question."
 				}
 			]
 		},
@@ -61697,7 +64280,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "player-initcity-613",
+					"note": "Method-side city founding path before this hook fires."
+				},
+				{
+					"entryId": "city-getgameturnfounded-144",
+					"note": "Useful once you resolve the founded city and need its founding metadata."
+				}
+			]
 		},
 		{
 			"id": "game-event-playerdoturn-72",
@@ -61761,7 +64353,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "player-ai-updatefoundvalues-8",
+					"note": "AI helper often involved in settler and expansion evaluation around the same unit-update phase."
+				},
+				{
+					"entryId": "game-event-playerdoturn-72",
+					"note": "Broader per-player turn hook when logic should run outside the narrower AI unit-update phase."
+				}
+			]
 		},
 		{
 			"id": "game-event-rebaseto-74",
@@ -61809,7 +64410,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "unit-canrebaseat-56",
+					"note": "Target-side validation before the rebase move resolves."
+				},
+				{
+					"entryId": "game-event-canrebaseto-13",
+					"note": "Earlier event-layer veto hook for the same rebase destination check."
+				}
+			]
 		},
 		{
 			"id": "game-event-religionenhanced-75",
@@ -61856,8 +64466,26 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Beliefs",
+					"note": "This hook uses BeliefTypes and eBelief values backed by Beliefs; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Religions",
+					"note": "This hook uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "game-enhancereligion-38",
+					"note": "Method-side enhancement path for the same religion lifecycle step."
+				},
+				{
+					"entryId": "game-getbeliefsinreligion-58",
+					"note": "Inspect the belief bundle after the enhancement resolves."
+				}
+			]
 		},
 		{
 			"id": "game-event-religionfounded-76",
@@ -61936,8 +64564,26 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Beliefs",
+					"note": "This hook uses BeliefTypes and eBelief values backed by Beliefs; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				},
+				{
+					"table": "Religions",
+					"note": "This hook uses ReligionTypes values backed by Religions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "game-foundreligion-40",
+					"note": "Method-side founding path for the same religion lifecycle transition."
+				},
+				{
+					"entryId": "player-getreligioncreatedbyplayer-490",
+					"note": "Resolve the religion row associated with the founding player."
+				}
+			]
 		},
 		{
 			"id": "game-event-setally-77",
@@ -61977,7 +64623,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "player-getally-116",
+					"note": "Resolve the minor civ's ally after the swap completes."
+				},
+				{
+					"entryId": "game-event-minorallieschanged-52",
+					"note": "Sibling hook when you also care about the broader ally-state transition details."
+				}
+			]
 		},
 		{
 			"id": "game-event-setpopulation-78",
@@ -62025,7 +64680,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "city-setpopulation-358",
+					"note": "Method-side mutator for the same state change."
+				}
+			]
 		},
 		{
 			"id": "game-event-teammeet-79",
@@ -62057,7 +64717,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "team-meet-134",
+					"note": "Method-side API touching the same operation."
+				}
+			]
 		},
 		{
 			"id": "game-event-teamsetera-80",
@@ -62088,8 +64753,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Eras",
+					"note": "This hook uses EraTypes values backed by Eras; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "team-getcurrentera-38",
+					"note": "Read the team's resolved era after the change fires."
+				},
+				{
+					"entryId": "game-event-teamtechresearched-82",
+					"note": "Common adjacent hook when era shifts are driven by newly researched technologies."
+				}
+			]
 		},
 		{
 			"id": "game-event-teamsethastech-81",
@@ -62146,6 +64825,10 @@
 				{
 					"entryId": "team-ishastech-110",
 					"note": "Method-side check for the same tech state after the hook fires."
+				},
+				{
+					"entryId": "team-sethastech-136",
+					"note": "Method-side mutator for the same state change."
 				}
 			]
 		},
@@ -62186,8 +64869,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Technologies",
+					"note": "This hook uses TechTypes values backed by Technologies; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "team-ishastech-110",
+					"note": "Check the researched tech state after this hook resolves."
+				},
+				{
+					"entryId": "team-sethastech-136",
+					"note": "Method-side mutation for the same tech ownership path."
+				}
+			]
 		},
 		{
 			"id": "game-event-uidiploevent-83",
@@ -62235,7 +64932,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-dofromuidiploevent-30",
+					"note": "Method-side dispatcher for the same UI diplomacy action."
+				},
+				{
+					"entryId": "game-event-candeclarewar-2",
+					"note": "One common downstream diplomacy gate when the UI event is war-related."
+				}
+			]
 		},
 		{
 			"id": "game-event-unitgetspecialexploretarget-84",
@@ -62267,7 +64973,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "unit-executespecialexploremove-88",
+					"note": "Method-side special-explore order that consumes the target produced around this hook."
+				},
+				{
+					"entryId": "game-event-playerpreaiunitupdate-73",
+					"note": "Often paired with AI movement logic during the same per-player update cycle."
+				}
+			]
 		},
 		{
 			"id": "game-event-unitkilledincombat-85",
@@ -62307,7 +65022,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "game-event-unitprekill-86",
+					"note": "Earlier sibling hook if you need the unit ID or plot before removal."
+				},
+				{
+					"entryId": "team-getkilledbyteam-50",
+					"note": "Team-level aggregate kill tracking related to the same combat outcome."
+				}
+			]
 		},
 		{
 			"id": "game-event-unitprekill-86",
@@ -62378,8 +65102,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "This hook uses UnitTypes values backed by Units; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "player-getunitbyid-579",
+					"note": "Resolve the unit object before delayed removal clears it from the player roster."
+				},
+				{
+					"entryId": "game-event-unitkilledincombat-85",
+					"note": "Combat-specific sibling hook for kills caused by battle resolution."
+				}
+			]
 		},
 		{
 			"id": "game-event-unitpromoted-87",
@@ -62418,8 +65156,22 @@
 			"notes": [],
 			"example": null,
 			"gotchas": [],
-			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"relatedSchemaNotes": [
+				{
+					"table": "UnitPromotions",
+					"note": "This hook uses PromotionTypes values backed by UnitPromotions; inspect that table for the concrete rows and gameplay fields behind the IDs passed here."
+				}
+			],
+			"seeAlso": [
+				{
+					"entryId": "unit-canpromote-53",
+					"note": "Method-side precondition check before the promotion is applied."
+				},
+				{
+					"entryId": "unit-promote-335",
+					"note": "Method-side promotion call related to the same upgrade in unit state."
+				}
+			]
 		},
 		{
 			"id": "game-event-unitsetxy-88",
@@ -62467,7 +65219,12 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "unit-setxy-363",
+					"note": "Method-side mutator for the same state change."
+				}
+			]
 		},
 		{
 			"id": "game-event-unitupgraded-89",
@@ -62515,7 +65272,16 @@
 			"example": null,
 			"gotchas": [],
 			"relatedSchemaNotes": [],
-			"seeAlso": []
+			"seeAlso": [
+				{
+					"entryId": "unit-canupgraderightnow-67",
+					"note": "Method-side precondition check before the upgrade resolves."
+				},
+				{
+					"entryId": "unit-getupgradeunittype-234",
+					"note": "Resolve the destination unit row for the upgrade path that just completed."
+				}
+			]
 		}
 	],
 	"plannedTracks": ["Events", "LuaEvents", "GameInfoTypes"]

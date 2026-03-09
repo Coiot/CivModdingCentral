@@ -226,23 +226,36 @@
 		if (!selectedEntry) {
 			return [];
 		}
-		return [
-			...selectedSchemaTouchpoints.slice(0, 4).map((item) => ({
+		const links = [];
+		const seenHrefs = new Set();
+
+		const appendLink = (link) => {
+			if (!link?.href || seenHrefs.has(link.href)) {
+				return;
+			}
+			seenHrefs.add(link.href);
+			links.push(link);
+		};
+
+		for (const item of selectedSchemaTouchpoints.slice(0, 4)) {
+			appendLink({
 				id: `schema-${item.table}`,
 				label: item.table,
 				copy: item.sourceLabels[0] || item.notes[0] || "Schema table",
 				href: item.href,
-			})),
-			...selectedSeeAlsoItems
-				.filter((item) => item.href)
-				.slice(0, 2)
-				.map((item) => ({
-					id: `link-${item.id}`,
-					label: item.label,
-					copy: item.copy,
-					href: item.href,
-				})),
-		];
+			});
+		}
+
+		for (const item of selectedSeeAlsoItems.slice(0, 2)) {
+			appendLink({
+				id: `link-${item.id}`,
+				label: item.label,
+				copy: item.copy,
+				href: item.href,
+			});
+		}
+
+		return links;
 	});
 	const selectedEntryQuickMeta = $derived.by(() => {
 		if (!selectedEntry) {
@@ -537,7 +550,7 @@
 					return null;
 				}
 				const normalized = {};
-				for (const key of ["entryId", "entryKey", "ref", "href", "table", "label", "note"]) {
+				for (const key of ["entryId", "entryKey", "ref", "label", "note"]) {
 					if (typeof item[key] === "string" && item[key].trim()) {
 						normalized[key] = item[key].trim();
 					}
@@ -681,6 +694,21 @@
 		});
 	}
 
+	function buildLuaEntryHref(entry) {
+		if (!entry) {
+			return "#";
+		}
+		if (typeof window === "undefined") {
+			return `?dataset=${entry.datasetId}&entry=${entry.id}`;
+		}
+		return buildLuaUrl({
+			...snapshotLuaUrlState(),
+			dataset: entry.datasetId,
+			entry: entry.id,
+			section: "signature",
+		});
+	}
+
 	async function copyEntrySignature() {
 		if (!selectedEntry || typeof navigator === "undefined" || !navigator.clipboard) {
 			return;
@@ -723,26 +751,6 @@
 			return null;
 		}
 
-		if (item.table) {
-			return {
-				id: `schema-${item.table}-${index}`,
-				type: "schema",
-				label: item.label || item.table,
-				copy: item.note || "Schema table",
-				href: schemaTableHref(item.table),
-			};
-		}
-
-		if (item.href) {
-			return {
-				id: `link-${index}`,
-				type: "link",
-				label: item.label || item.href,
-				copy: item.note || "External reference",
-				href: item.href,
-			};
-		}
-
 		const referencedEntry = resolveEntryReference(item.entryId || item.entryKey || item.ref);
 		if (!referencedEntry) {
 			return null;
@@ -754,18 +762,8 @@
 			copy: item.note || referencedEntry.secondaryLabel,
 			entryId: referencedEntry.id,
 			datasetId: referencedEntry.datasetId,
+			href: buildLuaEntryHref(referencedEntry),
 		};
-	}
-
-	function seeAlsoTypeLabel(type) {
-		switch (type) {
-			case "schema":
-				return "Schema table";
-			case "link":
-				return "External link";
-			default:
-				return "Lua entry";
-		}
 	}
 
 	function buildEntryAuthoredFlags(entry) {
@@ -933,7 +931,7 @@
 	<section class="lua-panel">
 		<div class="lua-section-head">
 			<span class="lua-kicker">Quick Starts</span>
-			<h2>Start with the lua hooks modders hit most often</h2>
+			<h2>Jump into the lua hooks modders use most often</h2>
 			<p>These are the most useful starting points for exploring the Lua API and wiring up your modding projects.</p>
 		</div>
 		<div class="lua-family-grid">
@@ -1116,9 +1114,9 @@
 							{#if selectedEntry.gotchas.length > 0}
 								<span class="lua-metric-chip lua-metric-chip--authored">gotchas {selectedEntry.gotchas.length}</span>
 							{/if}
-							{#if selectedSeeAlsoItems.length > 0}
+							<!-- {#if selectedSeeAlsoItems.length > 0}
 								<span class="lua-metric-chip lua-metric-chip--authored">see also {selectedSeeAlsoItems.length}</span>
-							{/if}
+							{/if} -->
 						</div>
 					</div>
 
@@ -1222,7 +1220,7 @@
 							<section id="lua-doc-example" class="lua-detail-card lua-doc-section" use:trackDocSection={"example"}>
 								<div class="lua-detail-card-head">
 									<h3>Example</h3>
-									<span>{selectedEntry.exampleLanguage}</span>
+									<!-- <span>{selectedEntry.exampleLanguage}</span> -->
 								</div>
 								<p class="lua-card-copy">{selectedEntry.exampleSummary}</p>
 								<pre class="lua-doc-example"><code>{selectedEntry.exampleCode}</code></pre>
@@ -1237,9 +1235,9 @@
 									<p class="lua-card-copy">These tables are the strongest schema-side matches for the current signature, with parameter context and any notes when available.</p>
 									<div class="lua-schema-grid">
 										{#each selectedSchemaTouchpoints as touchpoint (touchpoint.table)}
-											<article class="lua-schema-card">
+											<a class="lua-schema-card lua-schema-card--link" href={touchpoint.href}>
 												<div class="lua-schema-card-head">
-													<a class="lua-link lua-link--inline" href={touchpoint.href} target="_blank" rel="noopener noreferrer">{touchpoint.table}</a>
+													<span class="lua-link lua-link--inline lua-schema-pill">{touchpoint.table}</span>
 													{#if touchpoint.sourceLabels.length > 0}
 														<span>{touchpoint.sourceLabels.length} source{touchpoint.sourceLabels.length === 1 ? "" : "s"}</span>
 													{/if}
@@ -1254,10 +1252,9 @@
 														{/each}
 													</ul>
 												{/if}
-											</article>
+											</a>
 										{/each}
 									</div>
-									<p class="lua-card-copy">{selectedSchemaTouchpoints.length} {schemaTableCountLabel({ schemaTables: selectedSchemaTouchpoints })} line up with this entry.</p>
 								</section>
 							{/if}
 
@@ -1265,7 +1262,7 @@
 								<section id="lua-doc-see-also" class="lua-detail-card lua-doc-section" use:trackDocSection={"see-also"}>
 									<div class="lua-detail-card-head">
 										<h3>See also</h3>
-										<span>{selectedSeeAlsoItems.length}</span>
+										<!-- <span>{selectedSeeAlsoItems.length}</span> -->
 									</div>
 									<div class="lua-see-also-grid">
 										{#each selectedSeeAlsoItems as item (item.id)}
@@ -1273,15 +1270,13 @@
 												<button type="button" class="lua-see-also-card" onclick={() => selectEntry(item.entryId, item.datasetId)}>
 													<div class="lua-see-also-head">
 														<strong>{item.label}</strong>
-														<span class="lua-see-also-kind">{seeAlsoTypeLabel(item.type)}</span>
 													</div>
 													<p>{item.copy}</p>
 												</button>
 											{:else}
-												<a class="lua-see-also-card lua-see-also-card--link" href={item.href} target="_blank" rel="noopener noreferrer">
+												<a class="lua-see-also-card lua-see-also-card--link" href={item.href}>
 													<div class="lua-see-also-head">
 														<strong>{item.label}</strong>
-														<span class="lua-see-also-kind">{seeAlsoTypeLabel(item.type)}</span>
 													</div>
 													<p>{item.copy}</p>
 												</a>
@@ -1362,7 +1357,7 @@
 									<span class="lua-kicker">Quick Links</span>
 									<div class="lua-docs-nav-links">
 										{#each selectedEntryQuickLinks as link (link.id)}
-											<a class="lua-link lua-link--inline" href={link.href} target="_blank" rel="noopener noreferrer" title={link.copy}>{link.label}</a>
+											<a class="lua-link lua-link--inline" href={link.href} title={link.copy}>{link.label}</a>
 										{/each}
 									</div>
 								</div>
@@ -1383,6 +1378,10 @@
 		--lua-highlight: #b7ef84;
 		--lua-highlight-strong: #ebffd6;
 		--lua-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.88)) 86%, #20301b 14%);
+		--lua-schema-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #35658c 28%);
+		--lua-schema-highlight: #8dc7ff;
+		--lua-schema-highlight-strong: #d6ecff;
+		--lua-schema-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, #11263a 10%);
 		--scrollbar-thumb: color-mix(in srgb, var(--lua-highlight) 78%, #11180e 22%);
 		--scrollbar-thumb-hover: color-mix(in srgb, var(--lua-highlight) 88%, white 12%);
 		--scrollbar-track: color-mix(in srgb, var(--lua-panel) 82%, #11180e 18%);
@@ -1593,8 +1592,9 @@
 	.lua-detail-card-head,
 	.lua-list-head {
 		display: flex;
-		gap: 0.8rem;
-		justify-content: space-between;
+		gap: 1rem;
+		align-items: center;
+		/*justify-content: space-between;*/
 	}
 
 	.lua-family-card-head span,
@@ -1886,8 +1886,9 @@
 	}
 
 	.lua-detail-panel {
-		display: grid;
-		gap: 0.85rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
 	}
 
 	.lua-detail-hero {
@@ -2050,11 +2051,31 @@
 	.lua-schema-card {
 		display: grid;
 		gap: 0.45rem;
-		background: rgba(255, 255, 255, 0.03);
-		border: 1px solid rgba(255, 255, 255, 0.08);
+		background: color-mix(in srgb, var(--lua-schema-panel) 86%, transparent);
+		border: 1px solid var(--lua-schema-border);
 		border-radius: 1rem;
 		padding-block: 0.8rem;
 		padding-inline: 0.85rem;
+		box-shadow: inset 0 1px 0 color-mix(in srgb, var(--lua-schema-highlight) 12%, transparent);
+	}
+
+	.lua-schema-card--link {
+		color: inherit;
+		text-decoration: none;
+		transition:
+			transform 140ms ease,
+			border-color 140ms ease,
+			background-color 140ms ease,
+			box-shadow 140ms ease;
+	}
+
+	.lua-schema-card--link:hover {
+		background: color-mix(in srgb, var(--lua-schema-highlight) 10%, var(--lua-schema-panel) 90%);
+		border-color: color-mix(in srgb, var(--lua-schema-highlight) 74%, white 26%);
+		transform: translateY(-1px);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--lua-schema-highlight) 18%, transparent),
+			0 12px 28px rgba(0, 0, 0, 0.16);
 	}
 
 	.lua-schema-card-head {
@@ -2066,8 +2087,26 @@
 	}
 
 	.lua-schema-card-head span {
-		color: var(--lua-copy);
+		color: color-mix(in srgb, var(--lua-schema-highlight) 66%, var(--lua-copy) 34%);
 		font-size: 0.76rem;
+	}
+
+	.lua-schema-card .lua-link {
+		background: color-mix(in srgb, var(--lua-schema-panel) 76%, transparent);
+		border-color: var(--lua-schema-border);
+		color: var(--lua-schema-highlight-strong);
+	}
+
+	.lua-schema-card .lua-link:hover {
+		background: color-mix(in srgb, var(--lua-schema-highlight) 16%, var(--lua-schema-panel) 84%);
+		border-color: color-mix(in srgb, var(--lua-schema-highlight) 74%, white 26%);
+		color: white;
+	}
+
+	.lua-schema-pill {
+		font-size: 0.95rem !important;
+		cursor: inherit;
+		pointer-events: none;
 	}
 
 	.lua-parameter-row,
@@ -2264,6 +2303,10 @@
 		--lua-highlight: #3f6f27;
 		--lua-highlight-strong: #22430f;
 		--lua-panel: rgba(255, 255, 255, 0.96);
+		--lua-schema-border: rgba(37, 67, 96, 0.16);
+		--lua-schema-highlight: #1c5a8f;
+		--lua-schema-highlight-strong: #123a59;
+		--lua-schema-panel: rgba(255, 255, 255, 0.96);
 	}
 
 	:global(:root[data-theme="light"]) .lua-link,

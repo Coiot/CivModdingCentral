@@ -27,7 +27,7 @@
 			"summary": "Checks whether a player is currently allowed to train a unit type under the present game state.",
 			"notes": [
 				"Use this before exposing custom production shortcuts or auto-queue logic that assumes the player can legally build a unit.",
-				"This is a player-wide legality check, so it is a good fit for civ-wide rules, policy locks, and resource gate logic.",
+				"This is a player-wide validation, so it is a good fit for civ-wide rules, policy locks, and resource gate logic.",
 				"If you need city-specific availability checks, pair it with city-side production logic instead of relying on this call alone."
 			],
 			"example": {
@@ -93,7 +93,7 @@
 		"unit-canairliftat-12": {
 			"summary": "Tests whether a unit can airlift to the target location right now.",
 			"notes": [
-				"Use this as a legality check before issuing scripted relocation behavior that depends on airport-style movement.",
+				"Use this as a validation before issuing scripted relocation behavior that depends on airport-style movement.",
 				"The plot object and x or y coordinates together give you both the destination context and the map position the game will validate.",
 				"This is best used as a yes or no gate before you attempt any UI or mission-side follow-up."
 			],
@@ -294,6 +294,14 @@
 				{
 					"table": "Builds",
 					"note": "Cross-check build actions when the finished improvement alone is not enough context."
+				},
+				{
+					"entryId": "unit-canstartmission-63",
+					"note": "Upstream mission validation before the worker build resolves into a finished improvement."
+				},
+				{
+					"entryId": "plot-getimprovementtype-45",
+					"note": "Resolve the completed plot state once the improvement has actually landed on the map."
 				}
 			]
 		},
@@ -326,7 +334,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-cantrain-42",
-					"note": "Method-side legality check for the same production question."
+					"note": "Method-side validation for the same production question."
 				}
 			]
 		},
@@ -556,7 +564,427 @@
 				},
 				{
 					"entryId": "player-cantrain-42",
-					"note": "Related legality check on the production side for unit access."
+					"note": "Related validation on the production side for unit access."
+				}
+			]
+		},
+		"game-event-circumnavigatedglobe-16": {
+			"seeAlso": [
+				{
+					"entryId": "game-iscircumnavigated-180",
+					"note": "Read the global circumnavigation state after this hook fires."
+				},
+				{
+					"entryId": "game-makecircumnavigated-215",
+					"note": "Method-side trigger for the same world-state milestone."
+				}
+			]
+		},
+		"game-event-citycapturecomplete-27": {
+			"seeAlso": [
+				{
+					"entryId": "player-acquirecity-1",
+					"note": "Method-side city transfer path related to conquest and post-capture ownership changes."
+				},
+				{
+					"entryId": "city-isoccupied-309",
+					"note": "Useful for checking the captured city's occupation state after the takeover resolves."
+				}
+			]
+		},
+		"game-event-cityconstructed-28": {
+			"seeAlso": [
+				{
+					"entryId": "city-getnumbuilding-178",
+					"note": "Confirm the finished building row on the city after construction completes."
+				},
+				{
+					"entryId": "game-event-citycanconstruct-22",
+					"note": "Earlier veto hook for the same city-level building pipeline."
+				}
+			]
+		},
+		"game-event-cityconvertsreligion-29": {
+			"seeAlso": [
+				{
+					"entryId": "city-adoptreligionfully-2",
+					"note": "Method-side full conversion path for the same city religion state change."
+				},
+				{
+					"entryId": "city-convertpercentfollowers-60",
+					"note": "Useful when follow-up logic depends on how follower counts were shifted during conversion."
+				}
+			]
+		},
+		"game-event-citycreated-30": {
+			"seeAlso": [
+				{
+					"entryId": "player-initcity-613",
+					"note": "Method-side city creation path before the post-create hook runs."
+				},
+				{
+					"entryId": "city-getgameturnfounded-144",
+					"note": "Helpful once you resolve the new city object from the owning player and city ID."
+				}
+			]
+		},
+		"game-event-citysoldbuilding-31": {
+			"seeAlso": [
+				{
+					"entryId": "city-isbuildingsellable-286",
+					"note": "Pre-sale validation for the same building row."
+				},
+				{
+					"entryId": "city-getsellbuildingrefund-241",
+					"note": "Inspect the refund math tied to the building that was just sold."
+				}
+			]
+		},
+		"game-event-citytrained-33": {
+			"seeAlso": [
+				{
+					"entryId": "city-cantrain-24",
+					"note": "City-side validation before the completed unit reaches this hook."
+				},
+				{
+					"entryId": "game-event-playercantrain-70",
+					"note": "Player-wide train veto hook for the same unit access pipeline."
+				}
+			]
+		},
+		"game-event-gamecoretestvictory-36": {
+			"seeAlso": [
+				{
+					"entryId": "game-isvictoryvalid-214",
+					"note": "Check or gate the victory condition being evaluated by this test pass."
+				},
+				{
+					"entryId": "game-getwinner-171",
+					"note": "Inspect the resolved winner once victory logic succeeds."
+				}
+			]
+		},
+		"game-event-gamecoreupdatebegin-37": {
+			"seeAlso": [
+				{
+					"entryId": "game-getgameturn-80",
+					"note": "Useful for once-per-turn bookkeeping at the start of the core update cycle."
+				},
+				{
+					"entryId": "game-event-gamecoreupdateend-38",
+					"note": "Paired post-update hook after the same core tick finishes."
+				}
+			]
+		},
+		"game-event-gamecoreupdateend-38": {
+			"seeAlso": [
+				{
+					"entryId": "game-updatescore-261",
+					"note": "Common follow-up when the end of the core tick should refresh score-related state."
+				},
+				{
+					"entryId": "game-event-gamecoreupdatebegin-37",
+					"note": "Paired pre-update hook for the same core tick."
+				}
+			]
+		},
+		"game-event-gatherperturnreplaystats-39": {
+			"seeAlso": [
+				{
+					"entryId": "player-setreplaydatavalue-777",
+					"note": "Write custom per-turn replay values while the replay snapshot is being gathered."
+				},
+				{
+					"entryId": "player-getreplaydata-491",
+					"note": "Read back the custom replay channel when validating or rendering stored data."
+				}
+			]
+		},
+		"game-event-goodyhuttechresearched-47": {
+			"seeAlso": [
+				{
+					"entryId": "player-dogoody-96",
+					"note": "Upstream goody-resolution method when tracing how the reward was selected."
+				},
+				{
+					"entryId": "team-sethastech-136",
+					"note": "Method-side tech grant path tied to the same hut reward result."
+				}
+			]
+		},
+		"game-event-greatpersonexpended-48": {
+			"seeAlso": [
+				{
+					"entryId": "unit-isgreatperson-280",
+					"note": "Useful when follow-up logic needs to confirm the expended unit was treated as a great person."
+				},
+				{
+					"entryId": "game-event-unitprekill-86",
+					"note": "Sibling hook if you also need the exact unit ID or plot during removal."
+				}
+			]
+		},
+		"game-event-minorallieschanged-52": {
+			"seeAlso": [
+				{
+					"entryId": "player-getally-116",
+					"note": "Resolve the city-state's current ally after the transition."
+				},
+				{
+					"entryId": "team-getprojectedvotesfromminorallies-70",
+					"note": "Useful when ally changes should feed World Congress vote math."
+				}
+			]
+		},
+		"game-event-minorfriendschanged-53": {
+			"seeAlso": [
+				{
+					"entryId": "player-getminorcivfriendshipwithmajor-359",
+					"note": "Check the updated friendship total between the major and minor civ."
+				},
+				{
+					"entryId": "player-changeminorcivfriendshipwithmajor-64",
+					"note": "Method-side relationship mutation for the same friendship track."
+				}
+			]
+		},
+		"game-event-naturalwonderdiscovered-54": {
+			"seeAlso": [
+				{
+					"entryId": "player-gethappinessfromnaturalwonders-270",
+					"note": "Natural-wonder discovery often feeds directly into wonder-based happiness logic."
+				},
+				{
+					"entryId": "player-getnaturalwonderyieldmodifier-370",
+					"note": "Useful when discovery should branch on the player's natural-wonder yield modifiers."
+				}
+			]
+		},
+		"game-event-nucleardetonation-55": {
+			"seeAlso": [
+				{
+					"entryId": "plot-nukeexplosion-162",
+					"note": "Method-side plot blast resolution for the same detonation."
+				},
+				{
+					"entryId": "unit-cannukeat-49",
+					"note": "Pre-fire validation for the strike path that leads into this hook."
+				}
+			]
+		},
+		"game-event-pantheonfounded-56": {
+			"seeAlso": [
+				{
+					"entryId": "player-cancreatepantheon-23",
+					"note": "Method-side pantheon eligibility check before founding resolves."
+				},
+				{
+					"entryId": "game-foundpantheon-39",
+					"note": "Method-side creation path for the same pantheon milestone."
+				}
+			]
+		},
+		"game-event-paradropat-57": {
+			"seeAlso": [
+				{
+					"entryId": "unit-canparadrop-50",
+					"note": "General paradrop legality gate before target-specific checks run."
+				},
+				{
+					"entryId": "unit-canparadropat-51",
+					"note": "Target-specific paradrop check for the same move."
+				}
+			]
+		},
+		"game-event-playeradoptpolicy-58": {
+			"seeAlso": [
+				{
+					"entryId": "player-canadoptpolicy-18",
+					"note": "Method-side precondition check before the policy is taken."
+				},
+				{
+					"entryId": "player-doadoptpolicy-91",
+					"note": "Method-side adoption path for the same policy acquisition."
+				}
+			]
+		},
+		"game-event-playeradoptpolicybranch-59": {
+			"seeAlso": [
+				{
+					"entryId": "player-canunlockpolicybranch-43",
+					"note": "Method-side unlock gate for the same policy branch."
+				},
+				{
+					"entryId": "game-event-playercanadoptpolicybranch-61",
+					"note": "Earlier event-layer veto hook for whether the branch may be opened."
+				}
+			]
+		},
+		"game-event-playercityfounded-71": {
+			"seeAlso": [
+				{
+					"entryId": "player-initcity-613",
+					"note": "Method-side city founding path before this hook fires."
+				},
+				{
+					"entryId": "city-getgameturnfounded-144",
+					"note": "Useful once you resolve the founded city and need its founding metadata."
+				}
+			]
+		},
+		"game-event-playerpreaiunitupdate-73": {
+			"seeAlso": [
+				{
+					"entryId": "player-ai-updatefoundvalues-8",
+					"note": "AI helper often involved in settler and expansion evaluation around the same unit-update phase."
+				},
+				{
+					"entryId": "game-event-playerdoturn-72",
+					"note": "Broader per-player turn hook when logic should run outside the narrower AI unit-update phase."
+				}
+			]
+		},
+		"game-event-rebaseto-74": {
+			"seeAlso": [
+				{
+					"entryId": "unit-canrebaseat-56",
+					"note": "Target-side validation before the rebase move resolves."
+				},
+				{
+					"entryId": "game-event-canrebaseto-13",
+					"note": "Earlier event-layer veto hook for the same rebase destination check."
+				}
+			]
+		},
+		"game-event-religionenhanced-75": {
+			"seeAlso": [
+				{
+					"entryId": "game-enhancereligion-38",
+					"note": "Method-side enhancement path for the same religion lifecycle step."
+				},
+				{
+					"entryId": "game-getbeliefsinreligion-58",
+					"note": "Inspect the belief bundle after the enhancement resolves."
+				}
+			]
+		},
+		"game-event-religionfounded-76": {
+			"seeAlso": [
+				{
+					"entryId": "game-foundreligion-40",
+					"note": "Method-side founding path for the same religion lifecycle transition."
+				},
+				{
+					"entryId": "player-getreligioncreatedbyplayer-490",
+					"note": "Resolve the religion row associated with the founding player."
+				}
+			]
+		},
+		"game-event-setally-77": {
+			"seeAlso": [
+				{
+					"entryId": "player-getally-116",
+					"note": "Resolve the minor civ's ally after the swap completes."
+				},
+				{
+					"entryId": "game-event-minorallieschanged-52",
+					"note": "Sibling hook when you also care about the broader ally-state transition details."
+				}
+			]
+		},
+		"game-event-teamsetera-80": {
+			"seeAlso": [
+				{
+					"entryId": "team-getcurrentera-38",
+					"note": "Read the team's resolved era after the change fires."
+				},
+				{
+					"entryId": "game-event-teamtechresearched-82",
+					"note": "Common adjacent hook when era shifts are driven by newly researched technologies."
+				}
+			]
+		},
+		"game-event-teamtechresearched-82": {
+			"seeAlso": [
+				{
+					"entryId": "team-ishastech-110",
+					"note": "Check the researched tech state after this hook resolves."
+				},
+				{
+					"entryId": "team-sethastech-136",
+					"note": "Method-side mutation for the same tech ownership path."
+				}
+			]
+		},
+		"game-event-uidiploevent-83": {
+			"seeAlso": [
+				{
+					"entryId": "game-dofromuidiploevent-30",
+					"note": "Method-side dispatcher for the same UI diplomacy action."
+				},
+				{
+					"entryId": "game-event-candeclarewar-2",
+					"note": "One common downstream diplomacy gate when the UI event is war-related."
+				}
+			]
+		},
+		"game-event-unitgetspecialexploretarget-84": {
+			"seeAlso": [
+				{
+					"entryId": "unit-executespecialexploremove-88",
+					"note": "Method-side special-explore order that consumes the target produced around this hook."
+				},
+				{
+					"entryId": "game-event-playerpreaiunitupdate-73",
+					"note": "Often paired with AI movement logic during the same per-player update cycle."
+				}
+			]
+		},
+		"game-event-unitkilledincombat-85": {
+			"seeAlso": [
+				{
+					"entryId": "game-event-unitprekill-86",
+					"note": "Earlier sibling hook if you need the unit ID or plot before removal."
+				},
+				{
+					"entryId": "team-getkilledbyteam-50",
+					"note": "Team-level aggregate kill tracking related to the same combat outcome."
+				}
+			]
+		},
+		"game-event-unitprekill-86": {
+			"seeAlso": [
+				{
+					"entryId": "player-getunitbyid-579",
+					"note": "Resolve the unit object before delayed removal clears it from the player roster."
+				},
+				{
+					"entryId": "game-event-unitkilledincombat-85",
+					"note": "Combat-specific sibling hook for kills caused by battle resolution."
+				}
+			]
+		},
+		"game-event-unitpromoted-87": {
+			"seeAlso": [
+				{
+					"entryId": "unit-canpromote-53",
+					"note": "Method-side precondition check before the promotion is applied."
+				},
+				{
+					"entryId": "unit-promote-335",
+					"note": "Method-side promotion call related to the same upgrade in unit state."
+				}
+			]
+		},
+		"game-event-unitupgraded-89": {
+			"seeAlso": [
+				{
+					"entryId": "unit-canupgraderightnow-67",
+					"note": "Method-side precondition check before the upgrade resolves."
+				},
+				{
+					"entryId": "unit-getupgradeunittype-234",
+					"note": "Resolve the destination unit row for the upgrade path that just completed."
 				}
 			]
 		}

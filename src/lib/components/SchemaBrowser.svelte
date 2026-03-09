@@ -1276,7 +1276,7 @@
 	<section class="schema-panel">
 		<div class="schema-section-head">
 			<span class="schema-kicker">Quick Starts</span>
-			<h2>Jump into the tables modders touch most often</h2>
+			<h2>Jump into the tables modders use most often</h2>
 			<p>These are the most useful starting points for documentation, planning, and debugging code for your mods.</p>
 		</div>
 		<div class="schema-quick-grid">
@@ -1284,7 +1284,6 @@
 				<button type="button" class={`schema-quick-card ${isQuickStartActive(item.tableName) ? "is-active" : ""}`} onclick={() => selectTable(item.tableName)}>
 					<div class="schema-quick-head">
 						<h3>{item.label}</h3>
-						<span>{relatedTableCount(item.tableName)} companion tables</span>
 					</div>
 					<p>{item.copy}</p>
 				</button>
@@ -1633,7 +1632,7 @@
 														<button type="button" class="schema-section-toggle" onclick={goToNextMatch} disabled={!canGoToNextMatch}>Next match</button>
 													</div>
 												{/if}
-												<span>{formatNumber(selectedTable.rowCount)}</span>
+												<!-- <span>{formatNumber(selectedTable.rowCount)}</span> -->
 											</div>
 										</div>
 									</div>

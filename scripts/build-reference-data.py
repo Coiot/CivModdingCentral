@@ -69,6 +69,18 @@ PLURAL_SUFFIX_RULES = (
     ("ch", "ches"),
     ("sh", "shes"),
 )
+ENTRY_FAMILY_PREFIXES = ("City", "Game", "Player", "Plot", "Team", "Unit")
+EVENT_TO_METHOD_COUNTERPARTS = {
+    "CanDeclareWar": ("Team", "CanDeclareWar"),
+    "CanRaze": ("Player", "CanRaze"),
+    "CanStartMission": ("Unit", "CanStartMission"),
+    "DeclareWar": ("Team", "DeclareWar"),
+    "GetFounderBenefitsReligion": ("Game", "GetFounderBenefitsReligion"),
+    "MakePeace": ("Team", "MakePeace"),
+    "SetPopulation": ("City", "SetPopulation"),
+}
+AUTO_SCHEMA_NOTE_LIMIT = 3
+AUTO_SEE_ALSO_LIMIT = 3
 
 
 def slugify(value: str) -> str:
@@ -157,7 +169,7 @@ def normalize_see_also(value: Any) -> list[dict[str, str]]:
         if not isinstance(item, dict):
             continue
         entry: dict[str, str] = {}
-        for key in ("entryId", "entryKey", "ref", "href", "table", "label", "note"):
+        for key in ("entryId", "entryKey", "ref", "label", "note"):
             value = item.get(key)
             if isinstance(value, str) and value.strip():
                 entry[key] = value.strip()
@@ -195,6 +207,225 @@ def apply_lua_docs_overlay(
     ]
     snapshot["gameEvents"] = [
         merge_entry(entry, event_docs.get(entry["id"]))
+        for entry in snapshot["gameEvents"]
+    ]
+    return snapshot
+
+
+def build_schema_touchpoints(entry: dict[str, Any]) -> list[str]:
+    ordered: list[str] = []
+    seen: set[str] = set()
+
+    def remember(table: Any) -> None:
+        if not isinstance(table, str):
+            return
+        normalized = table.strip()
+        if not normalized or normalized in seen:
+            return
+        seen.add(normalized)
+        ordered.append(normalized)
+
+    for table in entry.get("schemaTables") or []:
+        remember(table)
+
+    for parameter in entry.get("parameters") or []:
+        if not isinstance(parameter, dict):
+            continue
+        for table in parameter.get("schemaTables") or []:
+            remember(table)
+
+    return ordered
+
+
+def describe_schema_note(entry: dict[str, Any], table: str) -> str:
+    descriptors: list[str] = []
+    seen: set[str] = set()
+    for parameter in entry.get("parameters") or []:
+        if not isinstance(parameter, dict):
+            continue
+        parameter_tables = parameter.get("schemaTables") or []
+        if table not in parameter_tables:
+            continue
+        for candidate in (
+            parameter.get("type"),
+            parameter.get("name"),
+            parameter.get("raw"),
+        ):
+            if not isinstance(candidate, str):
+                continue
+            normalized = candidate.strip()
+            if not normalized or normalized in seen:
+                continue
+            seen.add(normalized)
+            descriptors.append(normalized)
+            break
+        if len(descriptors) >= 2:
+            break
+
+    subject = "hook" if "scope" in entry else "method"
+    if descriptors:
+        label = " and ".join(descriptors[:2])
+        return (
+            f"This {subject} uses {label} values backed by {table}; inspect that "
+            "table for the concrete rows and gameplay fields behind the IDs passed here."
+        )
+    return (
+        f"This {subject} touches {table} rows; inspect that table for the concrete "
+        "records and gameplay fields behind the values involved here."
+    )
+
+
+def build_see_also_key(item: dict[str, str]) -> tuple[str, str] | None:
+    for key in ("entryId", "entryKey", "ref"):
+        value = item.get(key)
+        if value:
+            return key, value
+    return None
+
+
+def build_method_to_event_note(method_name: str) -> str:
+    if method_name.startswith("Can"):
+        return "GameEvents hook for overriding or observing the same validation."
+    if method_name.startswith("Get"):
+        return "GameEvents hook for supplying or altering the same resolved value."
+    if method_name.startswith("Set"):
+        return "GameEvents callback touching the same state change."
+    return "Related GameEvents callback touching the same operation."
+
+
+def build_event_to_method_note(action_name: str) -> str:
+    if action_name.startswith("Can"):
+        return "Method-side validation for the same rule path."
+    if action_name.startswith("Get"):
+        return "Method-side accessor for the same resolved value."
+    if action_name.startswith("Set"):
+        return "Method-side mutator for the same state change."
+    return "Method-side API touching the same operation."
+
+
+def resolve_counterpart_method(
+    event_entry: dict[str, Any], by_family_method: dict[tuple[str, str], str]
+) -> tuple[str, str] | None:
+    event_name = event_entry.get("name")
+    if not isinstance(event_name, str) or not event_name:
+        return None
+
+    for family in ENTRY_FAMILY_PREFIXES:
+        if not event_name.startswith(family):
+            continue
+        action_name = event_name[len(family) :]
+        counterpart_id = by_family_method.get((family, action_name))
+        if counterpart_id:
+            return counterpart_id, action_name
+
+    mapped = EVENT_TO_METHOD_COUNTERPARTS.get(event_name)
+    if not mapped:
+        return None
+    counterpart_id = by_family_method.get(mapped)
+    if not counterpart_id:
+        return None
+    return counterpart_id, mapped[1]
+
+
+def build_reverse_event_counterparts(
+    snapshot: dict[str, Any],
+) -> dict[tuple[str, str], tuple[str, str]]:
+    by_family_method: dict[tuple[str, str], str] = {}
+    for entry in snapshot["methods"]:
+        by_family_method[(entry["family"], entry["methodName"])] = entry["id"]
+
+    reverse: dict[tuple[str, str], tuple[str, str]] = {}
+    for entry in snapshot["gameEvents"]:
+        counterpart = resolve_counterpart_method(entry, by_family_method)
+        if not counterpart:
+            continue
+        counterpart_id, action_name = counterpart
+        reverse[(counterpart_id, action_name)] = (entry["id"], action_name)
+    return reverse
+
+
+def augment_entry_docs(
+    entry: dict[str, Any], counterpart_item: dict[str, str] | None
+) -> dict[str, Any]:
+    related_schema_notes = normalize_related_schema_notes(
+        entry.get("relatedSchemaNotes")
+    )
+    related_tables = {item["table"] for item in related_schema_notes}
+    for table in build_schema_touchpoints(entry):
+        if (
+            table in related_tables
+            or len(related_schema_notes) >= AUTO_SCHEMA_NOTE_LIMIT
+        ):
+            continue
+        related_schema_notes.append(
+            {"table": table, "note": describe_schema_note(entry, table)}
+        )
+        related_tables.add(table)
+
+    see_also = normalize_see_also(entry.get("seeAlso"))
+    seen_see_also = {
+        key for item in see_also if (key := build_see_also_key(item)) is not None
+    }
+
+    def append_see_also(item: dict[str, str]) -> None:
+        key = build_see_also_key(item)
+        if key is None or key in seen_see_also or len(see_also) >= AUTO_SEE_ALSO_LIMIT:
+            return
+        see_also.append(item)
+        seen_see_also.add(key)
+
+    if counterpart_item:
+        append_see_also(counterpart_item)
+
+    return {
+        **entry,
+        "relatedSchemaNotes": related_schema_notes,
+        "seeAlso": see_also,
+    }
+
+
+def augment_lua_snapshot(snapshot: dict[str, Any]) -> dict[str, Any]:
+    reverse_event_counterparts = build_reverse_event_counterparts(snapshot)
+
+    snapshot["methods"] = [
+        augment_entry_docs(
+            entry,
+            (
+                {
+                    "entryId": counterpart_id,
+                    "note": build_method_to_event_note(action_name),
+                }
+                if (
+                    counterpart := reverse_event_counterparts.get(
+                        (entry["id"], entry["methodName"])
+                    )
+                )
+                and (counterpart_id := counterpart[0])
+                and (action_name := counterpart[1])
+                else None
+            ),
+        )
+        for entry in snapshot["methods"]
+    ]
+
+    by_family_method = {
+        (entry["family"], entry["methodName"]): entry["id"]
+        for entry in snapshot["methods"]
+    }
+    snapshot["gameEvents"] = [
+        augment_entry_docs(
+            entry,
+            (
+                {
+                    "entryId": counterpart_id,
+                    "note": build_event_to_method_note(action_name),
+                }
+                if (counterpart := resolve_counterpart_method(entry, by_family_method))
+                and (counterpart_id := counterpart[0])
+                and (action_name := counterpart[1])
+                else None
+            ),
+        )
         for entry in snapshot["gameEvents"]
     ]
     return snapshot
@@ -581,6 +812,7 @@ def main() -> None:
     )
     lua_docs_overlay = load_optional_json(args.lua_docs)
     lua_snapshot = apply_lua_docs_overlay(lua_snapshot, lua_docs_overlay)
+    lua_snapshot = augment_lua_snapshot(lua_snapshot)
     write_json(args.schema_out, schema_snapshot)
     write_json(args.lua_out, lua_snapshot)
     print(f"Wrote {args.schema_out}")
