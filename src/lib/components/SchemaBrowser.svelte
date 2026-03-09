@@ -52,7 +52,7 @@
 	const CATEGORY_DEFS = [
 		{
 			id: "all",
-			label: "All tables",
+			label: "All",
 			match: () => true,
 		},
 		{
@@ -95,9 +95,9 @@
 	const SEARCH_MODE_DEFS = [
 		{ id: "all", label: "All" },
 		{ id: "tables", label: "Tables" },
+		{ id: "rows", label: "Rows" },
 		{ id: "columns", label: "Columns" },
 		{ id: "relationships", label: "Refs" },
-		{ id: "rows", label: "Rows" },
 	];
 	const TABLE_SORT_DEFS = [
 		{ id: "best", label: "Best match" },
@@ -1295,6 +1295,18 @@
 	<section class="schema-panel schema-panel--explorer">
 		<div class="schema-toolbar">
 			<div class="schema-toolbar-primary">
+				<div class="schema-mode-group" role="group" aria-label="Search scope">
+					{#each SEARCH_MODE_DEFS as mode (mode.id)}
+						<button
+							type="button"
+							class={`schema-filter-chip schema-filter-chip--scope ${searchMode === mode.id ? "is-active" : ""}`}
+							aria-pressed={searchMode === mode.id}
+							onclick={() => (searchMode = mode.id)}
+						>
+							{mode.label}
+						</button>
+					{/each}
+				</div>
 				<label class="schema-search-field">
 					<span>Search schema data</span>
 					<input type="search" bind:value={searchQuery} onkeydown={handleSearchKeyDown} placeholder={searchPlaceholder} />
@@ -1309,16 +1321,14 @@
 				</label>
 			</div>
 			<div class="schema-toolbar-secondary">
-				<div class="schema-mode-group" role="group" aria-label="Search scope">
-					{#each SEARCH_MODE_DEFS as mode (mode.id)}
-						<button type="button" class={`schema-filter-chip ${searchMode === mode.id ? "is-active" : ""}`} onclick={() => (searchMode = mode.id)}>
-							{mode.label}
-						</button>
-					{/each}
-				</div>
 				<div class="schema-filter-group" role="group" aria-label="Schema categories">
 					{#each CATEGORY_DEFS as category (category.id)}
-						<button type="button" class={`schema-filter-chip ${categoryFilter === category.id ? "is-active" : ""}`} onclick={() => (categoryFilter = category.id)}>
+						<button
+							type="button"
+							class={`schema-filter-chip schema-filter-chip--toggle ${categoryFilter === category.id ? "is-active" : ""}`}
+							aria-pressed={categoryFilter === category.id}
+							onclick={() => (categoryFilter = category.id)}
+						>
 							{category.label}
 							<span>{CATEGORY_COUNTS.find((item) => item.id === category.id)?.count ?? 0}</span>
 						</button>
@@ -1456,7 +1466,7 @@
 					</div>
 
 					{#if detailTab === "columns"}
-						<article class="schema-detail-card schema-detail-card--columns">
+						<article class="schema-detail-card schema-detail-card-exception">
 							<div class="schema-detail-card-head">
 								<div>
 									<h3>Columns</h3>
@@ -1596,7 +1606,7 @@
 							</article> -->
 
 							<div class="schema-rows-layout">
-								<article class="schema-detail-card schema-detail-card--rows">
+								<article class="schema-detail-card schema-detail-card-exception">
 									<div class="schema-detail-card-head">
 										<div>
 											<h3>Row data</h3>
@@ -1687,7 +1697,7 @@
 									{/if}
 								</article>
 
-								<article class="schema-detail-card schema-detail-card--inspector">
+								<article class="schema-detail-card schema-detail-card-inspector">
 									<div class="schema-detail-card-head">
 										<div>
 											<h3>Row inspector</h3>
@@ -1726,7 +1736,7 @@
 						</div>
 					{:else if detailTab === "relationships"}
 						<div class="schema-detail-secondary-grid schema-detail-secondary-grid--relationships">
-							<article class="schema-detail-card">
+							<article class="schema-detail-card schema-detail-card-exception">
 								<div class="schema-detail-card-head">
 									<div>
 										<h3>Outgoing foreign keys</h3>
@@ -1755,7 +1765,7 @@
 								{/if}
 							</article>
 
-							<article class="schema-detail-card">
+							<article class="schema-detail-card schema-detail-card-exception">
 								<div class="schema-detail-card-head">
 									<div>
 										<h3>Incoming foreign keys</h3>
@@ -1785,7 +1795,7 @@
 							</article>
 						</div>
 					{:else if detailTab === "companions"}
-						<article class="schema-detail-card">
+						<article class="schema-detail-card schema-detail-card-exception">
 							<div class="schema-detail-card-head">
 								<div>
 									<h3>Companion tables</h3>
@@ -2169,7 +2179,7 @@
 
 	.schema-toolbar-primary,
 	.schema-toolbar-secondary {
-		display: grid;
+		display: flex;
 		gap: 0.8rem;
 	}
 
@@ -2186,6 +2196,7 @@
 	}
 
 	.schema-search-field {
+		inline-size: 100%;
 		display: grid;
 		gap: 0.45rem;
 	}
@@ -2237,6 +2248,50 @@
 		gap: 0.55rem;
 	}
 
+	.schema-mode-group {
+		display: inline-flex;
+		flex-wrap: nowrap;
+		gap: 0;
+		background: rgba(255, 255, 255, 0.03);
+		border: 1px solid var(--schema-border);
+		border-radius: 999px;
+	}
+
+	.schema-mode-group:has(.schema-filter-chip--scope) {
+		inline-size: fit-content;
+	}
+
+	.schema-filter-chip--scope {
+		background: transparent;
+		border: none;
+		border-inline-end: 1px solid var(--schema-border);
+		border-radius: 0;
+		padding-block: 0.5rem;
+		padding-inline: 0.85rem;
+		transform: none;
+	}
+
+	.schema-filter-chip--scope:first-child {
+		border-radius: 999px 0 0 999px;
+	}
+
+	.schema-filter-chip--scope:last-child {
+		border-inline-end: none;
+		border-radius: 0 999px 999px 0;
+	}
+
+	.schema-filter-chip--scope:hover {
+		background: rgba(141, 199, 255, 0.08);
+		border-color: transparent;
+		transform: none;
+	}
+
+	.schema-filter-chip--scope.is-active {
+		background: rgba(141, 199, 255, 0.16);
+		border-color: transparent;
+		transform: none;
+	}
+
 	.schema-filter-chip {
 		align-items: center;
 		display: inline-flex;
@@ -2256,6 +2311,58 @@
 		background: rgba(255, 255, 255, 0.08);
 		border-radius: 999px;
 		text-box: trim-both;
+	}
+
+	.schema-mode-group > .schema-filter-chip--scope {
+		border-radius: 0;
+	}
+
+	.schema-mode-group > .schema-filter-chip--scope:first-child {
+		border-radius: 999px 0 0 999px;
+	}
+
+	.schema-mode-group > .schema-filter-chip--scope:last-child {
+		border-inline-end: none;
+		border-radius: 0 999px 999px 0;
+	}
+
+	.schema-filter-group--toggle {
+		align-items: center;
+		background: rgba(255, 255, 255, 0.03);
+		border: 1px solid var(--schema-border);
+		border-radius: 999px;
+		display: inline-flex;
+		gap: 0.35rem;
+		padding: 0.3rem;
+	}
+
+	.schema-filter-chip--toggle {
+		background: transparent;
+		border: 1px solid transparent;
+		border-radius: 999px;
+		padding-block: 0.42rem;
+		padding-inline: 0.7rem;
+		transform: none;
+	}
+
+	.schema-filter-chip--toggle:hover {
+		background: rgba(141, 199, 255, 0.08);
+		border-color: transparent;
+		transform: none;
+	}
+
+	.schema-filter-chip--toggle.is-active {
+		background: rgba(141, 199, 255, 0.14);
+		border-color: color-mix(in srgb, var(--schema-highlight) 70%, white 30%);
+		transform: none;
+	}
+
+	.schema-filter-chip--toggle span {
+		background: rgba(255, 255, 255, 0.06);
+	}
+
+	.schema-filter-chip--toggle.is-active span {
+		background: rgba(141, 199, 255, 0.18);
 	}
 
 	.schema-explorer-grid {
@@ -2396,7 +2503,7 @@
 		gap: 0.35rem;
 		font-size: 0.74rem;
 		background: rgba(255, 255, 255, 0.09);
-		border-radius: 999px;
+		border-radius: 0.5rem;
 		padding-block: 0.28rem;
 		padding-inline: 0.52rem;
 	}
@@ -2620,6 +2727,7 @@
 	}
 
 	.schema-inline-link {
+		text-align: left;
 		background: none;
 		border: none;
 		padding: 0;
@@ -2784,22 +2892,28 @@
 		margin: 0;
 	}
 
-	.schema-detail-card--inspector .schema-detail-card-head {
+	.schema-detail-card-exception {
+		background: none;
+		border: none;
+		border-radius: 0;
+	}
+
+	.schema-detail-card-inspector .schema-detail-card-head {
 		gap: 0.45rem;
 	}
 
-	.schema-detail-card--inspector .schema-detail-card-head h3 {
+	.schema-detail-card-inspector .schema-detail-card-head h3 {
 		font-size: 1.05rem;
 		line-height: 1.1;
 	}
 
-	.schema-detail-card--inspector .schema-section-note {
+	.schema-detail-card-inspector .schema-section-note {
 		font-size: 0.74rem;
 		line-height: 1.25;
 		margin-block-start: 0.1rem;
 	}
 
-	.schema-detail-card--inspector .schema-detail-card-head > span {
+	.schema-detail-card-inspector .schema-detail-card-head > span {
 		font-size: 0.82rem;
 	}
 
@@ -2816,7 +2930,7 @@
 		margin-block-start: 0.25rem;
 	}
 
-	.schema-detail-card--inspector {
+	.schema-detail-card-inspector {
 		position: sticky;
 		inset-block-start: 1rem;
 		max-block-size: calc(100dvh - 2rem);
@@ -2850,7 +2964,7 @@
 			grid-template-columns: 1fr;
 		}
 
-		.schema-detail-card--inspector {
+		.schema-detail-card-inspector {
 			position: static;
 			inset-block-start: auto;
 			max-height: none;

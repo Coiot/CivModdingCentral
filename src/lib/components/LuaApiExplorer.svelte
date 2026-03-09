@@ -30,12 +30,11 @@
 		{ id: "example", label: "Example" },
 		{ id: "schema", label: "Schema" },
 		{ id: "see-also", label: "See also" },
-		{ id: "related", label: "Related" },
 	];
 	const PLACEHOLDER_NOTES = [
 		"Placeholder summary. Replace this with entry specific notes from the JSON.",
 		"Use this section for what the entry does, when to call it, and any important side effects or assumptions.",
-		"Keep the final authored notes grounded in actual gameplay behavior.",
+		"Keep the actual notes grounded in actual gameplay behavior.",
 	];
 	const DOC_SECTION_SCROLL_OFFSET = 132;
 	const docSectionElements = new Map();
@@ -148,18 +147,21 @@
 		}
 		return reasons;
 	});
-	const relatedEntries = $derived.by(() => {
+	const selectedCounterpartEntries = $derived.by(() => {
 		if (!selectedEntry) {
 			return [];
 		}
-		if (selectedEntry.entryKind === "method") {
-			return METHODS.filter((entry) => entry.id !== selectedEntry.id && entry.family === selectedEntry.family)
-				.sort((left, right) => right.parameterCount - left.parameterCount || left.methodName.localeCompare(right.methodName))
-				.slice(0, 6);
-		}
-		return GAME_EVENTS.filter((entry) => entry.id !== selectedEntry.id && entry.scope === selectedEntry.scope)
-			.sort((left, right) => left.name.localeCompare(right.name))
-			.slice(0, 6);
+
+		const matches =
+			selectedEntry.entryKind === "method" ? GAME_EVENTS.filter((entry) => entry.name === selectedEntry.methodName) : METHODS.filter((entry) => entry.methodName === selectedEntry.name);
+
+		return matches
+			.filter((entry) => entry.id !== selectedEntry.id)
+			.map((entry) => ({
+				...entry,
+				authoredFlags: buildEntryAuthoredFlags(entry),
+			}))
+			.sort((left, right) => right.authoredFlags.length - left.authoredFlags.length || left.title.localeCompare(right.title));
 	});
 	const selectedSchemaTouchpoints = $derived.by(() => {
 		if (!selectedEntry) {
@@ -259,10 +261,17 @@
 		if (selectedSchemaTouchpoints.length > 0) {
 			items.push({ label: "Schema", value: String(selectedSchemaTouchpoints.length) });
 		}
-		if (selectedSeeAlsoItems.length > 0) {
-			items.push({ label: "See also", value: String(selectedSeeAlsoItems.length) });
-		}
 		return items;
+	});
+	const selectedEntryContentMeta = $derived.by(() => {
+		if (!selectedEntry) {
+			return [];
+		}
+		return [
+			{ label: "Summary", value: selectedEntry.summary ? "Present" : "None" },
+			{ label: "Gotchas", value: selectedEntry.gotchas.length ? String(selectedEntry.gotchas.length) : "None" },
+			{ label: "See also", value: selectedSeeAlsoItems.length ? String(selectedSeeAlsoItems.length) : "None" },
+		];
 	});
 	const selectedEntrySections = $derived.by(() => {
 		if (!selectedEntry) {
@@ -283,9 +292,6 @@
 			}
 			if (section.id === "see-also") {
 				return selectedSeeAlsoItems.length > 0;
-			}
-			if (section.id === "related") {
-				return relatedEntries.length > 0;
 			}
 			return true;
 		}).map((section) => ({
@@ -415,7 +421,7 @@
 			heading: entry.methodName,
 			secondaryLabel: `${entry.returnType || "unknown"} return`,
 			summary: typeof entry.summary === "string" ? entry.summary.trim() : "",
-			exampleSummary: entry.example?.summary || "Placeholder example. Replace this with a real snippet in the generated JSON once authored usage examples are available.",
+			exampleSummary: entry.example?.summary || "Placeholder example. Replace this with a real snippet in the JSON.",
 			exampleCode: entry.example?.code || buildMethodExampleCode(entry),
 			exampleLanguage: entry.example?.language || "lua",
 			notes: normalizeStringList(entry.notes, PLACEHOLDER_NOTES),
@@ -449,7 +455,7 @@
 			heading: entry.name,
 			secondaryLabel: `${entry.scope || "unscoped"} callback`,
 			summary: typeof entry.summary === "string" ? entry.summary.trim() : "",
-			exampleSummary: entry.example?.summary || "Placeholder example. Replace this with a real listener snippet in the generated JSON once authored usage examples are available.",
+			exampleSummary: entry.example?.summary || "Placeholder example. Replace this with a real listener snippet in the JSON once examples are written.",
 			exampleCode: entry.example?.code || buildGameEventExampleCode(entry),
 			exampleLanguage: entry.example?.language || "lua",
 			notes: normalizeStringList(entry.notes, PLACEHOLDER_NOTES),
@@ -470,7 +476,7 @@
 		const receiver = `some${entry.family}`;
 		const invocation = entry.callKind === "static" ? `${entry.family}.${entry.methodName}(${args})` : `${receiver}:${entry.methodName}(${args})`;
 		const hasReturnValue = entry.returnType && !["void", "nil"].includes(entry.returnType.toLowerCase());
-		const lines = ["-- Placeholder example. Replace with a real authored snippet."];
+		const lines = ["-- Placeholder example. Replace with a snippet."];
 		if (hasReturnValue) {
 			lines.push(`local result = ${invocation}`);
 			lines.push("print(result)");
@@ -482,7 +488,7 @@
 
 	function buildGameEventExampleCode(entry) {
 		const args = entry.parameters.map((parameter) => parameter.name).join(", ");
-		return ["-- Placeholder example. Replace with a real authored listener.", `GameEvents.${entry.name}.Add(function(${args})`, `\t-- handle ${entry.name}`, "end)"].join("\n");
+		return ["-- Placeholder example. Replace with a listener.", `GameEvents.${entry.name}.Add(function(${args})`, `\t-- handle ${entry.name}`, "end)"].join("\n");
 	}
 
 	function normalizeStringList(value, fallback = []) {
@@ -628,7 +634,8 @@
 		scopeFilter = "all";
 	}
 
-	function selectEntry(entryId) {
+	function selectEntry(entryId, datasetId = activeDataset) {
+		activeDataset = datasetId;
 		selectedEntryId = entryId;
 	}
 
@@ -746,7 +753,33 @@
 			label: item.label || referencedEntry.title,
 			copy: item.note || referencedEntry.secondaryLabel,
 			entryId: referencedEntry.id,
+			datasetId: referencedEntry.datasetId,
 		};
+	}
+
+	function seeAlsoTypeLabel(type) {
+		switch (type) {
+			case "schema":
+				return "Schema table";
+			case "link":
+				return "External link";
+			default:
+				return "Lua entry";
+		}
+	}
+
+	function buildEntryAuthoredFlags(entry) {
+		const flags = [];
+		if (entry.summary) {
+			flags.push("Summary");
+		}
+		if (entry.gotchas.length > 0) {
+			flags.push(`Gotchas ${entry.gotchas.length}`);
+		}
+		if (entry.seeAlso.length > 0) {
+			flags.push(`See also ${entry.seeAlso.length}`);
+		}
+		return flags;
 	}
 
 	function trackDocSection(node, sectionId) {
@@ -951,12 +984,12 @@
 
 				{#if activeDataset === "methods"}
 					<div class="lua-filter-group" role="group" aria-label="Method families">
-						<button type="button" class={`lua-filter-chip ${familyFilter === "all" ? "is-active" : ""}`} onclick={() => (familyFilter = "all")}>
+						<button type="button" class={`lua-filter-chip lua-filter-chip--toggle ${familyFilter === "all" ? "is-active" : ""}`} onclick={() => (familyFilter = "all")}>
 							All
 							<span>{methodResults.filter((entry) => entry.matchesQuery).length}</span>
 						</button>
 						{#each familyCounts as family (family.name)}
-							<button type="button" class={`lua-filter-chip ${familyFilter === family.name ? "is-active" : ""}`} onclick={() => (familyFilter = family.name)}>
+							<button type="button" class={`lua-filter-chip lua-filter-chip--toggle ${familyFilter === family.name ? "is-active" : ""}`} onclick={() => (familyFilter = family.name)}>
 								{family.name}
 								<span>{family.count}</span>
 							</button>
@@ -964,12 +997,12 @@
 					</div>
 				{:else}
 					<div class="lua-filter-group" role="group" aria-label="GameEvent scopes">
-						<button type="button" class={`lua-filter-chip ${scopeFilter === "all" ? "is-active" : ""}`} onclick={() => (scopeFilter = "all")}>
+						<button type="button" class={`lua-filter-chip lua-filter-chip--toggle ${scopeFilter === "all" ? "is-active" : ""}`} onclick={() => (scopeFilter = "all")}>
 							All scopes
 							<span>{gameEventResults.filter((entry) => entry.matchesQuery).length}</span>
 						</button>
 						{#each scopeCounts as scope (scope.name)}
-							<button type="button" class={`lua-filter-chip ${scopeFilter === scope.name ? "is-active" : ""}`} onclick={() => (scopeFilter = scope.name)}>
+							<button type="button" class={`lua-filter-chip lua-filter-chip--toggle ${scopeFilter === scope.name ? "is-active" : ""}`} onclick={() => (scopeFilter = scope.name)}>
 								{scope.name}
 								<span>{scope.count}</span>
 							</button>
@@ -982,7 +1015,7 @@
 						<span class="lua-toolbar-label">Recent Searches</span>
 						<div class="lua-recent-list">
 							{#each recentEntries as entry (entry.entryKey)}
-								<button type="button" class="lua-link lua-link--inline" onclick={() => selectEntry(entry.id)}>{entry.heading}</button>
+								<button type="button" class="lua-link lua-link--inline" onclick={() => selectEntry(entry.id, entry.datasetId)}>{entry.heading}</button>
 							{/each}
 						</div>
 					</div>
@@ -1023,33 +1056,23 @@
 										{/if}
 									</div>
 								</div>
-								<p class="lua-entry-card-copy">{entry.secondaryLabel}</p>
-								<!-- <div class="lua-entry-card-footer">
-									{#if normalizedQuery && (entry.nameMatch || entry.signatureMatch || entry.parameterMatch || entry.schemaMatch)}
-										<div class="lua-entry-tags">
-											{#if entry.nameMatch}
-												<span class="lua-tag">Name</span>
-											{/if}
-											{#if entry.signatureMatch}
-												<span class="lua-tag">Signature</span>
-											{/if}
-											{#if entry.parameterMatch}
-												<span class="lua-tag">Params</span>
-											{/if}
-											{#if entry.schemaMatch}
-												<span class="lua-tag">Schema</span>
-											{/if}
-										</div>
-									{/if}
-									{#if entry.schemaTables.length > 0}
-										<p class="lua-entry-schema-preview">
-											{entry.schemaTables.slice(0, 3).join(" · ")}
-											{#if entry.schemaTables.length > 3}
-												<span>+{entry.schemaTables.length - 3} more</span>
-											{/if}
-										</p>
-									{/if}
-								</div> -->
+								<!-- <p class="lua-entry-card-copy">{entry.secondaryLabel}</p>
+								{#if entry.summary}
+									<p class="lua-entry-summary">{entry.summary}</p>
+								{/if} -->
+								<!-- {#if entry.summary || entry.gotchas.length > 0 || entry.seeAlso.length > 0}
+									<div class="lua-entry-property-strip" aria-label="Entry fields">
+										{#if entry.summary}
+											<span class="lua-entry-property">Summary</span>
+										{/if}
+										{#if entry.gotchas.length > 0}
+											<span class="lua-entry-property">Gotchas {entry.gotchas.length}</span>
+										{/if}
+										{#if entry.seeAlso.length > 0}
+											<span class="lua-entry-property">See also {entry.seeAlso.length}</span>
+										{/if}
+									</div>
+								{/if} -->
 							</button>
 						{/each}
 					{/if}
@@ -1087,7 +1110,15 @@
 								<span class="lua-metric-chip">{selectedEntry.scope || "unscoped"}</span>
 							{/if}
 							<span class="lua-metric-chip">{selectedEntry.parameterCount} params</span>
-							<!-- <span class="lua-metric-chip">{selectedEntry.schemaTables.length} schema links</span> -->
+							{#if selectedEntry.summary}
+								<span class="lua-metric-chip lua-metric-chip--authored">summary</span>
+							{/if}
+							{#if selectedEntry.gotchas.length > 0}
+								<span class="lua-metric-chip lua-metric-chip--authored">gotchas {selectedEntry.gotchas.length}</span>
+							{/if}
+							{#if selectedSeeAlsoItems.length > 0}
+								<span class="lua-metric-chip lua-metric-chip--authored">see also {selectedSeeAlsoItems.length}</span>
+							{/if}
 						</div>
 					</div>
 
@@ -1203,9 +1234,7 @@
 										<h3>Schema touchpoints</h3>
 										<span>{selectedSchemaTouchpoints.length}</span>
 									</div>
-									<p class="lua-card-copy">
-										These tables are the strongest schema-side matches for the current signature, with parameter context and any authored notes when available.
-									</p>
+									<p class="lua-card-copy">These tables are the strongest schema-side matches for the current signature, with parameter context and any notes when available.</p>
 									<div class="lua-schema-grid">
 										{#each selectedSchemaTouchpoints as touchpoint (touchpoint.table)}
 											<article class="lua-schema-card">
@@ -1238,36 +1267,25 @@
 										<h3>See also</h3>
 										<span>{selectedSeeAlsoItems.length}</span>
 									</div>
-									<div class="lua-related-grid">
+									<div class="lua-see-also-grid">
 										{#each selectedSeeAlsoItems as item (item.id)}
 											{#if item.entryId}
-												<button type="button" class="lua-related-card" onclick={() => selectEntry(item.entryId)}>
-													<strong>{item.label}</strong>
-													<span>{item.copy}</span>
+												<button type="button" class="lua-see-also-card" onclick={() => selectEntry(item.entryId, item.datasetId)}>
+													<div class="lua-see-also-head">
+														<strong>{item.label}</strong>
+														<span class="lua-see-also-kind">{seeAlsoTypeLabel(item.type)}</span>
+													</div>
+													<p>{item.copy}</p>
 												</button>
 											{:else}
-												<a class="lua-related-card lua-related-card--link" href={item.href} target="_blank" rel="noopener noreferrer">
-													<strong>{item.label}</strong>
-													<span>{item.copy}</span>
+												<a class="lua-see-also-card lua-see-also-card--link" href={item.href} target="_blank" rel="noopener noreferrer">
+													<div class="lua-see-also-head">
+														<strong>{item.label}</strong>
+														<span class="lua-see-also-kind">{seeAlsoTypeLabel(item.type)}</span>
+													</div>
+													<p>{item.copy}</p>
 												</a>
 											{/if}
-										{/each}
-									</div>
-								</section>
-							{/if}
-
-							{#if relatedEntries.length > 0}
-								<section id="lua-doc-related" class="lua-detail-card lua-doc-section" use:trackDocSection={"related"}>
-									<div class="lua-detail-card-head">
-										<h3>Related entries</h3>
-										<span>{relatedEntries.length}</span>
-									</div>
-									<div class="lua-related-grid">
-										{#each relatedEntries as entry (entry.entryKey)}
-											<button type="button" class="lua-related-card" onclick={() => selectEntry(entry.id)}>
-												<strong>{entry.title}</strong>
-												<span>{entry.parameterCount} params{entry.schemaTables.length ? ` · ${entry.schemaTables.length} schema` : ""}</span>
-											</button>
 										{/each}
 									</div>
 								</section>
@@ -1290,7 +1308,43 @@
 									{/each}
 								</div>
 							</div>
-							{#if selectedEntryQuickMeta.length > 0}
+							{#if selectedCounterpartEntries.length > 0}
+								<div class="lua-docs-nav-card">
+									<span class="lua-kicker">Other Surfaces</span>
+									<div class="lua-surface-list">
+										{#each selectedCounterpartEntries as entry (entry.entryKey)}
+											<button type="button" class="lua-see-also-card" onclick={() => selectEntry(entry.id, entry.datasetId)}>
+												<div class="lua-see-also-head">
+													<strong>{entry.title}</strong>
+													<span class="lua-see-also-kind">{entry.entryKind === "method" ? "Method" : "GameEvents"}</span>
+												</div>
+												<p>{entry.secondaryLabel}</p>
+												{#if entry.authoredFlags.length > 0}
+													<div class="lua-entry-property-strip">
+														{#each entry.authoredFlags as flag (`${entry.entryKey}-${flag}`)}
+															<span class="lua-entry-property">{flag}</span>
+														{/each}
+													</div>
+												{/if}
+											</button>
+										{/each}
+									</div>
+								</div>
+							{/if}
+							<!-- {#if selectedEntryContentMeta.length > 0}
+								<div class="lua-docs-nav-card">
+									<span class="lua-kicker">Authored Fields</span>
+									<dl class="lua-quick-meta">
+										{#each selectedEntryContentMeta as item (item.label)}
+											<div>
+												<dt>{item.label}</dt>
+												<dd>{item.value}</dd>
+											</div>
+										{/each}
+									</dl>
+								</div>
+							{/if} -->
+							<!-- {#if selectedEntryQuickMeta.length > 0}
 								<div class="lua-docs-nav-card">
 									<span class="lua-kicker">Entry Facts</span>
 									<dl class="lua-quick-meta">
@@ -1302,7 +1356,7 @@
 										{/each}
 									</dl>
 								</div>
-							{/if}
+							{/if} -->
 							{#if selectedEntryQuickLinks.length > 0}
 								<div class="lua-docs-nav-card">
 									<span class="lua-kicker">Quick Links</span>
@@ -1384,7 +1438,7 @@
 	.lua-parameter-row p,
 	.lua-planned-card p,
 	.lua-note-list li,
-	.lua-related-card span {
+	.lua-see-also-card p {
 		color: var(--lua-copy);
 		text-align: left;
 		line-height: 1.45;
@@ -1412,7 +1466,7 @@
 	.lua-filter-chip,
 	.lua-family-card,
 	.lua-entry-card,
-	.lua-related-card {
+	.lua-see-also-card {
 		transition:
 			transform 140ms ease,
 			border-color 140ms ease,
@@ -1445,7 +1499,7 @@
 	.lua-stats,
 	.lua-family-grid,
 	.lua-planned-grid,
-	.lua-related-grid {
+	.lua-see-also-grid {
 		display: grid;
 		gap: 0.85rem;
 	}
@@ -1456,7 +1510,7 @@
 
 	.lua-family-grid,
 	.lua-planned-grid,
-	.lua-related-grid {
+	.lua-see-also-grid {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
 
@@ -1476,7 +1530,7 @@
 	.lua-entry-card,
 	.lua-tab,
 	.lua-filter-chip,
-	.lua-related-card {
+	.lua-see-also-card {
 		font: inherit;
 		background: rgba(255, 255, 255, 0.03);
 		border: 1px solid var(--lua-border);
@@ -1488,7 +1542,7 @@
 	.lua-detail-card,
 	.lua-list-panel,
 	.lua-planned-card,
-	.lua-related-card,
+	.lua-see-also-card,
 	.lua-docs-nav-card {
 		border-radius: 1.2rem;
 	}
@@ -1498,7 +1552,7 @@
 	.lua-detail-card,
 	.lua-list-panel,
 	.lua-planned-card,
-	.lua-related-card,
+	.lua-see-also-card,
 	.lua-docs-nav-card {
 		padding-block: 0.95rem;
 		padding-inline: 0.95rem;
@@ -1510,7 +1564,7 @@
 	.lua-filter-chip.is-active,
 	.lua-family-card:hover,
 	.lua-entry-card:hover,
-	.lua-related-card:hover {
+	.lua-see-also-card:hover {
 		background: rgba(183, 239, 132, 0.11);
 		border-color: color-mix(in srgb, var(--lua-highlight) 70%, white 30%);
 		transform: translateY(-1px);
@@ -1574,7 +1628,7 @@
 	.lua-entry-card h3,
 	.lua-detail-card h3,
 	.lua-planned-card h3,
-	.lua-related-card strong {
+	.lua-see-also-card strong {
 		overflow-wrap: anywhere;
 		word-break: break-word;
 	}
@@ -1588,12 +1642,21 @@
 	}
 
 	.lua-entry-path,
-	.lua-entry-card-copy,
-	.lua-entry-schema-preview {
+	.lua-entry-card-copy {
 		color: var(--lua-copy);
 		font-size: 0.76rem;
 		line-height: 1.3;
 		margin: 0;
+	}
+
+	.lua-entry-summary {
+		color: var(--lua-highlight-strong);
+		font-size: 0.77rem;
+		line-height: 1.35;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 
 	.lua-entry-path {
@@ -1606,24 +1669,31 @@
 		overflow: hidden;
 	}
 
-	.lua-entry-card-footer {
-		display: grid;
-		gap: 0.28rem;
-	}
-
 	.lua-entry-tags {
 		gap: 0.35rem;
 	}
 
-	.lua-entry-card-copy,
-	.lua-entry-schema-preview {
+	.lua-entry-card-copy {
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
 	}
 
-	.lua-entry-schema-preview span {
-		opacity: 0.8;
+	.lua-entry-property-strip {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+
+	.lua-entry-property {
+		align-items: center;
+		display: inline-flex;
+		font-size: 0.69rem;
+		background: rgba(183, 239, 132, 0.12);
+		border: 1px solid rgba(183, 239, 132, 0.18);
+		border-radius: 999px;
+		padding-block: 0.2rem;
+		padding-inline: 0.48rem;
 	}
 
 	.lua-toolbar {
@@ -1647,7 +1717,7 @@
 	.lua-search-field span,
 	.lua-sort-field span {
 		color: var(--lua-copy);
-		font-size: 0.8rem;
+		font-size: 0.9rem;
 	}
 
 	.lua-search-field,
@@ -1717,6 +1787,35 @@
 		background: rgba(255, 255, 255, 0.08);
 		border-radius: 999px;
 		text-box: trim-both;
+	}
+
+	.lua-filter-chip--toggle {
+		background: transparent;
+		border: 1px solid transparent;
+		border-radius: 999px;
+		padding-block: 0.42rem;
+		padding-inline: 0.7rem;
+		transform: none;
+	}
+
+	.lua-filter-chip--toggle:hover {
+		background: rgba(141, 199, 255, 0.08);
+		border-color: transparent;
+		transform: none;
+	}
+
+	.lua-filter-chip--toggle.is-active {
+		background: rgba(141, 199, 255, 0.14);
+		border-color: color-mix(in srgb, var(--lua-highlight) 70%, white 30%);
+		transform: none;
+	}
+
+	.lua-filter-chip--toggle span {
+		background: rgba(255, 255, 255, 0.06);
+	}
+
+	.lua-filter-chip--toggle.is-active span {
+		background: rgba(141, 199, 255, 0.18);
 	}
 
 	.lua-explorer-grid {
@@ -1848,9 +1947,14 @@
 		display: inline-flex;
 		font-size: 0.74rem;
 		background: rgba(255, 255, 255, 0.08);
-		border-radius: 999px;
+		border-radius: 0.5rem;
 		padding-block: 0.3rem;
 		padding-inline: 0.54rem;
+	}
+
+	.lua-metric-chip--authored {
+		background: rgba(183, 239, 132, 0.14);
+		color: var(--lua-highlight-strong);
 	}
 
 	.lua-tag--optional {
@@ -2031,22 +2135,39 @@
 		font-weight: 600;
 	}
 
-	.lua-related-grid {
+	.lua-see-also-grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
-	.lua-related-card {
-		display: block;
+	.lua-see-also-card {
+		display: grid;
+		gap: 0.55rem;
 		text-align: left;
 	}
 
-	.lua-related-card--link {
+	.lua-see-also-card--link {
 		text-decoration: none;
 	}
 
-	.lua-related-card strong {
-		display: block;
-		margin-block-end: 0.2rem;
+	.lua-see-also-head {
+		align-items: start;
+		display: flex;
+		gap: 0.65rem;
+		justify-content: space-between;
+	}
+
+	.lua-see-also-head strong {
+		margin: 0;
+	}
+
+	.lua-see-also-kind {
+		color: var(--lua-copy);
+		font-size: 0.7rem;
+		background: rgba(255, 255, 255, 0.07);
+		border-radius: 999px;
+		padding-block: 0.2rem;
+		padding-inline: 0.5rem;
+		white-space: nowrap;
 	}
 
 	@media (max-width: 1180px) {
@@ -2081,7 +2202,7 @@
 		.lua-stats,
 		.lua-family-grid,
 		.lua-planned-grid,
-		.lua-related-grid {
+		.lua-see-also-grid {
 			grid-template-columns: 1fr;
 		}
 
@@ -2150,7 +2271,7 @@
 	:global(:root[data-theme="light"]) .lua-tab,
 	:global(:root[data-theme="light"]) .lua-filter-chip,
 	:global(:root[data-theme="light"]) .lua-docs-nav-card,
-	:global(:root[data-theme="light"]) .lua-related-card,
+	:global(:root[data-theme="light"]) .lua-see-also-card,
 	:global(:root[data-theme="light"]) .lua-search-field input,
 	:global(:root[data-theme="light"]) .lua-sort-field select {
 		background: rgba(255, 255, 255, 0.96);

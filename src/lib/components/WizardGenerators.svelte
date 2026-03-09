@@ -1,135 +1,15 @@
 <script>
-	const wizardCards = [
-		{
-			title: "Building / Wonder Wizard",
-			stage: "First Wave",
-			copy: "Start with the content family modders create most often and get the companion tables, text keys, and default validation in place from the first pass.",
-			asks: ["Type keys and class relationship", "Cost, prerequisites, yields, flavors, and specialist data", "Civilopedia and gameplay text keys"],
-			outputs: [
-				"Core building row plus common side-table inserts",
-				"Localization scaffold and mod action file split",
-				"Optional hooks for free promotions, dummy building patterns, and notifications",
-			],
-		},
-		{
-			title: "Unique Unit Wizard",
-			stage: "First Wave",
-			copy: "Generate a unit package that respects class replacement, upgrade paths, promotions, art references, and localization instead of stopping at the main unit row.",
-			asks: ["Base class replacement or standalone class", "Combat role, movement profile, and promotions", "Icon / atlas references and text keys"],
-			outputs: ["Unit, Unit_ClassUpgrades, and related side tables", "Promotion and prerequisite stubs", "Localization and icon registration placeholders"],
-		},
-		{
-			title: "Lua Hook Wizard",
-			stage: "First Wave",
-			copy: "Guide modders to the right hook family and emit a starter file that already uses the correct callback signature and context.",
-			asks: ["Gameplay effect versus UI reaction", "Expected inputs and return behavior", "Persistence and notification needs"],
-			outputs: ["GameEvents, Events, or LuaEvents starter file", "Namespaced save-data helper when needed", "Optional notification and debug logging blocks"],
-		},
-		{
-			title: "Atlas / Art Registration Builder",
-			stage: "First Wave",
-			copy: "Tie the existing DDS and icon pipeline into generator output so art registration becomes repeatable instead of a manual checklist.",
-			asks: ["Atlas sizes, filenames, and portrait indices", "VFS expectations and content action placement", "Alpha / icon sheet naming"],
-			outputs: ["IconTextureAtlases rows and texture references", "VFS reminders and import flags", "Text-key placeholders for related UI surfaces"],
-		},
-		{
-			title: "Civilization + Leader Package Wizard",
-			stage: "Second Wave",
-			copy: "This should come after the smaller pieces exist, because it is really a bundle of building, unit, art, text, and bias generators in one package.",
-			asks: ["Civilization identity, colors, traits, uniques, and city names", "Leader text, diplomacy, start biases, and icons", "Which sub-generators to include in the package"],
-			outputs: ["Baseline civilization and leader rows", "Localization packs and art registration stubs", "Expandable folder structure instead of a single giant output blob"],
-		},
-	];
+	import WizardExamplePreview from "./WizardExamplePreview.svelte";
+	import { datasetNotes, exampleSupportsLanguage, guardrails, implementationStages, internalCrossLinks, researchLinks, snippetLanguageFilters, wizardCards } from "../data/generatorPageData.js";
 
-	const guardrails = [
-		{
-			title: "Event family correctness",
-			copy: "The wizard layer should never force modders to memorize the difference between GameEvents, Events, and LuaEvents. That routing belongs in the generator.",
-			source: "Internal hook docs + Lua API Explorer",
-		},
-		{
-			title: "VFS is explicit",
-			copy: "Generators should state which files belong in VFS and which belong in content actions, especially for UI Lua, XML includes, and art registration.",
-			source: "Internal setup docs + Schema Browser",
-		},
-		{
-			title: "Localization always ships",
-			copy: "Every gameplay wizard should emit text keys as part of the baseline package, not as an optional 'later' step.",
-			source: "Internal localization docs",
-		},
-		{
-			title: "No magic IDs",
-			copy: "Lua-oriented generators should prefer `GameInfoTypes` lookup patterns and safe guards instead of raw integer assumptions.",
-			source: "Schema Browser + Lua API Explorer",
-		},
-		{
-			title: "Persistence is namespaced",
-			copy: "When a wizard adds save data, it should also add key naming and lightweight caching so the generated code is sustainable.",
-			source: "Internal persistence docs",
-		},
-	];
+	let activeSnippetLanguage = "all";
+	let wizardBacklogGrid;
 
-	const implementationStages = [
-		{
-			label: "Stage 1",
-			title: "Recipe-backed helpers first",
-			copy: "Use the Recipe Library to prove the small patterns: localization, event routing, persistence, VFS wiring, and debug helpers.",
-		},
-		{
-			label: "Stage 2",
-			title: "Single-domain wizards",
-			copy: "Ship building, unit, Lua hook, and atlas builders once the shared helper logic is stable.",
-		},
-		{
-			label: "Stage 3",
-			title: "Large package generators",
-			copy: "Only then combine the smaller pieces into civilization, leader, or project-level builders.",
-		},
-	];
-
-	const internalCrossLinks = [
-		{
-			title: "Recipe Library",
-			copy: "Recipes should own the compact patterns that the larger generators compose.",
-			links: [{ label: "Open Recipe Library", href: "/recipe-library" }],
-			planned: ["Event docs", "Persistence docs", "Localization docs"],
-		},
-		{
-			title: "Lua API Explorer",
-			copy: "Internal browser for workbook-backed methods and GameEvents that can feed signatures, parameter hints, and future code examples straight into wizard output.",
-			links: [{ label: "Open Lua API Explorer", href: "/lua-api-explorer" }],
-			planned: ["Callback signatures", "Cross-links from recipes", "Events + LuaEvents imports"],
-		},
-		{
-			title: "Schema Browser",
-			copy: "Internal browser for gameplay tables, foreign-key style relationships, and common companion rows used by content generators.",
-			links: [{ label: "Open Schema Browser", href: "/schema-browser" }],
-			planned: ["Side-table hints", "Type lookup cross-links", "Generator validation rules"],
-		},
-		{
-			title: "Existing Build Tools",
-			copy: "Generators should connect to the site's working tools instead of inventing disconnected workflows.",
-			links: [
-				{ label: "ModInfo Builder", href: "/modinfo-builder" },
-				{ label: "DDS Converter", href: "/dds-converter" },
-				{ label: "Civ Icon Maker", href: "/civ-icon-maker" },
-			],
-			planned: ["Atlas handoff", "Project wiring handoff"],
-		},
-	];
-
-	const researchLinks = [
-		{ label: "Civ5 XML Reference", href: "https://modiki.civfanatics.com/index.php/Civ5_XML_Reference" },
-		{ label: "Debugging (Civ5)", href: "https://modiki.civfanatics.com/index.php/Debugging_%28Civ5%29" },
-		{ label: "VFS (Civ5)", href: "https://modiki.civfanatics.com/index.php/VFS_%28Civ5%29" },
-		{ label: "GameInfoTypes (Civ5 Type)", href: "https://modiki.civfanatics.com/index.php/GameInfoTypes_%28Civ5_Type%29" },
-		{ label: "Persisting data (Civ5)", href: "https://modiki.civfanatics.com/index.php/Persisting_data_%28Civ5%29" },
-	];
-
-	const datasetNotes = [
-		"GameEvents authoring workbook: 89 callback entries available for generator validation and signature hints.",
-		"Methods authoring workbook: 2,310 method signatures across 12 object families available for API lookup support.",
-	];
+	function setAllWizardDetails(open) {
+		wizardBacklogGrid?.querySelectorAll(".wizard-block--collapsed").forEach((detail) => {
+			detail.open = open;
+		});
+	}
 </script>
 
 <section class="wizard-page">
@@ -137,8 +17,8 @@
 		<p class="eyebrow">Generator Planning Hub</p>
 		<h1>Wizard Generators</h1>
 		<p>
-			This page now frames the generator roadmap around actual Civ V source material. The goal is not to rush a flashy wizard, but to build generators that encode the rules from VFS,
-			localization, event routing, GameInfoTypes, persistence, and the local workbooks you supplied.
+			This page can now start showing the kind of starter output the generators should actually emit. The goal is still disciplined scaffolding, but the backlog cards now point at concrete Lua
+			hooks, schema tables, and starter XML or Lua blocks instead of staying purely conceptual.
 		</p>
 	</header>
 
@@ -163,10 +43,31 @@
 		<div class="wizard-section-head">
 			<span class="wizard-kicker">Wizard Backlog</span>
 			<h2>Concrete generators worth building next</h2>
-			<p>The first real wizards should be the ones that replace tedious, error-prone setup work while still staying understandable to edit by hand after generation.</p>
+			<p>
+				The first real wizards should replace tedious, error-prone setup work while still leaving generated files readable by hand. Each card now includes a starter output block and real
+				touchpoints into the current internal tools.
+			</p>
 		</div>
 
-		<div class="wizard-grid wizard-grid--feature">
+		<div class="wizard-filter-toolbar" aria-label="Snippet language filters">
+			<div class="wizard-filter-copy">
+				<span class="wizard-toolbar-kicker">Snippet Filter</span>
+				<p>Switch the backlog between Lua, XML, Text, and INI starter outputs so each generator card is easier to scan.</p>
+			</div>
+			<div class="wizard-filter-group" role="group" aria-label="Snippet languages">
+				{#each snippetLanguageFilters as filter (filter.id)}
+					<button type="button" class={`wizard-filter-chip ${activeSnippetLanguage === filter.id ? "is-active" : ""}`} onclick={() => (activeSnippetLanguage = filter.id)}>
+						{filter.label}
+					</button>
+				{/each}
+			</div>
+			<div class="wizard-detail-controls" role="group" aria-label="Card detail controls">
+				<button type="button" class="wizard-detail-chip" onclick={() => setAllWizardDetails(true)}>Expand all details</button>
+				<button type="button" class="wizard-detail-chip" onclick={() => setAllWizardDetails(false)}>Collapse all details</button>
+			</div>
+		</div>
+
+		<div class="wizard-grid wizard-grid--feature" bind:this={wizardBacklogGrid}>
 			{#each wizardCards as card (card.title)}
 				<article class="wizard-card">
 					<div class="wizard-card-head">
@@ -176,23 +77,51 @@
 
 					<p>{card.copy}</p>
 
-					<div class="wizard-block">
-						<h4>Wizard asks</h4>
+					{#if exampleSupportsLanguage(card.example, activeSnippetLanguage)}
+						<div class="wizard-block wizard-block--example">
+							<h4>Wizard Flow Preview</h4>
+							<WizardExamplePreview example={card.example} activeLanguage={activeSnippetLanguage} />
+						</div>
+					{/if}
+
+					<details class="wizard-block wizard-block--collapsed wizard-block--asks">
+						<summary class="wizard-block-summary">
+							<h4>Wizard asks</h4>
+							<span>{card.asks.length}</span>
+						</summary>
 						<ul class="wizard-list">
 							{#each card.asks as item (item)}
 								<li>{item}</li>
 							{/each}
 						</ul>
-					</div>
+					</details>
 
-					<div class="wizard-block">
-						<h4>Wizard outputs</h4>
+					<details class="wizard-block wizard-block--collapsed wizard-block--outputs">
+						<summary class="wizard-block-summary">
+							<h4>Wizard outputs</h4>
+							<span>{card.outputs.length}</span>
+						</summary>
 						<ul class="wizard-list">
 							{#each card.outputs as item (item)}
 								<li>{item}</li>
 							{/each}
 						</ul>
-					</div>
+					</details>
+
+					<details class="wizard-block wizard-block--collapsed wizard-block--references">
+						<summary class="wizard-block-summary">
+							<h4>Reference touchpoints</h4>
+							<span>{card.touchpoints.length}</span>
+						</summary>
+						<div class="wizard-reference-list">
+							{#each card.touchpoints as touchpoint (touchpoint.href)}
+								<a class="wizard-reference-card" href={touchpoint.href}>
+									<strong>{touchpoint.label}</strong>
+									<span>{touchpoint.note}</span>
+								</a>
+							{/each}
+						</div>
+					</details>
 				</article>
 			{/each}
 		</div>
@@ -269,7 +198,7 @@
 <style>
 	.wizard-page {
 		display: grid;
-		gap: 1rem;
+		gap: 1.25rem;
 	}
 
 	.wizard-hero {
@@ -282,12 +211,12 @@
 
 	.wizard-panel {
 		display: grid;
-		gap: 1rem;
+		gap: 1.2rem;
 		background: var(--panel-bg);
 		border: 1px solid color-mix(in oklch, var(--panel-border) 72%, transparent);
 		border-radius: 1rem;
 		box-shadow: 0 10px 28px var(--shadow-soft);
-		padding: 1.35rem;
+		padding: 1.5rem;
 	}
 
 	.wizard-panel--timeline {
@@ -296,7 +225,7 @@
 
 	.wizard-section-head {
 		display: grid;
-		gap: 0.35rem;
+		gap: 0.45rem;
 	}
 
 	.wizard-kicker {
@@ -317,7 +246,8 @@
 	.wizard-section-head p,
 	.wizard-card p,
 	.wizard-stage-card p,
-	.wizard-list li {
+	.wizard-list li,
+	.wizard-reference-card span {
 		margin: 0;
 		color: var(--muted-ink);
 		line-height: 1.55;
@@ -327,30 +257,40 @@
 	.wizard-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-		gap: 0.9rem;
+		gap: 1rem;
 	}
 
 	.wizard-grid--feature {
-		grid-template-columns: repeat(auto-fit, minmax(21rem, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
 	}
 
 	.wizard-stage-card,
 	.wizard-card {
 		display: grid;
-		gap: 0.75rem;
+		align-content: start;
+		gap: 1rem;
 		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 70%, transparent) 0%, color-mix(in oklch, var(--panel-bg) 88%, transparent) 100%);
 		border: 1px solid color-mix(in oklch, var(--accent) 34%, var(--panel-border));
 		border-radius: 0.9rem;
-		padding: 1rem;
+		padding: 1.15rem;
 	}
 
 	.wizard-card--compact {
 		align-content: start;
 	}
 
+	.wizard-block summary {
+		list-style: none;
+	}
+
+	.wizard-block summary::-webkit-details-marker {
+		display: none;
+	}
+
 	.wizard-stage-label,
 	.wizard-status,
-	.wizard-source {
+	.wizard-source,
+	.wizard-filter-chip {
 		display: inline-flex;
 		align-items: center;
 		inline-size: fit-content;
@@ -381,9 +321,114 @@
 		border: 1px solid color-mix(in oklch, var(--panel-border) 76%, var(--accent) 24%);
 	}
 
+	.wizard-filter-toolbar {
+		display: grid;
+		gap: 0.9rem;
+		padding: 1rem;
+		background: linear-gradient(180deg, color-mix(in oklch, var(--panel-bg) 88%, var(--control-bg)) 0%, color-mix(in oklch, var(--panel-bg) 80%, var(--control-bg)) 100%);
+		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border-radius: 1rem;
+	}
+
+	.wizard-filter-copy {
+		display: grid;
+		gap: 0.3rem;
+	}
+
+	.wizard-filter-copy p {
+		margin: 0;
+		color: var(--muted-ink);
+		line-height: 1.55;
+	}
+
+	.wizard-toolbar-kicker {
+		color: color-mix(in oklch, white 82%, var(--ink));
+		font-size: 0.72rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	.wizard-filter-group {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.wizard-detail-controls {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.wizard-filter-chip {
+		color: var(--muted-ink);
+		cursor: pointer;
+		background: color-mix(in oklch, var(--panel-bg) 82%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+	}
+
+	.wizard-detail-chip {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		inline-size: fit-content;
+		padding: 0.32rem 0.7rem;
+		border-radius: 999px;
+		border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--panel-border));
+		background: color-mix(in oklch, var(--panel-bg) 84%, var(--control-bg));
+		color: var(--muted-ink);
+		font: inherit;
+		font-size: 0.74rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.wizard-filter-chip.is-active,
+	.wizard-filter-chip:hover,
+	.wizard-detail-chip:hover {
+		color: color-mix(in oklch, white 84%, var(--ink));
+		background: color-mix(in oklch, var(--accent) 16%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--accent) 40%, var(--panel-border));
+	}
+
 	.wizard-block {
 		display: grid;
-		gap: 0.45rem;
+		gap: 0.55rem;
+		padding: 0.95rem;
+		background: linear-gradient(180deg, color-mix(in oklch, var(--panel-bg) 88%, var(--control-bg)) 0%, color-mix(in oklch, var(--panel-bg) 80%, var(--control-bg)) 100%);
+		border: 1px solid color-mix(in oklch, var(--accent) 16%, var(--panel-border));
+		border-radius: 1rem;
+	}
+
+	.wizard-block--collapsed {
+		gap: 0.8rem;
+	}
+
+	.wizard-block-summary {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		cursor: pointer;
+	}
+
+	.wizard-block-summary span {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-inline-size: 1.75rem;
+		padding: 0.22rem 0.5rem;
+		border-radius: 999px;
+		background: color-mix(in oklch, var(--panel-bg) 82%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, var(--accent) 16%, var(--panel-border));
+		color: var(--muted-ink);
+		font-size: 0.72rem;
+		font-weight: 700;
+	}
+
+	.wizard-block--collapsed:not([open]) {
+		gap: 0;
 	}
 
 	.wizard-block h4 {
@@ -393,9 +438,14 @@
 		color: color-mix(in oklch, white 82%, var(--ink));
 	}
 
+	.wizard-block--example {
+		border-color: color-mix(in oklch, var(--accent) 28%, var(--panel-border));
+		box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 10%, transparent);
+	}
+
 	.wizard-list {
 		display: grid;
-		gap: 0.55rem;
+		gap: 0.6rem;
 		margin: 0;
 		padding-inline-start: 1.1rem;
 	}
@@ -406,16 +456,32 @@
 		border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--panel-border));
 	}
 
-	.wizard-links {
+	.wizard-links,
+	.wizard-tags,
+	.wizard-reference-list {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
 
-	.wizard-tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.45rem;
+	.wizard-reference-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+	}
+
+	.wizard-reference-card {
+		display: grid;
+		gap: 0.35rem;
+		text-decoration: none;
+		background: color-mix(in oklch, var(--panel-bg) 80%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, var(--accent) 22%, var(--panel-border));
+		border-radius: 0.8rem;
+		padding: 0.85rem;
+	}
+
+	.wizard-reference-card strong {
+		color: color-mix(in oklch, white 84%, var(--ink));
+		font-size: 0.86rem;
 	}
 
 	.wizard-tag {
@@ -439,6 +505,7 @@
 		padding: 0.34rem 0.6rem;
 	}
 
+	.wizard-reference-card:hover,
 	.wizard-link:hover {
 		border-color: color-mix(in oklch, var(--accent) 42%, var(--panel-border));
 		background: color-mix(in oklch, var(--accent) 12%, var(--control-bg));

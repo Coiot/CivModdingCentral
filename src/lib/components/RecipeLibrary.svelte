@@ -1,147 +1,8 @@
 <script>
-	const launchRecipes = [
-		{
-			title: "Event Bucket Chooser",
-			focus: "Lua hook routing",
-			status: "First Batch",
-			copy: "Start with the right event surface instead of debugging the wrong callback family after the fact.",
-			deliverables: [
-				"Quick chooser for GameEvents, Events, and LuaEvents by context and return behavior.",
-				"Starter handler signatures using named parameters instead of mystery positional arguments.",
-				"Notes on where a hook belongs: gameplay logic, UI reaction, or custom cross-context messaging.",
-			],
-			internalTargets: ["Hook family docs", "Lua API Explorer", "GameEvents workbook mapping"],
-		},
-		{
-			title: "Persistent Data Helper",
-			focus: "Save data",
-			status: "First Batch",
-			copy: "Package a safe persistence pattern with namespaced keys, cache wrappers, and a clear choice between game and user scope.",
-			deliverables: [
-				"OpenSaveData and OpenUserData starter snippets with consistent key naming.",
-				"Read-through cache helpers so mods stop hammering persistence APIs every turn.",
-				"Example serialization patterns for booleans, counters, and small tables.",
-			],
-			internalTargets: ["Persistence docs", "Lua API Explorer", "Debug playbook"],
-		},
-		{
-			title: "Localization + Markup Pack",
-			focus: "Text keys",
-			status: "First Batch",
-			copy: "Generate a clean localization scaffold with working text keys and safe markup examples for UI, notifications, and civilopedia text.",
-			deliverables: [
-				"Language file starter with `TXT_KEY_` naming conventions and key grouping.",
-				"Markup examples for `ICON`, `COLOR`, `LINK`, and `NEWLINE` usage.",
-				"Copy blocks for summary text, help text, and notification text that stay easy to extend.",
-			],
-			internalTargets: ["Localization docs", "Text markup guide", "Notification recipes"],
-		},
-		{
-			title: "VFS / UI Include Setup",
-			focus: "Project wiring",
-			status: "First Batch",
-			copy: "Turn the VFS rules into a checklist so art, UI XML, and Lua includes land in the correct content actions the first time.",
-			deliverables: [
-				"Checklist for files that should be imported into VFS versus loaded through content actions.",
-				"UI include patterns and filename guardrails for Lua include chains.",
-				"Notes on common VFS-related failure cases that look like gameplay bugs but are project setup bugs.",
-			],
-			internalTargets: ["Project wiring docs", "Schema Browser", "ModInfo Builder"],
-		},
-		{
-			title: "Debug Triage Checklist",
-			focus: "Logs and tooling",
-			status: "First Batch",
-			copy: "Give newer modders a repeatable order of operations when a building does not appear, text keys fail, or Lua silently stops firing.",
-			deliverables: [
-				"Config and FireTuner reminders before testing begins.",
-				"Log-first checklist for XML, SQL, Lua, VFS, and localization failures.",
-				"Known symptom map for 'loads without errors' versus 'loaded into the wrong context'.",
-			],
-			internalTargets: ["Debug playbook", "Schema Browser", "Lua API Explorer"],
-		},
-		{
-			title: "GameInfoTypes Lookup Pattern",
-			focus: "Lua data access",
-			status: "First Batch",
-			copy: "Give recipes a standard way to resolve type names, validate rows, and stop hard-coding integer IDs into Lua.",
-			deliverables: [
-				"Type-to-ID lookups for units, buildings, promotions, and yields.",
-				"Guard clauses for missing custom rows so bad content fails loudly during testing.",
-				"Companion notes showing where the Methods workbook helps find the right API after the lookup.",
-			],
-			internalTargets: ["Schema Browser", "Lua API Explorer", "Methods workbook mapping"],
-		},
-	];
+	import SnippetExample from "./SnippetExample.svelte";
+	import { authoringDatasets, exampleSupportsLanguage, firstShipPrinciples, internalDocLanes, recipeLaunchRecipes, researchBasisLinks, snippetLanguageFilters } from "../data/generatorPageData.js";
 
-	const internalDocLanes = [
-		{
-			title: "Gameplay Hook Docs",
-			copy: "Internal docs for event families, callback signatures, return behavior, and when to use GameEvents, Events, or LuaEvents.",
-			links: [
-				{ label: "Recipe Library", href: "/recipe-library" },
-				{ label: "Lua API Explorer", href: "/lua-api-explorer" },
-				{ label: "Wizard Generators", href: "/wizard-generators" },
-			],
-			planned: ["GameEvents workbook import", "Events import"],
-		},
-		{
-			title: "Data Model Docs",
-			copy: "Internal docs for table relationships, common side-table dependencies, and type lookups that should eventually cross-link straight into the Schema Browser.",
-			links: [
-				{ label: "Schema Browser", href: "/schema-browser" },
-				{ label: "ModInfo Builder", href: "/modinfo-builder" },
-				{ label: "Community Links", href: "/community-links" },
-			],
-			planned: ["Methods workbook import", "Type constant index"],
-		},
-		{
-			title: "Text and UI Docs",
-			copy: "Internal guides for localization, text markup, notifications, and UI include patterns so the team can keep examples up to date in one place.",
-			links: [
-				{ label: "Recipe Library", href: "/recipe-library" },
-				{ label: "Community Links", href: "/community-links" },
-			],
-			planned: ["Localization docs", "Markup guide"],
-		},
-		{
-			title: "Project Setup Docs",
-			copy: "Internal guides for VFS, project actions, debug logging, and common failure patterns that can reference both recipes and future first-party browsers.",
-			links: [
-				{ label: "ModInfo Builder", href: "/modinfo-builder" },
-				{ label: "Wizard Generators", href: "/wizard-generators" },
-			],
-			planned: ["Debug playbook", "VFS guide"],
-		},
-	];
-
-	const researchBasisLinks = [
-		{ label: "Civ5 XML Reference", href: "https://modiki.civfanatics.com/index.php/Civ5_XML_Reference" },
-		{ label: "Debugging (Civ5)", href: "https://modiki.civfanatics.com/index.php/Debugging_%28Civ5%29" },
-		{ label: "VFS (Civ5)", href: "https://modiki.civfanatics.com/index.php/VFS_%28Civ5%29" },
-		{ label: "Localization Tutorial", href: "https://modiki.civfanatics.com/index.php/Localization_Tutorial_%28Civ5%29" },
-		{ label: "Text icons and markups", href: "https://modiki.civfanatics.com/index.php/Text_icons_and_markups_%28Civ5%29" },
-		{ label: "Persisting data", href: "https://modiki.civfanatics.com/index.php/Persisting_data_%28Civ5%29" },
-	];
-
-	const authoringDatasets = [
-		{
-			title: "GameEvents workbook",
-			value: "89 entries",
-			copy: "Local authoring workbook used as the definitive callback list while building the event-selection recipes.",
-		},
-		{
-			title: "Methods workbook",
-			value: "2,310 signatures",
-			copy: "Local API index spanning 12 method families: Area, City, Deal, Fractal, Game, League, Map, Player, Plot, Team, TeamTech, and Unit.",
-		},
-	];
-
-	const firstShipPrinciples = [
-		"Ship recipes that reduce repeated setup work before building giant end-to-end project wizards.",
-		"Move the durable knowledge into first-party docs so the team can revise examples without depending on external sites.",
-		"Bias toward generators that help modders verify correctness: event routing, VFS wiring, localization, persistence, and logging.",
-	];
+	let activeSnippetLanguage = "all";
 </script>
 
 <section class="recipe-page">
@@ -149,8 +10,8 @@
 		<p class="eyebrow">Research-Backed Buildout</p>
 		<h1>Recipe Library</h1>
 		<p>
-			This page is no longer just a placeholder. It is the staging ground for small, trustworthy Civ V generators backed by Modiki references, Kael's guide, and the local workbooks you provided
-			for GameEvents and API methods.
+			This page has moved past planning copy. It now starts to show the actual snippet patterns these recipes should ship: real Lua callbacks, type lookups, XML starters, and schema-backed
+			touchpoints that can feed future generators.
 		</p>
 	</header>
 
@@ -168,11 +29,28 @@
 		<div class="recipe-section-head">
 			<span class="recipe-kicker">First Recipes</span>
 			<h2>Initial patterns worth shipping before full wizards</h2>
-			<p>These are the compact generators with the highest leverage. Each one maps to a source-backed problem area where Civ V modders routinely lose time to wiring or syntax mistakes.</p>
+			<p>
+				These are the compact generators with the highest leverage. Each one now carries a concrete snippet and direct touchpoints into the Lua API Explorer or Schema Browser so the page can
+				act like a working reference instead of a static backlog.
+			</p>
+		</div>
+
+		<div class="recipe-filter-toolbar" aria-label="Snippet language filters">
+			<div class="recipe-filter-copy">
+				<span class="recipe-toolbar-kicker">Snippet Filter</span>
+				<p>Show only Lua, XML, Text, or INI examples while reviewing the cards.</p>
+			</div>
+			<div class="recipe-filter-group" role="group" aria-label="Snippet languages">
+				{#each snippetLanguageFilters as filter (filter.id)}
+					<button type="button" class={`recipe-filter-chip ${activeSnippetLanguage === filter.id ? "is-active" : ""}`} onclick={() => (activeSnippetLanguage = filter.id)}>
+						{filter.label}
+					</button>
+				{/each}
+			</div>
 		</div>
 
 		<div class="recipe-grid recipe-grid--feature">
-			{#each launchRecipes as recipe (recipe.title)}
+			{#each recipeLaunchRecipes as recipe (recipe.title)}
 				<article class="recipe-card">
 					<div class="recipe-card-head">
 						<div class="recipe-card-title-wrap">
@@ -184,23 +62,39 @@
 
 					<p>{recipe.copy}</p>
 
-					<div class="recipe-block">
-						<h4>Outputs</h4>
+					{#if exampleSupportsLanguage(recipe.example, activeSnippetLanguage)}
+						<div class="recipe-block recipe-block--example">
+							<h4>{recipe.example.title}</h4>
+							<SnippetExample example={recipe.example} activeLanguage={activeSnippetLanguage} />
+						</div>
+					{/if}
+
+					<details class="recipe-block recipe-block--collapsed">
+						<summary class="recipe-block-summary">
+							<h4>Outputs</h4>
+							<span>{recipe.deliverables.length}</span>
+						</summary>
 						<ul class="recipe-list">
 							{#each recipe.deliverables as item (item)}
 								<li>{item}</li>
 							{/each}
 						</ul>
-					</div>
+					</details>
 
-					<div class="recipe-block">
-						<h4>Planned Internal Links</h4>
-						<div class="recipe-tags">
-							{#each recipe.internalTargets as target (target)}
-								<span class="recipe-tag">{target}</span>
+					<details class="recipe-block recipe-block--collapsed recipe-block--references">
+						<summary class="recipe-block-summary">
+							<h4>Reference touchpoints</h4>
+							<span>{recipe.touchpoints.length}</span>
+						</summary>
+						<div class="recipe-reference-list">
+							{#each recipe.touchpoints as touchpoint (touchpoint.href)}
+								<a class="recipe-reference-card" href={touchpoint.href}>
+									<strong>{touchpoint.label}</strong>
+									<span>{touchpoint.note}</span>
+								</a>
 							{/each}
 						</div>
-					</div>
+					</details>
 				</article>
 			{/each}
 		</div>
@@ -266,7 +160,7 @@
 <style>
 	.recipe-page {
 		display: grid;
-		gap: 1rem;
+		gap: 1.25rem;
 	}
 
 	.recipe-hero {
@@ -280,12 +174,12 @@
 	.recipe-stats,
 	.recipe-panel {
 		display: grid;
-		gap: 1rem;
+		gap: 1.2rem;
 		background: var(--panel-bg);
 		border: 1px solid color-mix(in oklch, var(--panel-border) 72%, transparent);
 		border-radius: 1rem;
 		box-shadow: 0 10px 28px var(--shadow-soft);
-		padding: 1.35rem;
+		padding: 1.5rem;
 	}
 
 	.recipe-stats {
@@ -315,7 +209,8 @@
 	.recipe-stat p,
 	.recipe-section-head p,
 	.recipe-card p,
-	.recipe-list li {
+	.recipe-list li,
+	.recipe-reference-card span {
 		margin: 0;
 		color: var(--muted-ink);
 		line-height: 1.55;
@@ -323,7 +218,7 @@
 
 	.recipe-section-head {
 		display: grid;
-		gap: 0.35rem;
+		gap: 0.45rem;
 	}
 
 	.recipe-kicker {
@@ -337,20 +232,21 @@
 	.recipe-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-		gap: 0.9rem;
+		gap: 1rem;
 	}
 
 	.recipe-grid--feature {
-		grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
 	}
 
 	.recipe-card {
 		display: grid;
-		gap: 0.8rem;
+		align-content: start;
+		gap: 1rem;
 		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 72%, transparent) 0%, color-mix(in oklch, var(--panel-bg) 86%, transparent) 100%);
 		border: 1px solid color-mix(in oklch, var(--accent) 34%, var(--panel-border));
 		border-radius: 0.9rem;
-		padding: 1rem;
+		padding: 1.15rem;
 	}
 
 	.recipe-card--compact {
@@ -364,13 +260,23 @@
 		gap: 0.75rem;
 	}
 
-	.recipe-card-title-wrap {
+	.recipe-card-title-wrap,
+	.recipe-block {
 		display: grid;
-		gap: 0.45rem;
+		gap: 0.55rem;
+	}
+
+	.recipe-block summary {
+		list-style: none;
+	}
+
+	.recipe-block summary::-webkit-details-marker {
+		display: none;
 	}
 
 	.recipe-chip,
-	.recipe-status {
+	.recipe-status,
+	.recipe-filter-chip {
 		display: inline-flex;
 		align-items: center;
 		inline-size: fit-content;
@@ -394,9 +300,52 @@
 		border: 1px solid color-mix(in oklch, var(--panel-border) 76%, var(--accent) 24%);
 	}
 
-	.recipe-block {
+	.recipe-filter-toolbar {
 		display: grid;
-		gap: 0.45rem;
+		gap: 0.9rem;
+		padding: 1rem;
+		background: linear-gradient(180deg, color-mix(in oklch, var(--panel-bg) 88%, var(--control-bg)) 0%, color-mix(in oklch, var(--panel-bg) 80%, var(--control-bg)) 100%);
+		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border-radius: 1rem;
+	}
+
+	.recipe-filter-copy {
+		display: grid;
+		gap: 0.3rem;
+	}
+
+	.recipe-filter-copy p {
+		margin: 0;
+		color: var(--muted-ink);
+		line-height: 1.55;
+	}
+
+	.recipe-toolbar-kicker {
+		color: color-mix(in oklch, white 82%, var(--ink));
+		font-size: 0.72rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	.recipe-filter-group {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.recipe-filter-chip {
+		color: var(--muted-ink);
+		cursor: pointer;
+		background: color-mix(in oklch, var(--panel-bg) 82%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+	}
+
+	.recipe-filter-chip.is-active,
+	.recipe-filter-chip:hover {
+		color: color-mix(in oklch, white 84%, var(--ink));
+		background: color-mix(in oklch, var(--accent) 16%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--accent) 40%, var(--panel-border));
 	}
 
 	.recipe-block h4 {
@@ -406,23 +355,91 @@
 		color: color-mix(in oklch, white 82%, var(--ink));
 	}
 
+	.recipe-block {
+		padding: 0.95rem;
+		background: linear-gradient(180deg, color-mix(in oklch, var(--panel-bg) 88%, var(--control-bg)) 0%, color-mix(in oklch, var(--panel-bg) 80%, var(--control-bg)) 100%);
+		border: 1px solid color-mix(in oklch, var(--accent) 16%, var(--panel-border));
+		border-radius: 1rem;
+	}
+
+	.recipe-block--collapsed {
+		gap: 0.8rem;
+	}
+
+	.recipe-block-summary {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		cursor: pointer;
+	}
+
+	.recipe-block-summary span {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-inline-size: 1.75rem;
+		padding: 0.22rem 0.5rem;
+		border-radius: 999px;
+		background: color-mix(in oklch, var(--panel-bg) 82%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, var(--accent) 16%, var(--panel-border));
+		color: var(--muted-ink);
+		font-size: 0.72rem;
+		font-weight: 700;
+	}
+
+	.recipe-block--collapsed:not([open]) {
+		gap: 0;
+	}
+
+	.recipe-block--collapsed:not([open]) .recipe-block-summary {
+		margin: 0;
+	}
+
+	.recipe-block--example {
+		border-color: color-mix(in oklch, var(--accent) 28%, var(--panel-border));
+		box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 10%, transparent);
+	}
+
 	.recipe-list {
 		display: grid;
-		gap: 0.55rem;
+		gap: 0.6rem;
 		margin: 0;
 		padding-inline-start: 1.1rem;
 	}
 
-	.recipe-links {
+	.recipe-links,
+	.recipe-tags,
+	.recipe-reference-list {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
 
-	.recipe-tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.45rem;
+	.recipe-reference-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+	}
+
+	.recipe-reference-card {
+		display: grid;
+		gap: 0.35rem;
+		text-decoration: none;
+		background: color-mix(in oklch, var(--panel-bg) 80%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, var(--accent) 22%, var(--panel-border));
+		border-radius: 0.8rem;
+		padding: 0.85rem;
+	}
+
+	.recipe-reference-card strong {
+		color: color-mix(in oklch, white 84%, var(--ink));
+		font-size: 0.86rem;
+	}
+
+	.recipe-reference-card:hover,
+	.recipe-link:hover {
+		border-color: color-mix(in oklch, var(--accent) 42%, var(--panel-border));
+		background: color-mix(in oklch, var(--accent) 12%, var(--control-bg));
 	}
 
 	.recipe-tag {
@@ -449,11 +466,6 @@
 		border: 1px solid color-mix(in oklch, var(--accent) 22%, var(--panel-border));
 		border-radius: 999px;
 		padding: 0.34rem 0.6rem;
-	}
-
-	.recipe-link:hover {
-		border-color: color-mix(in oklch, var(--accent) 42%, var(--panel-border));
-		background: color-mix(in oklch, var(--accent) 12%, var(--control-bg));
 	}
 
 	:global(:root[data-theme="light"]) .recipe-card {
