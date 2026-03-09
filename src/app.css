@@ -16,6 +16,10 @@
 	--accent-soft: oklch(0.82 0.12 34);
 	--button-hover-bg: color-mix(in oklch, var(--control-bg) 88%, var(--accent) 12%);
 	--button-hover-border: color-mix(in oklch, var(--accent) 42%, var(--panel-border));
+	--scrollbar-thumb: color-mix(in oklch, var(--accent) 78%, black 22%);
+	--scrollbar-thumb-hover: color-mix(in oklch, var(--accent) 88%, white 12%);
+	--scrollbar-track: color-mix(in oklch, var(--panel-bg) 82%, black 18%);
+	--scrollbar-corner: color-mix(in oklch, var(--panel-bg) 88%, black 12%);
 }
 
 :root[data-theme="light"] {
@@ -35,6 +39,43 @@
 	--accent-soft: oklch(0.82 0.12 52);
 	--button-hover-bg: color-mix(in oklch, white 60%, var(--accent) 40%);
 	--button-hover-border: color-mix(in oklch, var(--accent) 80%, var(--accent-strong));
+	--scrollbar-thumb: color-mix(in oklch, var(--accent) 60%, white 40%);
+	--scrollbar-thumb-hover: color-mix(in oklch, var(--accent-strong) 68%, white 32%);
+	--scrollbar-track: color-mix(in oklch, var(--panel-bg) 85%, white 15%);
+	--scrollbar-corner: color-mix(in oklch, var(--panel-bg) 92%, white 8%);
+}
+
+html {
+	scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+	scrollbar-width: thin;
+}
+
+* {
+	scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+	scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+	inline-size: 0.55rem;
+	block-size: 0.55rem;
+}
+
+*::-webkit-scrollbar-track {
+	background: var(--scrollbar-track);
+}
+
+*::-webkit-scrollbar-thumb {
+	background: var(--scrollbar-thumb);
+	border: 2px solid var(--scrollbar-track);
+	border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+	background: var(--scrollbar-thumb-hover);
+}
+
+*::-webkit-scrollbar-corner {
+	background: var(--scrollbar-corner);
 }
 
 body {

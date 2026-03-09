@@ -1914,6 +1914,10 @@
 		--schema-highlight: #8dc7ff;
 		--schema-highlight-strong: #d6ecff;
 		--schema-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, #11263a 10%);
+		--scrollbar-thumb: color-mix(in srgb, var(--schema-highlight) 78%, #08131f 22%);
+		--scrollbar-thumb-hover: color-mix(in srgb, var(--schema-highlight) 88%, white 12%);
+		--scrollbar-track: color-mix(in srgb, var(--schema-panel) 82%, #08131f 18%);
+		--scrollbar-corner: color-mix(in srgb, var(--schema-panel) 88%, #08131f 12%);
 		display: grid;
 		gap: 1.15rem;
 	}

@@ -1383,6 +1383,10 @@
 		--lua-highlight: #b7ef84;
 		--lua-highlight-strong: #ebffd6;
 		--lua-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.88)) 86%, #20301b 14%);
+		--scrollbar-thumb: color-mix(in srgb, var(--lua-highlight) 78%, #11180e 22%);
+		--scrollbar-thumb-hover: color-mix(in srgb, var(--lua-highlight) 88%, white 12%);
+		--scrollbar-track: color-mix(in srgb, var(--lua-panel) 82%, #11180e 18%);
+		--scrollbar-corner: color-mix(in srgb, var(--lua-panel) 88%, #11180e 12%);
 		display: grid;
 		gap: 1.15rem;
 	}
