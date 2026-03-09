@@ -44,52 +44,6 @@
 				},
 			],
 		},
-		// {
-		// 	id: "generate",
-		// 	kicker: "Scaffold",
-		// 	label: "Generators & Recipes",
-		// 	description: "Spin up common Civ V patterns and starter content.",
-		// 	panelTitle: "Starter Builders",
-		// 	panelCopy: "Use these pages when you need repeatable modding patterns, starter scaffolds, or guided content generation.",
-		// 	links: [
-		// 		{
-		// 			href: "/recipe-library",
-		// 			label: "Recipe Library",
-		// 			description: "Planned copy-pasteable Civ V patterns, helper generators, and markup utilities in one hub.",
-		// 		},
-		// 		{
-		// 			href: "/wizard-generators",
-		// 			label: "Wizard Generators",
-		// 			description: "Overview for the upcoming guided builders for units, buildings, civs, leaders, resources, and art registration.",
-		// 		},
-		// 		{
-		// 			label: "Project Skeleton Generator",
-		// 			description: "Generate a clean starter mod with wired XML, SQL, Lua, UI folders, and actions.",
-		// 			disabled: true,
-		// 			statusLabel: "Coming Soon",
-		// 		},
-		// 	],
-		// },
-		{
-			id: "assets",
-			kicker: "Art",
-			label: "Asset Pipeline",
-			description: "Prep art assets for in-game use.",
-			panelTitle: "Art Tools",
-			panelCopy: "Helpful tools when you are preparing art and need outputs that fit the game's style and texture pipeline.",
-			links: [
-				{
-					href: "/dds-converter",
-					label: "DDS Converter",
-					description: "Convert icons, screens, and textures into game-ready DDS files using helpful presets.",
-				},
-				{
-					href: "/civ-icon-maker",
-					label: "Icon Maker",
-					description: "Upload a civ icon alpha and have it styled and formatted for use in icon sheets for mods.",
-				},
-			],
-		},
 		{
 			id: "explore",
 			kicker: "Reference",
@@ -99,14 +53,14 @@
 			panelCopy: "Open these when you need to inspect map data, refresh your memory, or jump into community references quickly.",
 			links: [
 				{
+					href: "/schema-browser",
 					label: "Schema Browser",
-					description: "Search Civ V tables, columns, foreign keys, and common companion tables from an offline graph.",
-					disabled: true,
-					statusLabel: "Coming Soon",
+					description: "Search Civ V tables, columns, foreign keys, incoming references, and companion tables from an offline core-database snapshot.",
 				},
 				{
+					href: "/lua-api-explorer",
 					label: "Lua API Explorer",
-					description: "Search GameEvents, Events, LuaEvents, and GameInfoTypes with examples and documentation.",
+					description: "Search workbook-backed Civ V methods and GameEvents now, with room to grow into Events, LuaEvents, and GameInfoTypes on-site.",
 					disabled: true,
 					statusLabel: "Coming Soon",
 				},
@@ -119,6 +73,52 @@
 					href: "/community-links",
 					label: "Community Links",
 					description: "Open the curated collection of Civ V modding references, utilities, and community resources.",
+				},
+			],
+		},
+		// {
+		// 	id: "generate",
+		// 	kicker: "Scaffold",
+		// 	label: "Generators & Recipes",
+		// 	description: "Research-backed starter patterns and guided builders.",
+		// 	panelTitle: "Starter Builders",
+		// 	panelCopy: "Use these pages when you need repeatable Civ V patterns, source-backed implementation notes, or guided generator planning.",
+		// 	links: [
+		// 		{
+		// 			href: "/recipe-library",
+		// 			label: "Recipe Library",
+		// 			description: "Source-backed patterns for event routing, persistence, VFS wiring, localization, debugging, and other repeatable Civ V tasks.",
+		// 		},
+		// 		{
+		// 			href: "/wizard-generators",
+		// 			label: "Wizard Generators",
+		// 			description: "Initial generator roadmap for buildings, units, Lua hooks, atlas registration, and larger civilization package builders.",
+		// 		},
+		// 		{
+		// 			label: "Project Skeleton Generator",
+		// 			description: "Generate a clean starter mod with wired XML, SQL, Lua, UI folders, and actions.",
+		// 			disabled: true,
+		// 			statusLabel: "Coming Soon",
+		// 		},
+		// 	],
+		// },
+		{
+			id: "assets",
+			kicker: "Art Prep",
+			label: "Visual Assets",
+			description: "Prep art assets for in-game use.",
+			panelTitle: "Tools & Resources",
+			panelCopy: "Helpful tools when you are preparing art and need outputs that fit the game's style and texture pipeline.",
+			links: [
+				{
+					href: "/dds-converter",
+					label: "DDS Converter",
+					description: "Convert icons, screens, and textures into game-ready DDS files using helpful presets.",
+				},
+				{
+					href: "/civ-icon-maker",
+					label: "Icon Maker",
+					description: "Upload a civ icon alpha and have it styled and formatted for use in icon sheets for mods.",
 				},
 			],
 		},
@@ -553,10 +553,10 @@
 		top: calc(100% + 0.65rem);
 		right: 0;
 		left: auto;
-		inline-size: min(44rem, calc(100cqi - 1rem));
+		inline-size: min(36rem, calc(100cqi - 1rem));
 		max-inline-size: calc(100cqi - 1rem);
 		display: none;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 0.55rem;
 		align-items: start;
 		background: color-mix(in oklch, var(--panel-bg) 88%, black);
@@ -591,7 +591,7 @@
 	}
 
 	.nav-group-trigger {
-		min-block-size: 6rem;
+		min-block-size: 7.5rem;
 		inline-size: 100%;
 		display: flex;
 		flex-direction: column;
@@ -640,7 +640,7 @@
 	.nav-group-panel-kicker,
 	.nav-menu-copy {
 		text-transform: uppercase;
-		font-size: 0.68rem;
+		font-size: 0.8rem;
 		letter-spacing: 0.12em;
 	}
 

@@ -1,0 +1,312 @@
+{
+  "methods": {
+    "player-addnotification-5": {
+      "summary": "Pushes a notification onto a specific player's notification stack.",
+      "notes": [
+        "Use this when gameplay code needs to surface a specific event to one player without opening a full popup.",
+        "Pass -1 for x and y when the notification is not tied to a world plot.",
+        "Choose the notification type carefully because the game uses it to decide icon behavior and click handling."
+      ],
+      "example": {
+        "summary": "Notify the active player about something that happened at their capital.",
+        "language": "lua",
+        "code": "local iPlayer = Game.GetActivePlayer()\nlocal pPlayer = Players[iPlayer]\nlocal pCapital = pPlayer:GetCapitalCity()\nif pCapital then\n\tpPlayer:AddNotification(\n\t\tNotificationTypes.NOTIFICATION_GENERIC,\n\t\t\"A scripted effect resolved in your capital.\",\n\t\t\"Scripted Event\",\n\t\tpCapital:GetX(),\n\t\tpCapital:GetY()\n\t)\nend"
+      },
+      "gotchas": [
+        "Some notification types expect extra payload data and will feel broken if iData and iDataExtra are always left at defaults.",
+        "Notification text should already be localized before it reaches this method."
+      ],
+      "seeAlso": [
+        {
+          "entryId": "game-getactiveplayer-44",
+          "note": "Common way to resolve the local player before sending a notification."
+        }
+      ]
+    },
+    "player-cantrain-42": {
+      "summary": "Checks whether a player is currently allowed to train a unit type under the present game state.",
+      "notes": [
+        "Use this before exposing custom production shortcuts or auto-queue logic that assumes the player can legally build a unit.",
+        "This is a player-wide legality check, so it is a good fit for civ-wide rules, policy locks, and resource gate logic.",
+        "If you need city-specific availability checks, pair it with city-side production logic instead of relying on this call alone."
+      ],
+      "example": {
+        "summary": "Guard a UI action before trying to queue a unit for the active player.",
+        "language": "lua",
+        "code": "local iPlayer = Game.GetActivePlayer()\nlocal pPlayer = Players[iPlayer]\nlocal iUnit = GameInfoTypes.UNIT_ARCHER\nif pPlayer and pPlayer:CanTrain(iUnit, false, true, false, false) then\n\tprint(\"Active player can currently train an Archer\")\nend"
+      },
+      "gotchas": [
+        "The boolean flags materially change the answer, so do not cargo-cult a single flag set into every caller.",
+        "A true result here does not mean a specific city can produce the unit this turn; city context may still block it."
+      ],
+      "relatedSchemaNotes": [
+        {
+          "table": "Units",
+          "note": "This hook keys directly off unit rows, so trait overrides and production rules usually start here."
+        },
+        {
+          "table": "UnitClasses",
+          "note": "Check class-level replacement relationships when a civ swaps one unit row for another."
+        }
+      ],
+      "seeAlso": [
+        {
+          "entryId": "game-event-playercantrain-70",
+          "note": "Event-side veto hook for adding extra train rules."
+        },
+        {
+          "table": "Units",
+          "note": "Inspect the unit rows and prereqs behind the queried type."
+        }
+      ]
+    },
+    "city-getnumbuilding-178": {
+      "summary": "Returns the current count of a specific building type in a city.",
+      "notes": [
+        "Use this to test whether a city already has a building before granting yields, promotions, or dummy-building side effects.",
+        "For most standard buildings the answer is 0 or 1, but dummy-building patterns can intentionally stack counts above one.",
+        "This is usually the cleanest city-level read when you need an actual building row instead of a building class abstraction."
+      ],
+      "example": {
+        "summary": "Check whether the selected city already has a Monument row applied.",
+        "language": "lua",
+        "code": "local iBuilding = GameInfoTypes.BUILDING_MONUMENT\nlocal pCity = UI.GetHeadSelectedCity()\nif pCity and pCity:GetNumBuilding(iBuilding) > 0 then\n\tprint(\"The selected city already has a Monument\")\nend"
+      },
+      "gotchas": [
+        "The parameter is a BuildingType row ID, not a BuildingClass.",
+        "Dummy-building systems may legitimately return values greater than one."
+      ],
+      "relatedSchemaNotes": [
+        {
+          "table": "Buildings",
+          "note": "Look here first for per-building yield, specialist, and prerequisite data."
+        },
+        {
+          "table": "BuildingClasses",
+          "note": "Class rows matter when unique buildings replace a shared class."
+        }
+      ],
+      "seeAlso": [
+        {
+          "entryId": "game-event-citycanconstruct-22",
+          "note": "Use the construct hook when you need to block or allow a building before it enters production."
+        }
+      ]
+    },
+    "unit-canairliftat-12": {
+      "summary": "Tests whether a unit can airlift to the target location right now.",
+      "notes": [
+        "Use this as a legality check before issuing scripted relocation behavior that depends on airport-style movement.",
+        "The plot object and x or y coordinates together give you both the destination context and the map position the game will validate.",
+        "This is best used as a yes or no gate before you attempt any UI or mission-side follow-up."
+      ],
+      "example": {
+        "summary": "Check whether the selected unit can airlift to its current plot coordinates.",
+        "language": "lua",
+        "code": "local pUnit = UI.GetHeadSelectedUnit()\nif pUnit then\n\tlocal pPlot = pUnit:GetPlot()\n\tif pPlot and pUnit:CanAirliftAt(pPlot, pPlot:GetX(), pPlot:GetY()) then\n\t\tprint(\"Selected unit has a valid airlift target check\")\n\tend\nend"
+      },
+      "gotchas": [
+        "Airlift legality depends on both source and destination state, not just whether the coordinates are reachable on the map.",
+        "A false result does not explain which airport or unit-state rule blocked the move."
+      ],
+      "seeAlso": [
+        {
+          "entryId": "game-getactiveplayer-44",
+          "note": "Useful when the airlift check is being driven from active-player UI code."
+        }
+      ]
+    },
+    "game-getactiveplayer-44": {
+      "summary": "Returns the player ID currently treated as active by the running game or UI context.",
+      "notes": [
+        "In UI code this is usually the local human player, and the usual next step is Players[Game.GetActivePlayer()].",
+        "This is a stable helper for front-end and in-game UI code that needs a player handle without already carrying one around.",
+        "It is also a common bridge into player-scoped methods like notifications, production lookups, and diplomacy UI."
+      ],
+      "example": {
+        "summary": "Resolve the active player object before calling other player-scoped helpers.",
+        "language": "lua",
+        "code": "local iPlayer = Game.GetActivePlayer()\nlocal pPlayer = Players[iPlayer]\nif pPlayer then\n\tprint(\"Active player ID:\", iPlayer)\nend"
+      },
+      "gotchas": [
+        "Do not assume the active player is the same thing as the turn owner in every UI flow or multiplayer situation.",
+        "This returns an ID, not a Player object, so callers still need to index into Players." 
+      ],
+      "seeAlso": [
+        {
+          "entryId": "player-addnotification-5",
+          "note": "Common follow-up once you have the active player object."
+        },
+        {
+          "entryId": "game-event-playerdoturn-72",
+          "note": "Do not confuse active-player UI context with the per-player turn hook."
+        }
+      ]
+    }
+  },
+  "gameEvents": {
+    "game-event-buildfinished-1": {
+      "summary": "Hook fired when a build action finishes on a plot and resolves into an improvement result.",
+      "notes": [
+        "Use this after an improvement actually lands on the map, not while a worker is still deciding whether the action is legal.",
+        "The hook gives you player and plot coordinates, which is enough to resolve the plot and inspect terrain, owner, and follow-up effects.",
+        "This is a good place for post-build rewards, terrain cleanup, or progress systems that only care about finished work."
+      ],
+      "example": {
+        "summary": "Grant a simple log message when a worker build finishes.",
+        "language": "lua",
+        "code": "GameEvents.BuildFinished.Add(function(iPlayer, iPlotX, iPlotY, eImprovement)\n\tlocal pPlot = Map.GetPlot(iPlotX, iPlotY)\n\tif pPlot then\n\t\tprint(\"Build finished for player\", iPlayer, \"at\", iPlotX, iPlotY, eImprovement)\n\tend\nend)"
+      },
+      "gotchas": [
+        "The improvement parameter reflects the completed improvement row, not necessarily the original build action enum chosen by the unit.",
+        "If you need to reason about the worker action itself, you will often need to cross-check Builds as well as Improvements."
+      ],
+      "relatedSchemaNotes": [
+        {
+          "table": "Improvements",
+          "note": "Use the completed improvement row for yield changes, pillage rules, and upgrade behavior."
+        },
+        {
+          "table": "Builds",
+          "note": "The worker action that produced the result is documented separately from the finished improvement row."
+        }
+      ],
+      "seeAlso": [
+        {
+          "table": "Builds",
+          "note": "Cross-check build actions when the finished improvement alone is not enough context."
+        }
+      ]
+    },
+    "game-event-playercantrain-70": {
+      "summary": "Player-level hook for vetoing or permitting access to a unit type before production proceeds.",
+      "notes": [
+        "Use this to inject extra civ-wide train rules without rewriting every city production surface yourself.",
+        "Keep handlers narrow and return quickly for players you do not intend to modify.",
+        "This hook is best for broad player state checks such as traits, eras, game options, or scenario rules."
+      ],
+      "example": {
+        "summary": "Block a specific unit type for minor civs.",
+        "language": "lua",
+        "code": "GameEvents.PlayerCanTrain.Add(function(iPlayer, eUnit)\n\tlocal pPlayer = Players[iPlayer]\n\tif pPlayer and pPlayer:IsMinorCiv() and eUnit == GameInfoTypes.UNIT_ARCHER then\n\t\treturn false\n\tend\n\treturn true\nend)"
+      },
+      "gotchas": [
+        "Treat false as a veto and avoid broad handlers that accidentally suppress unrelated unit types.",
+        "This hook does not tell you which city is asking, so it is the wrong place for local building or terrain requirements."
+      ],
+      "relatedSchemaNotes": [
+        {
+          "table": "Units",
+          "note": "This is the main row set for unit costs, prereqs, combat classes, and upgrade chains."
+        },
+        {
+          "table": "UnitClasses",
+          "note": "Check class replacement behavior when civ uniques redirect one unit row into another."
+        }
+      ],
+      "seeAlso": [
+        {
+          "entryId": "player-cantrain-42",
+          "note": "Method-side legality check for the same production question."
+        }
+      ]
+    },
+    "game-event-playercanconstruct-62": {
+      "summary": "Player-level hook for permitting or vetoing access to a building type across the player's empire.",
+      "notes": [
+        "Use this for civ-wide or empire-wide building rules that should apply before a specific city gets involved.",
+        "This is a good place for policy, ideology, religion, or scenario checks that do not depend on one city's local state.",
+        "Return quickly for players outside your mod's target rules to keep the production pipeline predictable."
+      ],
+      "example": {
+        "summary": "Deny a building globally until a prerequisite policy branch is finished.",
+        "language": "lua",
+        "code": "GameEvents.PlayerCanConstruct.Add(function(iPlayer, eBuilding)\n\tlocal pPlayer = Players[iPlayer]\n\tif pPlayer and eBuilding == GameInfoTypes.BUILDING_GARDEN then\n\t\treturn pPlayer:IsPolicyBranchFinished(GameInfoTypes.POLICY_BRANCH_TRADITION)\n\tend\n\treturn true\nend)"
+      },
+      "gotchas": [
+        "This hook does not tell you which city is evaluating the building, so city-local restrictions belong elsewhere.",
+        "The building parameter is a BuildingType row ID, not a BuildingClass."
+      ],
+      "relatedSchemaNotes": [
+        {
+          "table": "Buildings",
+          "note": "Start here for yields, prereqs, classes, specialists, and wonder flags."
+        },
+        {
+          "table": "BuildingClasses",
+          "note": "Class rows matter when uniques replace a shared base building."
+        }
+      ],
+      "seeAlso": [
+        {
+          "entryId": "game-event-citycanconstruct-22",
+          "note": "Use the city-level hook when the restriction depends on one city's state."
+        },
+        {
+          "entryId": "city-getnumbuilding-178",
+          "note": "Useful follow-up when validating city state around existing building counts."
+        }
+      ]
+    },
+    "game-event-citycanconstruct-22": {
+      "summary": "City-level hook for permitting or vetoing whether one specific city can construct a building type.",
+      "notes": [
+        "Use this when the rule depends on city-local state such as terrain, local dummy buildings, conquest status, or nearby resources.",
+        "The city parameter is a city ID, so callers usually resolve the city through the owning player's city collection before inspecting it.",
+        "This hook is more precise than the player-level construct hook when only some cities should be affected."
+      ],
+      "example": {
+        "summary": "Hide a building unless the target city already has a prerequisite dummy building.",
+        "language": "lua",
+        "code": "GameEvents.CityCanConstruct.Add(function(iPlayer, iCity, eBuilding)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pCity = pPlayer and pPlayer:GetCityByID(iCity)\n\tif pCity and eBuilding == GameInfoTypes.BUILDING_GARDEN then\n\t\treturn pCity:GetNumBuilding(GameInfoTypes.BUILDING_MONUMENT) > 0\n\tend\n\treturn true\nend)"
+      },
+      "gotchas": [
+        "Community notes suggest a false return removes the building from the production list rather than showing it disabled with an explanation.",
+        "The building parameter is a BuildingType ID, so building-class replacement logic still needs to be handled explicitly."
+      ],
+      "relatedSchemaNotes": [
+        {
+          "table": "Buildings",
+          "note": "Inspect the target row here when your rule depends on building flags or costs."
+        },
+        {
+          "table": "BuildingClasses",
+          "note": "Use class rows to reason about unique-building substitutions."
+        }
+      ],
+      "seeAlso": [
+        {
+          "entryId": "game-event-playercanconstruct-62",
+          "note": "Use the player-level hook for empire-wide construct rules."
+        },
+        {
+          "entryId": "city-getnumbuilding-178",
+          "note": "Common helper when the construct rule depends on existing building counts."
+        }
+      ]
+    },
+    "game-event-playerdoturn-72": {
+      "summary": "Per-player turn hook that fires during the turn cycle rather than only for the active human UI context.",
+      "notes": [
+        "This is a strong default hook for per-player upkeep, counters, deferred maintenance, and scenario bookkeeping.",
+        "Modder experimentation on the wiki reports that it fires at the start of turn rather than after player actions resolve.",
+        "Use the passed player ID directly instead of assuming the active player matches the turn currently being processed."
+      ],
+      "example": {
+        "summary": "Run a once-per-turn maintenance check for every alive player.",
+        "language": "lua",
+        "code": "GameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif pPlayer and pPlayer:IsAlive() then\n\t\tprint(\"Processing scripted upkeep for player\", iPlayer)\n\tend\nend)"
+      },
+      "gotchas": [
+        "The wiki notes that this does not appear to run on the first turn of the game, only for the human player on turn two, and for all players after that.",
+        "Because it runs for every player, expensive logic here can scale poorly in large games."
+      ],
+      "seeAlso": [
+        {
+          "entryId": "game-getactiveplayer-44",
+          "note": "Useful contrast when you need local UI context instead of the current turn owner."
+        }
+      ]
+    }
+  }
+}

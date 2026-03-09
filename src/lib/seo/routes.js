@@ -45,16 +45,27 @@ const ROUTE_SEO = {
 		pageType: "CollectionPage",
 	},
 	"/recipe-library": {
-		title: "Recipe Library Roadmap for Civ V Modding Patterns | Civ Modding Central",
-		description:
-			"Preview the planned Recipe Library for Civilization V modding, including copy-pasteable patterns for yields, units, Lua events, persistence, notifications, and text markup helpers.",
+		title: "Recipe Library for Civ V Modding Patterns | Civ Modding Central",
+		description: "Browse the Civ V Recipe Library for source-backed modding patterns covering Lua events, persistence, VFS wiring, localization, debugging, and repeated implementation tasks.",
 		keywords: "Civilization V recipe library, Civ 5 patterns, dummy building helper, notification builder, persistent data helper",
 		pageType: "CollectionPage",
 	},
 	"/wizard-generators": {
-		title: "Wizard Generator Roadmap for Civ V Content Creation | Civ Modding Central",
-		description: "Preview the planned wizard generators for Civilization V modding, including unit, building, resource, tile improvement, civilization, leader, and atlas registration builders.",
+		title: "Wizard Generators for Civ V Content Creation | Civ Modding Central",
+		description: "Explore the Civ V wizard generator planning hub covering buildings, units, Lua hooks, atlas registration, and larger civilization package builders.",
 		keywords: "Civilization V wizard generator, Civ 5 unit wizard, building wizard, civilization wizard, atlas registration builder",
+		pageType: "CollectionPage",
+	},
+	"/schema-browser": {
+		title: "Civ V Schema Browser and Table Reference | Civ Modding Central",
+		description: "Browse the Civilization V core database schema with searchable tables, columns, foreign keys, incoming references, and companion table hints.",
+		keywords: "Civilization V schema browser, Civ 5 database tables, Civ 5 foreign keys, Buildings table, Units table",
+		pageType: "CollectionPage",
+	},
+	"/lua-api-explorer": {
+		title: "Civ V Lua API Explorer and GameEvents Reference | Civ Modding Central",
+		description: "Search workbook-backed Civilization V Lua methods and GameEvents with signatures, parameter lists, object families, and schema touchpoints.",
+		keywords: "Civilization V Lua API explorer, Civ 5 GameEvents, Civ 5 Lua methods, Player API, City API",
 		pageType: "CollectionPage",
 	},
 	"/civ-icon-maker": {

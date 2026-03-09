@@ -35,7 +35,11 @@
 	let authAccessDebug = $state("");
 	let currentPath = $state(typeof window !== "undefined" ? normalizePathname(window.location.pathname || "/") : "/");
 	let MapViewerComponent = $state(null);
+	let SchemaBrowserComponent = $state(null);
+	let LuaApiExplorerComponent = $state(null);
 	let mapViewerLoadError = $state("");
+	let schemaBrowserLoadError = $state("");
+	let luaApiExplorerLoadError = $state("");
 	let authRestoreStarted = $state(false);
 	let routeShellEl = $state();
 	let shouldFocusRouteHeading = $state(false);
@@ -93,6 +97,30 @@
 			MapViewerComponent = module.default;
 		} catch (error) {
 			mapViewerLoadError = error?.message || "Unable to load map viewer.";
+		}
+	}
+
+	async function ensureSchemaBrowserLoaded() {
+		if (SchemaBrowserComponent || schemaBrowserLoadError) {
+			return;
+		}
+		try {
+			const module = await import("./lib/components/SchemaBrowser.svelte");
+			SchemaBrowserComponent = module.default;
+		} catch (error) {
+			schemaBrowserLoadError = error?.message || "Unable to load schema browser.";
+		}
+	}
+
+	async function ensureLuaApiExplorerLoaded() {
+		if (LuaApiExplorerComponent || luaApiExplorerLoadError) {
+			return;
+		}
+		try {
+			const module = await import("./lib/components/LuaApiExplorer.svelte");
+			LuaApiExplorerComponent = module.default;
+		} catch (error) {
+			luaApiExplorerLoadError = error?.message || "Unable to load Lua API explorer.";
 		}
 	}
 
@@ -167,6 +195,18 @@
 	});
 
 	$effect(() => {
+		if (currentPath === "/map-viewer") {
+			void ensureMapViewerLoaded();
+			return;
+		}
+		if (currentPath === "/schema-browser") {
+			void ensureSchemaBrowserLoaded();
+			return;
+		}
+		if (currentPath === "/lua-api-explorer") {
+			void ensureLuaApiExplorerLoaded();
+			return;
+		}
 		if (
 			currentPath === "/" ||
 			currentPath === "/community-links" ||
@@ -180,7 +220,6 @@
 		) {
 			return;
 		}
-		void ensureMapViewerLoaded();
 	});
 
 	$effect(() => {
@@ -762,6 +801,18 @@
 					<RecipeLibrary />
 				{:else if currentPath === "/wizard-generators"}
 					<WizardGenerators />
+				{:else if currentPath === "/schema-browser" && schemaBrowserLoadError}
+					<p class="status error">{schemaBrowserLoadError}</p>
+				{:else if currentPath === "/schema-browser" && SchemaBrowserComponent}
+					<SchemaBrowserComponent />
+				{:else if currentPath === "/schema-browser"}
+					<p class="status">Loading schema browser...</p>
+				{:else if currentPath === "/lua-api-explorer" && luaApiExplorerLoadError}
+					<p class="status error">{luaApiExplorerLoadError}</p>
+				{:else if currentPath === "/lua-api-explorer" && LuaApiExplorerComponent}
+					<LuaApiExplorerComponent />
+				{:else if currentPath === "/lua-api-explorer"}
+					<p class="status">Loading Lua API explorer...</p>
 				{:else if currentPath === "/map-viewer" && mapViewerLoadError}
 					<p class="status error">{mapViewerLoadError}</p>
 				{:else if currentPath === "/map-viewer" && MapViewerComponent}
