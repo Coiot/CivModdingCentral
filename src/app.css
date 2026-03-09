@@ -190,6 +190,12 @@ figcaption a:focus-visible {
 	outline-offset: 2px;
 }
 
+input,
+select,
+textarea {
+	field-sizing: content;
+}
+
 :root[data-theme="light"] .hero {
 	background: linear-gradient(135deg, color-mix(in oklch, var(--panel-bg) 90%, white) 0%, color-mix(in oklch, var(--panel-bg) 90%, var(--accent) 2%) 100%);
 }

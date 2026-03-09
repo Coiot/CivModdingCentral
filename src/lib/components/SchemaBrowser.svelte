@@ -1334,17 +1334,17 @@
 						</button>
 					{/each}
 				</div>
-				{#if recentTables.length > 0}
-					<div class="schema-recent-group" aria-label="Recent tables">
-						<span class="schema-toolbar-label">Recent tables</span>
-						<div class="schema-recent-list">
-							{#each recentTables as table (table.name)}
-								<button type="button" class="schema-inline-link schema-inline-link--chip" onclick={() => selectTable(table.name)}>{table.name}</button>
-							{/each}
-						</div>
-					</div>
-				{/if}
 			</div>
+			{#if recentTables.length > 0}
+				<div class="schema-recent-group" aria-label="Recent tables">
+					<span class="schema-toolbar-label">Recent tables</span>
+					<div class="schema-recent-list">
+						{#each recentTables as table (table.name)}
+							<button type="button" class="schema-inline-link schema-inline-link--chip" onclick={() => selectTable(table.name)}>{table.name}</button>
+						{/each}
+					</div>
+				</div>
+			{/if}
 		</div>
 
 		<div class="schema-explorer-grid">
