@@ -1818,9 +1818,8 @@
 		</div>
 	</section>
 
-	<section class="schema-panel schema-panel--snapshot">
+	<!-- <section class="schema-panel schema-panel--snapshot">
 		<div class="schema-section-head">
-			<!-- <span class="schema-kicker">Database Overview</span> -->
 			<h2>Database Overview</h2>
 			<p>Just some neat stats about the database.</p>
 		</div>
@@ -1894,7 +1893,7 @@
 				</ul>
 			</article>
 		</div>
-	</section>
+	</section> -->
 </section>
 
 <style>
