@@ -16,8 +16,11 @@ XLSX_NS = {
     "pkg": "http://schemas.openxmlformats.org/package/2006/relationships",
 }
 
-DEFAULT_DB_PATH = Path(
+DEFAULT_CORE_DB_PATH = Path(
     "/Users/coiot/Library/Application Support/Sid Meier's Civilization 5/cache/Civ5CoreDatabase.db"
+)
+DEFAULT_DEBUG_DB_PATH = Path(
+    "/Users/coiot/Library/Application Support/Sid Meier's Civilization 5/cache/Civ5DebugDatabase.db"
 )
 DEFAULT_METHODS_PATH = Path("/Users/coiot/Sites/LandofSnows/Methods.xlsx")
 DEFAULT_GAME_EVENTS_PATH = Path("/Users/coiot/Sites/LandofSnows/GameEvents.xlsx")
@@ -81,6 +84,15 @@ EVENT_TO_METHOD_COUNTERPARTS = {
 }
 AUTO_SCHEMA_NOTE_LIMIT = 3
 AUTO_SEE_ALSO_LIMIT = 3
+
+
+def resolve_default_db_path() -> Path:
+    if DEFAULT_DEBUG_DB_PATH.exists():
+        return DEFAULT_DEBUG_DB_PATH
+    return DEFAULT_CORE_DB_PATH
+
+
+DEFAULT_DB_PATH = resolve_default_db_path()
 
 
 def slugify(value: str) -> str:

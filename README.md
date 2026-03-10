@@ -15,6 +15,10 @@ npm run dev
 npm run build
 ```
 
+## Reference data
+
+`npm run build:reference-data` prefers `Civ5DebugDatabase.db` when it exists under the local Civ V cache because that database includes merged DLC and expansion gameplay rows. It falls back to `Civ5CoreDatabase.db` if the debug database is unavailable.
+
 ## DDS Converter: Dedicated Server
 
 Use a separate server when you want higher quality native DDS encoding (for example via `CompressonatorCLI`) instead of browser/Netlify-only conversion.

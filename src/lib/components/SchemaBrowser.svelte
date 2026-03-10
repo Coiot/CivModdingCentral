@@ -1269,7 +1269,7 @@
 		<p class="schema-eyebrow">Database Reference</p>
 		<h1>Schema Browser</h1>
 		<p>
-			Search the Civilization V core database for quick reference. This viewer is an exact copy of <code>Civ5CoreDatabase.db</code>.
+			Search the Civilization V database for quick reference. This viewer is an exact copy of <code>Civ5DebugDatabase.db</code> when owning all DLC.
 		</p>
 	</header>
 
