@@ -25,22 +25,22 @@
 			label: "Build & Publish",
 			description: "Package, format, and ship finished mods.",
 			panelTitle: "Compiling Mods",
-			panelCopy: "Use these when the mod is ready to package, format, and push into a distributable form.",
+			panelCopy: "Use these when your mod is ready to package, validate, format, and push into a distributable form for local testing, sharing, or Workshop release.",
 			links: [
 				{
 					href: "/workshop-uploader",
 					label: "Workshop Uploader",
-					description: "OS agnostic desktop app for streamlined Steam Workshop publishing.",
+					description: "OS agnostic desktop app for streamlined Steam Workshop publishing and updating of mods.",
 				},
 				{
 					href: "/modinfo-builder",
 					label: ".modinfo Builder",
-					description: "Generate mod actions, references, and metadata without hand-editing the project XML.",
+					description: "Generate a working modinfo file with all the correct references and metadata without hand-editing the project XML.",
 				},
 				{
 					href: "/civ5mod-ziper",
 					label: ".civ5mod Ziper",
-					description: "Bundle a mod folder into Civ V's distributable archive format for publishing and sharing.",
+					description: "Bundle a mod folder into Civ V's distributable legacy zip format for publishing and sharing.",
 				},
 			],
 		},
@@ -50,17 +50,17 @@
 			label: "Explore & Learn",
 			description: "Inspect data and jump into curated docs.",
 			panelTitle: "Lookup & Reference",
-			panelCopy: "Open these when you need to inspect map data, refresh your memory, or jump into community references quickly.",
+			panelCopy: "Open these when you need to inspect Civ V data, review the game's API for new mods, or jump into trusted community references.",
 			links: [
 				{
 					href: "/schema-browser",
 					label: "Schema Browser",
-					description: "Search Civ V tables, columns, foreign keys, incoming references, and companion tables from an offline core-database snapshot.",
+					description: "Search through the entire Civ V database. Inspect every column and row data with helpful filters.",
 				},
 				{
 					href: "/lua-api-explorer",
 					label: "Lua API Explorer",
-					description: "Search workbook-backed Civ V methods and GameEvents now, with room to grow into Events, LuaEvents, and GameInfoTypes on-site.",
+					description: "Search Civ V Method and GameEvents with curated documentation and sets of real mod examples.",
 					disabled: true,
 					statusLabel: "Coming Soon",
 				},
@@ -104,11 +104,11 @@
 		// },
 		{
 			id: "assets",
-			kicker: "Art Prep",
-			label: "Visual Assets",
-			description: "Prep art assets for in-game use.",
-			panelTitle: "Tools & Resources",
-			panelCopy: "Helpful tools when you are preparing art and need outputs that fit the game's style and texture pipeline.",
+			kicker: "Art & UI",
+			label: "Build Visual Assets",
+			description: "Turn source art into Civ V-ready icons, textures, and UI assets.",
+			panelTitle: "Art Pipeline",
+			panelCopy: "Use these when you need mod-ready visual assets that fit Civ V's icon sheets, DDS requirements, and in-game presentation constraints.",
 			links: [
 				{
 					href: "/dds-converter",
