@@ -57,37 +57,37 @@
 		},
 		{
 			id: "civs",
-			label: "Civs & leaders",
+			label: "Civs & Leaders",
 			match: (name) => /^(Civilization|Leader|Trait|Policy|Belief|Religion|Minor)/.test(name),
 		},
 		{
 			id: "economy",
-			label: "Economy & growth",
+			label: "Economy & Growth",
 			match: (name) => /^(Building|Improvement|Resource|Yield|Specialist|Process|Hurry|Route|Builds?$)/.test(name),
 		},
 		{
 			id: "military",
-			label: "Units & combat",
+			label: "Units & Combat",
 			match: (name) => /^(Unit|Promotion|UnitAI|UnitCombat|Domain|Formation|Mission|Operation|Automate|Command|SpecialUnit|MultiUnit)/.test(name),
 		},
 		{
 			id: "world",
-			label: "World & map",
+			label: "World & Map",
 			match: (name) => /^(Map|Terrain|Feature|Area|Plot|River|Natural|Goody|Climate)/.test(name),
 		},
 		{
 			id: "diplomacy",
-			label: "Diplomacy & victory",
+			label: "Diplomacy & Victory",
 			match: (name) => /^(AI|Diplomacy|League|Resolution|Deal|Attitude|Victory|Handicap)/.test(name),
 		},
 		{
 			id: "presentation",
-			label: "Art, UI, text",
+			label: "Art, UI, Text",
 			match: (name) => /^(ArtDefine|Audio|Animation|Icon|Color|PlayerColor|Language|Concept|Interface|Notification|Tutorial)/.test(name),
 		},
 		{
 			id: "systems",
-			label: "Tech & systems",
+			label: "Tech & Systems",
 			match: (name) => /^(Tech|Technology|Era|GameSpeed|Calendar|GameOption|MPOption|Project|PolicyBranch|Flavor|Defines|Global)/.test(name),
 		},
 	];
@@ -2307,14 +2307,12 @@
 	}
 
 	.schema-filter-chip span {
-		height: 1.75rem;
-		display: inline-grid;
-		place-items: center;
-		min-inline-size: 2rem;
+		inline-size: fit-content;
 		font-size: 0.8rem;
 		background: rgba(255, 255, 255, 0.08);
 		border-radius: 999px;
-		text-box: trim-both;
+		text-box: trim-both cap alphabetic;
+		padding: 0.45rem 0.6rem;
 	}
 
 	.schema-mode-group > .schema-filter-chip--scope {
