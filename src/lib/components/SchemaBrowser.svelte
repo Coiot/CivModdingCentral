@@ -2126,7 +2126,8 @@
 	.schema-link-list span,
 	.schema-column-row p,
 	.schema-table-match-list li {
-		font-size: 0.87rem;
+		font-size: 0.9rem;
+		word-break: break-word;
 		margin-block-start: 0.18rem;
 		margin-inline: 0;
 	}
