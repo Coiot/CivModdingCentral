@@ -7,7 +7,7 @@
 	const CENTER = OUTPUT_SIZE / 2;
 	const INNER_DIAMETER = 172;
 	const INNER_RADIUS = INNER_DIAMETER / 2;
-	const RENDER_SCALE = 20;
+	const RENDER_SCALE = 16;
 	const RENDER_SIZE = OUTPUT_SIZE * RENDER_SCALE;
 	const RENDER_CENTER = CENTER * RENDER_SCALE;
 	const RENDER_INNER_RADIUS = INNER_RADIUS * RENDER_SCALE;
@@ -15,21 +15,14 @@
 	const SWIATLO_OFFSET_X = 0.65;
 	const SWIATLO_OFFSET_Y = -0.25;
 	const SWIATLO_PIXEL_SNAP = true;
-	const SWIATLO_SHARPEN_CONTRAST = 16;
-	const SWIATLO_CUSTOM_BLEND_MODE_BY_LAYER_ID = Object.freeze({
-		overlay_light: "overlay",
-		overlay_light_2: "hard-light",
-	});
-	const SWIATLO_CUSTOM_BLEND_STRENGTH_BY_LAYER_ID = Object.freeze({
-		overlay_light: 1.15,
-	});
+	const SWIATLO_SHARPEN_CONTRAST = 1.1;
 	const FIT_GUARD_PX = 15;
 	const FIT_DIAMETER = Math.max(1, INNER_DIAMETER - FIT_GUARD_PX * 2);
 	const CIRCLE_EDGE_AA_PX = 1;
 	const ALPHA_BOUNDS_MIN_ALPHA = 8;
 	const STABLE_FILTER_STEP_PX = 1;
 	const STABLE_OFFSET_STEP_PX = 1;
-	const ICON_EFFECT_FORCE_SOURCE_OVER_BLEND = true;
+	const ICON_EFFECT_FORCE_SOURCE_OVER_BLEND = false;
 	const CANVAS_COLOR_SPACE = "srgb";
 	const MIN_OFFSET = -25;
 	const MAX_OFFSET = 25;
@@ -37,6 +30,8 @@
 	const DEFAULT_ICON_COLOR = "#F4DE9A";
 	const COLOR_PICKER_DEBOUNCE_MS = 180;
 	const INTERACTION_SETTLE_MS = 180;
+	const STATE_PERSIST_DEBOUNCE_MS = 220;
+	const RENDER_PERF_HISTORY_LIMIT = 12;
 	const SETTINGS_STORAGE_KEY = "cmc:civ-icon-maker:settings:v2";
 	const SOURCE_STORAGE_KEY = "cmc:civ-icon-maker:source:v2";
 	const LEGACY_STORAGE_KEY = "cmc:civ-icon-maker:v1";
@@ -45,23 +40,17 @@
 		outerShadow: {
 			enabled: true,
 			color: "#000000",
-			opacity: 0.365,
-			blur: 0.2,
-			distance: 1,
+			opacity: 0.5,
+			blur: 1,
+			distance: 1.75,
 			angleDeg: 300,
-			blendMode: "source-over",
-			coreOpacity: 0.3,
-			coreBlurMultiplier: 3,
-			falloffOpacity: 0.9,
-			falloffBlurMultiplier: 3.5,
-			falloffDistanceMultiplier: 1.75,
-			tintFromIcon: true,
-			tintOpacity: 0.75,
-			tintBlurMultiplier: 0.2,
-			tintDistanceMultiplier: 0.5,
-			tintSaturationMultiplier: 2,
-			tintSaturationAdd: 0,
-			tintLightnessAdd: 45,
+			coreBlendMode: "multiply",
+			coreOpacity: 0.5,
+			coreBlurMultiplier: 2,
+			falloffBlendMode: "overlay",
+			falloffOpacity: 0.4,
+			falloffBlurMultiplier: 2,
+			falloffDistanceMultiplier: 1.5,
 		},
 		bevel: {
 			enabled: true,
@@ -83,7 +72,7 @@
 			},
 		},
 	};
-	const ICON_EDGE_SOFTEN_PX = 0.08;
+	const ICON_EDGE_SOFTEN_PX = 2;
 	const SWIATLO_LAYER_DEFS = [
 		{ id: "blik", label: "Top Glint", file: "blik.png", blendMode: "source-over", opacity: 1 },
 		{ id: "overlay_flash_3", label: "Arc Highlight", file: "overlay flash 3.png", blendMode: "screen", opacity: 1 },
@@ -91,8 +80,8 @@
 		{ id: "overlay_flash_copy", label: "Upper Sweep", file: "overlay flash copy.png", blendMode: "overlay", opacity: 1 },
 		{ id: "overlay_flash_copy_2", label: "Lower Sweep", file: "overlay flash copy 2.png", blendMode: "soft-light", opacity: 1 },
 		{ id: "overlay_flash", label: "Soft Flash", file: "overlay flash.png", blendMode: "hard-light", opacity: 1 },
-		{ id: "overlay_light_2", label: "Crown Glow", file: "overlay light 2.png", blendMode: "hard-light", opacity: 0.725 },
-		{ id: "overlay_light", label: "Face Glow", file: "overlay light.png", blendMode: "hard-light", opacity: 0.95 },
+		{ id: "overlay_light_2", label: "Crown Glow", file: "overlay light 2.png", blendMode: "hard-light", opacity: 0.8 },
+		{ id: "overlay_light", label: "Face Glow", file: "overlay light.png", blendMode: "overlay", opacity: 0.75 },
 		{ id: "overlay_shadow_2", label: "Edge Shade", file: "overlay shadow 2.png", blendMode: "soft-light", opacity: 1 },
 		{ id: "overlay_blue", label: "Cyan Shade", file: "overlay blue.png", blendMode: "hard-light", opacity: 1 },
 		{
@@ -178,7 +167,6 @@
 	let effectCanvasA = null;
 	let effectCanvasB = null;
 	let effectCanvasC = null;
-	let effectCanvasD = null;
 	let circleEdgeMaskCanvas = null;
 	let tintVersionCounter = 0;
 	let tintedColorCache = new Map();
@@ -241,6 +229,8 @@
 	let primaryColorPickerDebounceId = 0;
 	let iconColorPickerDebounceId = 0;
 	let interactionPreviewTimeoutId = 0;
+	let persistStateTimeoutId = 0;
+	let historyCommitTimeoutId = 0;
 	let renderFrameId = 0;
 	let pendingRenderOutput = false;
 	let pendingRenderCompare = false;
@@ -249,6 +239,12 @@
 	let renderBusy = $state(false);
 	let renderBusyLabel = $state("");
 	let exportBusy = $state(false);
+	let comparePreviewSignature = "";
+	let comparePreviewSourceCanvas = null;
+	let compositeRenderSignature = "";
+	let compositeRenderSourceCanvas = null;
+	let perfInstrumentationEnabled = $state(false);
+	let renderPerfSamples = $state([]);
 
 	const hasSource = $derived(Boolean(sourceCanvas));
 	const sourceWidth = $derived(sourceCanvas?.width || 0);
@@ -262,6 +258,9 @@
 	const canUndo = $derived(historyEntries.length > 0);
 	const canRedo = $derived(redoEntries.length > 0);
 	const activityMessage = $derived(exportBusy ? "Exporting PNG..." : renderBusy ? renderBusyLabel || "Loading effects..." : "");
+	const latestRenderPerfSample = $derived(renderPerfSamples[renderPerfSamples.length - 1] || null);
+	const latestRenderPerfStageRows = $derived.by(() => (latestRenderPerfSample ? buildRenderPerfStageRows(latestRenderPerfSample) : []));
+	const latestRenderPerfOverlayRows = $derived.by(() => (latestRenderPerfSample ? buildRenderPerfOverlayRows(latestRenderPerfSample) : []));
 	const suggestedColorSchemes = $derived(
 		buildColorSuggestions(primaryColor, iconColor, suggestionBaseLocked ? suggestionBasePrimary : primaryColor, suggestionBaseLocked ? suggestionBaseIcon : iconColor, {
 			lockHue: suggestionLockHue,
@@ -334,11 +333,16 @@
 			skipPersist = false;
 			return;
 		}
-		persistState();
+		schedulePersistState();
+		return () => {
+			clearPersistStateTimeout();
+		};
 	});
 
 	$effect(() => {
 		hasSource;
+		historySuspended;
+		interactivePreviewMode;
 		primaryColor;
 		iconColor;
 		iconOffsetX;
@@ -348,6 +352,15 @@
 		swiatloPresetId;
 		swiatloActiveLayerId;
 		swiatloLayerVisibility;
+		if (!hasSource || historySuspended) {
+			return;
+		}
+		if (interactivePreviewMode) {
+			scheduleHistoryCheckpoint();
+			return () => {
+				clearHistoryCommitTimeout();
+			};
+		}
 		commitHistoryCheckpoint();
 	});
 
@@ -363,8 +376,11 @@
 		if (iconColorPickerDebounceId) {
 			clearTimeout(iconColorPickerDebounceId);
 		}
-		if (interactionPreviewTimeoutId) {
-			clearTimeout(interactionPreviewTimeoutId);
+		clearInteractionPreviewTimeout();
+		clearPersistStateTimeout();
+		clearHistoryCommitTimeout();
+		if (storageReady && !skipPersist) {
+			persistState();
 		}
 		if (renderFrameId) {
 			cancelAnimationFrame(renderFrameId);
@@ -513,6 +529,7 @@
 	}
 
 	function resetHistoryTracking() {
+		clearHistoryCommitTimeout();
 		historyEntries = [];
 		redoEntries = [];
 		historyBaselineSignature = "";
@@ -524,6 +541,7 @@
 			resetHistoryTracking();
 			return;
 		}
+		clearHistoryCommitTimeout();
 		const snapshot = createEditorSnapshot();
 		historyBaselineSnapshot = snapshot;
 		historyBaselineSignature = buildSnapshotSignature(snapshot);
@@ -602,6 +620,7 @@
 
 	function captureCompareReference() {
 		compareReference = createEditorSnapshot();
+		comparePreviewSignature = "";
 		resetMessages();
 		statusMessage = "Captured compare reference.";
 	}
@@ -664,6 +683,92 @@
 			localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(payload));
 		} catch {
 			// Ignore localStorage write failures.
+		}
+	}
+
+	function clearPersistStateTimeout() {
+		if (persistStateTimeoutId) {
+			clearTimeout(persistStateTimeoutId);
+			persistStateTimeoutId = 0;
+		}
+	}
+
+	function schedulePersistState() {
+		clearPersistStateTimeout();
+		persistStateTimeoutId = setTimeout(() => {
+			persistStateTimeoutId = 0;
+			persistState();
+		}, STATE_PERSIST_DEBOUNCE_MS);
+	}
+
+	function clearHistoryCommitTimeout() {
+		if (historyCommitTimeoutId) {
+			clearTimeout(historyCommitTimeoutId);
+			historyCommitTimeoutId = 0;
+		}
+	}
+
+	function scheduleHistoryCheckpoint() {
+		clearHistoryCommitTimeout();
+		historyCommitTimeoutId = setTimeout(() => {
+			historyCommitTimeoutId = 0;
+			commitHistoryCheckpoint();
+		}, INTERACTION_SETTLE_MS);
+	}
+
+	function readPerfNow() {
+		if (typeof performance !== "undefined" && typeof performance.now === "function") {
+			return performance.now();
+		}
+		return Date.now();
+	}
+
+	function recordRenderPerfSample(sample) {
+		if (!perfInstrumentationEnabled || !sample) {
+			return;
+		}
+		renderPerfSamples = [...renderPerfSamples, sample].slice(-RENDER_PERF_HISTORY_LIMIT);
+	}
+
+	function clearRenderPerfSamples() {
+		renderPerfSamples = [];
+	}
+
+	function formatTimingMs(value) {
+		const normalized = Number.isFinite(value) ? value : 0;
+		return `${normalized.toFixed(normalized >= 10 ? 1 : 2)} ms`;
+	}
+
+	function buildRenderPerfStageRows(sample) {
+		return Object.entries(sample?.stages || {})
+			.map(([id, durationMs]) => ({
+				id,
+				label:
+					{
+						fillBase: "Fill base",
+						rasterizeIcon: "Rasterize icon",
+						outerShadow: "Outer shadow",
+						iconBase: "Icon base",
+						bevel: "Bevel",
+						swiatloOverlays: "Light overlays",
+						edgeAA: "Edge AA",
+						present: "Present",
+						guides: "Guides",
+					}[id] || id,
+				durationMs,
+			}))
+			.filter((row) => row.durationMs > 0)
+			.sort((left, right) => right.durationMs - left.durationMs);
+	}
+
+	function buildRenderPerfOverlayRows(sample) {
+		return [...(sample?.overlayStages || [])].sort((left, right) => right.durationMs - left.durationMs);
+	}
+
+	function onPerfInstrumentationToggle(checked) {
+		perfInstrumentationEnabled = checked;
+		if (!checked) {
+			clearRenderPerfSamples();
 		}
 	}
 
@@ -746,6 +851,20 @@
 	function clearTintCache() {
 		tintedColorCache.clear();
 		scaledTintCache.clear();
+		resetCompositeRenderCache();
+	}
+
+	function resetCompositeRenderCache() {
+		compositeRenderSignature = "";
+		compositeRenderSourceCanvas = null;
+	}
+
+	function buildCompositeRenderSignature(resolvedSnapshot) {
+		return JSON.stringify({
+			snapshot: resolvedSnapshot,
+			tintVersion,
+			swiatloAssetsVersion,
+		});
 	}
 
 	function getCanvas2dContext(canvas, options) {
@@ -813,15 +932,6 @@
 		return effectCanvasC;
 	}
 
-	function ensureEffectCanvasD() {
-		if (!effectCanvasD || effectCanvasD.width !== RENDER_SIZE || effectCanvasD.height !== RENDER_SIZE) {
-			effectCanvasD = document.createElement("canvas");
-			effectCanvasD.width = RENDER_SIZE;
-			effectCanvasD.height = RENDER_SIZE;
-		}
-		return effectCanvasD;
-	}
-
 	function ensureCircleEdgeMaskCanvas() {
 		if (CIRCLE_EDGE_AA_PX <= 0) {
 			return null;
@@ -878,14 +988,6 @@
 	function colorToRgba(color, opacity) {
 		const rgb = hexToRgb(color);
 		return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${clamp(opacity, 0, 1)})`;
-	}
-
-	function deriveShadowTintColor(iconHex, settings) {
-		const rgb = hexToRgb(iconHex);
-		const hsl = rgbToHsl(rgb);
-		const saturation = clamp(hsl.s * (settings.tintSaturationMultiplier ?? 1.2) + (settings.tintSaturationAdd ?? 0), 0, 100);
-		const lightness = clamp(hsl.l + (settings.tintLightnessAdd ?? -24), 0, 100);
-		return rgbToHex(hslToRgb({ h: hsl.h, s: saturation, l: lightness }));
 	}
 
 	function swiatloAssetPath(filename) {
@@ -1308,18 +1410,25 @@
 		if (options.fastPreview) {
 			drawFastPreview(previewCanvasEl, true, PREVIEW_SIZE, currentState);
 		} else {
-			drawComposite(previewCanvasEl, true, PREVIEW_SIZE, currentState);
+			drawComposite(previewCanvasEl, true, PREVIEW_SIZE, currentState, "preview");
 		}
 		if (options.includeOutput !== false) {
-			drawComposite(outputCanvasEl, false, OUTPUT_SIZE, currentState);
+			drawComposite(outputCanvasEl, false, OUTPUT_SIZE, currentState, "output");
 		}
 		if (options.includeCompare !== false && compareEnabled && compareCanvasEl && compareReference) {
-			drawComposite(compareCanvasEl, true, PREVIEW_SIZE, compareReference);
+			const nextCompareSignature = JSON.stringify(resolveRenderSnapshot(compareReference));
+			if (comparePreviewSignature !== nextCompareSignature || comparePreviewSourceCanvas !== sourceCanvas || compareCanvasEl.width !== PREVIEW_SIZE || compareCanvasEl.height !== PREVIEW_SIZE) {
+				drawComposite(compareCanvasEl, true, PREVIEW_SIZE, compareReference, "compare");
+				comparePreviewSignature = nextCompareSignature;
+				comparePreviewSourceCanvas = sourceCanvas;
+			}
 		} else if (compareCanvasEl && !compareEnabled) {
 			const ctx = getCanvas2dContext(compareCanvasEl);
 			if (ctx) {
 				ctx.clearRect(0, 0, compareCanvasEl.width, compareCanvasEl.height);
 			}
+			comparePreviewSignature = "";
+			comparePreviewSourceCanvas = null;
 		}
 	}
 
@@ -1429,18 +1538,16 @@
 		};
 	}
 
-	function drawIconOuterShadow(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight, iconHexColor) {
+	function drawIconOuterShadow(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight) {
 		if (!tintCanvas || !ICON_EFFECT_SETTINGS.outerShadow.enabled) {
 			return;
 		}
 
 		const maskCanvas = ensureEffectCanvasA();
 		const maskCtx = getCanvas2dContext(maskCanvas);
-		const tintMaskCanvas = ensureEffectCanvasB();
-		const tintMaskCtx = getCanvas2dContext(tintMaskCanvas);
 		const shadowCanvas = ensureEffectCanvasC();
 		const shadowCtx = getCanvas2dContext(shadowCanvas);
-		if (!maskCtx || !tintMaskCtx || !shadowCtx) {
+		if (!maskCtx || !shadowCtx) {
 			return;
 		}
 
@@ -1454,14 +1561,9 @@
 		const falloffOpacity = clamp((settings.falloffOpacity ?? 0.4) * settings.opacity, 0, 1);
 		const falloffBlur = toStableBlurPx(baseBlur * (settings.falloffBlurMultiplier ?? 2));
 		const falloffDistance = settings.falloffDistanceMultiplier ?? 1;
-		const tintedColor = settings.tintFromIcon === false ? settings.color : deriveShadowTintColor(iconHexColor, settings);
-		const tintOpacity = clamp((settings.tintOpacity ?? 0.42) * settings.opacity, 0, 1);
-		const tintBlur = toStableBlurPx(baseBlur * (settings.tintBlurMultiplier ?? 3.2));
-		const tintDistance = settings.tintDistanceMultiplier ?? 1.24;
+		const punchoutBlur = toStableBlurPx(Math.max(1, baseBlur * 0.8));
 		const falloffOffsetX = toStableOffsetPx(offsetX * falloffDistance);
 		const falloffOffsetY = toStableOffsetPx(offsetY * falloffDistance);
-		const tintOffsetX = toStableOffsetPx(offsetX * tintDistance);
-		const tintOffsetY = toStableOffsetPx(offsetY * tintDistance);
 
 		configureImageSmoothing(maskCtx);
 		maskCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
@@ -1471,43 +1573,31 @@
 		maskCtx.fillRect(0, 0, RENDER_SIZE, RENDER_SIZE);
 		maskCtx.globalCompositeOperation = "source-over";
 
-		configureImageSmoothing(tintMaskCtx);
-		tintMaskCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
-		tintMaskCtx.drawImage(tintCanvas, drawX, drawY, drawWidth, drawHeight);
-		tintMaskCtx.globalCompositeOperation = "source-in";
-		tintMaskCtx.fillStyle = colorToRgba(tintedColor, 1);
-		tintMaskCtx.fillRect(0, 0, RENDER_SIZE, RENDER_SIZE);
-		tintMaskCtx.globalCompositeOperation = "source-over";
-
 		configureImageSmoothing(shadowCtx);
-		shadowCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
+		const renderShadowPass = (alpha, blurPx, passOffsetX, passOffsetY, blendMode) => {
+			if (alpha <= 0) {
+				return;
+			}
+			shadowCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
+			shadowCtx.save();
+			shadowCtx.globalAlpha = alpha;
+			shadowCtx.filter = blurFilter(blurPx);
+			shadowCtx.drawImage(maskCanvas, passOffsetX, passOffsetY);
+			shadowCtx.restore();
+			shadowCtx.save();
+			shadowCtx.globalCompositeOperation = "destination-out";
+			shadowCtx.filter = blurFilter(punchoutBlur);
+			shadowCtx.drawImage(maskCanvas, 0, 0);
+			shadowCtx.restore();
 
-		shadowCtx.save();
-		shadowCtx.globalAlpha = coreOpacity;
-		shadowCtx.filter = blurFilter(coreBlur);
-		shadowCtx.drawImage(maskCanvas, offsetX, offsetY);
-		shadowCtx.restore();
+			ctx.save();
+			ctx.globalCompositeOperation = blendMode || "source-over";
+			ctx.drawImage(shadowCanvas, 0, 0);
+			ctx.restore();
+		};
 
-		shadowCtx.save();
-		shadowCtx.globalAlpha = falloffOpacity;
-		shadowCtx.filter = blurFilter(falloffBlur);
-		shadowCtx.drawImage(maskCanvas, falloffOffsetX, falloffOffsetY);
-		shadowCtx.restore();
-
-		shadowCtx.save();
-		shadowCtx.globalAlpha = tintOpacity;
-		shadowCtx.filter = blurFilter(tintBlur);
-		shadowCtx.drawImage(tintMaskCanvas, tintOffsetX, tintOffsetY);
-		shadowCtx.restore();
-
-		shadowCtx.globalCompositeOperation = "destination-out";
-		shadowCtx.drawImage(maskCanvas, 0, 0);
-		shadowCtx.globalCompositeOperation = "source-over";
-
-		ctx.save();
-		ctx.globalCompositeOperation = resolveIconBlendMode(settings.blendMode);
-		ctx.drawImage(shadowCanvas, 0, 0);
-		ctx.restore();
+		renderShadowPass(coreOpacity, coreBlur, offsetX, offsetY, settings.coreBlendMode);
+		renderShadowPass(falloffOpacity, falloffBlur, falloffOffsetX, falloffOffsetY, settings.falloffBlendMode);
 	}
 
 	function drawInnerBevelPass(ctx, tintCanvas, drawX, drawY, drawWidth, drawHeight, options) {
@@ -1652,92 +1742,31 @@
 		ctx.restore();
 	}
 
-	function blendOverlayChannel(base, blend) {
-		if (base <= 0.5) {
-			return 2 * base * blend;
-		}
-		return 1 - 2 * (1 - base) * (1 - blend);
-	}
-
-	function blendHardLightChannel(base, blend) {
-		if (blend <= 0.5) {
-			return 2 * base * blend;
-		}
-		return 1 - 2 * (1 - base) * (1 - blend);
-	}
-
-	function applyPhotoshopStyleSwiatloBlend(destinationData, sourceData, mode, opacity, strength = 1) {
-		const normalizedOpacity = clamp(opacity, 0, 1);
-		const normalizedStrength = Math.max(0, Number(strength) || 0);
-		if (normalizedOpacity <= 0) {
-			return;
-		}
-		const blendChannel = mode === "hard-light" ? blendHardLightChannel : blendOverlayChannel;
-
-		for (let index = 0; index < destinationData.length; index += 4) {
-			const sourceAlpha = (sourceData[index + 3] / 255) * normalizedOpacity;
-			const blendInfluence = clamp(sourceAlpha * normalizedStrength, 0, 2);
-			if (blendInfluence <= 0) {
-				continue;
-			}
-
-			const baseRed = destinationData[index] / 255;
-			const baseGreen = destinationData[index + 1] / 255;
-			const baseBlue = destinationData[index + 2] / 255;
-			const blendRed = sourceData[index] / 255;
-			const blendGreen = sourceData[index + 1] / 255;
-			const blendBlue = sourceData[index + 2] / 255;
-
-			const mixedRed = baseRed + (blendChannel(baseRed, blendRed) - baseRed) * blendInfluence;
-			const mixedGreen = baseGreen + (blendChannel(baseGreen, blendGreen) - baseGreen) * blendInfluence;
-			const mixedBlue = baseBlue + (blendChannel(baseBlue, blendBlue) - baseBlue) * blendInfluence;
-
-			destinationData[index] = clamp(Math.round(mixedRed * 255), 0, 255);
-			destinationData[index + 1] = clamp(Math.round(mixedGreen * 255), 0, 255);
-			destinationData[index + 2] = clamp(Math.round(mixedBlue * 255), 0, 255);
-		}
-	}
-
-	function drawSwiatloLayerWithPhotoshopBlend(ctx, layer, mode, opacity, strength = 1) {
-		const layerCanvas = ensureEffectCanvasD();
-		const layerCtx = getCanvas2dContext(layerCanvas, { willReadFrequently: true });
-		if (!layerCtx) {
-			return;
-		}
-
-		layerCtx.globalAlpha = 1;
-		layerCtx.globalCompositeOperation = "source-over";
-		layerCtx.filter = "none";
-		layerCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
-		drawSwiatloLayer(layerCtx, layer);
-
-		const sourcePixels = layerCtx.getImageData(0, 0, RENDER_SIZE, RENDER_SIZE);
-		const destinationPixels = ctx.getImageData(0, 0, RENDER_SIZE, RENDER_SIZE);
-		applyPhotoshopStyleSwiatloBlend(destinationPixels.data, sourcePixels.data, mode, opacity, strength);
-		ctx.putImageData(destinationPixels, 0, 0);
-	}
-
 	function drawSwiatloOverlays(ctx, options = {}) {
 		if (options.enabled === false) {
 			return;
 		}
 		const visibility = options.visibility || swiatloLayerVisibility;
+		const perfSample = options.perfSample || null;
 
 		for (const layer of SWIATLO_LAYER_DEFS) {
 			if (!visibility?.[layer.id]) {
 				continue;
 			}
-			const customMode = SWIATLO_CUSTOM_BLEND_MODE_BY_LAYER_ID[layer.id];
-			if (customMode) {
-				const strength = SWIATLO_CUSTOM_BLEND_STRENGTH_BY_LAYER_ID[layer.id] ?? 1;
-				drawSwiatloLayerWithPhotoshopBlend(ctx, layer, customMode, layer.opacity ?? 1, strength);
-				continue;
-			}
+			const layerStart = perfSample ? readPerfNow() : 0;
 			ctx.save();
 			ctx.globalCompositeOperation = layer.blendMode || "source-over";
 			ctx.globalAlpha = layer.opacity ?? 1;
 			drawSwiatloLayer(ctx, layer);
 			ctx.restore();
+			if (perfSample) {
+				perfSample.overlayStages.push({
+					id: layer.id,
+					label: layer.label,
+					mode: layer.blendMode || "source-over",
+					durationMs: readPerfNow() - layerStart,
+				});
+			}
 		}
 	}
 
@@ -1816,7 +1845,7 @@
 		}
 	}
 
-	function drawComposite(canvas, includeGuides, size = OUTPUT_SIZE, snapshot = createEditorSnapshot()) {
+	function drawComposite(canvas, includeGuides, size = OUTPUT_SIZE, snapshot = createEditorSnapshot(), targetLabel = "preview") {
 		if (!canvas) {
 			return;
 		}
@@ -1838,42 +1867,89 @@
 			return;
 		}
 		const resolvedSnapshot = resolveRenderSnapshot(snapshot);
+		const nextCompositeSignature = buildCompositeRenderSignature(resolvedSnapshot);
+		const canReuseComposite = compositeRenderSignature === nextCompositeSignature && compositeRenderSourceCanvas === sourceCanvas;
+		const perfSample = perfInstrumentationEnabled
+			? {
+					targetLabel,
+					size,
+					totalMs: 0,
+					stages: {},
+					overlayStages: [],
+				}
+			: null;
+		const totalStart = perfSample ? readPerfNow() : 0;
+		const measureStage = (stageId, callback) => {
+			if (!perfSample) {
+				return callback();
+			}
+			const stageStart = readPerfNow();
+			const result = callback();
+			perfSample.stages[stageId] = (perfSample.stages[stageId] || 0) + (readPerfNow() - stageStart);
+			return result;
+		};
 
-		configureImageSmoothing(renderCtx);
-		renderCtx.globalAlpha = 1;
-		renderCtx.globalCompositeOperation = "source-over";
-		renderCtx.filter = "none";
-		renderCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
-		renderCtx.fillStyle = resolvedSnapshot.primaryColor;
-		renderCtx.fillRect(0, 0, RENDER_SIZE, RENDER_SIZE);
+		if (!canReuseComposite) {
+			configureImageSmoothing(renderCtx);
+			renderCtx.globalAlpha = 1;
+			renderCtx.globalCompositeOperation = "source-over";
+			renderCtx.filter = "none";
+			renderCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
+			measureStage("fillBase", () => {
+				renderCtx.fillStyle = resolvedSnapshot.primaryColor;
+				renderCtx.fillRect(0, 0, RENDER_SIZE, RENDER_SIZE);
+			});
 
-		const tintCanvas = getTintedCanvasForColor(resolvedSnapshot.iconColor);
-		if (tintCanvas) {
-			const drawWidthRaw = tintCanvas.width * resolvedSnapshot.iconScale * RENDER_SCALE;
-			const drawHeightRaw = tintCanvas.height * resolvedSnapshot.iconScale * RENDER_SCALE;
-			const drawXRaw = RENDER_CENTER - drawWidthRaw / 2 + resolvedSnapshot.iconOffsetX * RENDER_SCALE;
-			const drawYRaw = RENDER_CENTER - drawHeightRaw / 2 + resolvedSnapshot.iconOffsetY * RENDER_SCALE;
-			const iconRaster = resolveIconRaster(tintCanvas, resolvedSnapshot.iconColor, drawXRaw, drawYRaw, drawWidthRaw, drawHeightRaw);
+			const tintCanvas = getTintedCanvasForColor(resolvedSnapshot.iconColor);
+			if (tintCanvas) {
+				const drawWidthRaw = tintCanvas.width * resolvedSnapshot.iconScale * RENDER_SCALE;
+				const drawHeightRaw = tintCanvas.height * resolvedSnapshot.iconScale * RENDER_SCALE;
+				const drawXRaw = RENDER_CENTER - drawWidthRaw / 2 + resolvedSnapshot.iconOffsetX * RENDER_SCALE;
+				const drawYRaw = RENDER_CENTER - drawHeightRaw / 2 + resolvedSnapshot.iconOffsetY * RENDER_SCALE;
+				const iconRaster = measureStage("rasterizeIcon", () => resolveIconRaster(tintCanvas, resolvedSnapshot.iconColor, drawXRaw, drawYRaw, drawWidthRaw, drawHeightRaw));
 
-			drawIconOuterShadow(renderCtx, iconRaster.canvas, iconRaster.x, iconRaster.y, iconRaster.width, iconRaster.height, resolvedSnapshot.iconColor);
-			drawIconBase(renderCtx, iconRaster.canvas, iconRaster.x, iconRaster.y, iconRaster.width, iconRaster.height);
-			drawIconBevelEffects(renderCtx, iconRaster.canvas, iconRaster.x, iconRaster.y, iconRaster.width, iconRaster.height);
+				measureStage("outerShadow", () => {
+					drawIconOuterShadow(renderCtx, iconRaster.canvas, iconRaster.x, iconRaster.y, iconRaster.width, iconRaster.height);
+				});
+				measureStage("iconBase", () => {
+					drawIconBase(renderCtx, iconRaster.canvas, iconRaster.x, iconRaster.y, iconRaster.width, iconRaster.height);
+				});
+				measureStage("bevel", () => {
+					drawIconBevelEffects(renderCtx, iconRaster.canvas, iconRaster.x, iconRaster.y, iconRaster.width, iconRaster.height);
+				});
+			}
+			measureStage("swiatloOverlays", () => {
+				drawSwiatloOverlays(renderCtx, {
+					enabled: resolvedSnapshot.swiatloEnabled,
+					visibility: resolvedSnapshot.swiatloLayerVisibility,
+					perfSample,
+				});
+			});
+			measureStage("edgeAA", () => {
+				applyCircleEdgeAntiAliasing(renderCtx);
+			});
+			compositeRenderSignature = nextCompositeSignature;
+			compositeRenderSourceCanvas = sourceCanvas;
 		}
-		drawSwiatloOverlays(renderCtx, {
-			enabled: resolvedSnapshot.swiatloEnabled,
-			visibility: resolvedSnapshot.swiatloLayerVisibility,
-		});
-		applyCircleEdgeAntiAliasing(renderCtx);
 
 		configureImageSmoothing(targetCtx);
 		targetCtx.globalAlpha = 1;
 		targetCtx.globalCompositeOperation = "source-over";
 		targetCtx.filter = "none";
-		targetCtx.clearRect(0, 0, size, size);
-		targetCtx.drawImage(renderTarget, 0, 0, size, size);
+		measureStage("present", () => {
+			targetCtx.clearRect(0, 0, size, size);
+			targetCtx.drawImage(renderTarget, 0, 0, size, size);
+		});
 
 		if (includeGuides) {
-			drawGuides(targetCtx, size);
+			measureStage("guides", () => {
+				drawGuides(targetCtx, size);
+			});
+		}
+
+		if (perfSample) {
+			perfSample.totalMs = readPerfNow() - totalStart;
+			recordRenderPerfSample(perfSample);
 		}
 	}
 
@@ -2650,6 +2726,47 @@
 					</details>
 				</section>
 
+				<!-- <section class="civ-icon-control-group">
+					<div class="civ-icon-suggestions-head">
+						<h2 class="civ-icon-subtitle">Render Timings</h2>
+						<p class="civ-icon-copy">Measure full composite passes and overlay timings to find the dominant hot path.</p>
+					</div>
+					<div class="civ-icon-action-row">
+						<label class="civ-icon-inline-toggle">
+							<input type="checkbox" checked={perfInstrumentationEnabled} onchange={(event) => onPerfInstrumentationToggle(event.currentTarget.checked)} />
+							<span>Instrument composite renders</span>
+						</label>
+						<button type="button" class="civ-icon-button civ-icon-button-subtle" onclick={clearRenderPerfSamples} disabled={renderPerfSamples.length === 0}> Clear Samples </button>
+					</div>
+					{#if perfInstrumentationEnabled && latestRenderPerfSample}
+						<div class="civ-icon-perf-summary">
+							<span>Latest {latestRenderPerfSample.targetLabel} render</span>
+							<strong>{formatTimingMs(latestRenderPerfSample.totalMs)}</strong>
+						</div>
+						<ul class="civ-icon-perf-list" aria-label="Render stage timings">
+							{#each latestRenderPerfStageRows as row (row.id)}
+								<li>
+									<span>{row.label}</span>
+									<strong>{formatTimingMs(row.durationMs)}</strong>
+								</li>
+							{/each}
+						</ul>
+						{#if latestRenderPerfOverlayRows.length > 0}
+							<p class="civ-icon-copy">Overlay passes</p>
+							<ul class="civ-icon-perf-list civ-icon-perf-list--compact" aria-label="Overlay layer timings">
+								{#each latestRenderPerfOverlayRows as row (`${row.id}-${row.mode}`)}
+									<li>
+										<span>{row.label} <code>{row.mode}</code></span>
+										<strong>{formatTimingMs(row.durationMs)}</strong>
+									</li>
+								{/each}
+							</ul>
+						{/if}
+					{:else if perfInstrumentationEnabled}
+						<p class="civ-icon-copy">Adjust scale, colors, overlays, or compare state to capture timings.</p>
+					{/if}
+				</section> -->
+
 				<div class="civ-icon-actions">
 					<div class="civ-icon-action-row">
 						<button type="button" class="civ-icon-button civ-icon-button-primary" onclick={downloadPng} disabled={exportBusy}>
@@ -3055,6 +3172,60 @@
 	.civ-icon-control-group {
 		display: grid;
 		gap: 0.45rem;
+	}
+
+	.civ-icon-perf-summary {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		padding: 0.72rem 0.82rem;
+		border-radius: 0.82rem;
+		background: color-mix(in oklch, var(--panel-bg) 82%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, var(--panel-border) 72%, transparent);
+		color: color-mix(in oklch, white 82%, var(--ink));
+	}
+
+	.civ-icon-perf-summary strong {
+		font-size: 0.95rem;
+		color: color-mix(in oklch, var(--accent) 52%, white 28%);
+	}
+
+	.civ-icon-perf-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.32rem;
+	}
+
+	.civ-icon-perf-list li {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		padding: 0.48rem 0.1rem;
+		border-top: 1px solid color-mix(in oklch, var(--panel-border) 56%, transparent);
+		font-size: 0.86rem;
+	}
+
+	.civ-icon-perf-list li:first-child {
+		border-top: 0;
+		padding-top: 0.1rem;
+	}
+
+	.civ-icon-perf-list li span {
+		min-inline-size: 0;
+		color: color-mix(in oklch, white 78%, var(--ink));
+	}
+
+	.civ-icon-perf-list li strong {
+		flex: 0 0 auto;
+		color: color-mix(in oklch, var(--accent) 44%, white 36%);
+	}
+
+	.civ-icon-perf-list--compact li {
+		font-size: 0.8rem;
 	}
 
 	.civ-icon-controls-panel .civ-icon-input-label {

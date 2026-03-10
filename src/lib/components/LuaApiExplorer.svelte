@@ -1112,7 +1112,7 @@
 								<span class="lua-metric-chip lua-metric-chip--authored">summary</span>
 							{/if}
 							{#if selectedEntry.gotchas.length > 0}
-								<span class="lua-metric-chip lua-metric-chip--authored">gotchas {selectedEntry.gotchas.length}</span>
+								<span class="lua-metric-chip lua-metric-chip--authored">gotchas</span>
 							{/if}
 							<!-- {#if selectedSeeAlsoItems.length > 0}
 								<span class="lua-metric-chip lua-metric-chip--authored">see also {selectedSeeAlsoItems.length}</span>
@@ -1207,7 +1207,7 @@
 								<section id="lua-doc-gotchas" class="lua-detail-card lua-doc-section" use:trackDocSection={"gotchas"}>
 									<div class="lua-detail-card-head">
 										<h3>Gotchas</h3>
-										<span>{selectedEntry.gotchas.length}</span>
+										<!-- <span>{selectedEntry.gotchas.length}</span> -->
 									</div>
 									<ul class="lua-note-list">
 										{#each selectedEntry.gotchas as gotcha (`${selectedEntry.entryKey}-${gotcha}`)}
