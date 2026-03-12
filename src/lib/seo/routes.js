@@ -44,16 +44,16 @@ const ROUTE_SEO = {
 		keywords: "Civilization V modding links, Civ 5 Discord, Civ modding resources, community hubs",
 		pageType: "CollectionPage",
 	},
-	"/recipe-library": {
-		title: "Recipe Library for Civ V Modding Patterns | Civ Modding Central",
-		description: "Browse the Civ V Recipe Library for source-backed modding patterns covering Lua events, persistence, VFS wiring, localization, debugging, and repeated implementation tasks.",
-		keywords: "Civilization V recipe library, Civ 5 patterns, dummy building helper, notification builder, persistent data helper",
+	"/pattern-library": {
+		title: "Pattern Library for Civ V Modding Workflows | Civ Modding Central",
+		description: "Browse the Civ V Pattern Library for source-backed modding workflows covering Lua events, persistence, VFS wiring, localization, debugging, and repeated implementation tasks.",
+		keywords: "Civilization V pattern library, Civ 5 patterns, dummy building helper, notification builder, persistent data helper",
 		pageType: "CollectionPage",
 	},
-	"/wizard-generators": {
-		title: "Wizard Generators for Civ V Content Creation | Civ Modding Central",
-		description: "Explore the Civ V wizard generator planning hub covering buildings, units, Lua hooks, atlas registration, and larger civilization package builders.",
-		keywords: "Civilization V wizard generator, Civ 5 unit wizard, building wizard, civilization wizard, atlas registration builder",
+	"/scaffold-generators": {
+		title: "Scaffold Generators for Civ V Content Creation | Civ Modding Central",
+		description: "Explore the Civ V scaffold generator planning hub covering buildings, units, Lua hooks, atlas registration, and larger civilization package builders.",
+		keywords: "Civilization V scaffold generator, Civ 5 unit scaffold, building scaffold, civilization scaffold, atlas registration builder",
 		pageType: "CollectionPage",
 	},
 	"/schema-browser": {

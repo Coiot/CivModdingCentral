@@ -1,6 +1,7 @@
 <script>
 	import { onDestroy, onMount, tick } from "svelte";
 	import { parseHexInput as parseHexInputUtil, sanitizeHexColor as sanitizeHexColorUtil } from "../map/pins.js";
+	import { syncCivIconPreferences } from "../stores/toolPreferences.js";
 
 	const OUTPUT_SIZE = 256;
 	const PREVIEW_SIZE = 768;
@@ -32,6 +33,16 @@
 	const INTERACTION_SETTLE_MS = 180;
 	const STATE_PERSIST_DEBOUNCE_MS = 220;
 	const RENDER_PERF_HISTORY_LIMIT = 12;
+	const REDUCED_BEVEL_HIGHLIGHT_OPACITY_MULTIPLIER = 0.5;
+	const SAFARI_CORE_SHADOW_OPACITY_MULTIPLIER = 1.75;
+	const SAFARI_CORE_SHADOW_DISTANCE_MULTIPLIER = 0.7;
+	const SAFARI_SHADOW_OPACITY_MULTIPLIER = 1.5;
+	const SAFARI_SHADOW_BLUR_MULTIPLIER = 5;
+	const SAFARI_SHADOW_DISTANCE_MULTIPLIER = 1.2;
+	const SAFARI_FALLOFF_SHADOW_DISTANCE_MULTIPLIER = 1.5;
+	const SAFARI_SHADOW_FALLOFF_OPACITY_MULTIPLIER = 1.95;
+	const SAFARI_SHADOW_FALLOFF_BLUR_MULTIPLIER = 3;
+	const SAFARI_SHADOW_PUNCHOUT_BLUR_MULTIPLIER = 0.55;
 	const SETTINGS_STORAGE_KEY = "cmc:civ-icon-maker:settings:v2";
 	const SOURCE_STORAGE_KEY = "cmc:civ-icon-maker:source:v2";
 	const LEGACY_STORAGE_KEY = "cmc:civ-icon-maker:v1";
@@ -40,25 +51,25 @@
 		outerShadow: {
 			enabled: true,
 			color: "#000000",
-			opacity: 0.5,
-			blur: 1,
+			opacity: 0.4,
+			blur: 0.25,
 			distance: 1.75,
 			angleDeg: 300,
 			coreBlendMode: "multiply",
-			coreOpacity: 0.5,
-			coreBlurMultiplier: 2,
+			coreOpacity: 0.45,
+			coreBlurMultiplier: 1,
 			falloffBlendMode: "overlay",
-			falloffOpacity: 0.4,
-			falloffBlurMultiplier: 2,
-			falloffDistanceMultiplier: 1.5,
+			falloffOpacity: 0.3,
+			falloffBlurMultiplier: 0.25,
+			falloffDistanceMultiplier: 1.1,
 		},
 		bevel: {
 			enabled: true,
 			angleDeg: 285,
 			highlight: {
 				color: "#ffffff",
-				opacity: 0.85,
-				distance: 0.925,
+				opacity: 0.925,
+				distance: 0.9,
 				samples: 16,
 				soften: 0.5,
 				blendMode: "source-over",
@@ -72,7 +83,7 @@
 			},
 		},
 	};
-	const ICON_EDGE_SOFTEN_PX = 2;
+	const ICON_EDGE_SOFTEN_PX = 1;
 	const SWIATLO_LAYER_DEFS = [
 		{ id: "blik", label: "Top Glint", file: "blik.png", blendMode: "source-over", opacity: 1 },
 		{ id: "overlay_flash_3", label: "Arc Highlight", file: "overlay flash 3.png", blendMode: "screen", opacity: 1 },
@@ -239,6 +250,8 @@
 	let renderBusy = $state(false);
 	let renderBusyLabel = $state("");
 	let exportBusy = $state(false);
+	let usesReducedBevelHighlightOpacity = false;
+	let isSafariShadowProfile = $state(false);
 	let comparePreviewSignature = "";
 	let comparePreviewSourceCanvas = null;
 	let compositeRenderSignature = "";
@@ -364,7 +377,19 @@
 		commitHistoryCheckpoint();
 	});
 
+	$effect(() => {
+		primaryColor;
+		iconColor;
+		syncCivIconPreferences({
+			primaryColor: sanitizeHexColor(primaryColor, DEFAULT_PRIMARY_COLOR),
+			iconColor: sanitizeHexColor(iconColor, DEFAULT_ICON_COLOR),
+		});
+	});
+
 	onMount(() => {
+		const userAgent = typeof navigator !== "undefined" ? navigator.userAgent : "";
+		usesReducedBevelHighlightOpacity = /firefox|chrom(e|ium)|edg|opr/i.test(userAgent);
+		isSafariShadowProfile = /safari/i.test(userAgent) && !/firefox|chrom(e|ium)|edg|opr/i.test(userAgent);
 		void restorePersistedState();
 		primeSwiatloAssets();
 	});
@@ -1552,16 +1577,25 @@
 		}
 
 		const settings = ICON_EFFECT_SETTINGS.outerShadow;
+		const shadowCoreOpacityMultiplier = isSafariShadowProfile ? SAFARI_CORE_SHADOW_OPACITY_MULTIPLIER : 1;
+		const shadowCoreDistanceMultiplier = isSafariShadowProfile ? SAFARI_CORE_SHADOW_DISTANCE_MULTIPLIER : 1;
+		const shadowFalloffDistanceMultiplier = isSafariShadowProfile ? SAFARI_FALLOFF_SHADOW_DISTANCE_MULTIPLIER : 1;
+		const shadowOpacityMultiplier = isSafariShadowProfile ? SAFARI_SHADOW_OPACITY_MULTIPLIER : 1;
+		const shadowBlurMultiplier = isSafariShadowProfile ? SAFARI_SHADOW_BLUR_MULTIPLIER : 1;
+		const shadowDistanceMultiplier = isSafariShadowProfile ? SAFARI_SHADOW_DISTANCE_MULTIPLIER : 1;
+		const shadowFalloffOpacityMultiplier = isSafariShadowProfile ? SAFARI_SHADOW_FALLOFF_OPACITY_MULTIPLIER : 1;
+		const shadowFalloffBlurMultiplier = isSafariShadowProfile ? SAFARI_SHADOW_FALLOFF_BLUR_MULTIPLIER : 1;
+		const shadowPunchoutBlurMultiplier = isSafariShadowProfile ? SAFARI_SHADOW_PUNCHOUT_BLUR_MULTIPLIER : 1;
 		const vector = angleToVector(settings.angleDeg);
-		const offsetX = toStableOffsetPx(vector.x * settings.distance * RENDER_SCALE);
-		const offsetY = toStableOffsetPx(vector.y * settings.distance * RENDER_SCALE);
-		const baseBlur = toStableBlurPx(settings.blur * RENDER_SCALE);
-		const coreOpacity = clamp((settings.coreOpacity ?? 1) * settings.opacity, 0, 1);
+		const offsetX = toStableOffsetPx(vector.x * settings.distance * shadowCoreDistanceMultiplier * RENDER_SCALE);
+		const offsetY = toStableOffsetPx(vector.y * settings.distance * shadowCoreDistanceMultiplier * RENDER_SCALE);
+		const baseBlur = toStableBlurPx(settings.blur * shadowBlurMultiplier * RENDER_SCALE);
+		const coreOpacity = clamp((settings.coreOpacity ?? 1) * settings.opacity * shadowOpacityMultiplier * shadowCoreOpacityMultiplier, 0, 1);
 		const coreBlur = toStableBlurPx(baseBlur * (settings.coreBlurMultiplier ?? 1));
-		const falloffOpacity = clamp((settings.falloffOpacity ?? 0.4) * settings.opacity, 0, 1);
-		const falloffBlur = toStableBlurPx(baseBlur * (settings.falloffBlurMultiplier ?? 2));
-		const falloffDistance = settings.falloffDistanceMultiplier ?? 1;
-		const punchoutBlur = toStableBlurPx(Math.max(1, baseBlur * 0.8));
+		const falloffOpacity = clamp((settings.falloffOpacity ?? 0.4) * settings.opacity * shadowOpacityMultiplier * shadowFalloffOpacityMultiplier, 0, 1);
+		const falloffBlur = toStableBlurPx(baseBlur * (settings.falloffBlurMultiplier ?? 2) * shadowFalloffBlurMultiplier);
+		const falloffDistance = (settings.falloffDistanceMultiplier ?? 1) * shadowDistanceMultiplier * shadowFalloffDistanceMultiplier;
+		const punchoutBlur = toStableBlurPx(Math.max(1, baseBlur * 0.8 * shadowPunchoutBlurMultiplier));
 		const falloffOffsetX = toStableOffsetPx(offsetX * falloffDistance);
 		const falloffOffsetY = toStableOffsetPx(offsetY * falloffDistance);
 
@@ -1579,14 +1613,26 @@
 				return;
 			}
 			shadowCtx.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
-			shadowCtx.save();
-			shadowCtx.globalAlpha = alpha;
-			shadowCtx.filter = blurFilter(blurPx);
-			shadowCtx.drawImage(maskCanvas, passOffsetX, passOffsetY);
-			shadowCtx.restore();
+			if (isSafariShadowProfile) {
+				shadowCtx.save();
+				shadowCtx.globalAlpha = alpha;
+				shadowCtx.filter = "none";
+				shadowCtx.shadowColor = colorToRgba(settings.color, 1);
+				shadowCtx.shadowBlur = blurPx;
+				shadowCtx.shadowOffsetX = passOffsetX;
+				shadowCtx.shadowOffsetY = passOffsetY;
+				shadowCtx.drawImage(maskCanvas, 0, 0);
+				shadowCtx.restore();
+			} else {
+				shadowCtx.save();
+				shadowCtx.globalAlpha = alpha;
+				shadowCtx.filter = blurFilter(blurPx);
+				shadowCtx.drawImage(maskCanvas, passOffsetX, passOffsetY);
+				shadowCtx.restore();
+			}
 			shadowCtx.save();
 			shadowCtx.globalCompositeOperation = "destination-out";
-			shadowCtx.filter = blurFilter(punchoutBlur);
+			shadowCtx.filter = isSafariShadowProfile ? "none" : blurFilter(punchoutBlur);
 			shadowCtx.drawImage(maskCanvas, 0, 0);
 			shadowCtx.restore();
 
@@ -1616,7 +1662,7 @@
 		const opacity = clamp(options.opacity ?? 0, 0, 1);
 		const sampleCount = Math.max(1, Math.round(Number(options.samples) || 1));
 		const distancePx = Math.max(0, Number(options.distance) || 0) * RENDER_SCALE;
-		const softenPx = Math.max(0, Number(options.soften) || 0) * RENDER_SCALE;
+		const softenPx = toStableOffsetPx(Math.max(0, Number(options.soften) || 0) * RENDER_SCALE);
 		if (opacity <= 0 || distancePx <= 0) {
 			return;
 		}
@@ -1626,6 +1672,29 @@
 		const baseShiftX = vector.x * distancePx * direction;
 		const baseShiftY = vector.y * distancePx * direction;
 		const totalWeight = (sampleCount * (sampleCount + 1)) / 2;
+		const quantizedSamples = new Map();
+		let quantizedWeightTotal = 0;
+
+		for (let index = 0; index < sampleCount; index += 1) {
+			const step = (index + 1) / sampleCount;
+			const weight = (index + 1) / totalWeight;
+			const shiftX = toStableOffsetPx(baseShiftX * step);
+			const shiftY = toStableOffsetPx(baseShiftY * step);
+			if (shiftX === 0 && shiftY === 0) {
+				continue;
+			}
+			const key = `${shiftX}:${shiftY}`;
+			quantizedSamples.set(key, {
+				shiftX,
+				shiftY,
+				weight: (quantizedSamples.get(key)?.weight || 0) + weight,
+			});
+			quantizedWeightTotal += weight;
+		}
+
+		if (quantizedSamples.size === 0 || quantizedWeightTotal <= 0) {
+			return;
+		}
 
 		configureImageSmoothing(resultCtx);
 		resultCtx.globalAlpha = 1;
@@ -1635,14 +1704,9 @@
 
 		configureImageSmoothing(sampleCtx);
 
-		// Build the bevel from several fractional edge samples instead of blur filters.
-		// This is more predictable across browsers and naturally smooths the rim.
-		for (let index = 0; index < sampleCount; index += 1) {
-			const step = (index + 1) / sampleCount;
-			const weight = (index + 1) / totalWeight;
-			const shiftX = baseShiftX * step;
-			const shiftY = baseShiftY * step;
-
+		// Quantize and merge the sample offsets so different canvas engines do not
+		// over-accentuate the same fractional rim in slightly different ways.
+		for (const { shiftX, shiftY, weight } of quantizedSamples.values()) {
 			sampleCtx.globalAlpha = 1;
 			sampleCtx.globalCompositeOperation = "source-over";
 			sampleCtx.filter = "none";
@@ -1653,7 +1717,7 @@
 			sampleCtx.globalCompositeOperation = "destination-out";
 			sampleCtx.drawImage(tintCanvas, drawX - shiftX, drawY - shiftY, drawWidth, drawHeight);
 			sampleCtx.globalCompositeOperation = "source-in";
-			sampleCtx.fillStyle = colorToRgba(options.color, opacity * weight);
+			sampleCtx.fillStyle = colorToRgba(options.color, opacity * (weight / quantizedWeightTotal));
 			sampleCtx.fillRect(0, 0, RENDER_SIZE, RENDER_SIZE);
 			sampleCtx.globalCompositeOperation = "source-over";
 
@@ -1699,7 +1763,7 @@
 			samples: bevel.highlight?.samples,
 			soften: bevel.highlight?.soften,
 			color: bevel.highlight?.color,
-			opacity: bevel.highlight?.opacity,
+			opacity: (bevel.highlight?.opacity ?? 0) * (usesReducedBevelHighlightOpacity ? REDUCED_BEVEL_HIGHLIGHT_OPACITY_MULTIPLIER : 1),
 			blendMode: bevel.highlight?.blendMode,
 			invertDirection: true,
 		});

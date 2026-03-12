@@ -35,6 +35,11 @@
 		description: string;
 	}
 
+	interface SourceFileScanRow extends ModinfoFileRow {
+		actionHint?: string;
+		entryPointHint?: string;
+	}
+
 	type LogLevel = "info" | "warn" | "error";
 
 	interface SteamActionResult<T = unknown> {
@@ -100,7 +105,7 @@
 	};
 
 	const ACTION_TYPES = ["UpdateDatabase", "UpdateText", "UpdateArt", "ImportFiles", "PlayAudio"];
-	const ENTRYPOINT_TYPES = ["InGameUIAddin", "FrontEndUIAddin"];
+	const ENTRYPOINT_TYPES = ["InGameUIAddin", "FrontEndUIAddin", "Custom", "Map", "MapScript", "CityViewUIAddin", "DiplomacyUIAddin"];
 	const STABILITY_OPTIONS = ["Experimental", "Alpha", "Beta", "Stable"] as const;
 	const CIV5_COLOR_OPTIONS = [
 		"COLOR_ADVISOR_HIGHLIGHT_TEXT",
@@ -350,16 +355,16 @@
 		if (normalized.endsWith(".sql")) {
 			return false;
 		}
-		if (normalized.endsWith(".lua")) {
-			return true;
-		}
 
 		const importExtensions = [".dds", ".tga", ".png", ".jpg", ".jpeg", ".gr2", ".fxsxml", ".ogg", ".wav", ".mp3", ".bnk"];
 		if (importExtensions.some((ext) => normalized.endsWith(ext))) {
 			return true;
 		}
+		if (isLikelyReplacementUiPath(normalized)) {
+			return true;
+		}
 
-		const importFolders = ["/lua/", "/ui/", "/art/", "/audio/", "/icons/", "/textures/", "/models/"];
+		const importFolders = ["/art/", "/audio/", "/icons/", "/textures/", "/models/"];
 		if (importFolders.some((folder) => normalized.includes(folder))) {
 			return true;
 		}
@@ -376,16 +381,218 @@
 				})
 				.map((row) => normalizeRelativeFilePath(row.file)),
 		);
-		const importByEntryPoint = new Set((entryPointRows || []).map((row) => normalizeRelativeFilePath(row.file)));
+		const entryPointFiles = new Set((entryPointRows || []).map((row) => normalizeRelativeFilePath(row.file)));
 
 		return (fileRows || []).map((file) => {
 			const normalizedPath = normalizeRelativeFilePath(file.relativePath);
-			const inferred = importByAction.has(normalizedPath) || importByEntryPoint.has(normalizedPath) || shouldImportFileByPath(normalizedPath);
+			const inferred = importByAction.has(normalizedPath) || (!entryPointFiles.has(normalizedPath) && shouldImportFileByPath(normalizedPath));
 			return {
 				...file,
 				import: Boolean(normalizeImportFlag(file.import) || inferred),
 			};
 		});
+	}
+
+	function stripXmlDeclaration(value: string): string {
+		return String(value || "").replace(/^\uFEFF/, "").trimStart().replace(/^<\?xml[^>]*>\s*/i, "");
+	}
+
+	function isUiPath(path: string): boolean {
+		const normalized = normalizeRelativeFilePath(path);
+		return normalized.startsWith("ui/") || normalized.includes("/ui/");
+	}
+
+	function uiPathSegments(path: string): string[] {
+		const normalized = normalizeRelativeFilePath(path);
+		const parts = normalized.split("/").filter(Boolean);
+		const uiIndex = parts.indexOf("ui");
+		if (uiIndex === -1) {
+			return [];
+		}
+		return parts.slice(uiIndex + 1);
+	}
+
+	function isUiContextXml(content: string): boolean {
+		return /^<(Context|Contexts)\b/i.test(content);
+	}
+
+	function isLikelyReplacementUiPath(path: string): boolean {
+		const normalized = normalizeRelativeFilePath(path);
+		if (!normalized.endsWith(".xml") || !isUiPath(normalized)) {
+			return false;
+		}
+		if (normalized.includes("/override/") || normalized.includes("/replace/") || normalized.includes("/replacement/")) {
+			return true;
+		}
+
+		const uiParts = uiPathSegments(normalized);
+		if (uiParts.length <= 2) {
+			return true;
+		}
+
+		const top = uiParts[0] || "";
+		const second = uiParts[1] || "";
+		const knownReplacementFolders = new Set([
+			"cityview",
+			"civilopedia",
+			"diplomacy",
+			"leaderhead",
+			"menus",
+			"popups",
+			"strategicview",
+			"techpopup",
+			"victoryprogress",
+			"worldview",
+		]);
+		return (top === "ingame" || top === "frontend") && knownReplacementFolders.has(second);
+	}
+
+	function isReplacementUiXml(path: string, content: string): boolean {
+		if (!isLikelyReplacementUiPath(path)) {
+			return false;
+		}
+		if (isUiContextXml(content)) {
+			const uiParts = uiPathSegments(path);
+			// UI/InGame/<mod-folder>/<context>.xml is usually a new addin context, not a direct replacement.
+			if (uiParts.length >= 3 && (uiParts[0] === "ingame" || uiParts[0] === "frontend")) {
+				const knownReplacementFolders = new Set([
+					"cityview",
+					"civilopedia",
+					"diplomacy",
+					"leaderhead",
+					"menus",
+					"popups",
+					"strategicview",
+					"techpopup",
+					"victoryprogress",
+					"worldview",
+				]);
+				if (!knownReplacementFolders.has(uiParts[1] || "")) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	function isScenarioLoadScreenXml(path: string, content: string): boolean {
+		const normalized = normalizeRelativeFilePath(path);
+		if (!normalized.endsWith(".xml")) {
+			return false;
+		}
+		const hasPathHint =
+			normalized.includes("loadscreen") || normalized.includes("loadingscreen") || normalized.includes("customsetup") || normalized.includes("custom_setup");
+		const inScenarioFolder =
+			normalized.includes("/map/") || normalized.includes("/maps/") || normalized.includes("/scenario/") || normalized.includes("/scenarios/");
+		const hasXmlHint = /<(Custom|Scenario|LoadScreen)\b/i.test(content);
+		return hasPathHint && (inScenarioFolder || hasXmlHint);
+	}
+
+	function isLeaderSceneXml(content: string): boolean {
+		return /^<LeaderScene\s+FallbackImage=/i.test(content);
+	}
+
+	function isLocalizationXml(path: string, content: string): boolean {
+		const normalizedPath = normalizeRelativeFilePath(path);
+		return normalizedPath.includes("/text/") || normalizedPath.includes("language") || /<Language_[A-Za-z0-9_]+\b/.test(content);
+	}
+
+	function isGameplayDatabaseXml(content: string): boolean {
+		return /^<(GameData|GameInfo)\b/i.test(content);
+	}
+
+	function inferEntryPointTypeByPath(path: string): string {
+		const normalized = normalizeRelativeFilePath(path);
+		if (!normalized) {
+			return "";
+		}
+		if (normalized.endsWith(".civ5map")) {
+			return "Map";
+		}
+		if (normalized.includes("mapscript")) {
+			return "MapScript";
+		}
+		if (normalized.includes("cityview")) {
+			return "CityViewUIAddin";
+		}
+		if (normalized.includes("diplo") || normalized.includes("diplomacy")) {
+			return "DiplomacyUIAddin";
+		}
+		if (normalized.includes("loadingscreen") || normalized.includes("loadscreen") || normalized.includes("customsetup") || normalized.includes("custom_setup")) {
+			return "Custom";
+		}
+		if (normalized.includes("frontend") || normalized.includes("front-end") || normalized.includes("/front/")) {
+			return "FrontEndUIAddin";
+		}
+		if (normalized.endsWith(".lua")) {
+			return "InGameUIAddin";
+		}
+		return "";
+	}
+
+	function inferXmlActionHint(path: string, content: string): string {
+		if (isGameplayDatabaseXml(content)) {
+			return "UpdateDatabase";
+		}
+		if (isLocalizationXml(path, content)) {
+			return "UpdateText";
+		}
+		return "";
+	}
+
+	function inferXmlEntryPointHint(path: string, content: string): string {
+		if (isScenarioLoadScreenXml(path, content)) {
+			return "Custom";
+		}
+		if (!isUiPath(path)) {
+			return inferEntryPointTypeByPath(path);
+		}
+		if (isReplacementUiXml(path, content)) {
+			return "";
+		}
+		if (isUiContextXml(content)) {
+			const byPath = inferEntryPointTypeByPath(path);
+			if (byPath === "CityViewUIAddin" || byPath === "DiplomacyUIAddin" || byPath === "FrontEndUIAddin") {
+				return byPath;
+			}
+			return "InGameUIAddin";
+		}
+		return "";
+	}
+
+	async function scanSourceFile(file: File, relativePath: string): Promise<SourceFileScanRow> {
+		const md5 = await md5HexBytes(file);
+		const normalizedPath = normalizeRelativeFilePath(relativePath);
+		let importHint = false;
+		let actionHint = "";
+		let entryPointHint = "";
+
+		if (normalizedPath.endsWith(".xml")) {
+			const normalizedXml = stripXmlDeclaration(await file.slice(0, 16384).text());
+			importHint = isLeaderSceneXml(normalizedXml) || isReplacementUiXml(normalizedPath, normalizedXml);
+			actionHint = inferXmlActionHint(normalizedPath, normalizedXml);
+			entryPointHint = inferXmlEntryPointHint(normalizedPath, normalizedXml);
+		} else if (normalizedPath.endsWith(".lua") || normalizedPath.endsWith(".civ5map")) {
+			entryPointHint = inferEntryPointTypeByPath(normalizedPath);
+		}
+
+		return {
+			relativePath,
+			md5,
+			import: importHint,
+			actionHint,
+			entryPointHint,
+		};
+	}
+
+	function mergeActionSuggestions(...groups: ModinfoActionRow[][]): ModinfoActionRow[] {
+		const merged = groups.flat().filter((row) => nonEmpty(row?.file));
+		return Array.from(new Map(merged.map((row) => [`${row.event}|${row.action}|${normalizeRelativeFilePath(row.file)}`, row])).values());
+	}
+
+	function mergeEntryPointSuggestions(...groups: ModinfoEntryPointRow[][]): ModinfoEntryPointRow[] {
+		const merged = groups.flat().filter((row) => nonEmpty(row?.file));
+		return Array.from(new Map(merged.map((row) => [`${row.type}|${normalizeRelativeFilePath(row.file)}`, row])).values());
 	}
 
 	function removeFile(index: number): void {
@@ -742,18 +949,7 @@
 		onWorking(true);
 		try {
 			if (!api) {
-				const scannedFiles = await Promise.all(
-					selectedSourceFiles.map(async (file) => {
-						const md5 = await md5HexBytes(file);
-						const relativePath = normalizeRelativePath(file.webkitRelativePath || file.name);
-						const importByLeaderScene = await shouldImportLeaderSceneXml(file);
-						return {
-							relativePath,
-							md5,
-							import: importByLeaderScene,
-						};
-					}),
-				);
+				const scannedFiles = await Promise.all(selectedSourceFiles.map(async (file) => scanSourceFile(file, normalizeRelativePath(file.webkitRelativePath || file.name))));
 				files = scannedFiles.filter((entry) => Boolean(entry.relativePath));
 				actions = suggestActionsFromFiles(files);
 				entryPoints = suggestEntryPointsFromFiles(files);
@@ -779,8 +975,8 @@
 
 			sourceDirectoryPath = result.data.sourceDirectoryPath;
 			files = normalizeFileRows(result.data.files);
-			actions = result.data.suggestedActions;
-			entryPoints = result.data.suggestedEntryPoints;
+			actions = mergeActionSuggestions(result.data.suggestedActions || [], suggestActionsFromFiles(files));
+			entryPoints = mergeEntryPointSuggestions(result.data.suggestedEntryPoints || [], suggestEntryPointsFromFiles(files));
 			files = applyAutoImportHints(files, actions, entryPoints);
 			if (!nonEmpty(properties.name)) {
 				properties.name = result.data.suggestedName;
@@ -923,16 +1119,6 @@
 		return parts.length > 1 ? parts.slice(1).join("/") : parts[0] || "";
 	}
 
-	async function shouldImportLeaderSceneXml(file: File): Promise<boolean> {
-		const fileName = String(file?.name || "").toLowerCase();
-		if (!fileName.endsWith(".xml")) {
-			return false;
-		}
-
-		const header = await file.slice(0, 4096).text();
-		const normalized = header.replace(/^\uFEFF/, "").trimStart().replace(/^<\?xml[^>]*>\s*/i, "");
-		return /^<LeaderScene\s+FallbackImage=/.test(normalized);
-	}
 
 	async function md5HexBytes(file: File): Promise<string> {
 		return computeMd5HexBytes(new Uint8Array(await file.arrayBuffer()));
@@ -956,23 +1142,40 @@
 			const file = row.relativePath.toLowerCase();
 			if (file.endsWith(".sql")) {
 				next.push({ event: "OnModActivated", action: "UpdateDatabase", file: row.relativePath });
-			} else if (file.endsWith(".xml") && (file.includes("/text/") || file.includes("language"))) {
+				continue;
+			}
+			if ((row as SourceFileScanRow).actionHint) {
+				next.push({ event: "OnModActivated", action: (row as SourceFileScanRow).actionHint || "UpdateDatabase", file: row.relativePath });
+				continue;
+			}
+			if (file.endsWith(".xml") && isLocalizationXml(file, "")) {
 				next.push({ event: "OnModActivated", action: "UpdateText", file: row.relativePath });
+				continue;
+			}
+			if (file.endsWith(".xml") && !file.includes("/ui/") && !file.includes("/art/") && !file.includes("/audio/")) {
+				next.push({ event: "OnModActivated", action: "UpdateDatabase", file: row.relativePath });
 			}
 		}
-		return next;
+		return Array.from(new Map(next.map((row) => [`${row.event}|${row.action}|${normalizeRelativeFilePath(row.file)}`, row])).values());
 	}
 
 	function suggestEntryPointsFromFiles(rows: ModinfoFileRow[]): ModinfoEntryPointRow[] {
-		return rows
-			.filter((row) => row.relativePath.toLowerCase().endsWith(".lua"))
-			.slice(0, 8)
-			.map((row) => ({
-				type: "InGameUIAddin",
-				file: row.relativePath,
-				name: row.relativePath.split("/").pop() || row.relativePath,
-				description: "",
-			}));
+		const next = rows
+			.map((row) => {
+				const hintedType = (row as SourceFileScanRow).entryPointHint || inferEntryPointTypeByPath(row.relativePath);
+				if (!hintedType) {
+					return null;
+				}
+				return {
+					type: hintedType,
+					file: row.relativePath,
+					name: row.relativePath.split("/").pop() || row.relativePath,
+					description: "",
+				};
+			})
+			.filter((row): row is ModinfoEntryPointRow => Boolean(row));
+
+		return Array.from(new Map(next.map((row) => [`${row.type}|${normalizeRelativeFilePath(row.file)}`, row])).values()).slice(0, 8);
 	}
 
 	function parseImportedModinfoXml(xml: string, fileName: string): LoadModinfoResultData {

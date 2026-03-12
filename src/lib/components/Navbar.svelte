@@ -23,34 +23,61 @@
 			id: "ship",
 			kicker: "Publish",
 			label: "Build & Publish",
-			description: "Package, format, and ship finished mods.",
-			panelTitle: "Compiling Mods",
-			panelCopy: "Use these when your mod is ready to package, validate, format, and push into a distributable form for local testing, sharing, or Workshop release.",
+			description: "Package, validate, and ship finished mods.",
+			panelTitle: "Build Outputs",
+			panelCopy: "Use these when your mod is ready for manifest editing, packaging, and Workshop release.",
 			links: [
 				{
 					href: "/workshop-uploader",
 					label: "Workshop Uploader",
-					description: "OS agnostic desktop app for streamlined Steam Workshop publishing and updating of mods.",
+					description: "Desktop app for Steam Workshop publishing and updating.",
 				},
 				{
 					href: "/modinfo-builder",
 					label: ".modinfo Builder",
-					description: "Generate a working modinfo file with all the correct references and metadata without hand-editing the project XML.",
+					description: "Build and edit `.modinfo` manifests directly, including actions and metadata.",
 				},
 				{
 					href: "/civ5mod-ziper",
 					label: ".civ5mod Ziper",
-					description: "Bundle a mod folder into Civ V's distributable legacy zip format for publishing and sharing.",
+					description: "Package a mod folder into Civ V's distributable `.civ5mod` format.",
 				},
 			],
 		},
 		{
-			id: "explore",
+			id: "assets",
+			kicker: "Art & UI",
+			label: "Visual Pipeline",
+			description: "Prepare icons, textures, and interface assets.",
+			panelTitle: "Prep & Design",
+			panelCopy: "Use these when you need Civ V-ready DDS files, icon sheets, and UI-facing art assets.",
+			links: [
+				{
+					href: "/dds-converter",
+					label: "DDS Converter",
+					description: "Convert icons, screens, and textures into game-ready DDS files using helpful presets.",
+				},
+				{
+					href: "/civ-icon-maker",
+					label: "Icon Maker",
+					description: "Generate styled civ icons for atlas sheets and UI use.",
+				},
+				{
+					href: "/text-screen-viewer",
+					label: "Text Screen Viewer",
+					description: "Browse and test text with Civ V icons in the various in-game screens.",
+					disabled: true,
+					statusLabel: "Coming Soon",
+				},
+			],
+		},
+		{
+			id: "reference",
 			kicker: "Reference",
-			label: "Explore & Learn",
-			description: "Inspect data and jump into curated docs.",
-			panelTitle: "Lookup & Reference",
-			panelCopy: "Open these when you need to inspect Civ V data, review the game's API for new mods, or jump into trusted community references.",
+			label: "Reference & Viewers",
+			description: "Inspect game data, modded content, and map systems.",
+			panelTitle: "Data & Inspection",
+			panelCopy: "Use these when you need schema lookup, visual inspection tools, or mod content reference pages.",
 			links: [
 				{
 					href: "/schema-browser",
@@ -69,60 +96,73 @@
 					label: "Map Viewer",
 					description: "Inspect plots, terrain, ownership, and other map data visually for mod support or CPU-only game setup.",
 				},
+				// {
+				// 	href: "/tech-tree-viewer",
+				// 	label: "Tech Tree Viewer",
+				// 	description: "Browse technologies, prerequisites, and progression layout.",
+				// 	disabled: true,
+				// 	statusLabel: "Coming Soon",
+				// },
+				// {
+				// 	href: "/modded-civs-pedia",
+				// 	label: "Modded Civs Pedia",
+				// 	description: "Reference page for custom civilizations and gameplay mods",
+				// 	disabled: true,
+				// 	statusLabel: "Coming Soon",
+				// },
+				// {
+				// 	href: "/religion-support",
+				// 	label: "Religion Support",
+				// 	description: "Lookup support data for Historical Religions and related religion mods.",
+				// 	disabled: true,
+				// 	statusLabel: "Coming Soon",
+				// },
+			],
+		},
+		{
+			id: "learn",
+			kicker: "Learn",
+			label: "Tutorials & Patterns",
+			description: "Follow guided tutorials and starter workflows.",
+			panelTitle: "Learning Paths",
+			panelCopy: "Use these when you need onboarding, source-backed recipes, or guided mod setup flows.",
+			links: [
+				// {
+				// 	href: "/guided-planner",
+				// 	label: "Guided Planner",
+				// 	description: "Checklist driven planner for building a civ mod with step-by-step links into the site's tools, references, and tutorials.",
+				// 	disabled: true,
+				// 	statusLabel: "Coming Soon",
+				// },
+				{
+					href: "/tutorials",
+					label: "Tutorials",
+					description: "Guided walkthroughs for setup, uniques, art, UI, and 3D assets.",
+					disabled: true,
+					statusLabel: "Coming Soon",
+				},
+				{
+					href: "/scaffold-generators",
+					label: "Scaffold Generators",
+					description: "Step-by-step generators for setuping up a new civ mod from a starter build.",
+				},
+				{
+					href: "/pattern-library",
+					label: "Pattern Library",
+					description: "Curated set of coded patterns and repeatable setup recipes.",
+					disabled: true,
+					statusLabel: "Coming Soon",
+				},
+
 				{
 					href: "/community-links",
 					label: "Community Links",
-					description: "Open the curated collection of Civ V modding references, utilities, and community resources.",
-				},
-			],
-		},
-		// {
-		// 	id: "generate",
-		// 	kicker: "Scaffold",
-		// 	label: "Generators & Recipes",
-		// 	description: "Research-backed starter patterns and guided builders.",
-		// 	panelTitle: "Starter Builders",
-		// 	panelCopy: "Use these pages when you need repeatable Civ V patterns, source-backed implementation notes, or guided generator planning.",
-		// 	links: [
-		// 		{
-		// 			href: "/recipe-library",
-		// 			label: "Recipe Library",
-		// 			description: "Source-backed patterns for event routing, persistence, VFS wiring, localization, debugging, and other repeatable Civ V tasks.",
-		// 		},
-		// 		{
-		// 			href: "/wizard-generators",
-		// 			label: "Wizard Generators",
-		// 			description: "Initial generator roadmap for buildings, units, Lua hooks, atlas registration, and larger civilization package builders.",
-		// 		},
-		// 		{
-		// 			label: "Project Skeleton Generator",
-		// 			description: "Generate a clean starter mod with wired XML, SQL, Lua, UI folders, and actions.",
-		// 			disabled: true,
-		// 			statusLabel: "Coming Soon",
-		// 		},
-		// 	],
-		// },
-		{
-			id: "assets",
-			kicker: "Art & UI",
-			label: "Build Visual Assets",
-			description: "Turn source art into Civ V-ready icons, textures, and UI assets.",
-			panelTitle: "Art Pipeline",
-			panelCopy: "Use these when you need mod-ready visual assets that fit Civ V's icon sheets, DDS requirements, and in-game presentation constraints.",
-			links: [
-				{
-					href: "/dds-converter",
-					label: "DDS Converter",
-					description: "Convert icons, screens, and textures into game-ready DDS files using helpful presets.",
-				},
-				{
-					href: "/civ-icon-maker",
-					label: "Icon Maker",
-					description: "Upload a civ icon alpha and have it styled and formatted for use in icon sheets for mods.",
+					description: "Civ V modding references, utilities, and community resources.",
 				},
 			],
 		},
 	];
+
 	const NAV_PAGE_COUNT = NAV_GROUPS.reduce((count, group) => count + group.links.length, 0);
 	const REDDIT_URL = "https://old.reddit.com/r/civmoddingcentral/";
 	const DISCORD_URL = "https://discord.gg/yf8jUXf";

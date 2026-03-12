@@ -46,6 +46,70 @@
 		Plot: "Terrain, ownership, routes, resources, improvements, visibility, and map tile inspection.",
 		Team: "Tech progress, war state, embassies, shared visibility, and team-scoped diplomacy checks.",
 	};
+	const LUA_PATTERN_SEE_ALSO = {
+		"game-events:game-event-playerdoturn-72": [
+			{
+				type: "pattern",
+				label: "Per-Turn City Scanner",
+				note: "High-signal recipe companion when the hook is driving a recurring city loop or civ effect.",
+				href: "/pattern-library?pattern=per-turn-city-scanner",
+			},
+			{
+				type: "pattern",
+				label: "SaveData Cooldown / Once-Per-City / Once-Per-Player",
+				note: "Use this when the turn hook needs guards instead of firing the payload every pass.",
+				href: "/pattern-library?pattern=savedata-cooldown-once-per-city-once-per-player",
+			},
+		],
+		"game-events:game-event-canhavepromotion-5": [
+			{
+				type: "pattern",
+				label: "Promotion Chain Setup",
+				note: "Natural follow-up when the event is vetoing or staging a gated promotion chain.",
+				href: "/pattern-library?pattern=promotion-chain-setup",
+			},
+		],
+		"game-events:game-event-cityboughtplot-17": [
+			{
+				type: "pattern",
+				label: "City Bought Plot Trigger",
+				note: "Direct recipe companion for one-time rewards or tile payloads on purchased plots.",
+				href: "/pattern-library?pattern=city-bought-plot-trigger",
+			},
+		],
+		"methods:city-getnumbuilding-178": [
+			{
+				type: "pattern",
+				label: "Dummy Building Scaffold",
+				note: "Useful next read when the method is checking hidden marker buildings on a city.",
+				href: "/pattern-library?pattern=dummy-building-scaffold",
+			},
+		],
+		"methods:player-getcapitalcity-141": [
+			{
+				type: "pattern",
+				label: "Capital / Holy City / Coastal Target Resolver",
+				note: "Good follow-up when capital lookup is only the first step in choosing a safe target city.",
+				href: "/pattern-library?pattern=capital-holy-city-coastal-target-resolver",
+			},
+		],
+		"game-events:game-event-citycanconstruct-22": [
+			{
+				type: "pattern",
+				label: "Requirements Gate Pattern",
+				note: "Recipe companion for city-scoped construction veto logic and stacked eligibility checks.",
+				href: "/pattern-library?pattern=requirements-gate-pattern",
+			},
+		],
+		"game-events:game-event-playercanconstruct-62": [
+			{
+				type: "pattern",
+				label: "Requirements Gate Pattern",
+				note: "Recipe companion for empire-level construction gates and shared unlock checks.",
+				href: "/pattern-library?pattern=requirements-gate-pattern",
+			},
+		],
+	};
 	const METHOD_SEARCH_EXAMPLES = ["AddNotification", "CanTrain", "UnitPromotions", "TechTypes", "Player"];
 	const EVENT_SEARCH_EXAMPLES = ["BuildFinished", "PlayerCanTrain", "UnitPromotions", "Hook", "TechTypes"];
 
@@ -220,7 +284,21 @@
 		if (!selectedEntry) {
 			return [];
 		}
-		return selectedEntry.seeAlso.map((item, index) => resolveSeeAlsoItem(item, index)).filter(Boolean);
+		const items = [...selectedEntry.seeAlso, ...(LUA_PATTERN_SEE_ALSO[selectedEntry.entryKey] || [])];
+		const seenKeys = new Set();
+		return items
+			.map((item, index) => resolveSeeAlsoItem(item, index))
+			.filter((item) => {
+				if (!item) {
+					return false;
+				}
+				const key = item.entryId ? `entry:${item.entryId}` : `href:${item.href}`;
+				if (seenKeys.has(key)) {
+					return false;
+				}
+				seenKeys.add(key);
+				return true;
+			});
 	});
 	const selectedEntryQuickLinks = $derived.by(() => {
 		if (!selectedEntry) {
@@ -652,6 +730,15 @@
 		selectedEntryId = entryId;
 	}
 
+	function revealEntry(entryId, datasetId = activeDataset) {
+		searchQuery = "";
+		searchMode = "all";
+		familyFilter = "all";
+		scopeFilter = "all";
+		activeDataset = datasetId;
+		selectedEntryId = entryId;
+	}
+
 	function selectAdjacentEntry(delta) {
 		if (!filteredEntries.length) {
 			return;
@@ -752,17 +839,28 @@
 		}
 
 		const referencedEntry = resolveEntryReference(item.entryId || item.entryKey || item.ref);
-		if (!referencedEntry) {
+		if (referencedEntry) {
+			return {
+				id: `entry-${referencedEntry.id}-${index}`,
+				type: "entry",
+				label: item.label || referencedEntry.title,
+				copy: item.note || referencedEntry.secondaryLabel,
+				entryId: referencedEntry.id,
+				datasetId: referencedEntry.datasetId,
+				href: buildLuaEntryHref(referencedEntry),
+				surface: "entry",
+			};
+		}
+		if (!item.href) {
 			return null;
 		}
 		return {
-			id: `entry-${referencedEntry.id}-${index}`,
-			type: "entry",
-			label: item.label || referencedEntry.title,
-			copy: item.note || referencedEntry.secondaryLabel,
-			entryId: referencedEntry.id,
-			datasetId: referencedEntry.datasetId,
-			href: buildLuaEntryHref(referencedEntry),
+			id: `${item.type || "link"}-${index}-${item.href}`,
+			type: item.type || "link",
+			label: item.label || item.href,
+			copy: item.note || "Related reference",
+			href: item.href,
+			surface: item.type === "pattern" || item.href.startsWith("/pattern-library") ? "pattern" : "link",
 		};
 	}
 
@@ -1013,7 +1111,7 @@
 						<span class="lua-toolbar-label">Recent Searches</span>
 						<div class="lua-recent-list">
 							{#each recentEntries as entry (entry.entryKey)}
-								<button type="button" class="lua-link lua-link--inline" onclick={() => selectEntry(entry.id, entry.datasetId)}>{entry.heading}</button>
+								<button type="button" class="lua-link lua-link--inline" onclick={() => revealEntry(entry.id, entry.datasetId)}>{entry.heading}</button>
 							{/each}
 						</div>
 					</div>
@@ -1267,16 +1365,19 @@
 									<div class="lua-see-also-grid">
 										{#each selectedSeeAlsoItems as item (item.id)}
 											{#if item.entryId}
-												<button type="button" class="lua-see-also-card" onclick={() => selectEntry(item.entryId, item.datasetId)}>
+												<button type="button" class="lua-see-also-card" onclick={() => revealEntry(item.entryId, item.datasetId)}>
 													<div class="lua-see-also-head">
 														<strong>{item.label}</strong>
 													</div>
 													<p>{item.copy}</p>
 												</button>
 											{:else}
-												<a class="lua-see-also-card lua-see-also-card--link" href={item.href}>
+												<a class={`lua-see-also-card lua-see-also-card--link ${item.surface === "pattern" ? "is-pattern" : ""}`} href={item.href}>
 													<div class="lua-see-also-head">
 														<strong>{item.label}</strong>
+														{#if item.surface === "pattern"}
+															<span class="lua-see-also-kind">Pattern</span>
+														{/if}
 													</div>
 													<p>{item.copy}</p>
 												</a>
@@ -1308,7 +1409,7 @@
 									<span class="lua-kicker">Other Surfaces</span>
 									<div class="lua-surface-list">
 										{#each selectedCounterpartEntries as entry (entry.entryKey)}
-											<button type="button" class="lua-see-also-card" onclick={() => selectEntry(entry.id, entry.datasetId)}>
+											<button type="button" class="lua-see-also-card" onclick={() => revealEntry(entry.id, entry.datasetId)}>
 												<div class="lua-see-also-head">
 													<strong>{entry.title}</strong>
 													<span class="lua-see-also-kind">{entry.entryKind === "method" ? "Method" : "GameEvents"}</span>
@@ -1382,17 +1483,16 @@
 		--lua-schema-highlight: #8dc7ff;
 		--lua-schema-highlight-strong: #d6ecff;
 		--lua-schema-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, #11263a 10%);
+		--scrollbar-corner: color-mix(in srgb, var(--lua-panel) 88%, #11180e 12%);
 		--scrollbar-thumb: color-mix(in srgb, var(--lua-highlight) 78%, #11180e 22%);
 		--scrollbar-thumb-hover: color-mix(in srgb, var(--lua-highlight) 88%, white 12%);
 		--scrollbar-track: color-mix(in srgb, var(--lua-panel) 82%, #11180e 18%);
-		--scrollbar-corner: color-mix(in srgb, var(--lua-panel) 88%, #11180e 12%);
 		display: grid;
 		gap: 1.15rem;
 	}
 
 	.lua-hero,
 	.lua-panel,
-	.lua-stat-card,
 	.lua-docs-nav-card {
 		background: var(--lua-panel);
 		box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
@@ -1401,8 +1501,7 @@
 	}
 
 	.lua-hero,
-	.lua-panel,
-	.lua-stat-card {
+	.lua-panel {
 		padding-block: 1.3rem;
 		padding-inline: 1.3rem;
 	}
@@ -1414,10 +1513,10 @@
 	.lua-eyebrow,
 	.lua-kicker {
 		color: var(--lua-highlight);
-		font-size: 0.76rem;
 		letter-spacing: 0.16em;
-		text-transform: uppercase;
 		margin: 0 0 0.45rem;
+		font-size: 0.76rem;
+		text-transform: uppercase;
 	}
 
 	.lua-hero h1,
@@ -1425,7 +1524,6 @@
 	.lua-family-card h3,
 	.lua-entry-card h3,
 	.lua-detail-card h3,
-	.lua-planned-card h3,
 	.lua-detail-hero h2,
 	.lua-list-head h2 {
 		margin: 0;
@@ -1433,35 +1531,29 @@
 
 	.lua-hero p,
 	.lua-section-head p,
-	.lua-stat-card p,
 	.lua-family-card p,
 	.lua-entry-card p,
 	.lua-card-copy,
 	.lua-empty,
 	.lua-parameter-row p,
-	.lua-planned-card p,
 	.lua-note-list li,
 	.lua-see-also-card p {
 		color: var(--lua-copy);
-		text-align: left;
 		line-height: 1.45;
 		margin: 0;
+		text-align: left;
 	}
 
-	.lua-hero-links,
 	.lua-tab-row,
 	.lua-filter-group,
 	.lua-entry-tags,
 	.lua-detail-chips,
 	.lua-parameter-flags,
-	.lua-schema-links,
-	.lua-mode-group,
 	.lua-recent-list,
-	.lua-detail-actions,
 	.lua-docs-nav-links {
 		display: flex;
-		flex-wrap: wrap;
 		gap: 0.5rem;
+		flex-wrap: wrap;
 	}
 
 	.lua-link,
@@ -1477,17 +1569,17 @@
 	}
 
 	.lua-link {
-		align-items: center;
 		display: inline-flex;
 		color: var(--lua-highlight-strong);
 		font: inherit;
-		text-decoration: none;
 		background: rgba(255, 255, 255, 0.04);
 		border: 1px solid var(--lua-border);
 		border-radius: 999px;
 		padding-block: 0.72rem;
 		padding-inline: 0.95rem;
+		align-items: center;
 		cursor: pointer;
+		text-decoration: none;
 
 		&:hover {
 			color: white;
@@ -1499,30 +1591,15 @@
 		padding-inline: 0.68rem;
 	}
 
-	.lua-stats,
 	.lua-family-grid,
-	.lua-planned-grid,
 	.lua-see-also-grid {
 		display: grid;
 		gap: 0.85rem;
 	}
 
-	.lua-stats {
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-	}
-
 	.lua-family-grid,
-	.lua-planned-grid,
 	.lua-see-also-grid {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-	}
-
-	.lua-stat-value {
-		display: block;
-		color: var(--lua-highlight-strong);
-		font-size: clamp(1.6rem, 4vw, 2.5rem);
-		font-weight: 700;
-		margin-block-end: 0.45rem;
 	}
 
 	.lua-section-head {
@@ -1541,10 +1618,18 @@
 	}
 
 	.lua-family-card,
+	.lua-see-also-card {
+		display: grid;
+		gap: 0.6rem;
+		align-content: start;
+		justify-items: start;
+		text-align: left;
+	}
+
+	.lua-family-card,
 	.lua-entry-card,
 	.lua-detail-card,
 	.lua-list-panel,
-	.lua-planned-card,
 	.lua-see-also-card,
 	.lua-docs-nav-card {
 		border-radius: 1.2rem;
@@ -1554,7 +1639,6 @@
 	.lua-entry-card,
 	.lua-detail-card,
 	.lua-list-panel,
-	.lua-planned-card,
 	.lua-see-also-card,
 	.lua-docs-nav-card {
 		padding-block: 0.95rem;
@@ -1574,31 +1658,35 @@
 	}
 
 	.lua-entry-card {
-		min-block-size: 6ch;
 		block-size: fit-content;
+		min-block-size: 6ch;
 		min-inline-size: 0;
 		display: flex;
-		flex-direction: column;
 		gap: 0.32rem;
-		text-align: left;
 		border-radius: 0.8rem;
 		padding-block: 0.68rem;
 		padding-inline: 0.76rem;
 		overflow: hidden;
+		flex-direction: column;
+		text-align: left;
 	}
 
 	.lua-family-card-head,
-	.lua-entry-card-head,
 	.lua-detail-card-head,
 	.lua-list-head {
 		display: flex;
 		gap: 1rem;
 		align-items: center;
-		/*justify-content: space-between;*/
+	}
+
+	.lua-family-card-head,
+	.lua-see-also-head {
+		inline-size: 100%;
+		justify-content: space-between;
+		align-items: start;
 	}
 
 	.lua-family-card-head span,
-	.lua-entry-card-head span,
 	.lua-detail-card-head span,
 	.lua-list-head span {
 		color: var(--lua-copy);
@@ -1606,9 +1694,9 @@
 	}
 
 	.lua-entry-card-top {
-		align-items: start;
 		display: flex;
 		gap: 0.55rem;
+		align-items: start;
 		justify-content: space-between;
 	}
 
@@ -1620,84 +1708,76 @@
 	.lua-entry-card-metrics {
 		display: flex;
 		flex: 0 0 auto;
-		flex-direction: column;
 		gap: 0.16rem;
-		justify-items: end;
 		color: var(--lua-copy);
-		font-size: 0.72rem;
 		white-space: nowrap;
+		flex-direction: column;
+		font-size: 0.72rem;
+		justify-items: end;
 	}
 
 	.lua-family-card h3,
 	.lua-entry-card h3,
 	.lua-detail-card h3,
-	.lua-planned-card h3,
 	.lua-see-also-card strong {
 		overflow-wrap: anywhere;
 		word-break: break-word;
 	}
 
 	.lua-entry-card h3 {
-		font-size: 1.05rem;
 		line-height: 1.15;
-		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
+		font-size: 1.05rem;
+		text-overflow: ellipsis;
 	}
 
-	.lua-entry-path,
-	.lua-entry-card-copy {
+	.lua-entry-path {
 		color: var(--lua-copy);
-		font-size: 0.76rem;
 		line-height: 1.3;
 		margin: 0;
+		font-size: 0.76rem;
 	}
 
 	.lua-entry-summary {
-		color: var(--lua-highlight-strong);
-		font-size: 0.77rem;
-		line-height: 1.35;
 		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
+		color: var(--lua-highlight-strong);
+		line-height: 1.35;
 		overflow: hidden;
+		-webkit-box-orient: vertical;
+		font-size: 0.77rem;
+		-webkit-line-clamp: 2;
 	}
 
 	.lua-entry-path {
 		opacity: 0.9;
-		font-family: "SFMono-Regular", "JetBrains Mono", ui-monospace, monospace;
-		font-size: 0.7rem;
-		text-overflow: ellipsis;
 		white-space: nowrap;
 		margin-block-start: 0.12rem;
 		overflow: hidden;
+		font-family: "SFMono-Regular", "JetBrains Mono", ui-monospace, monospace;
+		font-size: 0.7rem;
+		text-overflow: ellipsis;
 	}
 
 	.lua-entry-tags {
 		gap: 0.35rem;
 	}
 
-	.lua-entry-card-copy {
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
-	}
-
 	.lua-entry-property-strip {
 		display: flex;
-		flex-wrap: wrap;
 		gap: 0.35rem;
+		flex-wrap: wrap;
 	}
 
 	.lua-entry-property {
-		align-items: center;
 		display: inline-flex;
-		font-size: 0.69rem;
 		background: rgba(183, 239, 132, 0.12);
 		border: 1px solid rgba(183, 239, 132, 0.18);
 		border-radius: 999px;
 		padding-block: 0.2rem;
 		padding-inline: 0.48rem;
+		align-items: center;
+		font-size: 0.69rem;
 	}
 
 	.lua-toolbar {
@@ -1748,14 +1828,14 @@
 	}
 
 	.lua-tab-row {
-		align-items: stretch;
 		display: inline-flex;
-		flex-wrap: nowrap;
 		gap: 0;
 		background: rgba(255, 255, 255, 0.03);
 		border: 1px solid var(--lua-border);
 		border-radius: 1.25rem;
 		overflow: hidden;
+		align-items: stretch;
+		flex-wrap: nowrap;
 	}
 
 	.lua-tab {
@@ -1772,24 +1852,24 @@
 	}
 
 	.lua-filter-chip {
-		align-items: center;
 		display: inline-flex;
 		gap: 0.45rem;
-		font-size: 0.88rem;
 		border-radius: 999px;
 		padding-block: 0.48rem;
 		padding-inline: 0.72rem;
+		align-items: center;
+		font-size: 0.88rem;
 	}
 
 	.lua-filter-chip span {
 		height: 1.7rem;
-		display: inline-grid;
-		place-items: center;
 		inline-size: fit-content;
 		min-inline-size: 2rem;
-		font-size: 0.8rem;
+		display: inline-grid;
 		background: rgba(255, 255, 255, 0.08);
 		border-radius: 999px;
+		font-size: 0.8rem;
+		place-items: center;
 		text-box: trim-both;
 	}
 
@@ -1800,26 +1880,26 @@
 		padding-block: 0.42rem;
 		padding-inline: 0.7rem;
 		transform: none;
-	}
 
-	.lua-filter-chip--toggle:hover {
-		background: rgba(141, 199, 255, 0.08);
-		border-color: transparent;
-		transform: none;
-	}
+		&:hover {
+			background: rgba(141, 199, 255, 0.08);
+			border-color: transparent;
+			transform: none;
+		}
 
-	.lua-filter-chip--toggle.is-active {
-		background: rgba(141, 199, 255, 0.14);
-		border-color: color-mix(in srgb, var(--lua-highlight) 70%, white 30%);
-		transform: none;
-	}
+		&.is-active {
+			background: rgba(141, 199, 255, 0.14);
+			border-color: color-mix(in srgb, var(--lua-highlight) 70%, white 30%);
+			transform: none;
+		}
 
-	.lua-filter-chip--toggle span {
-		background: rgba(255, 255, 255, 0.06);
-	}
+		& span {
+			background: rgba(255, 255, 255, 0.06);
+		}
 
-	.lua-filter-chip--toggle.is-active span {
-		background: rgba(141, 199, 255, 0.18);
+		&.is-active span {
+			background: rgba(141, 199, 255, 0.18);
+		}
 	}
 
 	.lua-explorer-grid {
@@ -1828,22 +1908,21 @@
 		grid-template-columns: minmax(17rem, 20rem) minmax(0, 1fr);
 	}
 
-	.lua-list-panel,
-	.lua-planned-card {
+	.lua-list-panel {
 		display: flex;
-		flex-direction: column;
 		gap: 0.55rem;
 		background: rgba(255, 255, 255, 0.025);
 		border: 1px solid var(--lua-border);
+		flex-direction: column;
 	}
 
 	.lua-list-panel {
 		position: sticky;
-		inset-block-start: 1rem;
 		max-block-size: calc(100dvh - 2rem);
 		min-block-size: 0;
-		align-self: stretch;
 		overflow: hidden;
+		align-self: stretch;
+		inset-block-start: 1rem;
 	}
 
 	.lua-entry-list,
@@ -1851,25 +1930,25 @@
 	.lua-note-list {
 		display: grid;
 		gap: 0.5rem;
+		list-style: none;
 		padding: 0;
 		margin: 0;
-		list-style: none;
 	}
 
 	.lua-entry-list {
 		min-block-size: 0;
-		align-content: start;
 		flex: 1 1 auto;
 		gap: 0.5rem;
 		padding-block-start: 0.5rem;
 		padding-inline-end: 0.15rem;
 		overflow: auto;
+		align-content: start;
 	}
 
 	.lua-empty-state {
-		align-content: start;
 		display: grid;
 		gap: 0.55rem;
+		align-content: start;
 		justify-items: start;
 	}
 
@@ -1881,25 +1960,25 @@
 
 	.lua-empty-actions {
 		display: flex;
-		flex-wrap: wrap;
 		gap: 0.5rem;
+		flex-wrap: wrap;
 	}
 
 	.lua-detail-panel {
 		display: flex;
-		flex-direction: column;
 		gap: 1rem;
+		flex-direction: column;
 	}
 
 	.lua-detail-hero {
-		align-items: start;
 		display: flex;
 		gap: 0.8rem;
-		justify-content: space-between;
 		background: linear-gradient(135deg, rgba(183, 239, 132, 0.11), rgba(255, 255, 255, 0.02));
 		border-radius: 1.2rem;
 		padding-block: 0.95rem;
 		padding-inline: 1rem;
+		align-items: start;
+		justify-content: space-between;
 	}
 
 	.lua-detail-hero-copy {
@@ -1911,12 +1990,12 @@
 	.lua-doc-signature {
 		display: block;
 		color: var(--lua-highlight-strong);
-		font-size: 0.92rem;
 		background: rgba(0, 0, 0, 0.22);
 		border-radius: 1rem;
 		padding-block: 0.9rem;
 		padding-inline: 1rem;
 		overflow: auto;
+		font-size: 0.92rem;
 	}
 
 	.lua-detail-card {
@@ -1936,8 +2015,7 @@
 
 	.lua-detail-chips,
 	.lua-parameter-flags,
-	.lua-entry-tags,
-	.lua-schema-links {
+	.lua-entry-tags {
 		align-items: start;
 	}
 
@@ -1948,18 +2026,18 @@
 
 	.lua-metric-chip,
 	.lua-tag {
-		align-items: center;
 		display: inline-flex;
-		font-size: 0.74rem;
 		background: rgba(255, 255, 255, 0.08);
 		border-radius: 0.5rem;
 		padding-block: 0.3rem;
 		padding-inline: 0.54rem;
+		align-items: center;
+		font-size: 0.74rem;
 	}
 
 	.lua-metric-chip--authored {
-		background: rgba(183, 239, 132, 0.14);
 		color: var(--lua-highlight-strong);
+		background: rgba(183, 239, 132, 0.14);
 	}
 
 	.lua-tag--optional {
@@ -1985,11 +2063,11 @@
 	.lua-signature-meta {
 		column-gap: 1rem;
 		display: grid;
-		row-gap: 0.45rem;
-		grid-template-columns: minmax(10rem, 1fr) minmax(8rem, 9rem) minmax(10rem, max-content);
 		list-style: none;
+		row-gap: 0.45rem;
 		padding: 0;
 		margin: 0;
+		grid-template-columns: minmax(10rem, 1fr) minmax(8rem, 9rem) minmax(10rem, max-content);
 	}
 
 	.lua-signature-meta li {
@@ -2015,32 +2093,32 @@
 	}
 
 	.lua-signature-meta li > strong {
+		inline-size: 100%;
 		color: var(--lua-highlight-strong);
 		font-size: 0.98rem;
 		font-weight: 700;
-		inline-size: 100%;
 		justify-self: start;
 		text-align: left;
 	}
 
 	.lua-signature-meta li > span:last-child {
-		color: var(--lua-copy);
 		inline-size: 100%;
+		color: var(--lua-copy);
 		justify-self: start;
 		text-align: left;
 	}
 
 	.lua-doc-example {
 		color: var(--lua-highlight-strong);
-		font-size: 0.88rem;
 		line-height: 1.55;
+		white-space: pre-wrap;
 		background: rgba(0, 0, 0, 0.22);
 		border-radius: 1rem;
 		padding-block: 0.9rem;
 		padding-inline: 1rem;
 		margin: 0;
 		overflow: auto;
-		white-space: pre-wrap;
+		font-size: 0.88rem;
 	}
 
 	.lua-schema-grid {
@@ -2052,37 +2130,37 @@
 		display: grid;
 		gap: 0.45rem;
 		background: color-mix(in srgb, var(--lua-schema-panel) 86%, transparent);
+		box-shadow: inset 0 1px 0 color-mix(in srgb, var(--lua-schema-highlight) 12%, transparent);
 		border: 1px solid var(--lua-schema-border);
 		border-radius: 1rem;
 		padding-block: 0.8rem;
 		padding-inline: 0.85rem;
-		box-shadow: inset 0 1px 0 color-mix(in srgb, var(--lua-schema-highlight) 12%, transparent);
 	}
 
 	.lua-schema-card--link {
 		color: inherit;
-		text-decoration: none;
 		transition:
 			transform 140ms ease,
 			border-color 140ms ease,
 			background-color 140ms ease,
 			box-shadow 140ms ease;
+		text-decoration: none;
 	}
 
 	.lua-schema-card--link:hover {
 		background: color-mix(in srgb, var(--lua-schema-highlight) 10%, var(--lua-schema-panel) 90%);
-		border-color: color-mix(in srgb, var(--lua-schema-highlight) 74%, white 26%);
-		transform: translateY(-1px);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--lua-schema-highlight) 18%, transparent),
 			0 12px 28px rgba(0, 0, 0, 0.16);
+		border-color: color-mix(in srgb, var(--lua-schema-highlight) 74%, white 26%);
+		transform: translateY(-1px);
 	}
 
 	.lua-schema-card-head {
-		align-items: center;
 		display: flex;
-		flex-wrap: wrap;
 		gap: 0.55rem;
+		align-items: center;
+		flex-wrap: wrap;
 		justify-content: space-between;
 	}
 
@@ -2092,45 +2170,45 @@
 	}
 
 	.lua-schema-card .lua-link {
+		color: var(--lua-schema-highlight-strong);
 		background: color-mix(in srgb, var(--lua-schema-panel) 76%, transparent);
 		border-color: var(--lua-schema-border);
-		color: var(--lua-schema-highlight-strong);
 	}
 
 	.lua-schema-card .lua-link:hover {
+		color: white;
 		background: color-mix(in srgb, var(--lua-schema-highlight) 16%, var(--lua-schema-panel) 84%);
 		border-color: color-mix(in srgb, var(--lua-schema-highlight) 74%, white 26%);
-		color: white;
 	}
 
 	.lua-schema-pill {
-		font-size: 0.95rem !important;
 		cursor: inherit;
+		font-size: 0.95rem !important;
 		pointer-events: none;
 	}
 
 	.lua-parameter-row,
 	.lua-note-list li {
-		align-items: start;
 		display: flex;
 		gap: 0.8rem;
-		justify-content: space-between;
-		border-block-start: 1px solid rgba(255, 255, 255, 0.08);
 		padding-block-start: 0.45rem;
+		align-items: start;
+		border-block-start: 1px solid rgba(255, 255, 255, 0.08);
+		justify-content: space-between;
 
 		&:first-child {
-			border-block-start: none;
 			padding-block-start: 0;
+			border-block-start: none;
 		}
 	}
 
 	.lua-docs-nav {
 		position: sticky;
-		inset-block-start: 1rem;
 		max-block-size: calc(100dvh - 2rem);
-		align-self: start;
 		display: grid;
 		gap: 0.85rem;
+		align-self: start;
+		inset-block-start: 1rem;
 	}
 
 	.lua-docs-nav-card {
@@ -2150,34 +2228,6 @@
 		border-color: color-mix(in srgb, var(--lua-highlight) 70%, white 30%);
 	}
 
-	.lua-quick-meta {
-		display: grid;
-		gap: 0.55rem;
-		margin: 0;
-	}
-
-	.lua-quick-meta div {
-		align-items: baseline;
-		display: flex;
-		gap: 0.6rem;
-		justify-content: space-between;
-	}
-
-	.lua-quick-meta dt,
-	.lua-quick-meta dd {
-		margin: 0;
-	}
-
-	.lua-quick-meta dt {
-		color: var(--lua-copy);
-		font-size: 0.82rem;
-	}
-
-	.lua-quick-meta dd {
-		color: var(--lua-highlight-strong);
-		font-weight: 600;
-	}
-
 	.lua-see-also-grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
@@ -2188,14 +2238,48 @@
 		text-align: left;
 	}
 
+	.lua-see-also-card.is-pattern {
+		border-color: color-mix(in srgb, var(--lua-border) 58%, #b48922 42%);
+		background: color-mix(in srgb, var(--lua-panel) 80%, #3b2810 20%);
+		color: #f5d36a;
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, #f5d36a 10%, transparent),
+			0 12px 30px color-mix(in srgb, black 82%, transparent);
+	}
+
+	.lua-see-also-card.is-pattern strong {
+		color: #fff1bc;
+	}
+
+	.lua-see-also-card.is-pattern p,
+	.lua-see-also-card.is-pattern .lua-see-also-kind {
+		color: color-mix(in srgb, #f5d36a 82%, white 18%);
+	}
+
 	.lua-see-also-card--link {
+		color: inherit;
 		text-decoration: none;
+		transition:
+			transform 140ms ease,
+			border-color 140ms ease,
+			background-color 140ms ease,
+			box-shadow 140ms ease,
+			color 140ms ease;
+	}
+
+	.lua-see-also-card--link.is-pattern:hover {
+		background: color-mix(in srgb, #f5d36a 10%, color-mix(in srgb, var(--lua-panel) 80%, #3b2810 20%) 90%);
+		border-color: color-mix(in srgb, var(--lua-border-strong) 48%, #ffd976 52%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, #fff1bc 18%, transparent),
+			0 18px 38px color-mix(in srgb, black 78%, transparent);
+		transform: translateY(-1px);
 	}
 
 	.lua-see-also-head {
-		align-items: start;
 		display: flex;
 		gap: 0.65rem;
+		align-items: start;
 		justify-content: space-between;
 	}
 
@@ -2205,17 +2289,15 @@
 
 	.lua-see-also-kind {
 		color: var(--lua-copy);
-		font-size: 0.7rem;
+		white-space: nowrap;
 		background: rgba(255, 255, 255, 0.07);
 		border-radius: 999px;
 		padding-block: 0.2rem;
 		padding-inline: 0.5rem;
-		white-space: nowrap;
+		font-size: 0.7rem;
 	}
 
 	@media (max-width: 1180px) {
-		.lua-stats,
-		.lua-planned-grid,
 		.lua-family-grid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
@@ -2229,22 +2311,19 @@
 		.lua-list-panel,
 		.lua-docs-nav {
 			position: static;
-			inset-block-start: auto;
 			max-height: none;
+			inset-block-start: auto;
 		}
 	}
 
 	@media (max-width: 760px) {
 		.lua-hero,
-		.lua-panel,
-		.lua-stat-card {
+		.lua-panel {
 			padding-block: 1.1rem;
 			padding-inline: 1.1rem;
 		}
 
-		.lua-stats,
 		.lua-family-grid,
-		.lua-planned-grid,
 		.lua-see-also-grid {
 			grid-template-columns: 1fr;
 		}
@@ -2312,7 +2391,6 @@
 	:global(:root[data-theme="light"]) .lua-link,
 	:global(:root[data-theme="light"]) .lua-list-panel,
 	:global(:root[data-theme="light"]) .lua-detail-card,
-	:global(:root[data-theme="light"]) .lua-planned-card,
 	:global(:root[data-theme="light"]) .lua-family-card,
 	:global(:root[data-theme="light"]) .lua-entry-card,
 	:global(:root[data-theme="light"]) .lua-tab,

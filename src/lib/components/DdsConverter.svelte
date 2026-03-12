@@ -1,5 +1,7 @@
 <script>
 	import { onDestroy, onMount } from "svelte";
+	import { get } from "svelte/store";
+	import { ddsPreferences, syncDdsPreferences } from "../stores/toolPreferences.js";
 
 	const CONVERTER_ENDPOINT = resolveConverterEndpoint();
 
@@ -366,7 +368,30 @@
 	});
 
 	onMount(() => {
+		const sharedPrefs = get(ddsPreferences);
+		if (sharedPrefs && typeof sharedPrefs === "object") {
+			workflow = WORKFLOWS[sharedPrefs.workflow] ? sharedPrefs.workflow : workflow;
+			selectedAtlasPresetId = typeof sharedPrefs.selectedAtlasPresetId === "string" ? sharedPrefs.selectedAtlasPresetId : selectedAtlasPresetId;
+			atlasRowsInput = String(sharedPrefs.atlasRows || atlasRowsInput || 1);
+			atlasColsInput = String(sharedPrefs.atlasCols || atlasColsInput || 1);
+			atlasSelectedSizesMap = buildSizeSelection(Array.isArray(sharedPrefs.atlasSelectedSizes) ? sharedPrefs.atlasSelectedSizes : []);
+		}
 		sqlHistoryEntries = loadSqlHistory();
+	});
+
+	$effect(() => {
+		workflow;
+		selectedAtlasPresetId;
+		atlasRows;
+		atlasCols;
+		atlasSelectedSizes;
+		syncDdsPreferences({
+			workflow,
+			selectedAtlasPresetId,
+			atlasRows,
+			atlasCols,
+			atlasSelectedSizes: [...atlasSelectedSizes],
+		});
 	});
 
 	function normalizeAtlasSqlToken(value) {

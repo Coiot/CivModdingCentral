@@ -9,8 +9,8 @@
 	import WorkshopUploader from "./lib/components/WorkshopUploader.svelte";
 	import ModInfoBuilder from "./lib/components/ModInfoBuilder.svelte";
 	import Civ5ModZiper from "./lib/components/Civ5ModZiper.svelte";
-	import RecipeLibrary from "./lib/components/RecipeLibrary.svelte";
-	import WizardGenerators from "./lib/components/WizardGenerators.svelte";
+	import PatternLibrary from "./lib/components/PatternLibrary.svelte";
+	import ScaffoldGenerators from "./lib/components/ScaffoldGenerators.svelte";
 
 	const THEME_STORAGE_KEY = "cmc-theme-mode";
 	const AUTH_STORAGE_KEY = "cmc-auth-session";
@@ -215,8 +215,8 @@
 			currentPath === "/workshop-uploader" ||
 			currentPath === "/modinfo-builder" ||
 			currentPath === "/civ5mod-ziper" ||
-			currentPath === "/recipe-library" ||
-			currentPath === "/wizard-generators"
+			currentPath === "/pattern-library" ||
+			currentPath === "/scaffold-generators"
 		) {
 			return;
 		}
@@ -797,10 +797,10 @@
 					<ModInfoBuilder />
 				{:else if currentPath === "/civ5mod-ziper"}
 					<Civ5ModZiper />
-				{:else if currentPath === "/recipe-library"}
-					<RecipeLibrary />
-				{:else if currentPath === "/wizard-generators"}
-					<WizardGenerators />
+				{:else if currentPath === "/pattern-library"}
+					<PatternLibrary />
+				{:else if currentPath === "/scaffold-generators"}
+					<ScaffoldGenerators />
 				{:else if currentPath === "/schema-browser" && schemaBrowserLoadError}
 					<p class="status error">{schemaBrowserLoadError}</p>
 				{:else if currentPath === "/schema-browser" && SchemaBrowserComponent}
