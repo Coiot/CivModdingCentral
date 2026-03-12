@@ -1620,7 +1620,7 @@
 	.lua-family-card,
 	.lua-see-also-card {
 		display: grid;
-		gap: 0.6rem;
+		gap: 0.75rem;
 		align-content: start;
 		justify-items: start;
 		text-align: left;
@@ -1643,6 +1643,17 @@
 	.lua-docs-nav-card {
 		padding-block: 0.95rem;
 		padding-inline: 0.95rem;
+	}
+
+	.lua-family-card {
+		grid-template-rows: auto 1fr;
+		min-block-size: 10.5rem;
+		padding-block: 1rem;
+		padding-inline: 1rem;
+		border-radius: 1rem;
+		border-color: color-mix(in srgb, var(--lua-border) 72%, #2f6b53 28%);
+		background: linear-gradient(180deg, color-mix(in srgb, rgba(255, 255, 255, 0.03) 68%, #10271d 32%) 0%, rgba(255, 255, 255, 0.02) 100%);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 	}
 
 	.lua-family-card.is-active,
@@ -1686,11 +1697,45 @@
 		align-items: start;
 	}
 
+	.lua-family-card-head {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: 0.8rem;
+		align-items: start;
+	}
+
 	.lua-family-card-head span,
 	.lua-detail-card-head span,
 	.lua-list-head span {
 		color: var(--lua-copy);
 		white-space: nowrap;
+	}
+
+	.lua-family-card h3 {
+		font-size: clamp(1.25rem, 2vw, 1.6rem);
+		line-height: 1.05;
+	}
+
+	.lua-family-card-head span {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-inline-size: 3.1rem;
+		padding-block: 0.28rem;
+		padding-inline: 0.6rem;
+		border-radius: 999px;
+		border: 1px solid color-mix(in srgb, var(--lua-highlight) 44%, rgba(255, 255, 255, 0.18));
+		background: color-mix(in srgb, rgba(0, 0, 0, 0.3) 72%, #173526 28%);
+		color: var(--lua-highlight-strong);
+		font-size: 0.9rem;
+		font-weight: 700;
+		letter-spacing: 0.02em;
+	}
+
+	.lua-family-card p {
+		font-size: 0.98rem;
+		line-height: 1.5;
+		color: color-mix(in srgb, var(--lua-copy) 90%, white 10%);
 	}
 
 	.lua-entry-card-top {
