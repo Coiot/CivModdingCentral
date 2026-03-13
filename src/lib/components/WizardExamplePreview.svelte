@@ -267,7 +267,7 @@
 		let cancelled = false;
 
 		async function loadArtDefineOptions() {
-			const module = await import("../generated/civ-schema.json");
+			const module = await import("../data/civ-schema.json");
 			if (cancelled) {
 				return;
 			}

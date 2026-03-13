@@ -1,7 +1,7 @@
 <script>
 	import { onMount, tick } from "svelte";
 
-	import luaData from "../generated/civ-lua-api.json";
+	import luaData from "../data/civ-lua-api.json";
 
 	const numberFormatter = new Intl.NumberFormat("en-US");
 	const DATASET_TABS = [
@@ -31,21 +31,60 @@
 		{ id: "schema", label: "Schema" },
 		{ id: "see-also", label: "See also" },
 	];
-	const PLACEHOLDER_NOTES = [
-		"Placeholder summary. Replace this with entry specific notes from the JSON.",
-		"Use this section for what the entry does, when to call it, and any important side effects or assumptions.",
-		"Keep the actual notes grounded in actual gameplay behavior.",
-	];
 	const DOC_SECTION_SCROLL_OFFSET = 132;
 	const docSectionElements = new Map();
-	const FAMILY_QUICK_START_COPY = {
-		Player: "Notifications, policy checks, diplomacy hooks, yields, and most civ-level gameplay scripting.",
-		Unit: "Combat behavior, promotions, movement, damage state, upgrades, and per-unit ability logic.",
-		City: "Buildings, production, specialists, growth, local yields, resistance, and city-stateful logic.",
-		Game: "Global turn flow, active-player context, randomization, speed settings, and session-wide helpers.",
-		Plot: "Terrain, ownership, routes, resources, improvements, visibility, and map tile inspection.",
-		Team: "Tech progress, war state, embassies, shared visibility, and team-scoped diplomacy checks.",
-	};
+	let detailPanelElement = $state(null);
+	const CURATED_METHOD_NAMES = [
+		"AddNotification",
+		"GetActivePlayer",
+		"GetGameTurn",
+		"GetCapitalCity",
+		"GetCityByID",
+		"GetOwner",
+		"GetNumBuilding",
+		"SetNumRealBuilding",
+		"GetReligiousMajority",
+		"IsHasTech",
+		"CanTrain",
+		"InitUnit",
+		"PushMission",
+		"SetHasPromotion",
+		"SetImprovementType",
+		"SetResourceType",
+		"PlotDistance",
+	];
+	const CURATED_EVENT_NAMES = [
+		"BuildFinished",
+		"CityCanConstruct",
+		"PlayerCanConstruct",
+		"PlayerCanTrain",
+		"CityConstructed",
+		"CityTrained",
+		"CityCreated",
+		"PlayerCityFounded",
+		"CityCaptureComplete",
+		"CityBoughtPlot",
+		"SetPopulation",
+		"CityConvertsReligion",
+		"ReligionFounded",
+		"CanHavePromotion",
+		"CanHaveUpgrade",
+		"UnitPromoted",
+		"UnitUpgraded",
+		"UnitSetXY",
+		"UnitPrekill",
+		"PlayerDoTurn",
+		"PlayerAdoptPolicy",
+		"PlayerAdoptPolicyBranch",
+		"TeamSetHasTech",
+		"TeamTechResearched",
+		"CanDeclareWar",
+		"DeclareWar",
+		"MakePeace",
+		"GreatPersonExpended",
+		"MinorAlliesChanged",
+		"MinorFriendsChanged",
+	];
 	const LUA_PATTERN_SEE_ALSO = {
 		"game-events:game-event-playerdoturn-72": [
 			{
@@ -118,13 +157,25 @@
 	const METHOD_BY_ID = new Map(METHODS.map((entry) => [entry.id, entry]));
 	const GAME_EVENT_BY_ID = new Map(GAME_EVENTS.map((entry) => [entry.id, entry]));
 	const ENTRY_BY_KEY = new Map([...METHODS, ...GAME_EVENTS].map((entry) => [entry.entryKey, entry]));
-	const FEATURED_FAMILIES = [...luaData.families]
-		.sort((left, right) => right.methodCount - left.methodCount)
-		.slice(0, 6)
-		.map((family) => ({
-			...family,
-			quickStartCopy: FAMILY_QUICK_START_COPY[family.name] || `${family.methodCount} indexed methods in the current workbook snapshot.`,
-		}));
+	const CURATED_ENTRY_LINKS = [...new Set(CURATED_METHOD_NAMES.map((name) => `methods:${name}`)), ...new Set(CURATED_EVENT_NAMES.map((name) => `game-events:${name}`))]
+		.map((key) => {
+			const [datasetId, name] = key.split(":");
+			const entry = datasetId === "methods" ? METHODS.find((item) => item.methodName === name) : GAME_EVENTS.find((item) => item.name === name);
+			if (!entry) {
+				return null;
+			}
+			return {
+				id: `${entry.datasetId}:${entry.id}`,
+				entryId: entry.id,
+				datasetId: entry.datasetId,
+				title: entry.heading,
+				meta: entry.datasetId === "methods" ? entry.family : entry.scope || "GameEvent",
+				supporting: entry.secondaryLabel,
+				paramLabel: `${entry.parameterCount} ${entry.parameterCount === 1 ? "param" : "params"}`,
+				schemaLabel: entry.schemaTables.length ? `${entry.schemaTables.length} schema` : "",
+			};
+		})
+		.filter(Boolean);
 	const DEFAULT_METHOD_ID = METHODS.find((entry) => entry.family === "Player" && entry.methodName === "AddNotification")?.id || METHODS[0]?.id || "";
 	const DEFAULT_EVENT_ID = GAME_EVENTS.find((entry) => entry.name === "BuildFinished")?.id || GAME_EVENTS[0]?.id || "";
 
@@ -375,8 +426,14 @@
 			if (section.id === "parameters") {
 				return selectedEntry.parameters.length > 0;
 			}
+			if (section.id === "notes") {
+				return selectedEntry.notes.length > 0;
+			}
 			if (section.id === "gotchas") {
 				return selectedEntry.gotchas.length > 0;
+			}
+			if (section.id === "example") {
+				return Boolean(selectedEntry.exampleCode);
 			}
 			if (section.id === "schema") {
 				return selectedSchemaTouchpoints.length > 0;
@@ -512,10 +569,10 @@
 			heading: entry.methodName,
 			secondaryLabel: `${entry.returnType || "unknown"} return`,
 			summary: typeof entry.summary === "string" ? entry.summary.trim() : "",
-			exampleSummary: entry.example?.summary || "Placeholder example. Replace this with a real snippet in the JSON.",
-			exampleCode: entry.example?.code || buildMethodExampleCode(entry),
-			exampleLanguage: entry.example?.language || "lua",
-			notes: normalizeStringList(entry.notes, PLACEHOLDER_NOTES),
+			exampleSummary: typeof entry.example?.summary === "string" ? entry.example.summary.trim() : "",
+			exampleCode: typeof entry.example?.code === "string" ? entry.example.code.trim() : "",
+			exampleLanguage: entry.example?.code ? entry.example?.language || "lua" : "",
+			notes: normalizeStringList(entry.notes),
 			gotchas: normalizeStringList(entry.gotchas),
 			relatedSchemaNotes: normalizeRelatedSchemaNotes(entry.relatedSchemaNotes),
 			seeAlso: normalizeSeeAlsoItems(entry.seeAlso),
@@ -546,10 +603,10 @@
 			heading: entry.name,
 			secondaryLabel: `${entry.scope || "unscoped"} callback`,
 			summary: typeof entry.summary === "string" ? entry.summary.trim() : "",
-			exampleSummary: entry.example?.summary || "Placeholder example. Replace this with a real listener snippet in the JSON once examples are written.",
-			exampleCode: entry.example?.code || buildGameEventExampleCode(entry),
-			exampleLanguage: entry.example?.language || "lua",
-			notes: normalizeStringList(entry.notes, PLACEHOLDER_NOTES),
+			exampleSummary: typeof entry.example?.summary === "string" ? entry.example.summary.trim() : "",
+			exampleCode: typeof entry.example?.code === "string" ? entry.example.code.trim() : "",
+			exampleLanguage: entry.example?.code ? entry.example?.language || "lua" : "",
+			notes: normalizeStringList(entry.notes),
 			gotchas: normalizeStringList(entry.gotchas),
 			relatedSchemaNotes: normalizeRelatedSchemaNotes(entry.relatedSchemaNotes),
 			seeAlso: normalizeSeeAlsoItems(entry.seeAlso),
@@ -737,6 +794,15 @@
 		scopeFilter = "all";
 		activeDataset = datasetId;
 		selectedEntryId = entryId;
+	}
+
+	async function revealEntryAndScroll(entryId, datasetId = activeDataset) {
+		revealEntry(entryId, datasetId);
+		await tick();
+		detailPanelElement?.scrollIntoView({
+			behavior: "smooth",
+			block: "start",
+		});
 	}
 
 	function selectAdjacentEntry(delta) {
@@ -1029,17 +1095,20 @@
 	<section class="lua-panel">
 		<div class="lua-section-head">
 			<span class="lua-kicker">Quick Starts</span>
-			<h2>Jump into the lua hooks modders use most often</h2>
-			<p>These are the most useful starting points for exploring the Lua API and wiring up your modding projects.</p>
+			<h2>Jump into the Lua entries modders use most often</h2>
+			<p>These are some of the most used hooks so are great starting points for exploring the Lua API and wiring up your own mods.</p>
 		</div>
-		<div class="lua-family-grid">
-			{#each FEATURED_FAMILIES as family (family.name)}
-				<button type="button" class={`lua-family-card ${activeDataset === "methods" && familyFilter === family.name ? "is-active" : ""}`} onclick={() => selectFamily(family.name)}>
-					<div class="lua-family-card-head">
-						<h3>{family.name}</h3>
-						<span>{family.methodCount}</span>
+		<div class="lua-launcher-grid">
+			{#each CURATED_ENTRY_LINKS as entry (entry.id)}
+				<button
+					type="button"
+					class={`lua-launcher-card ${selectedEntry?.id === entry.entryId && activeDataset === entry.datasetId ? "is-active" : ""}`}
+					onclick={() => revealEntryAndScroll(entry.entryId, entry.datasetId)}
+				>
+					<div class="lua-launcher-card-head">
+						<h3>{entry.title}</h3>
+						<span class="lua-launcher-card-meta">{entry.meta}</span>
 					</div>
-					<p>{family.quickStartCopy}</p>
 				</button>
 			{/each}
 		</div>
@@ -1176,7 +1245,7 @@
 			</aside>
 
 			{#if selectedEntry}
-				<section class="lua-detail-panel" aria-label="Selected entry details">
+				<section class="lua-detail-panel" bind:this={detailPanelElement} aria-label="Selected entry details">
 					<div class="lua-detail-hero">
 						<div class="lua-detail-hero-copy">
 							<p class="lua-kicker">Selected entry</p>
@@ -1290,16 +1359,18 @@
 								</section>
 							{/if}
 
-							<section id="lua-doc-notes" class="lua-detail-card lua-doc-section" use:trackDocSection={"notes"}>
-								<div class="lua-detail-card-head">
-									<h3>Notes</h3>
-								</div>
-								<ul class="lua-note-list">
-									{#each selectedEntry.notes as note (`${selectedEntry.entryKey}-${note}`)}
-										<li>{note}</li>
-									{/each}
-								</ul>
-							</section>
+							{#if selectedEntry.notes.length > 0}
+								<section id="lua-doc-notes" class="lua-detail-card lua-doc-section" use:trackDocSection={"notes"}>
+									<div class="lua-detail-card-head">
+										<h3>Notes</h3>
+									</div>
+									<ul class="lua-note-list">
+										{#each selectedEntry.notes as note (`${selectedEntry.entryKey}-${note}`)}
+											<li>{note}</li>
+										{/each}
+									</ul>
+								</section>
+							{/if}
 
 							{#if selectedEntry.gotchas.length > 0}
 								<section id="lua-doc-gotchas" class="lua-detail-card lua-doc-section" use:trackDocSection={"gotchas"}>
@@ -1315,14 +1386,17 @@
 								</section>
 							{/if}
 
-							<section id="lua-doc-example" class="lua-detail-card lua-doc-section" use:trackDocSection={"example"}>
-								<div class="lua-detail-card-head">
-									<h3>Example</h3>
-									<!-- <span>{selectedEntry.exampleLanguage}</span> -->
-								</div>
-								<p class="lua-card-copy">{selectedEntry.exampleSummary}</p>
-								<pre class="lua-doc-example"><code>{selectedEntry.exampleCode}</code></pre>
-							</section>
+							{#if selectedEntry.exampleCode}
+								<section id="lua-doc-example" class="lua-detail-card lua-doc-section" use:trackDocSection={"example"}>
+									<div class="lua-detail-card-head">
+										<h3>Example</h3>
+									</div>
+									{#if selectedEntry.exampleSummary}
+										<p class="lua-card-copy">{selectedEntry.exampleSummary}</p>
+									{/if}
+									<pre class="lua-doc-example"><code>{selectedEntry.exampleCode}</code></pre>
+								</section>
+							{/if}
 
 							{#if selectedSchemaTouchpoints.length > 0}
 								<section id="lua-doc-schema" class="lua-detail-card lua-doc-section" use:trackDocSection={"schema"}>
@@ -1415,13 +1489,6 @@
 													<span class="lua-see-also-kind">{entry.entryKind === "method" ? "Method" : "GameEvents"}</span>
 												</div>
 												<p>{entry.secondaryLabel}</p>
-												{#if entry.authoredFlags.length > 0}
-													<div class="lua-entry-property-strip">
-														{#each entry.authoredFlags as flag (`${entry.entryKey}-${flag}`)}
-															<span class="lua-entry-property">{flag}</span>
-														{/each}
-													</div>
-												{/if}
 											</button>
 										{/each}
 									</div>
@@ -1521,7 +1588,7 @@
 
 	.lua-hero h1,
 	.lua-section-head h2,
-	.lua-family-card h3,
+	.lua-launcher-card h3,
 	.lua-entry-card h3,
 	.lua-detail-card h3,
 	.lua-detail-hero h2,
@@ -1531,7 +1598,6 @@
 
 	.lua-hero p,
 	.lua-section-head p,
-	.lua-family-card p,
 	.lua-entry-card p,
 	.lua-card-copy,
 	.lua-empty,
@@ -1559,7 +1625,7 @@
 	.lua-link,
 	.lua-tab,
 	.lua-filter-chip,
-	.lua-family-card,
+	.lua-launcher-card,
 	.lua-entry-card,
 	.lua-see-also-card {
 		transition:
@@ -1591,22 +1657,22 @@
 		padding-inline: 0.68rem;
 	}
 
-	.lua-family-grid,
+	.lua-launcher-grid,
 	.lua-see-also-grid {
 		display: grid;
 		gap: 0.85rem;
 	}
 
-	.lua-family-grid,
+	.lua-launcher-grid,
 	.lua-see-also-grid {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-columns: repeat(5, minmax(6rem, 1fr));
 	}
 
 	.lua-section-head {
-		margin-block-end: 0.9rem;
+		margin-block-end: 0.75rem;
 	}
 
-	.lua-family-card,
+	.lua-launcher-card,
 	.lua-entry-card,
 	.lua-tab,
 	.lua-filter-chip,
@@ -1617,7 +1683,7 @@
 		cursor: pointer;
 	}
 
-	.lua-family-card,
+	.lua-launcher-card,
 	.lua-see-also-card {
 		display: grid;
 		gap: 0.75rem;
@@ -1626,7 +1692,7 @@
 		text-align: left;
 	}
 
-	.lua-family-card,
+	.lua-launcher-card,
 	.lua-entry-card,
 	.lua-detail-card,
 	.lua-list-panel,
@@ -1635,7 +1701,7 @@
 		border-radius: 1.2rem;
 	}
 
-	.lua-family-card,
+	.lua-launcher-card,
 	.lua-entry-card,
 	.lua-detail-card,
 	.lua-list-panel,
@@ -1645,22 +1711,23 @@
 		padding-inline: 0.95rem;
 	}
 
-	.lua-family-card {
-		grid-template-rows: auto 1fr;
-		min-block-size: 10.5rem;
-		padding-block: 1rem;
-		padding-inline: 1rem;
-		border-radius: 1rem;
+	.lua-launcher-card {
+		min-inline-size: 0;
+		gap: 0.55rem;
+		border-radius: 0.95rem;
+		padding-block: 0.82rem;
+		padding-inline: 0.82rem;
 		border-color: color-mix(in srgb, var(--lua-border) 72%, #2f6b53 28%);
-		background: linear-gradient(180deg, color-mix(in srgb, rgba(255, 255, 255, 0.03) 68%, #10271d 32%) 0%, rgba(255, 255, 255, 0.02) 100%);
+		background: linear-gradient(180deg, color-mix(in srgb, rgba(255, 255, 255, 0.03) 70%, #10271d 30%) 0%, rgba(255, 255, 255, 0.02) 100%);
 		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+		text-align: left;
 	}
 
-	.lua-family-card.is-active,
+	.lua-launcher-card.is-active,
 	.lua-entry-card.is-active,
 	.lua-tab.is-active,
 	.lua-filter-chip.is-active,
-	.lua-family-card:hover,
+	.lua-launcher-card:hover,
 	.lua-entry-card:hover,
 	.lua-see-also-card:hover {
 		background: rgba(183, 239, 132, 0.11);
@@ -1670,19 +1737,18 @@
 
 	.lua-entry-card {
 		block-size: fit-content;
-		min-block-size: 6ch;
 		min-inline-size: 0;
 		display: flex;
-		gap: 0.32rem;
+		gap: 0.25rem;
 		border-radius: 0.8rem;
-		padding-block: 0.68rem;
-		padding-inline: 0.76rem;
+		padding-block: 0.5rem;
+		padding-inline: 0.75rem;
 		overflow: hidden;
 		flex-direction: column;
 		text-align: left;
 	}
 
-	.lua-family-card-head,
+	.lua-launcher-card-head,
 	.lua-detail-card-head,
 	.lua-list-head {
 		display: flex;
@@ -1690,52 +1756,66 @@
 		align-items: center;
 	}
 
-	.lua-family-card-head,
+	.lua-launcher-card-head,
 	.lua-see-also-head {
 		inline-size: 100%;
 		justify-content: space-between;
-		align-items: start;
+		align-items: center;
 	}
 
-	.lua-family-card-head {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto;
-		gap: 0.8rem;
-		align-items: start;
-	}
-
-	.lua-family-card-head span,
+	.lua-launcher-card-meta,
 	.lua-detail-card-head span,
 	.lua-list-head span {
 		color: var(--lua-copy);
 		white-space: nowrap;
 	}
 
-	.lua-family-card h3 {
-		font-size: clamp(1.25rem, 2vw, 1.6rem);
-		line-height: 1.05;
+	.lua-launcher-card h3 {
+		font-size: 0.9rem;
+		text-box: trim-both cap alphabetic;
 	}
 
-	.lua-family-card-head span {
+	.lua-launcher-card-meta {
+		font-size: 0.72rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.lua-launcher-kind {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		min-inline-size: 3.1rem;
-		padding-block: 0.28rem;
-		padding-inline: 0.6rem;
+		padding-block: 0.2rem;
+		padding-inline: 0.5rem;
 		border-radius: 999px;
 		border: 1px solid color-mix(in srgb, var(--lua-highlight) 44%, rgba(255, 255, 255, 0.18));
 		background: color-mix(in srgb, rgba(0, 0, 0, 0.3) 72%, #173526 28%);
 		color: var(--lua-highlight-strong);
-		font-size: 0.9rem;
+		font-size: 0.68rem;
 		font-weight: 700;
-		letter-spacing: 0.02em;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
 	}
 
-	.lua-family-card p {
-		font-size: 0.98rem;
-		line-height: 1.5;
-		color: color-mix(in srgb, var(--lua-copy) 90%, white 10%);
+	.lua-launcher-kind.is-event {
+		border-color: color-mix(in srgb, var(--lua-border) 72%, #8aa85a 28%);
+		background: color-mix(in srgb, rgba(0, 0, 0, 0.3) 76%, #24301b 24%);
+	}
+
+	.lua-launcher-foot {
+		display: flex;
+		gap: 0.45rem;
+		flex-wrap: wrap;
+		color: var(--lua-copy);
+		font-size: 0.75rem;
+	}
+
+	.lua-launcher-foot span {
+		padding-block: 0.16rem;
+		padding-inline: 0.45rem;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.06);
+		border: 1px solid rgba(255, 255, 255, 0.06);
 	}
 
 	.lua-entry-card-top {
@@ -1761,7 +1841,7 @@
 		justify-items: end;
 	}
 
-	.lua-family-card h3,
+	.lua-launcher-card h3,
 	.lua-entry-card h3,
 	.lua-detail-card h3,
 	.lua-see-also-card strong {
@@ -2343,7 +2423,7 @@
 	}
 
 	@media (max-width: 1180px) {
-		.lua-family-grid {
+		.lua-launcher-grid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 
@@ -2368,12 +2448,12 @@
 			padding-inline: 1.1rem;
 		}
 
-		.lua-family-grid,
+		.lua-launcher-grid,
 		.lua-see-also-grid {
 			grid-template-columns: 1fr;
 		}
 
-		.lua-family-card-head,
+		.lua-launcher-card-head,
 		.lua-detail-card-head,
 		.lua-list-head,
 		.lua-parameter-row,
@@ -2382,7 +2462,7 @@
 			flex-direction: column;
 		}
 
-		.lua-family-card-head span,
+		.lua-launcher-card-meta,
 		.lua-detail-card-head span,
 		.lua-list-head span {
 			white-space: normal;
@@ -2436,7 +2516,7 @@
 	:global(:root[data-theme="light"]) .lua-link,
 	:global(:root[data-theme="light"]) .lua-list-panel,
 	:global(:root[data-theme="light"]) .lua-detail-card,
-	:global(:root[data-theme="light"]) .lua-family-card,
+	:global(:root[data-theme="light"]) .lua-launcher-card,
 	:global(:root[data-theme="light"]) .lua-entry-card,
 	:global(:root[data-theme="light"]) .lua-tab,
 	:global(:root[data-theme="light"]) .lua-filter-chip,

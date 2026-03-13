@@ -24,8 +24,8 @@ DEFAULT_DEBUG_DB_PATH = Path(
 )
 DEFAULT_METHODS_PATH = Path("/Users/coiot/Sites/LandofSnows/Methods.xlsx")
 DEFAULT_GAME_EVENTS_PATH = Path("/Users/coiot/Sites/LandofSnows/GameEvents.xlsx")
-DEFAULT_SCHEMA_OUT = Path("src/lib/generated/civ-schema.json")
-DEFAULT_LUA_OUT = Path("src/lib/generated/civ-lua-api.json")
+DEFAULT_SCHEMA_OUT = Path("src/lib/data/civ-schema.json")
+DEFAULT_LUA_OUT = Path("src/lib/data/civ-lua-api.json")
 DEFAULT_LUA_DOCS_PATH = Path("src/lib/data/civ-lua-api-docs.json")
 TYPE_TABLE_MAP = {
     "BeliefTypes": ["Beliefs"],

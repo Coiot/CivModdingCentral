@@ -1,7 +1,7 @@
 <script>
 	import { onMount, tick } from "svelte";
 
-	import schemaData from "../generated/civ-schema.json";
+	import schemaData from "../data/civ-schema.json";
 
 	const numberFormatter = new Intl.NumberFormat("en-US");
 	const QUICK_STARTS = [
@@ -2039,6 +2039,11 @@
 	.schema-quick-card,
 	.schema-companion-card,
 	.schema-table-card {
+		display: grid;
+		gap: 0.55rem;
+		min-inline-size: 0;
+		align-content: start;
+		justify-items: start;
 		border-radius: 1.1rem;
 		padding-block: 0.85rem;
 		padding-inline: 0.9rem;
@@ -2067,6 +2072,12 @@
 		justify-content: space-between;
 	}
 
+	.schema-quick-head,
+	.schema-table-card-head {
+		inline-size: 100%;
+		align-items: start;
+	}
+
 	.schema-quick-head span,
 	.schema-table-card-head span,
 	.schema-detail-card-head span,
@@ -2081,9 +2092,11 @@
 	.schema-detail-card h3,
 	.schema-inline-link,
 	.schema-companion-card strong {
+		font-size: clamp(1rem, 1.4vw, 1.18rem);
 		line-height: 1.12;
 		overflow-wrap: anywhere;
 		word-break: break-word;
+		text-align: left;
 	}
 
 	.schema-table-card p,
@@ -2095,6 +2108,7 @@
 		margin-block-start: 0.18rem;
 		margin-inline: 0;
 		font-size: 0.9rem;
+		text-align: left;
 	}
 
 	.schema-table-meta {

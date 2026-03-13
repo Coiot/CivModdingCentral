@@ -5572,8 +5572,8 @@
 			"displaySignature": "City:GetNumBuilding(BuildingTypes:eBuildingType)",
 			"summary": "Returns the current count of a specific building type in a city.",
 			"notes": [
-				"Use this to test whether a city already has a building before granting yields, promotions, or dummy-building side effects.",
-				"For most standard buildings the answer is 0 or 1, but dummy-building patterns can intentionally stack counts above one.",
+				"Use this to test whether a city already has a building before granting yields, promotions, or dummy building side effects.",
+				"For most standard buildings the answer is 0 or 1, but dummy building patterns can intentionally stack counts above one.",
 				"This is usually the cleanest city-level read when you need an actual building row instead of a building class abstraction."
 			],
 			"example": {
@@ -5581,7 +5581,7 @@
 				"code": "local iBuilding = GameInfoTypes.BUILDING_MONUMENT\nlocal pCity = UI.GetHeadSelectedCity()\nif pCity and pCity:GetNumBuilding(iBuilding) > 0 then\n\tprint(\"The selected city already has a Monument\")\nend",
 				"language": "lua"
 			},
-			"gotchas": ["The parameter is a BuildingType row ID, not a BuildingClass.", "Dummy-building systems may legitimately return values greater than one."],
+			"gotchas": ["The parameter is a BuildingType row ID, not a BuildingClass.", "Dummy building systems may legitimately return values greater than one."],
 			"relatedSchemaNotes": [
 				{
 					"table": "Buildings",
@@ -14400,10 +14400,10 @@
 			"notes": [
 				"In UI code this is usually the local human player, and the usual next step is Players[Game.GetActivePlayer()].",
 				"This is a stable helper for front-end and in-game UI code that needs a player handle without already carrying one around.",
-				"It is also a common bridge into player-scoped methods like notifications, production lookups, and diplomacy UI."
+				"It is also a common bridge into player scoped methods like notifications, production lookups, and diplomacy UI."
 			],
 			"example": {
-				"summary": "Resolve the active player object before calling other player-scoped helpers.",
+				"summary": "Resolve the active player object before calling other player scoped helpers.",
 				"code": "local iPlayer = Game.GetActivePlayer()\nlocal pPlayer = Players[iPlayer]\nif pPlayer then\n\tprint(\"Active player ID:\", iPlayer)\nend",
 				"language": "lua"
 			},
@@ -14415,11 +14415,11 @@
 			"seeAlso": [
 				{
 					"entryId": "player-addnotification-5",
-					"note": "Common follow-up once you have the active player object."
+					"note": "Common followup once you have the active player object."
 				},
 				{
 					"entryId": "game-event-playerdoturn-72",
-					"note": "Do not confuse active-player UI context with the per-player turn hook."
+					"note": "Do not confuse active player UI context with the per-player turn hook."
 				}
 			]
 		},
@@ -15273,7 +15273,7 @@
 			},
 			"gotchas": [
 				"The turn number is not the same thing as the displayed world year.",
-				"Do not confuse a turn counter with active-player UI context; many players can still be processed during the same turn."
+				"Do not confuse a turn counter with active player UI context; many players can still be processed during the same turn."
 			],
 			"relatedSchemaNotes": [],
 			"seeAlso": [
@@ -23990,7 +23990,7 @@
 				"language": "lua"
 			},
 			"gotchas": [
-				"The boolean flags materially change the answer, so do not cargo-cult a single flag set into every caller.",
+				"The boolean flags materially change the answer, so do not blindly reuse the same flag set everywhere.",
 				"A true result here does not mean a specific city can produce the unit this turn; city context may still block it."
 			],
 			"relatedSchemaNotes": [
@@ -44291,7 +44291,7 @@
 			"summary": "Returns the owning player ID for a plot, or -1 when the plot is unowned.",
 			"notes": [
 				"Use this when territory ownership matters more than plot visibility or city assignment.",
-				"This is a useful bridge from map coordinates back into player-scoped logic after resolving a plot from an event hook.",
+				"This is a useful bridge from map coordinates back into player scoped logic after resolving a plot from an event hook.",
 				"The return value is lightweight and easy to combine with Players[...] lookups or territory comparison checks."
 			],
 			"example": {
@@ -50393,10 +50393,10 @@
 			"notes": [
 				"Use this for empire-wide tech gates where team ownership matters more than one specific player handle.",
 				"This is the right layer for rules that should apply to every member of a team once the tech is unlocked.",
-				"It pairs naturally with tech-triggered event hooks and schema lookups into the Technologies table."
+				"It pairs naturally with tech triggered event hooks and schema lookups into the Technologies table."
 			],
 			"example": {
-				"summary": "Check whether the active player's team has Writing before allowing a tech-gated effect.",
+				"summary": "Check whether the active player's team has Writing before allowing a tech gated effect.",
 				"code": "local iPlayer = Game.GetActivePlayer()\nlocal pPlayer = Players[iPlayer]\nlocal pTeam = pPlayer and Teams[pPlayer:GetTeam()]\nlocal iTech = GameInfoTypes.TECH_WRITING\nif pTeam and pTeam:IsHasTech(iTech) then\n\tprint(\"The active player's team already has Writing\")\nend",
 				"language": "lua"
 			},
@@ -50410,7 +50410,7 @@
 			"seeAlso": [
 				{
 					"entryId": "game-event-teamsethastech-81",
-					"note": "Hook that fires when tech ownership changes and can trigger follow-up logic."
+					"note": "Hook that fires when tech ownership changes and can trigger followup logic."
 				}
 			]
 		},
@@ -52210,7 +52210,7 @@
 			"notes": [
 				"Use this as a validation before issuing scripted relocation behavior that depends on airport-style movement.",
 				"The plot object and x or y coordinates together give you both the destination context and the map position the game will validate.",
-				"This is best used as a yes or no gate before you attempt any UI or mission-side follow-up."
+				"This is best used as a yes or no gate before you attempt any UI or mission-side followup."
 			],
 			"example": {
 				"summary": "Check whether the selected unit can airlift to its current plot coordinates.",
@@ -52225,7 +52225,7 @@
 			"seeAlso": [
 				{
 					"entryId": "game-getactiveplayer-44",
-					"note": "Useful when the airlift check is being driven from active-player UI code."
+					"note": "Useful when the airlift check is being driven from active player UI code."
 				}
 			]
 		},
@@ -60981,7 +60981,7 @@
 			"summary": "Hook fired when a build action finishes on a plot and resolves into an improvement result.",
 			"notes": [
 				"Use this after an improvement actually lands on the map, not while a worker is still deciding whether the action is legal.",
-				"The hook gives you player and plot coordinates, which is enough to resolve the plot and inspect terrain, owner, and follow-up effects.",
+				"The hook gives you player and plot coordinates, which is enough to resolve the plot and inspect terrain, owner, and followup effects.",
 				"This is a good place for post-build rewards, terrain cleanup, or progress systems that only care about finished work."
 			],
 			"example": {
@@ -60991,7 +60991,7 @@
 			},
 			"gotchas": [
 				"The improvement parameter reflects the completed improvement row, not necessarily the original build action enum chosen by the unit.",
-				"If you need to reason about the worker action itself, you will often need to cross-check Builds as well as Improvements."
+				"If you need to reason about the worker action itself, you will often need to cross check Builds as well as Improvements."
 			],
 			"relatedSchemaNotes": [
 				{
@@ -61005,7 +61005,7 @@
 			],
 			"seeAlso": [
 				{
-					"note": "Cross-check build actions when the finished improvement alone is not enough context."
+					"note": "Cross check build actions when the finished improvement alone is not enough context."
 				},
 				{
 					"entryId": "unit-canstartmission-63",
@@ -61766,7 +61766,7 @@
 			"seeAlso": [
 				{
 					"entryId": "plot-getowner-60",
-					"note": "Useful follow-up when reacting to the new owner of the purchased plot."
+					"note": "Useful followup when reacting to the new owner of the purchased plot."
 				}
 			]
 		},
@@ -61990,7 +61990,7 @@
 				"language": "lua"
 			},
 			"gotchas": [
-				"Community notes suggest a false return removes the building from the production list rather than showing it disabled with an explanation.",
+				"A false return removes the building from the production list rather than showing it disabled with an explanation.",
 				"The building parameter is a BuildingType ID, so building-class replacement logic still needs to be handled explicitly."
 			],
 			"relatedSchemaNotes": [
@@ -62443,7 +62443,7 @@
 				},
 				{
 					"entryId": "city-convertpercentfollowers-60",
-					"note": "Useful when follow-up logic depends on how follower counts were shifted during conversion."
+					"note": "Useful when followup logic depends on how follower counts were shifted during conversion."
 				}
 			]
 		},
@@ -62814,7 +62814,7 @@
 			"seeAlso": [
 				{
 					"entryId": "game-updatescore-261",
-					"note": "Common follow-up when the end of the core tick should refresh score-related state."
+					"note": "Common followup when the end of the core tick should refresh score-related state."
 				},
 				{
 					"entryId": "game-event-gamecoreupdatebegin-37",
@@ -63170,7 +63170,7 @@
 			"seeAlso": [
 				{
 					"entryId": "unit-isgreatperson-280",
-					"note": "Useful when follow-up logic needs to confirm the expended unit was treated as a great person."
+					"note": "Useful when followup logic needs to confirm the expended unit was treated as a great person."
 				},
 				{
 					"entryId": "game-event-unitprekill-86",
@@ -63911,7 +63911,7 @@
 				},
 				{
 					"entryId": "city-getnumbuilding-178",
-					"note": "Useful follow-up when validating city state around existing building counts."
+					"note": "Useful followup when validating city state around existing building counts."
 				},
 				{
 					"entryId": "player-canconstruct-21",
@@ -64308,9 +64308,9 @@
 			"parameterCount": 1,
 			"schemaTables": [],
 			"displaySignature": "GameEvents.PlayerDoTurn(PlayerTypes:ePlayer)",
-			"summary": "Per player turn hook that fires at the start of the turn cycle of every player (human or CPU).",
+			"summary": "Per-player turn hook that fires at the start of the turn cycle of every player (human or CPU).",
 			"notes": [
-				"This is a strong default hook for per player counters, maintenance, and general bookkeeping.",
+				"This is a strong default hook for per-player counters, maintenance, and general bookkeeping.",
 				"Fires at the start of turn before any player actions take place.",
 				"Use the passed player ID directly instead of assuming the active player matches the turn currently being processed."
 			],
