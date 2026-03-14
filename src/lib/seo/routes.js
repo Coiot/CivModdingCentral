@@ -8,14 +8,11 @@ const SAME_AS_URLS = ["https://discord.gg/yf8jUXf", "https://old.reddit.com/r/ci
 
 const ROUTE_SEO = {
 	"/": {
-		title: "CMC Workshop Uploader and Civ V Modding Tools | Civ Modding Central",
+		title: "Learn, Build, and Publish Civilization V Mods | Civ Modding Central",
 		description:
-			"Download the cross-platform CMC Workshop Uploader for Civilization V Steam Workshop uploads on Windows, macOS, and Linux, then use the site for DDS conversion, .modinfo authoring, .civ5mod packaging, map viewing, and modding resources.",
-		keywords: "CMC Workshop Uploader, Civilization V, Civ 5, modding tools, workshop uploader, Windows, macOS, Linux, DDS converter, modinfo builder, civ5mod ziper, map viewer",
-		pageType: "SoftwareApplication",
-		applicationCategory: "DeveloperApplication",
-		operatingSystem: "Windows, macOS, Linux",
-		softwareVersion: "0.1.13",
+			"Start learning Civilization V modding with Civ Modding Central's guided planner, template generators, schema and Lua references, art helpers, packaging tools, and Workshop publishing app.",
+		keywords: "Civilization V modding, Civ 5 mod tools, guided planner, template generators, schema browser, Lua API explorer, workshop uploader, Civ Modding Central",
+		pageType: "WebPage",
 	},
 	"/dds-converter": {
 		title: "DDS Converter for Civilization V Textures | Civ Modding Central",
@@ -26,14 +23,14 @@ const ROUTE_SEO = {
 	},
 	"/modinfo-builder": {
 		title: ".modinfo Builder for Civilization V Mods | Civ Modding Central",
-		description: "Create and edit Civilization V .modinfo files with MD5 generation, file lists, actions, entry points, dependencies, and save-ready XML output.",
+		description: "Create and edit Civilization V .modinfo files with auto-filled MD5 generation, file lists, actions, entry points, dependencies, and XML output.",
 		keywords: "Civilization V modinfo builder, Civ 5 modinfo tool, md5 generator, mod packaging",
 		pageType: "WebApplication",
 		applicationCategory: "DeveloperApplication",
 	},
 	"/civ5mod-ziper": {
 		title: ".civ5mod 7z Builder for Civilization V Mods | Civ Modding Central",
-		description: "Build true .civ5mod archives in the browser for Civilization V mods, including .modinfo hash normalization and legacy 7z compatibility adjustments.",
+		description: "Build true .civ5mod archives in the browser for Civilization V mods, including .modinfo hash normalization and legacy 7z compatibility.",
 		keywords: "Civilization V civ5mod builder, Civ 5 7z packer, mod archive maker, civ5mod ziper",
 		pageType: "WebApplication",
 		applicationCategory: "DeveloperApplication",
@@ -46,39 +43,52 @@ const ROUTE_SEO = {
 	},
 	"/pattern-library": {
 		title: "Pattern Library for Civ V Modding Workflows | Civ Modding Central",
-		description: "Browse the Civ V Pattern Library for source-backed modding workflows covering Lua events, persistence, VFS wiring, localization, debugging, and repeated implementation tasks.",
+		description: "Browse our Pattern Library for curated code examples covering the most common tasks and implementations.",
 		keywords: "Civilization V pattern library, Civ 5 patterns, dummy building helper, notification builder, persistent data helper",
 		pageType: "CollectionPage",
 	},
-	"/scaffold-generators": {
-		title: "Scaffold Generators for Civ V Content Creation | Civ Modding Central",
-		description: "Explore the Civ V scaffold generator planning hub covering buildings, units, Lua hooks, atlas registration, and larger civilization package builders.",
-		keywords: "Civilization V scaffold generator, Civ 5 unit scaffold, building scaffold, civilization scaffold, atlas registration builder",
+	"/template-generators": {
+		title: "Template Generators for Civ V Content Creation | Civ Modding Central",
+		description: "Use our starter template to get started with brand new Civ V civ mod that is ready to customize and expand.",
+		keywords: "Civilization V template generator, Civ 5 unit template, building template, civilization template, atlas registration builder",
+		pageType: "CollectionPage",
+	},
+	"/guided-planner": {
+		title: "Guided Planner for Civilization V Civ Mods | Civ Modding Central",
+		description:
+			"Plan a full Civilization V civ mod with a step-by-step guide for code, art, world support, text, packaging, and release follow-up using links into Civ Modding Central's tools and references.",
+		keywords: "Civilization V guided planner, Civ 5 civ mod checklist, civ mod planner, Civ 5 mod workflow, Civilization V mod release planning",
 		pageType: "CollectionPage",
 	},
 	"/schema-browser": {
 		title: "Civ V Schema Browser and Table Reference | Civ Modding Central",
-		description: "Browse the Civilization V core database schema with searchable tables, columns, foreign keys, incoming references, and companion table hints.",
+		description: "Browse the Civilization V database schema with searchable tables, columns, foreign keys, incoming references, and companion table hints.",
 		keywords: "Civilization V schema browser, Civ 5 database tables, Civ 5 foreign keys, Buildings table, Units table",
 		pageType: "CollectionPage",
 	},
 	"/lua-api-explorer": {
 		title: "Civ V Lua API Explorer and GameEvents Reference | Civ Modding Central",
-		description: "Search workbook-backed Civilization V Lua methods and GameEvents with signatures, parameter lists, object families, and schema touchpoints.",
+		description: "Search throuahl all the Lua methods and GameEvents with parameter lists, examples, and known gotchas",
 		keywords: "Civilization V Lua API explorer, Civ 5 GameEvents, Civ 5 Lua methods, Player API, City API",
 		pageType: "CollectionPage",
 	},
 	"/civ-icon-maker": {
 		title: "Civ V Icon Maker and Alpha Atlas Tool | Civ Modding Central",
-		description: "Create Civilization V-style icon renders with layered lighting, color controls, drag positioning, and export-ready alpha atlas styling.",
+		description: "Create Civilization V style icon renders with layered lighting, color controls, drag positioning, and export-ready alpha atlas styling.",
 		keywords: "Civilization V icon maker, Civ 5 alpha atlas, civ icon tool",
 		pageType: "WebApplication",
 		applicationCategory: "DesignApplication",
 	},
+	// "/unit-flag-previewer": {
+	// 	title: "Unit Flag Previewer Concept for Civ V Art Checks | Civ Modding Central",
+	// 	description: "Preview interface for testing banner readability, alpha edges, and battlefield contrast before DDS export.",
+	// 	keywords: "Civilization V unit flag previewer, Civ 5 unit flag art, unit flag readability, Civ V banner helper",
+	// 	pageType: "WebPage",
+	// },
 	"/workshop-uploader": {
 		title: "CMC Workshop Uploader for Civilization V Steam Workshop | Civ Modding Central",
 		description:
-			"Learn about the standalone CMC Workshop Uploader desktop app for Civilization V Steam Workshop uploads, updates, item lookup, .modinfo preparation, and .civ5mod packaging across Windows, macOS, and Linux.",
+			"Download the standalone CMC Workshop Uploader desktop app for Civilization V Steam Workshop publishing and updates, with built-in .modinfo and .civ5mod helpers across Windows, macOS, and Linux.",
 		keywords: "CMC Workshop Uploader, Civilization V workshop uploader, Civ 5 Steam Workshop desktop app, Windows, macOS, Linux",
 		pageType: "SoftwareApplication",
 		applicationCategory: "DeveloperApplication",

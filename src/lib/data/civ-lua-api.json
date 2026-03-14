@@ -1477,10 +1477,18 @@
 			"parameterCount": 5,
 			"schemaTables": [],
 			"displaySignature": "City:CanTrain(int:iUnit, [bool:bContinue:false], [bool:bTestVisible:false], [bool:bIgnoreCost:false], [bool:bWillPurchase:false])",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Tests whether the city can currently train the specified unit under the provided validation flags.",
+			"notes": [
+				"Use this as a safe pre-check before queueing, granting, or recommending units from script.",
+				"The boolean flags let you mirror different contexts such as continued production, UI-visible checks, ignored cost, or purchase flow.",
+				"This is often the city-side counterpart to GameEvents.PlayerCanTrain when you want a one-off answer instead of an event hook."
+			],
+			"example": {
+				"summary": "Check whether the selected city can train a Worker right now.",
+				"code": "local pCity = UI.GetHeadSelectedCity()\nlocal iUnit = GameInfoTypes.UNIT_WORKER\nif pCity and pCity:CanTrain(iUnit, false, false, false, false) then\n\tprint(\"This city can train a Worker right now\")\nend",
+				"language": "lua"
+			},
+			"gotchas": ["The boolean flags materially change the answer, so do not blindly reuse the same flag set everywhere.", "The first parameter is a UnitTypes row ID, not a UnitClass."],
 			"relatedSchemaNotes": [],
 			"seeAlso": [
 				{
@@ -6102,10 +6110,18 @@
 			"parameterCount": 0,
 			"schemaTables": [],
 			"displaySignature": "City:GetOwner()",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Returns the player ID that currently owns the city.",
+			"notes": [
+				"Use this when you already have a City object and need to jump back to the owning Player entry.",
+				"This is useful in UI flows, city iteration code, or helper functions that start from a city instead of an event payload.",
+				"Pair the returned ID with Players[iOwner] if you need the actual player object afterward."
+			],
+			"example": {
+				"summary": "Resolve the selected city owner and jump back to the Player object.",
+				"code": "local pCity = UI.GetHeadSelectedCity()\nif pCity then\n\tlocal iOwner = pCity:GetOwner()\n\tlocal pOwner = Players[iOwner]\n\tprint(\"City owner:\", iOwner, pOwner and pOwner:GetCivilizationShortDescription())\nend",
+				"language": "lua"
+			},
+			"gotchas": ["The return value is a player ID, not a Player object.", "Ownership can change after conquest, liberation, or trade, so cached owner IDs can become stale."],
 			"relatedSchemaNotes": [],
 			"seeAlso": []
 		},
@@ -7030,10 +7046,21 @@
 			"parameterCount": 0,
 			"schemaTables": [],
 			"displaySignature": "City:GetReligiousMajority()",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Returns the ReligionTypes ID that currently has majority pressure in the city.",
+			"notes": [
+				"Use this for religion-gated bonuses, conversion checks, or city targeting that depends on the dominant faith.",
+				"It is a fast city-level read when you only care about the current majority result rather than the full follower breakdown.",
+				"Compare the returned integer against ReligionTypes or GameInfoTypes religion IDs before applying effects."
+			],
+			"example": {
+				"summary": "Read the current majority religion from the selected city.",
+				"code": "local pCity = UI.GetHeadSelectedCity()\nif pCity then\n\tlocal eReligion = pCity:GetReligiousMajority()\n\tprint(\"Majority religion id:\", eReligion)\nend",
+				"language": "lua"
+			},
+			"gotchas": [
+				"Cities can exist with no clear majority, so do not assume the result is always a founded religion you care about.",
+				"The majority religion is not the same thing as the city owner's religion, pantheon, or holy-city status."
+			],
 			"relatedSchemaNotes": [],
 			"seeAlso": []
 		},
@@ -10494,10 +10521,18 @@
 			"parameterCount": 2,
 			"schemaTables": [],
 			"displaySignature": "City:SetNumRealBuilding(int:iBuilding, int:iNewValue)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Sets the city's current count for a specific building row immediately.",
+			"notes": [
+				"This is the standard lever for dummy-building systems, scenario setup, and direct building-state rewards.",
+				"Passing 0 removes the building count, while positive values add or stack the row directly.",
+				"Work with concrete BuildingTypes rows here rather than the BuildingClasses abstraction."
+			],
+			"example": {
+				"summary": "Apply a building row directly to the selected city.",
+				"code": "local pCity = UI.GetHeadSelectedCity()\nlocal iBuilding = GameInfoTypes.BUILDING_MONUMENT\nif pCity then\n\tpCity:SetNumRealBuilding(iBuilding, 1)\n\tprint(\"Applied building count to\", pCity:GetName())\nend",
+				"language": "lua"
+			},
+			"gotchas": ["This bypasses normal production, purchase, and prerequisite flows.", "The parameter is a BuildingTypes row ID, not a BuildingClass."],
 			"relatedSchemaNotes": [],
 			"seeAlso": []
 		},
@@ -22351,10 +22386,18 @@
 			"parameterCount": 4,
 			"schemaTables": [],
 			"displaySignature": "Map.PlotDistance(int:iX1, int:iY1, int:iX2, int:iY2)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Returns the hex distance between two map coordinates.",
+			"notes": [
+				"Use this for radius checks, nearest-target logic, and movement or proximity comparisons that operate on grid coordinates.",
+				"It is a lightweight helper when you already have x and y values and do not need full plot objects.",
+				"The result is Civ V hex distance, not Euclidean distance or raw difference on one axis."
+			],
+			"example": {
+				"summary": "Measure the selected unit's distance from the active player's capital.",
+				"code": "local pUnit = UI.GetHeadSelectedUnit()\nlocal pPlayer = Players[Game.GetActivePlayer()]\nlocal pCapital = pPlayer and pPlayer:GetCapitalCity()\nif pUnit and pCapital then\n\tlocal iDistance = Map.PlotDistance(pCapital:GetX(), pCapital:GetY(), pUnit:GetX(), pUnit:GetY())\n\tprint(\"Distance from capital:\", iDistance)\nend",
+				"language": "lua"
+			},
+			"gotchas": ["The function expects coordinate pairs, not Plot objects.", "Hex-grid distance can differ from what a square-grid or straight-line mental model would suggest."],
 			"relatedSchemaNotes": [],
 			"seeAlso": []
 		},
@@ -26955,10 +26998,18 @@
 			"parameterCount": 1,
 			"schemaTables": [],
 			"displaySignature": "Player:GetCityByID(int:id)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Resolves one of the player's cities from its city ID and returns the City object, or nil if that ID is no longer valid for the player.",
+			"notes": [
+				"Use this when an event hands you a city ID and you need the actual City object for followup reads or mutations.",
+				"City IDs are only meaningful within the owning player, so resolve them through the correct Players[ePlayer] entry.",
+				"This is the normal bridge from GameEvents payloads like CityConstructed or CityTrained into city-level API calls."
+			],
+			"example": {
+				"summary": "Resolve a city object from a known city ID before doing city-level work.",
+				"code": "local pPlayer = Players[Game.GetActivePlayer()]\nlocal pCapital = pPlayer and pPlayer:GetCapitalCity()\nif pCapital then\n\tlocal pResolvedCity = pPlayer:GetCityByID(pCapital:GetID())\n\tif pResolvedCity then\n\t\tprint(\"Resolved city:\", pResolvedCity:GetName())\n\tend\nend",
+				"language": "lua"
+			},
+			"gotchas": ["A city ID is not globally unique across every player.", "Captured, razed, or stale city IDs can return nil even when the player is still alive."],
 			"relatedSchemaNotes": [],
 			"seeAlso": []
 		},
@@ -37814,10 +37865,21 @@
 			"parameterCount": 5,
 			"schemaTables": ["Units"],
 			"displaySignature": "Player:InitUnit(UnitTypes:eUnit, int:x, int:y, [int:eUnitAI:NO_UNITAI], [int:eFacingDirection:NO_DIRECTION])",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Creates a new unit for the player at the target coordinates and returns the spawned Unit object.",
+			"notes": [
+				"This is the standard way to grant scripted reward units, spawn scenario forces, or create support units on demand.",
+				"The optional AI and facing arguments let you shape how the unit behaves immediately after creation.",
+				"Use valid map coordinates and a sensible destination plot because the unit appears in the game world at once."
+			],
+			"example": {
+				"summary": "Spawn a Worker for the active player at the capital.",
+				"code": "local iPlayer = Game.GetActivePlayer()\nlocal pPlayer = Players[iPlayer]\nlocal pCapital = pPlayer and pPlayer:GetCapitalCity()\nif pCapital then\n\tlocal pUnit = pPlayer:InitUnit(GameInfoTypes.UNIT_WORKER, pCapital:GetX(), pCapital:GetY())\n\tif pUnit then\n\t\tprint(\"Spawned unit:\", pUnit:GetName())\n\tend\nend",
+				"language": "lua"
+			},
+			"gotchas": [
+				"This creates the unit immediately; it is not a queued production request.",
+				"Spawning onto an invalid or blocked plot can produce unwanted results or fail your intended placement."
+			],
 			"relatedSchemaNotes": [
 				{
 					"table": "Units",
@@ -47018,10 +47080,21 @@
 			"parameterCount": 2,
 			"schemaTables": ["Improvements"],
 			"displaySignature": "Plot:SetImprovementType(ImprovementTypes:eNewValue, [PlayerTypes:eBuilder:NO_PLAYER])",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Sets the plot's improvement row directly, optionally attributing the change to a builder player.",
+			"notes": [
+				"Use this for scripted tile rewards, instant improvement placement, or map-state cleanup after custom events.",
+				"The optional builder parameter is useful when ownership or credit matters for downstream logic.",
+				"This is a direct map mutation, so it fits best after you have already decided the target plot is valid."
+			],
+			"example": {
+				"summary": "Place a Farm directly on the hovered plot.",
+				"code": "local pPlot = UI.GetMouseOverPlot()\nif pPlot then\n\tpPlot:SetImprovementType(GameInfoTypes.IMPROVEMENT_FARM)\n\tprint(\"Placed a Farm on the hovered plot\")\nend",
+				"language": "lua"
+			},
+			"gotchas": [
+				"This does not walk a worker through normal build turns or legality checks for you.",
+				"The target plot still needs to make sense for the improvement if you want stable in-game results."
+			],
 			"relatedSchemaNotes": [
 				{
 					"table": "Improvements",
@@ -47292,10 +47365,21 @@
 			"parameterCount": 3,
 			"schemaTables": ["Resources"],
 			"displaySignature": "Plot:SetResourceType(ResourceTypes:eNewValue, int:iResourceNum, [bool:bForMinorCivPlot:false])",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Sets the plot's resource row and quantity directly.",
+			"notes": [
+				"Use this for scripted map rewards, scenario setup, or resource redistribution effects that bypass normal map generation.",
+				"The quantity argument controls how much of the resource is placed on the plot.",
+				"This is a low-level map mutation, so it is usually paired with separate logic for ownership, visibility, or improvement cleanup."
+			],
+			"example": {
+				"summary": "Place Iron directly on the hovered plot.",
+				"code": "local pPlot = UI.GetMouseOverPlot()\nif pPlot then\n\tpPlot:SetResourceType(GameInfoTypes.RESOURCE_IRON, 2)\n\tprint(\"Placed Iron on the hovered plot\")\nend",
+				"language": "lua"
+			},
+			"gotchas": [
+				"This does not automatically add the correct improvement or reveal the resource to players.",
+				"Resource row and quantity choices still need to make sense for the target plot and your rules."
+			],
 			"relatedSchemaNotes": [
 				{
 					"table": "Resources",
@@ -60217,10 +60301,21 @@
 			"parameterCount": 2,
 			"schemaTables": ["UnitPromotions"],
 			"displaySignature": "Unit:SetHasPromotion(PromotionTypes:eIndex, bool:bNewValue)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Adds or removes a specific promotion on the unit immediately.",
+			"notes": [
+				"Use this for reward payloads, conditional promotion cleanup, and scripted state syncing on custom unit systems.",
+				"Pass true to grant the promotion and false to strip it back off.",
+				"The promotion ID comes from UnitPromotions, so this pairs naturally with schema-driven promotion starters."
+			],
+			"example": {
+				"summary": "Grant a promotion to the selected unit.",
+				"code": "local pUnit = UI.GetHeadSelectedUnit()\nlocal iPromotion = GameInfoTypes.PROMOTION_SHOCK_1\nif pUnit then\n\tpUnit:SetHasPromotion(iPromotion, true)\n\tprint(\"Applied promotion to selected unit\")\nend",
+				"language": "lua"
+			},
+			"gotchas": [
+				"This changes the unit state directly rather than asking whether the promotion would normally be selectable.",
+				"The promotion parameter is a PromotionTypes row ID, not a text key or class."
+			],
 			"relatedSchemaNotes": [
 				{
 					"table": "UnitPromotions",
@@ -62299,10 +62394,21 @@
 			"parameterCount": 9,
 			"schemaTables": [],
 			"displaySignature": "GameEvents.CityCaptureComplete(PlayerTypes:eOldPlayer, bool:bCapital, int:iPlotX, int:iPlotY, int:iCity, int:iOldPop, bool:bConquest, int:iGreatWorkCount, int:iGreatWorkCount)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired after city capture has finished and the transferred city can be inspected in its new state.",
+			"notes": [
+				"Use this for conquest rewards, occupation cleanup, or post-capture notifications that need the city after ownership has changed.",
+				"The plot coordinates are the safest way to resolve the captured city object once the transfer is complete.",
+				"The payload also tells you whether the city was a capital and whether the change came through conquest."
+			],
+			"example": {
+				"summary": "Resolve the captured city from the map after takeover completes.",
+				"code": "GameEvents.CityCaptureComplete.Add(function(eOldPlayer, bCapital, iPlotX, iPlotY, iCity, iOldPop, bConquest)\n\tlocal pPlot = Map.GetPlot(iPlotX, iPlotY)\n\tlocal pCity = pPlot and pPlot:GetPlotCity()\n\tif pCity then\n\t\tprint(\"Captured city:\", pCity:GetName(), eOldPlayer, bCapital, iOldPop, bConquest)\n\tend\nend)",
+				"language": "lua"
+			},
+			"gotchas": [
+				"Use the plot coordinates to resolve the live city object instead of assuming the city ID alone is enough.",
+				"This fires after capture resolution, so pre-capture state should be collected earlier if you need it."
+			],
 			"relatedSchemaNotes": [],
 			"seeAlso": [
 				{
@@ -62364,10 +62470,18 @@
 			"parameterCount": 5,
 			"schemaTables": ["Buildings"],
 			"displaySignature": "GameEvents.CityConstructed(PlayerTypes:ePlayer, int:iCity, BuildingTypes:eBuilding, bool:bGold, bool:bFaithOrCulture)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired after a city completes a building and the result is already in city state.",
+			"notes": [
+				"Use this for post-build rewards, notifications, or cleanup that should run only after the building is actually present.",
+				"Resolve the city through Players[ePlayer]:GetCityByID(iCity) before doing any city-level followup work.",
+				"The gold and faith-or-culture flags help distinguish how the completed building entered the city."
+			],
+			"example": {
+				"summary": "Resolve the city after a building finishes and log the result.",
+				"code": "GameEvents.CityConstructed.Add(function(ePlayer, iCity, eBuilding, bGold, bFaithOrCulture)\n\tlocal pPlayer = Players[ePlayer]\n\tlocal pCity = pPlayer and pPlayer:GetCityByID(iCity)\n\tif pCity then\n\t\tprint(\"Building finished in\", pCity:GetName(), eBuilding, bGold, bFaithOrCulture)\n\tend\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["The city parameter is a city ID, not a City object.", "The building parameter is a BuildingTypes row ID, not a BuildingClass."],
 			"relatedSchemaNotes": [
 				{
 					"table": "Buildings",
@@ -62426,10 +62540,18 @@
 			"parameterCount": 4,
 			"schemaTables": ["Religions"],
 			"displaySignature": "GameEvents.CityConvertsReligion(PlayerTypes:ePlayer, ReligionTypes:eReligion, int:iPlotX, int:iPlotY)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired when a city converts to the specified religion at the provided plot coordinates.",
+			"notes": [
+				"Use this for religion-conversion rewards, pressure cleanup, or per-city state updates that should happen after conversion.",
+				"Resolve the city from the plot coordinates because the callback does not pass a city ID.",
+				"The religion parameter is the new dominant or converted religion row for the city state change you are reacting to."
+			],
+			"example": {
+				"summary": "Resolve the converted city and log the new religion row.",
+				"code": "GameEvents.CityConvertsReligion.Add(function(ePlayer, eReligion, iPlotX, iPlotY)\n\tlocal pPlot = Map.GetPlot(iPlotX, iPlotY)\n\tlocal pCity = pPlot and pPlot:GetPlotCity()\n\tif pCity then\n\t\tprint(\"City converted:\", pCity:GetName(), eReligion, ePlayer)\n\tend\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["The payload does not tell you the previous religion or the full follower breakdown.", "The religion parameter is a ReligionTypes row ID, not a Religion object."],
 			"relatedSchemaNotes": [
 				{
 					"table": "Religions",
@@ -62496,10 +62618,18 @@
 			"parameterCount": 5,
 			"schemaTables": ["Projects"],
 			"displaySignature": "GameEvents.CityCreated(PlayerTypes:ePlayer, int:iCity, ProjectTypes:eProject, bool:bGold, bool:bFaithOrCulture)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Despite the name, this hook fires after a city completes a project row.",
+			"notes": [
+				"Use this for post-project rewards or notifications that should happen after the project is actually finished.",
+				"Resolve the city through the owning player and city ID before reading local city state.",
+				"If you want actual city founding logic, use PlayerCityFounded instead."
+			],
+			"example": {
+				"summary": "Log a completed project from the city that produced it.",
+				"code": "GameEvents.CityCreated.Add(function(ePlayer, iCity, eProject, bGold, bFaithOrCulture)\n\tlocal pPlayer = Players[ePlayer]\n\tlocal pCity = pPlayer and pPlayer:GetCityByID(iCity)\n\tif pCity then\n\t\tprint(\"Project completed in\", pCity:GetName(), eProject, bGold, bFaithOrCulture)\n\tend\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["This is not a city-founding hook even though the name suggests it.", "The project parameter is a ProjectTypes row ID, not a Project object."],
 			"relatedSchemaNotes": [
 				{
 					"table": "Projects",
@@ -62660,10 +62790,18 @@
 			"parameterCount": 5,
 			"schemaTables": ["Units"],
 			"displaySignature": "GameEvents.CityTrained(PlayerTypes:ePlayer, int:iCity, UnitTypes:eUnit, bool:bGold, bool:bFaithOrCulture)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired after a city finishes training or purchasing a unit.",
+			"notes": [
+				"Use this for post-training rewards, free promotions, or logging that should only happen once the unit type is approved and finished.",
+				"Resolve the city through the player and city ID if your followup logic needs local city state.",
+				"The purchase-path booleans help separate queue production from gold or faith-style completion flows."
+			],
+			"example": {
+				"summary": "Log the city and unit type after training finishes.",
+				"code": "GameEvents.CityTrained.Add(function(ePlayer, iCity, eUnit, bGold, bFaithOrCulture)\n\tlocal pPlayer = Players[ePlayer]\n\tlocal pCity = pPlayer and pPlayer:GetCityByID(iCity)\n\tif pCity then\n\t\tprint(\"Unit finished in\", pCity:GetName(), eUnit, bGold, bFaithOrCulture)\n\tend\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["The city parameter is a city ID, not a City object.", "Treat the unit payload according to the event signature here; it is not a Unit object."],
 			"relatedSchemaNotes": [
 				{
 					"table": "Units",
@@ -62706,10 +62844,18 @@
 			"parameterCount": 2,
 			"schemaTables": [],
 			"displaySignature": "GameEvents.DeclareWar(TeamTypes:eFromTeam, TeamTypes:eToTeam)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired when one team declares war on another team.",
+			"notes": [
+				"Use this for diplomacy-triggered effects, war-state logging, or one-time setup that should happen the moment war begins.",
+				"The payload is team-scoped, which matters in games where multiple players share a team.",
+				"This is the post-declaration surface; CanDeclareWar is the earlier veto hook."
+			],
+			"example": {
+				"summary": "Log the teams involved when war begins.",
+				"code": "GameEvents.DeclareWar.Add(function(eFromTeam, eToTeam)\n\tprint(\"War declared:\", eFromTeam, eToTeam)\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["The parameters are team IDs, not player IDs.", "If you need to block the declaration, this hook is already too late."],
 			"relatedSchemaNotes": [],
 			"seeAlso": [
 				{
@@ -63157,10 +63303,21 @@
 			"parameterCount": 2,
 			"schemaTables": ["Units"],
 			"displaySignature": "GameEvents.GreatPersonExpended(PlayerTypes:ePlayer, UnitTypes:eUnit)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired when a great person unit is consumed for its special action.",
+			"notes": [
+				"Use this for cooldowns, reward followups, or analytics tied to great-person consumption.",
+				"The payload gives the owning player and the unit row, which is enough for most type-based branching.",
+				"Pair this with UnitPrekill if you also need the specific unit instance or map location during removal."
+			],
+			"example": {
+				"summary": "Log the player and great person row when it is expended.",
+				"code": "GameEvents.GreatPersonExpended.Add(function(ePlayer, eUnit)\n\tprint(\"Great person expended:\", ePlayer, eUnit)\nend)",
+				"language": "lua"
+			},
+			"gotchas": [
+				"The unit parameter is a UnitTypes row ID, not a live Unit object or unit ID.",
+				"This hook is about the expend action specifically, not every way a great person can leave play."
+			],
 			"relatedSchemaNotes": [
 				{
 					"table": "Units",
@@ -63235,10 +63392,18 @@
 			"parameterCount": 2,
 			"schemaTables": [],
 			"displaySignature": "GameEvents.MakePeace(TeamTypes:eFromTeam, TeamTypes:eToTeam)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired when two teams make peace.",
+			"notes": [
+				"Use this for war-end cleanup, treaty-triggered rewards, or diplomacy logging that should happen after peace resolves.",
+				"Like DeclareWar, the payload is team-scoped rather than player-scoped.",
+				"This is useful for clearing wartime state that should not persist after the peace transition."
+			],
+			"example": {
+				"summary": "Log the teams involved when peace is made.",
+				"code": "GameEvents.MakePeace.Add(function(eFromTeam, eToTeam)\n\tprint(\"Peace made:\", eFromTeam, eToTeam)\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["The parameters are team IDs, not player IDs.", "This hook does not tell you anything about why peace happened, only that the state changed."],
 			"relatedSchemaNotes": [],
 			"seeAlso": [
 				{
@@ -63328,10 +63493,18 @@
 			"parameterCount": 5,
 			"schemaTables": [],
 			"displaySignature": "GameEvents.MinorAlliesChanged(PlayerTypes:eCS, PlayerTypes:ePlayer, bool:bGainedLost, int:iOldValue, int:iNewValue)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired when a major civ gains or loses ally status with a city-state.",
+			"notes": [
+				"Use this for ally-threshold rewards, influence tracking, or diplomatic logic that only cares about the ally transition.",
+				"The callback gives both the city-state player ID and the major player involved in the relationship change.",
+				"The old and new values let you inspect how the relationship total shifted around the ally threshold."
+			],
+			"example": {
+				"summary": "Log ally-state changes between a major civ and a city-state.",
+				"code": "GameEvents.MinorAlliesChanged.Add(function(eCS, ePlayer, bGainedLost, iOldValue, iNewValue)\n\tprint(\"Minor ally change:\", eCS, ePlayer, bGainedLost, iOldValue, iNewValue)\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["The first player ID is the city-state, not the major civ.", "This is the ally-threshold hook, so it does not cover every friendship change by itself."],
 			"relatedSchemaNotes": [],
 			"seeAlso": [
 				{
@@ -63393,10 +63566,18 @@
 			"parameterCount": 5,
 			"schemaTables": [],
 			"displaySignature": "GameEvents.MinorFriendsChanged(PlayerTypes:eCS, PlayerTypes:ePlayer, bool:bGainedLost, int:iOldValue, int:iNewValue)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired when a major civ gains or loses friend status with a city-state.",
+			"notes": [
+				"Use this for friendship-threshold rewards, diplomacy UI updates, or city-state tracking that should react at the friend breakpoint.",
+				"The callback gives both sides of the relationship plus the old and new influence values.",
+				"This is the friend-threshold companion to MinorAlliesChanged when you want earlier city-state relationship transitions."
+			],
+			"example": {
+				"summary": "Log friend-state changes between a major civ and a city-state.",
+				"code": "GameEvents.MinorFriendsChanged.Add(function(eCS, ePlayer, bGainedLost, iOldValue, iNewValue)\n\tprint(\"Minor friend change:\", eCS, ePlayer, bGainedLost, iOldValue, iNewValue)\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["The first player ID is the city-state, not the major civ.", "This is a threshold hook, so it will not fire for every small influence adjustment."],
 			"relatedSchemaNotes": [],
 			"seeAlso": [
 				{
@@ -63708,10 +63889,18 @@
 			"parameterCount": 2,
 			"schemaTables": ["Policies"],
 			"displaySignature": "GameEvents.PlayerAdoptPolicy(PlayerTypes:ePlayer, PolicyTypes:ePolicy)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired after a player adopts a specific policy.",
+			"notes": [
+				"Use this for one-time rewards, policy-driven unlocks, or bookkeeping that should happen exactly when the policy is taken.",
+				"The payload gives the player ID and the adopted Policies row, which is usually enough to drive policy-specific branches.",
+				"This is the post-adoption hook; use gate methods or earlier veto hooks when you need to block the policy instead."
+			],
+			"example": {
+				"summary": "Log policy adoption after it happens.",
+				"code": "GameEvents.PlayerAdoptPolicy.Add(function(ePlayer, ePolicy)\n\tprint(\"Player adopted policy:\", ePlayer, ePolicy)\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["This fires on actual adoption, not on policy availability checks.", "The policy parameter is a PolicyTypes row ID, not a PolicyBranchTypes row."],
 			"relatedSchemaNotes": [
 				{
 					"table": "Policies",
@@ -63754,10 +63943,18 @@
 			"parameterCount": 2,
 			"schemaTables": ["PolicyBranchTypes"],
 			"displaySignature": "GameEvents.PlayerAdoptPolicyBranch(PlayerTypes:ePlayer, PolicyBranchTypes:ePolicyBranch)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired after a player opens a policy branch.",
+			"notes": [
+				"Use this for opener rewards, ideology setup, or branch-specific state that should start the moment the branch unlocks.",
+				"The payload gives the player ID and the PolicyBranchTypes row that was just opened.",
+				"This is distinct from later policy picks inside that branch, which are tracked by PlayerAdoptPolicy."
+			],
+			"example": {
+				"summary": "Log the branch opener as soon as it is adopted.",
+				"code": "GameEvents.PlayerAdoptPolicyBranch.Add(function(ePlayer, ePolicyBranch)\n\tprint(\"Player adopted policy branch:\", ePlayer, ePolicyBranch)\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["The branch parameter is a PolicyBranchTypes row ID, not a specific policy.", "Later policies inside the branch do not refire this branch-opener hook."],
 			"relatedSchemaNotes": [
 				{
 					"table": "PolicyBranchTypes",
@@ -64275,10 +64472,18 @@
 			"parameterCount": 3,
 			"schemaTables": [],
 			"displaySignature": "GameEvents.PlayerCityFounded(PlayerTypes:ePlayer, int:iPlotX, int:iPlotY)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired when a player founds a new city on the given plot coordinates.",
+			"notes": [
+				"Use this for settling bonuses, map-based placement checks, or one-time setup that should happen on founding.",
+				"The payload gives plot coordinates, so resolve the new city from the plot rather than expecting a city ID in the callback.",
+				"This is the cleanest founding hook when you care about where the city landed on the map."
+			],
+			"example": {
+				"summary": "Resolve and log the city that was just founded.",
+				"code": "GameEvents.PlayerCityFounded.Add(function(ePlayer, iPlotX, iPlotY)\n\tlocal pPlot = Map.GetPlot(iPlotX, iPlotY)\n\tlocal pCity = pPlot and pPlot:GetPlotCity()\n\tif pCity then\n\t\tprint(\"Founded city:\", pCity:GetName(), ePlayer)\n\tend\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["The payload does not include a City object or city ID directly.", "City founding is separate from later capture, annexation, or ownership-change flows."],
 			"relatedSchemaNotes": [],
 			"seeAlso": [
 				{
@@ -64560,10 +64765,21 @@
 			"parameterCount": 8,
 			"schemaTables": ["Beliefs", "Religions"],
 			"displaySignature": "GameEvents.ReligionFounded(PlayerTypes:ePlayer, int:iCity, ReligionTypes:eReligion, BeliefTypes:eBelief, BeliefTypes:eBelief, BeliefTypes:eBelief, BeliefTypes:eBelief, BeliefTypes:eBelief)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired when a player founds a religion and its initial belief package is locked in.",
+			"notes": [
+				"Use this for founder rewards, religion-specific setup, or one-time belief-dependent state initialization.",
+				"The city parameter is the holy city ID for the founding player, so resolve it through the player if you need the City object.",
+				"The hook includes the founded religion plus the belief selections chosen during the founding flow."
+			],
+			"example": {
+				"summary": "Resolve the holy city after a religion is founded.",
+				"code": "GameEvents.ReligionFounded.Add(function(ePlayer, iCity, eReligion, eBelief1, eBelief2, eBelief3, eBelief4, eBelief5)\n\tlocal pPlayer = Players[ePlayer]\n\tlocal pCity = pPlayer and pPlayer:GetCityByID(iCity)\n\tif pCity then\n\t\tprint(\"Religion founded in\", pCity:GetName(), eReligion)\n\tend\nend)",
+				"language": "lua"
+			},
+			"gotchas": [
+				"The city parameter is a city ID, not a City object.",
+				"Belief slots can include unused or context-dependent values, so do not assume every belief parameter is meaningful in every founding case."
+			],
 			"relatedSchemaNotes": [
 				{
 					"table": "Beliefs",
@@ -64675,10 +64891,18 @@
 			"parameterCount": 4,
 			"schemaTables": [],
 			"displaySignature": "GameEvents.SetPopulation(int:iPlotX, int:iPlotY, int:iOldValue, int:iNewValue)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired when a city's population changes at the target plot coordinates.",
+			"notes": [
+				"Use this for growth or shrink triggers, population-based bonuses, and per-city maintenance that reacts to demographic change.",
+				"Resolve the city from the plot coordinates if your logic needs the current city object.",
+				"Comparing old and new values is the cleanest way to separate growth, starvation, and scripted population shifts."
+			],
+			"example": {
+				"summary": "Log population changes for the city on the changed plot.",
+				"code": "GameEvents.SetPopulation.Add(function(iPlotX, iPlotY, iOldValue, iNewValue)\n\tlocal pPlot = Map.GetPlot(iPlotX, iPlotY)\n\tlocal pCity = pPlot and pPlot:GetPlotCity()\n\tif pCity then\n\t\tprint(\"Population change:\", pCity:GetName(), iOldValue, iNewValue)\n\tend\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["This is not only a growth hook; it can also fire for population loss or direct scripted changes.", "The payload uses plot coordinates, not a city ID."],
 			"relatedSchemaNotes": [],
 			"seeAlso": [
 				{
@@ -64865,10 +65089,18 @@
 			"parameterCount": 3,
 			"schemaTables": ["Technologies"],
 			"displaySignature": "GameEvents.TeamTechResearched(TeamTypes:eTeam, TechTypes:eTech, int:iChange)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired when a team completes research on a technology.",
+			"notes": [
+				"Use this for tech-completion rewards, unlock notifications, or cleanup that should run when the research actually lands.",
+				"The team parameter lets you operate at shared-tech scope instead of assuming a single player owns the result.",
+				"If you need a more general gain-or-loss state hook, pair this with TeamSetHasTech."
+			],
+			"example": {
+				"summary": "Log the team and tech when research completes.",
+				"code": "GameEvents.TeamTechResearched.Add(function(eTeam, eTech, iChange)\n\tprint(\"Team researched tech:\", eTeam, eTech, iChange)\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["The team parameter is a team ID, not a Team object.", "This is a research-completion hook, so use TeamSetHasTech if you need the broader ownership transition surface."],
 			"relatedSchemaNotes": [
 				{
 					"table": "Technologies",
@@ -65098,10 +65330,18 @@
 			"parameterCount": 7,
 			"schemaTables": ["Units"],
 			"displaySignature": "GameEvents.UnitPrekill(PlayerTypes:ePlayer, int:iUnit, UnitTypes:eUnit, int:iPlotX, int:iPlotY, bool:bDelay, PlayerTypes:eByPlayer)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired just before a unit is removed from the game.",
+			"notes": [
+				"Use this for death rewards, cleanup, or final state capture that must happen before the unit disappears.",
+				"The hook includes the unit owner, the acting killer player, and the plot where removal is being processed.",
+				"This is broader than combat-only death handling, so it is useful for scripted removals as well."
+			],
+			"example": {
+				"summary": "Log the unit and plot just before removal.",
+				"code": "GameEvents.UnitPrekill.Add(function(ePlayer, iUnit, eUnit, iPlotX, iPlotY, bDelay, eByPlayer)\n\tprint(\"UnitPrekill:\", ePlayer, iUnit, eUnit, iPlotX, iPlotY, bDelay, eByPlayer)\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["If you need the live Unit object, resolve it immediately because it may disappear right after the callback.", "This hook is not limited to combat deaths."],
 			"relatedSchemaNotes": [
 				{
 					"table": "Units",
@@ -65152,10 +65392,18 @@
 			"parameterCount": 3,
 			"schemaTables": ["UnitPromotions"],
 			"displaySignature": "GameEvents.UnitPromoted(PlayerTypes:ePlayer, int:iUnit, PromotionTypes:ePromotion)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired after a unit gains the specified promotion.",
+			"notes": [
+				"Use this for post-promotion rewards, chained promotion logic, or tracking that should happen only after the promotion is actually applied.",
+				"Resolve the unit through Players[ePlayer]:GetUnitByID(iUnit) if you need the live Unit object.",
+				"The promotion parameter points at the UnitPromotions row that was just granted."
+			],
+			"example": {
+				"summary": "Resolve the promoted unit and log the new promotion.",
+				"code": "GameEvents.UnitPromoted.Add(function(ePlayer, iUnit, ePromotion)\n\tlocal pPlayer = Players[ePlayer]\n\tlocal pUnit = pPlayer and pPlayer:GetUnitByID(iUnit)\n\tif pUnit then\n\t\tprint(\"Unit promoted:\", pUnit:GetName(), ePromotion)\n\tend\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["The unit parameter is a unit ID, not a Unit object.", "Followup promotion logic can chain quickly, so avoid accidental recursive grant loops."],
 			"relatedSchemaNotes": [
 				{
 					"table": "UnitPromotions",
@@ -65214,10 +65462,18 @@
 			"parameterCount": 4,
 			"schemaTables": [],
 			"displaySignature": "GameEvents.UnitSetXY(PlayerTypes:ePlayer, int:iUnit, int:iPlotX, int:iPlotY)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired when a unit is set to a specific plot coordinate.",
+			"notes": [
+				"Use this for movement triggers, zone checks, or map-based effects that need to react whenever a unit lands on a plot.",
+				"The callback is driven by coordinates, so resolve the plot or unit only when you actually need more detail.",
+				"This is a strong default hook for tile-entry logic because it catches normal movement and other relocation paths."
+			],
+			"example": {
+				"summary": "Resolve the plot reached by the moved unit.",
+				"code": "GameEvents.UnitSetXY.Add(function(ePlayer, iUnit, iPlotX, iPlotY)\n\tlocal pPlot = Map.GetPlot(iPlotX, iPlotY)\n\tif pPlot then\n\t\tprint(\"Unit moved to:\", ePlayer, iUnit, iPlotX, iPlotY)\n\tend\nend)",
+				"language": "lua"
+			},
+			"gotchas": ["This hook can fire very frequently, so heavy logic here scales badly.", "The payload gives plot coordinates, not a Plot object."],
 			"relatedSchemaNotes": [],
 			"seeAlso": [
 				{
@@ -65267,10 +65523,21 @@
 			"parameterCount": 4,
 			"schemaTables": [],
 			"displaySignature": "GameEvents.UnitUpgraded(PlayerTypes:ePlayer, int:iUnit, int:iNewUnit, bool:bGoodyHut)",
-			"summary": "",
-			"notes": [],
-			"example": null,
-			"gotchas": [],
+			"summary": "Hook fired after a unit upgrades into a new unit ID.",
+			"notes": [
+				"Use this for post-upgrade cleanup, carryover effects, or notifications that depend on the final upgraded unit.",
+				"The payload gives both the previous unit ID and the new unit ID so you can bridge custom state across the transition.",
+				"The goody-hut flag helps separate regular upgrade flows from special-case reward transitions."
+			],
+			"example": {
+				"summary": "Resolve the upgraded unit from its new unit ID.",
+				"code": "GameEvents.UnitUpgraded.Add(function(ePlayer, iUnit, iNewUnit, bGoodyHut)\n\tlocal pPlayer = Players[ePlayer]\n\tlocal pNewUnit = pPlayer and pPlayer:GetUnitByID(iNewUnit)\n\tif pNewUnit then\n\t\tprint(\"Unit upgraded to:\", pNewUnit:GetName(), iUnit, bGoodyHut)\n\tend\nend)",
+				"language": "lua"
+			},
+			"gotchas": [
+				"The old and new unit values are unit IDs, not UnitTypes rows.",
+				"If you need live post-upgrade state, resolve the new unit rather than assuming the old unit ID is still usable."
+			],
 			"relatedSchemaNotes": [],
 			"seeAlso": [
 				{

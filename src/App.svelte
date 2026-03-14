@@ -3,6 +3,7 @@
 	import { fade } from "svelte/transition";
 	import { applyDocumentSeo, normalizeSeoPath } from "./lib/seo/routes.js";
 	import Navbar from "./lib/components/Navbar.svelte";
+	import HomePage from "./lib/components/HomePage.svelte";
 	import CommunityLinks from "./lib/components/CommunityLinks.svelte";
 	import DdsConverter from "./lib/components/DdsConverter.svelte";
 	import CivIconMaker from "./lib/components/CivIconMaker.svelte";
@@ -10,7 +11,9 @@
 	import ModInfoBuilder from "./lib/components/ModInfoBuilder.svelte";
 	import Civ5ModZiper from "./lib/components/Civ5ModZiper.svelte";
 	import PatternLibrary from "./lib/components/PatternLibrary.svelte";
-	import ScaffoldGenerators from "./lib/components/ScaffoldGenerators.svelte";
+	import TemplateGenerators from "./lib/components/TemplateGenerators.svelte";
+	import GuidedPlanner from "./lib/components/GuidedPlanner.svelte";
+	import UnitFlagPreviewer from "./lib/components/UnitFlagPreviewer.svelte";
 
 	const THEME_STORAGE_KEY = "cmc-theme-mode";
 	const AUTH_STORAGE_KEY = "cmc-auth-session";
@@ -216,7 +219,9 @@
 			currentPath === "/modinfo-builder" ||
 			currentPath === "/civ5mod-ziper" ||
 			currentPath === "/pattern-library" ||
-			currentPath === "/scaffold-generators"
+			currentPath === "/template-generators" ||
+			currentPath === "/guided-planner" ||
+			currentPath === "/unit-flag-previewer"
 		) {
 			return;
 		}
@@ -791,7 +796,9 @@
 					<DdsConverter />
 				{:else if currentPath === "/civ-icon-maker"}
 					<CivIconMaker />
-				{:else if currentPath === "/" || currentPath === "/workshop-uploader"}
+				{:else if currentPath === "/"}
+					<HomePage />
+				{:else if currentPath === "/workshop-uploader"}
 					<WorkshopUploader />
 				{:else if currentPath === "/modinfo-builder"}
 					<ModInfoBuilder />
@@ -799,8 +806,12 @@
 					<Civ5ModZiper />
 				{:else if currentPath === "/pattern-library"}
 					<PatternLibrary />
-				{:else if currentPath === "/scaffold-generators"}
-					<ScaffoldGenerators />
+				{:else if currentPath === "/template-generators"}
+					<TemplateGenerators />
+				{:else if currentPath === "/guided-planner"}
+					<GuidedPlanner {authUser} authAccessToken={authSession.accessToken} authEnabled={AUTH_ENABLED} />
+				{:else if currentPath === "/unit-flag-previewer"}
+					<UnitFlagPreviewer />
 				{:else if currentPath === "/schema-browser" && schemaBrowserLoadError}
 					<p class="status error">{schemaBrowserLoadError}</p>
 				{:else if currentPath === "/schema-browser" && SchemaBrowserComponent}
@@ -836,43 +847,36 @@
 </div>
 
 <style>
-	.route-shell {
-		view-transition-name: route-shell;
+	.skip-link {
+		position: absolute;
+		z-index: 40;
+		inset-block-start: 0.75rem;
+		inset-inline-start: 50%;
+		color: var(--ink);
+		text-decoration: none;
+		font-weight: 700;
+		background: color-mix(in oklch, var(--panel-bg) 88%, var(--accent) 12%);
+		border: 1px solid color-mix(in oklch, var(--accent) 45%, var(--panel-border));
+		border-radius: 0.75rem;
+		padding-block: 0.6rem;
+		padding-inline: 0.95rem;
+		transition: transform 140ms ease;
+		transform: translate(-50%, -140%);
+	}
+
+	.skip-link:focus-visible {
+		outline: 2px solid color-mix(in oklch, white 78%, var(--accent));
+		outline-offset: 2px;
+		transform: translate(-50%, 0);
 	}
 
 	.app-shell {
 		inline-size: min(95vw, 1540px);
 		display: grid;
 		gap: 1rem;
-		padding-inline: clamp(1rem, 2.1vw, 1.5rem);
 		padding-block: clamp(1rem, 2.2vw, 2.5rem) 1rem;
+		padding-inline: clamp(1rem, 2.1vw, 1.5rem);
 		margin-inline: auto;
-	}
-
-	.skip-link {
-		position: absolute;
-		inset-block-start: 0.75rem;
-		inset-inline-start: 50%;
-		z-index: 40;
-		padding: 0.6rem 0.95rem;
-		border-radius: 0.75rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 45%, var(--panel-border));
-		background: color-mix(in oklch, var(--panel-bg) 88%, var(--accent) 12%);
-		color: var(--ink);
-		font-weight: 700;
-		text-decoration: none;
-		transform: translate(-50%, -140%);
-		transition: transform 140ms ease;
-	}
-
-	.skip-link:focus-visible {
-		transform: translate(-50%, 0);
-		outline: 2px solid color-mix(in oklch, white 78%, var(--accent));
-		outline-offset: 2px;
-	}
-
-	:global(#main-content:focus) {
-		outline: none;
 	}
 
 	.page-shell {
@@ -881,10 +885,11 @@
 		margin: 0;
 	}
 
-	.site-footer {
-		padding-block-start: 0;
-		padding-block-end: 0.15rem;
-		border-top: 1px solid color-mix(in oklch, var(--panel-border) 72%, transparent);
+	:global(#main-content:focus) {
+		outline: none;
+	}
+	.route-shell {
+		view-transition-name: route-shell;
 	}
 
 	.site-footer p {
@@ -894,18 +899,24 @@
 		margin-block-start: 0.5rem;
 	}
 
-	:global(::view-transition-old(route-shell)),
+	.site-footer {
+		border-top: 1px solid color-mix(in oklch, var(--panel-border) 72%, transparent);
+		padding-block-start: 0;
+		padding-block-end: 0.15rem;
+	}
+
 	:global(::view-transition-new(route-shell)) {
-		animation-duration: 180ms;
-		animation-timing-function: ease;
+		animation-name: app-route-fade-in;
 	}
 
 	:global(::view-transition-old(route-shell)) {
 		animation-name: app-route-fade-out;
 	}
 
+	:global(::view-transition-old(route-shell)),
 	:global(::view-transition-new(route-shell)) {
-		animation-name: app-route-fade-in;
+		animation-timing-function: ease;
+		animation-duration: 180ms;
 	}
 
 	@keyframes app-route-fade-out {

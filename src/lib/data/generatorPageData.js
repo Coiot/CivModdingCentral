@@ -42,6 +42,13 @@ const linkToLua = (label, entryId, dataset, note, hash = "") => ({
 	note,
 });
 
+const linkToPage = (label, href, note, options = {}) => ({
+	label,
+	href,
+	note,
+	...options,
+});
+
 // const snippetRoleLead = (path, language) => {
 // 	const normalizedLanguage = normalizeSnippetLanguage(language);
 // 	const normalizedPath = String(path).toLowerCase();
@@ -143,67 +150,205 @@ const friendlySnippetNote = (path, language, note = "") => {
 	return `${cleanedNote}`;
 };
 
-const snippetFile = (path, language, code, note = "", label = "") => ({
-	path,
-	language,
-	code,
-	note: friendlySnippetNote(path, language, note),
-	label,
-});
+const SCAFFOLD_STEM_PLACEHOLDER = "<Civ_Leader>";
+const SCAFFOLD_GAME_DEFINES_PATH = `Core/${SCAFFOLD_STEM_PLACEHOLDER}_GameDefines.sql`;
+const SCAFFOLD_GAME_TEXT_PATH = `Core/${SCAFFOLD_STEM_PLACEHOLDER}_GameText.xml`;
+const SCAFFOLD_ART_DEFINES_PATH = `Core/${SCAFFOLD_STEM_PLACEHOLDER}_ArtDefines.sql`;
+const SCAFFOLD_MOD_SUPPORT_PATH = `Core/${SCAFFOLD_STEM_PLACEHOLDER}_ModSupport.sql`;
+const SCAFFOLD_FUNCTIONS_PATH = `Lua/${SCAFFOLD_STEM_PLACEHOLDER}_Functions.lua`;
+
+const normalizeScaffoldSnippetPath = (path, language = "") => {
+	const normalizedPath = String(path ?? "")
+		.trim()
+		.replace(/\\/g, "/");
+	if (!normalizedPath) {
+		return normalizedPath;
+	}
+
+	if (normalizedPath.includes("/Core/") || normalizedPath.includes("/Lua/") || normalizedPath.includes("/UI/") || normalizedPath.includes("/Audio/") || normalizedPath.includes("/Art/")) {
+		return normalizedPath;
+	}
+
+	const fileName = normalizedPath.split("/").pop() ?? normalizedPath;
+	const normalizedLanguage = String(language ?? "")
+		.trim()
+		.toLowerCase();
+	const lowerPath = normalizedPath.toLowerCase();
+
+	if (
+		normalizedPath === SCAFFOLD_GAME_DEFINES_PATH ||
+		normalizedPath === SCAFFOLD_GAME_TEXT_PATH ||
+		normalizedPath === SCAFFOLD_ART_DEFINES_PATH ||
+		normalizedPath === SCAFFOLD_MOD_SUPPORT_PATH ||
+		normalizedPath === SCAFFOLD_FUNCTIONS_PATH
+	) {
+		return normalizedPath;
+	}
+
+	if (normalizedPath.startsWith("Core/")) {
+		if (lowerPath.includes("gametext") || lowerPath.includes("text")) {
+			return SCAFFOLD_GAME_TEXT_PATH;
+		}
+		if (lowerPath.includes("artdefine") || lowerPath.includes("art")) {
+			return SCAFFOLD_ART_DEFINES_PATH;
+		}
+		if (lowerPath.includes("modsupport") || lowerPath.includes("support")) {
+			return SCAFFOLD_MOD_SUPPORT_PATH;
+		}
+		return SCAFFOLD_GAME_DEFINES_PATH;
+	}
+
+	if (normalizedPath.startsWith("Lua/")) {
+		if (normalizedPath.startsWith("Lua/UI/") || normalizedPath.startsWith("Lua/Overrides/")) {
+			return `UI/${fileName}`;
+		}
+		return SCAFFOLD_FUNCTIONS_PATH;
+	}
+
+	if (normalizedPath.startsWith("UI/")) {
+		return `UI/${fileName}`;
+	}
+
+	if (normalizedPath.startsWith("Audio/")) {
+		return `Audio/${fileName}`;
+	}
+
+	if (normalizedPath.startsWith("Art/")) {
+		return normalizedPath;
+	}
+
+	if (normalizedPath.startsWith("Project/")) {
+		return fileName;
+	}
+
+	if (normalizedPath.startsWith("Lua/UI/") || normalizedPath.startsWith("Lua/Overrides/") || normalizedPath.startsWith("UI/")) {
+		return `UI/${fileName}`;
+	}
+
+	if (normalizedPath.startsWith("Lua/")) {
+		return SCAFFOLD_FUNCTIONS_PATH;
+	}
+
+	if (normalizedPath.startsWith("Audio/")) {
+		return `Audio/${fileName}`;
+	}
+
+	if (normalizedPath.startsWith("XML/Art/")) {
+		return SCAFFOLD_ART_DEFINES_PATH;
+	}
+
+	if (normalizedPath.startsWith("Art/")) {
+		return `Art/${fileName}`;
+	}
+
+	if (normalizedPath.startsWith("SQL/")) {
+		if (lowerPath.includes("art")) {
+			return SCAFFOLD_ART_DEFINES_PATH;
+		}
+		if (lowerPath.includes("support")) {
+			return SCAFFOLD_MOD_SUPPORT_PATH;
+		}
+		return SCAFFOLD_GAME_DEFINES_PATH;
+	}
+
+	if (normalizedPath.startsWith("XML/")) {
+		return SCAFFOLD_GAME_TEXT_PATH;
+	}
+
+	if (normalizedPath.startsWith("Config/")) {
+		return fileName;
+	}
+
+	if (normalizedLanguage === "lua") {
+		return SCAFFOLD_FUNCTIONS_PATH;
+	}
+
+	if (normalizedLanguage === "sql") {
+		return SCAFFOLD_GAME_DEFINES_PATH;
+	}
+
+	if (normalizedLanguage === "xml") {
+		return SCAFFOLD_GAME_TEXT_PATH;
+	}
+
+	if (normalizedLanguage === "ini") {
+		return fileName;
+	}
+
+	return normalizedPath;
+};
+
+const snippetFile = (path, language, code, note = "", label = "") => {
+	const normalizedPath = normalizeScaffoldSnippetPath(path, language);
+	return {
+		key: `${normalizedPath}::${String(path ?? "").trim() || String(label ?? "").trim() || String(language ?? "").trim()}`,
+		path: normalizedPath,
+		language,
+		code,
+		note: friendlySnippetNote(path, language, note),
+		label,
+	};
+};
 
 export const recipeLaunchRecipes = [
 	{
 		title: "Dummy Building Scaffold",
-		focus: "Hidden building setup",
+		focus: "Hidden proxy setup",
 		status: "First Batch",
-		copy: "Dummy buildings are hidden marker rows that modders grant indirectly to cities so the game can apply yields, prerequisites, and other building-driven effects without exposing a real constructible building. This recipe keeps that marker on its own building class so class-sensitive logic stays attached to the correct row instead of silently resolving against the wrong class member.",
+		copy: "Dummy buildings are hidden proxies that modders grant indirectly to cities so the game can apply yields, prerequisites, and other building-driven effects to apply the desired effects for your civ. This recipe keeps that proxy on its own building class so class ensitive logic stays attached to the correct row instead of silently resolving against the wrong class member.",
 		deliverables: [
-			"Dedicated `BuildingClasses` and `Buildings` rows for an unbuildable dummy building.",
-			"Optional effect rows such as `Building_YieldChanges` or other building-side payload tables.",
-			"Small Lua-side validation pattern for checking whether the dummy marker is present on a city.",
+			"Dedicated “BuildingClasses” and “Buildings” rows for an unbuildable dummy building.",
+			"Optional effect rows such as “Building_YieldChanges” or other building-side tables.",
+			"Small Lua-side validation pattern for checking whether the dummy proxy is present on a city.",
 		],
 		example: {
 			title: "Hidden building scaffold",
 			summary:
-				"Modders use dummy buildings as invisible city flags: Lua, decisions, policies, or other gameplay rules add the building behind the scenes, then Civ V applies whatever effect tables are attached to that building row. Use a dedicated class, keep the row unbuildable, and only add text if the building ever surfaces to the player.",
+				"Modders use dummy buildings as invisible proxies: Lua, decisions, policies, or other gameplay rules add the building behind the scenes, then the game applies whatever effect tables are attached to that building row. Use a dedicated class, keep the row unbuildable, and only add text if the building appears to the player.",
 			files: [
 				snippetFile(
 					"SQL/Buildings/DummyBuilding.sql",
 					"sql",
 					"INSERT INTO BuildingClasses (Type, DefaultBuilding, Description)\nVALUES\n\t('BUILDINGCLASS_CMC_DUMMY_GARRISON', 'BUILDING_CMC_DUMMY_GARRISON', 'TXT_KEY_BUILDING_CMC_DUMMY_GARRISON');\n\nINSERT INTO Buildings\n\t(Type, BuildingClass, Cost, FaithCost, GreatWorkCount, NeverCapture, NukeImmune, ConquestProb, Description, Help)\nVALUES\n\t('BUILDING_CMC_DUMMY_GARRISON', 'BUILDINGCLASS_CMC_DUMMY_GARRISON', -1, -1, -1, 1, 1, 0, 'TXT_KEY_BUILDING_CMC_DUMMY_GARRISON', 'TXT_KEY_BUILDING_CMC_DUMMY_GARRISON_HELP');\n\nINSERT INTO Building_YieldChanges (BuildingType, YieldType, Yield)\nVALUES\n\t('BUILDING_CMC_DUMMY_GARRISON', 'YIELD_PRODUCTION', 1);",
-					"Dedicated building class plus the dummy building row in SQL. This keeps the structural database work in the format most Civ V mods prefer for inserts and patches.",
+					"Dedicated building class plus the dummy building row in SQL. This keeps the structural database work in the format most mods prefer for inserts and patches.",
 				),
 				snippetFile(
 					"XML/Text/DummyBuildingText.xml",
 					"xml",
-					'<GameData>\n\t<Language_en_US>\n\t\t<Row Tag=\"TXT_KEY_BUILDING_CMC_DUMMY_GARRISON\" Text=\"Hidden Garrison State\" />\n\t\t<Row Tag=\"TXT_KEY_BUILDING_CMC_DUMMY_GARRISON_HELP\" Text=\"Internal marker building used for gated city effects.\" />\n\t</Language_en_US>\n</GameData>',
+					'<GameData>\n\t<Language_en_US>\n\t\t<Row Tag=\"TXT_KEY_BUILDING_CMC_DUMMY_GARRISON\" Text=\"Hidden Garrison State\" />\n\t\t<Row Tag=\"TXT_KEY_BUILDING_CMC_DUMMY_GARRISON_HELP\" Text=\"Internal proxy building used for gated city effects.\" />\n\t</Language_en_US>\n</GameData>',
 					"Only needed when the dummy row references description or help keys or when you want a visible debug label during testing.",
 				),
 				snippetFile(
 					"Lua/Gameplay/DummyBuildingChecks.lua",
 					"lua",
 					"local iDummy = GameInfoTypes.BUILDING_CMC_DUMMY_GARRISON\nlocal iTarget = GameInfoTypes.BUILDING_BARRACKS\n\nGameEvents.CityCanConstruct.Add(function(iPlayer, iCity, eBuilding)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pCity = pPlayer and pPlayer:GetCityByID(iCity)\n\tif pCity and eBuilding == iTarget then\n\t\treturn pCity:GetNumBuilding(iDummy) > 0\n\tend\n\treturn true\nend)",
-					"Cheap validation pattern that checks whether the hidden marker is currently present on a city before another effect unlocks.",
+					"Cheap validation pattern that checks whether the hidden proxy is currently present on a city before another effect unlocks.",
 				),
 			],
 		},
 		touchpoints: [
-			linkToSchema("BuildingClasses", "Dummy buildings with sensitive effects should usually own a dedicated class so the game resolves the intended hidden marker row.", "rows"),
-			linkToSchema("Buildings", "Keep the dummy row unbuildable and explicitly tied to its class so modders add it indirectly instead of letting players construct it.", "rows"),
-			linkToSchema("Building_YieldChanges", "One example payload table that turns the hidden marker into a real city effect once the dummy building is present.", "rows"),
+			linkToSchema("BuildingClasses", "Dummy buildings with sensitive effects should usually own a dedicated class so the game resolves the intended hidden proxy row.", "rows"),
+			linkToSchema("Buildings", "Keep the dummy row unbuildable and explicitly tied to its class so you add it indirectly instead of letting players construct it.", "rows"),
+			linkToSchema("Building_YieldChanges", "One example payload table that turns the hidden proxy into a real city effect once the dummy building is present.", "rows"),
 			linkToSchema("Civilization_BuildingClassOverrides", "Only use overrides when a civ needs a different member of the same dummy class.", "rows"),
-			linkToLua("City:GetNumBuilding", "city-getnumbuilding-178", "methods", "Fast check for whether the hidden marker is active on the city."),
-			linkToLua("GameEvents.CityCanConstruct", "game-event-citycanconstruct-22", "gameEvents", "Typical gate hook for testing whether the hidden marker should unlock another action."),
+			linkToLua("City:GetNumBuilding", "city-getnumbuilding-178", "methods", "Fast check for whether the hidden proxy is active on the city."),
+			linkToLua("GameEvents.CityCanConstruct", "game-event-citycanconstruct-22", "gameEvents", "Typical gate hook for testing whether the hidden proxy should unlock another action."),
+			linkToPage("Dynamic Dummy Building Updater", "/pattern-library", "Natural next step when the hidden proxy stops being static and starts syncing with changing city state."),
+			linkToPage(
+				"Dummy Policy / Dummy Building Tradeoff",
+				"/pattern-library",
+				"Good companion when the real question is whether this hidden effect should live on an empire-wide policy or a city-scoped dummy building.",
+			),
 		],
 	},
 	{
 		title: "Trait / Leader / Civ Wiring",
 		focus: "Core civ package joins",
 		status: "First Batch",
-		copy: "Wire a custom trait into the actual leader and civilization package instead of stopping at the `Traits` row. This is the repetitive join work almost every civ mod has to repeat before any trait effect actually reaches gameplay.",
+		copy: "Wire a custom trait into the actual leader and civilization package instead of stopping at the “Traits” row. This is the repetitive join work almost every civ mod has to repeat before any trait effect actually reaches gameplay.",
 		deliverables: [
 			"Trait definition plus one starter trait effect table.",
-			"`Leader_Traits` and `Civilization_Leaders` link rows that actually wire the trait into the civ package.",
+			"“Leader_Traits” and “Civilization_Leaders” link rows that actually wire the trait into the civ package.",
 			"Matching game text for the trait name and help copy.",
 		],
 		example: {
@@ -232,24 +377,24 @@ export const recipeLaunchRecipes = [
 			linkToSchema("Leaders", "Validate that the target leader row already exists before wiring the trait.", "rows"),
 			{
 				label: "Civilization Starter",
-				href: "/scaffold-generators?generator=civilization-starter",
-				note: "Use the scaffold generator when you want these core trait, leader, and civ joins emitted as part of a full civ starter bundle instead of wiring them by hand.",
+				href: "/template-generators?generator=civilization-starter",
+				note: "Use the template generator when you want these core trait, leader, and civ joins emitted as part of a full civ starter bundle instead of wiring them by hand.",
 			},
 		],
 	},
 	{
-		title: "Unique Replacement Builder",
+		title: "Unique Replacement Setup",
 		focus: "UU / UB overrides",
 		status: "First Batch",
-		copy: "Clone a base unit or building, wire it into the civilization override table, and attach any free promotions or text keys in one pass. This is one of the most repeated bits of civ scaffolding in Civ V modding.",
+		copy: "Clone a base unit or building, wire it into the civilization override table, and attach any free promotions or text keys in one pass. This is one of the most repeated bits of civ modding.",
 		deliverables: [
-			"Base-row clone pattern for a unique unit or building.",
-			"`Civilization_UnitClassOverrides` or `Civilization_BuildingClassOverrides` rows.",
-			"Optional free-promotion and text scaffolding for the replacement row.",
+			"Base row pattern for a unique unit or building.",
+			"“Civilization_UnitClassOverrides” or “Civilization_BuildingClassOverrides” rows.",
+			"Optional free promotion and text scaffolding for the replacement row.",
 		],
 		example: {
 			title: "Unique unit replacement scaffold",
-			summary: "Clone the base unit with SQL `SELECT`, then override the civ's unit class link and attach any starter promotion rows.",
+			summary: "Clone the base unit with SQL “SELECT”, then override the civ’s unit class link and attach any starter promotion rows.",
 			files: [
 				snippetFile(
 					"SQL/Civilizations/AtlasLongbow.sql",
@@ -273,8 +418,8 @@ export const recipeLaunchRecipes = [
 			linkToSchema("Unit_FreePromotions", "Starter place to attach a free promotion to the replacement unit.", "rows"),
 			{
 				label: "Civilization Starter",
-				href: "/scaffold-generators?generator=civilization-starter",
-				note: "The scaffold generator already lays out the civ-side unique shell; use this recipe when you want to deepen or customize the replacement rows beyond the starter output.",
+				href: "/template-generators?generator=civilization-starter",
+				note: "The template generator already lays out the civ-side unique base; use this recipe when you want to deepen or customize the replacement rows beyond the starter output.",
 			},
 		],
 	},
@@ -285,11 +430,11 @@ export const recipeLaunchRecipes = [
 		copy: "Define a custom promotion line, restrict it to the correct unit combats, optionally seed it onto a unit, and add a Lua gate when the normal promotion path needs extra rules.",
 		deliverables: [
 			"Promotion rows with text keys and basic metadata.",
-			"`UnitPromotions_UnitCombats` and optional `Unit_FreePromotions` wiring.",
+			"“UnitPromotions_UnitCombats” and optional “Unit_FreePromotions” wiring.",
 			"Lua veto pattern for promotions that need custom rules beyond the database tables.",
 		],
 		example: {
-			title: "Two-step promotion chain",
+			title: "Two step promotion chain",
 			summary: "Promotion rows live in SQL, unit-combat restrictions live in join tables, and Lua only steps in when the base rules are not enough.",
 			files: [
 				snippetFile(
@@ -326,7 +471,7 @@ export const recipeLaunchRecipes = [
 		copy: "Persist turn markers and scoped keys so a reward, trigger, or scripted effect only fires once per turn, once per city, or once per player instead of retriggering every time the hook runs.",
 		deliverables: [
 			"Namespaced save keys for player and city scope.",
-			"Turn-based cooldown checks using `Game.GetGameTurn()`.",
+			"Turn-based cooldown checks using “Game.GetGameTurn()”.",
 			"A starter gameplay consumer that demonstrates a once-per-turn or once-per-city reward path.",
 		],
 		example: {
@@ -351,6 +496,8 @@ export const recipeLaunchRecipes = [
 			linkToLua("GameEvents.PlayerDoTurn", "game-event-playerdoturn-72", "gameEvents", "Common recurring hook for once-per-turn checks."),
 			linkToLua("Game.GetGameTurn", "game-getgameturn-80", "methods", "Turn stamp used for cooldown and last-processed markers."),
 			linkToLua("Player:GetCapitalCity", "player-getcapitalcity-141", "methods", "Typical city scope when the once-per-X effect is attached to the capital."),
+			linkToPage("Once-Per-Trigger Guard", "/pattern-library", "Use this alongside saved cooldown keys when the same gameplay event can fire multiple times inside one broader action."),
+			linkToPage("Table Saver / Loader for SaveData", "/pattern-library", "Step up to this when one or two flat keys turn into a real structured state bundle."),
 		],
 	},
 	{
@@ -365,7 +512,7 @@ export const recipeLaunchRecipes = [
 		],
 		example: {
 			title: "Coastal policy attachment",
-			summary: "Start with the `Policies` row, wire it to a branch, then add the actual payload tables that the unlock should grant.",
+			summary: "Start with the “Policies” row, wire it to a branch, then add the actual payload tables that the unlock should grant.",
 			files: [
 				snippetFile(
 					"SQL/Policies/TidalDoctrine.sql",
@@ -387,16 +534,21 @@ export const recipeLaunchRecipes = [
 			linkToSchema("Policy_PrereqPolicies", "Attach prerequisite policy links without editing the branch manually.", "rows"),
 			linkToSchema("Policy_CoastalCityYieldChanges", "Starter payload table for coastal-city policy bonuses.", "rows"),
 			linkToSchema("Policy_FreePromotionUnitCombats", "Attach a promotion payload to selected unit combats.", "rows"),
+			linkToPage(
+				"Free Promotion From Building / Policy / Trait",
+				"/pattern-library",
+				"Best follow-up when the policy payload is not just yields and needs combat-class or promotion-side wiring.",
+			),
 		],
 	},
 	{
-		title: "Decision / Event Reward Payload",
+		title: "Decision / Event Reward",
 		focus: "Reward scripting",
 		status: "High-Use Recipe",
 		copy: "Bundle the common ‘if condition passes, grant X’ workflow: yields, units, hidden buildings, cooldown markers, and a notification so the player knows the reward actually fired.",
 		deliverables: [
-			"Starter reward hook with a clear trigger and bail-out path.",
-			"Payload pattern for gold, a spawned unit, and a hidden-building marker.",
+			"Starter reward hook with a clear trigger and release path.",
+			"Payload pattern for gold, a spawned unit, and a hidden-building proxy.",
 			"Cooldown persistence plus notification text in one repeatable scaffold.",
 		],
 		example: {
@@ -423,21 +575,28 @@ export const recipeLaunchRecipes = [
 			linkToLua("Player:AddNotification", "player-addnotification-5", "methods", "Surface the resolved reward to the player."),
 			linkToSchema("Buildings", "Hidden reward markers usually land through a dummy building row.", "rows"),
 			linkToSchema("Units", "Spawned rewards still need valid unit rows and text.", "rows"),
+			linkToPage("Cooldown + Notification Combo", "/pattern-library", "Use this when the payload mostly needs a clean persistence-plus-feedback wrapper around the trigger."),
+			linkToPage("Unit Spawn Workflow", "/pattern-library", "Natural companion when the reward package includes a spawned unit that needs setup beyond one bare “InitUnit” call."),
+			linkToPage(
+				"Dummy Building Scaffold",
+				"/pattern-library",
+				"Use this first when the reward package includes a hidden building proxy and the building row itself still needs to be scaffolded.",
+			),
 		],
 	},
 	{
 		title: "SQL Merge / Delete Pattern",
 		focus: "Compatibility SQL",
 		status: "High-Use Recipe",
-		copy: "Use safe compatibility SQL patterns when you need to patch base-game, DLC, or modded rows without assuming every referenced row exists in every load order.",
+		copy: "Use safe compatibility SQL patterns when you need to patch base game, DLC, or modded rows without assuming every referenced row exists in every load order.",
 		deliverables: [
-			"`UPDATE`, `DELETE`, and `INSERT OR REPLACE` starter patterns.",
-			"`WHERE EXISTS` guards against missing rows or missing DLC content.",
+			"“UPDATE”, “DELETE”, and “INSERT OR REPLACE” starter patterns.",
+			"“WHERE EXISTS” guards against missing rows or missing DLC content.",
 			"A compact reference for compatibility edits that do not rely on blind row replacement.",
 		],
 		example: {
 			title: "Compatibility patch block",
-			summary: "Guard changes with `WHERE EXISTS`, patch existing rows with `UPDATE`, and remove conflicting rows explicitly when needed.",
+			summary: "Guard changes with “WHERE EXISTS”, patch existing rows with “UPDATE”, and remove conflicting rows explicitly when needed.",
 			files: [
 				snippetFile(
 					"SQL/Compatibility/BalancePatch.sql",
@@ -465,8 +624,8 @@ export const recipeLaunchRecipes = [
 			"Notification stub so the spawned unit is visible to the player immediately.",
 		],
 		example: {
-			title: "Capital spawn helper",
-			summary: "Use the capital as a stable spawn anchor, then apply the setup block right after the unit is created.",
+			title: "Spawn helper variants",
+			summary: "Use the capital-anchor version when the destination is fixed, then switch to a chosen-plot version when the mechanic resolves a safer target tile first.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/SpawnRewardUnit.lua",
@@ -474,13 +633,21 @@ export const recipeLaunchRecipes = [
 					'local iUnitType = GameInfoTypes.UNIT_ARCHER\nlocal iPromotion = GameInfoTypes.PROMOTION_DRILL_1\nlocal iPlayer = Game.GetActivePlayer()\nlocal pPlayer = Players[iPlayer]\nlocal pCapital = pPlayer and pPlayer:GetCapitalCity()\n\nif pPlayer and pCapital then\n\tlocal pUnit = pPlayer:InitUnit(iUnitType, pCapital:GetX(), pCapital:GetY())\n\tif pUnit then\n\t\tpUnit:SetExperience(15)\n\t\tpUnit:SetDamage(10)\n\t\tpUnit:SetHasPromotion(iPromotion, true)\n\t\tpUnit:SetName(\"Atlas Vanguard\")\n\t\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, \"A reward unit has been deployed in your capital.\", \"Reinforcements Arrived\", pCapital:GetX(), pCapital:GetY())\n\tend\nend',
 					"One-pass spawn helper covering position, experience, promotion, name, and player-facing feedback.",
 				),
+				snippetFile(
+					"Lua/Gameplay/SpawnRewardUnitOnPlot.lua",
+					"lua",
+					'local iUnitType = GameInfoTypes.UNIT_ARCHER\n\nlocal function spawnOnResolvedPlot(pPlayer, pPlot)\n\tif not pPlayer or not pPlot then\n\t\treturn nil\n\tend\n\tlocal pUnit = pPlayer:InitUnit(iUnitType, pPlot:GetX(), pPlot:GetY())\n\tif pUnit then\n\t\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, \"A reward unit arrived on the chosen plot.\", \"Reinforcements Arrived\", pPlot:GetX(), pPlot:GetY())\n\tend\n\treturn pUnit\nend',
+					"Chosen-plot variant. Use this when some earlier helper already found the legal destination and the spawn helper should only handle creation plus feedback.",
+				),
 			],
 		},
 		touchpoints: [
 			linkToLua("Player:GetCapitalCity", "player-getcapitalcity-141", "methods", "Stable city anchor for spawn helpers and reward units."),
+			linkToLua("Player:InitUnit", "player-initunit-614", "methods", "Core spawn method behind both the city-anchor and chosen-plot variants."),
 			linkToLua("Player:AddNotification", "player-addnotification-5", "methods", "Notify the player once the unit is actually spawned."),
 			linkToSchema("Units", "Validate the spawned unit row and text keys.", "rows"),
 			linkToSchema("UnitPromotions", "Promotion rows the helper may seed onto the spawned unit.", "rows"),
+			linkToPage("Plot Search Pattern", "/pattern-library", "Useful companion when the spawn helper should consume a resolved legal plot instead of assuming the city tile is always safe."),
 			{
 				label: "Unit Created Post-Spawn Setup",
 				href: "/pattern-library",
@@ -492,29 +659,37 @@ export const recipeLaunchRecipes = [
 		title: "Building Grant / Remove Lua Helper",
 		focus: "City building state",
 		status: "High-Use Recipe",
-		copy: "Loop cities, decide whether a building marker should be present, then add or remove it cleanly. This is the usual glue for capital-only, coastal, puppet, religion, and dummy-building mechanics.",
+		copy: "Loop cities, decide whether a building proxy should be present, then add or remove it cleanly. This is the usual glue for capital-only, coastal, puppet, religion, and dummy-building mechanics.",
 		deliverables: [
 			"City loop pattern for syncing hidden or visible buildings.",
 			"Clear condition block for grants versus removals.",
-			"A city-state sync scaffold that avoids leaving stale building markers behind.",
+			"A city-state sync scaffold that avoids leaving stale building proxys behind.",
 		],
 		example: {
-			title: "Coastal dummy sync",
-			summary: "Decide once per city whether the marker building should exist, then set the count directly instead of stacking ad hoc grants.",
+			title: "Grant or remove variants",
+			summary: "Use the same city-sync shape whether the proxy comes from a positive condition like coastal access or a negative cleanup condition like occupation or puppet state.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/SyncCoastalDummy.lua",
 					"lua",
 					"local iDummy = GameInfoTypes.BUILDING_CMC_DUMMY_GARRISON\n\nlocal function syncCity(pCity)\n\tif not pCity then\n\t\treturn\n\tend\n\tlocal shouldHave = pCity:IsCoastal(10) and not pCity:IsPuppet()\n\tpCity:SetNumRealBuilding(iDummy, shouldHave and 1 or 0)\nend\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() then\n\t\treturn\n\tend\n\tfor pCity in pPlayer:Cities() do\n\t\tsyncCity(pCity)\n\tend\nend)",
-					"Reusable city-loop helper for keeping building markers in sync with changing city state.",
+					"Reusable city-loop helper for keeping building proxys in sync with changing city state.",
+				),
+				snippetFile(
+					"Lua/Gameplay/ClearOccupiedDummy.lua",
+					"lua",
+					"local iDummy = GameInfoTypes.BUILDING_CMC_OCCUPATION_PROXY\n\nlocal function syncOccupiedState(pCity)\n\tif not pCity then\n\t\treturn\n\tend\n\tlocal shouldHave = pCity:IsOccupied() and not pCity:IsPuppet()\n\tpCity:SetNumRealBuilding(iDummy, shouldHave and 1 or 0)\nend",
+					"Cleanup-oriented variant. Use this when the helper's real job is removing stale city proxies once occupation or ownership state changes.",
 				),
 			],
 		},
 		touchpoints: [
 			linkToLua("GameEvents.PlayerDoTurn", "game-event-playerdoturn-72", "gameEvents", "Simple recurring sync hook when city state may change from turn to turn."),
 			linkToLua("City:GetNumBuilding", "city-getnumbuilding-178", "methods", "Useful for validation checks before and after the sync runs."),
+			linkToLua("City:SetNumRealBuilding", "city-setnumrealbuilding-355", "methods", "Direct write helper used by both the grant and cleanup variants."),
 			linkToSchema("Buildings", "The granted or removed row still needs a valid building definition.", "rows"),
-			linkToSchema("BuildingClasses", "Hidden markers should still be classed correctly when they depend on class-sensitive effects.", "rows"),
+			linkToSchema("BuildingClasses", "Hidden proxies should still be classed correctly when they depend on class-sensitive effects.", "rows"),
+			linkToPage("City Capture Follow-Up", "/pattern-library", "Useful companion when the remove-side example is really part of a broader conquest cleanup flow."),
 		],
 	},
 	{
@@ -528,8 +703,8 @@ export const recipeLaunchRecipes = [
 			"Touchpoints for the tables or hooks behind common capital, coastal, and tech gates.",
 		],
 		example: {
-			title: "Capital + coastal + tech gate",
-			summary: "Most gate logic is just a stack of cheap state checks. Start with capital, coastal, and tech requirements, then swap in religion or golden-age checks as needed.",
+			title: "Gate variants by state type",
+			summary: "Keep the shape the same, but swap the actual yes or no checks depending on whether the gate is city-state, religion-state, or player-state driven.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/ConstructRequirements.lua",
@@ -537,21 +712,66 @@ export const recipeLaunchRecipes = [
 					"local iTargetBuilding = GameInfoTypes.BUILDING_CMC_HARBOR_OFFICE\nlocal iRequiredTech = GameInfoTypes.TECH_COMPASS\n\nGameEvents.PlayerCanConstruct.Add(function(iPlayer, eBuilding)\n\tif eBuilding ~= iTargetBuilding then\n\t\treturn true\n\tend\n\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pCapital = pPlayer and pPlayer:GetCapitalCity()\n\tlocal pTeam = pPlayer and Teams[pPlayer:GetTeam()]\n\tif not pCapital or not pCapital:IsCoastal(10) then\n\t\treturn false\n\tend\n\tif not pTeam or not pTeam:IsHasTech(iRequiredTech) then\n\t\treturn false\n\tend\n\treturn true\nend)",
 					"Starter gate callback for a building that should only unlock once the capital is coastal and the team owns the required tech.",
 				),
+				snippetFile(
+					"Lua/Gameplay/ReligionRequirements.lua",
+					"lua",
+					`local iTargetBuilding = GameInfoTypes.BUILDING_CMC_CONVERSION_SHRINE
+
+GameEvents.CityCanConstruct.Add(function(iPlayer, iCity, eBuilding)
+	if eBuilding ~= iTargetBuilding then
+		return true
+	end
+
+	local pPlayer = Players[iPlayer]
+	local pCity = pPlayer and pPlayer:GetCityByID(iCity)
+	local eReligion = pCity and pCity:GetReligiousMajority()
+	return eReligion and eReligion >= 0
+end)`,
+					"Religion-state variant. The shape is the same, but the gate now depends on whether the city already has a majority religion.",
+				),
+				snippetFile(
+					"Lua/Gameplay/GoldenAgeRequirements.lua",
+					"lua",
+					`local iTargetUnit = GameInfoTypes.UNIT_CMC_FESTIVAL_GUARD
+
+GameEvents.PlayerCanTrain.Add(function(iPlayer, eUnit)
+	if eUnit ~= iTargetUnit then
+		return true
+	end
+
+	local pPlayer = Players[iPlayer]
+	return pPlayer and pPlayer:GetGoldenAgeTurns() > 0
+end)`,
+					"Player-state variant. Use the same early return gate shape when the requirement belongs to the player rather than a city or team.",
+				),
 			],
 		},
 		touchpoints: [
 			linkToLua("GameEvents.PlayerCanConstruct", "game-event-playercanconstruct-62", "gameEvents", "Empire-level building gate hook for custom construction rules."),
+			linkToLua(
+				"GameEvents.CityCanConstruct",
+				"game-event-citycanconstruct-22",
+				"gameEvents",
+				"City-level gate surface used when the requirement depends on local city state like majority religion.",
+			),
+			linkToLua("GameEvents.PlayerCanTrain", "game-event-playercantrain-70", "gameEvents", "Useful when the gate variant applies to units instead of buildings."),
 			linkToLua("Player:GetCapitalCity", "player-getcapitalcity-141", "methods", "Common way to anchor a capital-only gate."),
 			linkToLua("Team:IsHasTech", "team-ishastech-110", "methods", "Team-level tech gate for unlock checks."),
 			linkToSchema("Buildings", "Validate the gated building row and its prerequisite keys.", "rows"),
 			linkToSchema("Technologies", "Use the tech row behind the gate for display text and downstream unlock relationships.", "rows"),
+			linkToPage(
+				"Holy City / Largest City Reward Resolver",
+				"/pattern-library",
+				"Good companion when the gate starts by resolving a specific city target instead of only checking the active player.",
+			),
+			linkToPage("Religion / Belief Condition Check", "/pattern-library", "Add this when the gate grows beyond capital, coastal, and tech checks into religion requirements."),
 		],
 	},
 	{
 		title: "Audio Hook Setup",
 		focus: "Sound pipeline",
 		status: "High-Use Recipe",
-		copy: "Register sound rows, wire the audio file into the project actions, and keep the modinfo-side import expectations clear so custom sound effects or music cues actually load.",
+		copy: "Register sound rows, wire the audio file into the project actions, and keep the modinfo import expectations clear so custom sound effects or music cues actually load.",
 		deliverables: [
 			"Starter audio database rows for sound IDs and 2D script hooks.",
 			"A mod action split for database updates plus imported audio files.",
@@ -568,10 +788,10 @@ export const recipeLaunchRecipes = [
 					"Minimal audio rows for a custom scripted sound and its 2D script hook.",
 				),
 				snippetFile(
-					"Project/Audio.modinfo",
+					".modinfo",
 					"xml",
 					'<Mod id="11111111-1111-1111-1111-111111111111" version="1">\n\t<Files>\n\t\t<File import="1">Audio/CMC_Event_Sting.ogg</File>\n\t\t<File import="0">SQL/Audio/EventSting.sql</File>\n\t</Files>\n\t<Actions>\n\t\t<OnModActivated>\n\t\t\t<UpdateDatabase>SQL/Audio/EventSting.sql</UpdateDatabase>\n\t\t</OnModActivated>\n\t\t<OnModActivated>\n\t\t\t<ImportFiles>Audio/CMC_Event_Sting.ogg</ImportFiles>\n\t\t\t<PlayAudio>Audio/CMC_Event_Sting.ogg</PlayAudio>\n\t\t</OnModActivated>\n\t</Actions>\n</Mod>',
-					"Direct `.modinfo` version of the audio wiring: the SQL is updated once, and the sound file is imported from the same manifest instead of relying on a separate editor view.",
+					"Direct “.modinfo” version of the audio wiring: the SQL is updated once, and the sound file is imported from the same manifest instead of relying on a separate editor view.",
 				),
 			],
 		},
@@ -581,14 +801,14 @@ export const recipeLaunchRecipes = [
 			linkToSchema("Audio_ScriptTypes", "Useful when matching your custom sound to an existing script-type convention.", "rows"),
 			{ label: ".modinfo Builder", href: "/modinfo-builder", note: "Use the builder when the audio file also needs matching import and action wiring." },
 			{
-				label: "Art + Audio Bundle",
-				href: "/scaffold-generators?generator=art-audio-bundle",
+				label: "Art + Audio Setup",
+				href: "/template-generators?generator=art-audio-bundle",
 				note: "Use the generator when the audio work is part of a civ identity pass with colors, atlases, and leader music rather than a one-off scripted sound.",
 			},
 			{
 				label: "Leader / Civ Music Setup",
 				href: "/pattern-library",
-				note: "Read the music-specific companion when the same pipeline needs leader peace and war themes instead of a one-off sound effect.",
+				note: "Read the music specific companion when your mod needs leader peace and war themes instead of a one-off sound effect.",
 			},
 		],
 	},
@@ -596,44 +816,44 @@ export const recipeLaunchRecipes = [
 		title: "Leader / Civ Music Setup",
 		focus: "Music pipeline",
 		status: "High-Use Recipe",
-		copy: "Add leader peace and war themes with the hardcoded `ScriptID` naming Civ V expects, then set a `SoundtrackTag` so the civ falls back to an appropriate generic music pool after those intro tracks finish.",
+		copy: "Add leader peace and war themes with the hardcoded “ScriptID” naming Civ V expects, then set a “SoundtrackTag” so the civ falls back to an appropriate generic music pool after those intro tracks finish.",
 		deliverables: [
-			"SQL rows for leader peace and war music in `Audio_Sounds` and `Audio_2DSounds`.",
-			"A `SoundtrackTag` update so the civilization keeps using a matching background music family after the leader tracks end.",
-			"A `.modinfo` reminder for importing both music files and marking them for VFS through either direct manifest edits or the `.modinfo Builder`.",
+			"SQL rows for leader peace and war music in “Audio_Sounds” and “Audio_2DSounds”.",
+			"A “SoundtrackTag” update so the civilization keeps using a matching background music family after the leader tracks end.",
+			"A “.modinfo” reminder for importing both music files and marking them for VFS through either direct manifest edits or the “.modinfo Builder”.",
 		],
 		example: {
 			title: "Leader music + soundtrack fallback",
-			summary: "Register the peace and war files first, match the `ScriptID` to the leader name, then point the civ at an existing soundtrack family for its longer-form in-game music.",
+			summary: "Register the peace and war files first, match the “ScriptID” to the leader name, then point the civ at an existing soundtrack family for its longer form in-game music.",
 			files: [
 				snippetFile(
 					"SQL/Audio/NavarchMusic.sql",
 					"sql",
 					"INSERT INTO Audio_Sounds (SoundID, Filename, LoadType)\nVALUES\n\t('SND_LEADER_MUSIC_CMC_NAVARCH_PEACE', 'NavarchPeace', 'DynamicResident'),\n\t('SND_LEADER_MUSIC_CMC_NAVARCH_WAR', 'NavarchWar', 'DynamicResident');\n\nINSERT INTO Audio_2DSounds (ScriptID, SoundID, SoundType, MinVolume, MaxVolume, IsMusic)\nVALUES\n\t('AS2D_LEADER_MUSIC_CMC_NAVARCH_PEACE', 'SND_LEADER_MUSIC_CMC_NAVARCH_PEACE', 'GAME_MUSIC', 120, 120, 1),\n\t('AS2D_LEADER_MUSIC_CMC_NAVARCH_WAR', 'SND_LEADER_MUSIC_CMC_NAVARCH_WAR', 'GAME_MUSIC', 80, 80, 1);\n\nUPDATE Civilizations\nSET SoundtrackTag = 'England'\nWHERE Type = 'CIVILIZATION_CMC_ATLAS';",
-					"Use the exact leader-type tail in the `ScriptID`: if the leader is `LEADER_CMC_NAVARCH`, the music hooks must be `AS2D_LEADER_MUSIC_CMC_NAVARCH_PEACE` and `_WAR` or the game will not connect them.",
+					"Use the exact leader-type tail in the “ScriptID”: if the leader is “LEADER_CMC_NAVARCH”, the music hooks must be “AS2D_LEADER_MUSIC_CMC_NAVARCH_PEACE” and “_WAR” or the game will not connect them.",
 				),
 				snippetFile(
-					"Project/NavarchMusic.modinfo",
+					".modinfo",
 					"xml",
 					'<Mod id="22222222-2222-2222-2222-222222222222" version="1">\n\t<Files>\n\t\t<File import="1">Audio/NavarchPeace.mp3</File>\n\t\t<File import="1">Audio/NavarchWar.mp3</File>\n\t\t<File import="0">SQL/Audio/NavarchMusic.sql</File>\n\t</Files>\n\t<Actions>\n\t\t<OnModActivated>\n\t\t\t<UpdateDatabase>SQL/Audio/NavarchMusic.sql</UpdateDatabase>\n\t\t</OnModActivated>\n\t</Actions>\n</Mod>',
-					"Keep the manifest simple: import the music files through the `.modinfo` file, then let the SQL handle the peace and war `ScriptID` rows. The `Filename` values in SQL should still match the file names without path or extension.",
+					"Keep the manifest simple: import the music files through the “.modinfo” file, then let the SQL handle the peace and war “ScriptID” rows. The “Filename” values in SQL should still match the file names without path or extension.",
 				),
 				snippetFile(
 					"Docs/MusicImportChecklist.txt",
 					"text",
-					"1. Add `Audio/NavarchPeace.mp3` and `Audio/NavarchWar.mp3` to your mod.\n2. In the `.modinfo` file, or in the `.modinfo Builder`, mark both files for import / VFS.\n3. Make sure the SQL `Filename` values match the file names without `.mp3` or `.ogg`.\n4. Rebuild, start a game with the civ, and test both peace and war states.",
+					"1. Add “Audio/NavarchPeace.mp3” and “Audio/NavarchWar.mp3” to your mod.\n2. In the “.modinfo” file, or in the “.modinfo Builder”, mark both files for import / VFS.\n3. Make sure the SQL “Filename” values match the file names without “.mp3” or “.ogg”.\n4. Rebuild, start a game with the civ, and test both peace and war states.",
 					"Small checklist for the pieces that usually fail first: manifest import flags, filename matching, and war/peace testing.",
 				),
 			],
 		},
 		touchpoints: [
 			linkToSchema("Audio_Sounds", "Register the actual peace and war file names here before the game can play them.", "rows"),
-			linkToSchema("Audio_2DSounds", "This is where the leader-specific `ScriptID` names are matched to the custom sound rows.", "rows"),
-			linkToSchema("Civilizations", "Use `SoundtrackTag` when you want the civ to borrow an existing soundtrack family after the leader music ends.", "rows"),
+			linkToSchema("Audio_2DSounds", "This is where the leader-specific “ScriptID” names are matched to the custom sound rows.", "rows"),
+			linkToSchema("Civilizations", "Use “SoundtrackTag” when you want the civ to borrow an existing soundtrack family after the leader music ends.", "rows"),
 			{ label: ".modinfo Builder", href: "/modinfo-builder", note: "Use the builder to keep the music file imports and manifest wiring aligned with the SQL setup." },
 			{
-				label: "Art + Audio Bundle",
-				href: "/scaffold-generators?generator=art-audio-bundle",
+				label: "Art + Audio Setup",
+				href: "/template-generators?generator=art-audio-bundle",
 				note: "Use the generator when you want the leader music rows emitted alongside civ colors, atlas registration, and the rest of the ArtDefines identity bundle.",
 			},
 			{
@@ -649,7 +869,7 @@ export const recipeLaunchRecipes = [
 		status: "Lua Pattern",
 		copy: "Loop cities once per turn, bail early for dead or invalid players, and keep the city filters explicit so capital-only, coastal, occupied, or puppet logic stays readable.",
 		deliverables: [
-			"Safe `PlayerDoTurn` scaffold with alive and city checks.",
+			"Safe “PlayerDoTurn” scaffold with alive and city checks.",
 			"City filter block for capital, coastal, occupied, and puppet states.",
 			"A clean place to apply yields, dummy buildings, or notifications once per turn.",
 		],
@@ -682,8 +902,8 @@ export const recipeLaunchRecipes = [
 			"Starter examples for once-ever and once-per-turn checks.",
 		],
 		example: {
-			title: "Scoped trigger helpers",
-			summary: "Keep the SaveData key building in one include file and call tiny helpers from the gameplay hook.",
+			title: "Trigger guard variants",
+			summary: "Centralize the key building once, then expose different scopes like once ever, once per player-turn, or once per city so callers do not keep rebuilding them.",
 			files: [
 				snippetFile(
 					"Lua/Shared/TriggerGuards.lua",
@@ -691,39 +911,100 @@ export const recipeLaunchRecipes = [
 					'local ModData = Modding.OpenSaveData()\nlocal PREFIX = "CMC_TRIGGER_"\n\nlocal function playerKey(iPlayer, suffix)\n\treturn string.format("%sP%d_%s", PREFIX, iPlayer, suffix)\nend\n\nlocal function onceEver(iPlayer, suffix)\n\tlocal key = playerKey(iPlayer, suffix)\n\tif ModData.GetValue(key) then\n\t\treturn false\n\tend\n\tModData.SetValue(key, 1)\n\treturn true\nend\n\nlocal function oncePerPlayerTurn(iPlayer, suffix)\n\tlocal key = playerKey(iPlayer, suffix)\n\tlocal turn = Game.GetGameTurn()\n\tif ModData.GetValue(key) == turn then\n\t\treturn false\n\tend\n\tModData.SetValue(key, turn)\n\treturn true\nend\n\nreturn {\n\tonceEver = onceEver,\n\toncePerPlayerTurn = oncePerPlayerTurn,\n}',
 					"Small include file for the two most common trigger scopes: once ever and once per player-turn.",
 				),
+				snippetFile(
+					"Lua/Shared/CityTriggerGuards.lua",
+					"lua",
+					'local ModData = Modding.OpenSaveData()\nlocal PREFIX = "CMC_TRIGGER_"\n\nlocal function cityKey(iPlayer, iCity, suffix)\n\treturn string.format("%sP%d_C%d_%s", PREFIX, iPlayer, iCity, suffix)\nend\n\nlocal function oncePerCity(iPlayer, iCity, suffix)\n\tlocal key = cityKey(iPlayer, iCity, suffix)\n\tif ModData.GetValue(key) then\n\t\treturn false\n\tend\n\tModData.SetValue(key, 1)\n\treturn true\nend\n\nreturn {\n\toncePerCity = oncePerCity,\n}',
+					"Per-city variant. Use this when the mechanic should fire once for each city instead of once globally or once per turn.",
+				),
 			],
 		},
 		touchpoints: [
 			linkToLua("Game.GetGameTurn", "game-getgameturn-80", "methods", "Turn stamp for per-turn and per-era trigger guards."),
 			linkToLua("GameEvents.PlayerDoTurn", "game-event-playerdoturn-72", "gameEvents", "Typical consumer of a once-per-player-turn wrapper."),
+			linkToPage("City Tracking Table", "/pattern-library", "Natural companion when the guard scope is per-city and the rest of the mechanic already tracks city-local runtime state."),
 		],
 	},
 	{
-		title: "Capital / Holy City / Coastal Target Resolver",
-		focus: "City targeting",
+		title: "Holy City / Largest City Reward Resolver",
+		focus: "Reward destination selection",
 		status: "Lua Pattern",
-		copy: "Resolve the correct city first, then hand that city to the reward or effect logic. This avoids scattering separate capital, coastal, or religion-target lookups across multiple scripts.",
+		copy: "Resolve the reward destination first, then hand that city to the effect logic. This keeps holy-city, largest-city, and fallback selection in one helper instead of scattering city-picking rules across multiple scripts.",
 		deliverables: [
-			"Helper that chooses between capital, holy city, or first coastal city.",
+			"Helper that chooses between a holy city, the largest eligible city, or a final fallback city.",
 			"Single return path for reward code, notifications, or building grants.",
-			"Starter schema touchpoints for city-side religion and coastal checks.",
+			"Starter touchpoints for religion-aware targeting and reward-safe fallback selection.",
 		],
 		example: {
-			title: "Fallback city resolver",
-			summary: "Try the capital first, then a religion city, then the first coastal city that matches your fallback rules.",
+			title: "Resolver variants by fallback style",
+			summary:
+				"Keep the reward code separate and swap only the city-picking helper depending on whether the mechanic wants a religion anchor, the biggest stable city, or a capital or coastal fallback.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/ResolveTargetCity.lua",
 					"lua",
-					"local function resolveTargetCity(pPlayer)\n\tif not pPlayer then\n\t\treturn nil\n\tend\n\tlocal pCapital = pPlayer:GetCapitalCity()\n\tif pCapital then\n\t\treturn pCapital\n\tend\n\tfor pCity in pPlayer:Cities() do\n\t\tif pCity:IsCoastal(10) then\n\t\t\treturn pCity\n\t\tend\n\tend\n\tfor pCity in pPlayer:Cities() do\n\t\treturn pCity\n\tend\n\treturn nil\nend\n\nreturn resolveTargetCity",
-					"Simple target resolver that prefers the capital, then any coastal fallback, then the first available city.",
+					"local function isReligionAnchorCity(pPlayer, pCity)\n\tlocal eReligion = pPlayer and pPlayer:GetReligionCreatedByPlayer()\n\treturn pCity and eReligion and eReligion >= 0 and pCity:IsHolyCityForReligion(eReligion)\nend\n\nlocal function resolveTargetCity(pPlayer)\n\tif not pPlayer then\n\t\treturn nil\n\tend\n\n\tfor pCity in pPlayer:Cities() do\n\t\tif isReligionAnchorCity(pPlayer, pCity) then\n\t\t\treturn pCity\n\t\tend\n\tend\n\n\tlocal pLargestCity = nil\n\tfor pCity in pPlayer:Cities() do\n\t\tif not pCity:IsOccupied() and (not pLargestCity or pCity:GetPopulation() > pLargestCity:GetPopulation()) then\n\t\t\tpLargestCity = pCity\n\t\tend\n\tend\n\tif pLargestCity then\n\t\treturn pLargestCity\n\tend\n\n\tfor pCity in pPlayer:Cities() do\n\t\treturn pCity\n\tend\n\treturn nil\nend\n\nreturn resolveTargetCity",
+					"Single resolver that prefers a religion anchor, then the largest stable city, then the first valid fallback city.",
+				),
+				snippetFile(
+					"Lua/Gameplay/ResolveLargestStableCity.lua",
+					"lua",
+					`local function resolveLargestStableCity(pPlayer)
+	if not pPlayer then
+		return nil
+	end
+
+	local pLargestCity = nil
+	for pCity in pPlayer:Cities() do
+		if not pCity:IsOccupied() and (not pLargestCity or pCity:GetPopulation() > pLargestCity:GetPopulation()) then
+			pLargestCity = pCity
+		end
+	end
+	return pLargestCity
+end
+
+return resolveLargestStableCity`,
+					"Population first variant. Use this when the mechanic has nothing to do with religion and just wants the empire's biggest stable city.",
+				),
+				snippetFile(
+					"Lua/Gameplay/ResolveCapitalOrCoastalCity.lua",
+					"lua",
+					`local function resolveCapitalOrCoastalCity(pPlayer)
+	if not pPlayer then
+		return nil
+	end
+
+	local pCapital = pPlayer:GetCapitalCity()
+	if pCapital and not pCapital:IsOccupied() then
+		return pCapital
+	end
+
+	for pCity in pPlayer:Cities() do
+		if pCity:IsCoastal(10) and not pCity:IsOccupied() then
+			return pCity
+		end
+	end
+
+	for pCity in pPlayer:Cities() do
+		return pCity
+	end
+	return nil
+end
+
+return resolveCapitalOrCoastalCity`,
+					"Capital-or-coastal fallback. This is better when the effect should feel geographic or capital-centered instead of religion-centered.",
 				),
 			],
 		},
 		touchpoints: [
-			linkToLua("Player:GetCapitalCity", "player-getcapitalcity-141", "methods", "Fastest and safest way to grab the capital if that is the intended target."),
-			linkToSchema("Religions", "Religion-target logic usually depends on whether the civ or city is tied to a religion row.", "rows"),
-			linkToSchema("Civilization_Religions", "Useful when the target city should match the civilization's religion-side setup.", "rows"),
+			linkToSchema("Religions", "Religion-aware destination logic often starts from the founded religion or holy-city relationship.", "rows"),
+			linkToSchema("Civilization_Religions", "Useful when the reward destination should line up with the civilization’s religion setup.", "rows"),
+			linkToLua("Player:GetCapitalCity", "player-getcapitalcity-141", "methods", "Useful for the capital-or-coastal fallback variant when the resolver starts with the capital check."),
+			linkToPage(
+				"Religion / Belief Condition Check",
+				"/pattern-library",
+				"Good companion when the first-choice destination depends on belief or religion state before the fallback city is chosen.",
+			),
 		],
 	},
 	{
@@ -732,19 +1013,25 @@ export const recipeLaunchRecipes = [
 		status: "Lua Pattern",
 		copy: "React cleanly when a team gains a technology, then route that state change into a reward, a building sync, or a notification without duplicating the same unlock guard everywhere.",
 		deliverables: [
-			"`TeamTechResearched` listener with a single target tech check.",
+			"“TeamTechResearched” listener with a single target tech check.",
 			"Team-to-player resolution block for the civs on that team.",
 			"A starter place to hang rewards, dummy buildings, or messages once the unlock lands.",
 		],
 		example: {
-			title: "Single-tech listener",
-			summary: "Listen once, filter to the target tech, then resolve the actual players on the unlocking team.",
+			title: "Tech listener variants",
+			summary: "Use one version when a single named tech matters, then a second version when the real payload should branch by whole tech family or threshold.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/TechUnlockListener.lua",
 					"lua",
 					'local iTargetTech = GameInfoTypes.TECH_COMPASS\n\nGameEvents.TeamTechResearched.Add(function(eTeam, eTech, iChange)\n\tif eTech ~= iTargetTech or (iChange or 0) <= 0 then\n\t\treturn\n\tend\n\tfor iPlayer, pPlayer in ipairs(Players) do\n\t\tif pPlayer and pPlayer:IsAlive() and pPlayer:GetTeam() == eTeam then\n\t\t\tprint("[CMC] Team researched target tech for player", iPlayer)\n\t\tend\n\tend\nend)',
-					"Compact unlock listener that keys off `TeamTechResearched` and only runs the payload path when the chosen tech is newly added.",
+					"Compact unlock listener that keys off “TeamTechResearched” and only runs the payload path when the chosen tech is newly added.",
+				),
+				snippetFile(
+					"Lua/Gameplay/NavalTechUnlockListener.lua",
+					"lua",
+					'local NAVAL_TECHS = {\n\t[GameInfoTypes.TECH_COMPASS] = true,\n\t[GameInfoTypes.TECH_ASTRONOMY] = true,\n}\n\nGameEvents.TeamTechResearched.Add(function(eTeam, eTech, iChange)\n\tif not NAVAL_TECHS[eTech] or (iChange or 0) <= 0 then\n\t\treturn\n\tend\n\tprint("[CMC] Naval tech unlocked for team", eTeam, eTech)\nend)',
+					"Family-based variant. Use this when multiple related techs should route into the same reward or unlock logic.",
 				),
 			],
 		},
@@ -752,6 +1039,7 @@ export const recipeLaunchRecipes = [
 			{ label: "GameEvents.TeamTechResearched", href: "/lua-api-explorer", note: "Preferred hook when a recipe should react right as a team researches a technology." },
 			linkToLua("Team:IsHasTech", "team-ishastech-110", "methods", "Useful when the listener feeds into later gate checks."),
 			linkToSchema("Technologies", "Validate the tech row and any downstream unlock text or prerequisites.", "rows"),
+			linkToPage("Requirements Gate Pattern", "/pattern-library", "Natural companion when the researched tech should later open or close a gate instead of only firing an immediate reward."),
 		],
 	},
 	{
@@ -765,8 +1053,8 @@ export const recipeLaunchRecipes = [
 			"Schema touchpoints for the promotion rows and eligible unit combats.",
 		],
 		example: {
-			title: "Conditional promotion sync",
-			summary: "Compute the condition once, then use one helper to either grant or remove the promotion cleanly.",
+			title: "Promotion sync variants",
+			summary: "Keep one small grant or strip helper, then swap the live condition depending on whether the promotion is terrain-based, city-state-based, or something else.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/PromotionSync.lua",
@@ -774,12 +1062,29 @@ export const recipeLaunchRecipes = [
 					"local iPromotion = GameInfoTypes.PROMOTION_CMC_VOLLEY_I\n\nlocal function syncPromotion(pUnit, shouldHave)\n\tif not pUnit then\n\t\treturn\n\tend\n\tpUnit:SetHasPromotion(iPromotion, shouldHave and true or false)\nend\n\nlocal function refreshUnit(pUnit)\n\tlocal pPlot = pUnit and pUnit:GetPlot()\n\tlocal shouldHave = pPlot and not pPlot:IsHills()\n\tsyncPromotion(pUnit, shouldHave)\nend",
 					"One helper for setting or stripping a promotion when a live condition changes.",
 				),
+				snippetFile(
+					"Lua/Gameplay/GarrisonPromotionSync.lua",
+					"lua",
+					`local iPromotion = GameInfoTypes.PROMOTION_CMC_GARRISON_GUARD
+
+local function refreshGarrisonPromotion(pUnit)
+	if not pUnit then
+		return
+	end
+	local pPlot = pUnit:GetPlot()
+	local pCity = pPlot and pPlot:GetPlotCity()
+	local shouldHave = pCity and pCity:GetOwner() == pUnit:GetOwner()
+	pUnit:SetHasPromotion(iPromotion, shouldHave and true or false)
+end`,
+					"City-state variant. This uses the same grant or strip shape, but the condition now depends on whether the unit is actually garrisoned in a friendly city.",
+				),
 			],
 		},
 		touchpoints: [
 			linkToLua("GameEvents.CanHavePromotion", "game-event-canhavepromotion-5", "gameEvents", "Use the event when the game needs to veto the promotion path entirely."),
 			linkToSchema("UnitPromotions", "Promotion rows that the Lua helper is toggling on or off.", "rows"),
 			linkToSchema("UnitPromotions_UnitCombats", "Keep the dynamic promotion aligned with the unit combats it is meant to affect.", "rows"),
+			linkToPage("Unit Promoted Trigger", "/pattern-library", "Useful companion when the promotion sync should feed a post-promotion reward or tracking reaction."),
 		],
 	},
 	{
@@ -794,7 +1099,7 @@ export const recipeLaunchRecipes = [
 		],
 		example: {
 			title: "Count-based dummy updater",
-			summary: "Calculate the live count, then write that count directly so the hidden marker stays in sync with the current city state.",
+			summary: "Calculate the live count, then write that count directly so the hidden proxy stays in sync with the current city state.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/DynamicDummyUpdater.lua",
@@ -805,13 +1110,13 @@ export const recipeLaunchRecipes = [
 			],
 		},
 		touchpoints: [
-			linkToSchema("Buildings", "The hidden marker row that is being dynamically synced.", "rows"),
+			linkToSchema("Buildings", "The hidden proxy row that is being dynamically synced.", "rows"),
 			linkToSchema("BuildingClasses", "Keep the dummy row on the right class while its count changes.", "rows"),
-			linkToSchema("Building_YieldChanges", "Effect table that actually turns the hidden marker into gameplay value.", "rows"),
+			linkToSchema("Building_YieldChanges", "Effect table that actually turns the hidden proxy into gameplay value.", "rows"),
 		],
 	},
 	{
-		title: "Trait-Driven Lua Effect",
+		title: "Trait Driven Lua Effect",
 		focus: "Trait checks in code",
 		status: "Lua Pattern",
 		copy: "Check whether the current civ or leader carries the intended trait, then branch the Lua effect from that trait key instead of hardcoding one civilization type everywhere.",
@@ -846,18 +1151,18 @@ export const recipeLaunchRecipes = [
 		copy: "Preserve promotions, names, or custom state across upgrades so special units do not silently lose their scripted identity when they advance to the next class.",
 		deliverables: [
 			"Pre-upgrade state capture idea for names, markers, or promotions.",
-			"A `UnitUpgraded` reapply block for the new unit.",
+			"A “UnitUpgraded” reapply block for the new unit.",
 			"Schema touchpoints for the upgrade class and promotion rows involved.",
 		],
 		example: {
 			title: "Upgrade carryover note",
-			summary: "Store the custom state before the upgrade resolves, then reapply it when `UnitUpgraded` hands you the new unit ID.",
+			summary: "Store the custom state before the upgrade resolves, then reapply it when “UnitUpgraded” hands you the new unit ID.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/UnitUpgradeCarryover.lua",
 					"lua",
 					"local upgradeState = {}\n\nlocal function rememberUnit(pUnit)\n\tif not pUnit then\n\t\treturn\n\tend\n\tupgradeState[pUnit:GetID()] = {\n\t\tname = pUnit:GetNameNoDesc(),\n\t\txp = pUnit:GetExperience(),\n\t}\nend\n\nlocal function restoreUnit(pUnit, state)\n\tif not pUnit or not state then\n\t\treturn\n\tend\n\tif state.name and state.name ~= '' then\n\t\tpUnit:SetName(state.name)\n\tend\n\tpUnit:SetExperience(math.max(pUnit:GetExperience(), state.xp or 0))\nend\n\nGameEvents.UnitUpgraded.Add(function(iPlayer, iOldUnit, iNewUnit, bGoodyHut)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pUnit = pPlayer and pPlayer:GetUnitByID(iNewUnit)\n\tlocal state = upgradeState[iOldUnit]\n\tif not pUnit or not state then\n\t\treturn\n\tend\n\trestoreUnit(pUnit, state)\n\tupgradeState[iOldUnit] = nil\nend)",
-					"Core pattern for remembering custom unit state and restoring it through the `UnitUpgraded` event once the new unit exists.",
+					"Core pattern for remembering custom unit state and restoring it through the “UnitUpgraded” event once the new unit exists.",
 				),
 			],
 		},
@@ -872,7 +1177,7 @@ export const recipeLaunchRecipes = [
 		title: "Religion / Belief Condition Check",
 		focus: "Religion gates",
 		status: "Lua Pattern",
-		copy: "Centralize the most common religion-side checks: does the city follow a religion, is it the holy city, does the civ own a belief, or should a belief-specific reward path open at all.",
+		copy: "Centralize the most common religion checks: does the city follow a religion, is it the holy city, does the civ own a belief, or should a belief-specific reward path open at all.",
 		deliverables: [
 			"Starter city-level religion gate with explicit fallback behavior.",
 			"Belief-side schema references for common city and holy-city payload tables.",
@@ -893,7 +1198,7 @@ export const recipeLaunchRecipes = [
 		touchpoints: [
 			linkToSchema("Religions", "Base religion table behind city and civ religion checks.", "rows"),
 			linkToSchema("Beliefs", "Belief rows behind belief-aware reward or restriction logic.", "rows"),
-			linkToSchema("Belief_HolyCityYieldChanges", "Typical holy-city payoff table for religion-side mechanics.", "rows"),
+			linkToSchema("Belief_HolyCityYieldChanges", "Typical holy-city payoff table for religion mechanics.", "rows"),
 			linkToSchema("Belief_CityYieldChanges", "City-level belief payload table often mirrored by Lua checks.", "rows"),
 		],
 	},
@@ -908,20 +1213,48 @@ export const recipeLaunchRecipes = [
 			"Schema touchpoints for the units or improvements that will use the chosen plot.",
 		],
 		example: {
-			title: "Find nearest valid plot",
-			summary: "Search nearby plots, reject bad candidates early, then return the first legal tile for the spawn or improvement effect.",
+			title: "Plot search variants",
+			summary: "Use one search shape for unit placement and another for improvement stamping so the validity rule stays tied to the actual job.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/FindValidPlot.lua",
 					"lua",
 					"local function findNearestValidPlot(pCity, maxRadius)\n\tlocal pOrigin = pCity and Map.GetPlot(pCity:GetX(), pCity:GetY())\n\tif not pOrigin then\n\t\treturn nil\n\tend\n\tfor radius = 1, maxRadius do\n\t\tfor dx = -radius, radius do\n\t\t\tfor dy = -radius, radius do\n\t\t\t\tlocal pPlot = Map.PlotXYWithRangeCheck(pOrigin:GetX(), pOrigin:GetY(), dx, dy, radius)\n\t\t\t\tif pPlot and not pPlot:IsWater() and not pPlot:IsCity() and not pPlot:IsMountain() then\n\t\t\t\t\treturn pPlot\n\t\t\t\tend\n\t\t\tend\n\t\tend\n\tend\n\treturn nil\nend",
-					"Radius-based search pattern for the nearest legal non-city, non-water, non-mountain plot.",
+					"Radius based search pattern for the nearest legal non-city, non-water, non-mountain plot.",
+				),
+				snippetFile(
+					"Lua/Gameplay/FindImprovementCandidate.lua",
+					"lua",
+					`local function findImprovementCandidate(pCity, maxRadius)
+	local pOrigin = pCity and Map.GetPlot(pCity:GetX(), pCity:GetY())
+	if not pOrigin then
+		return nil
+	end
+	for radius = 1, maxRadius do
+		for dx = -radius, radius do
+			for dy = -radius, radius do
+				local pPlot = Map.PlotXYWithRangeCheck(pOrigin:GetX(), pOrigin:GetY(), dx, dy, radius)
+				if pPlot and not pPlot:IsWater() and not pPlot:IsCity() and not pPlot:IsMountain() and pPlot:GetImprovementType() == -1 and pPlot:GetResourceType(-1) == -1 then
+					return pPlot
+				end
+			end
+		end
+	end
+	return nil
+end`,
+					"Improvement-placement variant. This keeps the same search loop, but the validity rule now cares about empty, buildable land instead of just any spawnable plot.",
 				),
 			],
 		},
 		touchpoints: [
 			linkToSchema("Units", "Spawn helpers usually feed the resolved plot into a unit creation call.", "rows"),
 			linkToSchema("Builds", "Improvement or worker patterns often pair the plot search with a build choice.", "rows"),
+			linkToSchema("Improvements", "Useful for the improvement-candidate variant where the resolved tile must still be empty and valid for a follow-up improvement stamp.", "rows"),
+			linkToPage(
+				"Nearest Valid Plot Finder",
+				"/pattern-library",
+				"Use the stricter follow-up recipe when the placement rules need fallback ordering and failure handling instead of a tiny starter loop.",
+			),
 		],
 	},
 	{
@@ -931,12 +1264,12 @@ export const recipeLaunchRecipes = [
 		copy: "Handle tile distance, city distance, and 'closest of X' lookups in one place so map-based effects do not keep reimplementing the same loops. This is useful for nearest city checks, nearest unit searches, radius gating, and tile-targeted rewards.",
 		deliverables: [
 			"Distance helper for plot-to-plot and city-to-plot checks.",
-			"Nearest-match loop for cities, units, or any other collection with coordinates.",
+			"Nearest match loop for cities, units, or any other collection with coordinates.",
 			"A reusable scaffold for 'closest valid X' queries with a filter callback.",
 		],
 		example: {
 			title: "Distance and nearest-target helpers",
-			summary: "Keep the raw distance math in small helpers, then reuse the same nearest-match loop for cities, units, or filtered plots.",
+			summary: "Keep the raw distance math in small helpers, then reuse the same nearest match loop for cities, units, or filtered plots.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/DistanceHelpers.lua",
@@ -995,19 +1328,51 @@ export const recipeLaunchRecipes = [
 		status: "Lua Pattern",
 		copy: "Spawn a unit from a known city or plot, then immediately do the usual follow-up work: damage, experience, promotions, custom naming, and player feedback. This is the smaller baseline pattern before more specialized unit reward scripts.",
 		deliverables: [
-			"`InitUnit`-style creation scaffold from a city or chosen plot.",
+			"“InitUnit” style creation scaffold from a city or chosen plot.",
 			"Optional post-spawn setup block for promotions, damage, or names.",
 			"A notification path so the player can see the created unit resolve.",
 		],
 		example: {
-			title: "Spawn a named guard unit",
-			summary: "Pick the origin city first, then create and configure the unit immediately after it spawns.",
+			title: "Spawn workflow variants",
+			summary: "Show the clean city-anchor version first, then a fallback-placement version for cases where the origin tile may not be safe enough on its own.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/SpawnUnitWorkflow.lua",
 					"lua",
 					'local iUnitType = GameInfoTypes.UNIT_SPEARMAN\nlocal iPromotion = GameInfoTypes.PROMOTION_DRILL_1\n\nlocal function spawnGuardUnit(pPlayer, pCity)\n\tif not pPlayer or not pCity then\n\t\treturn nil\n\tend\n\tlocal pUnit = pPlayer:InitUnit(iUnitType, pCity:GetX(), pCity:GetY())\n\tif not pUnit then\n\t\treturn nil\n\tend\n\tpUnit:SetHasPromotion(iPromotion, true)\n\tpUnit:SetDamage(5)\n\tpUnit:SetName(\"City Guard\")\n\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, \"A guard unit has been raised.\", \"Unit Spawned\", pCity:GetX(), pCity:GetY())\n\treturn pUnit\nend',
 					"Baseline unit-spawn pattern with post-creation setup and a player-facing notification.",
+				),
+				snippetFile(
+					"Lua/Gameplay/SpawnUnitWithFallbackPlot.lua",
+					"lua",
+					`local iUnitType = GameInfoTypes.UNIT_SPEARMAN
+
+local function findSpawnPlotAroundCity(pCity, maxRadius)
+	local pOrigin = pCity and Map.GetPlot(pCity:GetX(), pCity:GetY())
+	if not pOrigin then
+		return nil
+	end
+	for radius = 0, maxRadius do
+		for dx = -radius, radius do
+			for dy = -radius, radius do
+				local pPlot = Map.PlotXYWithRangeCheck(pOrigin:GetX(), pOrigin:GetY(), dx, dy, radius)
+				if pPlot and not pPlot:IsWater() and not pPlot:IsCity() and not pPlot:IsMountain() then
+					return pPlot
+				end
+			end
+		end
+	end
+	return pOrigin
+end
+
+local function spawnUnitWithFallback(pPlayer, pCity)
+	local pSpawnPlot = findSpawnPlotAroundCity(pCity, 2)
+	if not pPlayer or not pSpawnPlot then
+		return nil
+	end
+	return pPlayer:InitUnit(iUnitType, pSpawnPlot:GetX(), pSpawnPlot:GetY())
+end`,
+					"Fallback-placement variant. Use this when the unit should appear near the city, but not blindly on the city tile every time.",
 				),
 			],
 		},
@@ -1017,6 +1382,11 @@ export const recipeLaunchRecipes = [
 			linkToSchema("UnitPromotions", "Promotion rows commonly attached right after the unit spawns.", "rows"),
 			linkToLua("Player:GetCapitalCity", "player-getcapitalcity-141", "methods", "Common origin city when the spawn is capital-based."),
 			linkToLua("Player:AddNotification", "player-addnotification-5", "methods", "Show the player where the spawned unit appeared."),
+			linkToPage(
+				"Plot Search Pattern",
+				"/pattern-library",
+				"Useful companion when the fallback spawn version should first resolve a legal nearby tile instead of always using the city coordinates.",
+			),
 			{
 				label: "Unit Spawn Helper",
 				href: "/pattern-library",
@@ -1095,7 +1465,7 @@ export const recipeLaunchRecipes = [
 					"Lua/Gameplay/ReligiousUnitSpawn.lua",
 					"lua",
 					"local iMissionary = GameInfoTypes.UNIT_MISSIONARY\n\nlocal function findReligionCity(pPlayer)\n\tfor pCity in pPlayer:Cities() do\n\t\tlocal religion = pCity:GetReligiousMajority()\n\t\tif religion and religion ~= -1 then\n\t\t\treturn pCity, religion\n\t\tend\n\tend\n\treturn nil, nil\nend\n\nlocal function spawnMissionaryAtTarget(pPlayer, pTargetPlot)\n\tlocal pCity, religion = findReligionCity(pPlayer)\n\tif not pCity or not pTargetPlot then\n\t\treturn nil, nil\n\tend\n\n\t-- Important gotcha: spawn the religious unit in the city that already has the religion first.\n\t-- If you create it directly on an arbitrary target tile, you can end up with a unit that does not carry the intended religion state.\n\tlocal pUnit = pPlayer:InitUnit(iMissionary, pCity:GetX(), pCity:GetY())\n\tif not pUnit then\n\t\treturn nil, religion\n\tend\n\n\tpUnit:SetXY(pTargetPlot:GetX(), pTargetPlot:GetY())\n\treturn pUnit, religion\nend",
-					"Religious-unit spawn scaffold that first creates the unit in a city with the religion, then moves it to the player's intended destination plot.",
+					"Religious-unit spawn scaffold that first creates the unit in a city with the religion, then moves it to the player’s intended destination plot.",
 				),
 			],
 		},
@@ -1161,14 +1531,26 @@ export const recipeLaunchRecipes = [
 			"Schema touchpoints for the building and city-side rows these hooks often affect.",
 		],
 		example: {
-			title: "Construct-time city hook",
-			summary: "Use construct-time hooks for veto logic, then hand longer cleanup or reward work to later city or turn hooks when needed.",
+			title: "City lifecycle hook map",
+			summary: "Split city lifecycle logic by when the game is asking a question, when a city is founded, and when ownership changes after capture.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/CityLifecycleHooks.lua",
 					"lua",
 					"local iTarget = GameInfoTypes.BUILDING_CMC_HARBOR_OFFICE\n\nGameEvents.CityCanConstruct.Add(function(iPlayer, iCity, eBuilding)\n\tif eBuilding ~= iTarget then\n\t\treturn true\n\tend\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pCity = pPlayer and pPlayer:GetCityByID(iCity)\n\treturn pCity and not pCity:IsOccupied()\nend)",
-					"Focused construct-time example showing the kind of quick city-state validation that belongs directly in the lifecycle hook.",
+					"Construct-time gate example. This is the right place for a fast yes or no check before the building is allowed into production.",
+				),
+				snippetFile(
+					"Lua/Gameplay/CityFoundedHooks.lua",
+					"lua",
+					'local iDummy = GameInfoTypes.BUILDING_CMC_FOUNDING_MARKER\n\nGameEvents.PlayerCityFounded.Add(function(iPlayer, iPlotX, iPlotY)\n\tlocal pPlot = Map.GetPlot(iPlotX, iPlotY)\n\tlocal pCity = pPlot and pPlot:GetPlotCity()\n\tif not pCity then\n\t\treturn\n\tend\n\tpCity:SetNumRealBuilding(iDummy, 1)\n\tprint("Initialized founded city:", pCity:GetName())\nend)',
+					"Founded-city example. This is the safe moment for one-time setup on the new city after the city object actually exists on the map.",
+				),
+				snippetFile(
+					"Lua/Gameplay/CityCaptureHooks.lua",
+					"lua",
+					'local iOccupiedDummy = GameInfoTypes.BUILDING_CMC_OCCUPATION_STATE\n\nGameEvents.CityCaptureComplete.Add(function(iOldPlayer, bCapital, iPlotX, iPlotY, iCity, iOldPop, bConquest)\n\tlocal pPlot = Map.GetPlot(iPlotX, iPlotY)\n\tlocal pCity = pPlot and pPlot:GetPlotCity()\n\tif not pCity then\n\t\treturn\n\tend\n\tif bConquest then\n\t\tpCity:SetNumRealBuilding(iOccupiedDummy, 0)\n\t\tprint("Post-capture cleanup for:", pCity:GetName(), bCapital, iOldPop)\n\tend\nend)',
+					"Capture-complete example. Use the post-capture hook once the city has changed hands and can be restamped or cleaned up in its new state.",
 				),
 			],
 		},
@@ -1205,8 +1587,8 @@ export const recipeLaunchRecipes = [
 			"Text-ready structure for scaling or conditional burst rewards later.",
 		],
 		example: {
-			title: "Instant gold burst",
-			summary: "Keep the burst logic small and obvious, then layer scaling on top later if the mechanic grows.",
+			title: "Yield burst variants",
+			summary: "Start with a one-yield helper, then branch into mixed-yield versions only when the mechanic actually needs them.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/YieldBurst.lua",
@@ -1214,11 +1596,18 @@ export const recipeLaunchRecipes = [
 					"local function grantGoldBurst(pPlayer, amount, pCity)\n\tif not pPlayer or amount <= 0 then\n\t\treturn\n\tend\n\tpPlayer:ChangeGold(amount)\n\tif pCity then\n\t\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, string.format('You gained %d [ICON_GOLD] Gold.', amount), 'Yield Burst', pCity:GetX(), pCity:GetY())\n\tend\nend",
 					"Baseline burst helper for an immediate gold reward plus a simple notification path.",
 				),
+				snippetFile(
+					"Lua/Gameplay/MixedYieldBurst.lua",
+					"lua",
+					"local function grantMixedBurst(pPlayer, goldAmount, cultureAmount, pCity)\n\tif not pPlayer then\n\t\treturn\n\tend\n\tif (goldAmount or 0) > 0 then\n\t\tpPlayer:ChangeGold(goldAmount)\n\tend\n\tif (cultureAmount or 0) > 0 then\n\t\tpPlayer:ChangeJONSCulture(cultureAmount)\n\tend\n\tif pCity then\n\t\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, string.format('You gained %d [ICON_GOLD] Gold and %d [ICON_CULTURE] Culture.', goldAmount or 0, cultureAmount or 0), 'Yield Burst', pCity:GetX(), pCity:GetY())\n\tend\nend",
+					"Mixed-yield variant. Use this when one trigger should pay out more than one burst type instead of only gold.",
+				),
 			],
 		},
 		touchpoints: [
 			linkToLua("Player:AddNotification", "player-addnotification-5", "methods", "Most burst rewards should still tell the player what just happened."),
 			linkToLua("Player:GetCapitalCity", "player-getcapitalcity-141", "methods", "Convenient coordinate anchor when the burst came from the capital."),
+			linkToPage("Yield Reward With Scaled Era Output", "/pattern-library", "Use the scaled-yield companion when the mixed burst should grow by era instead of staying flat."),
 		],
 	},
 	{
@@ -1232,8 +1621,8 @@ export const recipeLaunchRecipes = [
 			"A template that can be pasted into any event before the actual mechanic runs.",
 		],
 		example: {
-			title: "Safe player + team resolve",
-			summary: "Resolve the player first, then the team, and bail early before touching city, unit, or reward logic.",
+			title: "Lookup safety variants",
+			summary: "Use one resolver for player plus team lookups, then a second resolver when the mechanic starts from a city and needs to validate the owner chain safely.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/SafeLookups.lua",
@@ -1241,11 +1630,23 @@ export const recipeLaunchRecipes = [
 					"local function getLiveMajorPlayerAndTeam(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() or pPlayer:IsMinorCiv() or pPlayer:IsBarbarian() then\n\t\treturn nil, nil\n\tend\n\tlocal pTeam = Teams[pPlayer:GetTeam()]\n\tif not pTeam then\n\t\treturn nil, nil\n\tend\n\treturn pPlayer, pTeam\nend\n\nreturn getLiveMajorPlayerAndTeam",
 					"Drop-in resolver that protects most hooks from invalid player or team lookups before the actual mechanic starts.",
 				),
+				snippetFile(
+					"Lua/Gameplay/SafeCityOwnerLookup.lua",
+					"lua",
+					"local function getSafeCityAndOwner(iPlayer, iCity)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() or pPlayer:IsMinorCiv() or pPlayer:IsBarbarian() then\n\t\treturn nil, nil\n\tend\n\tlocal pCity = pPlayer:GetCityByID(iCity)\n\tif not pCity then\n\t\treturn nil, nil\n\tend\n\treturn pPlayer, pCity\nend\n\nreturn getSafeCityAndOwner",
+					"City-owner variant. Use this when the event payload starts with a city ID and the mechanic should not continue unless both the player and city resolve cleanly.",
+				),
 			],
 		},
 		touchpoints: [
 			linkToLua("Team:IsHasTech", "team-ishastech-110", "methods", "One of the common team-side checks that benefits from a safe team resolver."),
 			linkToLua("Player:GetCapitalCity", "player-getcapitalcity-141", "methods", "Typical next step once the player lookup is confirmed safe."),
+			linkToLua(
+				"Player:GetCityByID",
+				"player-getcitybyid-146",
+				"methods",
+				"Useful for the city-owner resolver variant when the safe lookup starts from a city payload instead of a bare player ID.",
+			),
 		],
 	},
 	{
@@ -1279,7 +1680,7 @@ export const recipeLaunchRecipes = [
 		touchpoints: [
 			linkToLua("GameEvents.PlayerDoTurn", "game-event-playerdoturn-72", "gameEvents", "Common consumer for a top-level feature toggle."),
 			{ label: ".modinfo Builder", href: "/modinfo-builder", note: "Project setup and file wiring often need to stay in sync when a feature can be toggled on or off." },
-			{ label: "Debug Triage Checklist", href: "/pattern-library", note: "Feature flags are easier to validate when the logging and debug path is already in place." },
+			{ label: "Log & Debug Triage", href: "/pattern-library", note: "Feature flags are easier to validate when the logging and debug path is already in place." },
 			{
 				label: "Mod Detection / Compatibility Toggle",
 				href: "/pattern-library",
@@ -1293,7 +1694,7 @@ export const recipeLaunchRecipes = [
 		status: "Archive Pattern",
 		copy: "Use this when you want something to happen right after a city trains a unit. Common uses are giving the unit a promotion, turning on a dummy building in the city, giving a small reward, or showing a notification.",
 		deliverables: [
-			"A `GameEvents.CityTrained` scaffold that resolves the city and unit safely.",
+			"A “GameEvents.CityTrained” scaffold that resolves the city and unit safely.",
 			"A post-train handoff point for promotions, dummy buildings, or reward bursts.",
 			"Schema touchpoints for unit rows, promotions, and city-side payloads.",
 		],
@@ -1305,7 +1706,7 @@ export const recipeLaunchRecipes = [
 					"Lua/Gameplay/CityTrainedTrigger.lua",
 					"lua",
 					'local iTrackedUnit = GameInfoTypes.UNIT_SPEARMAN\nlocal iPromotion = GameInfoTypes.PROMOTION_DRILL_1\nlocal iDummy = GameInfoTypes.BUILDING_DUMMY_TRAINED_SPEARMAN\n\nGameEvents.CityTrained.Add(function(iPlayer, iCity, iUnit)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pCity = pPlayer and pPlayer:GetCityByID(iCity)\n\tlocal pUnit = pPlayer and pPlayer:GetUnitByID(iUnit)\n\tif not pCity or not pUnit or pUnit:GetUnitType() ~= iTrackedUnit then\n\t\treturn\n\tend\n\tpUnit:SetHasPromotion(iPromotion, true)\n\tpCity:SetNumRealBuilding(iDummy, 1)\n\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "Your Spearman starts with Drill I.", "City Trained Trigger", pCity:GetX(), pCity:GetY())\nend)',
-					"Starter `CityTrained` reaction that modifies the new unit, marks the city, and surfaces the result to the player.",
+					"Starter “CityTrained” reaction that modifies the new unit, marks the city, and surfaces the result to the player.",
 				),
 			],
 		},
@@ -1327,7 +1728,7 @@ export const recipeLaunchRecipes = [
 		status: "Archive Pattern",
 		copy: "Use this when you want something to happen before a unit is removed from the map. It is good for death rewards, cleanup, small area effects, or clearing tracked data.",
 		deliverables: [
-			"A `UnitPrekill` hook scaffold with plot and owner resolution.",
+			"A “UnitPrekill” hook scaffold with plot and owner resolution.",
 			"A clean branch for yield bursts, spawned aftermath units, or cleanup of tracked data.",
 			"Schema touchpoints for units, promotions, and any tables mirrored by the death effect.",
 		],
@@ -1356,7 +1757,7 @@ export const recipeLaunchRecipes = [
 		status: "Archive Pattern",
 		copy: "Use this when any new unit should get setup work right after it appears. Good uses are adding a promotion, setting a name, or saving unit state for later.",
 		deliverables: [
-			"A `UnitCreated` hook scaffold for post-spawn setup.",
+			"A “UnitCreated” hook scaffold for post-spawn setup.",
 			"A safe place to seed promotions, names, and tracked state for any created unit.",
 			"A handoff pattern to more specialized spawn logic when only some unit types matter.",
 		],
@@ -1392,21 +1793,27 @@ export const recipeLaunchRecipes = [
 		title: "City Founded Initialization",
 		focus: "New-city setup",
 		status: "Archive Pattern",
-		copy: "Use this when a new city should get setup right away. Common jobs are adding a free building, turning on a dummy marker, or showing a first-turn notification.",
+		copy: "Use this when a new city should get setup right away. Common jobs are adding a free building, turning on a dummy proxy, or showing a first-turn notification.",
 		deliverables: [
-			"A `PlayerCityFounded` scaffold that resolves the founded city from the plot.",
+			"A “PlayerCityFounded” scaffold that resolves the founded city from the plot.",
 			"Starter city-side payloads for buildings, notifications, or tracked flags.",
 			"Schema touchpoints for city naming, buildings, and any founding-time tables that interact with the setup.",
 		],
 		example: {
-			title: "Give a new city its founding marker",
-			summary: "This example finds the new city from the founded tile, adds a dummy building, and shows a short message.",
+			title: "Founded-city variants",
+			summary: "Use one version for immediate dummy-building setup, then a second for founding-time reward initialization once the city object exists.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/CityFoundedInit.lua",
 					"lua",
-					'local iDummy = GameInfoTypes.BUILDING_DUMMY_NEW_CITY_BONUS\n\nGameEvents.PlayerCityFounded.Add(function(iPlayer, iX, iY)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pPlot = Map.GetPlot(iX, iY)\n\tlocal pCity = pPlot and pPlot:GetPlotCity()\n\tif not pPlayer or not pCity then\n\t\treturn\n\tend\n\tpCity:SetNumRealBuilding(iDummy, 1)\n\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "Your new city starts with its bonus marker.", pCity:GetName(), iX, iY)\nend)',
-					"Founding-time initialization scaffold that stamps a city marker and sends a setup notification immediately.",
+					'local iDummy = GameInfoTypes.BUILDING_DUMMY_NEW_CITY_BONUS\n\nGameEvents.PlayerCityFounded.Add(function(iPlayer, iX, iY)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pPlot = Map.GetPlot(iX, iY)\n\tlocal pCity = pPlot and pPlot:GetPlotCity()\n\tif not pPlayer or not pCity then\n\t\treturn\n\tend\n\tpCity:SetNumRealBuilding(iDummy, 1)\n\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "Your new city starts with its bonus proxy.", pCity:GetName(), iX, iY)\nend)',
+					"Founding-time initialization scaffold that stamps a city proxy and sends a setup notification immediately.",
+				),
+				snippetFile(
+					"Lua/Gameplay/CityFoundedReward.lua",
+					"lua",
+					'GameEvents.PlayerCityFounded.Add(function(iPlayer, iX, iY)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pPlot = Map.GetPlot(iX, iY)\n\tlocal pCity = pPlot and pPlot:GetPlotCity()\n\tif not pPlayer or not pCity then\n\t\treturn\n\tend\n\tpPlayer:ChangeGold(25)\n\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "Your new city received a founding reward.", pCity:GetName(), iX, iY)\nend)',
+					"Reward variant. Use this when founding should immediately pay out a one-time reward instead of only stamping persistent city state.",
 				),
 			],
 		},
@@ -1415,6 +1822,7 @@ export const recipeLaunchRecipes = [
 			linkToSchema("Buildings", "Common city-side payload when founding should grant a dummy or free building.", "rows"),
 			linkToSchema("Civilization_CityNames", "Useful when the founding setup also needs city-name aware logic or debugging.", "rows"),
 			linkToLua("Player:AddNotification", "player-addnotification-5", "methods", "Straightforward way to surface founding-time setup to the player."),
+			linkToPage("Yield Burst Helper", "/pattern-library", "Useful companion when the founding-time variant should pay out an immediate reward instead of only stamping city state."),
 			{
 				label: "City Capture / Found / Construct Hooks",
 				href: "/pattern-library",
@@ -1426,28 +1834,35 @@ export const recipeLaunchRecipes = [
 		title: "City Capture Follow-Up",
 		focus: "Post-conquest cleanup",
 		status: "Archive Pattern",
-		copy: "Use this after a city is captured. It is a good place to remove old markers, add new owner markers, give a conquest reward, or show a message.",
+		copy: "Use this after a city is captured. It is a good place to remove old proxies, add new owner proxies, give a conquest reward, or show a message.",
 		deliverables: [
-			"A `CityCaptureComplete` scaffold that resolves the captured city from the conquest plot.",
+			"A “CityCaptureComplete” scaffold that resolves the captured city from the conquest plot.",
 			"A cleanup block for old owner state and a setup block for new owner state.",
-			"Schema touchpoints for building markers and city-side conquest payload tables.",
+			"Schema touchpoints for building proxys and city-side conquest payload tables.",
 		],
 		example: {
-			title: "Reset and restamp captured city state",
-			summary: "This example removes an old owner marker, adds a new owner marker, and tells the new owner the city was updated.",
+			title: "Capture follow-up variants",
+			summary: "Use one version for city-state cleanup and restamping, then a second when the capture should immediately pay out a conquest reward to the new owner.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/CityCaptureFollowUp.lua",
 					"lua",
 					'local iOldMarker = GameInfoTypes.BUILDING_DUMMY_OLD_OWNER_MARKER\nlocal iNewMarker = GameInfoTypes.BUILDING_DUMMY_NEW_OWNER_MARKER\n\nGameEvents.CityCaptureComplete.Add(function(iOldOwner, bIsCapital, iX, iY, iNewOwner)\n\tlocal pPlayer = Players[iNewOwner]\n\tlocal pPlot = Map.GetPlot(iX, iY)\n\tlocal pCity = pPlot and pPlot:GetPlotCity()\n\tif not pPlayer or not pCity then\n\t\treturn\n\tend\n\tpCity:SetNumRealBuilding(iOldMarker, 0)\n\tpCity:SetNumRealBuilding(iNewMarker, 1)\n\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "Your captured city was updated.", pCity:GetName(), iX, iY)\nend)',
-					"Capture follow-up scaffold for clearing stale city markers and applying the new owner's conquest state.",
+					"Capture follow-up scaffold for clearing stale city proxies and applying the new owner’s conquest state.",
+				),
+				snippetFile(
+					"Lua/Gameplay/CityCaptureReward.lua",
+					"lua",
+					'GameEvents.CityCaptureComplete.Add(function(iOldOwner, bIsCapital, iX, iY, iNewOwner)\n\tlocal pPlayer = Players[iNewOwner]\n\tlocal pPlot = Map.GetPlot(iX, iY)\n\tlocal pCity = pPlot and pPlot:GetPlotCity()\n\tif not pPlayer or not pCity then\n\t\treturn\n\tend\n\tpPlayer:ChangeGold(bIsCapital and 100 or 40)\n\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "Your conquest yielded an immediate reward.", pCity:GetName(), iX, iY)\nend)',
+					"Reward variant. Use this when the important result is the conquest payout rather than only city-state cleanup.",
 				),
 			],
 		},
 		touchpoints: [
 			linkToLua("GameEvents.CityCaptureComplete", "game-event-citycapturecomplete-27", "gameEvents", "Ownership-swap hook for conquest cleanup and new-owner setup."),
-			linkToSchema("Buildings", "Most post-capture cleanup uses dummy buildings or city-side state markers.", "rows"),
-			linkToSchema("BuildingClasses", "Useful when the capture logic must respect or reset a class-linked city marker.", "rows"),
+			linkToSchema("Buildings", "Most post-capture cleanup uses dummy buildings or city-side state proxies.", "rows"),
+			linkToSchema("BuildingClasses", "Useful when the capture logic must respect or reset a class-linked city proxy.", "rows"),
+			linkToPage("Yield Burst Helper", "/pattern-library", "Useful companion when the capture follow-up includes a direct conquest payout instead of only city-state cleanup."),
 			{ label: "Building Grant / Remove Lua Helper", href: "/pattern-library", note: "Useful companion when capture cleanup mostly consists of city-side building state changes." },
 			{
 				label: "City Capture / Found / Construct Hooks",
@@ -1462,7 +1877,7 @@ export const recipeLaunchRecipes = [
 		status: "Archive Pattern",
 		copy: "Use this when something should happen after a worker finishes a build on a tile. Good uses are small rewards, resource reveals, or placing a follow-up effect nearby.",
 		deliverables: [
-			"A `BuildFinished` scaffold for plot-level improvement completion.",
+			"A “BuildFinished” scaffold for plot-level improvement completion.",
 			"A clear split between validating the finished build and applying the resulting effect.",
 			"Schema touchpoints for builds, improvements, and plot-side resources that the effect may touch.",
 		],
@@ -1491,7 +1906,7 @@ export const recipeLaunchRecipes = [
 		status: "Archive Pattern",
 		copy: "Use this when adopting a policy should do more than the database rows can handle. Good uses are one-time rewards, free units, cooldown stamps, or notifications.",
 		deliverables: [
-			"A `PlayerAdoptPolicy` and `PlayerAdoptPolicyBranch` scaffold with clean filtering.",
+			"A “PlayerAdoptPolicy” and “PlayerAdoptPolicyBranch” scaffold with clean filtering.",
 			"A one-time reward branch for units, dummy buildings, or yield bursts.",
 			"Schema touchpoints for the policy, branch, and policy-side payload tables involved.",
 		],
@@ -1531,7 +1946,7 @@ export const recipeLaunchRecipes = [
 		status: "Archive Pattern",
 		copy: "Use this when spending a Great Person should also trigger a second effect. Good uses are extra rewards, saved state, or a short area effect at the same tile.",
 		deliverables: [
-			"A `GreatPersonExpended` scaffold that resolves the unit type and plot.",
+			"A “GreatPersonExpended” scaffold that resolves the unit type and plot.",
 			"A branch for post-expended rewards, notifications, or saved state updates.",
 			"Schema touchpoints for GP units, unit classes, and any related specialist-side logic.",
 		],
@@ -1560,7 +1975,7 @@ export const recipeLaunchRecipes = [
 		status: "Archive Pattern",
 		copy: "Use this when you want a unit entering a tile to trigger an effect. Good uses are terrain rewards, fort checks, border checks, discoveries, or scripted danger zones.",
 		deliverables: [
-			"A `UnitSetXY` scaffold with plot resolution and fast early exits.",
+			"A “UnitSetXY” scaffold with plot resolution and fast early exits.",
 			"A clean predicate path for improvements, resources, owner checks, or region checks.",
 			"A handoff pattern for movement rewards, discoveries, or status effects.",
 		],
@@ -1651,7 +2066,7 @@ export const recipeLaunchRecipes = [
 					"Lua/Gameplay/NotificationExample.lua",
 					"lua",
 					'include("NotificationUtils")\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pCapital = pPlayer and pPlayer:GetCapitalCity()\n\tif not pPlayer or not pCapital or not pPlayer:IsHuman() then\n\t\treturn\n\tend\n\tPlayer.SendNotification(pPlayer, "NOTIFICATION_GENERIC", "Your capital got a small bonus this turn.", pCapital:GetName(), false, pCapital:GetX(), pCapital:GetY())\nend)',
-					"Real use example: a turn-based capital message using the shared helper instead of calling `AddNotification` directly in every file.",
+					"Real use example: a turn-based capital message using the shared helper instead of calling “AddNotification” directly in every file.",
 				),
 			],
 		},
@@ -1675,9 +2090,9 @@ export const recipeLaunchRecipes = [
 		status: "Utility Pattern",
 		copy: "Use one helper for trait checks so your gameplay files can simply ask if a player has a trait or if any civ in the game is using that trait.",
 		deliverables: [
-			"A per-player `HasTrait` helper.",
-			"A game-wide `IsTraitActive` helper that scans major-civ slots.",
-			"A single place to absorb CP-style `Player:HasTrait` support when present.",
+			"A per-player “HasTrait” helper.",
+			"A game-wide “IsTraitActive” helper that scans major-civ slots.",
+			"A single place to absorb CP-style “Player:HasTrait” support when present.",
 		],
 		example: {
 			title: "Trait utility pair",
@@ -1699,9 +2114,9 @@ export const recipeLaunchRecipes = [
 		},
 		touchpoints: [
 			linkToSchema("Traits", "Central trait rows that the helper resolves against.", "rows"),
-			linkToSchema("Leader_Traits", "Join table behind fallback trait resolution when `Player:HasTrait` is unavailable.", "rows"),
+			linkToSchema("Leader_Traits", "Join table behind fallback trait resolution when “Player:HasTrait” is unavailable.", "rows"),
 			linkToSchema("Civilization_Leaders", "Useful when tracing the trait all the way through the civ package during debugging.", "rows"),
-			{ label: "Trait-Driven Lua Effect", href: "/pattern-library", note: "Use the helper recipe first, then plug it into recurring or event-driven trait mechanics." },
+			{ label: "Trait Driven Lua Effect", href: "/pattern-library", note: "Use the helper recipe first, then plug it into recurring or event-driven trait mechanics." },
 			{
 				label: "Free Promotion From Building / Policy / Trait",
 				href: "/pattern-library",
@@ -1715,7 +2130,7 @@ export const recipeLaunchRecipes = [
 		status: "Utility Pattern",
 		copy: "Use this when part of your mod should only run if another mod is active. It keeps compatibility code in one place and avoids silent failures.",
 		deliverables: [
-			"Helpers that scan `Modding.GetActivatedMods()` for known IDs.",
+			"Helpers that scan “Modding.GetActivatedMods()” for known IDs.",
 			"A clean branch point for compatibility-only SQL, Lua, or UI behavior.",
 			"A safer alternative to assuming CP, VMC, or other ecosystem mods are always present.",
 		],
@@ -1742,12 +2157,12 @@ export const recipeLaunchRecipes = [
 			{
 				label: "Compatibility Pack / Reference-Heavy ModInfo",
 				href: "/pattern-library",
-				note: "Use a heavy `.modinfo` recipe when the compatibility layer also needs References, Dependencies, or Blocks.",
+				note: "Use a heavy “.modinfo” recipe when the compatibility layer also needs References, Dependencies, or Blocks.",
 			},
 			{
 				label: "Mod Configuration Toggle",
 				href: "/pattern-library",
-				note: "Pair it with the config-toggle companion when activation should depend on both another mod being present and a local feature flag being enabled.",
+				note: "Pair it with the config toggle companion when activation should depend on both another mod being present and a local feature flag being enabled.",
 			},
 		],
 	},
@@ -1757,8 +2172,8 @@ export const recipeLaunchRecipes = [
 		status: "Utility Pattern",
 		copy: "Use this when you want the game to pick the best unit the player can train right now instead of always using one fixed unit type.",
 		deliverables: [
-			"A 'fastest' resolver keyed by `Moves` and `CanTrain`.",
-			"A 'strongest' resolver keyed by `Combat` and `CanTrain`.",
+			"A “fastest” resolver keyed by “Moves” and “CanTrain”.",
+			"A “strongest” resolver keyed by “Combat” and “CanTrain”.",
 			"A shared pattern for filtering by one or more combat classes and optionally ignoring resources.",
 		],
 		example: {
@@ -1793,7 +2208,7 @@ export const recipeLaunchRecipes = [
 		copy: "Use one helper to add up Great Person rate bonuses instead of rebuilding that math in several files. This is useful when you want to inspect or display GP progress.",
 		deliverables: [
 			"A helper that gathers player-wide and city-wide GP rate modifiers.",
-			"Branch points for GP-type-specific modifiers such as writers, engineers, or scientists.",
+			"Branch points for GP type specific modifiers such as writers, engineers, or scientists.",
 			"A cleaner base for later mechanics that need to inspect or display GP generation state.",
 		],
 		example: {
@@ -1804,13 +2219,13 @@ export const recipeLaunchRecipes = [
 					"Lua/Utilities/GreatPersonRateCalculator.lua",
 					"lua",
 					"function City_GetGreatPeopleUnitRateModifier(pPlayer, pCity, pSpecialistInfo)\n\tlocal iPlayerMod = pPlayer:GetGreatPeopleRateModifier()\n\tlocal iPolicyMod = pPlayer:GetPolicyGreatPeopleRateModifier()\n\tlocal iCityMod = pCity:GetGreatPeopleRateModifier()\n\tlocal iWorldCongressMod = 0\n\tlocal iGoldenAgeMod = 0\n\tif pSpecialistInfo.GreatPeopleUnitClass == 'UNITCLASS_ENGINEER' then\n\t\tiPlayerMod = iPlayerMod + pPlayer:GetGreatEngineerRateModifier()\n\t\tiPolicyMod = iPolicyMod + pPlayer:GetPolicyGreatEngineerRateModifier()\n\tend\n\tif pPlayer:GetGoldenAgeTurns() > 0 and pPlayer.GetGoldenAgeGreatEngineerRateModifier then\n\t\tiGoldenAgeMod = pPlayer:GetGoldenAgeGreatEngineerRateModifier() or 0\n\tend\n\treturn iPlayerMod + iPolicyMod + iCityMod + iWorldCongressMod + iGoldenAgeMod\nend",
-					"Condensed GP-rate helper showing the same modifier-stack pattern used in the archive utilities.",
+					"Condensed GP rate helper showing the same modifier-stack pattern used in the archive utilities.",
 				),
 				snippetFile(
 					"Lua/Gameplay/GreatPersonRateExample.lua",
 					"lua",
 					'include("GreatPersonRateCalculator")\n\nlocal function printEngineerRate(pPlayer)\n\tlocal pCapital = pPlayer and pPlayer:GetCapitalCity()\n\tlocal pSpecialistInfo = GameInfo.Specialists.SPECIALIST_ENGINEER\n\tif not pCapital or not pSpecialistInfo then\n\t\treturn\n\tend\n\tprint("Capital engineer rate bonus:", City_GetGreatPeopleUnitRateModifier(pPlayer, pCapital, pSpecialistInfo))\nend',
-					"Real use example: inspect the capital's Engineer rate bonus with the shared helper.",
+					"Real use example: inspect the capital’s Engineer rate bonus with the shared helper.",
 				),
 			],
 		},
@@ -1824,28 +2239,28 @@ export const recipeLaunchRecipes = [
 		title: "Plot Iterators / Radius Scan",
 		focus: "Preferred area scanning utility",
 		status: "Infrastructure Pattern",
-		copy: "Prefer `PlotIterators.lua` when you need to scan tiles around a city or unit. It is a common Civ V utility, it reads more clearly than custom nested loops, and it gives a stable scan order.",
+		copy: "Prefer “PlotIterators.lua” when you need to scan tiles around a city or unit. It is a common Civ V utility, it reads more clearly than custom nested loops, and it gives a stable scan order.",
 		deliverables: [
-			"A `PlotAreaSpiralIterator` example for radius scanning around a city or unit.",
-			"A clear note that `PlotIterators.lua` is the preferred shared utility for this pattern.",
+			"A “PlotAreaSpiralIterator” example for radius scanning around a city or unit.",
+			"A clear note that “PlotIterators.lua” is the preferred shared utility for this pattern.",
 			"A clean predicate branch for filtering water, mountains, cities, improvements, or owned tiles.",
 		],
 		example: {
 			title: "Preferred spiral scan around a city",
-			summary: "This example starts from a city and looks outward for the first valid land tile. It uses `PlotIterators.lua` instead of a custom radius loop.",
+			summary: "This example starts from a city and looks outward for the first valid land tile. It uses “PlotIterators.lua” instead of a custom radius loop.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/PlotIteratorScan.lua",
 					"lua",
 					'include("PlotIterators")\n\nlocal function findNearestValidPlot(pCity, radius)\n\tlocal pOrigin = pCity and Map.GetPlot(pCity:GetX(), pCity:GetY())\n\tif not pOrigin then\n\t\treturn nil\n\tend\n\tfor pPlot in PlotAreaSpiralIterator(pOrigin, radius, SECTOR_NORTH, DIRECTION_CLOCKWISE, DIRECTION_OUTWARDS, CENTRE_EXCLUDE) do\n\t\tif pPlot and not pPlot:IsWater() and not pPlot:IsCity() and not pPlot:IsMountain() then\n\t\t\treturn pPlot\n\t\tend\n\tend\n\treturn nil\nend',
-					"Preferred common utility for radius scans. Use the iterator helper instead of custom nested `dx`/`dy` loops whenever possible.",
+					"Preferred common utility for radius scans. Use the iterator helper instead of custom nested “dx”/“dy” loops whenever possible.",
 				),
 			],
 		},
 		touchpoints: [
-			{ label: "Plot Search Pattern", href: "/pattern-library", note: "Use the older loop recipe only as a fallback; `PlotIterators.lua` is the cleaner shared utility for most radius scans." },
+			{ label: "Plot Search Pattern", href: "/pattern-library", note: "Use the older loop recipe only as a fallback; “PlotIterators.lua” is the cleaner shared utility for most radius scans." },
 			{ label: "Distance + Closest Resolver", href: "/pattern-library", note: "Good companion when the radius scan also needs nearest-target or distance comparisons." },
-			{ label: "Lua API Explorer", href: "/lua-api-explorer", note: "Use the explorer to inspect plot, map, city, and unit helpers that feed into the iterator's filter predicate." },
+			{ label: "Lua API Explorer", href: "/lua-api-explorer", note: "Use the explorer to inspect plot, map, city, and unit helpers that feed into the iterator’s filter predicate." },
 		],
 	},
 	{
@@ -1854,7 +2269,7 @@ export const recipeLaunchRecipes = [
 		status: "Setup Pattern",
 		copy: "Use this when you want to add a small icon or panel to the city screen without replacing the whole screen. It is the safer choice when your UI should live beside other mods.",
 		deliverables: [
-			"A CityInfoStack registration flow that pushes addins through `LuaEvents.CityInfoStackDataRefresh`.",
+			"A CityInfoStack registration flow that pushes addins through “LuaEvents.CityInfoStackDataRefresh”.",
 			"A UI-side dirty/refresh pattern so the city screen re-renders when your data changes.",
 			"A clearer separation between additive city UI and full UI overrides.",
 		],
@@ -1875,7 +2290,7 @@ export const recipeLaunchRecipes = [
 			{
 				label: ".modinfo Builder",
 				href: "/modinfo-builder",
-				note: "Use the builder to wire the UI files as `InGameUIAddin` or other appropriate entry points instead of guessing the load context.",
+				note: "Use the builder to wire the UI files as “InGameUIAddin” or other appropriate entry points instead of guessing the load context.",
 			},
 		],
 	},
@@ -1887,17 +2302,17 @@ export const recipeLaunchRecipes = [
 		deliverables: [
 			"A replacement-file checklist: exact filenames, matching XML/Lua pairs, and VFS import expectations.",
 			"A split between additive UI addins and full overrides so modders choose the right packaging model.",
-			"A starter `.modinfo` action example for override files and paired textures.",
+			"A starter “.modinfo” action example for override files and paired textures.",
 		],
 		example: {
 			title: "Override a Firaxis UI context",
-			summary: "The first file shows the VFS packaging. The second file shows a simple real override of `CultureOverview.lua`.",
+			summary: "The first file shows the VFS packaging. The second file shows a simple real override of “CultureOverview.lua”.",
 			files: [
 				snippetFile(
-					"Project/UIOverride.modinfo",
+					".modinfo",
 					"xml",
 					'<Mod id="33333333-3333-3333-3333-333333333333" version="1">\n\t<Files>\n\t\t<File import="1">Lua/Overrides/CultureOverview.lua</File>\n\t\t<File import="1">Lua/Overrides/CultureOverview.xml</File>\n\t\t<File import="1">Lua/Overrides/Images/CityStatePopupTop500.dds</File>\n\t</Files>\n\t<Actions>\n\t\t<OnModActivated>\n\t\t\t<ImportIntoVFS>Lua/Overrides/CultureOverview.lua</ImportIntoVFS>\n\t\t\t<ImportIntoVFS>Lua/Overrides/CultureOverview.xml</ImportIntoVFS>\n\t\t\t<ImportIntoVFS>Lua/Overrides/Images/CityStatePopupTop500.dds</ImportIntoVFS>\n\t\t</OnModActivated>\n\t</Actions>\n</Mod>',
-					"Replacement UI files still need the real Firaxis filenames, but this version shows the wiring directly in the `.modinfo` manifest so you can edit the action rows in the file itself.",
+					"Replacement UI files still need the real Firaxis filenames, but this version shows the wiring directly in the “.modinfo” manifest so you can edit the action rows in the file itself.",
 				),
 				snippetFile(
 					"Lua/Overrides/CultureOverview.lua",
@@ -1913,17 +2328,17 @@ export const recipeLaunchRecipes = [
 			{
 				label: "Lua Override Examples",
 				href: "/pattern-library",
-				note: "The archive's `Lua/Overrides` folder is a good reminder that override packaging owns the original filename and context.",
+				note: "The archive’s “Lua/Overrides” folder is a good reminder that override packaging owns the original filename and context.",
 			},
 		],
 	},
 	{
 		title: "Compatibility Pack / Reference-Heavy ModInfo",
-		focus: "Large integration `.modinfo`",
+		focus: "Large integration “.modinfo”",
 		status: "Setup Pattern",
-		copy: "Use a larger `.modinfo` when your mod is really a compatibility layer. This lets you list required mods, optional companion mods, blocked conflicts, and any reload flags in one place.",
+		copy: "Use in “.modinfo” when your mod is really a compatibility layer. This lets you list required mods, optional companion mods, blocked conflicts, and any reload flags in one place.",
 		deliverables: [
-			"A compatibility-oriented `.modinfo` skeleton with `Dependencies`, `References`, and `Blocks`.",
+			"A compatibility-oriented “.modinfo” skeleton with “Dependencies”, “References”, and “Blocks”.",
 			"Examples of reload flags for art- and UI-heavy integration packs.",
 			"A cleaner pattern for documenting hard requirements, optional companions, and blocked conflicts in one manifest.",
 		],
@@ -1932,10 +2347,10 @@ export const recipeLaunchRecipes = [
 			summary: "This example shows a compatibility pack that needs one art mod, supports Community Patch, and blocks one known conflict.",
 			files: [
 				snippetFile(
-					"Project/CompatibilityPack.modinfo",
+					".modinfo",
 					"xml",
 					'<Mod id="00000000-0000-0000-0000-000000000000" version="1">\n\t<Properties>\n\t\t<ReloadAudioSystem>1</ReloadAudioSystem>\n\t\t<ReloadLandmarkSystem>1</ReloadLandmarkSystem>\n\t\t<ReloadStrategicViewSystem>1</ReloadStrategicViewSystem>\n\t\t<ReloadUnitSystem>1</ReloadUnitSystem>\n\t</Properties>\n\t<Dependencies>\n\t\t<Mod id="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" minversion="0" maxversion="999" title="Required Art Pack" />\n\t</Dependencies>\n\t<References>\n\t\t<Mod id="bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb" minversion="0" maxversion="999" title="Community Patch" />\n\t\t<Mod id="cccccccc-cccc-cccc-cccc-cccccccccccc" minversion="0" maxversion="999" title="Optional Companion Pack" />\n\t</References>\n\t<Blocks>\n\t\t<Mod id="dddddddd-dddd-dddd-dddd-dddddddddddd" minversion="0" maxversion="999" title="Known Conflict Mod" />\n\t</Blocks>\n</Mod>',
-					"Compact compatibility-pack manifest modeled on a reference-heavy archive `.modinfo` rather than a small standalone civ manifest.",
+					"Compact compatibility-pack manifest modeled on a reference-heavy archive “.modinfo” rather than a small standalone civ manifest.",
 				),
 			],
 		},
@@ -1947,14 +2362,14 @@ export const recipeLaunchRecipes = [
 				note: "Pair manifest-level compatibility declarations with runtime mod-detection helpers when optional integrations also change Lua behavior.",
 			},
 			{
-				label: "Debug Triage Checklist",
+				label: "Log & Debug Triage",
 				href: "/pattern-library",
 				note: "Heavy integration manifests are easier to validate when you already have the logging and baseline-comparison workflow in place.",
 			},
 		],
 	},
 	{
-		title: "Debug Triage Checklist",
+		title: "Log & Debug Triage",
 		focus: "Logs and tooling",
 		status: "Support Recipe",
 		copy: "Give modders a repeatable order of operations when Lua stops firing, text keys fail to resolve, or XML appears to load but never affects gameplay. Start by turning on database validation and logging, then compare a baseline run without your mod against the first turn where your mod actually loads.",
@@ -1969,10 +2384,10 @@ export const recipeLaunchRecipes = [
 				"Enable validation and logs first, then do one baseline game load without your mod so you know which errors belong to Firaxis or DLC. After that, enable your mod, press Next so it loads, and only chase the new messages.",
 			files: [
 				snippetFile(
-					"Config/config.ini",
+					"config.ini",
 					"ini",
 					"; config.ini\n; Validates the game database whenever XML or SQL changes it.\nValidateGameDatabase = 1\n\n; Turns on log file output in ...\\My Games\\Sid Meier's Civilization 5\\Logs.\nLoggingEnabled = 1\n\n; Exposes extra Lua debug helpers that make investigation easier.\nEnableLuaDebugLibrary = 1\n\n; Allows FireTuner / tuner-side inspection when you need live state checks.\nEnableTuner = 1",
-					"Baseline switches before troubleshooting. `ValidateGameDatabase` catches bad references early, `LoggingEnabled` writes the log files, `EnableLuaDebugLibrary` helps Lua inspection, and `EnableTuner` opens live debugging tools.",
+					"Baseline switches before troubleshooting. “ValidateGameDatabase” catches bad references early, “LoggingEnabled” writes the log files, “EnableLuaDebugLibrary” helps Lua inspection, and “EnableTuner” opens live debugging tools.",
 				),
 				snippetFile(
 					"Logs/DebugReadOrder.txt",
@@ -1984,13 +2399,19 @@ export const recipeLaunchRecipes = [
 					"Lua/Gameplay/TraceHooks.lua",
 					"lua",
 					'print("[CMC_MyMod] Loaded gameplay hook file on turn", Game.GetGameTurn())\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tprint("[CMC_MyMod] PlayerDoTurn", iPlayer, Game.GetGameTurn())\nend)',
-					"Minimal recurring trace file for proving gameplay Lua is loading and firing. These messages should show up in `lua.log` once `LoggingEnabled = 1` is active.",
+					"Minimal recurring trace file for proving gameplay Lua is loading and firing. These messages should show up in “lua.log” once “LoggingEnabled = 1” is active.",
 				),
 			],
 		},
 		touchpoints: [
 			linkToLua("GameEvents.PlayerDoTurn", "game-event-playerdoturn-72", "gameEvents", "Simple recurring hook for proving that gameplay Lua is actually loading."),
 			linkToLua("Game.GetGameTurn", "game-getgameturn-80", "methods", "Small timing helper that makes logs much easier to compare across turns."),
+			linkToPage(".modinfo Builder", "/modinfo-builder", "Helpful when the real failure is bad file wiring or wrong load actions rather than broken SQL or Lua logic."),
+			linkToPage(
+				"Why My Mod Loaded But Did Nothing",
+				"/pattern-library",
+				"Natural follow-up when the logs stay quiet and the symptom is a mod that appears enabled but never actually changes gameplay.",
+			),
 		],
 	},
 	{
@@ -2014,10 +2435,10 @@ export const recipeLaunchRecipes = [
 					"Starter SQL database file for the gameplay rows referenced by the mod actions below.",
 				),
 				snippetFile(
-					"Project/FloatingArchives.modinfo",
+					".modinfo",
 					"xml",
 					'<Mod id="44444444-4444-4444-4444-444444444444" version="1">\n\t<Files>\n\t\t<File import="0">SQL/Buildings/FloatingArchives.sql</File>\n\t\t<File import="0">XML/Text/FloatingArchivesText.xml</File>\n\t\t<File import="1">UI/CMC_StatusPanel.lua</File>\n\t\t<File import="1">UI/CMC_StatusPanel.xml</File>\n\t\t<File import="1">Art/CMC_Atlas256.dds</File>\n\t</Files>\n\t<Actions>\n\t\t<OnModActivated>\n\t\t\t<UpdateDatabase>SQL/Buildings/FloatingArchives.sql</UpdateDatabase>\n\t\t\t<UpdateDatabase>XML/Text/FloatingArchivesText.xml</UpdateDatabase>\n\t\t</OnModActivated>\n\t\t<OnModActivated>\n\t\t\t<ImportIntoVFS>UI/CMC_StatusPanel.lua</ImportIntoVFS>\n\t\t\t<ImportIntoVFS>UI/CMC_StatusPanel.xml</ImportIntoVFS>\n\t\t\t<ImportIntoVFS>Art/CMC_Atlas256.dds</ImportIntoVFS>\n\t\t</OnModActivated>\n\t</Actions>\n</Mod>',
-					"Manifest example that keeps the SQL update, localization XML, and VFS imports together in one `.modinfo` file. If you do not want to hand-edit this, the `.modinfo Builder` is the easier route.",
+					"Manifest example that keeps the SQL update, localization XML, and VFS imports together in one “.modinfo” file. If you do not want to hand-edit this, the “.modinfo Builder” is the easier route.",
 				),
 				snippetFile(
 					"UI/CMC_StatusPanel.lua",
@@ -2038,8 +2459,8 @@ export const recipeLaunchRecipes = [
 		status: "High-Use Recipe",
 		copy: "Start with one practical text pack that covers a building name, building help, and a matching notification. This gives you a reusable pattern for text keys, markup, and player-facing feedback without splitting the basics across multiple recipes.",
 		deliverables: [
-			"A grouped `Language_en_US` file with building and notification text keys.",
-			"Examples for `ICON`, `COLOR`, `NEWLINE`, and parameter placeholders in real gameplay text.",
+			"A grouped “Language_en_US” file with building and notification text keys.",
+			"Examples for “ICON”, “COLOR”, “NEWLINE”, and parameter placeholders in real gameplay text.",
 			"A notification call that turns those text keys into visible in-game feedback with map coordinates.",
 		],
 		example: {
@@ -2064,7 +2485,8 @@ export const recipeLaunchRecipes = [
 			linkToLua("Player:AddNotification", "player-addnotification-5", "methods", "Notification call site that consumes the localized strings."),
 			linkToLua("Player:GetCapitalCity", "player-getcapitalcity-141", "methods", "Convenient way to anchor notification coordinates to the relevant city."),
 			linkToSchema("Buildings", "Keep the visible building text aligned with the gameplay row that owns the description and help keys."),
-			linkToSchema("Language_en_US", "Every `TXT_KEY_` used by the building row or notification call needs a matching localized text row.", "rows"),
+			linkToSchema("Language_en_US", "Every “TXT_KEY_” used by the building row or notification call needs a matching localized text row.", "rows"),
+			linkToPage("Notification Utility Wrapper", "/pattern-library", "Use this next when the text is ready but the mod now wants a reusable notification helper instead of one inline call."),
 		],
 	},
 	{
@@ -2075,11 +2497,11 @@ export const recipeLaunchRecipes = [
 		deliverables: [
 			"A clone-from-base building row that keeps the original class intact.",
 			"A civilization override row that swaps the class member cleanly.",
-			"Text rows for the replacement building's name, help, and Civilopedia copy.",
+			"Text rows for the replacement building’s name, help, and Civilopedia copy.",
 		],
 		example: {
 			title: "Library-class replacement",
-			summary: "Clone the base building first, keep the `BUILDINGCLASS_LIBRARY` link, then let the civilization override redirect only that civ to the new member.",
+			summary: "Clone the base building first, keep the “BUILDINGCLASS_LIBRARY” link, then let the civilization override redirect only that civ to the new member.",
 			files: [
 				snippetFile(
 					"SQL/Civilizations/AtlasArchivesOverride.sql",
@@ -2218,14 +2640,20 @@ WHERE Type = 'UNIT_CROSSBOWMAN';`,
 		touchpoints: [
 			linkToSchema("Units", "Main gameplay row that references the visible text, atlas, and art define keys.", "rows"),
 			linkToSchema("IconTextureAtlases", "Portrait and flag atlas registration must match the atlas names used by the unit row.", "rows"),
-			linkToSchema("ArtDefine_UnitInfos", "Top-level art define record the unit points at through `UnitArtInfo`.", "rows"),
+			linkToSchema("ArtDefine_UnitInfos", "Top-level art define record the unit points at through “UnitArtInfo”.", "rows"),
 			linkToSchema("ArtDefine_UnitInfoMemberInfos", "Connects the unit art define to the actual member model definition.", "rows"),
 			linkToSchema("ArtDefine_StrategicView", "Strategic-view icon row for the zoomed-out map presentation.", "rows"),
 			{
-				label: "Art + Audio Bundle",
-				href: "/scaffold-generators?generator=art-audio-bundle",
+				label: "Art + Audio Setup",
+				href: "/template-generators?generator=art-audio-bundle",
 				note: "Use the generator when you want the civ colors, atlas rows, leader audio, and unit art define scaffolding emitted together before refining the presentation by hand.",
 			},
+			linkToPage("Civ Icon Maker", "/civ-icon-maker", "Use it when the portrait-side source art or civ-color treatment still needs a cleaner icon render before atlas registration."),
+			linkToPage("DDS Converter", "/dds-converter", "Natural handoff once the portrait, unit flag, and strategic-view source art is approved and ready for Civ V DDS export."),
+			linkToPage("Unit Flag Previewer", "/unit-flag-previewer", "Planned helper for checking whether the unit flag actually reads well before the atlas and DDS handoff.", {
+				disabled: true,
+				statusLabel: "Coming Soon",
+			}),
 		],
 	},
 	{
@@ -2332,7 +2760,7 @@ end)`,
 			{ label: "SaveData Cooldown / Once-Per-City / Once-Per-Player", href: "/pattern-library", note: "Good companion when the one-time init grows into multiple scoped save keys." },
 			linkToLua("GameEvents.PlayerDoTurn", "game-event-playerdoturn-72", "gameEvents", "Safe recurring hook for checking whether the live game state is ready."),
 			linkToLua("Game.GetGameTurn", "game-getgameturn-80", "methods", "Simple way to gate the setup to the first playable turn."),
-			linkToSchema("Buildings", "Common payload target when first-turn init seeds a hidden city marker.", "rows"),
+			linkToSchema("Buildings", "Common payload target when first-turn init seeds a hidden city proxy.", "rows"),
 		],
 	},
 	{
@@ -2386,7 +2814,7 @@ end)`,
 		touchpoints: [
 			linkToSchema("GameSpeeds", "Use the game-speed multipliers when a flat reward feels too small on Marathon or too large on Quick.", "rows"),
 			linkToSchema("Eras", "Current-era scaling is easier to reason about when the era rows and their order are visible.", "rows"),
-			{ label: "Decision / Event Reward Payload", href: "/pattern-library", note: "Use this recipe when the scaled yield is only one part of a larger reward bundle." },
+			{ label: "Decision / Event Reward", href: "/pattern-library", note: "Use this recipe when the scaled yield is only one part of a larger reward bundle." },
 		],
 	},
 	{
@@ -2513,18 +2941,18 @@ end)`,
 		title: "On City Growth Trigger",
 		focus: "Population milestone reactions",
 		status: "High-Use Recipe",
-		copy: "React at the exact moment a city's population changes instead of scanning every city every turn. This is the cleanest starting point for growth rewards, threshold checks, and city-scoped state updates.",
+		copy: "React at the exact moment a city’s population changes instead of scanning every city every turn. This is the cleanest starting point for growth rewards, threshold checks, and city-scoped state updates.",
 		deliverables: [
-			"A `SetPopulation` listener that compares old and new values directly.",
+			"A “SetPopulation” listener that compares old and new values directly.",
 			"A plot-to-city resolve block for the city that changed population.",
 			"A clean place to attach rewards, notifications, or dummy building sync when the threshold is crossed.",
 		],
 		example: {
-			title: "Population change tracker",
-			summary: "Use the old and new population values from the hook, resolve the city from the plot, then attach the real growth payload only when the city actually gained population.",
+			title: "Growth hook variants",
+			summary: "Keep the same population-change hook, but split the simple any-growth reward from the milestone-only version so the teaching examples do not blur together.",
 			files: [
 				snippetFile(
-					"Lua/Gameplay/CityGrowthTrigger.lua",
+					"Lua/Gameplay/AnyGrowthTrigger.lua",
 					"lua",
 					`GameEvents.SetPopulation.Add(function(iX, iY, iOldValue, iNewValue)
 	if iNewValue <= iOldValue then
@@ -2540,19 +2968,38 @@ end)`,
 	if not pPlayer then
 		return
 	end
-	print("[CMC] City grew:", pCity:GetName(), iOldValue, iNewValue)
-	if iNewValue % 5 == 0 then
-		pPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, pCity:GetName() .. " reached population " .. iNewValue .. ".", "City Growth Trigger", iX, iY)
-	end
+	pPlayer:ChangeGold(5)
+	pPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, pCity:GetName() .. " grew to population " .. iNewValue .. ".", "City Growth Trigger", iX, iY)
 end)`,
-					"Growth trigger built on the dedicated population-change event instead of a turn scan and saved-value comparison.",
+					"Any-growth variant. Use this when every growth step should pay out a small reward or run a lightweight effect.",
+				),
+				snippetFile(
+					"Lua/Gameplay/GrowthMilestoneTrigger.lua",
+					"lua",
+					`GameEvents.SetPopulation.Add(function(iX, iY, iOldValue, iNewValue)
+	if iNewValue <= iOldValue or iNewValue % 5 ~= 0 then
+		return
+	end
+	local pPlot = Map.GetPlot(iX, iY)
+	local pCity = pPlot and pPlot:GetPlotCity()
+	if not pCity then
+		return
+	end
+	local pPlayer = Players[pCity:GetOwner()]
+	if not pPlayer then
+		return
+	end
+	pPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, pCity:GetName() .. " reached population " .. iNewValue .. ".", "City Growth Trigger", iX, iY)
+end)`,
+					"Milestone variant. Use this when only threshold populations should matter, like every 5 population or a specific city-size breakpoint.",
 				),
 			],
 		},
 		touchpoints: [
-			{ label: "GameEvents.SetPopulation", href: "/lua-api-explorer", note: "Preferred hook when the recipe should react at the exact moment a city's population changes." },
+			{ label: "GameEvents.SetPopulation", href: "/lua-api-explorer", note: "Preferred hook when the recipe should react at the exact moment a city’s population changes." },
 			{ label: "Dynamic Dummy Building Updater", href: "/pattern-library", note: "Good companion when city growth should change a hidden building count rather than only print or notify." },
 			linkToSchema("Buildings", "Common payload target when a growth threshold should turn on a dummy building or a real city reward.", "rows"),
+			linkToPage("Yield Burst Helper", "/pattern-library", "Useful companion when the any-growth variant should pay out a small immediate reward instead of only toggling city state."),
 		],
 	},
 	{
@@ -2561,47 +3008,49 @@ end)`,
 		status: "High-Use Recipe",
 		copy: "Use the city-side completion hooks that fire after a building or project actually lands. These are better teaching examples than generic lifecycle summaries because they show the city ID, the completed payload, and the easiest follow-up work in one place.",
 		deliverables: [
-			"A `CityConstructed` scaffold for building-finished reactions.",
-			"A `CityCreated` scaffold for project completion reactions using the city ID from the hook.",
-			"One city-resolve pattern based on `GetCityByID` so the same shape works in both handlers.",
+			"A “CityConstructed” scaffold for building-finished reactions.",
+			"A “CityCreated” scaffold for project completion reactions using the city ID from the hook.",
+			"One city-resolve pattern based on “GetCityByID” so the same shape works in both handlers.",
 		],
 		example: {
-			title: "Building and project completion follow-up",
-			summary: "Resolve the city once from the player and city ID, then branch separately for the building or project you care about.",
+			title: "Completion hook variants",
+			summary: "Keep the same city-resolve shape, but show building completion and project completion as separate follow-up patterns instead of one combined example.",
 			files: [
 				snippetFile(
-					"Lua/Gameplay/CityConstructedAndCreated.lua",
+					"Lua/Gameplay/CityConstructedTrigger.lua",
 					"lua",
 					`local iGuildhall = GameInfoTypes.BUILDING_CMC_GUILDHALL
-local iApollo = GameInfoTypes.PROJECT_APOLLO_PROGRAM
-
-local function resolveCity(iPlayer, iCity)
-	local pPlayer = Players[iPlayer]
-	return pPlayer, pPlayer and pPlayer:GetCityByID(iCity)
-end
 
 GameEvents.CityConstructed.Add(function(iPlayer, iCity, eBuilding, bGold, bFaithOrCulture)
 	if eBuilding ~= iGuildhall then
 		return
 	end
-	local pPlayer, pCity = resolveCity(iPlayer, iCity)
+	local pPlayer = Players[iPlayer]
+	local pCity = pPlayer and pPlayer:GetCityByID(iCity)
 	if not pCity then
 		return
 	end
 	pPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, pCity:GetName() .. " completed the Guildhall.", "City Constructed", pCity:GetX(), pCity:GetY())
-end)
+end)`,
+					"Building-complete variant. Use this when the reward should wait until the building actually lands in the city.",
+				),
+				snippetFile(
+					"Lua/Gameplay/CityCreatedTrigger.lua",
+					"lua",
+					`local iApollo = GameInfoTypes.PROJECT_APOLLO_PROGRAM
 
 GameEvents.CityCreated.Add(function(iPlayer, iCity, eProject, bGold, bFaithOrCulture)
 	if eProject ~= iApollo then
 		return
 	end
-	local pPlayer, pCity = resolveCity(iPlayer, iCity)
+	local pPlayer = Players[iPlayer]
+	local pCity = pPlayer and pPlayer:GetCityByID(iCity)
 	if not pCity then
 		return
 	end
 	pPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, pCity:GetName() .. " completed Apollo Program.", "Project Created", pCity:GetX(), pCity:GetY())
 end)`,
-					"Paired completion hooks using the same city resolver so the building and project examples stay practical instead of abstract.",
+					"Project-complete variant. This is the cleaner teaching example when the mechanic cares about a finished project rather than a building row.",
 				),
 			],
 		},
@@ -2609,6 +3058,7 @@ end)`,
 			{ label: "GameEvents.CityConstructed", href: "/lua-api-explorer", note: "Preferred building-complete hook when the reaction should happen after the city finishes construction." },
 			{ label: "GameEvents.CityCreated", href: "/lua-api-explorer", note: "Companion hook for project completion that still provides the player and city IDs." },
 			linkToLua("Player:GetCityByID", "player-getcitybyid-144", "methods", "The safest way to resolve the city from the hook payload before applying the follow-up effect."),
+			linkToSchema("Buildings", "Useful for the building-complete variant when the follow-up logic keys off a specific building row instead of a project.", "rows"),
 			linkToSchema("Projects", "Useful when the completion logic keys off a world or team project instead of a building row.", "rows"),
 		],
 	},
@@ -2618,16 +3068,16 @@ end)`,
 		status: "High-Use Recipe",
 		copy: "React when teams enter or leave war without polling diplomacy state every turn. This is a good starter pattern for temporary dummy markers, era-like war states, or notifications that only care about the transition itself.",
 		deliverables: [
-			"A paired `DeclareWar` and `MakePeace` scaffold.",
+			"A paired “DeclareWar” and “MakePeace” scaffold.",
 			"A team-to-player resolve block so team events can still reach major-civ payloads.",
 			"A simple state flip example for when the mechanic should turn on at war and turn off at peace.",
 		],
 		example: {
-			title: "War state on, peace state off",
-			summary: "Resolve the first alive major player on each team, then flip the same marker on war and clear it on peace.",
+			title: "War-start and peace-end variants",
+			summary: "Teach the war-start payload and the peace cleanup payload separately so the transition logic reads like two clear jobs instead of one combined block.",
 			files: [
 				snippetFile(
-					"Lua/Gameplay/WarPeaceHooks.lua",
+					"Lua/Gameplay/DeclareWarHook.lua",
 					"lua",
 					`local iDummy = GameInfoTypes.BUILDING_CMC_DUMMY_WAR_STATE
 
@@ -2651,20 +3101,43 @@ end
 GameEvents.DeclareWar.Add(function(eFromTeam, eToTeam)
 	setCapitalMarker(getMajorPlayerForTeam(eFromTeam), 1)
 	setCapitalMarker(getMajorPlayerForTeam(eToTeam), 1)
-end)
+end)`,
+					"War-start variant. Use this when a war-state proxy or notification should turn on exactly when the teams enter war.",
+				),
+				snippetFile(
+					"Lua/Gameplay/MakePeaceHook.lua",
+					"lua",
+					`local iDummy = GameInfoTypes.BUILDING_CMC_DUMMY_WAR_STATE
+
+local function getMajorPlayerForTeam(eTeam)
+	for iPlayer = 0, GameDefines.MAX_MAJOR_CIVS - 1 do
+		local pPlayer = Players[iPlayer]
+		if pPlayer and pPlayer:IsAlive() and pPlayer:GetTeam() == eTeam then
+			return pPlayer
+		end
+	end
+	return nil
+end
+
+local function setCapitalMarker(pPlayer, amount)
+	local pCapital = pPlayer and pPlayer:GetCapitalCity()
+	if pCapital then
+		pCapital:SetNumRealBuilding(iDummy, amount)
+	end
+end
 
 GameEvents.MakePeace.Add(function(eFromTeam, eToTeam)
 	setCapitalMarker(getMajorPlayerForTeam(eFromTeam), 0)
 	setCapitalMarker(getMajorPlayerForTeam(eToTeam), 0)
 end)`,
-					"Transition-focused diplomacy scaffold that does its work only when war begins or ends instead of every turn.",
+					"Peace-end variant. Use this when the mechanic should tear down the war-state payload only after peace is actually restored.",
 				),
 			],
 		},
 		touchpoints: [
 			{ label: "GameEvents.DeclareWar", href: "/lua-api-explorer", note: "Use this to react exactly when the teams enter war." },
 			{ label: "GameEvents.MakePeace", href: "/lua-api-explorer", note: "Use this companion hook to tear down the war-state payload cleanly." },
-			linkToSchema("Buildings", "Common carrier when war or peace state should flip a hidden city marker.", "rows"),
+			linkToSchema("Buildings", "Common carrier when war or peace state should flip a hidden city proxy.", "rows"),
 			{ label: "Player / Team Lookup Safety", href: "/pattern-library", note: "Useful companion when the team event needs a safer player resolver before applying the effect." },
 		],
 	},
@@ -2674,13 +3147,13 @@ end)`,
 		status: "High-Use Recipe",
 		copy: "React when a city buys a tile instead of trying to infer border expansion from later map state. This is a practical place for one-time rewards, improvement placement, or civ-specific plot purchase mechanics.",
 		deliverables: [
-			"A `CityBoughtPlot` scaffold with city and plot resolution.",
-			"A city lookup using `GetCityByID` so the purchase stays tied to the correct owner city.",
+			"A “CityBoughtPlot” scaffold with city and plot resolution.",
+			"A city lookup using “GetCityByID” so the purchase stays tied to the correct owner city.",
 			"A plot payload example that changes the tile after the purchase happens.",
 		],
 		example: {
-			title: "Stamp an improvement on a purchased tile",
-			summary: "Resolve the city from the hook, check the purchased plot, then place the follow-up improvement only when the tile is valid.",
+			title: "Purchased-plot variants",
+			summary: "Use one version for immediate tile changes, then a second when the purchased plot should instead produce a local reward without mutating the terrain.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/CityBoughtPlotTrigger.lua",
@@ -2699,6 +3172,20 @@ GameEvents.CityBoughtPlot.Add(function(iPlayer, iCity, iPlotX, iPlotY, bGold, bF
 end)`,
 					"Practical border-purchase example that uses the hook payload directly and modifies the purchased tile immediately.",
 				),
+				snippetFile(
+					"Lua/Gameplay/CityBoughtPlotReward.lua",
+					"lua",
+					`GameEvents.CityBoughtPlot.Add(function(iPlayer, iCity, iPlotX, iPlotY, bGold, bFaithOrCulture)
+	local pPlayer = Players[iPlayer]
+	local pCity = pPlayer and pPlayer:GetCityByID(iCity)
+	if not pPlayer or not pCity then
+		return
+	end
+	pPlayer:ChangeGold(15)
+	pPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, pCity:GetName() .. " earned a border-expansion reward.", "City Bought Plot", iPlotX, iPlotY)
+end)`,
+					"Reward-only variant. Use this when the purchased tile itself should stay unchanged but the city or player should still get a border-expansion bonus.",
+				),
 			],
 		},
 		touchpoints: [
@@ -2706,24 +3193,25 @@ end)`,
 			linkToLua("Player:GetCityByID", "player-getcitybyid-144", "methods", "Resolve the owner city from the hook before attaching the reward or marker."),
 			linkToLua("Plot:SetImprovementType", "plot-setimprovementtype-94", "methods", "Useful when the purchased tile should immediately gain a scripted improvement or marker."),
 			linkToSchema("Improvements", "Validate the improvement row used by the purchased-tile follow-up effect.", "rows"),
+			linkToPage("Yield Burst Helper", "/pattern-library", "Useful companion when the purchased-plot variant should reward the player directly instead of changing the terrain."),
 		],
 	},
 	{
 		title: "Religion Founded / Conversion Hooks",
 		focus: "Religion-state reactions",
 		status: "High-Use Recipe",
-		copy: "Use the dedicated religion events when the mechanic cares about a founding moment or a city's majority religion changing. This keeps the recipe closer to how real religion mods behave than a generic per-turn religion scan.",
+		copy: "Use the dedicated religion events when the mechanic cares about a founding moment or a city’s majority religion changing. This keeps the recipe closer to how real religion mods behave than a generic per-turn religion scan.",
 		deliverables: [
-			"A `ReligionFounded` scaffold for founder rewards or founder-state setup.",
-			"A `CityConvertsReligion` scaffold for city-majority changes.",
-			"A city-religion check using `GetReligiousMajority` so the follow-up effect can validate the current state before acting.",
+			"A “ReligionFounded” scaffold for founder rewards or founder-state setup.",
+			"A “CityConvertsReligion” scaffold for city-majority changes.",
+			"A city-religion check using “GetReligiousMajority” so the follow-up effect can validate the current state before acting.",
 		],
 		example: {
-			title: "Founder reward and conversion follow-up",
-			summary: "Handle the religion-wide founding reward first, then use the city conversion hook for city-local follow-up logic.",
+			title: "Religion hook variants",
+			summary: "Split the religion-wide founding moment from the repeatable city-conversion moment so beginners can see that these are different payloads, not one generic religion hook.",
 			files: [
 				snippetFile(
-					"Lua/Gameplay/ReligionHooks.lua",
+					"Lua/Gameplay/ReligionFoundedHook.lua",
 					"lua",
 					`GameEvents.ReligionFounded.Add(function(iPlayer, iCity, eReligion, eBelief1, eBelief2, eBelief3, eBelief4, eBelief5)
 	local pPlayer = Players[iPlayer]
@@ -2732,9 +3220,13 @@ end)`,
 		return
 	end
 	pPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, pCity:GetName() .. " founded a religion.", "Religion Founded", pCity:GetX(), pCity:GetY())
-end)
-
-GameEvents.CityConvertsReligion.Add(function(iPlayer, eReligion, iPlotX, iPlotY)
+end)`,
+					"Religion-founded variant. Use this when the reward is tied to the one-time founder moment or the holy city itself.",
+				),
+				snippetFile(
+					"Lua/Gameplay/CityConvertsReligionHook.lua",
+					"lua",
+					`GameEvents.CityConvertsReligion.Add(function(iPlayer, eReligion, iPlotX, iPlotY)
 	local pPlayer = Players[iPlayer]
 	local pPlot = Map.GetPlot(iPlotX, iPlotY)
 	local pCity = pPlot and pPlot:GetPlotCity()
@@ -2743,15 +3235,21 @@ GameEvents.CityConvertsReligion.Add(function(iPlayer, eReligion, iPlotX, iPlotY)
 	end
 	pPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, pCity:GetName() .. " converted to a new majority religion.", "City Converts Religion", iPlotX, iPlotY)
 end)`,
-					"Paired religion hooks covering the one-time founding moment and the repeatable city-majority change moment.",
+					"City-conversion variant. Use this when the effect should re-fire on local majority changes instead of only on founding.",
 				),
 			],
 		},
 		touchpoints: [
 			{ label: "GameEvents.ReligionFounded", href: "/lua-api-explorer", note: "Use this for the religion-wide founding moment and founder rewards." },
 			{ label: "GameEvents.CityConvertsReligion", href: "/lua-api-explorer", note: "Use this when a city-level reaction should happen on majority religion change." },
-			linkToLua("City:GetReligiousMajority", "city-getreligiousmajority-46", "methods", "Validate the city's current majority religion before firing the city-side payload."),
+			linkToLua("Player:GetCityByID", "player-getcitybyid-146", "methods", "Useful for the founding-side variant where the hook payload gives a city ID instead of direct city coordinates."),
+			linkToLua("City:GetReligiousMajority", "city-getreligiousmajority-46", "methods", "Validate the city’s current majority religion before firing the city-side payload."),
 			linkToSchema("Religions", "Reference row family for the religion IDs moving through the hook payload.", "rows"),
+			linkToPage(
+				"Religion / Belief Condition Check",
+				"/pattern-library",
+				"Strong companion when the hook needs belief-side or majority-religion eligibility checks before the city reward fires.",
+			),
 		],
 	},
 	{
@@ -2760,16 +3258,16 @@ end)`,
 		status: "High-Use Recipe",
 		copy: "React when a player becomes friends with or allies a city-state, or loses that status, without recomputing influence thresholds by hand. This is a practical hook for one-time influence rewards, notifications, or scripted CS support bonuses.",
 		deliverables: [
-			"A paired `MinorFriendsChanged` and `MinorAlliesChanged` scaffold.",
+			"A paired “MinorFriendsChanged” and “MinorAlliesChanged” scaffold.",
 			"A transition-aware branch that distinguishes gained status from lost status.",
 			"A city-state/player resolve pattern that can attach rewards to the player who crossed the threshold.",
 		],
 		example: {
-			title: "Reward friendship, escalate on alliance",
-			summary: "Use the boolean transition flag first, then branch into the small friend reward or the larger ally reward.",
+			title: "Friend and ally threshold variants",
+			summary: "Teach the friend-threshold reaction and the ally-threshold reaction separately so the difference in reward size and trigger surface stays obvious.",
 			files: [
 				snippetFile(
-					"Lua/Gameplay/MinorRelationshipHooks.lua",
+					"Lua/Gameplay/MinorFriendsChangedHook.lua",
 					"lua",
 					`GameEvents.MinorFriendsChanged.Add(function(iMinor, iPlayer, bGainedLost, iOldValue, iNewValue)
 	local pPlayer = Players[iPlayer]
@@ -2778,9 +3276,13 @@ end)`,
 		return
 	end
 	pPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "You became friends with " .. pMinor:GetName() .. ".", "Minor Friends Changed", -1, -1)
-end)
-
-GameEvents.MinorAlliesChanged.Add(function(iMinor, iPlayer, bGainedLost, iOldValue, iNewValue)
+end)`,
+					"Friend-threshold variant. This is the lighter-weight reward case that fires before a full alliance exists.",
+				),
+				snippetFile(
+					"Lua/Gameplay/MinorAlliesChangedHook.lua",
+					"lua",
+					`GameEvents.MinorAlliesChanged.Add(function(iMinor, iPlayer, bGainedLost, iOldValue, iNewValue)
 	local pPlayer = Players[iPlayer]
 	local pMinor = Players[iMinor]
 	if not pPlayer or not pMinor then
@@ -2791,7 +3293,7 @@ GameEvents.MinorAlliesChanged.Add(function(iMinor, iPlayer, bGainedLost, iOldVal
 		pPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "You are now allied with " .. pMinor:GetName() .. ".", "Minor Allies Changed", -1, -1)
 	end
 end)`,
-					"City-state relationship scaffold that reacts only on the threshold change itself instead of rechecking influence totals elsewhere.",
+					"Ally-threshold variant. Use this when the bigger relationship milestone should pay out a stronger or different reward.",
 				),
 			],
 		},
@@ -2808,13 +3310,13 @@ end)`,
 		status: "High-Use Recipe",
 		copy: "React when a unit earns a promotion instead of trying to infer promotion state from later combat or movement hooks. This is a good starter pattern for follow-up rewards, chained promotions, or unit-state saves that only matter after the promotion lands.",
 		deliverables: [
-			"A `UnitPromoted` scaffold that resolves the promoted unit safely.",
+			"A “UnitPromoted” scaffold that resolves the promoted unit safely.",
 			"A branch keyed off the exact promotion that was chosen.",
 			"A follow-up effect that modifies the same unit after the promotion applies.",
 		],
 		example: {
-			title: "Reward a newly promoted unit",
-			summary: "Resolve the promoted unit from the hook, filter by the chosen promotion, then apply the follow-up bonus only once the promotion already exists.",
+			title: "Promotion trigger variants",
+			summary: "Use one version for chained promotion rewards, then a second when the important reaction is saved state or a notification rather than another promotion.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/UnitPromotedTrigger.lua",
@@ -2836,12 +3338,23 @@ GameEvents.UnitPromoted.Add(function(iPlayer, iUnit, ePromotion)
 end)`,
 					"Promotion-earned scaffold that waits for the actual promotion event before layering an extra reward onto the same unit.",
 				),
+				snippetFile(
+					"Lua/Gameplay/UnitPromotedTracker.lua",
+					"lua",
+					"local promotedUnits = promotedUnits or {}\n\nGameEvents.UnitPromoted.Add(function(iPlayer, iUnit, ePromotion)\n\tpromotedUnits[string.format('%d:%d', iPlayer, iUnit)] = {\n\t\tpromotion = ePromotion,\n\t\tturn = Game.GetGameTurn(),\n\t}\nend)",
+					"Tracking variant. Use this when the promotion event should mark runtime state for later logic instead of always granting another immediate bonus.",
+				),
 			],
 		},
 		touchpoints: [
 			{ label: "GameEvents.UnitPromoted", href: "/lua-api-explorer", note: "Use this when the follow-up effect should happen only after a specific promotion is chosen." },
 			linkToLua("Unit:SetHasPromotion", "unit-sethaspromotion-330", "methods", "Common follow-up method when the promoted unit should immediately gain a chained bonus promotion."),
 			linkToSchema("UnitPromotions", "Reference the exact promotion rows used by the trigger and the follow-up effect.", "rows"),
+			linkToPage(
+				"Unit Tracking Table",
+				"/pattern-library",
+				"Useful companion when the promotion event should mark runtime state for later mechanics instead of only granting an immediate bonus.",
+			),
 			{ label: "Promotion Grant / Strip Logic", href: "/pattern-library", note: "Useful companion when the post-promotion effect should be conditional rather than always on." },
 		],
 	},
@@ -2850,7 +3363,7 @@ end)`,
 		focus: "Placement resolution",
 		status: "High-Use Recipe",
 		copy: "Find the closest legal plot for a unit, improvement, or effect without sprinkling raw plot checks everywhere. This is the missing glue between ‘I know the origin city’ and ‘I have a safe target tile.’",
-		deliverables: ["A reusable nearest-plot search helper.", "A filter predicate where the mod decides what ‘valid’ means.", "A result pattern that returns the best plot or `nil` cleanly."],
+		deliverables: ["A reusable nearest-plot search helper.", "A filter predicate where the mod decides what ‘valid’ means.", "A result pattern that returns the best plot or “nil” cleanly."],
 		example: {
 			title: "Nearest non-water, non-mountain plot",
 			summary: "Pass an origin plot and a predicate into one helper so the search rules stay reusable.",
@@ -2948,10 +3461,10 @@ return {
 		title: "UI Addin vs UI Override Decision Guide",
 		focus: "UI packaging choices",
 		status: "High-Use Recipe",
-		copy: "Decide whether the feature should plug into an existing Firaxis screen or fully replace one. Many UI bugs come from choosing the wrong packaging model before the `.modinfo` or VFS wiring is even written.",
+		copy: "Decide whether the feature should plug into an existing Firaxis screen or fully replace one. Many UI bugs come from choosing the wrong packaging model before the “.modinfo” or VFS wiring is even written.",
 		deliverables: [
 			"A short decision checklist for addins versus overrides.",
-			"One `.modinfo` example using an `InGameUIAddin` entry point.",
+			"One “.modinfo” example using an “InGameUIAddin” entry point.",
 			"One override example using VFS import and the original Firaxis filename path.",
 		],
 		example: {
@@ -2969,7 +3482,7 @@ return {
 					"Decision guide for the packaging choice that causes a lot of avoidable UI debugging later.",
 				),
 				snippetFile(
-					"Project/GenericCityInfoAddin.modinfo",
+					".modinfo",
 					"xml",
 					`<Mod id="55555555-5555-5555-5555-555555555555" version="1">
 	<Files>
@@ -2985,7 +3498,7 @@ return {
 					"Addin-shaped manifest: one file imported, one entry point declared, and no claim on the whole Firaxis context.",
 				),
 				snippetFile(
-					"Project/CultureOverviewOverride.modinfo",
+					".modinfo",
 					"xml",
 					`<Mod id="66666666-6666-6666-6666-666666666666" version="1">
 	<Files>
@@ -3054,7 +3567,7 @@ WHERE Type = 'BUILDING_FLOATING_ARCHIVES';`,
 			],
 		},
 		touchpoints: [
-			{ label: "Debug Triage Checklist", href: "/pattern-library", note: "Read this first for the broader logging order, then come back here for the silent-failure-specific checks." },
+			{ label: "Log & Debug Triage", href: "/pattern-library", note: "Read this first for the broader logging order, then come back here for the silent-failure-specific checks." },
 			{ label: "VFS / UI Include Setup", href: "/pattern-library", note: "Use this when the failure is really a file-context problem rather than a bad gameplay row." },
 			{ label: "Schema Browser", href: "/schema-browser", note: "Check the exact type keys and target rows when a SQL update looks valid but changes nothing." },
 		],
@@ -3064,8 +3577,8 @@ WHERE Type = 'BUILDING_FLOATING_ARCHIVES';`,
 export const wizardCards = [
 	{
 		title: "Civilization Starter",
-		stage: "Starter Skeleton",
-		copy: "Build a new civ with this starter bundle in one pass: core SQL, sectioned blank game text, starter Lua, mod-support placeholders, a generic leader-scene XML, and the expected project folders even when they are empty. The unique-row skeleton reacts to whether the second unique is a unit, building, or improvement.",
+		stage: "Skeleton Kit",
+		copy: "Build a new civ with this starter bundle. Includes the core setup for SQL, game text, Lua, mod-support, leader-scene XML, and the typical project folders. The files reacts to whether the second unique is a unit, building, or improvement.",
 		asks: ["Civilization name", "Leader name", "Primary unique unit name", "Required second unique type + name"],
 		outputs: [
 			"ZIP bundle with “Core”, “Lua”, and “Art/Leaderscene” starter files",
@@ -3104,7 +3617,7 @@ export const wizardCards = [
 					},
 					{
 						title: "Output bundle",
-						copy: "Emit the core file tree and package it for download.",
+						copy: "Package the core file tree for download.",
 						fields: [
 							{ label: "Root folder", value: "Shambhala (Maitreya)" },
 							{ label: "Files", values: ["Core/*", "Lua/*", "Art/Leaderscene/*"] },
@@ -3117,13 +3630,13 @@ export const wizardCards = [
 					"Shambhala (Maitreya)/Core/Shambhala_Maitreya_GameDefines.sql",
 					"sql",
 					"INSERT INTO Traits (Type, Description, ShortDescription)\nVALUES\n\t('TRAIT_SHAMBHALA_UA', 'TXT_KEY_TRAIT_SHAMBHALA_UA', 'TXT_KEY_TRAIT_SHAMBHALA_UA_SHORT');\n\nINSERT INTO Leaders (Type, Description, Civilopedia, CivilopediaTag, ArtDefineTag, IconAtlas, PortraitIndex)\nVALUES\n\t('LEADER_MAITREYA', 'TXT_KEY_LEADER_MAITREYA', 'TXT_KEY_LEADER_MAITREYA_PEDIA', 'TXT_KEY_CIVILOPEDIA_LEADERS_MAITREYA', 'Maitreya_Scene.xml', 'SHAMBHALA_ICON_ATLAS', 0);\n\n-- Additional civ shell, unique rows, and naming lists generated in the scaffold bundle.",
-					"Representative core SQL file from the scaffold bundle.",
+					"Main core SQL file from the scaffold bundle.",
 				),
 				snippetFile(
 					"Shambhala (Maitreya)/Core/Shambhala_Maitreya_GameText.xml",
 					"xml",
 					'<GameData>\n\t<Language_en_US>\n\t\t<Row Tag="TXT_KEY_CIVILIZATION_ATLAS_EMPIRE_DESC"><Text></Text></Row>\n\t\t<Row Tag="TXT_KEY_LEADER_MAITREYA"><Text></Text></Row>\n\t\t<Row Tag="TXT_KEY_UNIT_ATLAS_EMPIRE_ATLAS_GUARD"><Text></Text></Row>\n\t</Language_en_US>\n</GameData>',
-					"Blank text rows so the scaffold ships matching keys without forcing final wording up front.",
+					"Blank text rows all the essential text keys for the civ.",
 				),
 				snippetFile(
 					"Shambhala (Maitreya)/Lua/Shambhala_Maitreya_Functions.lua",
@@ -3140,6 +3653,21 @@ export const wizardCards = [
 			linkToSchema("Civilization_UnitClassOverrides", "Primary unique-unit override table emitted by the scaffold.", "rows"),
 			linkToSchema("Civilization_BuildingClassOverrides", "Used only when the optional second unique is a building.", "rows"),
 			linkToSchema("Improvements", "Needed when the optional second unique is a tile improvement instead of a building or unit.", "rows"),
+			linkToPage(
+				"Trait / Leader / Civ Wiring",
+				"/pattern-library",
+				"Best pattern-library companion for understanding how the scaffold's civ, leader, trait, and text rows fit together once you move past the generated shell.",
+			),
+			linkToPage(
+				"Unique Replacement Setup",
+				"/pattern-library",
+				"Useful follow-up when the starter's unit or building override rows need to turn into a proper UU or UB with the right class-replacement chain.",
+			),
+			linkToPage(
+				"Dummy Building Scaffold",
+				"/pattern-library",
+				"Natural next step when the starter civ grows into a trait that needs a hidden building to carry city-level yields, flags, or modifiers.",
+			),
 			// { label: "Lua API Explorer", href: "/lua-api-explorer", note: "Use it to inspect the nearby player, city, plot, and team helpers the scaffold Lua will usually lean on first." },
 			{ label: "Map Viewer", href: "/map-viewer", note: "Useful when the scaffold grows into start-position, region, or map-anchored setup work that needs a quick visual map check." },
 		],
@@ -3164,14 +3692,14 @@ export const wizardCards = [
 					cityNames: ["Kalapa"],
 					spyNames: ["Lhamo"],
 				},
-				resultNote: "Append the generated rows into the scaffold generator's GameDefines and GameText files.",
+				resultNote: "Append the generated rows into the template generator’s GameDefines and GameText files.",
 				steps: [
 					{
 						title: "Civilization identity",
 						copy: "Set the civ key.",
 						fields: [
 							{ label: "Civilization type", value: "CIVILIZATION_SHAMBHALA" },
-							{ label: "Target scaffold files", value: "*_GameDefines.sql / *_GameText.xml" },
+							{ label: "Target starter files", value: "*_GameDefines.sql / *_GameText.xml" },
 						],
 					},
 					{
@@ -3188,16 +3716,16 @@ export const wizardCards = [
 			},
 			files: [
 				snippetFile(
-					"Core/<ScaffoldStem>_GameDefines.sql",
+					"Core/<Civ_Leader>_GameDefines.sql",
 					"sql",
 					"INSERT INTO Civilization_CityNames (CivilizationType, CityName)\nVALUES\n\t('CIVILIZATION_ATLAS', 'TXT_KEY_CITY_NAME_ATLAS_HARBOR'),\n\t('CIVILIZATION_ATLAS', 'TXT_KEY_CITY_NAME_ATLAS_STONEWATCH');\n\nINSERT INTO Civilization_SpyNames (CivilizationType, SpyName)\nVALUES\n\t('CIVILIZATION_ATLAS', 'TXT_KEY_SPY_NAME_ATLAS_0'),\n\t('CIVILIZATION_ATLAS', 'TXT_KEY_SPY_NAME_ATLAS_1');",
-					"Append these naming inserts to the scaffold generator's GameDefines.sql file.",
+					"Append these naming inserts to the template generator’s GameDefines.sql file.",
 				),
 				snippetFile(
-					"Core/<ScaffoldStem>_GameText.xml",
+					"Core/<Civ_Leader>_GameText.xml",
 					"xml",
 					'<GameData>\n\t<Language_en_US>\n\t\t<Row Tag="TXT_KEY_CITY_NAME_ATLAS_HARBOR" Text="Atlas Harbor" />\n\t\t<Row Tag="TXT_KEY_CITY_NAME_ATLAS_STONEWATCH" Text="Stonewatch" />\n\t\t<Row Tag="TXT_KEY_SPY_NAME_ATLAS_0" Text="Mira" />\n\t\t<Row Tag="TXT_KEY_SPY_NAME_ATLAS_1" Text="Sable" />\n\t</Language_en_US>\n</GameData>',
-					"Append these Language_en_US rows to the scaffold generator's GameText.xml file.",
+					"Append these Language_en_US rows to the template generator’s GameText.xml file.",
 				),
 			],
 		},
@@ -3206,16 +3734,16 @@ export const wizardCards = [
 			linkToSchema("Civilization_SpyNames", "Main spy-name table the generator should populate.", "rows"),
 			linkToSchema("Language_en_US", "Every generated tag needs a matching localized text row.", "rows"),
 			{
-				label: "Civilization Scaffold",
-				href: "/scaffold-generators?generator=civilization-scaffold",
-				note: "The naming rows are meant to drop into the scaffold's GameDefines and GameText files rather than live as a standalone bundle.",
+				label: "Civilization Starter",
+				href: "/template-generators?generator=civilization-scaffold",
+				note: "The naming rows are meant to drop into the starter’s GameDefines and GameText files rather than live as a standalone bundle.",
 			},
 		],
 	},
 	{
 		title: "Leader Behavior Tuning",
 		stage: "Personality Tuning",
-		copy: "Tune the leader's behavior values to determine how the civ responds to in-game actions.",
+		copy: "Tune the leader’s behavior values to determine how the civ responds to in-game actions.",
 		asks: ["Leader Name to update", "Leader personality scores", "Major and Minor civ approach biases", "Flavor score matrix"],
 		outputs: [
 			"“UPDATE Leaders” values for the leader personality fields",
@@ -3301,7 +3829,7 @@ export const wizardCards = [
 						FLAVOR_AIR_CARRIER: 3,
 					},
 				},
-				resultNote: "Append the leader-tuning block into the scaffold generator's GameDefines file.",
+				resultNote: "Append the leader-tuning block into the template generator’s GameDefines file.",
 				steps: [
 					{
 						title: "Leader Name",
@@ -3327,17 +3855,17 @@ export const wizardCards = [
 					},
 					{
 						title: "Flavor Priorities",
-						copy: "Set the full `Leader_Flavors` matrix the same way you set the bias tables.",
+						copy: "Set the full “Leader_Flavors” matrix the same way you set the bias tables.",
 						fields: [{ label: "Highest flavors", values: ["FLAVOR_GREAT_PEOPLE=10", "FLAVOR_CULTURE=9", "FLAVOR_RELIGION=9"] }],
 					},
 				],
 			},
 			files: [
 				snippetFile(
-					"Core/<ScaffoldStem>_GameDefines.sql",
+					"Core/<Civ_Leader>_GameDefines.sql",
 					"sql",
 					"UPDATE Leaders\nSET\n\tVictoryCompetitiveness = 7,\n\tWonderCompetitiveness = 4,\n\tMinorCivCompetitiveness = 6,\n\tBoldness = 9,\n\tDiploBalance = 6,\n\tWarmongerHate = 3,\n\tDenounceWillingness = 8,\n\tDoFWillingness = 4,\n\tLoyalty = 3,\n\tNeediness = 4,\n\tForgiveness = 3,\n\tChattiness = 6,\n\tMeanness = 7\nWHERE\n\tType = 'LEADER_MAITREYA';\n\n-- Leader_MajorCivApproachBiases\nINSERT INTO\n\tLeader_MajorCivApproachBiases (LeaderType, MajorCivApproachType, Bias)\nVALUES\n\t('LEADER_MAITREYA', 'MAJOR_CIV_APPROACH_WAR', 7),\n\t('LEADER_MAITREYA', 'MAJOR_CIV_APPROACH_HOSTILE', 6),\n\t('LEADER_MAITREYA', 'MAJOR_CIV_APPROACH_DECEPTIVE', 7),\n\t('LEADER_MAITREYA', 'MAJOR_CIV_APPROACH_GUARDED', 4),\n\t('LEADER_MAITREYA', 'MAJOR_CIV_APPROACH_AFRAID', 2),\n\t('LEADER_MAITREYA', 'MAJOR_CIV_APPROACH_FRIENDLY', 5),\n\t('LEADER_MAITREYA', 'MAJOR_CIV_APPROACH_NEUTRAL', 6);\n\n-- Leader_MinorCivApproachBiases\nINSERT INTO\n\tLeader_MinorCivApproachBiases (LeaderType, MinorCivApproachType, Bias)\nVALUES\n\t('LEADER_MAITREYA', 'MINOR_CIV_APPROACH_IGNORE', 4),\n\t('LEADER_MAITREYA', 'MINOR_CIV_APPROACH_FRIENDLY', 3),\n\t('LEADER_MAITREYA', 'MINOR_CIV_APPROACH_PROTECTIVE', 4),\n\t('LEADER_MAITREYA', 'MINOR_CIV_APPROACH_CONQUEST', 7),\n\t('LEADER_MAITREYA', 'MINOR_CIV_APPROACH_BULLY', 8);\n\n-- Leader_Flavors\nINSERT INTO\n\tLeader_Flavors (LeaderType, FlavorType, Flavor)\nVALUES\n\t('LEADER_MAITREYA', 'FLAVOR_OFFENSE', 4),\n\t('LEADER_MAITREYA', 'FLAVOR_DEFENSE', 5),\n\t('LEADER_MAITREYA', 'FLAVOR_CITY_DEFENSE', 5),\n\t('LEADER_MAITREYA', 'FLAVOR_MILITARY_TRAINING', 4),\n\t('LEADER_MAITREYA', 'FLAVOR_RECON', 5),\n\t('LEADER_MAITREYA', 'FLAVOR_RANGED', 4),\n\t('LEADER_MAITREYA', 'FLAVOR_MOBILE', 5),\n\t('LEADER_MAITREYA', 'FLAVOR_NAVAL', 2),\n\t('LEADER_MAITREYA', 'FLAVOR_NAVAL_RECON', 2),\n\t('LEADER_MAITREYA', 'FLAVOR_NAVAL_GROWTH', 2),\n\t('LEADER_MAITREYA', 'FLAVOR_NAVAL_TILE_IMPROVEMENT', 2),\n\t('LEADER_MAITREYA', 'FLAVOR_AIR', 3),\n\t('LEADER_MAITREYA', 'FLAVOR_EXPANSION', 4),\n\t('LEADER_MAITREYA', 'FLAVOR_GROWTH', 7),\n\t('LEADER_MAITREYA', 'FLAVOR_TILE_IMPROVEMENT', 6),\n\t('LEADER_MAITREYA', 'FLAVOR_INFRASTRUCTURE', 6),\n\t('LEADER_MAITREYA', 'FLAVOR_PRODUCTION', 6),\n\t('LEADER_MAITREYA', 'FLAVOR_GOLD', 5),\n\t('LEADER_MAITREYA', 'FLAVOR_SCIENCE', 5),\n\t('LEADER_MAITREYA', 'FLAVOR_CULTURE', 9),\n\t('LEADER_MAITREYA', 'FLAVOR_HAPPINESS', 7),\n\t('LEADER_MAITREYA', 'FLAVOR_GREAT_PEOPLE', 10),\n\t('LEADER_MAITREYA', 'FLAVOR_WONDER', 8),\n\t('LEADER_MAITREYA', 'FLAVOR_RELIGION', 9),\n\t('LEADER_MAITREYA', 'FLAVOR_DIPLOMACY', 6),\n\t('LEADER_MAITREYA', 'FLAVOR_SPACESHIP', 3),\n\t('LEADER_MAITREYA', 'FLAVOR_WATER_CONNECTION', 2),\n\t('LEADER_MAITREYA', 'FLAVOR_NUKE', 1),\n\t('LEADER_MAITREYA', 'FLAVOR_USE_NUKE', 1),\n\t('LEADER_MAITREYA', 'FLAVOR_ESPIONAGE', 4),\n\t('LEADER_MAITREYA', 'FLAVOR_AIRLIFT', 3),\n\t('LEADER_MAITREYA', 'FLAVOR_I_TRADE_DESTINATION', 5),\n\t('LEADER_MAITREYA', 'FLAVOR_I_TRADE_ORIGIN', 5),\n\t('LEADER_MAITREYA', 'FLAVOR_I_SEA_TRADE_ROUTE', 3),\n\t('LEADER_MAITREYA', 'FLAVOR_I_LAND_TRADE_ROUTE', 6),\n\t('LEADER_MAITREYA', 'FLAVOR_ARCHAEOLOGY', 8),\n\t('LEADER_MAITREYA', 'FLAVOR_AIR_CARRIER', 3);",
-					"Append this leader-tuning block to the scaffold generator's GameDefines.sql file.",
+					"Append this leader-tuning block to the template generator’s GameDefines.sql file.",
 				),
 			],
 		},
@@ -3349,9 +3877,9 @@ export const wizardCards = [
 		],
 	},
 	{
-		title: "Art + Audio Bundle",
+		title: "Art + Audio Setup",
 		stage: "Art Defines",
-		copy: "Fill out the scaffold ArtDefines file with civ colors, atlas registration, leader music, unit art clones, and optional improvement or feature art rows.",
+		copy: "Fill out the starter ArtDefines file with civ colors, atlas registration, leader music, unit art clones, and optional improvement or feature art rows.",
 		asks: [
 			"Civilization + leader names",
 			"Saved civ colors from Civ Icon Maker",
@@ -3367,7 +3895,7 @@ export const wizardCards = [
 		],
 		example: {
 			title: "Art + audio identity bundle",
-			summary: "Scaffold-aligned ArtDefines output with shared civ colors, atlas registration, leader music, and optional art rows.",
+			summary: "Starter ArtDefines output with shared civ colors, atlas registration, leader music, and optional art rows.",
 			preview: {
 				interactiveKind: "art-audio-bundle",
 				formDefaults: {
@@ -3382,7 +3910,7 @@ export const wizardCards = [
 					landmarkModelFile: "shambhala_lotus_sanctuary.fxsxml",
 					landmarkStrategicAsset: "shambhala_lotus_sanctuary_sref.dds",
 				},
-				resultNote: "Append the generated sections into the scaffold generator's ArtDefines file. Civ colors and atlas shape defaults carry over from the other tools when available.",
+				resultNote: "Append the generated sections into the template generator’s ArtDefines file. Civ colors and atlas shape defaults carry over from the other tools when available.",
 				steps: [
 					{
 						title: "Identity assets",
@@ -3411,10 +3939,10 @@ export const wizardCards = [
 			},
 			files: [
 				snippetFile(
-					"Core/<ScaffoldStem>_ArtDefines.sql",
+					"Core/<Civ_Leader>_ArtDefines.sql",
 					"sql",
 					"-- Colors\nINSERT INTO Colors (Type, Red, Green, Blue, Alpha)\nVALUES\n\t('COLOR_PLAYER_SHAMBHALA_ICON', 0.12, 0.31, 0.60, 1),\n\t('COLOR_PLAYER_SHAMBHALA_BACKGROUND', 0.96, 0.87, 0.60, 1);\n\n-- Audio_Sounds\nINSERT INTO Audio_Sounds (SoundID, Filename, LoadType)\nVALUES\n\t('SND_LEADER_MUSIC_SHAMBHALA_MAITREYA_PEACE', 'Shambhala_Maitreya_Peace', 'DynamicResident'),\n\t('SND_LEADER_MUSIC_SHAMBHALA_MAITREYA_WAR', 'Shambhala_Maitreya_War', 'DynamicResident');",
-					"Append this generated block to the scaffold generator's ArtDefines.sql file.",
+					"Append this generated block to the template generator’s ArtDefines.sql file.",
 				),
 			],
 		},
@@ -3427,6 +3955,13 @@ export const wizardCards = [
 			linkToSchema("ArtDefine_UnitInfos", "Top-level unit art clone entry for a unique unit.", "rows"),
 			linkToSchema("ArtDefine_Landmarks", "Improvement and feature art rows for landmark-style assets.", "rows"),
 			linkToSchema("ArtDefine_StrategicView", "Strategic view rows for units, improvements, or features.", "rows"),
+			linkToPage(
+				"Civilopedia + Art Define Wiring",
+				"/pattern-library",
+				"Good companion when the generated art rows also need the supporting Civilopedia-facing art and icon registrations to stay in sync.",
+			),
+			linkToPage("Audio Hook Setup", "/pattern-library", "Use this when the art bundle's leader music rows need to expand into a fuller audio registration and playback workflow."),
+			linkToPage("Leader / Civ Music Setup", "/pattern-library", "Best pattern-library match for carrying the generated peace and war music rows into a complete leader-scene music setup."),
 			{ label: "Civ Icon Maker", href: "/civ-icon-maker", note: "Saved civ colors carry directly into the generated Colors and PlayerColors rows." },
 			{ label: "DDS Converter", href: "/dds-converter", note: "Atlas rows, columns, and selected sizes seed the IconTextureAtlases output." },
 			{ label: ".modinfo Builder", href: "/modinfo-builder", note: "Use it when the registered art or audio files also need import actions and manifest wiring." },
@@ -3442,7 +3977,7 @@ export const guardrails = [
 	},
 	{
 		title: "Text keys ship with data",
-		copy: "If a generator emits `TXT_KEY_` references, it should also emit the matching ‘Language_en_US’ rows in the same pass.",
+		copy: "If a generator emits “TXT_KEY_” references, it should also emit the matching ‘Language_en_US’ rows in the same pass.",
 		source: "Schema Browser + localization workflow",
 	},
 	{
@@ -3452,12 +3987,12 @@ export const guardrails = [
 	},
 	{
 		title: "Leader behavior stays split cleanly",
-		copy: "Leader builders should keep the `Leaders` row and `Leader_Traits` link in XML, then emit approach biases and flavor weights in separate SQL blocks that are easy to retune.",
+		copy: "Leader builders should keep the “Leaders” row and “Leader_Traits” link in XML, then emit approach biases and flavor weights in separate SQL blocks that are easy to retune.",
 		source: "Leaders + Leader_Traits + leader bias tables",
 	},
 	{
-		title: "Scaffold ZIPs should skip mod packaging",
-		copy: "The civ scaffold should stop at base project files and avoid bundling `.modinfo` or `Credits.txt`, since those are usually edited separately once the core shell is stable.",
+		title: "Starter ZIPs should skip mod packaging",
+		copy: "The civ starter should stop at base project files and avoid bundling “.modinfo” or “Credits.txt”, since those are usually edited separately once the core shell is stable.",
 		source: "Land of Snows project layout",
 	},
 ];
@@ -3465,7 +4000,7 @@ export const guardrails = [
 export const implementationStages = [
 	{
 		label: "Stage 1",
-		title: "Ship the civ scaffold first",
+		title: "Ship the civ starter first",
 		copy: "The biggest time saver is one downloadable civ starter bundle that covers the folder layout, core SQL shell, blank text, and starter Lua all at once.",
 	},
 	{
@@ -3501,15 +4036,15 @@ export const internalCrossLinks = [
 	},
 	{
 		title: "ModInfo Builder",
-		copy: "Once the data and art packs are generated, packaging should continue into the site's existing build and project wiring tools.",
+		copy: "Once the data and art packs are generated, packaging should continue into the site’s existing build and project wiring tools.",
 		links: [{ label: "ModInfo Builder", href: "/modinfo-builder" }],
 		planned: ["Generated-file handoff", "Split XML + SQL action reminders"],
 	},
 ];
 
 export const datasetNotes = [
-	"Schema snapshot includes 1,663 `Civilization_CityNames` rows and 430 `Civilization_SpyNames` rows for pattern checking and output validation.",
-	"Schema snapshot also includes 44 `Leaders`, 301 `Leader_MajorCivApproachBiases`, 215 `Leader_MinorCivApproachBiases`, and 1,659 `Leader_Flavors` rows for bias and flavor pattern checking.",
+	"Schema snapshot includes 1,663 “Civilization_CityNames” rows and 430 “Civilization_SpyNames” rows for pattern checking and output validation.",
+	"Schema snapshot also includes 44 “Leaders”, 301 “Leader_MajorCivApproachBiases”, 215 “Leader_MinorCivApproachBiases”, and 1,659 “Leader_Flavors” rows for bias and flavor pattern checking.",
 	"Archive mods in the local reference folder show both SQL and XML naming-pack styles, grouped atlas registration XML, and the common XML-plus-SQL split for custom leader setup.",
 ];
 
@@ -3520,7 +4055,7 @@ export const internalDocLanes = [
 		links: [
 			{ label: "Pattern Library", href: "/pattern-library" },
 			{ label: "Lua API Explorer", href: "/lua-api-explorer" },
-			{ label: "Scaffold Generators", href: "/scaffold-generators" },
+			{ label: "Template Generators", href: "/template-generators" },
 		],
 		planned: ["GameEvents workbook import", "Events import"],
 	},
@@ -3548,7 +4083,7 @@ export const internalDocLanes = [
 		copy: "Internal guides for VFS, project actions, debug logging, and common failure patterns that can reference both recipes and first-party browsers.",
 		links: [
 			{ label: "ModInfo Builder", href: "/modinfo-builder" },
-			{ label: "Scaffold Generators", href: "/scaffold-generators" },
+			{ label: "Template Generators", href: "/template-generators" },
 		],
 		planned: ["Debug playbook", "VFS guide"],
 	},

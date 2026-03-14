@@ -97,7 +97,7 @@
 		{ id: "tables", label: "Tables" },
 		{ id: "rows", label: "Rows" },
 		{ id: "columns", label: "Columns" },
-		{ id: "relationships", label: "Refs" },
+		// { id: "relationships", label: "Refs" },
 	];
 	const TABLE_SORT_DEFS = [
 		{ id: "best", label: "Best match" },
@@ -191,6 +191,7 @@
 	let lastSchemaUrlState = $state("");
 	let lastSchemaUrlSnapshot = $state(null);
 	let queryConditionSeed = 0;
+	let schemaHydrating = $state(true);
 
 	const normalizedQuery = $derived(searchQuery.trim().toLowerCase());
 	const normalizedColumnFilter = $derived(columnFilter.trim().toLowerCase());
@@ -470,8 +471,14 @@
 			return;
 		}
 
-		applySchemaUrlStateFromLocation();
-		schemaUrlSyncReady = true;
+		void (async () => {
+			try {
+				await applySchemaUrlStateFromLocation();
+			} finally {
+				schemaUrlSyncReady = true;
+				schemaHydrating = false;
+			}
+		})();
 
 		const handlePopState = () => {
 			applySchemaUrlStateFromLocation();
@@ -1273,241 +1280,247 @@
 		</p>
 	</header>
 
-	<section class="schema-panel">
-		<div class="schema-section-head">
-			<span class="schema-kicker">Quick Starts</span>
-			<h2>Jump into the tables modders use most often</h2>
-			<p>These are the most useful starting points for documentation, planning, and debugging code for your mods.</p>
-		</div>
-		<div class="schema-quick-grid">
-			{#each QUICK_STARTS as item (item.tableName)}
-				<button type="button" class={`schema-quick-card ${isQuickStartActive(item.tableName) ? "is-active" : ""}`} onclick={() => selectTable(item.tableName)}>
-					<div class="schema-quick-head">
-						<h3>{item.label}</h3>
-					</div>
-					<p>{item.copy}</p>
-				</button>
-			{/each}
-		</div>
-	</section>
-
-	<section class="schema-panel schema-panel--explorer">
-		<div class="schema-toolbar">
-			<div class="schema-toolbar-primary">
-				<div class="schema-mode-group" role="group" aria-label="Search scope">
-					{#each SEARCH_MODE_DEFS as mode (mode.id)}
-						<button
-							type="button"
-							class={`schema-filter-chip schema-filter-chip--scope ${searchMode === mode.id ? "is-active" : ""}`}
-							aria-pressed={searchMode === mode.id}
-							onclick={() => (searchMode = mode.id)}
-						>
-							{mode.label}
-						</button>
-					{/each}
-				</div>
-				<label class="schema-search-field">
-					<span>Search schema data</span>
-					<input type="search" bind:value={searchQuery} onkeydown={handleSearchKeyDown} placeholder={searchPlaceholder} />
-				</label>
-				<label class="schema-sort-field">
-					<span>Sort tables</span>
-					<select bind:value={tableSort}>
-						{#each TABLE_SORT_DEFS as option (option.id)}
-							<option value={option.id}>{option.label}</option>
-						{/each}
-					</select>
-				</label>
+	{#if schemaHydrating}
+		<p class="status status-loading" role="status" aria-live="polite">
+			<span class="status-spinner" aria-hidden="true"></span>
+			<span>Loading schema browser...</span>
+		</p>
+	{:else}
+		<section class="schema-panel">
+			<div class="schema-section-head">
+				<span class="schema-kicker">Quick Starts</span>
+				<h2>Jump into the tables modders use most often</h2>
+				<p>These are the most useful starting points for documentation, planning, and debugging code for your mods.</p>
 			</div>
-			<div class="schema-toolbar-secondary">
-				<div class="schema-filter-group" role="group" aria-label="Schema categories">
-					{#each CATEGORY_DEFS as category (category.id)}
-						<button
-							type="button"
-							class={`schema-filter-chip schema-filter-chip--toggle ${categoryFilter === category.id ? "is-active" : ""}`}
-							aria-pressed={categoryFilter === category.id}
-							onclick={() => (categoryFilter = category.id)}
-						>
-							{category.label}
-							<span>{CATEGORY_COUNTS.find((item) => item.id === category.id)?.count ?? 0}</span>
-						</button>
-					{/each}
-				</div>
-			</div>
-			{#if recentTables.length > 0}
-				<div class="schema-recent-group" aria-label="Recent tables">
-					<span class="schema-toolbar-label">Recent tables</span>
-					<div class="schema-recent-list">
-						{#each recentTables as table (table.name)}
-							<button type="button" class="schema-inline-link schema-inline-link--chip" onclick={() => selectTable(table.name)}>{table.name}</button>
-						{/each}
-					</div>
-				</div>
-			{/if}
-		</div>
-
-		<div class="schema-explorer-grid">
-			<aside class="schema-list-panel" aria-label="Schema tables">
-				<div class="schema-list-head">
-					<h2>Tables</h2>
-					<span>{filteredTables.length} matches</span>
-				</div>
-				<div class="schema-table-list">
-					{#if filteredTables.length === 0}
-						<div class="schema-empty-state">
-							<p class="schema-empty">No tables match the current search.</p>
-							<p class="schema-empty-note">Try one of these examples or clear the current scope.</p>
-							<div class="schema-empty-actions">
-								{#each EMPTY_SEARCH_EXAMPLES as example (example)}
-									<button type="button" class="schema-inline-link schema-inline-link--chip" onclick={() => setSearchExample(example)}>{example}</button>
-								{/each}
-								<button
-									type="button"
-									class="schema-inline-link schema-inline-link--chip"
-									onclick={() => {
-										searchQuery = "";
-										searchMode = "all";
-										categoryFilter = "all";
-									}}>Clear search</button
-								>
-							</div>
+			<div class="schema-quick-grid">
+				{#each QUICK_STARTS as item (item.tableName)}
+					<button type="button" class={`schema-quick-card ${isQuickStartActive(item.tableName) ? "is-active" : ""}`} onclick={() => selectTable(item.tableName)}>
+						<div class="schema-quick-head">
+							<h3>{item.label}</h3>
 						</div>
-					{:else}
-						{#each filteredTables as table (table.name)}
+						<p>{item.copy}</p>
+					</button>
+				{/each}
+			</div>
+		</section>
+
+		<section class="schema-panel schema-panel--explorer">
+			<div class="schema-toolbar">
+				<div class="schema-toolbar-primary">
+					<div class="schema-mode-group" role="group" aria-label="Search scope">
+						{#each SEARCH_MODE_DEFS as mode (mode.id)}
 							<button
 								type="button"
-								class={`schema-table-card ${selectedTable?.name === table.name ? "is-active" : ""}`}
-								onclick={() => selectTable(table.name)}
-								use:registerTableCard={table.name}
+								class={`schema-filter-chip schema-filter-chip--scope ${searchMode === mode.id ? "is-active" : ""}`}
+								aria-pressed={searchMode === mode.id}
+								onclick={() => (searchMode = mode.id)}
 							>
-								<div class="schema-table-card-head">
-									<h3 style="font-size: 1rem">{table.name}</h3>
-								</div>
-								<div class="schema-table-meta">
-									<!-- <span>{table.foreignKeyCount} outgoing refs</span>
-									<span>{table.incomingForeignKeys.length} incoming refs</span> -->
-									<span>{table.columnCount} cols</span>
-									<span>{formatNumber(table.rowCount)} rows</span>
-								</div>
-								{#if table.matchedColumns.length > 0}
-									<div class="schema-table-tags">
-										{#each table.matchedColumns as column (column.name)}
-											<span class="schema-tag">{column.name}</span>
-										{/each}
-									</div>
-								{/if}
-								{#if table.matchedRowSummaries.length > 0}
-									<ul class="schema-table-match-list" aria-label={`Matching rows in ${table.name}`}>
-										{#each table.matchedRowSummaries as rowSummary (`${table.name}-${rowSummary}`)}
-											<li>{rowSummary}</li>
-										{/each}
-									</ul>
-								{/if}
+								{mode.label}
 							</button>
 						{/each}
-					{/if}
+					</div>
+					<label class="schema-search-field">
+						<span>Search schema data</span>
+						<input type="search" bind:value={searchQuery} onkeydown={handleSearchKeyDown} placeholder={searchPlaceholder} />
+					</label>
+					<label class="schema-sort-field">
+						<span>Sort tables</span>
+						<select bind:value={tableSort}>
+							{#each TABLE_SORT_DEFS as option (option.id)}
+								<option value={option.id}>{option.label}</option>
+							{/each}
+						</select>
+					</label>
 				</div>
-			</aside>
-
-			{#if selectedTable}
-				<section class="schema-detail-panel" aria-label="Selected table details">
-					<div class="schema-detail-hero">
-						<div class="schema-detail-hero-copy">
-							<p class="schema-kicker">Selected table</p>
-							<h2>{selectedTable.name}</h2>
-							{#if normalizedQuery && selectedMatchReasons.length > 0}
-								<div class="schema-detail-match-summary">
-									<p class="schema-section-note">Why this table matched</p>
-									<div class="schema-table-tags">
-										{#each selectedMatchReasons as reason (reason)}
-											<span class="schema-tag">{reason}</span>
-										{/each}
-									</div>
-								</div>
-							{/if}
-							<div class="schema-detail-actions">
-								<div class="schema-detail-tabs" role="tablist" aria-label="Selected table views">
-									{#each DETAIL_TAB_DEFS as tab (tab.id)}
-										<button
-											type="button"
-											role="tab"
-											class={`schema-tab-button ${detailTab === tab.id ? "is-active" : ""}`}
-											aria-selected={detailTab === tab.id}
-											onclick={() => setDetailTab(tab.id)}
-										>
-											{tab.label}
-										</button>
-									{/each}
-								</div>
-								<!-- <div class="schema-detail-quick-actions">
-									<button type="button" class="schema-section-toggle" onclick={copyTableName}>Copy table name</button>
-								</div> -->
-							</div>
-						</div>
-						<div class="schema-detail-metrics">
-							<span class="schema-metric-chip">
-								<strong>{selectedTable.columnCount}</strong>
-								<span>columns</span>
-							</span>
-							<span class="schema-metric-chip">
-								<strong>{selectedTable.foreignKeyCount}</strong>
-								<span>outgoing refs</span>
-							</span>
-							<span class="schema-metric-chip">
-								<strong>{selectedTable.incomingForeignKeys.length}</strong>
-								<span>incoming refs</span>
-							</span>
-							<span class="schema-metric-chip">
-								<strong>{formatNumber(selectedTable.rowCount)}</strong>
-								<span>rows</span>
-							</span>
+				<div class="schema-toolbar-secondary">
+					<div class="schema-filter-group" role="group" aria-label="Schema categories">
+						{#each CATEGORY_DEFS as category (category.id)}
+							<button
+								type="button"
+								class={`schema-filter-chip schema-filter-chip--toggle ${categoryFilter === category.id ? "is-active" : ""}`}
+								aria-pressed={categoryFilter === category.id}
+								onclick={() => (categoryFilter = category.id)}
+							>
+								{category.label}
+								<span>{CATEGORY_COUNTS.find((item) => item.id === category.id)?.count ?? 0}</span>
+							</button>
+						{/each}
+					</div>
+				</div>
+				{#if recentTables.length > 0}
+					<div class="schema-recent-group" aria-label="Recent tables">
+						<span class="schema-toolbar-label">Recent tables</span>
+						<div class="schema-recent-list">
+							{#each recentTables as table (table.name)}
+								<button type="button" class="schema-inline-link schema-inline-link--chip" onclick={() => selectTable(table.name)}>{table.name}</button>
+							{/each}
 						</div>
 					</div>
+				{/if}
+			</div>
 
-					{#if detailTab === "columns"}
-						<article class="schema-detail-card schema-detail-card-exception">
-							<div class="schema-detail-card-head">
-								<div>
-									<h3>Columns</h3>
-									<p class="schema-section-note">Showing {visibleColumns.length} of {selectedTable.columns.length} columns in this table</p>
-								</div>
-								<div class="schema-card-tools">
-									<label class="schema-local-filter">
-										<span>Filter columns</span>
-										<input type="search" bind:value={columnFilter} placeholder="Type, Help, PrereqTech..." />
-									</label>
-									<span>{selectedTable.columns.length}</span>
+			<div class="schema-explorer-grid">
+				<aside class="schema-list-panel" aria-label="Schema tables">
+					<div class="schema-list-head">
+						<h2>Tables</h2>
+						<span>{filteredTables.length} matches</span>
+					</div>
+					<div class="schema-table-list">
+						{#if filteredTables.length === 0}
+							<div class="schema-empty-state">
+								<p class="schema-empty">No tables match the current search.</p>
+								<p class="schema-empty-note">Try one of these examples or clear the current scope.</p>
+								<div class="schema-empty-actions">
+									{#each EMPTY_SEARCH_EXAMPLES as example (example)}
+										<button type="button" class="schema-inline-link schema-inline-link--chip" onclick={() => setSearchExample(example)}>{example}</button>
+									{/each}
+									<button
+										type="button"
+										class="schema-inline-link schema-inline-link--chip"
+										onclick={() => {
+											searchQuery = "";
+											searchMode = "all";
+											categoryFilter = "all";
+										}}>Clear search</button
+									>
 								</div>
 							</div>
-							{#if visibleColumns.length === 0}
-								<p class="schema-empty">No columns match the current column filter.</p>
-							{:else}
-								<div class="schema-column-list" role="list">
-									{#each visibleColumns as column (column.name)}
-										<div class="schema-column-row" role="listitem">
-											<div>
-												<strong>{column.name}</strong>
-												<p>{column.type || "untyped"}</p>
-											</div>
-											<div class="schema-column-flags">
-												{#if column.primaryKey}
-													<span class="schema-tag schema-tag--key">PK</span>
-												{/if}
-												{#if column.notNull}
-													<span class="schema-tag">NOT NULL</span>
-												{/if}
-												{#if column.defaultValue !== null && column.defaultValue !== undefined && column.defaultValue !== ""}
-													<span class="schema-tag">Default {column.defaultValue}</span>
-												{/if}
-											</div>
+						{:else}
+							{#each filteredTables as table (table.name)}
+								<button
+									type="button"
+									class={`schema-table-card ${selectedTable?.name === table.name ? "is-active" : ""}`}
+									onclick={() => selectTable(table.name)}
+									use:registerTableCard={table.name}
+								>
+									<div class="schema-table-card-head">
+										<h3 style="font-size: 1rem">{table.name}</h3>
+									</div>
+									<div class="schema-table-meta">
+										<!-- <span>{table.foreignKeyCount} outgoing refs</span>
+									<span>{table.incomingForeignKeys.length} incoming refs</span> -->
+										<span>{table.columnCount} cols</span>
+										<span>{formatNumber(table.rowCount)} rows</span>
+									</div>
+									{#if table.matchedColumns.length > 0}
+										<div class="schema-table-tags">
+											{#each table.matchedColumns as column (column.name)}
+												<span class="schema-tag">{column.name}</span>
+											{/each}
 										</div>
-									{/each}
+									{/if}
+									{#if table.matchedRowSummaries.length > 0}
+										<ul class="schema-table-match-list" aria-label={`Matching rows in ${table.name}`}>
+											{#each table.matchedRowSummaries as rowSummary (`${table.name}-${rowSummary}`)}
+												<li>{rowSummary}</li>
+											{/each}
+										</ul>
+									{/if}
+								</button>
+							{/each}
+						{/if}
+					</div>
+				</aside>
+
+				{#if selectedTable}
+					<section class="schema-detail-panel" aria-label="Selected table details">
+						<div class="schema-detail-hero">
+							<div class="schema-detail-hero-copy">
+								<p class="schema-kicker">Selected table</p>
+								<h2>{selectedTable.name}</h2>
+								{#if normalizedQuery && selectedMatchReasons.length > 0}
+									<div class="schema-detail-match-summary">
+										<p class="schema-section-note">Why this table matched</p>
+										<div class="schema-table-tags">
+											{#each selectedMatchReasons as reason (reason)}
+												<span class="schema-tag">{reason}</span>
+											{/each}
+										</div>
+									</div>
+								{/if}
+								<div class="schema-detail-actions">
+									<div class="schema-detail-tabs" role="tablist" aria-label="Selected table views">
+										{#each DETAIL_TAB_DEFS as tab (tab.id)}
+											<button
+												type="button"
+												role="tab"
+												class={`schema-tab-button ${detailTab === tab.id ? "is-active" : ""}`}
+												aria-selected={detailTab === tab.id}
+												onclick={() => setDetailTab(tab.id)}
+											>
+												{tab.label}
+											</button>
+										{/each}
+									</div>
+									<!-- <div class="schema-detail-quick-actions">
+									<button type="button" class="schema-section-toggle" onclick={copyTableName}>Copy table name</button>
+								</div> -->
 								</div>
-							{/if}
-						</article>
-					{:else if detailTab === "rows"}
-						<div class="schema-rows-tab">
-							<!-- <article class="schema-detail-card schema-detail-card--query-builder">
+							</div>
+							<div class="schema-detail-metrics">
+								<span class="schema-metric-chip">
+									<strong>{selectedTable.columnCount}</strong>
+									<span>columns</span>
+								</span>
+								<span class="schema-metric-chip">
+									<strong>{selectedTable.foreignKeyCount}</strong>
+									<span>outgoing refs</span>
+								</span>
+								<span class="schema-metric-chip">
+									<strong>{selectedTable.incomingForeignKeys.length}</strong>
+									<span>incoming refs</span>
+								</span>
+								<span class="schema-metric-chip">
+									<strong>{formatNumber(selectedTable.rowCount)}</strong>
+									<span>rows</span>
+								</span>
+							</div>
+						</div>
+
+						{#if detailTab === "columns"}
+							<article class="schema-detail-card schema-detail-card-exception">
+								<div class="schema-detail-card-head">
+									<div>
+										<h3>Columns</h3>
+										<p class="schema-section-note">Showing {visibleColumns.length} of {selectedTable.columns.length} columns in this table</p>
+									</div>
+									<div class="schema-card-tools">
+										<label class="schema-local-filter">
+											<span>Filter columns</span>
+											<input type="search" bind:value={columnFilter} placeholder="Type, Help, PrereqTech..." />
+										</label>
+										<span>{selectedTable.columns.length}</span>
+									</div>
+								</div>
+								{#if visibleColumns.length === 0}
+									<p class="schema-empty">No columns match the current column filter.</p>
+								{:else}
+									<div class="schema-column-list" role="list">
+										{#each visibleColumns as column (column.name)}
+											<div class="schema-column-row" role="listitem">
+												<div>
+													<strong>{column.name}</strong>
+													<p>{column.type || "untyped"}</p>
+												</div>
+												<div class="schema-column-flags">
+													{#if column.primaryKey}
+														<span class="schema-tag schema-tag--key">PK</span>
+													{/if}
+													{#if column.notNull}
+														<span class="schema-tag">NOT NULL</span>
+													{/if}
+													{#if column.defaultValue !== null && column.defaultValue !== undefined && column.defaultValue !== ""}
+														<span class="schema-tag">Default {column.defaultValue}</span>
+													{/if}
+												</div>
+											</div>
+										{/each}
+									</div>
+								{/if}
+							</article>
+						{:else if detailTab === "rows"}
+							<div class="schema-rows-tab">
+								<!-- <article class="schema-detail-card schema-detail-card--query-builder">
 								<div class="schema-detail-card-head">
 									<div>
 										<h3>SQL-style query builder</h3>
@@ -1604,228 +1617,230 @@
 								</div>
 							</article> -->
 
-							<div class="schema-rows-layout">
+								<div class="schema-rows-layout">
+									<article class="schema-detail-card schema-detail-card-exception">
+										<div class="schema-detail-card-head">
+											<div>
+												<h3>Row data</h3>
+												<p class="schema-section-note">
+													Showing {formatNumber(visibleRowEntries.length)} visible rows
+													{#if hasActiveSqlQuery}
+														· {formatNumber(queryResultCount)} query results
+													{/if}
+													· {formatNumber(selectedTable.rowCount)} total rows in the local snapshot
+													{#if activeRowSearchQuery && selectedMatchedRowCount}
+														· Match {selectedActiveMatchedRowDisplayIndex} of {selectedMatchedRowCount}
+													{/if}
+												</p>
+											</div>
+											<div class="schema-card-tools">
+												<label class="schema-local-filter">
+													<span>Quick filter rows</span>
+													<input type="search" bind:value={rowFilter} placeholder="archer, TECH_ARCHERY, TXT_KEY..." />
+												</label>
+												<div class="schema-row-toolbar">
+													{#if activeRowSearchQuery && selectedMatchedRowCount > 1}
+														<div class="schema-match-nav" aria-label="Row match navigation">
+															<button type="button" class="schema-section-toggle" onclick={goToPreviousMatch} disabled={!canGoToPreviousMatch}>Previous match</button>
+															<button type="button" class="schema-section-toggle" onclick={goToNextMatch} disabled={!canGoToNextMatch}>Next match</button>
+														</div>
+													{/if}
+													<!-- <span>{formatNumber(selectedTable.rowCount)}</span> -->
+												</div>
+											</div>
+										</div>
+										{#if visibleRowEntries.length === 0}
+											<p class="schema-empty">
+												{#if hasActiveSqlQuery && queryResultCount === 0}
+													No rows match the current SQL-style query.
+												{:else}
+													No rows match the current row filter.
+												{/if}
+											</p>
+										{:else}
+											<div class="schema-row-preview-wrap">
+												<table class="schema-row-preview-table">
+													<thead>
+														<tr>
+															<th scope="col" class="schema-row-index-head">#</th>
+															{#each rowPreviewColumns as columnName (columnName)}
+																<th scope="col" class:is-sticky-primary={isPrimaryStickyRowColumn(columnName)} style={stickyRowColumnStyle(columnName)}>{columnName}</th
+																>
+															{/each}
+														</tr>
+													</thead>
+													<tbody>
+														{#each visibleRowEntries as entry (`${selectedTable.name}-row-${entry.index}`)}
+															<tr
+																id={`schema-row-${selectedTable.id}-${entry.index}`}
+																class:is-row-match={selectedMatchedRowIndexSet.has(entry.index)}
+																class:is-row-selected={selectedInspectorRowEntry?.index === entry.index}
+																onclick={() => selectRow(entry.index)}
+															>
+																<td class="schema-row-index-cell">{entry.index + 1}</td>
+																{#each rowPreviewColumns as columnName (columnName)}
+																	<td
+																		class:is-sticky-primary={isPrimaryStickyRowColumn(columnName)}
+																		class:is-empty-cell={isEmptyCell(entry.row[columnName])}
+																		class:is-cell-match={isRowCellMatch(entry.row[columnName], activeRowSearchQuery)}
+																		title={formatCellValue(entry.row[columnName])}
+																		style={stickyRowColumnStyle(columnName)}
+																	>
+																		{#if selectedOutgoingForeignKeyByColumn.get(columnName) && !isEmptyCell(entry.row[columnName])}
+																			<button
+																				type="button"
+																				class="schema-cell-link"
+																				onclick={(event) => {
+																					event.stopPropagation();
+																					selectTable(selectedOutgoingForeignKeyByColumn.get(columnName).toTable);
+																				}}
+																			>
+																				{formatCellValue(entry.row[columnName])}
+																			</button>
+																		{:else}
+																			{formatCellValue(entry.row[columnName])}
+																		{/if}
+																	</td>
+																{/each}
+															</tr>
+														{/each}
+													</tbody>
+												</table>
+											</div>
+										{/if}
+									</article>
+
+									<article class="schema-detail-card schema-detail-card-inspector">
+										<div class="schema-detail-card-head">
+											<div>
+												<h3>Row inspector</h3>
+												<p class="schema-section-note">
+													{#if selectedInspectorRowEntry}
+														Selected row #{selectedInspectorRowEntry.index + 1} · {selectedInspectorFields.length} populated fields shown
+													{:else}
+														Choose a row to inspect its values
+													{/if}
+												</p>
+											</div>
+											<span>{selectedInspectorRowEntry ? selectedInspectorRowEntry.index + 1 : 0}</span>
+										</div>
+										{#if !selectedInspectorRowEntry}
+											<p class="schema-empty">No visible row is selected.</p>
+										{:else if selectedInspectorFields.length === 0}
+											<p class="schema-empty">This row only contains empty values in the current sparse snapshot.</p>
+										{:else}
+											<dl class="schema-row-inspector">
+												{#each selectedInspectorFields as field (field.name)}
+													<div>
+														<dt>{field.name}</dt>
+														<dd>
+															{#if field.link}
+																<button type="button" class="schema-inline-link" onclick={() => selectTable(field.link.toTable)}>{formatCellValue(field.value)}</button>
+															{:else}
+																<span>{formatCellValue(field.value)}</span>
+															{/if}
+														</dd>
+													</div>
+												{/each}
+											</dl>
+										{/if}
+									</article>
+								</div>
+							</div>
+						{:else if detailTab === "relationships"}
+							<div class="schema-detail-secondary-grid schema-detail-secondary-grid--relationships">
 								<article class="schema-detail-card schema-detail-card-exception">
 									<div class="schema-detail-card-head">
 										<div>
-											<h3>Row data</h3>
-											<p class="schema-section-note">
-												Showing {formatNumber(visibleRowEntries.length)} visible rows
-												{#if hasActiveSqlQuery}
-													· {formatNumber(queryResultCount)} query results
-												{/if}
-												· {formatNumber(selectedTable.rowCount)} total rows in the local snapshot
-												{#if activeRowSearchQuery && selectedMatchedRowCount}
-													· Match {selectedActiveMatchedRowDisplayIndex} of {selectedMatchedRowCount}
-												{/if}
-											</p>
+											<h3>Outgoing foreign keys</h3>
+											<p class="schema-section-note">Showing {visibleOutgoingForeignKeys.length} of {selectedTable.foreignKeys.length}</p>
 										</div>
-										<div class="schema-card-tools">
-											<label class="schema-local-filter">
-												<span>Quick filter rows</span>
-												<input type="search" bind:value={rowFilter} placeholder="archer, TECH_ARCHERY, TXT_KEY..." />
-											</label>
-											<div class="schema-row-toolbar">
-												{#if activeRowSearchQuery && selectedMatchedRowCount > 1}
-													<div class="schema-match-nav" aria-label="Row match navigation">
-														<button type="button" class="schema-section-toggle" onclick={goToPreviousMatch} disabled={!canGoToPreviousMatch}>Previous match</button>
-														<button type="button" class="schema-section-toggle" onclick={goToNextMatch} disabled={!canGoToNextMatch}>Next match</button>
-													</div>
-												{/if}
-												<!-- <span>{formatNumber(selectedTable.rowCount)}</span> -->
-											</div>
-										</div>
+										{#if hasExtraOutgoingForeignKeys}
+											<button type="button" class="schema-section-toggle" onclick={() => (outgoingExpanded = !outgoingExpanded)}>
+												{outgoingExpanded ? `Show first ${SECTION_LIMITS.outgoing}` : `Show all ${selectedTable.foreignKeys.length}`}
+											</button>
+										{:else}
+											<span>{selectedTable.foreignKeys.length}</span>
+										{/if}
 									</div>
-									{#if visibleRowEntries.length === 0}
-										<p class="schema-empty">
-											{#if hasActiveSqlQuery && queryResultCount === 0}
-												No rows match the current SQL-style query.
-											{:else}
-												No rows match the current row filter.
-											{/if}
-										</p>
+									{#if selectedTable.foreignKeys.length === 0}
+										<p class="schema-empty">No outgoing foreign keys in this snapshot.</p>
 									{:else}
-										<div class="schema-row-preview-wrap">
-											<table class="schema-row-preview-table">
-												<thead>
-													<tr>
-														<th scope="col" class="schema-row-index-head">#</th>
-														{#each rowPreviewColumns as columnName (columnName)}
-															<th scope="col" class:is-sticky-primary={isPrimaryStickyRowColumn(columnName)} style={stickyRowColumnStyle(columnName)}>{columnName}</th>
-														{/each}
-													</tr>
-												</thead>
-												<tbody>
-													{#each visibleRowEntries as entry (`${selectedTable.name}-row-${entry.index}`)}
-														<tr
-															id={`schema-row-${selectedTable.id}-${entry.index}`}
-															class:is-row-match={selectedMatchedRowIndexSet.has(entry.index)}
-															class:is-row-selected={selectedInspectorRowEntry?.index === entry.index}
-															onclick={() => selectRow(entry.index)}
-														>
-															<td class="schema-row-index-cell">{entry.index + 1}</td>
-															{#each rowPreviewColumns as columnName (columnName)}
-																<td
-																	class:is-sticky-primary={isPrimaryStickyRowColumn(columnName)}
-																	class:is-empty-cell={isEmptyCell(entry.row[columnName])}
-																	class:is-cell-match={isRowCellMatch(entry.row[columnName], activeRowSearchQuery)}
-																	title={formatCellValue(entry.row[columnName])}
-																	style={stickyRowColumnStyle(columnName)}
-																>
-																	{#if selectedOutgoingForeignKeyByColumn.get(columnName) && !isEmptyCell(entry.row[columnName])}
-																		<button
-																			type="button"
-																			class="schema-cell-link"
-																			onclick={(event) => {
-																				event.stopPropagation();
-																				selectTable(selectedOutgoingForeignKeyByColumn.get(columnName).toTable);
-																			}}
-																		>
-																			{formatCellValue(entry.row[columnName])}
-																		</button>
-																	{:else}
-																		{formatCellValue(entry.row[columnName])}
-																	{/if}
-																</td>
-															{/each}
-														</tr>
-													{/each}
-												</tbody>
-											</table>
-										</div>
+										<ul class="schema-link-list">
+											{#each visibleOutgoingForeignKeys as link, index (`${link.from}-${link.toTable}-${index}`)}
+												<li>
+													<strong>{link.from}</strong>
+													<span>references</span>
+													<button type="button" class="schema-inline-link" onclick={() => selectTable(link.toTable)}>{link.toTable}.{link.toColumn}</button>
+												</li>
+											{/each}
+										</ul>
 									{/if}
 								</article>
 
-								<article class="schema-detail-card schema-detail-card-inspector">
+								<article class="schema-detail-card schema-detail-card-exception">
 									<div class="schema-detail-card-head">
 										<div>
-											<h3>Row inspector</h3>
-											<p class="schema-section-note">
-												{#if selectedInspectorRowEntry}
-													Selected row #{selectedInspectorRowEntry.index + 1} · {selectedInspectorFields.length} populated fields shown
-												{:else}
-													Choose a row to inspect its values
-												{/if}
-											</p>
+											<h3>Incoming foreign keys</h3>
+											<p class="schema-section-note">Showing {visibleIncomingForeignKeys.length} of {selectedTable.incomingForeignKeys.length}</p>
 										</div>
-										<span>{selectedInspectorRowEntry ? selectedInspectorRowEntry.index + 1 : 0}</span>
+										{#if hasExtraIncomingForeignKeys}
+											<button type="button" class="schema-section-toggle" onclick={() => (incomingExpanded = !incomingExpanded)}>
+												{incomingExpanded ? `Show first ${SECTION_LIMITS.incoming}` : `Show all ${selectedTable.incomingForeignKeys.length}`}
+											</button>
+										{:else}
+											<span>{selectedTable.incomingForeignKeys.length}</span>
+										{/if}
 									</div>
-									{#if !selectedInspectorRowEntry}
-										<p class="schema-empty">No visible row is selected.</p>
-									{:else if selectedInspectorFields.length === 0}
-										<p class="schema-empty">This row only contains empty values in the current sparse snapshot.</p>
+									{#if selectedTable.incomingForeignKeys.length === 0}
+										<p class="schema-empty">No incoming references in this snapshot.</p>
 									{:else}
-										<dl class="schema-row-inspector">
-											{#each selectedInspectorFields as field (field.name)}
-												<div>
-													<dt>{field.name}</dt>
-													<dd>
-														{#if field.link}
-															<button type="button" class="schema-inline-link" onclick={() => selectTable(field.link.toTable)}>{formatCellValue(field.value)}</button>
-														{:else}
-															<span>{formatCellValue(field.value)}</span>
-														{/if}
-													</dd>
-												</div>
+										<ul class="schema-link-list">
+											{#each visibleIncomingForeignKeys as link, index (`${link.fromTable}-${link.fromColumn}-${index}`)}
+												<li>
+													<button type="button" class="schema-inline-link" onclick={() => selectTable(link.fromTable)}>{link.fromTable}.{link.fromColumn}</button>
+													<span>targets</span>
+													<strong>{selectedTable.name}.{link.toColumn}</strong>
+												</li>
 											{/each}
-										</dl>
+										</ul>
 									{/if}
 								</article>
 							</div>
-						</div>
-					{:else if detailTab === "relationships"}
-						<div class="schema-detail-secondary-grid schema-detail-secondary-grid--relationships">
+						{:else if detailTab === "companions"}
 							<article class="schema-detail-card schema-detail-card-exception">
 								<div class="schema-detail-card-head">
 									<div>
-										<h3>Outgoing foreign keys</h3>
-										<p class="schema-section-note">Showing {visibleOutgoingForeignKeys.length} of {selectedTable.foreignKeys.length}</p>
+										<h3>Companion tables</h3>
+										<p class="schema-section-note">Showing {visibleCompanionTables.length} of {selectedCompanionTables.length}</p>
 									</div>
-									{#if hasExtraOutgoingForeignKeys}
-										<button type="button" class="schema-section-toggle" onclick={() => (outgoingExpanded = !outgoingExpanded)}>
-											{outgoingExpanded ? `Show first ${SECTION_LIMITS.outgoing}` : `Show all ${selectedTable.foreignKeys.length}`}
+									{#if hasExtraCompanionTables}
+										<button type="button" class="schema-section-toggle" onclick={() => (companionsExpanded = !companionsExpanded)}>
+											{companionsExpanded ? `Show first ${SECTION_LIMITS.companions}` : `Show all ${selectedCompanionTables.length}`}
 										</button>
 									{:else}
-										<span>{selectedTable.foreignKeys.length}</span>
+										<span>{selectedCompanionTables.length}</span>
 									{/if}
 								</div>
-								{#if selectedTable.foreignKeys.length === 0}
-									<p class="schema-empty">No outgoing foreign keys in this snapshot.</p>
+								{#if selectedCompanionTables.length === 0}
+									<p class="schema-empty">No name-pattern companion tables matched this table.</p>
 								{:else}
-									<ul class="schema-link-list">
-										{#each visibleOutgoingForeignKeys as link, index (`${link.from}-${link.toTable}-${index}`)}
-											<li>
-												<strong>{link.from}</strong>
-												<span>references</span>
-												<button type="button" class="schema-inline-link" onclick={() => selectTable(link.toTable)}>{link.toTable}.{link.toColumn}</button>
-											</li>
+									<div class="schema-companion-grid">
+										{#each visibleCompanionTables as table (table.name)}
+											<button type="button" class="schema-companion-card" onclick={() => selectTable(table.name)}>
+												<strong>{table.name}</strong>
+												<span>{table.columnCount} cols · {table.foreignKeyCount} refs</span>
+											</button>
 										{/each}
-									</ul>
-								{/if}
-							</article>
-
-							<article class="schema-detail-card schema-detail-card-exception">
-								<div class="schema-detail-card-head">
-									<div>
-										<h3>Incoming foreign keys</h3>
-										<p class="schema-section-note">Showing {visibleIncomingForeignKeys.length} of {selectedTable.incomingForeignKeys.length}</p>
 									</div>
-									{#if hasExtraIncomingForeignKeys}
-										<button type="button" class="schema-section-toggle" onclick={() => (incomingExpanded = !incomingExpanded)}>
-											{incomingExpanded ? `Show first ${SECTION_LIMITS.incoming}` : `Show all ${selectedTable.incomingForeignKeys.length}`}
-										</button>
-									{:else}
-										<span>{selectedTable.incomingForeignKeys.length}</span>
-									{/if}
-								</div>
-								{#if selectedTable.incomingForeignKeys.length === 0}
-									<p class="schema-empty">No incoming references in this snapshot.</p>
-								{:else}
-									<ul class="schema-link-list">
-										{#each visibleIncomingForeignKeys as link, index (`${link.fromTable}-${link.fromColumn}-${index}`)}
-											<li>
-												<button type="button" class="schema-inline-link" onclick={() => selectTable(link.fromTable)}>{link.fromTable}.{link.fromColumn}</button>
-												<span>targets</span>
-												<strong>{selectedTable.name}.{link.toColumn}</strong>
-											</li>
-										{/each}
-									</ul>
 								{/if}
 							</article>
-						</div>
-					{:else if detailTab === "companions"}
-						<article class="schema-detail-card schema-detail-card-exception">
-							<div class="schema-detail-card-head">
-								<div>
-									<h3>Companion tables</h3>
-									<p class="schema-section-note">Showing {visibleCompanionTables.length} of {selectedCompanionTables.length}</p>
-								</div>
-								{#if hasExtraCompanionTables}
-									<button type="button" class="schema-section-toggle" onclick={() => (companionsExpanded = !companionsExpanded)}>
-										{companionsExpanded ? `Show first ${SECTION_LIMITS.companions}` : `Show all ${selectedCompanionTables.length}`}
-									</button>
-								{:else}
-									<span>{selectedCompanionTables.length}</span>
-								{/if}
-							</div>
-							{#if selectedCompanionTables.length === 0}
-								<p class="schema-empty">No name-pattern companion tables matched this table.</p>
-							{:else}
-								<div class="schema-companion-grid">
-									{#each visibleCompanionTables as table (table.name)}
-										<button type="button" class="schema-companion-card" onclick={() => selectTable(table.name)}>
-											<strong>{table.name}</strong>
-											<span>{table.columnCount} cols · {table.foreignKeyCount} refs</span>
-										</button>
-									{/each}
-								</div>
-							{/if}
-						</article>
-					{/if}
-				</section>
-			{/if}
-		</div>
-	</section>
+						{/if}
+					</section>
+				{/if}
+			</div>
+		</section>
+	{/if}
 
 	<!-- <section class="schema-panel schema-panel--snapshot">
 		<div class="schema-section-head">
@@ -1906,7 +1921,17 @@
 </section>
 
 <style>
+	:global(:root[data-theme="light"]) .schema-page {
+		--schema-bg: linear-gradient(180deg, rgba(231, 242, 252, 0.95) 0%, rgba(245, 248, 252, 0.98) 100%);
+		--schema-border: rgba(37, 67, 96, 0.16);
+		--schema-copy: rgba(32, 48, 62, 0.84);
+		--schema-highlight: #1c5a8f;
+		--schema-highlight-strong: #123a59;
+		--schema-panel: rgba(255, 255, 255, 0.96);
+	}
 	.schema-page {
+		display: grid;
+		gap: 1.15rem;
 		--schema-bg: linear-gradient(180deg, color-mix(in srgb, var(--page-background, #0f1014) 85%, #17304d 15%) 0%, color-mix(in srgb, var(--page-background, #0f1014) 92%, #08131f 8%) 100%);
 		--schema-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #35658c 28%);
 		--schema-copy: color-mix(in srgb, currentColor 80%, transparent);
@@ -1917,35 +1942,10 @@
 		--scrollbar-thumb: color-mix(in srgb, var(--schema-highlight) 78%, #08131f 22%);
 		--scrollbar-thumb-hover: color-mix(in srgb, var(--schema-highlight) 88%, white 12%);
 		--scrollbar-track: color-mix(in srgb, var(--schema-panel) 82%, #08131f 18%);
-		display: grid;
-		gap: 1.15rem;
-	}
-
-	.schema-hero,
-	.schema-panel {
-		background: var(--schema-panel);
-		box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
-		border: 1px solid var(--schema-border);
-		border-radius: 1.5rem;
-	}
-
-	.schema-hero,
-	.schema-panel {
-		padding-block: 1.3rem;
-		padding-inline: 1.3rem;
 	}
 
 	.schema-hero {
 		background: var(--schema-bg);
-	}
-
-	.schema-eyebrow,
-	.schema-kicker {
-		color: var(--schema-highlight);
-		letter-spacing: 0.16em;
-		margin: 0 0 0.45rem;
-		font-size: 0.76rem;
-		text-transform: uppercase;
 	}
 
 	.schema-hero h1,
@@ -1968,114 +1968,89 @@
 		line-height: 1.45;
 	}
 
-	.schema-filter-group,
-	.schema-table-tags,
-	.schema-column-flags {
-		display: flex;
-		gap: 0.55rem;
-		flex-wrap: wrap;
-	}
-
-	.schema-link,
-	.schema-inline-link,
-	.schema-filter-chip,
-	.schema-companion-card,
-	.schema-quick-card,
-	.schema-table-card {
-		transition:
-			transform 140ms ease,
-			border-color 140ms ease,
-			background-color 140ms ease;
-	}
-
-	.schema-link,
-	.schema-inline-link {
-		color: var(--schema-highlight-strong);
-		text-decoration: none;
-	}
-
-	.schema-link {
-		display: inline-flex;
-		background: rgba(255, 255, 255, 0.04);
+	.schema-hero,
+	.schema-panel {
+		background: var(--schema-panel);
+		box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
 		border: 1px solid var(--schema-border);
-		border-radius: 999px;
-		padding-block: 0.75rem;
-		padding-inline: 1rem;
-		align-items: center;
+		border-radius: 1.5rem;
+	}
 
-		&:hover {
-			color: white;
-		}
+	.schema-hero,
+	.schema-panel {
+		padding-block: 1.3rem;
+		padding-inline: 1.3rem;
+	}
+
+	.schema-table-card p,
+	.schema-quick-card p,
+	.schema-link-list span,
+	.schema-column-row p,
+	.schema-table-match-list li {
+		font-size: 0.9rem;
+		text-align: left;
+		margin-inline: 0;
+		margin-block-start: 0.18rem;
+		word-break: break-word;
+	}
+
+	.schema-eyebrow,
+	.schema-kicker {
+		color: var(--schema-highlight);
+		text-transform: uppercase;
+		font-size: 0.76rem;
+		letter-spacing: 0.16em;
+		margin-inline: 0;
+		margin-block-start: 0;
+		margin-block-end: 0.45rem;
+	}
+
+	code {
+		font-family: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+		font-size: 0.92em;
+	}
+
+	.schema-row-inspector div {
+		display: grid;
+		gap: 0.08rem;
+		border-block-start: 1px solid rgba(255, 255, 255, 0.08);
+		padding-block-start: 0.32rem;
+	}
+
+	.schema-row-inspector div:first-child {
+		border-block-start: none;
+		padding-block-start: 0;
 	}
 
 	.schema-section-head {
 		margin-block-end: 0.9rem;
 	}
 
-	.schema-quick-grid {
-		display: grid;
-		gap: 0.8rem;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+	.schema-companion-card span {
+		display: block;
+		color: var(--schema-copy);
+		font-size: 0.84rem;
+		margin-block-start: 0.25rem;
 	}
 
-	.schema-quick-card,
-	.schema-companion-card,
-	.schema-table-card,
-	.schema-filter-chip,
-	.schema-inline-link {
-		font: inherit;
+	.schema-detail-card-inspector .schema-detail-card-head > span {
+		font-size: 0.82rem;
 	}
 
-	.schema-quick-card,
-	.schema-companion-card,
-	.schema-table-card,
-	.schema-filter-chip,
-	.schema-inline-link {
-		background: rgba(255, 255, 255, 0.03);
-		border: 1px solid var(--schema-border);
-		cursor: pointer;
+	.schema-detail-metrics .schema-metric-chip span {
+		color: var(--schema-copy);
+		font-size: 0.82rem;
+		line-height: 1.1;
 	}
 
-	.schema-quick-card,
-	.schema-companion-card,
-	.schema-table-card {
-		display: grid;
-		gap: 0.55rem;
-		min-inline-size: 0;
-		align-content: start;
-		justify-items: start;
-		border-radius: 1.1rem;
-		padding-block: 0.85rem;
-		padding-inline: 0.9rem;
-		text-align: left;
-	}
-
-	.schema-quick-card.is-active,
-	.schema-table-card.is-active,
-	.schema-filter-chip.is-active,
-	.schema-companion-card:hover,
-	.schema-quick-card:hover,
-	.schema-table-card:hover {
-		background: rgba(141, 199, 255, 0.1);
-		border-color: color-mix(in srgb, var(--schema-highlight) 70%, white 30%);
-		transform: translateY(-1px);
-	}
-
-	.schema-quick-head,
-	.schema-table-card-head,
-	.schema-detail-card-head,
-	.schema-list-head,
-	.schema-column-row,
-	.schema-link-list li {
-		display: flex;
-		gap: 0.8rem;
-		justify-content: space-between;
-	}
-
-	.schema-quick-head,
-	.schema-table-card-head {
-		inline-size: 100%;
-		align-items: start;
+	.schema-filter-chip span {
+		inline-size: fit-content;
+		font-size: 0.8rem;
+		background: rgba(255, 255, 255, 0.08);
+		border-radius: 999px;
+		padding-block: 0.45rem;
+		padding-inline: 0.6rem;
+		text-box: trim-both cap alphabetic;
 	}
 
 	.schema-quick-head span,
@@ -2087,123 +2062,9 @@
 		white-space: nowrap;
 	}
 
-	.schema-quick-card h3,
-	.schema-table-card h3,
-	.schema-detail-card h3,
-	.schema-inline-link,
-	.schema-companion-card strong {
-		font-size: clamp(1rem, 1.4vw, 1.18rem);
-		line-height: 1.12;
-		overflow-wrap: anywhere;
-		word-break: break-word;
-		text-align: left;
-	}
-
-	.schema-table-card p,
-	.schema-quick-card p,
-	.schema-link-list span,
-	.schema-column-row p,
-	.schema-table-match-list li {
-		word-break: break-word;
-		margin-block-start: 0.18rem;
-		margin-inline: 0;
-		font-size: 0.9rem;
-		text-align: left;
-	}
-
-	.schema-table-meta {
-		display: flex;
-		gap: 0.35rem 0.55rem;
-		color: var(--schema-copy);
-		margin-block-start: 0.18rem;
-		flex-wrap: wrap;
-		font-size: 0.84rem;
-	}
-
-	.schema-table-meta span {
-		white-space: nowrap;
-	}
-
-	.schema-table-match-list {
-		display: grid;
-		gap: 0.22rem;
-		list-style: none;
-		color: var(--schema-copy);
-		padding: 0;
-		margin-block-end: 0;
-		margin-block-start: 0.35rem;
-		margin-inline: 0;
-	}
-
-	.schema-empty-state {
-		display: grid;
-		gap: 0.6rem;
-		align-content: start;
-		justify-items: start;
-	}
-
-	.schema-empty-note {
-		color: var(--schema-copy);
-		margin: 0;
-		font-size: 0.86rem;
-	}
-
-	.schema-empty-actions {
-		display: flex;
-		gap: 0.5rem;
-		flex-wrap: wrap;
-	}
-
-	.schema-toolbar {
-		display: grid;
-		gap: 0.8rem;
-		margin-block-end: 0.85rem;
-	}
-
-	.schema-toolbar-primary,
-	.schema-toolbar-secondary {
-		display: flex;
-		gap: 0.8rem;
-	}
-
-	.schema-toolbar-primary {
-		align-items: end;
-		grid-template-columns: minmax(0, 1fr) minmax(13rem, 15rem);
-	}
-
-	.schema-toolbar-label {
-		color: var(--schema-highlight);
-		letter-spacing: 0.08em;
-		font-size: 0.78rem;
-		text-transform: uppercase;
-	}
-
-	.schema-search-field {
-		inline-size: 100%;
-		display: grid;
-		gap: 0.45rem;
-	}
-
 	.schema-search-field span {
 		color: var(--schema-copy);
 		font-size: 0.9rem;
-	}
-
-	.schema-search-field input {
-		inline-size: 100%;
-		color: inherit;
-		background: rgba(0, 0, 0, 0.24);
-		border: 1px solid var(--schema-border);
-		border-radius: 0.95rem;
-		padding-block: 0.82rem;
-		padding-inline: 0.9rem;
-	}
-
-	.schema-sort-field,
-	.schema-local-filter,
-	.schema-recent-group {
-		display: grid;
-		gap: 0.45rem;
 	}
 
 	.schema-sort-field span,
@@ -2212,86 +2073,75 @@
 		font-size: 0.8rem;
 	}
 
-	.schema-sort-field select,
-	.schema-local-filter input {
-		inline-size: 100%;
-		color: inherit;
-		font: inherit;
-		background: rgba(0, 0, 0, 0.24);
-		border: 1px solid var(--schema-border);
-		border-radius: 0.95rem;
-		padding-block: 0.75rem;
-		padding-inline: 0.85rem;
+	.schema-table-meta span {
+		white-space: nowrap;
 	}
 
-	.schema-mode-group,
-	.schema-recent-list {
+	.schema-quick-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.8rem;
+	}
+
+	.schema-quick-head,
+	.schema-table-card-head {
+		inline-size: 100%;
+		align-items: start;
+	}
+
+	.schema-quick-head,
+	.schema-table-card-head,
+	.schema-detail-card-head,
+	.schema-list-head,
+	.schema-column-row,
+	.schema-link-list li {
 		display: flex;
-		gap: 0.55rem;
-		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 0.8rem;
+	}
+
+	.schema-detail-card-inspector .schema-detail-card-head h3 {
+		font-size: 1.05rem;
+		line-height: 1.1;
+	}
+
+	.schema-quick-card h3,
+	.schema-table-card h3,
+	.schema-detail-card h3,
+	.schema-inline-link,
+	.schema-companion-card strong {
+		font-size: clamp(1rem, 1.4vw, 1.18rem);
+		line-height: 1.12;
+		text-align: left;
+		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
+
+	.schema-toolbar {
+		display: grid;
+		gap: 0.8rem;
+		margin-block-end: 0.85rem;
+	}
+
+	.schema-toolbar-primary {
+		display: grid;
+		grid-template-columns: auto minmax(20rem, 1fr) minmax(13rem, 15rem);
+		align-items: end;
+		gap: 0.8rem;
+	}
+
+	.schema-toolbar-secondary {
+		display: flex;
+		gap: 0.8rem;
 	}
 
 	.schema-mode-group {
 		display: inline-flex;
+		flex-wrap: nowrap;
 		gap: 0;
 		background: rgba(255, 255, 255, 0.03);
 		border: 1px solid var(--schema-border);
 		border-radius: 999px;
-		flex-wrap: nowrap;
-	}
-
-	.schema-mode-group:has(.schema-filter-chip--scope) {
-		inline-size: fit-content;
-	}
-
-	.schema-filter-chip--scope {
-		background: transparent;
-		border: none;
-		border-radius: 0;
-		padding-block: 0.5rem;
-		padding-inline: 0.85rem;
-		border-inline-end: 1px solid var(--schema-border);
-		transform: none;
-
-		&:first-child {
-			border-radius: 999px 0 0 999px;
-		}
-
-		&:last-child {
-			border-radius: 0 999px 999px 0;
-			border-inline-end: none;
-		}
-
-		&:hover {
-			background: rgba(141, 199, 255, 0.08);
-			border-color: transparent;
-			transform: none;
-		}
-
-		&.is-active {
-			background: rgba(141, 199, 255, 0.16);
-			border-color: transparent;
-			transform: none;
-		}
-	}
-
-	.schema-filter-chip {
-		display: inline-flex;
-		gap: 0.5rem;
-		border-radius: 999px;
-		padding-block: 0.5rem;
-		padding-inline: 0.75rem;
-		align-items: center;
-		font-size: 0.88rem;
-	}
-
-	.schema-filter-chip span {
-		inline-size: fit-content;
-		background: rgba(255, 255, 255, 0.08);
-		border-radius: 999px;
-		padding: 0.45rem 0.6rem;
-		font-size: 0.8rem;
-		text-box: trim-both cap alphabetic;
 	}
 
 	.schema-mode-group > .schema-filter-chip--scope {
@@ -2307,49 +2157,166 @@
 		border-inline-end: none;
 	}
 
-	.schema-filter-chip--toggle {
-		background: transparent;
-		border: 1px solid transparent;
+	.schema-recent-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.55rem;
+	}
+
+	.schema-mode-group:has(.schema-filter-chip--scope) {
+		inline-size: fit-content;
+	}
+
+	:global(:root[data-theme="light"]) .schema-link,
+	:global(:root[data-theme="light"]) .schema-list-panel,
+	:global(:root[data-theme="light"]) .schema-detail-card,
+	:global(:root[data-theme="light"]) .schema-search-field input,
+	:global(:root[data-theme="light"]) .schema-sort-field select,
+	:global(:root[data-theme="light"]) .schema-local-filter input,
+	:global(:root[data-theme="light"]) .schema-table-card,
+	:global(:root[data-theme="light"]) .schema-quick-card,
+	:global(:root[data-theme="light"]) .schema-filter-chip,
+	:global(:root[data-theme="light"]) .schema-companion-card,
+	:global(:root[data-theme="light"]) .schema-inline-link--chip {
+		background: rgba(255, 255, 255, 0.82);
+	}
+
+	.schema-search-field {
+		inline-size: 100%;
+		display: grid;
+		gap: 0.45rem;
+	}
+
+	.schema-search-field input {
+		inline-size: 100%;
+		color: inherit;
+		background: rgba(0, 0, 0, 0.24);
+		border: 1px solid var(--schema-border);
+		border-radius: 0.95rem;
+		padding-block: 0.82rem;
+		padding-inline: 0.9rem;
+	}
+
+	.schema-sort-field select,
+	.schema-local-filter input {
+		inline-size: 100%;
+		color: inherit;
+		font: inherit;
+		background: rgba(0, 0, 0, 0.24);
+		border: 1px solid var(--schema-border);
+		border-radius: 0.95rem;
+		padding-block: 0.75rem;
+		padding-inline: 0.85rem;
+	}
+
+	.schema-sort-field,
+	.schema-local-filter,
+	.schema-recent-group {
+		display: grid;
+		gap: 0.45rem;
+	}
+
+	.schema-filter-group,
+	.schema-table-tags,
+	.schema-column-flags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.55rem;
+	}
+
+	.schema-toolbar-label {
+		color: var(--schema-highlight);
+		text-transform: uppercase;
+		font-size: 0.78rem;
+		letter-spacing: 0.08em;
+	}
+
+	.schema-inline-link {
+		color: var(--schema-highlight-strong);
+		font: inherit;
+		text-align: left;
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 0;
+
+		&:hover {
+			color: white;
+		}
+	}
+
+	.schema-link,
+	.schema-inline-link,
+	.schema-inline-link--chip {
+		color: var(--schema-highlight-strong);
+		text-decoration: none;
+	}
+
+	.schema-link,
+	.schema-inline-link--chip,
+	.schema-filter-chip,
+	.schema-companion-card,
+	.schema-quick-card,
+	.schema-table-card {
+		transition:
+			transform 140ms ease,
+			border-color 140ms ease,
+			background-color 140ms ease;
+	}
+
+	.schema-quick-card,
+	.schema-companion-card,
+	.schema-table-card,
+	.schema-filter-chip,
+	.schema-inline-link--chip {
+		font: inherit;
+	}
+
+	.schema-quick-card,
+	.schema-companion-card,
+	.schema-table-card,
+	.schema-filter-chip,
+	.schema-inline-link--chip {
+		background: rgba(255, 255, 255, 0.03);
+		border: 1px solid var(--schema-border);
+		cursor: pointer;
+	}
+
+	.schema-inline-link--chip {
+		display: inline-flex;
+		align-items: center;
+		background: rgba(255, 255, 255, 0.04);
+		border: 1px solid var(--schema-border);
 		border-radius: 999px;
 		padding-block: 0.42rem;
 		padding-inline: 0.7rem;
-		transform: none;
-
-		&:hover {
-			background: rgba(141, 199, 255, 0.08);
-			border-color: transparent;
-			transform: none;
-		}
-
-		&.is-active {
-			background: rgba(141, 199, 255, 0.14);
-			border-color: color-mix(in srgb, var(--schema-highlight) 70%, white 30%);
-			transform: none;
-		}
-
-		& span {
-			background: rgba(255, 255, 255, 0.06);
-		}
-
-		&.is-active span {
-			background: rgba(141, 199, 255, 0.18);
-		}
 	}
 
 	.schema-explorer-grid {
 		display: grid;
-		gap: 0.85rem;
 		grid-template-columns: minmax(17rem, 20rem) minmax(0, 1fr);
+		gap: 0.85rem;
+	}
+
+	.schema-list-panel {
+		position: sticky;
+		inset-block-start: 1rem;
+		min-block-size: 0;
+		max-block-size: calc(100dvh - 2rem);
+		display: flex;
+		flex-direction: column;
+		align-self: stretch;
+		overflow: hidden;
 	}
 
 	.schema-list-panel,
 	.schema-detail-card {
 		display: flex;
+		flex-direction: column;
 		gap: 0.5rem;
 		background: rgba(255, 255, 255, 0.025);
 		border: 1px solid var(--schema-border);
 		border-radius: 1.2rem;
-		flex-direction: column;
 	}
 
 	.schema-list-panel,
@@ -2358,15 +2325,12 @@
 		padding-inline: 0.9rem;
 	}
 
-	.schema-list-panel {
-		position: sticky;
-		max-block-size: calc(100dvh - 2rem);
+	.schema-table-list {
 		min-block-size: 0;
-		display: flex;
-		overflow: hidden;
-		align-self: stretch;
-		flex-direction: column;
-		inset-block-start: 1rem;
+		flex: 1 1 auto;
+		align-content: start;
+		padding-inline-end: 0.15rem;
+		overflow: auto;
 	}
 
 	.schema-table-list,
@@ -2375,35 +2339,91 @@
 		gap: 0.5rem;
 	}
 
-	.schema-table-list {
-		min-block-size: 0;
-		flex: 1 1 auto;
-		padding-inline-end: 0.15rem;
-		overflow: auto;
+	.schema-empty-state {
+		display: grid;
+		justify-items: start;
 		align-content: start;
+		gap: 0.6rem;
 	}
 
-	.schema-column-list {
-		max-block-size: 44rem;
-		padding-inline-end: 0.15rem;
-		overflow: auto;
+	.schema-empty-note {
+		color: var(--schema-copy);
+		font-size: 0.86rem;
+		margin: 0;
+	}
+
+	.schema-empty-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.schema-table-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem 0.55rem;
+		color: var(--schema-copy);
+		font-size: 0.84rem;
+		margin-block-start: 0.18rem;
+	}
+
+	.schema-metric-chip,
+	.schema-tag {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.74rem;
+		background: rgba(255, 255, 255, 0.09);
+		border-radius: 0.5rem;
+		padding-block: 0.28rem;
+		padding-inline: 0.52rem;
+	}
+
+	.schema-table-match-list {
+		display: grid;
+		gap: 0.22rem;
+		color: var(--schema-copy);
+		padding: 0;
+		margin-inline: 0;
+		margin-block-start: 0.35rem;
+		margin-block-end: 0;
+		list-style: none;
+	}
+
+	.schema-column-row,
+	.schema-link-list li {
+		align-items: start;
+		border-block-start: 1px solid rgba(255, 255, 255, 0.08);
+		padding-block-start: 0.45rem;
+	}
+
+	.schema-column-row:first-child,
+	.schema-link-list li:first-child {
+		border-block-start: none;
+		padding-block-start: 0;
+	}
+
+	.schema-link-list li {
+		display: grid;
+		grid-template-columns: minmax(0, 1.1fr) auto minmax(0, 1fr);
+		align-items: start;
 	}
 
 	.schema-detail-panel {
 		display: flex;
-		gap: 0.85rem;
 		flex-direction: column;
+		gap: 0.85rem;
 	}
 
 	.schema-detail-hero {
 		display: flex;
+		justify-content: space-between;
 		gap: 0.8rem;
 		background: linear-gradient(135deg, rgba(141, 199, 255, 0.12), rgba(255, 255, 255, 0.02));
 		border: 1px solid var(--schema-border);
 		border-radius: 1.2rem;
 		padding-block: 0.9rem;
 		padding-inline: 1rem;
-		justify-content: space-between;
 	}
 
 	.schema-detail-hero-copy {
@@ -2416,112 +2436,31 @@
 		gap: 0.35rem;
 	}
 
-	.schema-detail-actions {
-		display: flex;
-		gap: 0.65rem;
-		align-items: center;
-		flex-wrap: wrap;
-	}
-
-	.schema-detail-tabs {
-		display: flex;
-		gap: 0.5rem;
-		flex-wrap: wrap;
-	}
-
-	.schema-tab-button {
-		color: var(--schema-copy);
-		font: inherit;
-		background: rgba(255, 255, 255, 0.04);
-		border: 1px solid var(--schema-border);
-		border-radius: 999px;
-		padding-block: 0.46rem;
-		padding-inline: 0.78rem;
-		transition:
-			transform 140ms ease,
-			border-color 140ms ease,
-			background-color 140ms ease,
-			color 140ms ease;
-		cursor: pointer;
-	}
-
-	.schema-tab-button.is-active,
-	.schema-tab-button:hover {
-		color: var(--schema-highlight-strong);
-		background: rgba(141, 199, 255, 0.1);
-		border-color: color-mix(in srgb, var(--schema-highlight) 70%, white 30%);
-	}
-
-	.schema-detail-metrics {
-		display: flex;
-		gap: 0.55rem;
-		align-self: start;
-		flex-wrap: wrap;
-	}
-
-	.schema-metric-chip,
-	.schema-tag {
-		display: inline-flex;
-		gap: 0.35rem;
-		background: rgba(255, 255, 255, 0.09);
-		border-radius: 0.5rem;
-		padding-block: 0.28rem;
-		padding-inline: 0.52rem;
-		align-items: center;
+	.schema-detail-card-inspector .schema-section-note {
 		font-size: 0.74rem;
-	}
-
-	.schema-detail-metrics .schema-metric-chip {
-		background: rgba(255, 255, 255, 0.06);
-		border: 1px solid rgba(255, 255, 255, 0.08);
-		padding-block: 0.52rem;
-		padding-inline: 0.78rem;
-		font-size: 0.82rem;
-	}
-
-	.schema-detail-metrics .schema-metric-chip strong {
-		color: var(--schema-highlight-strong);
-		line-height: 1.1;
-		font-size: 0.98rem;
-	}
-
-	.schema-detail-metrics .schema-metric-chip span {
-		color: var(--schema-copy);
-		line-height: 1.1;
-		font-size: 0.82rem;
-	}
-
-	.schema-tag--key {
-		color: var(--schema-highlight-strong);
-		background: rgba(141, 199, 255, 0.14);
-	}
-
-	.schema-detail-secondary-grid {
-		display: grid;
-		gap: 0.85rem;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-	}
-
-	.schema-detail-secondary-grid--relationships {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	.schema-detail-card-head {
-		align-items: start;
-	}
-
-	.schema-card-tools {
-		display: grid;
-		gap: 0.6rem;
-		justify-items: end;
+		line-height: 1.25;
+		margin-block-start: 0.1rem;
 	}
 
 	.schema-section-note {
 		color: var(--schema-copy);
-		margin-block-end: 0;
-		margin-block-start: 0.2rem;
-		margin-inline: 0;
 		font-size: 0.8rem;
+		margin-inline: 0;
+		margin-block-start: 0.2rem;
+		margin-block-end: 0;
+	}
+
+	.schema-detail-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.65rem;
+	}
+
+	.schema-detail-tabs {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
 	}
 
 	.schema-section-toggle {
@@ -2554,19 +2493,56 @@
 		}
 	}
 
-	.schema-row-toolbar {
+	.schema-detail-metrics {
 		display: flex;
-		gap: 0.55rem;
-		align-items: center;
 		flex-wrap: wrap;
-		justify-content: flex-end;
+		align-self: start;
+		gap: 0.55rem;
 	}
 
-	.schema-match-nav {
-		display: flex;
+	.schema-detail-metrics .schema-metric-chip {
+		font-size: 0.82rem;
+		background: rgba(255, 255, 255, 0.06);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		padding-block: 0.52rem;
+		padding-inline: 0.78rem;
+	}
+
+	.schema-detail-metrics .schema-metric-chip strong {
+		color: var(--schema-highlight-strong);
+		font-size: 0.98rem;
+		line-height: 1.1;
+	}
+
+	.schema-detail-card-exception {
+		background: none;
+		border: none;
+		border-radius: 0;
+	}
+
+	.schema-detail-card-head {
+		align-items: start;
+	}
+
+	.schema-detail-card-inspector .schema-detail-card-head {
 		gap: 0.45rem;
-		flex-wrap: wrap;
-		justify-content: flex-end;
+	}
+
+	.schema-card-tools {
+		display: grid;
+		justify-items: end;
+		gap: 0.6rem;
+	}
+
+	.schema-column-list {
+		max-block-size: 44rem;
+		padding-inline-end: 0.15rem;
+		overflow: auto;
+	}
+
+	.schema-tag--key {
+		color: var(--schema-highlight-strong);
+		background: rgba(141, 199, 255, 0.14);
 	}
 
 	.schema-rows-tab {
@@ -2576,110 +2552,40 @@
 
 	.schema-rows-layout {
 		display: grid;
-		gap: 0.85rem;
 		grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
+		gap: 0.85rem;
 	}
 
-	.schema-column-row,
-	.schema-link-list li {
-		padding-block-start: 0.45rem;
-		align-items: start;
-		border-block-start: 1px solid rgba(255, 255, 255, 0.08);
-	}
-
-	.schema-column-row:first-child,
-	.schema-link-list li:first-child {
-		padding-block-start: 0;
-		border-block-start: none;
-	}
-
-	.schema-link-list {
-		display: grid;
-		gap: 0.5rem;
-		list-style: none;
-		padding-block-start: 0.5rem;
-		padding-inline: 0;
-		margin: 0;
-	}
-
-	.schema-link-list li {
-		display: grid;
-		align-items: start;
-		grid-template-columns: minmax(0, 1.1fr) auto minmax(0, 1fr);
-	}
-
-	.schema-inline-link {
-		background: none;
-		border: none;
-		padding: 0;
-		text-align: left;
-
-		&:hover {
-			color: white;
-		}
-	}
-
-	.schema-inline-link--chip {
-		display: inline-flex;
-		background: rgba(255, 255, 255, 0.04);
-		border: 1px solid var(--schema-border);
-		border-radius: 999px;
-		padding-block: 0.42rem;
-		padding-inline: 0.7rem;
+	.schema-row-toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
 		align-items: center;
+		gap: 0.55rem;
+	}
+
+	.schema-match-nav {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 0.45rem;
 	}
 
 	.schema-row-preview-wrap {
-		--schema-sticky-primary-width: 20rem;
 		max-block-size: 44rem;
 		background: rgba(0, 0, 0, 0.18);
 		border: 1px solid rgba(255, 255, 255, 0.08);
 		border-radius: 1rem;
 		overflow: auto;
+		--schema-sticky-primary-width: 20rem;
 	}
 
 	.schema-row-preview-table {
 		inline-size: max-content;
 		min-inline-size: 100%;
+		font-size: 0.83rem;
 		border-collapse: separate;
 		border-spacing: 0;
-		font-size: 0.83rem;
-	}
-
-	.schema-row-preview-table th,
-	.schema-row-preview-table td {
-		max-width: 13rem;
-		white-space: nowrap;
-		padding-block: 0.55rem;
-		padding-inline: 0.7rem;
-		overflow: hidden;
-		border-block-end: 1px solid rgba(255, 255, 255, 0.08);
-		text-align: left;
-		text-overflow: ellipsis;
-	}
-
-	.schema-row-preview-table thead th {
-		position: sticky;
-		z-index: 2;
-		color: var(--schema-highlight-strong);
-		background: color-mix(in srgb, var(--schema-panel) 88%, #102236 12%);
-		inset-block-start: 0;
-	}
-
-	.schema-row-index-head,
-	.schema-row-index-cell {
-		inline-size: 3.2rem;
-		min-inline-size: 3.2rem;
-	}
-
-	.schema-row-preview-table thead th.is-sticky-primary,
-	.schema-row-preview-table tbody td.is-sticky-primary {
-		position: sticky;
-		inset-inline-start: var(--schema-sticky-left);
-	}
-
-	.schema-row-preview-table thead th.is-sticky-primary {
-		z-index: 3;
 	}
 
 	.schema-row-preview-table tbody td.is-sticky-primary {
@@ -2687,23 +2593,24 @@
 		background: color-mix(in srgb, var(--schema-panel) 92%, #0a1622 8%);
 	}
 
-	.schema-row-preview-table th.is-sticky-primary,
-	.schema-row-preview-table td.is-sticky-primary {
-		inline-size: var(--schema-sticky-primary-width);
-		max-inline-size: var(--schema-sticky-primary-width);
-		min-inline-size: var(--schema-sticky-primary-width);
+	.schema-row-preview-table tbody tr {
+		cursor: pointer;
+	}
+
+	.schema-row-preview-table tbody tr:last-child td {
+		border-block-end: none;
 	}
 
 	.schema-row-preview-table tbody tr.is-row-match td {
 		background: rgba(141, 199, 255, 0.08);
 	}
 
-	.schema-row-preview-table tbody tr.is-row-selected td {
-		background: rgba(141, 199, 255, 0.14);
-	}
-
 	.schema-row-preview-table tbody tr.is-row-match td.is-sticky-primary {
 		background: color-mix(in srgb, var(--schema-panel) 78%, #19344f 22%);
+	}
+
+	.schema-row-preview-table tbody tr.is-row-selected td {
+		background: rgba(141, 199, 255, 0.14);
 	}
 
 	.schema-row-preview-table tbody tr.is-row-selected td.is-sticky-primary {
@@ -2716,17 +2623,52 @@
 		box-shadow: inset 0 0 0 1px rgba(141, 199, 255, 0.24);
 	}
 
-	.schema-row-preview-table tbody tr:last-child td {
-		border-block-end: none;
-	}
-
 	.schema-row-preview-table td.is-empty-cell {
 		color: color-mix(in srgb, currentColor 54%, transparent);
 		font-style: italic;
 	}
 
-	.schema-row-preview-table tbody tr {
-		cursor: pointer;
+	.schema-row-preview-table th,
+	.schema-row-preview-table td {
+		max-width: 13rem;
+		white-space: nowrap;
+		text-align: left;
+		border-block-end: 1px solid rgba(255, 255, 255, 0.08);
+		padding-block: 0.55rem;
+		padding-inline: 0.7rem;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.schema-row-preview-table th.is-sticky-primary,
+	.schema-row-preview-table td.is-sticky-primary {
+		inline-size: var(--schema-sticky-primary-width);
+		min-inline-size: var(--schema-sticky-primary-width);
+		max-inline-size: var(--schema-sticky-primary-width);
+	}
+
+	.schema-row-preview-table thead th {
+		position: sticky;
+		z-index: 2;
+		inset-block-start: 0;
+		color: var(--schema-highlight-strong);
+		background: color-mix(in srgb, var(--schema-panel) 88%, #102236 12%);
+	}
+
+	.schema-row-preview-table thead th.is-sticky-primary {
+		z-index: 3;
+	}
+
+	.schema-row-preview-table thead th.is-sticky-primary,
+	.schema-row-preview-table tbody td.is-sticky-primary {
+		position: sticky;
+		inset-inline-start: var(--schema-sticky-left);
+	}
+
+	.schema-row-index-head,
+	.schema-row-index-cell {
+		inline-size: 3.2rem;
+		min-inline-size: 3.2rem;
 	}
 
 	.schema-cell-link {
@@ -2742,6 +2684,14 @@
 		}
 	}
 
+	.schema-detail-card-inspector {
+		position: sticky;
+		inset-block-start: 1rem;
+		min-block-size: 0;
+		max-block-size: calc(100dvh - 2rem);
+		overflow: hidden;
+	}
+
 	.schema-row-inspector {
 		min-block-size: 0;
 		display: grid;
@@ -2751,82 +2701,176 @@
 		overflow: auto;
 	}
 
-	.schema-row-inspector div {
-		display: grid;
-		gap: 0.08rem;
-		padding-block-start: 0.32rem;
-		border-block-start: 1px solid rgba(255, 255, 255, 0.08);
-	}
-
-	.schema-row-inspector div:first-child {
-		padding-block-start: 0;
-		border-block-start: none;
+	.schema-row-inspector dd {
+		font-size: 0.88rem;
+		line-height: 1.2;
+		margin: 0;
+		overflow-wrap: anywhere;
+		word-break: break-word;
 	}
 
 	.schema-row-inspector dt {
 		color: var(--schema-copy);
-		letter-spacing: 0.02em;
-		line-height: 1.15;
 		font-size: 0.72rem;
+		line-height: 1.15;
+		letter-spacing: 0.02em;
 	}
 
-	.schema-row-inspector dd {
-		line-height: 1.2;
-		overflow-wrap: anywhere;
-		word-break: break-word;
+	.schema-detail-secondary-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.85rem;
+	}
+
+	.schema-detail-secondary-grid--relationships {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.schema-link-list {
+		display: grid;
+		gap: 0.5rem;
+		padding-inline: 0;
+		padding-block-start: 0.5rem;
 		margin: 0;
-		font-size: 0.88rem;
-	}
-
-	.schema-detail-card-exception {
-		background: none;
-		border: none;
-		border-radius: 0;
-	}
-
-	.schema-detail-card-inspector .schema-detail-card-head {
-		gap: 0.45rem;
-	}
-
-	.schema-detail-card-inspector .schema-detail-card-head h3 {
-		line-height: 1.1;
-		font-size: 1.05rem;
-	}
-
-	.schema-detail-card-inspector .schema-section-note {
-		line-height: 1.25;
-		margin-block-start: 0.1rem;
-		font-size: 0.74rem;
-	}
-
-	.schema-detail-card-inspector .schema-detail-card-head > span {
-		font-size: 0.82rem;
+		list-style: none;
 	}
 
 	.schema-companion-grid {
 		display: grid;
-		gap: 0.6rem;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.6rem;
 	}
 
-	.schema-companion-card span {
-		display: block;
+	.schema-quick-card,
+	.schema-companion-card,
+	.schema-table-card {
+		min-inline-size: 0;
+		display: grid;
+		justify-items: start;
+		align-content: start;
+		gap: 0.55rem;
+		text-align: left;
+		border-radius: 1.1rem;
+		padding-block: 0.85rem;
+		padding-inline: 0.9rem;
+	}
+
+	.schema-quick-card.is-active,
+	.schema-table-card.is-active,
+	.schema-filter-chip.is-active,
+	.schema-companion-card:hover,
+	.schema-quick-card:hover,
+	.schema-table-card:hover {
+		background: rgba(141, 199, 255, 0.1);
+		border-color: color-mix(in srgb, var(--schema-highlight) 70%, white 30%);
+		transform: translateY(-1px);
+	}
+
+	.schema-filter-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.88rem;
+		border-radius: 999px;
+		padding-block: 0.5rem;
+		padding-inline: 0.75rem;
+	}
+
+	.schema-filter-chip--scope {
+		background: transparent;
+		border: none;
+		border-radius: 0;
+		border-inline-end: 1px solid var(--schema-border);
+		padding-block: 0.5rem;
+		padding-inline: 0.85rem;
+		transform: none;
+
+		&:first-child {
+			border-radius: 999px 0 0 999px;
+		}
+
+		&:last-child {
+			border-radius: 0 999px 999px 0;
+			border-inline-end: none;
+		}
+
+		&:hover {
+			background: rgba(141, 199, 255, 0.08);
+			border-color: transparent;
+			transform: none;
+		}
+
+		&.is-active {
+			background: rgba(141, 199, 255, 0.16);
+			border-color: transparent;
+			transform: none;
+		}
+	}
+
+	.schema-filter-chip--toggle {
+		background: transparent;
+		border: 1px solid transparent;
+		border-radius: 999px;
+		padding-block: 0.42rem;
+		padding-inline: 0.7rem;
+		transform: none;
+
+		&:hover {
+			background: rgba(141, 199, 255, 0.08);
+			border-color: transparent;
+			transform: none;
+		}
+
+		&.is-active {
+			background: rgba(141, 199, 255, 0.14);
+			border-color: color-mix(in srgb, var(--schema-highlight) 70%, white 30%);
+			transform: none;
+		}
+
+		& span {
+			background: rgba(255, 255, 255, 0.06);
+		}
+
+		&.is-active span {
+			background: rgba(141, 199, 255, 0.18);
+		}
+	}
+
+	.schema-link {
+		display: inline-flex;
+		align-items: center;
+		background: rgba(255, 255, 255, 0.04);
+		border: 1px solid var(--schema-border);
+		border-radius: 999px;
+		padding-block: 0.75rem;
+		padding-inline: 1rem;
+
+		&:hover {
+			color: white;
+		}
+	}
+
+	.schema-tab-button {
 		color: var(--schema-copy);
-		margin-block-start: 0.25rem;
-		font-size: 0.84rem;
+		font: inherit;
+		background: rgba(255, 255, 255, 0.04);
+		border: 1px solid var(--schema-border);
+		border-radius: 999px;
+		padding-block: 0.46rem;
+		padding-inline: 0.78rem;
+		transition:
+			transform 140ms ease,
+			border-color 140ms ease,
+			background-color 140ms ease,
+			color 140ms ease;
+		cursor: pointer;
 	}
 
-	.schema-detail-card-inspector {
-		position: sticky;
-		max-block-size: calc(100dvh - 2rem);
-		min-block-size: 0;
-		overflow: hidden;
-		inset-block-start: 1rem;
-	}
-
-	code {
-		font-family: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
-		font-size: 0.92em;
+	.schema-tab-button.is-active,
+	.schema-tab-button:hover {
+		color: var(--schema-highlight-strong);
+		background: rgba(141, 199, 255, 0.1);
+		border-color: color-mix(in srgb, var(--schema-highlight) 70%, white 30%);
 	}
 
 	@media (max-width: 1320px) {
@@ -2909,28 +2953,5 @@
 		.schema-link-list span {
 			white-space: normal;
 		}
-	}
-
-	:global(:root[data-theme="light"]) .schema-page {
-		--schema-bg: linear-gradient(180deg, rgba(231, 242, 252, 0.95) 0%, rgba(245, 248, 252, 0.98) 100%);
-		--schema-border: rgba(37, 67, 96, 0.16);
-		--schema-copy: rgba(32, 48, 62, 0.84);
-		--schema-highlight: #1c5a8f;
-		--schema-highlight-strong: #123a59;
-		--schema-panel: rgba(255, 255, 255, 0.96);
-	}
-
-	:global(:root[data-theme="light"]) .schema-link,
-	:global(:root[data-theme="light"]) .schema-list-panel,
-	:global(:root[data-theme="light"]) .schema-detail-card,
-	:global(:root[data-theme="light"]) .schema-search-field input,
-	:global(:root[data-theme="light"]) .schema-sort-field select,
-	:global(:root[data-theme="light"]) .schema-local-filter input,
-	:global(:root[data-theme="light"]) .schema-table-card,
-	:global(:root[data-theme="light"]) .schema-quick-card,
-	:global(:root[data-theme="light"]) .schema-filter-chip,
-	:global(:root[data-theme="light"]) .schema-companion-card,
-	:global(:root[data-theme="light"]) .schema-inline-link--chip {
-		background: rgba(255, 255, 255, 0.82);
 	}
 </style>

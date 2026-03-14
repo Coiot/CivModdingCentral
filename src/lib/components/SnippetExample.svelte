@@ -9,22 +9,76 @@
 	let copiedKey = $state("");
 	let resetTimeout;
 	let selectedFileKey = $state("");
+	let selectedVariantKey = $state("");
 
 	const isRecipeVariant = $derived(variant === "recipe");
 	const isWizardVariant = $derived(variant === "wizard");
 
-	const normalizedFiles = $derived(
-		(example?.files?.length ? example.files : [example]).filter(Boolean).map((file, index) => ({
-			key: file.key || file.path || file.label || `${example?.title || "snippet"}-${index}`,
+	function normalizeFiles(source, fallbackTitle = "snippet") {
+		return (source?.length ? source : []).filter(Boolean).map((file, index) => ({
+			key: file.key || file.path || file.label || `${fallbackTitle}-${index}`,
 			label: file.label || file.path || `Snippet ${index + 1}`,
 			path: file.path || "",
-			language: normalizeSnippetLanguage(file.language || example?.language || "text"),
+			language: normalizeSnippetLanguage(file.language || "text"),
 			code: file.code || "",
 			note: file.note || "",
-		})),
+		}));
+	}
+
+	function filterByLanguage(files) {
+		return activeLanguage === "all" ? files : files.filter((file) => normalizeSnippetLanguage(file.language) === activeLanguage);
+	}
+
+	function fileIdentity(file) {
+		return `${file.path || file.label || ""}::${normalizeSnippetLanguage(file.language)}`;
+	}
+
+	function variantTargetMeta(files) {
+		const identities = [...new Set(files.map(fileIdentity))];
+		if (identities.length === 1 && files[0]?.path) {
+			return `Use in ${files[0].path}`;
+		}
+		if (files.length === 1) {
+			return `${files[0]?.language || "text"} file`;
+		}
+		return `${files.length} files`;
+	}
+
+	const normalizedFiles = $derived(normalizeFiles(example?.files?.length ? example.files : example ? [example] : [], example?.title || "snippet"));
+	const filteredFiles = $derived(filterByLanguage(normalizedFiles));
+	const explicitVariants = $derived(
+		(example?.variants?.length ? example.variants : [])
+			.map((entry, index) => {
+				const files = normalizeFiles(entry?.files?.length ? entry.files : entry ? [entry] : [], entry?.title || entry?.label || `${example?.title || "snippet"}-${index}`);
+				const visibleFiles = filterByLanguage(files);
+				return {
+					key: entry?.key || entry?.id || entry?.title || entry?.label || `variant-${index}`,
+					label: entry?.label || entry?.title || `Example ${index + 1}`,
+					note: entry?.note || entry?.summary || "",
+					meta: variantTargetMeta(visibleFiles),
+					files: visibleFiles,
+				};
+			})
+			.filter((entry) => entry.files.length > 0),
 	);
-	const filteredFiles = $derived(activeLanguage === "all" ? normalizedFiles : normalizedFiles.filter((file) => normalizeSnippetLanguage(file.language) === activeLanguage));
-	const selectedFile = $derived(filteredFiles.find((file) => file.key === selectedFileKey) || filteredFiles[0]);
+	const inferredVariants = $derived(
+		!explicitVariants.length && isRecipeVariant && filteredFiles.length > 1 && new Set(filteredFiles.map(fileIdentity)).size === 1
+			? filteredFiles.map((file, index) => ({
+					key: `variant-${file.key}`,
+					label: `Example ${index + 1}`,
+					note: file.note || "",
+					meta: `Use in ${file.path || file.label || "target file"}`,
+					files: [file],
+				}))
+			: [],
+	);
+	const exampleVariants = $derived(explicitVariants.length ? explicitVariants : inferredVariants);
+	const hasExampleVariants = $derived(exampleVariants.length > 0);
+	const hasVisibleSnippets = $derived(Boolean(filteredFiles.length || exampleVariants.length));
+	const displayFiles = $derived((hasExampleVariants ? exampleVariants.find((entry) => entry.key === selectedVariantKey) || exampleVariants[0] : null)?.files || filteredFiles);
+	const selectedVariant = $derived((hasExampleVariants ? exampleVariants.find((entry) => entry.key === selectedVariantKey) || exampleVariants[0] : null) || null);
+	const selectedFile = $derived(displayFiles.find((file) => file.key === selectedFileKey) || displayFiles[0]);
+	const selectedFileNote = $derived(selectedFile?.note && selectedFile.note !== selectedVariant?.note ? selectedFile.note : "");
 
 	async function copySnippet(file) {
 		if (!file?.code || typeof navigator === "undefined" || !navigator.clipboard) {
@@ -53,24 +107,57 @@
 		<p class="snippet-summary">{example.summary}</p>
 	{/if}
 
-	{#if filteredFiles.length === 0}
+	{#if !hasVisibleSnippets}
 		<p class="snippet-empty">No {activeLanguage === "all" ? "" : activeLanguage.toUpperCase()} snippet is available for this example.</p>
 	{:else}
-		{#if filteredFiles.length > 1}
+		{#if hasExampleVariants}
+			<div class={`snippet-tabs-shell ${isRecipeVariant ? "is-recipe" : ""} ${isWizardVariant ? "is-wizard" : ""}`}>
+				<div class="snippet-tabs-copy">
+					<span class="snippet-tabs-kicker">Example Variants</span>
+					<p class="snippet-tabs-description">
+						{isRecipeVariant
+							? "These are alternative variants for the same type of example. Use the file switcher below only if that variant includes multiple files."
+							: "These are alternative implementations of the same example. Pick the variant that matches what you want to build."}
+					</p>
+				</div>
+
+				<div class="snippet-tabs snippet-tabs--variants" role="tablist" aria-label="Example variants">
+					{#each exampleVariants as entry (entry.key)}
+						<button
+							type="button"
+							role="tab"
+							aria-selected={selectedVariant?.key === entry.key}
+							class={`snippet-tab ${isRecipeVariant ? "is-recipe" : ""} ${isWizardVariant ? "is-wizard" : ""}`}
+							class:is-active={selectedVariant?.key === entry.key}
+							onclick={() => (selectedVariantKey = entry.key)}
+						>
+							<span class="snippet-tab-title">{entry.label}</span>
+							<span class="snippet-tab-meta">{entry.meta}</span>
+						</button>
+					{/each}
+				</div>
+			</div>
+		{/if}
+
+		{#if selectedVariant?.note}
+			<p class="snippet-variant-note">{selectedVariant.note}</p>
+		{/if}
+
+		{#if displayFiles.length > 1}
 			<div class={`snippet-tabs-shell ${isRecipeVariant ? "is-recipe" : ""} ${isWizardVariant ? "is-wizard" : ""}`}>
 				<div class="snippet-tabs-copy">
 					<span class="snippet-tabs-kicker">{isRecipeVariant ? "Recipe Files" : isWizardVariant ? "Generated Files" : "Included Files"}</span>
-					<!-- <p>
+					<p class="snippet-tabs-description">
 						{isRecipeVariant
-							? "Switch between the files this recipe ships together."
+							? "Switch between the files this recipe uses together."
 							: isWizardVariant
 								? "Switch between the files this generator preview is currently producing."
 								: "Switch between the files included in this example."}
-					</p> -->
+					</p>
 				</div>
 
 				<div class="snippet-tabs" role="tablist" aria-label="Snippet files">
-					{#each filteredFiles as file (file.key)}
+					{#each displayFiles as file (file.key)}
 						<button
 							type="button"
 							role="tab"
@@ -98,8 +185,8 @@
 						</div>
 					</div>
 
-					{#if selectedFile.note}
-						<p class="snippet-file-note">{selectedFile.note}</p>
+					{#if selectedFileNote}
+						<p class="snippet-file-note">{selectedFileNote}</p>
 					{/if}
 
 					<div class="snippet-code-shell">
@@ -122,113 +209,30 @@
 	.snippet-example,
 	.snippet-file-list,
 	.snippet-file-card {
+		min-width: 0;
 		display: grid;
 		gap: 0.9rem;
-		min-width: 0;
+	}
+
+	.snippet-tabs-copy p {
+		color: var(--muted-ink);
+		font-size: 0.82rem;
+		line-height: 1.45;
+		margin: 0;
 	}
 
 	.snippet-summary,
 	.snippet-file-note,
 	.snippet-file-meta span,
 	.snippet-empty {
-		margin: 0;
 		color: var(--muted-ink);
 		line-height: 1.55;
-	}
-
-	.snippet-tabs {
-		display: grid;
-		gap: 0.55rem;
-		grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-	}
-
-	.snippet-tabs-shell {
-		display: grid;
-		gap: 0.7rem;
+		margin: 0;
 	}
 
 	.snippet-tabs-copy {
 		display: grid;
 		gap: 0.22rem;
-	}
-
-	.snippet-tabs-copy p {
-		margin: 0;
-		color: var(--muted-ink);
-		font-size: 0.82rem;
-		line-height: 1.45;
-	}
-
-	.snippet-tabs-kicker {
-		color: color-mix(in oklch, white 78%, var(--ink));
-		font-size: 0.7rem;
-		font-weight: 700;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-	}
-
-	.snippet-tab {
-		display: grid;
-		gap: 0.2rem;
-		justify-items: start;
-		padding: 0.65rem 0.8rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--panel-border));
-		border-radius: 0.95rem;
-		background: color-mix(in oklch, var(--panel-bg) 80%, var(--control-bg));
-		color: var(--muted-ink);
-		font-size: 0.8rem;
-		font-weight: 600;
-		cursor: pointer;
-		text-align: left;
-		transition:
-			transform 140ms ease,
-			border-color 140ms ease,
-			background-color 140ms ease,
-			box-shadow 140ms ease,
-			color 140ms ease;
-	}
-
-	.snippet-tab-title,
-	.snippet-tab-meta {
-		display: block;
-	}
-
-	.snippet-tab-title {
-		color: color-mix(in oklch, white 82%, var(--ink));
-		font-size: 0.84rem;
-		font-weight: 700;
-		line-height: 1.3;
-		overflow-wrap: anywhere;
-	}
-
-	.snippet-tab-meta {
-		color: var(--muted-ink);
-		font-size: 0.68rem;
-		font-weight: 700;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-	}
-
-	.snippet-tab.is-active,
-	.snippet-tab:hover {
-		border-color: color-mix(in oklch, var(--accent) 42%, var(--panel-border));
-		background: color-mix(in oklch, var(--accent) 14%, var(--control-bg));
-		color: color-mix(in oklch, white 84%, var(--ink));
-		transform: translateY(-1px);
-	}
-
-	.snippet-tab.is-recipe {
-		border-color: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 70%, #a8861f 30%);
-		background: color-mix(in srgb, var(--panel-bg) 90%, #352608 10%);
-	}
-
-	.snippet-tab.is-wizard {
-		border-color: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #6d4bb1 28%);
-		background: color-mix(in srgb, var(--panel-bg) 90%, #261735 10%);
-	}
-
-	.snippet-tab.is-recipe .snippet-tab-title {
-		color: color-mix(in srgb, white 82%, var(--ink));
 	}
 
 	.snippet-tab.is-recipe .snippet-tab-meta,
@@ -241,22 +245,35 @@
 		color: #f0e2ff;
 	}
 
-	.snippet-tab.is-recipe.is-active,
-	.snippet-tab.is-recipe:hover {
-		background: linear-gradient(180deg, color-mix(in srgb, #f5d36a 18%, transparent) 0%, color-mix(in srgb, var(--panel-bg) 72%, #352608 28%) 100%);
-		border-color: color-mix(in srgb, #f5d36a 72%, white 28%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, #fff1bc 22%, transparent),
-			0 10px 22px color-mix(in oklch, var(--shadow-soft) 48%, transparent);
+	.snippet-tabs-kicker {
+		color: color-mix(in oklch, white 78%, var(--ink));
+		text-transform: uppercase;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.14em;
 	}
 
-	.snippet-tab.is-wizard.is-active,
-	.snippet-tab.is-wizard:hover {
-		background: linear-gradient(180deg, color-mix(in srgb, #caa6ff 18%, transparent) 0%, color-mix(in srgb, var(--panel-bg) 72%, #261735 28%) 100%);
-		border-color: color-mix(in srgb, #caa6ff 72%, white 28%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, #f0e2ff 22%, transparent),
-			0 10px 22px color-mix(in oklch, var(--shadow-soft) 48%, transparent);
+	.snippet-tabs {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+		gap: 0.55rem;
+	}
+
+	.snippet-tab-title {
+		color: color-mix(in oklch, white 82%, var(--ink));
+		font-size: 0.84rem;
+		font-weight: 700;
+		line-height: 1.3;
+		overflow-wrap: anywhere;
+	}
+
+	.snippet-tab-title,
+	.snippet-tab-meta {
+		display: block;
+	}
+
+	.snippet-tab.is-recipe .snippet-tab-title {
+		color: color-mix(in srgb, white 82%, var(--ink));
 	}
 
 	.snippet-tab.is-recipe.is-active .snippet-tab-title,
@@ -273,39 +290,32 @@
 		color: #f0e2ff;
 	}
 
+	.snippet-tab-meta {
+		color: var(--muted-ink);
+		text-transform: uppercase;
+		font-size: 0.68rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+	}
+
 	.snippet-file-card {
-		padding: 0.55rem 0 0.2rem;
+		background: transparent;
 		border: none;
 		border-radius: 0;
-		background: transparent;
+		padding-inline: 0;
+		padding-block-start: 0.55rem;
+		padding-block-end: 0.2rem;
 	}
 
 	.snippet-file-head {
 		display: flex;
-		align-items: center;
 		justify-content: space-between;
+		align-items: center;
 		gap: 0.65rem;
 	}
 
 	.snippet-file-head {
 		align-items: start;
-	}
-
-	.snippet-code-shell {
-		position: relative;
-		min-width: 0;
-		max-width: 100%;
-		overflow-x: auto;
-	}
-
-	.snippet-file-actions {
-		position: absolute;
-		inset-block-start: 0.8rem;
-		inset-inline-end: 0.8rem;
-		z-index: 1;
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
 	}
 
 	.snippet-file-meta {
@@ -319,18 +329,21 @@
 		font-weight: 700;
 	}
 
-	.snippet-file-language,
-	.snippet-copy-button {
-		display: inline-flex;
+	.snippet-code-shell {
+		position: relative;
+		max-width: 100%;
+		min-width: 0;
+		overflow-x: auto;
+	}
+
+	.snippet-file-actions {
+		position: absolute;
+		z-index: 1;
+		inset-block-start: 0.8rem;
+		inset-inline-end: 0.8rem;
+		display: flex;
 		align-items: center;
-		justify-content: center;
-		border-radius: 999px;
-		font-size: 0.7rem;
-		font-weight: 700;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		text-box: trim-both cap alphabetic;
-		padding: 0.45rem 0.55rem;
+		gap: 0.5rem;
 	}
 
 	.snippet-file-language {
@@ -339,45 +352,63 @@
 		border: 1px solid color-mix(in oklch, var(--accent) 10%, var(--panel-border));
 	}
 
+	.snippet-file-language,
+	.snippet-copy-button {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		text-transform: uppercase;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		border-radius: 999px;
+		padding-block: 0.45rem;
+		padding-inline: 0.55rem;
+		text-box: trim-both cap alphabetic;
+	}
+
 	.snippet-copy-button {
 		color: var(--ink);
-		cursor: pointer;
 		background: color-mix(in oklch, var(--panel-bg) 82%, var(--control-bg));
 		border: 1px solid color-mix(in oklch, var(--accent) 12%, var(--panel-border));
+		cursor: pointer;
 	}
 
 	.snippet-copy-button:hover {
-		border-color: color-mix(in oklch, var(--accent) 28%, var(--panel-border));
 		background: color-mix(in oklch, var(--accent) 12%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--accent) 28%, var(--panel-border));
 	}
 
 	.snippet-code-block {
-		margin: 0;
 		inline-size: 100%;
-		max-inline-size: 100%;
 		min-inline-size: 0;
-		padding: 1.5rem 1.15rem;
-		overflow-x: auto;
-		overflow-y: hidden;
-		white-space: pre;
-		border: 1px solid color-mix(in oklch, var(--accent) 8%, var(--panel-border));
-		border-radius: 0.85rem;
-		background: color-mix(in oklch, black 24%, var(--panel-bg));
+		max-inline-size: 100%;
 		color: color-mix(in oklch, white 88%, var(--ink));
+		white-space: pre;
 		font-size: 0.84rem;
 		line-height: 1.55;
+		background: color-mix(in oklch, black 24%, var(--panel-bg));
+		border: 1px solid color-mix(in oklch, var(--accent) 8%, var(--panel-border));
+		border-radius: 0.85rem;
+		padding-block: 1.5rem;
+		padding-inline: 1.15rem;
+		margin: 0;
+		overflow-x: auto;
+		overflow-y: hidden;
 		scrollbar-color: #d8b24a color-mix(in srgb, var(--panel-bg) 78%, black 22%);
 		scrollbar-width: thin;
 	}
 
-	.snippet-code-block::-webkit-scrollbar {
-		height: 0.75rem;
-		width: 0.75rem;
+	.snippet-code-block code {
+		inline-size: max-content;
+		min-inline-size: 100%;
+		display: block;
+		font-family: "Iosevka Web", "SFMono-Regular", Consolas, monospace;
 	}
 
-	.snippet-code-block::-webkit-scrollbar-track {
-		background: color-mix(in srgb, var(--panel-bg) 78%, black 22%);
-		border-radius: 999px;
+	.snippet-code-block::-webkit-scrollbar {
+		width: 0.75rem;
+		height: 0.75rem;
 	}
 
 	.snippet-code-block::-webkit-scrollbar-thumb {
@@ -390,11 +421,72 @@
 		background: linear-gradient(180deg, #ffe59a 0%, #d7a92f 100%);
 	}
 
-	.snippet-code-block code {
-		display: block;
-		inline-size: max-content;
-		min-inline-size: 100%;
-		font-family: "Iosevka Web", "SFMono-Regular", Consolas, monospace;
+	.snippet-code-block::-webkit-scrollbar-track {
+		background: color-mix(in srgb, var(--panel-bg) 78%, black 22%);
+		border-radius: 999px;
+	}
+
+	.snippet-tab {
+		display: grid;
+		justify-items: start;
+		gap: 0.2rem;
+		color: var(--muted-ink);
+		font-size: 0.8rem;
+		font-weight: 600;
+		text-align: left;
+		background: color-mix(in oklch, var(--panel-bg) 80%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--panel-border));
+		border-radius: 0.95rem;
+		padding-block: 0.65rem;
+		padding-inline: 0.8rem;
+		transition:
+			transform 140ms ease,
+			border-color 140ms ease,
+			background-color 140ms ease,
+			box-shadow 140ms ease,
+			color 140ms ease;
+		cursor: pointer;
+	}
+
+	.snippet-tab.is-active,
+	.snippet-tab:hover {
+		color: color-mix(in oklch, white 84%, var(--ink));
+		background: color-mix(in oklch, var(--accent) 14%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--accent) 42%, var(--panel-border));
+		transform: translateY(-1px);
+	}
+
+	.snippet-tab.is-recipe {
+		background: color-mix(in srgb, var(--panel-bg) 90%, #352608 10%);
+		border-color: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 70%, #a8861f 30%);
+	}
+
+	.snippet-tab.is-recipe.is-active,
+	.snippet-tab.is-recipe:hover {
+		background: linear-gradient(180deg, color-mix(in srgb, #f5d36a 18%, transparent) 0%, color-mix(in srgb, var(--panel-bg) 72%, #352608 28%) 100%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, #fff1bc 22%, transparent),
+			0 10px 22px color-mix(in oklch, var(--shadow-soft) 48%, transparent);
+		border-color: color-mix(in srgb, #f5d36a 72%, white 28%);
+	}
+
+	.snippet-tab.is-wizard {
+		background: color-mix(in srgb, var(--panel-bg) 90%, #261735 10%);
+		border-color: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #6d4bb1 28%);
+	}
+
+	.snippet-tab.is-wizard.is-active,
+	.snippet-tab.is-wizard:hover {
+		background: linear-gradient(180deg, color-mix(in srgb, #caa6ff 18%, transparent) 0%, color-mix(in srgb, var(--panel-bg) 72%, #261735 28%) 100%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, #f0e2ff 22%, transparent),
+			0 10px 22px color-mix(in oklch, var(--shadow-soft) 48%, transparent);
+		border-color: color-mix(in srgb, #caa6ff 72%, white 28%);
+	}
+
+	.snippet-tabs-shell {
+		display: grid;
+		gap: 0.7rem;
 	}
 
 	@media (width <= 720px) {

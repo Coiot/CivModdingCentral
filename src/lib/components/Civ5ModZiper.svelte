@@ -341,6 +341,53 @@
 </section>
 
 <style>
+	:global(:root[data-theme="light"]) .civ5mod-page {
+		.civ5mod-guide,
+		.civ5mod-panel {
+			border-color: color-mix(in oklch, var(--panel-border) 86%, var(--accent) 14%);
+		}
+
+		.civ5mod-guide,
+		.civ5mod-dropzone {
+			background: color-mix(in oklch, white 82%, var(--panel-bg));
+		}
+
+		.civ5mod-panel {
+			background: color-mix(in oklch, white 88%, var(--panel-bg));
+		}
+
+		.civ5mod-dropzone:hover {
+			background: color-mix(in oklch, white 76%, var(--accent) 8%);
+		}
+
+		.civ5mod-dropzone.is-drag-over {
+			background: color-mix(in oklch, white 72%, var(--accent) 14%);
+		}
+
+		.civ5mod-drop-feedback {
+			color: color-mix(in oklch, var(--accent) 56%, var(--ink));
+		}
+
+		.civ5mod-tooltip {
+			color: var(--ink);
+			background: color-mix(in oklch, white 94%, var(--panel-bg));
+			box-shadow: 0 14px 28px var(--shadow-soft);
+			border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+		}
+
+		.civ5mod-companion-card {
+			background: color-mix(in oklch, white 84%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--panel-border) 84%, var(--accent) 16%);
+
+			& p {
+				color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
+			}
+
+			&:hover {
+				background: color-mix(in oklch, white 78%, var(--accent) 10%);
+			}
+		}
+	}
 	.civ5mod-page {
 		display: grid;
 		gap: 1rem;
@@ -348,8 +395,8 @@
 
 	.civ5mod-guide-row {
 		display: grid;
-		gap: 1rem;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1rem;
 	}
 
 	.civ5mod-guide {
@@ -363,8 +410,8 @@
 
 		& h2 {
 			align-self: start;
-			font-size: 1.25rem;
 			font-family: "Rockwell", "Palatino Linotype", serif;
+			font-size: 1.25rem;
 			line-height: 1.05;
 		}
 
@@ -400,71 +447,13 @@
 		}
 	}
 
-	.civ5mod-section-head {
-		display: grid;
-		gap: 0.35rem;
-
-		& h2 {
-			margin: 0;
-			font-family: "Rockwell", "Palatino Linotype", serif;
-		}
-
-		& p {
-			margin: 0;
-			color: var(--muted-ink);
-		}
-	}
-
-	.civ5mod-dropzone {
-		display: grid;
-		gap: 0.55rem;
-		background: color-mix(in oklch, var(--panel-bg) 90%, var(--control-bg) 10%);
-		border: 1px dashed color-mix(in oklch, var(--panel-border) 75%, transparent);
-		border-radius: 0.8rem;
-		padding: 0.9rem;
-		cursor: pointer;
-		transition:
-			background 140ms ease,
-			border-color 140ms ease,
-			box-shadow 140ms ease,
-			transform 140ms ease;
-
-		& > p {
-			pointer-events: none;
-			user-select: none;
-		}
-
-		&:hover {
-			background: color-mix(in oklch, var(--panel-bg) 90%, var(--accent) 5%);
-			border-color: color-mix(in oklch, var(--accent) 80%, var(--panel-border));
-			box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 80%, transparent);
-			transform: translateY(-1px);
-		}
-
-		&:focus-visible {
-			outline: 2px solid color-mix(in oklch, var(--accent) 72%, white);
-			outline-offset: 2px;
-		}
-
-		&.is-drag-over {
-			background: color-mix(in oklch, var(--accent) 5%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
-			box-shadow:
-				0 0 0 1px color-mix(in oklch, var(--accent) 40%, transparent),
-				0 10px 24px color-mix(in oklch, var(--accent) 10%, transparent);
-			transform: translateY(-2px) scale(1.005);
-		}
-	}
-
 	.civ5mod-drop-title {
 		font-weight: 600;
 		margin: 0;
 	}
 
-	.civ5mod-hint {
-		color: color-mix(in oklch, var(--muted-ink) 88%, var(--ink) 12%);
-		font-size: 0.79rem;
-		margin: 0;
+	.civ5mod-hidden-input {
+		display: none;
 	}
 
 	.civ5mod-drop-feedback {
@@ -474,14 +463,10 @@
 		margin: 0;
 	}
 
-	.civ5mod-actions-row {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	.civ5mod-hidden-input {
-		display: none;
+	.civ5mod-hint {
+		color: color-mix(in oklch, var(--muted-ink) 88%, var(--ink) 12%);
+		font-size: 0.79rem;
+		margin: 0;
 	}
 
 	.civ5mod-output-name {
@@ -497,29 +482,59 @@
 		gap: 0.5rem;
 	}
 
-	.civ5mod-check {
+	.civ5mod-build-row {
+		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
-		display: inline-flex;
-		gap: 0.35rem;
-		font-size: 0.78rem;
-		border: 1px solid color-mix(in oklch, var(--panel-border) 80%, transparent);
-		border-radius: 0.55rem;
-		padding: 0.35rem 0.45rem;
+		gap: 0.55rem;
+	}
 
-		&.ok {
-			background: color-mix(in oklch, oklch(0.72 0.12 150) 18%, transparent);
+	.civ5mod-tooltip-wrap {
+		position: relative;
+		display: inline-flex;
+
+		& .civ5mod-tooltip {
+			position: absolute;
+			inset-block-end: calc(100% + 0.45rem);
+			inset-inline-start: 50%;
+			min-inline-size: 15rem;
+			max-inline-size: 24rem;
+			color: var(--ink);
+			opacity: 0;
+			font-size: 0.76rem;
+			background: oklch(0.2 0 0 / 0.96);
+			border: 1px solid color-mix(in oklch, var(--accent) 45%, var(--panel-border));
+			border-radius: 0.55rem;
+			padding-block: 0.45rem;
+			padding-inline: 0.6rem;
+			transition: opacity 120ms ease-in-out;
+			transform: translateX(-50%);
+			pointer-events: none;
 		}
 
-		&.warn {
-			background: color-mix(in oklch, oklch(0.72 0.12 35) 14%, transparent);
+		&:hover .civ5mod-tooltip {
+			opacity: 1;
 		}
 	}
 
-	.civ5mod-build-row {
-		align-items: center;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.55rem;
+	.civ5mod-btn {
+		color: var(--ink);
+		font: inherit;
+		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
+		border: 1px solid color-mix(in oklch, var(--accent) 56%, var(--panel-border));
+		border-radius: 0.62rem;
+		padding-block: 0.42rem;
+		padding-inline: 0.72rem;
+		cursor: pointer;
+
+		&.ghost {
+			background: var(--control-bg);
+		}
+
+		&:disabled {
+			opacity: 0.55;
+			cursor: not-allowed;
+		}
 	}
 
 	.civ5mod-status {
@@ -528,50 +543,18 @@
 		margin: 0;
 	}
 
-	.civ5mod-btn {
-		cursor: pointer;
-		color: var(--ink);
-		font: inherit;
-		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
-		border: 1px solid color-mix(in oklch, var(--accent) 56%, var(--panel-border));
-		border-radius: 0.62rem;
-		padding-block: 0.42rem;
-		padding-inline: 0.72rem;
+	.civ5mod-section-head {
+		display: grid;
+		gap: 0.35rem;
 
-		&.ghost {
-			background: var(--control-bg);
+		& h2 {
+			font-family: "Rockwell", "Palatino Linotype", serif;
+			margin: 0;
 		}
 
-		&:disabled {
-			cursor: not-allowed;
-			opacity: 0.55;
-		}
-	}
-
-	.civ5mod-tooltip-wrap {
-		position: relative;
-		display: inline-flex;
-
-		& .civ5mod-tooltip {
-			inset-block-end: calc(100% + 0.45rem);
-			inset-inline-start: 50%;
-			position: absolute;
-			transform: translateX(-50%);
-			max-inline-size: 24rem;
-			min-inline-size: 15rem;
-			pointer-events: none;
-			color: var(--ink);
-			opacity: 0;
-			font-size: 0.76rem;
-			background: oklch(0.2 0 0 / 0.96);
-			border: 1px solid color-mix(in oklch, var(--accent) 45%, var(--panel-border));
-			border-radius: 0.55rem;
-			padding: 0.45rem 0.6rem;
-			transition: opacity 120ms ease-in-out;
-		}
-
-		&:hover .civ5mod-tooltip {
-			opacity: 1;
+		& p {
+			color: var(--muted-ink);
+			margin: 0;
 		}
 	}
 
@@ -597,67 +580,85 @@
 			background 140ms ease;
 
 		& h3 {
-			margin: 0;
 			font-family: "Rockwell", "Palatino Linotype", serif;
+			margin: 0;
 		}
 
 		& p {
-			margin: 0;
 			color: var(--muted-ink);
+			margin: 0;
 		}
 
 		&:hover {
-			transform: translateY(-1px);
-			border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
 			background: color-mix(in oklch, var(--panel-bg) 82%, var(--accent) 6%);
+			border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
+			transform: translateY(-1px);
 		}
 	}
 
-	:global(:root[data-theme="light"]) .civ5mod-page {
-		.civ5mod-guide,
-		.civ5mod-panel {
-			border-color: color-mix(in oklch, var(--panel-border) 86%, var(--accent) 14%);
+	.civ5mod-actions-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.civ5mod-check {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: 0.78rem;
+		border: 1px solid color-mix(in oklch, var(--panel-border) 80%, transparent);
+		border-radius: 0.55rem;
+		padding-block: 0.35rem;
+		padding-inline: 0.45rem;
+
+		&.ok {
+			background: color-mix(in oklch, oklch(0.72 0.12 150) 18%, transparent);
 		}
 
-		.civ5mod-guide,
-		.civ5mod-dropzone {
-			background: color-mix(in oklch, white 82%, var(--panel-bg));
+		&.warn {
+			background: color-mix(in oklch, oklch(0.72 0.12 35) 14%, transparent);
+		}
+	}
+
+	.civ5mod-dropzone {
+		display: grid;
+		gap: 0.55rem;
+		background: color-mix(in oklch, var(--panel-bg) 90%, var(--control-bg) 10%);
+		border: 1px dashed color-mix(in oklch, var(--panel-border) 75%, transparent);
+		border-radius: 0.8rem;
+		padding: 0.9rem;
+		transition:
+			background 140ms ease,
+			border-color 140ms ease,
+			box-shadow 140ms ease,
+			transform 140ms ease;
+		cursor: pointer;
+
+		& > p {
+			pointer-events: none;
+			user-select: none;
 		}
 
-		.civ5mod-panel {
-			background: color-mix(in oklch, white 88%, var(--panel-bg));
+		&:hover {
+			background: color-mix(in oklch, var(--panel-bg) 90%, var(--accent) 5%);
+			box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 80%, transparent);
+			border-color: color-mix(in oklch, var(--accent) 80%, var(--panel-border));
+			transform: translateY(-1px);
 		}
 
-		.civ5mod-dropzone:hover {
-			background: color-mix(in oklch, white 76%, var(--accent) 8%);
+		&:focus-visible {
+			outline: 2px solid color-mix(in oklch, var(--accent) 72%, white);
+			outline-offset: 2px;
 		}
 
-		.civ5mod-dropzone.is-drag-over {
-			background: color-mix(in oklch, white 72%, var(--accent) 14%);
-		}
-
-		.civ5mod-drop-feedback {
-			color: color-mix(in oklch, var(--accent) 56%, var(--ink));
-		}
-
-		.civ5mod-tooltip {
-			color: var(--ink);
-			background: color-mix(in oklch, white 94%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
-			box-shadow: 0 14px 28px var(--shadow-soft);
-		}
-
-		.civ5mod-companion-card {
-			background: color-mix(in oklch, white 84%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 84%, var(--accent) 16%);
-
-			& p {
-				color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
-			}
-
-			&:hover {
-				background: color-mix(in oklch, white 78%, var(--accent) 10%);
-			}
+		&.is-drag-over {
+			background: color-mix(in oklch, var(--accent) 5%, var(--panel-bg));
+			box-shadow:
+				0 0 0 1px color-mix(in oklch, var(--accent) 40%, transparent),
+				0 10px 24px color-mix(in oklch, var(--accent) 10%, transparent);
+			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
+			transform: translateY(-2px) scale(1.005);
 		}
 	}
 

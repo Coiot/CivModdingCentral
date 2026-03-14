@@ -200,6 +200,34 @@
 </section>
 
 <style>
+	:global(:root[data-theme="light"]) .directory-page {
+		.directory-group {
+			background: color-mix(in oklch, white 86%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--panel-border) 88%, var(--accent) 12%);
+		}
+
+		.directory-card {
+			background: color-mix(in oklch, white 72%, var(--control-bg));
+			box-shadow: 0 8px 18px var(--shadow-soft);
+			border-color: color-mix(in oklch, var(--accent) 24%, var(--panel-border));
+		}
+
+		.directory-card:hover {
+			background: color-mix(in oklch, white 68%, var(--accent) 8%);
+			border-color: color-mix(in oklch, var(--accent) 34%, var(--panel-border));
+		}
+
+		.directory-card-preview,
+		.directory-card-fallback {
+			background: color-mix(in oklch, white 94%, var(--panel-bg));
+			border-color: color-mix(in oklch, var(--panel-border) 84%, var(--accent) 10%);
+		}
+
+		.directory-tagline,
+		.directory-url {
+			color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
+		}
+	}
 	.directory-page {
 		display: grid;
 		gap: 1.25rem;
@@ -214,16 +242,17 @@
 		display: grid;
 		gap: 1rem;
 		background: var(--panel-bg);
-		border-radius: 1rem;
-		border: 1px solid color-mix(in oklch, var(--panel-border) 70%, transparent);
 		box-shadow: 0 10px 26px var(--shadow-soft);
-		padding: 1.5rem 1.25rem;
+		border: 1px solid color-mix(in oklch, var(--panel-border) 70%, transparent);
+		border-radius: 1rem;
+		padding-block: 1.5rem;
+		padding-inline: 1.25rem;
 	}
 
 	.directory-group-header h2 {
 		color: var(--ink);
-		font-size: 1.5rem;
 		font-family: "Rockwell", "Palatino Linotype", serif;
+		font-size: 1.5rem;
 		margin: 0;
 	}
 
@@ -239,9 +268,9 @@
 		gap: 0.5rem;
 		color: var(--ink);
 		text-decoration: none;
-		border-radius: 0.85rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
 		background: var(--control-bg);
+		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+		border-radius: 0.85rem;
 		padding: 1rem;
 		transition:
 			transform 0.2s ease,
@@ -250,15 +279,9 @@
 	}
 
 	.directory-card:hover {
-		transform: translateY(-2px);
 		box-shadow: 0 8px 14px var(--shadow-soft);
 		border-color: color-mix(in oklch, var(--accent) 70%, var(--panel-border));
-	}
-
-	.directory-card-top {
-		display: grid;
-		gap: 0.5rem;
-		margin-block-start: 0.5rem;
+		transform: translateY(-2px);
 	}
 
 	.directory-card-preview {
@@ -274,8 +297,8 @@
 	.directory-card-preview img {
 		inline-size: 100%;
 		block-size: 100%;
-		object-fit: cover;
 		display: block;
+		object-fit: cover;
 	}
 
 	.directory-card-fallback {
@@ -294,14 +317,20 @@
 		display: grid;
 		place-items: center;
 		color: var(--ink);
-		padding: 0.25rem;
 		opacity: 0.95;
+		padding: 0.25rem;
 	}
 
 	.directory-card-icon svg {
 		inline-size: 100%;
 		block-size: 100%;
 		fill: currentColor;
+	}
+
+	.directory-card-top {
+		display: grid;
+		gap: 0.5rem;
+		margin-block-start: 0.5rem;
 	}
 
 	.directory-title {
@@ -317,35 +346,6 @@
 	.directory-url {
 		color: var(--muted-ink);
 		font-size: 0.85rem;
-	}
-
-	:global(:root[data-theme="light"]) .directory-page {
-		.directory-group {
-			background: color-mix(in oklch, white 86%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 88%, var(--accent) 12%);
-		}
-
-		.directory-card {
-			background: color-mix(in oklch, white 72%, var(--control-bg));
-			border-color: color-mix(in oklch, var(--accent) 24%, var(--panel-border));
-			box-shadow: 0 8px 18px var(--shadow-soft);
-		}
-
-		.directory-card:hover {
-			background: color-mix(in oklch, white 68%, var(--accent) 8%);
-			border-color: color-mix(in oklch, var(--accent) 34%, var(--panel-border));
-		}
-
-		.directory-card-preview,
-		.directory-card-fallback {
-			background: color-mix(in oklch, white 94%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 84%, var(--accent) 10%);
-		}
-
-		.directory-tagline,
-		.directory-url {
-			color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
-		}
 	}
 
 	@media (max-width: 720px) {

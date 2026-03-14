@@ -20,27 +20,87 @@
 
 	const NAV_GROUPS = [
 		{
-			id: "ship",
-			kicker: "Publish",
-			label: "Build & Publish",
-			description: "Package, validate, and ship finished mods.",
-			panelTitle: "Build Outputs",
-			panelCopy: "Use these when your mod is ready for manifest editing, packaging, and Workshop release.",
+			id: "learn",
+			kicker: "Learn",
+			label: "Tutorials & Patterns",
+			description: "Follow guided tutorials and starter workflows.",
+			panelTitle: "Learning Paths",
+			panelCopy: "Use these when you need help getting started or inspiration for your next mod.",
 			links: [
 				{
-					href: "/workshop-uploader",
-					label: "Workshop Uploader",
-					description: "Desktop app for Steam Workshop publishing and updating.",
+					href: "/guided-planner",
+					label: "Guided Planner",
+					description: "Weighted civ-mod planner with linked tools, references, and tutorial placeholders.",
 				},
 				{
-					href: "/modinfo-builder",
-					label: ".modinfo Builder",
-					description: "Build and edit `.modinfo` manifests directly, including actions and metadata.",
+					href: "/template-generators",
+					label: "Template Generators",
+					description: "Step-by-step generators for setting up a new civ mod from a starter template.",
 				},
 				{
-					href: "/civ5mod-ziper",
-					label: ".civ5mod Ziper",
-					description: "Package a mod folder into Civ V's distributable `.civ5mod` format.",
+					href: "/pattern-library",
+					label: "Pattern Library",
+					description: "Curated set of coded patterns and repeatable setup recipes.",
+				},
+				{
+					href: "/tutorials",
+					label: "Tutorials",
+					description: "Walkthroughs for setup, uniques, art, UI, and 3D assets.",
+					disabled: true,
+					statusLabel: "Coming Soon",
+				},
+
+				{
+					href: "/community-links",
+					label: "Community Links",
+					description: "Civ V modding references, utilities, and community resources.",
+				},
+			],
+		},
+
+		{
+			id: "reference",
+			kicker: "Reference",
+			label: "Reference & Viewers",
+			description: "Inspect game data, modded content, and map systems.",
+			panelTitle: "Data & Inspection",
+			panelCopy: "Use these when you need schema lookup, visual inspection tools, or existing mod references.",
+			links: [
+				{
+					href: "/schema-browser",
+					label: "Schema Browser",
+					description: "Search through the entire Civ V database. Inspect every column and row data with helpful filters.",
+				},
+				{
+					href: "/lua-api-explorer",
+					label: "Lua API Explorer",
+					description: "Search all Method and GameEvents with curated documentation, gotchas, and sets of examples.",
+				},
+				{
+					href: "/modded-civs-pedia",
+					label: "Modded Civs Pedia",
+					description: "Reference pedia for custom civilizations and gameplay mods",
+					disabled: true,
+					statusLabel: "Coming Soon",
+				},
+				{
+					href: "/map-viewer",
+					label: "Map Viewer",
+					description: "Inspect community maps down to each tile visually for mod support or CPU-only game setup.",
+				},
+				{
+					href: "/tech-tree-viewer",
+					label: "Tech Tree Viewer",
+					description: "Browse technologies, prerequisites, and progression layout to plot your civ uniques.",
+					disabled: true,
+					statusLabel: "Coming Soon",
+				},
+				{
+					href: "/religion-support",
+					label: "Religion Support",
+					description: "Lookup refernces for Historical Religions and related religion mods for mod support.",
+					disabled: true,
+					statusLabel: "Coming Soon",
 				},
 			],
 		},
@@ -64,100 +124,35 @@
 				},
 				{
 					href: "/text-screen-viewer",
-					label: "Text Screen Viewer",
-					description: "Browse and test text with Civ V icons in the various in-game screens.",
+					label: "Text Screen Helper",
+					description: "Browse and test text with Civ V icons across the various in-game screens.",
 					disabled: true,
 					statusLabel: "Coming Soon",
 				},
 			],
 		},
 		{
-			id: "reference",
-			kicker: "Reference",
-			label: "Reference & Viewers",
-			description: "Inspect game data, modded content, and map systems.",
-			panelTitle: "Data & Inspection",
-			panelCopy: "Use these when you need schema lookup, visual inspection tools, or mod content reference pages.",
+			id: "ship",
+			kicker: "Publish",
+			label: "Build & Publish",
+			description: "Package, validate, and ship finished mods.",
+			panelTitle: "Build Outputs",
+			panelCopy: "Use these when your mod is ready for testing, packaging, and Workshop release.",
 			links: [
 				{
-					href: "/schema-browser",
-					label: "Schema Browser",
-					description: "Search through the entire Civ V database. Inspect every column and row data with helpful filters.",
+					href: "/workshop-uploader",
+					label: "Workshop Uploader",
+					description: "Desktop app for Steam Workshop publishing and updating.",
 				},
 				{
-					href: "/lua-api-explorer",
-					label: "Lua API Explorer",
-					description: "Search Civ V Method and GameEvents with curated documentation and sets of real mod examples.",
-					disabled: true,
-					statusLabel: "Coming Soon",
+					href: "/modinfo-builder",
+					label: ".modinfo Builder",
+					description: "Build and edit `.modinfo` manifests directly, including actions and metadata.",
 				},
 				{
-					href: "/map-viewer",
-					label: "Map Viewer",
-					description: "Inspect plots, terrain, ownership, and other map data visually for mod support or CPU-only game setup.",
-				},
-				// {
-				// 	href: "/tech-tree-viewer",
-				// 	label: "Tech Tree Viewer",
-				// 	description: "Browse technologies, prerequisites, and progression layout.",
-				// 	disabled: true,
-				// 	statusLabel: "Coming Soon",
-				// },
-				// {
-				// 	href: "/modded-civs-pedia",
-				// 	label: "Modded Civs Pedia",
-				// 	description: "Reference page for custom civilizations and gameplay mods",
-				// 	disabled: true,
-				// 	statusLabel: "Coming Soon",
-				// },
-				// {
-				// 	href: "/religion-support",
-				// 	label: "Religion Support",
-				// 	description: "Lookup support data for Historical Religions and related religion mods.",
-				// 	disabled: true,
-				// 	statusLabel: "Coming Soon",
-				// },
-			],
-		},
-		{
-			id: "learn",
-			kicker: "Learn",
-			label: "Tutorials & Patterns",
-			description: "Follow guided tutorials and starter workflows.",
-			panelTitle: "Learning Paths",
-			panelCopy: "Use these when you need onboarding, source-backed recipes, or guided mod setup flows.",
-			links: [
-				// {
-				// 	href: "/guided-planner",
-				// 	label: "Guided Planner",
-				// 	description: "Checklist driven planner for building a civ mod with step-by-step links into the site's tools, references, and tutorials.",
-				// 	disabled: true,
-				// 	statusLabel: "Coming Soon",
-				// },
-				{
-					href: "/tutorials",
-					label: "Tutorials",
-					description: "Guided walkthroughs for setup, uniques, art, UI, and 3D assets.",
-					disabled: true,
-					statusLabel: "Coming Soon",
-				},
-				{
-					href: "/scaffold-generators",
-					label: "Scaffold Generators",
-					description: "Step-by-step generators for setuping up a new civ mod from a starter build.",
-				},
-				{
-					href: "/pattern-library",
-					label: "Pattern Library",
-					description: "Curated set of coded patterns and repeatable setup recipes.",
-					disabled: true,
-					statusLabel: "Coming Soon",
-				},
-
-				{
-					href: "/community-links",
-					label: "Community Links",
-					description: "Civ V modding references, utilities, and community resources.",
+					href: "/civ5mod-ziper",
+					label: ".civ5mod Ziper",
+					description: "Package a mod folder into Civ V's distributable `.civ5mod` format.",
 				},
 			],
 		},
@@ -183,9 +178,6 @@
 	function isActivePath(pathname) {
 		if (!pathname) {
 			return false;
-		}
-		if (pathname === "/workshop-uploader") {
-			return currentPath === "/" || currentPath === "/workshop-uploader";
 		}
 		return currentPath === pathname;
 	}
@@ -301,7 +293,7 @@
 			<img class="brand-logo" src="/brand/cmc-navbar-logo.jpg" alt="Civ Modding Central logo" width="100" height="100" />
 		</a>
 		<div>
-			<p class="brand-overline">Community Web Tools</p>
+			<p class="brand-overline">Community Web Hub</p>
 			<p class="brand-title">Civ Modding Central</p>
 		</div>
 	</div>
@@ -462,6 +454,8 @@
 						{#if !authEnabled && authAccessDebug}
 							<p class="user-message user-message--debug">Access checks: {authAccessDebug}</p>
 						{/if}
+
+						<p>Message Coiot for account registration.</p>
 					</div>
 				{/if}
 			</div>
@@ -516,24 +510,24 @@
 		position: relative;
 		z-index: 20;
 		display: flex;
-		align-items: center;
+		container: navbar / inline-size;
 		justify-content: space-between;
+		align-items: center;
 		gap: clamp(0.75rem, 1.5cqi, 1.15rem);
 		background: var(--navbar-bg);
 		box-shadow: 0 2px 4px var(--shadow-soft);
-		border-radius: 0.85rem;
 		border: 1px solid var(--panel-border);
+		border-radius: 0.85rem;
 		padding-block: 0.75rem 0.615rem;
 		padding-inline: clamp(0.8rem, 1.75cqi, 1rem);
-		container: navbar / inline-size;
 	}
 
 	.brand {
 		min-inline-size: 0;
 		display: flex;
+		flex: 0 1 auto;
 		align-items: center;
 		gap: 0.75rem;
-		flex: 0 1 auto;
 	}
 
 	.brand-link {
@@ -551,18 +545,18 @@
 		object-fit: contain;
 	}
 
-	.brand-overline,
-	.brand-title {
-		line-height: 1.15;
-		white-space: pre;
-		margin-block: 0;
-	}
-
 	.brand-overline {
 		color: var(--muted-ink);
 		text-transform: uppercase;
 		font-size: 0.75rem;
 		letter-spacing: 0.12em;
+	}
+
+	.brand-overline,
+	.brand-title {
+		white-space: pre;
+		line-height: 1.15;
+		margin-block: 0;
 	}
 
 	.brand-title {
@@ -575,10 +569,10 @@
 	.nav-tools {
 		min-inline-size: 0;
 		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		gap: clamp(0.45rem, 1cqi, 0.7rem);
 		flex: 1 1 auto;
+		justify-content: flex-end;
+		align-items: center;
+		gap: clamp(0.45rem, 1cqi, 0.7rem);
 	}
 
 	.page-nav-shell {
@@ -588,26 +582,477 @@
 		flex: 0 1 auto;
 	}
 
-	.page-nav {
+	.nav-group-trigger:focus-visible,
+	.nav-menu-trigger:focus-visible,
+	.nav-entry:focus-visible,
+	.social-trigger:focus-visible,
+	.help-trigger:focus-visible,
+	.user-trigger:focus-visible,
+	.user-actions button:focus-visible,
+	.user-chip:focus-visible,
+	.user-dropdown input:focus-visible {
+		outline: 2px solid color-mix(in oklch, white 78%, var(--accent));
+		outline-offset: 2px;
+		border-color: color-mix(in oklch, var(--accent) 60%, var(--panel-border));
+	}
+
+	.social-trigger,
+	.help-trigger,
+	.user-trigger,
+	.user-actions button {
+		color: var(--ink);
+		font: inherit;
+		background: var(--control-bg);
+		border: 1px solid var(--panel-border);
+		border-radius: 0.55rem;
+		padding-block: 0.42rem;
+		padding-inline: 0.62rem;
+		transition:
+			background 150ms ease,
+			border-color 150ms ease,
+			color 150ms ease;
+		cursor: pointer;
+	}
+
+	.user-actions button:hover {
+		background: color-mix(in oklch, var(--accent) 14%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
+	}
+
+	.nav-group-title,
+	.nav-menu-label {
+		white-space: pre;
+		font-size: 0.95rem;
+	}
+
+	.nav-group-title,
+	.nav-menu-label,
+	.nav-group-panel-title,
+	.nav-entry-title,
+	.help-header,
+	.user-heading {
+		color: var(--ink);
+		font-weight: 700;
+	}
+
+	.nav-group-kicker,
+	.nav-group-panel-kicker,
+	.nav-menu-copy {
+		text-transform: uppercase;
+		font-size: 0.8rem;
+		letter-spacing: 0.12em;
+	}
+
+	.nav-group-kicker,
+	.nav-menu-copy,
+	.nav-group-copy,
+	.nav-entry-copy,
+	.nav-group-panel-kicker,
+	.nav-group-panel-copy,
+	.user-label,
+	.help-section h4,
+	.user-meta,
+	.user-message,
+	.user-access,
+	.help-copy,
+	.help-list {
+		color: color-mix(in oklch, var(--muted-ink) 72%, var(--ink));
+	}
+
+	:global(:root[data-theme="light"]) .nav-group-trigger,
+	:global(:root[data-theme="light"]) .nav-menu-trigger {
+		background: color-mix(in oklch, white 82%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 76%, var(--accent) 24%);
+	}
+
+	:global(:root[data-theme="light"]) .nav-group-trigger:hover,
+	:global(:root[data-theme="light"]) .nav-group.is-open .nav-group-trigger,
+	:global(:root[data-theme="light"]) .nav-menu-trigger:hover,
+	:global(:root[data-theme="light"]) .nav-menu-trigger.is-open {
+		background: color-mix(in oklch, white 74%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 60%, var(--accent) 40%);
+	}
+
+	:global(:root[data-theme="light"]) .nav-group.is-active .nav-group-trigger {
+		background: color-mix(in oklch, white 68%, var(--accent) 32%);
+		border-color: color-mix(in oklch, var(--panel-border) 48%, var(--accent) 52%);
+	}
+
+	.nav-group-trigger {
+		inline-size: 100%;
+		min-block-size: 7.5rem;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.25rem;
+		color: var(--ink);
+		font: inherit;
+		text-align: left;
+		background: color-mix(in oklch, var(--control-bg) 92%, black);
+		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+		border-radius: 0.78rem;
+		padding-block: 0.56rem;
+		padding-inline: 0.72rem;
+		transition:
+			background 160ms ease,
+			border-color 160ms ease,
+			transform 160ms ease,
+			box-shadow 160ms ease;
+		cursor: pointer;
+
+		&:hover {
+			background: color-mix(in oklch, var(--control-bg) 88%, black);
+			box-shadow: 0 8px 12px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
+			border-color: color-mix(in oklch, var(--accent) 68%, var(--panel-border));
+			transform: translateY(-1px);
+		}
+	}
+
+	.nav-group-title-row {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+	}
+
+	:global(:root[data-theme="light"]) .nav-group-count {
+		background: color-mix(in oklch, var(--control-bg) 95%, white);
+	}
+
+	.nav-group-count {
+		flex: 0 0 auto;
+		color: color-mix(in oklch, var(--accent) 25%, var(--ink));
+		font-size: 0.68rem;
+		line-height: 1.2;
+		background: color-mix(in oklch, var(--control-bg) 90%, black);
+		border: 1px solid color-mix(in oklch, var(--accent) 58%, var(--panel-border));
+		border-radius: 999px;
+		padding-block: 0.04rem;
+		padding-inline: 0.42rem;
+	}
+
+	.nav-group-copy,
+	.nav-entry-copy,
+	.nav-group-panel-copy {
+		font-size: 0.77rem;
+		line-height: 1.34;
+		margin-block: 0;
+	}
+
+	:global(:root[data-theme="light"]) .page-nav,
+	:global(:root[data-theme="light"]) .nav-group-panel {
+		background: color-mix(in oklch, white 88%, var(--panel-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 74%, var(--accent) 26%);
+	}
+
+	.nav-group-panel {
 		position: absolute;
-		top: calc(100% + 0.65rem);
-		right: 0;
 		left: auto;
+		z-index: 30;
+		top: calc(100% + 0.45rem);
+		right: 0;
 		inline-size: min(36rem, calc(100cqi - 1rem));
 		max-inline-size: calc(100cqi - 1rem);
 		display: none;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 0.55rem;
-		align-items: start;
-		background: color-mix(in oklch, var(--panel-bg) 88%, black);
-		box-shadow: 0 12px 24px color-mix(in oklch, var(--shadow-soft) 90%, transparent);
+		grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+		gap: 0.85rem;
+		background: color-mix(in oklch, var(--panel-bg) 90%, black);
+		box-shadow: 0 18px 36px color-mix(in oklch, var(--shadow-soft) 90%, transparent);
+		border: 1px solid color-mix(in oklch, var(--accent) 54%, var(--panel-border));
 		border-radius: 0.95rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 52%, var(--panel-border));
-		padding: 0.8rem;
+		padding: 0.85rem;
+	}
 
-		&.is-open {
-			display: grid;
+	.nav-group-panel-head {
+		display: grid;
+		align-content: start;
+		gap: 0.35rem;
+		padding-inline-end: 0.25rem;
+	}
+
+	.nav-group-panel-title,
+	.nav-group-panel-kicker {
+		margin-block: 0;
+	}
+
+	.nav-group-panel-title {
+		font-size: 1rem;
+	}
+
+	.nav-group-links {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+		gap: 0.65rem;
+	}
+
+	:global(:root[data-theme="light"]) .nav-entry {
+		background: color-mix(in oklch, white 84%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 74%, var(--accent) 26%);
+	}
+
+	:global(:root[data-theme="light"]) .nav-entry:hover,
+	:global(:root[data-theme="light"]) .nav-entry:focus-visible {
+		background: color-mix(in oklch, white 76%, var(--accent) 10%);
+		border-color: color-mix(in oklch, var(--panel-border) 60%, var(--accent) 40%);
+	}
+
+	:global(:root[data-theme="light"]) .nav-entry.is-active {
+		background: color-mix(in oklch, white 72%, var(--accent) 14%);
+		border-color: color-mix(in oklch, var(--panel-border) 50%, var(--accent) 50%);
+	}
+
+	:global(:root[data-theme="light"]) .nav-entry.is-disabled {
+		background: color-mix(in oklch, white 90%, var(--panel-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 82%, transparent);
+	}
+
+	.nav-entry {
+		display: grid;
+		gap: 0.3rem;
+		text-decoration: none;
+		background: color-mix(in oklch, var(--panel-bg) 84%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, var(--accent) 46%, var(--panel-border));
+		border-radius: 0.78rem;
+		padding: 0.7rem;
+		transition:
+			background 160ms ease,
+			border-color 160ms ease,
+			transform 160ms ease;
+
+		&:hover,
+		&:focus-visible {
+			background: color-mix(in oklch, var(--panel-bg) 78%, var(--control-bg));
+			border-color: color-mix(in oklch, var(--accent) 68%, var(--panel-border));
+			transform: translateY(-1px);
 		}
+
+		&.is-active {
+			background: color-mix(in oklch, var(--panel-bg) 75%, var(--control-bg));
+			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
+		}
+
+		&.is-disabled {
+			opacity: 0.82;
+			background: color-mix(in oklch, var(--panel-bg) 88%, transparent);
+			border-color: color-mix(in oklch, var(--panel-border) 86%, transparent);
+			cursor: default;
+		}
+	}
+
+	.nav-entry-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: start;
+		gap: 0.5rem;
+	}
+
+	.nav-entry-status {
+		flex: 0 0 auto;
+		color: var(--muted-ink);
+		text-transform: uppercase;
+		font-size: 0.65rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		border: 1px solid color-mix(in oklch, var(--panel-border) 78%, var(--accent) 22%);
+		border-radius: 999px;
+		padding-block: 0.18rem;
+		padding-inline: 0.46rem;
+	}
+
+	.nav-actions {
+		display: inline-flex;
+		flex: 0 0 auto;
+		align-items: center;
+		gap: clamp(0.35rem, 0.8cqi, 0.5rem);
+	}
+
+	.help-trigger,
+	.social-trigger {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		text-decoration: none;
+		padding-inline: 0.48rem;
+	}
+
+	.social-trigger,
+	.help-trigger,
+	.user-trigger {
+		color: var(--ink);
+	}
+
+	.social-trigger:hover,
+	.help-trigger:hover,
+	.user-trigger:hover {
+		background: color-mix(in oklch, var(--ink) 8%, var(--control-bg));
+		border-color: var(--panel-border);
+	}
+
+	.social-icon,
+	.help-icon {
+		inline-size: 1rem;
+		block-size: 1rem;
+		fill: currentColor;
+	}
+
+	.user-wrap,
+	.help-wrap {
+		position: relative;
+	}
+
+	.user-trigger {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		padding-inline: 0.48rem;
+	}
+
+	.user-icon {
+		inline-size: 1rem;
+		block-size: 1rem;
+		color: var(--ink);
+	}
+
+	.user-dropdown {
+		position: absolute;
+		top: calc(100% + 0.4rem);
+		right: 0;
+		inline-size: min(330px, 88vw);
+		display: grid;
+		gap: 0.45rem;
+		background: var(--panel-bg);
+		box-shadow: 0 16px 34px var(--shadow-soft);
+		border: 1px solid var(--panel-border);
+		border-radius: 0.75rem;
+		padding-block: 0.65rem;
+		padding-inline: 0.65rem;
+	}
+
+	.user-dropdown input {
+		color: var(--ink);
+		font: inherit;
+		background: var(--input-bg);
+		border: 1px solid var(--panel-border);
+		border-radius: 0.5rem;
+		padding-block: 0.36rem;
+		padding-inline: 0.45rem;
+	}
+
+	.user-dropdown label {
+		display: grid;
+		gap: 0.25rem;
+		color: var(--muted-ink);
+		font-size: 0.78rem;
+	}
+
+	.user-theme {
+		display: grid;
+		gap: 0.25rem;
+		padding-block-end: 0.2rem;
+	}
+
+	.user-label {
+		font-size: 0.75rem;
+		margin-block: 0;
+	}
+
+	.user-toggle {
+		display: inline-flex;
+		gap: 0.5rem;
+	}
+
+	.user-heading {
+		font-size: 0.84rem;
+		margin-block-start: 0.5rem;
+	}
+
+	.user-heading,
+	.user-meta,
+	.user-message {
+		margin-block: 0;
+	}
+
+	.user-meta {
+		font-size: 0.78rem;
+	}
+
+	.user-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+
+	.user-message {
+		font-size: 0.76rem;
+	}
+
+	.user-message--debug {
+		opacity: 0.8;
+		font-size: 0.72rem;
+	}
+
+	.help-dropdown {
+		position: absolute;
+		top: calc(100% + 0.4rem);
+		right: 0;
+		inline-size: min(360px, 92vw);
+		display: grid;
+		gap: 0.5rem;
+		background: var(--panel-bg);
+		box-shadow: 0 16px 34px var(--shadow-soft);
+		border: 1px solid var(--panel-border);
+		border-radius: 0.75rem;
+		padding-block: 0.7rem;
+		padding-inline: 0.7rem;
+	}
+
+	.help-header {
+		font-size: 0.84rem;
+		letter-spacing: 0.02em;
+	}
+
+	.help-section h4 {
+		font-size: 0.8rem;
+		letter-spacing: 0.03em;
+		margin-block: 0 0.3rem;
+	}
+
+	.help-list {
+		display: grid;
+		gap: 0.5rem;
+		font-size: 0.76rem;
+		padding: 0;
+		margin-block: 0;
+		list-style: none;
+	}
+
+	.help-list kbd {
+		display: inline-block;
+		color: var(--ink);
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.75rem;
+		background: color-mix(in oklch, var(--accent) 25%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, var(--accent) 80%, var(--panel-border));
+		border-radius: 0.25rem;
+		padding-block: 0.15rem;
+		padding-inline: 0.5rem;
+		margin-inline-end: 0.5rem;
+	}
+
+	.help-copy {
+		font-size: 0.78rem;
+		line-height: 1.34;
+		margin-block: 0;
+	}
+
+	:global(:root[data-theme="light"]) .nav-menu-trigger-primary {
+		background: color-mix(in oklch, white 78%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 64%, var(--accent) 36%);
+	}
+
+	:global(:root[data-theme="light"]) .nav-menu-trigger-primary:hover,
+	:global(:root[data-theme="light"]) .nav-menu-trigger-primary.is-open {
+		background: color-mix(in oklch, white 70%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--panel-border) 54%, var(--accent) 46%);
 	}
 
 	.nav-group {
@@ -630,71 +1075,17 @@
 		}
 	}
 
-	.nav-group-trigger {
-		min-block-size: 7.5rem;
-		inline-size: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.25rem;
-		color: var(--ink);
-		text-align: left;
-		font: inherit;
-		background: color-mix(in oklch, var(--control-bg) 92%, black);
-		border-radius: 0.78rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
-		padding-block: 0.56rem;
-		padding-inline: 0.72rem;
-		transition:
-			background 160ms ease,
-			border-color 160ms ease,
-			transform 160ms ease,
-			box-shadow 160ms ease;
-		cursor: pointer;
-
-		&:hover {
-			background: color-mix(in oklch, var(--control-bg) 88%, black);
-			box-shadow: 0 8px 12px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
-			border-color: color-mix(in oklch, var(--accent) 68%, var(--panel-border));
-			transform: translateY(-1px);
-		}
-	}
-
-	.nav-group-kicker,
-	.nav-menu-copy,
-	.nav-group-copy,
-	.nav-entry-copy,
-	.nav-group-panel-kicker,
-	.nav-group-panel-copy,
-	.user-label,
-	.help-section h4,
-	.user-meta,
-	.user-message,
-	.user-access,
-	.help-copy,
-	.help-list {
-		color: color-mix(in oklch, var(--muted-ink) 72%, var(--ink));
-	}
-
-	.nav-group-kicker,
-	.nav-group-panel-kicker,
-	.nav-menu-copy {
-		text-transform: uppercase;
-		font-size: 0.8rem;
-		letter-spacing: 0.12em;
-	}
-
 	.nav-menu-trigger {
 		inline-size: fit-content;
 		min-inline-size: 0;
 		max-inline-size: 100%;
 		display: flex;
-		align-items: baseline;
 		justify-content: space-between;
+		align-items: baseline;
 		gap: 0.75rem;
 		color: var(--ink);
-		text-align: left;
 		font: inherit;
+		text-align: left;
 		border-radius: 0.78rem;
 		padding-block: 0.56rem;
 		padding-inline: 0.72rem;
@@ -739,270 +1130,39 @@
 		}
 	}
 
-	.nav-group-title-row {
-		display: flex;
-		align-items: center;
-		gap: 0.55rem;
-	}
-
-	.nav-group-title,
-	.nav-menu-label,
-	.nav-group-panel-title,
-	.nav-entry-title,
-	.help-header,
-	.user-heading {
-		color: var(--ink);
-		font-weight: 700;
-	}
-
-	.nav-group-title,
-	.nav-menu-label {
-		font-size: 0.95rem;
-		white-space: pre;
-	}
-
-	.nav-group-count {
-		line-height: 1.2;
-		flex: 0 0 auto;
-		color: color-mix(in oklch, var(--accent) 25%, var(--ink));
-		font-size: 0.68rem;
-		background: color-mix(in oklch, var(--control-bg) 90%, black);
-		border-radius: 999px;
-		border: 1px solid color-mix(in oklch, var(--accent) 58%, var(--panel-border));
-		padding-block: 0.04rem;
-		padding-inline: 0.42rem;
-	}
-
-	.nav-group-copy,
-	.nav-entry-copy,
-	.nav-group-panel-copy {
-		line-height: 1.34;
-		font-size: 0.77rem;
-		margin-block: 0;
-	}
-
-	.nav-group-panel {
+	.page-nav {
 		position: absolute;
-		top: calc(100% + 0.45rem);
-		right: 0;
 		left: auto;
-		z-index: 30;
+		top: calc(100% + 0.65rem);
+		right: 0;
 		inline-size: min(36rem, calc(100cqi - 1rem));
 		max-inline-size: calc(100cqi - 1rem);
 		display: none;
-		grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
-		gap: 0.85rem;
-		background: color-mix(in oklch, var(--panel-bg) 90%, black);
-		box-shadow: 0 18px 36px color-mix(in oklch, var(--shadow-soft) 90%, transparent);
-		border-radius: 0.95rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 54%, var(--panel-border));
-		padding: 0.85rem;
-	}
-
-	.nav-group-panel-head {
-		display: grid;
-		align-content: start;
-		gap: 0.35rem;
-		padding-inline-end: 0.25rem;
-	}
-
-	.nav-group-panel-title,
-	.nav-group-panel-kicker {
-		margin-block: 0;
-	}
-
-	.nav-group-panel-title {
-		font-size: 1rem;
-	}
-
-	.nav-group-links {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-		gap: 0.65rem;
-	}
-
-	.nav-entry {
-		display: grid;
-		gap: 0.3rem;
-		text-decoration: none;
-		background: color-mix(in oklch, var(--panel-bg) 84%, var(--control-bg));
-		border-radius: 0.78rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 46%, var(--panel-border));
-		padding: 0.7rem;
-		transition:
-			background 160ms ease,
-			border-color 160ms ease,
-			transform 160ms ease;
-
-		&:hover,
-		&:focus-visible {
-			background: color-mix(in oklch, var(--panel-bg) 78%, var(--control-bg));
-			border-color: color-mix(in oklch, var(--accent) 68%, var(--panel-border));
-			transform: translateY(-1px);
-		}
-
-		&.is-active {
-			background: color-mix(in oklch, var(--panel-bg) 75%, var(--control-bg));
-			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
-		}
-
-		&.is-disabled {
-			background: color-mix(in oklch, var(--panel-bg) 88%, transparent);
-			border-color: color-mix(in oklch, var(--panel-border) 86%, transparent);
-			opacity: 0.82;
-			cursor: default;
-		}
-	}
-
-	.nav-entry-head {
-		display: flex;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		align-items: start;
-		justify-content: space-between;
-		gap: 0.5rem;
+		gap: 0.55rem;
+		background: color-mix(in oklch, var(--panel-bg) 88%, black);
+		box-shadow: 0 12px 24px color-mix(in oklch, var(--shadow-soft) 90%, transparent);
+		border: 1px solid color-mix(in oklch, var(--accent) 52%, var(--panel-border));
+		border-radius: 0.95rem;
+		padding: 0.8rem;
+
+		&.is-open {
+			display: grid;
+		}
 	}
 
-	.nav-entry-status {
-		flex: 0 0 auto;
-		color: var(--muted-ink);
-		font-size: 0.65rem;
-		font-weight: 700;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		border: 1px solid color-mix(in oklch, var(--panel-border) 78%, var(--accent) 22%);
-		border-radius: 999px;
-		padding: 0.18rem 0.46rem;
-	}
-
-	.nav-actions {
-		display: inline-flex;
-		align-items: center;
-		gap: clamp(0.35rem, 0.8cqi, 0.5rem);
-		flex: 0 0 auto;
-	}
-
-	.user-dropdown input {
-		color: var(--ink);
-		font: inherit;
-		background: var(--input-bg);
-		border-radius: 0.5rem;
-		border: 1px solid var(--panel-border);
-		padding-block: 0.36rem;
-		padding-inline: 0.45rem;
-	}
-
-	.nav-group-trigger:focus-visible,
-	.nav-menu-trigger:focus-visible,
-	.nav-entry:focus-visible,
-	.social-trigger:focus-visible,
-	.help-trigger:focus-visible,
-	.user-trigger:focus-visible,
-	.user-actions button:focus-visible,
-	.user-chip:focus-visible,
-	.user-dropdown input:focus-visible {
-		outline: 2px solid color-mix(in oklch, white 78%, var(--accent));
-		outline-offset: 2px;
-		border-color: color-mix(in oklch, var(--accent) 60%, var(--panel-border));
-	}
-
-	.social-trigger,
-	.help-trigger,
-	.user-trigger,
-	.user-actions button {
-		color: var(--ink);
-		font: inherit;
-		background: var(--control-bg);
-		border: 1px solid var(--panel-border);
-		border-radius: 0.55rem;
-		padding-block: 0.42rem;
-		padding-inline: 0.62rem;
-		transition:
-			background 150ms ease,
-			border-color 150ms ease,
-			color 150ms ease;
-		cursor: pointer;
-	}
-
-	.user-actions button:hover {
-		background: color-mix(in oklch, var(--accent) 14%, var(--control-bg));
-		border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
-	}
-
-	.social-trigger:hover,
-	.help-trigger:hover,
-	.user-trigger:hover {
-		background: color-mix(in oklch, var(--ink) 8%, var(--control-bg));
-		border-color: var(--panel-border);
-	}
-
-	.user-wrap,
-	.help-wrap {
-		position: relative;
-	}
-
-	.user-trigger {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		padding-inline: 0.48rem;
-	}
-
-	.help-trigger,
-	.social-trigger {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		text-decoration: none;
-		padding-inline: 0.48rem;
-	}
-
-	.user-icon {
-		inline-size: 1rem;
-		block-size: 1rem;
-		color: var(--ink);
-	}
-
-	.social-icon,
-	.help-icon {
-		inline-size: 1rem;
-		block-size: 1rem;
-		fill: currentColor;
-	}
-
-	.social-trigger,
-	.help-trigger,
-	.user-trigger {
-		color: var(--ink);
-	}
-
-	.user-dropdown {
-		position: absolute;
-		top: calc(100% + 0.4rem);
-		right: 0;
-		inline-size: min(330px, 88vw);
-		display: grid;
-		gap: 0.45rem;
-		background: var(--panel-bg);
-		box-shadow: 0 16px 34px var(--shadow-soft);
-		border: 1px solid var(--panel-border);
-		border-radius: 0.75rem;
-		padding-block: 0.65rem;
-		padding-inline: 0.65rem;
-	}
-
-	.user-theme {
-		display: grid;
-		gap: 0.25rem;
-		padding-block-end: 0.2rem;
-	}
-
-	.user-label {
-		font-size: 0.75rem;
+	.user-access {
+		font-size: 0.76rem;
 		margin-block: 0;
 	}
 
-	.user-toggle {
-		display: inline-flex;
-		gap: 0.5rem;
+	.user-access.is-denied {
+		color: hsl(350deg 57% 53%);
+	}
+
+	.user-access.is-enabled {
+		color: color-mix(in oklch, var(--accent) 68%, var(--ink));
 	}
 
 	.user-chip {
@@ -1020,110 +1180,6 @@
 			background: color-mix(in oklch, var(--accent) 25%, var(--control-bg));
 			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
 		}
-	}
-
-	.help-dropdown {
-		position: absolute;
-		top: calc(100% + 0.4rem);
-		right: 0;
-		inline-size: min(360px, 92vw);
-		display: grid;
-		gap: 0.5rem;
-		background: var(--panel-bg);
-		box-shadow: 0 16px 34px var(--shadow-soft);
-		border-radius: 0.75rem;
-		border: 1px solid var(--panel-border);
-		padding-block: 0.7rem;
-		padding-inline: 0.7rem;
-	}
-
-	.help-header {
-		font-size: 0.84rem;
-		letter-spacing: 0.02em;
-	}
-
-	.help-section h4 {
-		font-size: 0.8rem;
-		letter-spacing: 0.03em;
-		margin-block: 0 0.3rem;
-	}
-
-	.help-list {
-		display: grid;
-		gap: 0.5rem;
-		font-size: 0.76rem;
-		padding: 0;
-		margin-block: 0;
-		list-style: none;
-	}
-
-	.help-list kbd {
-		display: inline-block;
-		color: var(--ink);
-		font-size: 0.75rem;
-		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-		background: color-mix(in oklch, var(--accent) 25%, var(--control-bg));
-		border-radius: 0.25rem;
-		border: 1px solid color-mix(in oklch, var(--accent) 80%, var(--panel-border));
-		padding-block: 0.15rem;
-		padding-inline: 0.5rem;
-		margin-inline-end: 0.5rem;
-	}
-
-	.help-copy {
-		line-height: 1.34;
-		font-size: 0.78rem;
-		margin-block: 0;
-	}
-
-	.user-heading,
-	.user-meta,
-	.user-message {
-		margin-block: 0;
-	}
-
-	.user-heading {
-		font-size: 0.84rem;
-		margin-block-start: 0.5rem;
-	}
-
-	.user-meta {
-		font-size: 0.78rem;
-	}
-
-	.user-access {
-		font-size: 0.76rem;
-		margin-block: 0;
-	}
-
-	.user-access.is-enabled {
-		color: color-mix(in oklch, var(--accent) 68%, var(--ink));
-	}
-
-	.user-access.is-denied {
-		color: hsl(350deg 57% 53%);
-	}
-
-	.user-dropdown label {
-		display: grid;
-		gap: 0.25rem;
-		color: var(--muted-ink);
-		font-size: 0.78rem;
-	}
-
-	.user-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem;
-	}
-
-	.user-message {
-		font-size: 0.76rem;
-	}
-
-	.user-message--debug {
-		opacity: 0.8;
-		font-size: 0.72rem;
 	}
 
 	@media (width <= 550px) {
@@ -1217,66 +1273,5 @@
 			flex-wrap: wrap;
 			padding-block-start: 0.15rem;
 		}
-	}
-
-	:global(:root[data-theme="light"]) .page-nav,
-	:global(:root[data-theme="light"]) .nav-group-panel {
-		background: color-mix(in oklch, white 88%, var(--panel-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 74%, var(--accent) 26%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-group-trigger,
-	:global(:root[data-theme="light"]) .nav-menu-trigger {
-		background: color-mix(in oklch, white 82%, var(--control-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 76%, var(--accent) 24%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-menu-trigger-primary {
-		background: color-mix(in oklch, white 78%, var(--control-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 64%, var(--accent) 36%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-group-trigger:hover,
-	:global(:root[data-theme="light"]) .nav-group.is-open .nav-group-trigger,
-	:global(:root[data-theme="light"]) .nav-menu-trigger:hover,
-	:global(:root[data-theme="light"]) .nav-menu-trigger.is-open {
-		background: color-mix(in oklch, white 74%, var(--control-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 60%, var(--accent) 40%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-menu-trigger-primary:hover,
-	:global(:root[data-theme="light"]) .nav-menu-trigger-primary.is-open {
-		background: color-mix(in oklch, white 70%, var(--control-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 54%, var(--accent) 46%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-group.is-active .nav-group-trigger {
-		background: color-mix(in oklch, white 68%, var(--accent) 32%);
-		border-color: color-mix(in oklch, var(--panel-border) 48%, var(--accent) 52%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-group-count {
-		background: color-mix(in oklch, var(--control-bg) 95%, white);
-	}
-
-	:global(:root[data-theme="light"]) .nav-entry {
-		background: color-mix(in oklch, white 84%, var(--control-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 74%, var(--accent) 26%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-entry:hover,
-	:global(:root[data-theme="light"]) .nav-entry:focus-visible {
-		background: color-mix(in oklch, white 76%, var(--accent) 10%);
-		border-color: color-mix(in oklch, var(--panel-border) 60%, var(--accent) 40%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-entry.is-active {
-		background: color-mix(in oklch, white 72%, var(--accent) 14%);
-		border-color: color-mix(in oklch, var(--panel-border) 50%, var(--accent) 50%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-entry.is-disabled {
-		background: color-mix(in oklch, white 90%, var(--panel-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 82%, transparent);
 	}
 </style>

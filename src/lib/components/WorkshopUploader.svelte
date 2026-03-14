@@ -1,22 +1,5 @@
 <script>
-	const RELEASES_REPO_URL = "https://github.com/Coiot/cmc-workshop-uploader";
-	const CURRENT_VERSION = "1.1.0";
-	const RELEASE_TAG = `v${CURRENT_VERSION}`;
-	const RELEASE_PAGE_URL = `${RELEASES_REPO_URL}/releases/tag/${RELEASE_TAG}`;
-
-	// Optional: set exact asset filenames from the GitHub release to enable direct one-click downloads.
-	// If left blank, cards link to the release page (or stay "Coming soon" for unavailable platforms).
-	const RELEASE_ASSET_FILENAMES = {
-		macos: "",
-		linux: "",
-		windows: "",
-	};
-
-	const resolveReleaseLink = (assetFileName) => (assetFileName ? `${RELEASES_REPO_URL}/releases/download/${RELEASE_TAG}/${assetFileName}` : RELEASE_PAGE_URL);
-
-	const macOsAvailable = true;
-	const linuxAvailable = Boolean(RELEASE_ASSET_FILENAMES.linux);
-	const windowsAvailable = Boolean(RELEASE_ASSET_FILENAMES.windows);
+	import { CURRENT_VERSION, workshopUploaderDownloadCards as downloadCards } from "../data/workshopUploaderReleaseData.js";
 
 	const featureCards = [
 		{
@@ -42,36 +25,6 @@
 		{
 			title: "Contemporary Steam Uploading",
 			copy: "A faster and more feature-rich ModBuddy replacement for Workshop uploads now that the 2010-era tool is unsupported with no longer public components.",
-		},
-	];
-
-	const downloadCards = [
-		{
-			title: "macOS",
-			formats: "ZIP / DMG",
-			status: "Available now",
-			copy: `The current stable release is the macOS build. Version ${CURRENT_VERSION} is the latest macOS uploader.`,
-			actionLabel: "Download macOS Build",
-			href: resolveReleaseLink(RELEASE_ASSET_FILENAMES.macos),
-			available: macOsAvailable,
-		},
-		{
-			title: "Linux",
-			formats: "AppImage / DEB / TAR.GZ",
-			status: linuxAvailable ? "Available now" : "Coming soon",
-			copy: linuxAvailable ? `Version ${CURRENT_VERSION} is available on the GitHub release page.` : "Linux version is currently being tested and is not ready to ship yet.",
-			actionLabel: linuxAvailable ? "Download Linux Build" : "Coming Soon",
-			href: resolveReleaseLink(RELEASE_ASSET_FILENAMES.linux),
-			available: linuxAvailable,
-		},
-		{
-			title: "Windows",
-			formats: "EXE / ZIP",
-			status: windowsAvailable ? "Available now" : "Coming soon",
-			copy: windowsAvailable ? `Version ${CURRENT_VERSION} is available on the GitHub release page.` : "Windows version is currently being tested and is not ready to ship yet.",
-			actionLabel: windowsAvailable ? "Download Windows Build" : "Coming Soon",
-			href: resolveReleaseLink(RELEASE_ASSET_FILENAMES.windows),
-			available: windowsAvailable,
 		},
 	];
 
@@ -119,14 +72,14 @@
 	<section class="workshop-app-panel">
 		<div class="workshop-app-section-head">
 			<span class="workshop-app-kicker">Use Cases</span>
-			<h2>What the App Faciliates</h2>
+			<h2 class="section-title">What the App Faciliates</h2>
 		</div>
 
 		<div class="workshop-app-feature-grid">
 			{#each featureCards as card (card.title)}
 				<article class="workshop-app-feature-card">
-					<h3>{card.title}</h3>
-					<p>{card.copy}</p>
+					<h3 class="card-title">{card.title}</h3>
+					<p class="card-copy">{card.copy}</p>
 				</article>
 			{/each}
 		</div>
@@ -134,8 +87,8 @@
 
 	<section class="workshop-app-panel">
 		<div class="workshop-app-section-head">
-			<h2>Download Status</h2>
-			<p>Choose the finished desktop package for your platform.</p>
+			<h2 class="section-title">Download Status</h2>
+			<p class="section-copy">Choose the finished desktop package for your platform.</p>
 		</div>
 
 		<div class="workshop-app-release-grid">
@@ -144,10 +97,10 @@
 					<a class="workshop-app-release-card workshop-app-release-link-card" href={card.href} target="_blank" rel="noopener noreferrer">
 						<div class="workshop-app-release-head">
 							<div class="workshop-app-release-title-row">
-								<h3>{card.title}</h3>
+								<h3 class="card-title">{card.title}</h3>
 								<span class="workshop-app-pill">{card.formats}</span>
 							</div>
-							<p>{card.copy}</p>
+							<p class="card-copy">{card.copy}</p>
 						</div>
 						<span class="workshop-app-button is-full" aria-hidden="true">{card.actionLabel}</span>
 					</a>
@@ -155,10 +108,10 @@
 					<article class="workshop-app-release-card">
 						<div class="workshop-app-release-head">
 							<div class="workshop-app-release-title-row">
-								<h3>{card.title}</h3>
+								<h3 class="card-title">{card.title}</h3>
 								<span class="workshop-app-pill">{card.formats}</span>
 							</div>
-							<p>{card.copy}</p>
+							<p class="card-copy">{card.copy}</p>
 						</div>
 						<span class="workshop-app-button is-full is-disabled" aria-disabled="true">{card.actionLabel}</span>
 					</article>
@@ -168,7 +121,7 @@
 
 		<div class="workshop-app-meta-grid">
 			<section class="workshop-app-meta-card">
-				<h3>Requirements</h3>
+				<h3 class="card-title">Requirements</h3>
 				<ul>
 					{#each requirements as item (item)}
 						<li>{@html item}</li>
@@ -177,7 +130,7 @@
 			</section>
 
 			<section class="workshop-app-meta-card">
-				<h3>Install and Upload Flow</h3>
+				<h3 class="card-title">Install and Upload Flow</h3>
 				<ol class="workshop-app-step-list">
 					{#each installSteps as step (step)}
 						<li>{@html step}</li>
@@ -189,15 +142,15 @@
 
 	<section class="workshop-app-panel">
 		<div class="workshop-app-section-head">
-			<h2>Use alongside the other Tools</h2>
-			<p>The app comes bundled with everything you need, but you can use some of the tools here independently.</p>
+			<h2 class="section-title">Use alongside the other Tools</h2>
+			<p class="section-copy">The app comes bundled with everything you need, but you can use some of the tools here independently.</p>
 		</div>
 
 		<div class="workshop-app-companion-grid">
 			{#each companionTools as tool (tool.title)}
 				<a class="workshop-app-companion-card" href={tool.href}>
-					<h3>{tool.title}</h3>
-					<p>{tool.copy}</p>
+					<h3 class="card-title">{tool.title}</h3>
+					<p class="card-copy">{tool.copy}</p>
 				</a>
 			{/each}
 		</div>
@@ -205,290 +158,6 @@
 </section>
 
 <style>
-	.workshop-app-page {
-		display: grid;
-		gap: 1rem;
-	}
-
-	.workshop-app-hero {
-		border-color: color-mix(in oklch, var(--accent) 50%, var(--panel-border));
-		background: linear-gradient(135deg, color-mix(in oklch, var(--panel-bg) 80%, black) 0%, color-mix(in oklch, var(--panel-bg) 90%, var(--accent) 5%) 100%);
-	}
-
-	.workshop-app-button {
-		min-block-size: 2.75rem;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.35rem;
-		color: var(--ink);
-		font-weight: 600;
-		text-decoration: none;
-		border-radius: 0.75rem;
-		border: 1px solid color-mix(in oklch, var(--panel-border) 80%, transparent);
-		background: color-mix(in oklch, var(--control-bg) 72%, black);
-		padding-inline: 0.95rem;
-		margin-block-start: auto;
-		transition:
-			transform 140ms ease,
-			border-color 140ms ease,
-			background 140ms ease;
-	}
-
-	.workshop-app-button:hover {
-		transform: translateY(-1px);
-		border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
-	}
-
-	.workshop-app-button.is-full {
-		inline-size: 100%;
-	}
-
-	.workshop-app-button.is-disabled {
-		cursor: not-allowed;
-		opacity: 0.6;
-		pointer-events: none;
-	}
-
-	.workshop-app-panel {
-		display: grid;
-		gap: 1rem;
-		padding: 1.5rem;
-		background: var(--panel-bg);
-		box-shadow: 0 10px 26px var(--shadow-soft);
-		border: 1px solid color-mix(in oklch, var(--panel-border) 78%, transparent);
-		border-radius: 1rem;
-	}
-
-	.workshop-app-kicker {
-		color: color-mix(in oklch, var(--accent) 90%, var(--ink));
-		font-size: 0.75rem;
-		font-weight: 700;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		margin-block-end: 0.25rem;
-	}
-
-	.workshop-app-section-head {
-		display: grid;
-		gap: 0.25rem;
-
-		& h2 {
-			font-family: "Rockwell", "Palatino Linotype", serif;
-		}
-
-		& p {
-			color: var(--muted-ink);
-		}
-	}
-
-	.workshop-app-feature-grid,
-	.workshop-app-release-grid,
-	.workshop-app-companion-grid,
-	.workshop-app-meta-grid {
-		display: grid;
-		gap: 1rem;
-	}
-
-	.workshop-app-feature-grid {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-	}
-
-	.workshop-app-feature-card,
-	.workshop-app-release-card,
-	.workshop-app-meta-card,
-	.workshop-app-companion-card {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 1rem;
-		border-radius: 0.9rem;
-		border: 1px solid color-mix(in oklch, var(--panel-border) 76%, transparent);
-		background: color-mix(in oklch, var(--panel-bg) 88%, black);
-		padding: 1.25rem;
-	}
-
-	.workshop-app-feature-card {
-		gap: 0.5rem;
-
-		& h3 {
-			font-size: 1.25rem;
-			font-family: "Rockwell", "Palatino Linotype", serif;
-		}
-
-		& p {
-			color: var(--muted-ink);
-		}
-	}
-
-	.workshop-app-release-grid {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-	}
-
-	.workshop-app-release-card {
-		position: relative;
-		overflow: clip;
-		display: grid;
-		gap: 0.8rem;
-		border-color: color-mix(in oklch, var(--accent) 80%, var(--panel-border));
-		background:
-			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 5%, transparent) 0%, transparent 58%),
-			linear-gradient(165deg, color-mix(in oklch, var(--panel-bg) 88%, var(--accent) 2%) 0%, color-mix(in oklch, var(--panel-bg) 90%, black) 100%);
-		box-shadow:
-			0 1px 0 color-mix(in oklch, var(--accent) 16%, transparent),
-			0 4px 8px color-mix(in oklch, black 80%, var(--accent) 20%);
-		transition:
-			transform 170ms ease,
-			border-color 170ms ease,
-			background 170ms ease,
-			box-shadow 170ms ease;
-
-		& h3 {
-			font-size: 1.5rem;
-			font-family: "Rockwell", "Palatino Linotype", serif;
-		}
-
-		& p {
-			color: var(--muted-ink);
-		}
-	}
-
-	.workshop-app-release-link-card {
-		color: var(--ink);
-		text-decoration: none;
-		cursor: pointer;
-	}
-
-	.workshop-app-release-card::after {
-		content: "";
-		position: absolute;
-		inset: auto -25% -42% auto;
-		inline-size: 12rem;
-		aspect-ratio: 1;
-		background: radial-gradient(circle, color-mix(in oklch, var(--accent) 4%, transparent) 0%, transparent 70%);
-		pointer-events: none;
-		opacity: 0.25;
-		transition: opacity 170ms ease;
-	}
-
-	.workshop-app-release-card:hover,
-	.workshop-app-release-card:focus-within,
-	.workshop-app-release-card:has(.workshop-app-button:hover),
-	.workshop-app-release-card:has(.workshop-app-button:focus-visible) {
-		transform: translateY(-2px);
-		border-color: color-mix(in oklch, var(--accent) 50%, var(--panel-border));
-		background:
-			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 7%, transparent) 0%, transparent 60%),
-			linear-gradient(165deg, color-mix(in oklch, var(--panel-bg) 84%, var(--accent) 5%) 0%, color-mix(in oklch, var(--panel-bg) 90%, black) 100%);
-		box-shadow:
-			0 1px 0 color-mix(in oklch, var(--accent) 20%, transparent),
-			0 12px 16px color-mix(in oklch, black 76%, var(--accent) 20%);
-	}
-
-	.workshop-app-release-card:hover::after,
-	.workshop-app-release-card:focus-within::after,
-	.workshop-app-release-card:has(.workshop-app-button:hover)::after,
-	.workshop-app-release-card:has(.workshop-app-button:focus-visible)::after {
-		opacity: 0.45;
-	}
-
-	.workshop-app-release-card:has(.workshop-app-button:hover) .workshop-app-pill,
-	.workshop-app-release-card:has(.workshop-app-button:focus-visible) .workshop-app-pill {
-		border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
-		background: color-mix(in oklch, var(--accent) 22%, transparent);
-	}
-
-	.workshop-app-release-head {
-		display: grid;
-		gap: 1rem;
-	}
-
-	.workshop-app-release-title-row {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-
-		& h3 {
-			text-box: trim-both cap alphabetic;
-		}
-	}
-
-	.workshop-app-pill {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		margin-inline-start: auto;
-		flex: 0 0 auto;
-		padding: 0.22rem 0.55rem;
-		border-radius: 999px;
-		border: 1px solid color-mix(in oklch, var(--accent) 70%, var(--panel-border));
-		background: color-mix(in oklch, var(--accent) 20%, transparent);
-		color: var(--ink);
-		font-size: 0.76rem;
-		font-weight: 700;
-		white-space: nowrap;
-	}
-
-	.workshop-app-meta-grid {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	.workshop-app-meta-card {
-		& h3 {
-			font-family: "Rockwell", "Palatino Linotype", serif;
-		}
-
-		& ul {
-			padding-inline-start: 1.1rem;
-			display: grid;
-			gap: 0.4rem;
-		}
-
-		& li {
-			color: var(--muted-ink);
-		}
-	}
-
-	.workshop-app-step-list {
-		padding-inline-start: 1.2rem;
-		display: grid;
-		gap: 0.55rem;
-
-		& li {
-			color: var(--muted-ink);
-		}
-	}
-
-	.workshop-app-companion-grid {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-	}
-
-	.workshop-app-companion-card {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		color: var(--ink);
-		text-decoration: none;
-		transition:
-			transform 140ms ease,
-			border-color 140ms ease,
-			background 140ms ease;
-
-		& h3 {
-			font-family: "Rockwell", "Palatino Linotype", serif;
-		}
-
-		& p {
-			color: var(--muted-ink);
-		}
-	}
-
-	.workshop-app-companion-card:hover {
-		transform: translateY(-1px);
-		border-color: color-mix(in oklch, var(--accent) 85%, var(--panel-border));
-		background: color-mix(in oklch, var(--panel-bg) 85%, var(--accent) 1%);
-	}
-
 	:global(:root[data-theme="light"]) .workshop-app-page {
 		.workshop-app-hero {
 			background: linear-gradient(135deg, color-mix(in oklch, white 78%, var(--panel-bg)) 0%, color-mix(in oklch, white 70%, var(--accent) 8%) 100%);
@@ -512,28 +181,28 @@
 			background:
 				radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 10%, white 90%) 0%, transparent 58%),
 				linear-gradient(165deg, color-mix(in oklch, white 86%, var(--accent) 5%) 0%, color-mix(in oklch, white 81%, var(--panel-bg)) 100%);
-			border-color: color-mix(in oklch, var(--accent) 32%, var(--panel-border));
 			box-shadow:
 				0 1px 0 color-mix(in oklch, var(--accent) 14%, white 86%),
 				0 10px 20px color-mix(in oklch, var(--panel-border) 46%, transparent);
+			border-color: color-mix(in oklch, var(--accent) 32%, var(--panel-border));
 		}
 
 		.workshop-app-release-card::after {
-			background: radial-gradient(circle, color-mix(in oklch, var(--accent) 12%, white 88%) 0%, transparent 70%);
 			opacity: 0.35;
+			background: radial-gradient(circle, color-mix(in oklch, var(--accent) 12%, white 88%) 0%, transparent 70%);
 		}
 
 		.workshop-app-release-card:hover,
 		.workshop-app-release-card:focus-within,
 		.workshop-app-release-card:has(.workshop-app-button:hover),
 		.workshop-app-release-card:has(.workshop-app-button:focus-visible) {
-			border-color: color-mix(in oklch, var(--accent) 48%, var(--panel-border));
 			background:
 				radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 16%, white 84%) 0%, transparent 60%),
 				linear-gradient(165deg, color-mix(in oklch, white 84%, var(--accent) 7%) 0%, color-mix(in oklch, white 79%, var(--panel-bg)) 100%);
 			box-shadow:
 				0 1px 0 color-mix(in oklch, var(--accent) 18%, white 82%),
 				0 14px 24px color-mix(in oklch, var(--panel-border) 52%, transparent);
+			border-color: color-mix(in oklch, var(--accent) 48%, var(--panel-border));
 		}
 
 		.workshop-app-button {
@@ -542,8 +211,8 @@
 		}
 
 		.workshop-app-button.is-disabled {
-			background: color-mix(in oklch, white 70%, var(--control-bg));
 			color: color-mix(in oklch, var(--ink) 54%, white 46%);
+			background: color-mix(in oklch, white 70%, var(--control-bg));
 		}
 
 		.workshop-app-pill {
@@ -555,14 +224,268 @@
 			background: color-mix(in oklch, white 74%, var(--accent) 10%);
 		}
 
-		.workshop-app-section-head p,
-		.workshop-app-feature-card p,
-		.workshop-app-release-card p,
+		.workshop-app-section-head .section-copy,
+		.workshop-app-feature-card .card-copy,
+		.workshop-app-release-card .card-copy,
 		.workshop-app-meta-card li,
-		.workshop-app-companion-card p,
+		.workshop-app-companion-card .card-copy,
 		.workshop-app-step-list li {
 			color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
 		}
+	}
+	.workshop-app-page {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.workshop-app-hero {
+		background: linear-gradient(135deg, color-mix(in oklch, var(--panel-bg) 80%, black) 0%, color-mix(in oklch, var(--panel-bg) 90%, var(--accent) 5%) 100%);
+		border-color: color-mix(in oklch, var(--accent) 50%, var(--panel-border));
+	}
+
+	.workshop-app-panel {
+		display: grid;
+		gap: 1rem;
+		background: var(--panel-bg);
+		box-shadow: 0 10px 26px var(--shadow-soft);
+		border: 1px solid color-mix(in oklch, var(--panel-border) 78%, transparent);
+		border-radius: 1rem;
+		padding: 1.5rem;
+	}
+
+	.workshop-app-section-head {
+		display: grid;
+		gap: 0.25rem;
+	}
+
+	.workshop-app-kicker {
+		color: color-mix(in oklch, var(--accent) 90%, var(--ink));
+		text-transform: uppercase;
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.16em;
+		margin-block-end: 0.25rem;
+	}
+
+	.workshop-app-feature-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.workshop-app-feature-grid,
+	.workshop-app-release-grid,
+	.workshop-app-companion-grid,
+	.workshop-app-meta-grid {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.workshop-app-feature-card {
+		gap: 0.5rem;
+	}
+
+	.workshop-app-feature-card .card-title {
+		font-size: 1.25rem;
+	}
+
+	.workshop-app-feature-card,
+	.workshop-app-release-card,
+	.workshop-app-meta-card,
+	.workshop-app-companion-card {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+		background: color-mix(in oklch, var(--panel-bg) 88%, black);
+		border: 1px solid color-mix(in oklch, var(--panel-border) 76%, transparent);
+		border-radius: 0.9rem;
+		padding: 1.25rem;
+	}
+
+	.workshop-app-release-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.workshop-app-release-card {
+		position: relative;
+		display: grid;
+		gap: 0.8rem;
+		background:
+			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 5%, transparent) 0%, transparent 58%),
+			linear-gradient(165deg, color-mix(in oklch, var(--panel-bg) 88%, var(--accent) 2%) 0%, color-mix(in oklch, var(--panel-bg) 90%, black) 100%);
+		box-shadow:
+			0 1px 0 color-mix(in oklch, var(--accent) 16%, transparent),
+			0 4px 8px color-mix(in oklch, black 80%, var(--accent) 20%);
+		border-color: color-mix(in oklch, var(--accent) 80%, var(--panel-border));
+		overflow: clip;
+		transition:
+			transform 170ms ease,
+			border-color 170ms ease,
+			background 170ms ease,
+			box-shadow 170ms ease;
+	}
+
+	.workshop-app-release-card .card-title {
+		font-size: 1.5rem;
+	}
+
+	.workshop-app-release-card::after {
+		position: absolute;
+		inset: auto -25% -42% auto;
+		inline-size: 12rem;
+		aspect-ratio: 1;
+		opacity: 0.25;
+		background: radial-gradient(circle, color-mix(in oklch, var(--accent) 4%, transparent) 0%, transparent 70%);
+		transition: opacity 170ms ease;
+		content: "";
+		pointer-events: none;
+	}
+
+	.workshop-app-release-card:has(.workshop-app-button:hover) .workshop-app-pill,
+	.workshop-app-release-card:has(.workshop-app-button:focus-visible) .workshop-app-pill {
+		background: color-mix(in oklch, var(--accent) 22%, transparent);
+		border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
+	}
+
+	.workshop-app-release-card:hover,
+	.workshop-app-release-card:focus-within,
+	.workshop-app-release-card:has(.workshop-app-button:hover),
+	.workshop-app-release-card:has(.workshop-app-button:focus-visible) {
+		background:
+			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 7%, transparent) 0%, transparent 60%),
+			linear-gradient(165deg, color-mix(in oklch, var(--panel-bg) 84%, var(--accent) 5%) 0%, color-mix(in oklch, var(--panel-bg) 90%, black) 100%);
+		box-shadow:
+			0 1px 0 color-mix(in oklch, var(--accent) 20%, transparent),
+			0 12px 16px color-mix(in oklch, black 76%, var(--accent) 20%);
+		border-color: color-mix(in oklch, var(--accent) 50%, var(--panel-border));
+		transform: translateY(-2px);
+	}
+
+	.workshop-app-release-card:hover::after,
+	.workshop-app-release-card:focus-within::after,
+	.workshop-app-release-card:has(.workshop-app-button:hover)::after,
+	.workshop-app-release-card:has(.workshop-app-button:focus-visible)::after {
+		opacity: 0.45;
+	}
+
+	.workshop-app-release-link-card {
+		color: var(--ink);
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.workshop-app-release-head {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.workshop-app-release-title-row {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.workshop-app-release-title-row .card-title {
+		text-box: trim-both cap alphabetic;
+	}
+
+	.workshop-app-pill {
+		display: inline-flex;
+		flex: 0 0 auto;
+		justify-content: center;
+		align-items: center;
+		color: var(--ink);
+		white-space: nowrap;
+		font-size: 0.76rem;
+		font-weight: 700;
+		background: color-mix(in oklch, var(--accent) 20%, transparent);
+		border: 1px solid color-mix(in oklch, var(--accent) 70%, var(--panel-border));
+		border-radius: 999px;
+		padding-block: 0.22rem;
+		padding-inline: 0.55rem;
+		margin-inline-start: auto;
+	}
+
+	.workshop-app-button {
+		min-block-size: 2.75rem;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		gap: 0.35rem;
+		color: var(--ink);
+		text-decoration: none;
+		font-weight: 600;
+		background: color-mix(in oklch, var(--control-bg) 72%, black);
+		border: 1px solid color-mix(in oklch, var(--panel-border) 80%, transparent);
+		border-radius: 0.75rem;
+		padding-inline: 0.95rem;
+		margin-block-start: auto;
+		transition:
+			transform 140ms ease,
+			border-color 140ms ease,
+			background 140ms ease;
+	}
+
+	.workshop-app-button:hover {
+		border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
+		transform: translateY(-1px);
+	}
+
+	.workshop-app-button.is-disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+
+	.workshop-app-button.is-full {
+		inline-size: 100%;
+	}
+
+	.workshop-app-meta-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.workshop-app-meta-card {
+		& ul {
+			display: grid;
+			gap: 0.4rem;
+			padding-inline-start: 1.1rem;
+		}
+
+		& li {
+			color: var(--muted-ink);
+		}
+	}
+
+	.workshop-app-step-list {
+		display: grid;
+		gap: 0.55rem;
+		padding-inline-start: 1.2rem;
+
+		& li {
+			color: var(--muted-ink);
+		}
+	}
+
+	.workshop-app-companion-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.workshop-app-companion-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		color: var(--ink);
+		text-decoration: none;
+		transition:
+			transform 140ms ease,
+			border-color 140ms ease,
+			background 140ms ease;
+	}
+
+	.workshop-app-companion-card:hover {
+		background: color-mix(in oklch, var(--panel-bg) 85%, var(--accent) 1%);
+		border-color: color-mix(in oklch, var(--accent) 85%, var(--panel-border));
+		transform: translateY(-1px);
 	}
 
 	@media (max-width: 980px) {
