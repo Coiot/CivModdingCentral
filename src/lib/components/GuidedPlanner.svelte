@@ -1569,9 +1569,9 @@
 									<p class="card-copy">{formatPercent(overallCompletionPercent)} complete in this civ plan.</p>
 								</article>
 								<article class="project-mini-card">
-									<span>Current Route</span>
+									<span>Current Focus</span>
 									<strong class="card-title">{projectCurrentTrack(activeProject)?.label || "Foundation"}</strong>
-									<p class="card-copy">{projectCurrentDeliverable(activeProject)?.label || "Choose a deliverable"} is the current focus.</p>
+									<p class="card-copy">{projectCurrentDeliverable(activeProject)?.label || "Choose a deliverable"} is the current active step.</p>
 								</article>
 								<article class="project-mini-card">
 									<span>Sync State</span>
@@ -2772,7 +2772,7 @@
 	.project-mini-card {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0.25rem;
 		background: color-mix(in oklch, var(--control-bg) 92%, #35251a 8%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 20%, transparent),
