@@ -1409,6 +1409,24 @@
 				<h1>Build a civ mod like a campaign,<br /> not a flat checklist.</h1>
 				<p>Work in grouped lanes, follow logical step progression, and keep progress saved while you move from design through workshop release.</p>
 
+				<div class="planner-hero-map" aria-label="Planner campaign map preview">
+					<p class="planner-hero-map-caption">Campaign route preview</p>
+
+					<div class="planner-hero-route">
+						{#each plannerTracks as track, index (track.id)}
+							<article class={["planner-hero-route-card", trackAccentClass(track.id), activeTrack?.id === track.id && "is-active", isTrackComplete(track.id) && "is-complete"]}>
+								<div class="planner-hero-route-top">
+									<span class="planner-hero-route-index">{index + 1}</span>
+									<strong class="planner-hero-route-label">{track.label}</strong>
+								</div>
+								<div class="planner-hero-route-meter" aria-hidden="true">
+									<span style={`width: ${trackCompletionPercent(track.id)}%`}></span>
+								</div>
+							</article>
+						{/each}
+					</div>
+				</div>
+
 				<!-- <div class="planner-hero-summary" aria-label="Active planner summary">
 					<article class="planner-hero-chip">
 						<span class="planner-hero-chip-label">Active civ</span>
@@ -2054,16 +2072,163 @@
 
 	.planner-hero-layout {
 		display: grid;
-		grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.85fr);
+		grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.85fr);
 		align-items: start;
-		gap: 1.1rem;
+		gap: 2rem;
 	}
 
 	.planner-hero-copy {
-		max-inline-size: 48rem;
 		display: grid;
 		gap: 1rem;
 		text-shadow: 1px 1px 3px #000;
+	}
+
+	.planner-hero-map {
+		display: grid;
+		gap: 0.75rem;
+		background:
+			radial-gradient(circle at 0% 0%, color-mix(in oklch, var(--planner-highlight-soft) 18%, transparent) 0%, transparent 34%),
+			linear-gradient(165deg, color-mix(in oklch, var(--planner-panel-soft) 92%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 88%, #14100d 12%) 100%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in oklch, white 20%, transparent),
+			0 6px 12px color-mix(in oklch, black 70%, transparent);
+		/*border: 1px solid color-mix(in oklch, var(--planner-highlight) 18%, var(--planner-border-soft));*/
+		border-radius: 1rem;
+		padding: 1rem;
+		margin-block-start: 0.5rem;
+	}
+
+	.planner-hero-map-caption {
+		color: color-mix(in oklch, var(--muted-ink) 80%, white 20%);
+		font-size: 0.8rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		margin: 0;
+	}
+
+	.planner-hero-route {
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+		gap: 0.75rem;
+	}
+
+	.planner-hero-route::before {
+		content: "";
+		position: absolute;
+		inset: 1.45rem 0 auto 0;
+		block-size: 1px;
+		background: linear-gradient(90deg, color-mix(in oklch, var(--planner-brass) 40%, transparent) 0%, color-mix(in oklch, var(--planner-sky) 28%, transparent) 100%);
+		opacity: 0.55;
+		pointer-events: none;
+	}
+
+	.planner-hero-route-card {
+		position: relative;
+		display: grid;
+		gap: 0.45rem;
+		padding: 0.7rem 0.75rem;
+		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 90%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 84%, #18120d 16%) 100%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in oklch, white 7%, transparent),
+			0 6px 14px color-mix(in oklch, black 16%, transparent);
+		border: 1px solid color-mix(in oklch, var(--planner-border-soft) 88%, white 12%);
+		border-radius: 0.85rem;
+		min-inline-size: 0;
+		--hero-track-accent: var(--planner-brass);
+		--hero-track-accent-soft: var(--planner-sky);
+	}
+
+	.planner-hero-route-card.is-foundation {
+		--hero-track-accent: #d5a45f;
+		--hero-track-accent-soft: #f2d39f;
+	}
+
+	.planner-hero-route-card.is-text {
+		--hero-track-accent: #b48cd4;
+		--hero-track-accent-soft: #e6d2f6;
+	}
+
+	.planner-hero-route-card.is-gameplay {
+		--hero-track-accent: #c97d64;
+		--hero-track-accent-soft: #f0c5b3;
+	}
+
+	.planner-hero-route-card.is-art {
+		--hero-track-accent: #8fb96a;
+		--hero-track-accent-soft: #d9edbb;
+	}
+
+	.planner-hero-route-card.is-presentation {
+		--hero-track-accent: #d59652;
+		--hero-track-accent-soft: #f0d1a0;
+	}
+
+	.planner-hero-route-card.is-text-polish {
+		--hero-track-accent: #9b86c9;
+		--hero-track-accent-soft: #ddd2f3;
+	}
+
+	.planner-hero-route-card.is-ship {
+		--hero-track-accent: #78a9d5;
+		--hero-track-accent-soft: #c9e3f8;
+	}
+
+	.planner-hero-route-card.is-active {
+		transform: translateY(-1px);
+		border-color: color-mix(in oklch, var(--hero-track-accent) 72%, white 28%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in oklch, white 9%, transparent),
+			0 8px 18px color-mix(in oklch, black 22%, transparent);
+	}
+
+	.planner-hero-route-card.is-complete {
+		opacity: 0.62;
+		filter: saturate(0.4);
+	}
+
+	.planner-hero-route-top {
+		display: flex;
+		align-items: center;
+		align-items: center;
+		gap: 0.5rem;
+		min-inline-size: 0;
+	}
+
+	.planner-hero-route-index {
+		inline-size: 1.4rem;
+		block-size: 1.4rem;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		flex: 0 0 auto;
+		font-size: 0.7rem;
+		font-weight: 800;
+		color: var(--ink);
+		background: color-mix(in oklch, var(--hero-track-accent) 16%, var(--input-bg));
+		border: 1px solid color-mix(in oklch, var(--hero-track-accent) 42%, white 12%);
+		border-radius: 999px;
+	}
+
+	.planner-hero-route-label {
+		min-inline-size: 0;
+		font-size: 0.9rem;
+		line-height: 1.15;
+		color: var(--ink);
+	}
+
+	.planner-hero-route-meter {
+		block-size: 0.32rem;
+		background: color-mix(in oklch, var(--control-bg) 84%, #130f0b 16%);
+		border-radius: 999px;
+		overflow: hidden;
+	}
+
+	.planner-hero-route-meter span {
+		display: block;
+		block-size: 100%;
+		border-radius: inherit;
+		background: linear-gradient(90deg, color-mix(in oklch, var(--hero-track-accent) 82%, white 18%) 0%, color-mix(in oklch, var(--hero-track-accent-soft) 78%, white 22%) 100%);
 	}
 
 	.project-hub-summary-copy .eyebrow {
@@ -2853,7 +3018,7 @@
 
 	.workbench-grid {
 		display: grid;
-		grid-template-columns: minmax(16rem, 20rem) minmax(19rem, 25rem) minmax(22rem, 1fr);
+		grid-template-columns: minmax(16rem, 22rem) minmax(16rem, 24rem) minmax(26rem, 1fr);
 		align-items: start;
 		gap: 1.25rem;
 	}
@@ -3416,7 +3581,6 @@
 	}
 
 	.planner-progress-summary {
-		max-inline-size: 48rem;
 		display: grid;
 		gap: 0.7rem;
 	}
@@ -3883,7 +4047,8 @@
 		.surface-card-grid,
 		.detail-grid,
 		.instruction-grid,
-		.compass-grid {
+		.compass-grid,
+		.planner-hero-route {
 			grid-template-columns: 1fr;
 		}
 
@@ -3895,6 +4060,14 @@
 
 		.planner-hero-guide {
 			padding: 0.95rem;
+		}
+
+		.planner-hero-map {
+			padding: 0.95rem;
+		}
+
+		.planner-hero-route::before {
+			display: none;
 		}
 
 		.project-hub,
