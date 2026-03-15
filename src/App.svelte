@@ -839,10 +839,28 @@
 		{/key}
 	</main>
 
-	<footer class="site-footer">
-		<p>
-			© {currentYear} Coiot. Shoutout if you found the tools useful {"<3"} or ping me if anything is borked! Special thanks for testers TopHatPaladin, Orange, DarthKyofu, and NopeCopter.
-		</p>
+	<footer class="site-footer" aria-label="Site footer">
+		<div class="site-footer-card">
+			<div class="stack half">
+				<p class="site-footer-title">Built by Coiot for Civ V modders.</p>
+				<p class="site-footer-note text-box-trim">If the site was useful, give a shoutout. If anything is borked, ping me and I will take a look.</p>
+				<p class="site-footer-year inline quarter"><span class="text-lg">©</span> {currentYear} <span class="site-footer-kicker">Civ Modding Central</span></p>
+			</div>
+
+			<div class="site-footer-meta">
+				<div class="site-footer-tester-block">
+					<span class="site-footer-label">Tested & Curated with help from</span>
+					<div class="site-footer-chip-row" aria-label="Testers">
+						<span class="site-footer-chip" style="--chip-highlight:#d8d474">TopHatPaladin</span>
+						<span class="site-footer-chip" style="--chip-highlight:#1abc9c">DarthKyofu</span>
+						<span class="site-footer-chip" style="--chip-highlight:#f1c40f">JFD</span>
+						<span class="site-footer-chip" style="--chip-highlight:#e67e23">Orange</span>
+						<span class="site-footer-chip" style="--chip-highlight:#d47afe">NopeCopter</span>
+						<span class="site-footer-chip" style="--chip-highlight:#d0c939">Rhoze</span>
+					</div>
+				</div>
+			</div>
+		</div>
 	</footer>
 </div>
 
@@ -855,7 +873,7 @@
 		color: var(--ink);
 		text-decoration: none;
 		font-weight: 700;
-		background: color-mix(in oklch, var(--panel-bg) 88%, var(--accent) 12%);
+		background: color-mix(in oklch, var(--panel-bg) 80%, var(--accent) 10%);
 		border: 1px solid color-mix(in oklch, var(--accent) 45%, var(--panel-border));
 		border-radius: 0.75rem;
 		padding-block: 0.6rem;
@@ -892,17 +910,98 @@
 		view-transition-name: route-shell;
 	}
 
-	.site-footer p {
-		color: var(--muted-ink);
-		font-size: 0.85rem;
-		line-height: 1.5;
-		margin-block-start: 0.5rem;
+	.site-footer {
+		padding-block: 0 0.15rem;
 	}
 
-	.site-footer {
-		border-top: 1px solid color-mix(in oklch, var(--panel-border) 72%, transparent);
-		padding-block-start: 0;
-		padding-block-end: 0.15rem;
+	.site-footer-card {
+		display: grid;
+		grid-template-columns: 1fr minmax(0, 1fr);
+		align-items: flex-start;
+		gap: 1rem;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent) 5%, transparent) 0%, transparent 32%),
+			linear-gradient(160deg, color-mix(in srgb, var(--panel-bg) 92%, #16100d 8%) 0%, color-mix(in srgb, var(--control-bg) 90%, #120d0b 10%) 100%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
+			0 6px 10px color-mix(in srgb, black 74%, transparent);
+		border: 1px solid color-mix(in oklch, var(--panel-border) 80%, transparent);
+		border-radius: 1rem;
+		padding: 1.25rem 1rem;
+	}
+
+	.site-footer-meta,
+	.site-footer-tester-block,
+	.site-footer-chip-row {
+		display: grid;
+		gap: 0.55rem;
+	}
+
+	.site-footer-kicker,
+	.site-footer-label,
+	.site-footer-year {
+		color: color-mix(in srgb, var(--muted-ink) 72%, white 28%);
+		text-transform: uppercase;
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		margin: 0;
+	}
+
+	.site-footer-title,
+	.site-footer-note {
+		margin: 0;
+	}
+
+	.site-footer-title {
+		color: var(--ink);
+		font-size: 1rem;
+		font-weight: 700;
+		line-height: 1.45;
+	}
+
+	.site-footer-note {
+		color: var(--muted-ink);
+		font-size: 0.9rem;
+		line-height: 1.55;
+	}
+
+	.site-footer-meta {
+		align-content: start;
+	}
+
+	.site-footer-chip-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.site-footer-chip {
+		min-inline-size: fit-content;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		color: color-mix(in srgb, white 82%, var(--chip-highlight, var(--accent)) 18%);
+		font-size: 0.85rem;
+		font-weight: 700;
+		text-shadow: 1px 1px 2px color-mix(in srgb, var(--chip-highlight, var(--accent)) 20%, #000);
+		background:
+			radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--chip-highlight, var(--accent)) 8%, transparent) 0%, transparent 72%),
+			color-mix(in srgb, var(--chip-highlight, var(--accent)) 6%, transparent);
+		box-shadow: inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+		border: 1px solid color-mix(in srgb, var(--chip-highlight, var(--accent)) 40%, var(--panel-border));
+		border-radius: 0.5rem;
+		padding: 0.5rem 1rem;
+	}
+
+	@media (max-width: 720px) {
+		.site-footer-card {
+			grid-template-columns: 1fr;
+		}
+
+		.site-footer-chip-row {
+			grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+		}
 	}
 
 	:global(::view-transition-new(route-shell)) {
@@ -947,7 +1046,7 @@
 
 	@media (min-width: 1440px) {
 		.app-shell {
-			inline-size: min(98vw, 2400px);
+			inline-size: min(98vw, 1560px);
 		}
 	}
 </style>

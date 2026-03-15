@@ -186,6 +186,35 @@
 		return `${groupId}-${link.href || link.label}-${index}`;
 	}
 
+	function navEntrySurfaceClass(href) {
+		switch (href) {
+			case "/template-generators":
+				return "is-generator";
+			case "/pattern-library":
+				return "is-pattern";
+			case "/schema-browser":
+				return "is-schema";
+			case "/lua-api-explorer":
+				return "is-lua";
+			case "/workshop-uploader":
+			case "/modinfo-builder":
+			case "/civ5mod-ziper":
+				return "is-publish";
+			case "/dds-converter":
+			case "/civ-icon-maker":
+			case "/text-screen-viewer":
+				return "is-ui";
+			case "/guided-planner":
+				return "is-planner";
+			case "/community-links":
+			case "/tutorials":
+			case "/religion-support":
+				return "is-support";
+			default:
+				return "is-tool";
+		}
+	}
+
 	function isTypingTarget(target) {
 		return Boolean(target?.closest?.("input, textarea, select, [contenteditable='true']"));
 	}
@@ -338,7 +367,7 @@
 							<div class="nav-group-links">
 								{#each group.links as link, index (navLinkKey(group.id, link, index))}
 									{#if link.disabled}
-										<div class="nav-entry is-disabled" aria-disabled="true">
+										<div class={`nav-entry ${navEntrySurfaceClass(link.href)} is-disabled`} aria-disabled="true">
 											<span class="nav-entry-head">
 												<span class="nav-entry-title">{link.label}</span>
 												<span class="nav-entry-status">{link.statusLabel || "Coming Soon"}</span>
@@ -347,7 +376,7 @@
 										</div>
 									{:else}
 										<a
-											class={`nav-entry ${isActivePath(link.href) ? "is-active" : ""}`}
+											class={`nav-entry ${navEntrySurfaceClass(link.href)} ${isActivePath(link.href) ? "is-active" : ""}`}
 											href={link.href}
 											aria-current={isActivePath(link.href) ? "page" : undefined}
 											onclick={closeNavMenus}
@@ -785,56 +814,140 @@
 	}
 
 	:global(:root[data-theme="light"]) .nav-entry {
-		background: color-mix(in oklch, white 84%, var(--control-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 74%, var(--accent) 26%);
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--nav-entry-highlight) 12%, transparent) 0%, transparent 38%),
+			linear-gradient(145deg, color-mix(in srgb, white 88%, var(--nav-entry-panel) 12%) 0%, color-mix(in srgb, white 92%, var(--nav-entry-panel) 8%) 100%);
+		border-color: color-mix(in srgb, var(--nav-entry-border) 62%, white 38%);
 	}
 
 	:global(:root[data-theme="light"]) .nav-entry:hover,
 	:global(:root[data-theme="light"]) .nav-entry:focus-visible {
-		background: color-mix(in oklch, white 76%, var(--accent) 10%);
-		border-color: color-mix(in oklch, var(--panel-border) 60%, var(--accent) 40%);
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--nav-entry-highlight) 16%, transparent) 0%, transparent 36%),
+			linear-gradient(145deg, color-mix(in srgb, white 84%, var(--nav-entry-panel) 16%) 0%, color-mix(in srgb, white 90%, var(--nav-entry-panel) 10%) 100%);
+		border-color: color-mix(in srgb, var(--nav-entry-highlight) 34%, var(--nav-entry-border));
 	}
 
 	:global(:root[data-theme="light"]) .nav-entry.is-active {
-		background: color-mix(in oklch, white 72%, var(--accent) 14%);
-		border-color: color-mix(in oklch, var(--panel-border) 50%, var(--accent) 50%);
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--nav-entry-highlight) 18%, transparent) 0%, transparent 34%),
+			linear-gradient(145deg, color-mix(in srgb, white 82%, var(--nav-entry-panel) 18%) 0%, color-mix(in srgb, white 88%, var(--nav-entry-panel) 12%) 100%);
+		border-color: color-mix(in srgb, var(--nav-entry-highlight) 42%, var(--nav-entry-border));
 	}
 
 	:global(:root[data-theme="light"]) .nav-entry.is-disabled {
-		background: color-mix(in oklch, white 90%, var(--panel-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 82%, transparent);
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--nav-entry-highlight) 8%, transparent) 0%, transparent 38%),
+			linear-gradient(145deg, color-mix(in srgb, white 92%, var(--nav-entry-panel) 8%) 0%, color-mix(in srgb, white 95%, var(--nav-entry-panel) 5%) 100%);
+		border-color: color-mix(in srgb, var(--nav-entry-border) 42%, white 58%);
 	}
 
 	.nav-entry {
+		--nav-entry-border: color-mix(in srgb, var(--surface-tool-border) 76%, var(--panel-border));
+		--nav-entry-highlight: var(--surface-tool-highlight);
+		--nav-entry-highlight-strong: var(--surface-tool-highlight-strong);
+		--nav-entry-panel: var(--surface-tool-panel);
 		display: grid;
 		gap: 0.3rem;
+		color: var(--nav-entry-highlight-strong);
 		text-decoration: none;
-		background: color-mix(in oklch, var(--panel-bg) 84%, var(--control-bg));
-		border: 1px solid color-mix(in oklch, var(--accent) 46%, var(--panel-border));
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--nav-entry-highlight) 12%, transparent) 0%, transparent 36%),
+			linear-gradient(145deg, color-mix(in srgb, var(--nav-entry-panel) 92%, var(--control-bg) 8%) 0%, color-mix(in srgb, var(--nav-entry-panel) 98%, black 2%) 100%);
+		border: 1px solid color-mix(in srgb, var(--nav-entry-border) 82%, var(--panel-border));
 		border-radius: 0.78rem;
 		padding: 0.7rem;
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, white 6%, transparent),
+			0 10px 24px color-mix(in oklch, black 28%, transparent);
 		transition:
 			background 160ms ease,
 			border-color 160ms ease,
+			box-shadow 160ms ease,
 			transform 160ms ease;
 
 		&:hover,
 		&:focus-visible {
-			background: color-mix(in oklch, var(--panel-bg) 78%, var(--control-bg));
-			border-color: color-mix(in oklch, var(--accent) 68%, var(--panel-border));
+			background:
+				radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--nav-entry-highlight) 18%, transparent) 0%, transparent 34%),
+				linear-gradient(145deg, color-mix(in srgb, var(--nav-entry-panel) 88%, var(--control-bg) 12%) 0%, color-mix(in srgb, var(--nav-entry-panel) 96%, black 4%) 100%);
+			border-color: color-mix(in srgb, var(--nav-entry-highlight) 56%, var(--nav-entry-border));
+			box-shadow:
+				inset 0 1px 0 color-mix(in srgb, var(--nav-entry-highlight-strong) 10%, transparent),
+				0 14px 28px color-mix(in oklch, black 34%, transparent);
 			transform: translateY(-1px);
 		}
 
 		&.is-active {
-			background: color-mix(in oklch, var(--panel-bg) 75%, var(--control-bg));
-			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
+			background:
+				radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--nav-entry-highlight) 18%, transparent) 0%, transparent 34%),
+				linear-gradient(145deg, color-mix(in srgb, var(--nav-entry-panel) 86%, var(--control-bg) 14%) 0%, color-mix(in srgb, var(--nav-entry-panel) 95%, black 5%) 100%);
+			border-color: color-mix(in srgb, var(--nav-entry-highlight) 68%, var(--nav-entry-border));
 		}
 
 		&.is-disabled {
 			opacity: 0.82;
-			background: color-mix(in oklch, var(--panel-bg) 88%, transparent);
-			border-color: color-mix(in oklch, var(--panel-border) 86%, transparent);
+			background:
+				radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--nav-entry-highlight) 8%, transparent) 0%, transparent 36%),
+				linear-gradient(145deg, color-mix(in srgb, var(--nav-entry-panel) 88%, transparent) 0%, color-mix(in srgb, var(--nav-entry-panel) 96%, black 4%) 100%);
+			border-color: color-mix(in srgb, var(--nav-entry-border) 72%, transparent);
 			cursor: default;
+		}
+
+		&.is-generator {
+			--nav-entry-border: var(--surface-generator-border);
+			--nav-entry-highlight: var(--surface-generator-highlight);
+			--nav-entry-highlight-strong: var(--surface-generator-highlight-strong);
+			--nav-entry-panel: var(--surface-generator-panel);
+		}
+
+		&.is-pattern {
+			--nav-entry-border: var(--surface-pattern-border);
+			--nav-entry-highlight: var(--surface-pattern-highlight);
+			--nav-entry-highlight-strong: var(--surface-pattern-highlight-strong);
+			--nav-entry-panel: var(--surface-pattern-panel);
+		}
+
+		&.is-schema {
+			--nav-entry-border: var(--surface-schema-border);
+			--nav-entry-highlight: var(--surface-schema-highlight);
+			--nav-entry-highlight-strong: var(--surface-schema-highlight-strong);
+			--nav-entry-panel: var(--surface-schema-panel);
+		}
+
+		&.is-lua {
+			--nav-entry-border: var(--surface-lua-border);
+			--nav-entry-highlight: var(--surface-lua-highlight);
+			--nav-entry-highlight-strong: var(--surface-lua-highlight-strong);
+			--nav-entry-panel: var(--surface-lua-panel);
+		}
+
+		&.is-support {
+			--nav-entry-border: var(--surface-support-border);
+			--nav-entry-highlight: var(--surface-support-highlight);
+			--nav-entry-highlight-strong: var(--surface-support-highlight-strong);
+			--nav-entry-panel: var(--surface-support-panel);
+		}
+
+		&.is-planner {
+			--nav-entry-border: var(--surface-planner-border);
+			--nav-entry-highlight: var(--surface-planner-highlight);
+			--nav-entry-highlight-strong: var(--surface-planner-highlight-strong);
+			--nav-entry-panel: var(--surface-planner-panel);
+		}
+
+		&.is-publish {
+			--nav-entry-border: var(--surface-publish-border);
+			--nav-entry-highlight: var(--surface-publish-highlight);
+			--nav-entry-highlight-strong: var(--surface-publish-highlight-strong);
+			--nav-entry-panel: var(--surface-publish-panel);
+		}
+
+		&.is-ui {
+			--nav-entry-border: var(--surface-ui-border);
+			--nav-entry-highlight: var(--surface-ui-highlight);
+			--nav-entry-highlight-strong: var(--surface-ui-highlight-strong);
+			--nav-entry-panel: var(--surface-ui-panel);
 		}
 	}
 
@@ -847,12 +960,13 @@
 
 	.nav-entry-status {
 		flex: 0 0 auto;
-		color: var(--muted-ink);
+		color: var(--nav-entry-highlight-strong);
 		text-transform: uppercase;
 		font-size: 0.65rem;
 		font-weight: 700;
 		letter-spacing: 0.12em;
-		border: 1px solid color-mix(in oklch, var(--panel-border) 78%, var(--accent) 22%);
+		background: color-mix(in srgb, var(--nav-entry-highlight) 10%, transparent);
+		border: 1px solid color-mix(in srgb, var(--nav-entry-highlight) 32%, var(--nav-entry-border));
 		border-radius: 999px;
 		padding-block: 0.18rem;
 		padding-inline: 0.46rem;

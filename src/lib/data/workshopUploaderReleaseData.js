@@ -31,7 +31,7 @@ export const workshopUploaderDownloadCards = [
 	{
 		id: "linux",
 		title: "Linux",
-		formats: "AI / DEB / TAR",
+		formats: "AI / DEB / TAR.GZ",
 		status: linuxAvailable ? "Available now" : "Coming soon",
 		copy: linuxAvailable ? `Version ${CURRENT_VERSION} is available on the GitHub release page.` : "Linux version is currently being tested and is not ready to ship yet.",
 		actionLabel: linuxAvailable ? "Download Linux Build" : "Coming Soon",

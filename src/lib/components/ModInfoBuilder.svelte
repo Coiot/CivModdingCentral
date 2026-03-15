@@ -1572,17 +1572,17 @@
 		<section class="modinfo-companion-panel">
 			<div class="modinfo-companion-head">
 				<div>
-					<h2>Use alongside the other Tools</h2>
-					<p>This builder handles the .modinfo layer. Continue with packaging and publishing tools once the manifest is ready.</p>
+					<h2>Use alongside the other tools</h2>
+					<p>Continue with packaging and publishing tools once the .modinfo file is ready.</p>
 				</div>
 			</div>
 			<div class="companion-grid">
-				{#each companionTools as tool (tool.title)}
-					<a class="companion-card" href={tool.href}>
-						<h3>{tool.title}</h3>
-						<p>{tool.copy}</p>
-					</a>
-				{/each}
+		{#each companionTools as tool (tool.title)}
+			<a class={`companion-card ${tool.href === "/community-links" ? "is-site-accent" : ""}`} href={tool.href}>
+				<h3>{tool.title}</h3>
+				<p>{tool.copy}</p>
+			</a>
+		{/each}
 			</div>
 		</section>
 	</div>
@@ -1656,8 +1656,19 @@
 		}
 	}
 	.modinfo-page {
+		--modinfo-accent-border: var(--surface-publish-border);
+		--modinfo-accent-highlight: var(--surface-publish-highlight);
+		--modinfo-accent-highlight-strong: var(--surface-publish-highlight-strong);
+		--modinfo-accent-panel: var(--surface-publish-panel);
 		display: grid;
 		gap: 1rem;
+	}
+
+	.modinfo-page .hero {
+		background:
+			/*radial-gradient(120% 140% at 100% 0%, color-mix(in oklch, var(--modinfo-accent-highlight) 16%, transparent) 0%, transparent 52%),*/
+			linear-gradient(135deg, color-mix(in oklch, var(--modinfo-accent-panel) 92%, black 8%) 0%, color-mix(in oklch, var(--modinfo-accent-panel) 95%, var(--modinfo-accent-highlight) 5%) 100%);
+		border-color: color-mix(in oklch, var(--modinfo-accent-highlight) 64%, var(--modinfo-accent-border));
 	}
 
 	.issues p {
@@ -1672,9 +1683,9 @@
 	}
 
 	.card {
-		background: var(--panel-bg);
+		background: color-mix(in oklch, var(--modinfo-accent-panel) 20%, var(--panel-bg));
 		box-shadow: 0 10px 26px var(--shadow-soft);
-		border: 1px solid color-mix(in oklch, var(--panel-border) 80%, transparent);
+		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 20%, var(--panel-border));
 		border-radius: 1rem;
 	}
 
@@ -1687,8 +1698,8 @@
 	.block {
 		display: grid;
 		gap: 0.5rem;
-		background: color-mix(in oklch, var(--control-bg) 62%, black);
-		border: 1px solid var(--panel-border);
+		background: color-mix(in oklch, var(--modinfo-accent-panel) 40%, var(--control-bg));
+		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 40%, var(--panel-border));
 		border-radius: 0.78rem;
 		padding: 1rem;
 		margin-block-end: 0.8rem;
@@ -1708,8 +1719,8 @@
 	.btn {
 		color: var(--ink);
 		font: inherit;
-		background: linear-gradient(145deg, var(--accent), var(--accent-strong));
-		border: 1px solid color-mix(in oklch, var(--accent) 56%, var(--panel-border));
+		background: linear-gradient(145deg, color-mix(in oklch, var(--modinfo-accent-highlight) 86%, #d97706), color-mix(in oklch, var(--modinfo-accent-highlight) 62%, #8a3f0a));
+		border: 1px solid color-mix(in oklch, var(--modinfo-accent-highlight) 56%, var(--modinfo-accent-border));
 		border-radius: 0.62rem;
 		padding-block: 0.44rem;
 		padding-inline: 0.76rem;
@@ -1722,8 +1733,8 @@
 	}
 
 	.btn.secondary {
-		background: var(--control-bg);
-		border-color: color-mix(in oklch, var(--panel-border) 80%, transparent);
+		background: color-mix(in oklch, var(--modinfo-accent-panel) 72%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--modinfo-accent-border) 80%, transparent);
 	}
 
 	.small {
@@ -1740,19 +1751,22 @@
 
 	.input {
 		inline-size: 100%;
-		color: var(--ink);
+		color: color-mix(in oklch, white 60%, var(--ink));
 		font: inherit;
 		line-height: 1.25;
-		background: var(--input-bg);
-		border: 1px solid var(--panel-border);
-		border-radius: 0.6rem;
-		padding-block: 0.46rem;
-		padding-inline: 0.58rem;
+		background: color-mix(in oklch, var(--modinfo-accent-highlight) 3%, var(--input-bg)) !important;
+		border: 1px solid color-mix(in oklch, var(--modinfo-accent-highlight) 10%, var(--modinfo-accent-border)) !important;
+		border-radius: 0.7rem;
+		padding-block: 0.7rem;
+		padding-inline: 0.8rem;
+		box-shadow:
+			inset 0 1px 0 color-mix(in oklch, white 10%, transparent),
+			0 0 0 1px color-mix(in oklch, var(--modinfo-accent-highlight) 10%, transparent);
 		box-sizing: border-box;
 	}
 
 	select.input {
-		block-size: calc(1.25em + 0.92rem + 4px);
+		block-size: calc(1.25em + 1.4rem + 4px);
 		background-image:
 			linear-gradient(45deg, transparent 50%, color-mix(in oklch, var(--muted-ink) 80%, var(--ink) 20%) 50%),
 			linear-gradient(135deg, color-mix(in oklch, var(--muted-ink) 80%, var(--ink) 20%) 50%, transparent 50%);
@@ -1812,7 +1826,7 @@
 	.color-helper-details {
 		min-inline-size: 0;
 		background: color-mix(in oklch, var(--control-bg) 68%, black);
-		border: 1px solid color-mix(in oklch, var(--panel-border) 72%, white);
+		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 72%, white);
 		border-radius: 0.65rem;
 		padding-inline: 0.5rem;
 		padding-block-start: 0.35rem;
@@ -1849,7 +1863,7 @@
 		display: grid;
 		gap: 0.45rem;
 		background: color-mix(in oklch, var(--control-bg) 70%, black);
-		border: 1px solid color-mix(in oklch, var(--panel-border) 76%, white);
+		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 76%, white);
 		border-radius: 0.65rem;
 		padding: 0.55rem;
 		overflow-x: hidden;
@@ -1890,7 +1904,7 @@
 
 	.color-chip.is-active {
 		color: var(--ink);
-		border-color: color-mix(in oklch, var(--accent) 70%, white);
+		border-color: color-mix(in oklch, var(--modinfo-accent-highlight) 70%, white);
 	}
 
 	.color-swatch {
@@ -1921,7 +1935,7 @@
 		white-space: nowrap;
 		font-size: 0.78rem;
 		background: color-mix(in oklch, var(--input-bg) 76%, black);
-		border: 1px solid var(--panel-border);
+		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 72%, var(--panel-border));
 		border-radius: 0.45rem;
 		padding-block: 0.25rem;
 		padding-inline: 0.45rem;
@@ -1993,7 +2007,7 @@
 
 	.preset-details {
 		background: color-mix(in oklch, var(--control-bg) 68%, black);
-		border: 1px solid color-mix(in oklch, var(--panel-border) 72%, white);
+		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 72%, white);
 		border-radius: 0.65rem;
 		padding-inline: 0.5rem;
 		padding-block-start: 0.35rem;
@@ -2015,7 +2029,7 @@
 		font-size: 0.85rem;
 		text-align: left;
 		background: color-mix(in oklch, var(--panel-bg) 86%, black);
-		border: 1px solid var(--panel-border);
+		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 72%, var(--panel-border));
 		border-radius: 0.52rem;
 		padding-block: 0.34rem;
 		padding-inline: 0.5rem;
@@ -2024,8 +2038,8 @@
 
 	.preset-chip:hover {
 		color: var(--ink);
-		background: color-mix(in oklch, var(--panel-bg) 90%, var(--accent));
-		border-color: color-mix(in oklch, var(--accent) 65%, var(--panel-border));
+		background: color-mix(in oklch, var(--modinfo-accent-panel) 90%, var(--modinfo-accent-highlight));
+		border-color: color-mix(in oklch, var(--modinfo-accent-highlight) 65%, var(--modinfo-accent-border));
 	}
 
 	.preset-type {
@@ -2067,7 +2081,7 @@
 		opacity: 0;
 		font-size: 0.78rem;
 		background: oklch(0.2 0 0 / 0.96);
-		border: 1px solid color-mix(in oklch, var(--warn) 45%, var(--panel-border));
+		border: 1px solid color-mix(in oklch, var(--modinfo-accent-highlight) 30%, var(--modinfo-accent-border));
 		border-radius: 0.55rem;
 		padding-block: 0.5rem;
 		padding-inline: 0.65rem;
@@ -2090,9 +2104,9 @@
 	.modinfo-companion-panel {
 		display: grid;
 		gap: 1rem;
-		background: var(--panel-bg);
+		background: color-mix(in oklch, var(--modinfo-accent-panel) 20%, var(--panel-bg));
 		box-shadow: 0 10px 26px var(--shadow-soft);
-		border: 1px solid color-mix(in oklch, var(--panel-border) 78%, transparent);
+		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 20%, var(--panel-border));
 		border-radius: 1rem;
 		padding: 1.25rem;
 	}
@@ -2133,8 +2147,8 @@
 		gap: 0.5rem;
 		color: var(--ink);
 		text-decoration: none;
-		background: color-mix(in oklch, var(--panel-bg) 88%, black);
-		border: 1px solid color-mix(in oklch, var(--panel-border) 76%, transparent);
+		background: color-mix(in oklch, var(--modinfo-accent-panel) 88%, black);
+		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 76%, transparent);
 		border-radius: 0.9rem;
 		padding: 1.25rem;
 		transition:
@@ -2153,10 +2167,30 @@
 		}
 
 		&:hover {
-			background: color-mix(in oklch, var(--panel-bg) 88%, var(--accent) 1%);
-			border-color: color-mix(in oklch, var(--accent) 85%, var(--panel-border));
+			background: color-mix(in oklch, var(--modinfo-accent-panel) 88%, var(--modinfo-accent-highlight) 8%);
+			border-color: color-mix(in oklch, var(--modinfo-accent-highlight) 85%, var(--modinfo-accent-border));
 			transform: translateY(-1px);
 		}
+	}
+
+	.companion-card.is-site-accent {
+		background: color-mix(in oklch, var(--panel-bg) 88%, black);
+		border-color: color-mix(in oklch, var(--accent) 26%, var(--panel-border));
+	}
+
+	.companion-card.is-site-accent:hover {
+		background: color-mix(in oklch, var(--panel-bg) 88%, var(--accent) 4%);
+		border-color: color-mix(in oklch, var(--accent) 85%, var(--panel-border));
+	}
+
+	.btn:hover {
+		background: linear-gradient(145deg, color-mix(in oklch, var(--modinfo-accent-highlight) 92%, #e4893b), color-mix(in oklch, var(--modinfo-accent-highlight) 68%, #9f4b10)) !important;
+		border-color: color-mix(in oklch, var(--modinfo-accent-highlight) 72%, var(--modinfo-accent-border)) !important;
+		box-shadow: 0 2px 4px color-mix(in oklch, var(--modinfo-accent-highlight) 22%, transparent);
+	}
+
+	.btn.secondary:hover {
+		background: color-mix(in oklch, var(--modinfo-accent-highlight) 14%, var(--modinfo-accent-panel)) !important;
 	}
 
 	@media (max-width: 980px) {

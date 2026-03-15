@@ -87,6 +87,14 @@ export const tutorialTracks = [
 		href: "/tutorials/cpu-only-game-setup",
 		disabled: true,
 	},
+	{
+		id: "workshop-packaging-and-publishing",
+		label: "Workshop Packaging and Publishing",
+		status: "Coming Soon",
+		description: "How to package the mod, prep the Workshop page, use the Workshop Uploader, and make the release public without avoidable last-minute mistakes.",
+		href: "/tutorials/workshop-packaging-and-publishing",
+		disabled: true,
+	},
 ];
 
 export const siteResourceGroups = [
@@ -244,7 +252,7 @@ export const siteResourceGroups = [
 				href: "/workshop-uploader",
 				status: "Live",
 				description:
-					"Decicated OS agonsitc app for uploads and updates to the Steam Workshop. Comes with everything you need to publish without needing to hunt down non-public plugins to get the 2010 version of Vsiaul Studio to run ModBuddy.",
+					"Dedicated OS agonsitc app for uploads and updates to the Steam Workshop. Comes with everything you need to package and publish mods without requiring the 2010 version of Vsiaul Studio to run ModBuddy.",
 				kind: "Tool",
 			},
 			{
@@ -274,9 +282,9 @@ export const tutorialById = Object.fromEntries(tutorialTracks.map((item) => [ite
 export const plannerTracks = [
 	{
 		id: "foundation",
-		label: "Foundation",
+		label: "Blueprint",
 		kicker: "Start Here",
-		description: "Create the civ's identity, load cleanly, and make sure the database and support assumptions are stable.",
+		description: "Form the civ's identity, design the uniques, and prep the foundation.",
 		risk: "If this lane slips, every later test is noisy because table names, load order, or support flags keep moving.",
 		deliverableIds: ["design", "core-code", "art-defines"],
 		resourceIds: ["template-generators", "schema-browser", "tech-tree-viewer", "pattern-library", "community-links"],
@@ -284,18 +292,18 @@ export const plannerTracks = [
 	},
 	{
 		id: "text",
-		label: "Core Text",
-		kicker: "Early Writing",
-		description: "Most text gets settled early once the civ identity is stable, so the rest of the project can build against real names and copy.",
-		risk: "If this lane is neglected, the rest of production drifts around placeholders and stale key names.",
-		deliverableIds: ["city-list", "dom-text", "diplo-lines", "spy-names"],
+		label: "Civ + Uniques Text",
+		kicker: "In-Game Copy",
+		description: "Lock the names, diplomacy, civilopedia, and supporting copy early enough that the rest of the project builds against final language instead of placeholders.",
+		risk: "If this lane is neglected, the rest of production drifts around placeholders, stale key names, and release-week text cleanup.",
+		deliverableIds: ["city-list", "spy-names", "dom-text", "diplo-lines", "civ-pedia", "leader-pedia", "uu-pedia", "uc2-pedia"],
 		resourceIds: ["community-links", "pattern-library", "text-screen-viewer", "modded-civs-pedia", "tutorials"],
 		tutorialIds: ["civ-design-research", "sql-uniques", "ingame-ui"],
 	},
 	{
 		id: "gameplay",
 		label: "Gameplay",
-		kicker: "Value Engine",
+		kicker: "Lua + SQL",
 		description: "Most of the mod's perceived value sits in the uniques and the way they actually feel in play.",
 		risk: "This is where a fun concept quietly becomes brittle unless the happy path and edge cases are both exercised.",
 		deliverableIds: ["ua", "uu", "uc2", "gameplay-test"],
@@ -304,18 +312,18 @@ export const plannerTracks = [
 	},
 	{
 		id: "art",
-		label: "Asset Production",
-		kicker: "Build Assets",
+		label: "Icons + Alphas",
+		kicker: "Art Assets",
 		description: "Produce the icon, model, flag, and audio assets that feed the signature finish work later on.",
 		risk: "This lane creates the raw materials for the hardest art work, so slippage here cascades into the finish stage.",
-		deliverableIds: ["leader-icon", "civ-icon", "unit-icon", "uc2-icon", "models", "unit-flags", "music"],
+		deliverableIds: ["civ-icon", "unit-icon", "uc2-icon", "leader-icon", "models", "unit-flags", "music"],
 		resourceIds: ["dds-converter", "civ-icon-maker", "text-screen-viewer", "community-links"],
 		tutorialIds: ["icons-and-alphas", "models-and-textures", "tile-improvements-and-3d-models", "ingame-ui"],
 	},
 	{
 		id: "presentation",
-		label: "Signature Finish",
-		kicker: "Longest Work",
+		label: "Map + Leaderscene",
+		kicker: "Toughest Work",
 		description: "Tackle the heaviest finish-art work: the map artwork, the leaderscene, and the Dawn of Man presentation surface.",
 		risk: "This lane is visually decisive and usually underestimated, especially because the leaderscene is one of the hardest assets in the whole civ pipeline.",
 		deliverableIds: ["map", "leaderscene", "dawn-of-man"],
@@ -323,24 +331,14 @@ export const plannerTracks = [
 		tutorialIds: ["leaderscene-art", "map-art", "ingame-ui"],
 	},
 	{
-		id: "text-polish",
-		label: "Civilopedia & Reference",
-		kicker: "Late Reference Pass",
-		description: "Finish the civilopedia and reference-facing writeups once the civ's mechanics, names, and presentation are no longer drifting.",
-		risk: "These pages look optional until release week, then stale or missing reference copy becomes one of the clearest signs the mod was not fully closed out.",
-		deliverableIds: ["civ-pedia", "leader-pedia", "uu-pedia", "uc2-pedia"],
-		resourceIds: ["text-screen-viewer", "modded-civs-pedia", "community-links", "pattern-library"],
-		tutorialIds: [],
-	},
-	{
 		id: "ship",
 		label: "Ship & Support",
 		kicker: "Final Pass",
 		description: "Close out compatibility, TSL support, final testing, and the release-facing copy once the main mod is already built.",
 		risk: "This lane gets delayed because it feels administrative until it blocks the release right at the end.",
-		deliverableIds: ["mod-support-code", "tsl", "full-test", "mod-support-text", "publish-text"],
+		deliverableIds: ["mod-support-code", "mod-support-text", "tsl", "full-test", "publish-text"],
 		resourceIds: ["workshop-uploader", "modinfo-builder", "civ5mod-ziper", "map-viewer", "text-screen-viewer", "community-links", "religion-support"],
-		tutorialIds: [],
+		tutorialIds: ["workshop-packaging-and-publishing"],
 	},
 ];
 
@@ -698,7 +696,7 @@ export const plannerDeliverables = [
 	{
 		id: "civ-pedia",
 		label: "Civ Pedia",
-		track: "text-polish",
+		track: "text",
 		pillar: "Text",
 		weight: 3,
 		summary: "Write the civilization civilopedia entry with the mod's final framing and context.",
@@ -712,7 +710,7 @@ export const plannerDeliverables = [
 	{
 		id: "leader-pedia",
 		label: "Leader Pedia",
-		track: "text-polish",
+		track: "text",
 		pillar: "Text",
 		weight: 3,
 		summary: "Write the leader page so the personality and historical framing survive beyond the diplo screen.",
@@ -726,7 +724,7 @@ export const plannerDeliverables = [
 	{
 		id: "uu-pedia",
 		label: "UU Pedia",
-		track: "text-polish",
+		track: "text",
 		pillar: "Text",
 		weight: 1,
 		summary: "Document the unique unit in the civilopedia and make sure its description matches the final implementation.",
@@ -740,7 +738,7 @@ export const plannerDeliverables = [
 	{
 		id: "uc2-pedia",
 		label: "UC2 Pedia",
-		track: "text-polish",
+		track: "text",
 		pillar: "Text",
 		weight: 1,
 		summary: "Give the second unique component matching pedia support and accurate explanation.",
@@ -763,32 +761,6 @@ export const plannerDeliverables = [
 		hint: "Weak publish text makes a finished mod look less complete than it is.",
 		dependencies: ["full-test"],
 		resourceIds: ["workshop-uploader", "modinfo-builder", "community-links"],
-		tutorialIds: [],
-	},
-];
-
-export const shipChecklist = [
-	{
-		id: "manifest",
-		label: "Lock the manifest",
-		copy: "Use .modinfo Builder to make sure actions, files, versioning, and metadata match the final build.",
-		resourceId: "modinfo-builder",
-	},
-	{
-		id: "package",
-		label: "Create the release archive",
-		copy: "Generate the distributable .civ5mod package once the file list is stable.",
-		resourceId: "civ5mod-ziper",
-	},
-	{
-		id: "upload",
-		label: "Upload and annotate",
-		copy: "Push the Workshop build with the final publish text, notes, and update framing.",
-		resourceId: "workshop-uploader",
-	},
-	{
-		id: "wiki",
-		label: "Add the wiki entry",
-		copy: "After the release is live, create or update the civ's wiki page so players can actually find it later.",
+		tutorialIds: ["workshop-packaging-and-publishing"],
 	},
 ];

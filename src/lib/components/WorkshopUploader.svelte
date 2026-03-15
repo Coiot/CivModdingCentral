@@ -7,7 +7,7 @@
 			copy: "The app is cross-platform, offering access to uploading Civ V mods for the first time to macOS and Linux with a streamlined Steam Workshop upload process.",
 		},
 		{
-			title: "New Upload",
+			title: "New Uploads",
 			copy: "Create a brand new Civilization V Workshop item with your own.civ5mod, preview image, title, description, visibility, and tags.",
 		},
 		{
@@ -29,9 +29,9 @@
 	];
 
 	const requirements = [
-		"Steam desktop client installed and logged into the account that owns or will publish the mod.",
-		"Steam copy of Civilization V installed and configured.",
-		"A ready .civ5mod file and preview image on local disk.",
+		"Steam desktop client logged into the account that owns or will publish the mod.",
+		"Steam copy of Civilization V installed.",
+		"A ready .civ5mod file and preview image on your local disk.",
 		"For updates, the correct publishedfileid selected from <strong>My Workshop Items</strong> or the mod's workshop id in its URL.",
 	];
 
@@ -142,13 +142,13 @@
 
 	<section class="workshop-app-panel">
 		<div class="workshop-app-section-head">
-			<h2 class="section-title">Use alongside the other Tools</h2>
-			<p class="section-copy">The app comes bundled with everything you need, but you can use some of the tools here independently.</p>
+			<h2 class="section-title">Use alongside the other tools</h2>
+			<p class="section-copy">The app comes bundled with everything you need, but you can use the tools here independently.</p>
 		</div>
 
 		<div class="workshop-app-companion-grid">
 			{#each companionTools as tool (tool.title)}
-				<a class="workshop-app-companion-card" href={tool.href}>
+				<a class={`workshop-app-companion-card ${tool.href === "/community-links" ? "is-site-accent" : ""}`} href={tool.href}>
 					<h3 class="card-title">{tool.title}</h3>
 					<p class="card-copy">{tool.copy}</p>
 				</a>
@@ -231,24 +231,34 @@
 		.workshop-app-companion-card .card-copy,
 		.workshop-app-step-list li {
 			color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
+			text-shadow: 1px 1px 2px #000;
 		}
 	}
 	.workshop-app-page {
+		--workshop-accent-border: var(--surface-publish-border);
+		--workshop-accent-highlight: var(--surface-publish-highlight);
+		--workshop-accent-highlight-strong: var(--surface-publish-highlight-strong);
+		--workshop-accent-panel: var(--surface-publish-panel);
 		display: grid;
 		gap: 1rem;
 	}
 
 	.workshop-app-hero {
-		background: linear-gradient(135deg, color-mix(in oklch, var(--panel-bg) 80%, black) 0%, color-mix(in oklch, var(--panel-bg) 90%, var(--accent) 5%) 100%);
-		border-color: color-mix(in oklch, var(--accent) 50%, var(--panel-border));
+		background:
+			/*radial-gradient(120% 140% at 100% 0%, color-mix(in oklch, var(--workshop-accent-highlight) 16%, transparent) 0%, transparent 52%),*/ linear-gradient(
+			135deg,
+			color-mix(in oklch, var(--workshop-accent-panel) 92%, black 8%) 0%,
+			color-mix(in oklch, var(--workshop-accent-panel) 95%, var(--workshop-accent-highlight) 5%) 100%
+		);
+		border-color: color-mix(in oklch, var(--workshop-accent-highlight) 64%, var(--workshop-accent-border));
 	}
 
 	.workshop-app-panel {
 		display: grid;
 		gap: 1rem;
-		background: var(--panel-bg);
+		background: color-mix(in oklch, var(--workshop-accent-panel) 20%, var(--panel-bg));
 		box-shadow: 0 10px 26px var(--shadow-soft);
-		border: 1px solid color-mix(in oklch, var(--panel-border) 78%, transparent);
+		border: 1px solid color-mix(in oklch, var(--workshop-accent-border) 40%, transparent);
 		border-radius: 1rem;
 		padding: 1.5rem;
 	}
@@ -259,7 +269,7 @@
 	}
 
 	.workshop-app-kicker {
-		color: color-mix(in oklch, var(--accent) 90%, var(--ink));
+		color: color-mix(in oklch, var(--workshop-accent-highlight) 90%, var(--ink));
 		text-transform: uppercase;
 		font-size: 0.75rem;
 		font-weight: 700;
@@ -294,11 +304,20 @@
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		gap: 1rem;
-		background: color-mix(in oklch, var(--panel-bg) 88%, black);
-		border: 1px solid color-mix(in oklch, var(--panel-border) 76%, transparent);
+		gap: 0.5rem;
+		background: color-mix(in oklch, var(--workshop-accent-panel) 40%, var(--panel-bg));
+		border: 1px solid color-mix(in oklch, var(--workshop-accent-border) 95%, transparent);
 		border-radius: 0.9rem;
 		padding: 1.25rem;
+	}
+
+	.workshop-app-release-card .card-title {
+		font-size: 1.5rem;
+		text-shadow: 1px 1px 2px #000;
+	}
+
+	.workshop-app-release-title-row .card-title {
+		text-box: trim-both cap alphabetic;
 	}
 
 	.workshop-app-release-grid {
@@ -310,12 +329,20 @@
 		display: grid;
 		gap: 0.8rem;
 		background:
-			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 5%, transparent) 0%, transparent 58%),
-			linear-gradient(165deg, color-mix(in oklch, var(--panel-bg) 88%, var(--accent) 2%) 0%, color-mix(in oklch, var(--panel-bg) 90%, black) 100%);
+			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--workshop-accent-highlight) 30%, transparent) 0%, transparent 58%),
+			linear-gradient(
+				135deg,
+				color-mix(in oklch, var(--workshop-accent-panel) 90%, color-mix(in oklch, #1a100c 20%, var(--workshop-accent-highlight) 20%) 26%) 0%,
+				color-mix(in oklch, var(--panel-bg) 85%, color-mix(in oklch, #2a140d 56%, #e67e23 44%) 10%) 24%,
+				color-mix(in oklch, var(--panel-bg) 85%, color-mix(in oklch, #3c1a0f 40%, #f39c12 60%) 12%) 50%,
+				color-mix(in oklch, var(--panel-bg) 90%, color-mix(in oklch, #4a2312 48%, #ff9f43 52%) 10%) 76%,
+				color-mix(in oklch, var(--panel-bg) 95%, color-mix(in oklch, #24140d 66%, #d97706 34%) 16%) 100%
+			);
+
 		box-shadow:
-			0 1px 0 color-mix(in oklch, var(--accent) 16%, transparent),
-			0 4px 8px color-mix(in oklch, black 80%, var(--accent) 20%);
-		border-color: color-mix(in oklch, var(--accent) 80%, var(--panel-border));
+			0 1px 0 color-mix(in oklch, var(--workshop-accent-highlight) 50%, transparent),
+			0 4px 8px color-mix(in oklch, black 80%, var(--workshop-accent-highlight) 20%);
+		border-color: color-mix(in oklch, var(--workshop-accent-highlight) 80%, var(--workshop-accent-border));
 		overflow: clip;
 		transition:
 			transform 170ms ease,
@@ -324,17 +351,13 @@
 			box-shadow 170ms ease;
 	}
 
-	.workshop-app-release-card .card-title {
-		font-size: 1.5rem;
-	}
-
 	.workshop-app-release-card::after {
 		position: absolute;
 		inset: auto -25% -42% auto;
 		inline-size: 12rem;
 		aspect-ratio: 1;
 		opacity: 0.25;
-		background: radial-gradient(circle, color-mix(in oklch, var(--accent) 4%, transparent) 0%, transparent 70%);
+		background: radial-gradient(circle, color-mix(in oklch, var(--workshop-accent-highlight) 10%, transparent) 0%, transparent 70%);
 		transition: opacity 170ms ease;
 		content: "";
 		pointer-events: none;
@@ -342,8 +365,8 @@
 
 	.workshop-app-release-card:has(.workshop-app-button:hover) .workshop-app-pill,
 	.workshop-app-release-card:has(.workshop-app-button:focus-visible) .workshop-app-pill {
-		background: color-mix(in oklch, var(--accent) 22%, transparent);
-		border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
+		background: color-mix(in oklch, var(--workshop-accent-highlight) 22%, transparent);
+		border-color: color-mix(in oklch, var(--workshop-accent-highlight) 90%, var(--workshop-accent-border));
 	}
 
 	.workshop-app-release-card:hover,
@@ -351,12 +374,19 @@
 	.workshop-app-release-card:has(.workshop-app-button:hover),
 	.workshop-app-release-card:has(.workshop-app-button:focus-visible) {
 		background:
-			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--accent) 7%, transparent) 0%, transparent 60%),
-			linear-gradient(165deg, color-mix(in oklch, var(--panel-bg) 84%, var(--accent) 5%) 0%, color-mix(in oklch, var(--panel-bg) 90%, black) 100%);
+			radial-gradient(120% 95% at 100% 0%, color-mix(in oklch, var(--workshop-accent-highlight) 18%, transparent) 0%, transparent 60%),
+			linear-gradient(
+				135deg,
+				color-mix(in oklch, var(--workshop-accent-panel) 80%, color-mix(in oklch, #1a100c 70%, var(--workshop-accent-highlight) 30%) 36%) 0%,
+				color-mix(in oklch, var(--panel-bg) 75%, color-mix(in oklch, #2a140d 56%, #e67e23 44%) 20%) 24%,
+				color-mix(in oklch, var(--panel-bg) 75%, color-mix(in oklch, #3c1a0f 40%, #f39c12 60%) 22%) 50%,
+				color-mix(in oklch, var(--panel-bg) 80%, color-mix(in oklch, #4a2312 48%, #ff9f43 52%) 20%) 76%,
+				color-mix(in oklch, var(--panel-bg) 85%, color-mix(in oklch, #24140d 66%, #d97706 34%) 26%) 100%
+			);
 		box-shadow:
-			0 1px 0 color-mix(in oklch, var(--accent) 20%, transparent),
-			0 12px 16px color-mix(in oklch, black 76%, var(--accent) 20%);
-		border-color: color-mix(in oklch, var(--accent) 50%, var(--panel-border));
+			0 1px 0 color-mix(in oklch, var(--workshop-accent-highlight) 20%, transparent),
+			0 6px 6px color-mix(in oklch, black 70%, var(--workshop-accent-highlight) 30%);
+		border-color: color-mix(in oklch, var(--workshop-accent-highlight) 90%, var(--workshop-accent-border));
 		transform: translateY(-2px);
 	}
 
@@ -364,7 +394,7 @@
 	.workshop-app-release-card:focus-within::after,
 	.workshop-app-release-card:has(.workshop-app-button:hover)::after,
 	.workshop-app-release-card:has(.workshop-app-button:focus-visible)::after {
-		opacity: 0.45;
+		opacity: 0.5;
 	}
 
 	.workshop-app-release-link-card {
@@ -384,10 +414,6 @@
 		gap: 1rem;
 	}
 
-	.workshop-app-release-title-row .card-title {
-		text-box: trim-both cap alphabetic;
-	}
-
 	.workshop-app-pill {
 		display: inline-flex;
 		flex: 0 0 auto;
@@ -397,8 +423,9 @@
 		white-space: nowrap;
 		font-size: 0.76rem;
 		font-weight: 700;
-		background: color-mix(in oklch, var(--accent) 20%, transparent);
-		border: 1px solid color-mix(in oklch, var(--accent) 70%, var(--panel-border));
+		text-shadow: 1px 1px 2px #000;
+		background: color-mix(in oklch, var(--workshop-accent-highlight) 30%, transparent);
+		border: 1px solid color-mix(in oklch, var(--workshop-accent-highlight) 90%, var(--workshop-accent-border));
 		border-radius: 999px;
 		padding-block: 0.22rem;
 		padding-inline: 0.55rem;
@@ -406,7 +433,7 @@
 	}
 
 	.workshop-app-button {
-		min-block-size: 2.75rem;
+		min-block-size: 3rem;
 		display: inline-flex;
 		justify-content: center;
 		align-items: center;
@@ -414,10 +441,10 @@
 		color: var(--ink);
 		text-decoration: none;
 		font-weight: 600;
-		background: color-mix(in oklch, var(--control-bg) 72%, black);
-		border: 1px solid color-mix(in oklch, var(--panel-border) 80%, transparent);
+		background: color-mix(in oklch, var(--workshop-accent-panel) 70%, black);
+		border: 1px solid color-mix(in oklch, var(--workshop-accent-border) 80%, var(--workshop-accent-highlight));
 		border-radius: 0.75rem;
-		padding-inline: 0.95rem;
+		padding-inline: 1rem;
 		margin-block-start: auto;
 		transition:
 			transform 140ms ease,
@@ -426,7 +453,9 @@
 	}
 
 	.workshop-app-button:hover {
-		border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
+		background: color-mix(in oklch, var(--workshop-accent-highlight) 15%, #000) !important;
+		border-color: color-mix(in oklch, var(--workshop-accent-highlight) 55%, var(--workshop-accent-border)) !important;
+		box-shadow: 0 4px 12px color-mix(in oklch, var(--workshop-accent-highlight) 18%, transparent);
 		transform: translateY(-1px);
 	}
 
@@ -483,9 +512,19 @@
 	}
 
 	.workshop-app-companion-card:hover {
-		background: color-mix(in oklch, var(--panel-bg) 85%, var(--accent) 1%);
-		border-color: color-mix(in oklch, var(--accent) 85%, var(--panel-border));
+		background: color-mix(in oklch, var(--workshop-accent-panel) 85%, var(--workshop-accent-highlight) 8%);
+		border-color: color-mix(in oklch, var(--workshop-accent-highlight) 85%, var(--workshop-accent-border));
 		transform: translateY(-1px);
+	}
+
+	.workshop-app-companion-card.is-site-accent {
+		background: color-mix(in oklch, var(--panel-bg) 88%, black);
+		border-color: color-mix(in oklch, var(--accent) 26%, var(--panel-border));
+	}
+
+	.workshop-app-companion-card.is-site-accent:hover {
+		background: color-mix(in oklch, var(--panel-bg) 85%, var(--accent) 8%);
+		border-color: color-mix(in oklch, var(--accent) 85%, var(--panel-border));
 	}
 
 	@media (max-width: 980px) {

@@ -338,6 +338,12 @@
 		if (href?.startsWith("/lua-api-explorer")) {
 			return "Lua API";
 		}
+		if (href?.startsWith("/workshop-uploader") || href?.startsWith("/modinfo-builder") || href?.startsWith("/civ5mod-ziper")) {
+			return "Publish";
+		}
+		if (href?.startsWith("/dds-converter") || href?.startsWith("/civ-icon-maker") || href?.startsWith("/text-screen-viewer")) {
+			return "UI";
+		}
 		return "Tool";
 	}
 
@@ -354,6 +360,12 @@
 		}
 		if (href?.startsWith("/lua-api-explorer")) {
 			return "is-lua";
+		}
+		if (href?.startsWith("/workshop-uploader") || href?.startsWith("/modinfo-builder") || href?.startsWith("/civ5mod-ziper")) {
+			return "is-publish";
+		}
+		if (href?.startsWith("/dds-converter") || href?.startsWith("/civ-icon-maker") || href?.startsWith("/text-screen-viewer")) {
+			return "is-ui";
 		}
 		return "is-tool";
 	}
@@ -543,101 +555,46 @@
 							<SnippetExample example={activeRecipe.example} activeLanguage="all" variant="recipe" />
 						</div>
 					{/if}
-
-					<section class="recipe-block recipe-block--touchpoints" aria-label="Reference touchpoints">
-						<div class="recipe-touchpoint-head">
-							<h4>Pattern References</h4>
-						</div>
-						<!-- <p class="recipe-card-meta">Open the strongest schema or Lua surfaces for this recipe, with the entries most likely to guide implementation.</p> -->
-						<div class="recipe-touchpoint-grid">
-							{#each activeRecipe.touchpoints as touchpoint (`${touchpoint.href}-${touchpoint.label}`)}
-								{#if touchpoint.disabled}
-									<div class={`recipe-touchpoint-card ${touchpointSurfaceClass(touchpoint)}`} aria-disabled="true">
-										<div class="recipe-touchpoint-card-head">
-											<span class="recipe-touchpoint-pill">{touchpoint.label}</span>
-											<span>{touchpoint.statusLabel || touchpointSurfaceLabel(touchpoint)}</span>
-										</div>
-										<p class="recipe-card-meta">{touchpoint.note}</p>
-									</div>
-								{:else}
-									<a
-										class={`recipe-touchpoint-card recipe-touchpoint-card--link ${touchpointSurfaceClass(touchpoint)}`}
-										href={touchpointHref(touchpoint)}
-										onclick={(event) => handleTouchpointClick(event, touchpoint)}
-									>
-										<div class="recipe-touchpoint-card-head">
-											<span class="recipe-touchpoint-pill">{touchpoint.label}</span>
-											<span>{touchpointSurfaceLabel(touchpoint)}</span>
-										</div>
-										<p class="recipe-card-meta">{touchpoint.note}</p>
-									</a>
-								{/if}
-							{/each}
-						</div>
-					</section>
 				</article>
 			</div>
 		{/if}
 	</section>
 
-	<!-- <section class="recipe-panel">
-		<div class="recipe-section-head">
-			<span class="recipe-kicker">Internal Documentation Lanes</span>
-			<h2>Build inward-facing content before leaning on outbound links</h2>
-			<p>Keep the long-term docs inside the site, then use public references as support material.</p>
+	<section class="recipe-block recipe-block--touchpoints margin-block-start" aria-label="Reference touchpoints">
+		<div class="recipe-touchpoint-head">
+			<h4>Pattern References</h4>
 		</div>
-
-		<div class="recipe-grid">
-			{#each internalDocLanes as lane (lane.title)}
-				<article class="recipe-card recipe-card--compact">
-					<h3>{lane.title}</h3>
-					<p>{lane.copy}</p>
-					{#if lane.links.length > 0}
-						<div class="recipe-links">
-							{#each lane.links as link (link.href)}
-								<a class="recipe-link" href={link.href}>{link.label}</a>
-							{/each}
+		<!-- <p class="recipe-card-meta">Open the strongest schema or Lua surfaces for this recipe, with the entries most likely to guide implementation.</p> -->
+		<div class="recipe-touchpoint-grid">
+			{#each activeRecipe.touchpoints as touchpoint (`${touchpoint.href}-${touchpoint.label}`)}
+				{#if touchpoint.disabled}
+					<div class={`recipe-touchpoint-card ${touchpointSurfaceClass(touchpoint)}`} aria-disabled="true">
+						<div class="recipe-touchpoint-card-head">
+							<span class="recipe-touchpoint-pill">{touchpoint.label}</span>
+							<span>{touchpoint.statusLabel || touchpointSurfaceLabel(touchpoint)}</span>
 						</div>
-					{/if}
-					{#if lane.planned.length > 0}
-						<p class="recipe-card-meta recipe-card-meta--muted">Planned: {lane.planned.join(" · ")}</p>
-					{/if}
-				</article>
+						<p class="recipe-card-meta">{touchpoint.note}</p>
+					</div>
+				{:else}
+					<a
+						class={`recipe-touchpoint-card recipe-touchpoint-card--link ${touchpointSurfaceClass(touchpoint)}`}
+						href={touchpointHref(touchpoint)}
+						onclick={(event) => handleTouchpointClick(event, touchpoint)}
+					>
+						<div class="recipe-touchpoint-card-head">
+							<span class="recipe-touchpoint-pill">{touchpoint.label}</span>
+							<span>{touchpointSurfaceLabel(touchpoint)}</span>
+						</div>
+						<p class="recipe-card-meta">{touchpoint.note}</p>
+					</a>
+				{/if}
 			{/each}
 		</div>
 	</section>
-
-	<section class="recipe-panel">
-		<div class="recipe-section-head">
-			<span class="recipe-kicker">Research Basis</span>
-			<h2>Compact external reference set</h2>
-			<p>Reference material behind the recipes and future generators.</p>
-		</div>
-
-		<div class="recipe-links">
-			{#each researchBasisLinks as link (link.href)}
-				<a class="recipe-link" href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
-			{/each}
-		</div>
-	</section>
-
-	<section class="recipe-panel recipe-panel--notes">
-		<div class="recipe-section-head">
-			<span class="recipe-kicker">Build Direction</span>
-			<h2>How this page should evolve</h2>
-		</div>
-
-		<ul class="recipe-list">
-			{#each firstShipPrinciples as item (item)}
-				<li>{item}</li>
-			{/each}
-		</ul>
-	</section> -->
 </section>
 
 <style>
 	.recipe-page {
-
 		display: grid;
 		gap: 1.25rem;
 		--recipe-accent-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 70%, #a8861f 30%);
@@ -647,7 +604,7 @@
 	}
 
 	.recipe-hero {
-		background: linear-gradient(145deg, color-mix(in srgb, var(--panel-bg) 82%, black) 0%, color-mix(in srgb, var(--panel-bg) 90%, #352608 10%) 100%);
+		background: linear-gradient(145deg, color-mix(in srgb, var(--panel-bg) 82%, black) 0%, color-mix(in srgb, var(--panel-bg) 40%, #352608 40%) 100%);
 		border-color: var(--recipe-accent-border);
 	}
 
@@ -712,10 +669,11 @@
 		color: var(--muted-ink);
 		white-space: nowrap;
 		font-size: 0.7rem;
+		text-box: trim-both cap alphabetic;
 		background: rgba(255, 255, 255, 0.07);
 		border-radius: 999px;
-		padding-block: 0.2rem;
-		padding-inline: 0.5rem;
+		padding-block: 0.5rem;
+		padding-inline: 0.6rem;
 	}
 
 	.recipe-touchpoint-card-head span {
@@ -803,10 +761,11 @@
 		color: color-mix(in srgb, var(--recipe-accent-highlight) 58%, var(--muted-ink) 42%);
 		font-size: 0.7rem;
 		font-weight: 600;
+		text-box: trim-both cap alphabetic;
 		background: rgba(255, 255, 255, 0.05);
 		border-radius: 999px;
-		padding-block: 0.18rem;
-		padding-inline: 0.3rem;
+		padding-block: 0.1rem;
+		padding-inline: 0.35rem;
 	}
 
 	.recipe-filter-chip.is-active small,
@@ -1081,8 +1040,8 @@
 	.recipe-filter-chip:hover,
 	.recipe-detail-chip:hover {
 		color: var(--recipe-accent-highlight-strong);
-		background: color-mix(in srgb, var(--recipe-accent-highlight) 10%, transparent);
-		border-color: color-mix(in srgb, var(--recipe-accent-highlight) 52%, var(--panel-border));
+		background: color-mix(in srgb, var(--recipe-accent-highlight) 10%, transparent) !important;
+		border-color: color-mix(in srgb, var(--recipe-accent-highlight) 52%, var(--panel-border)) !important;
 	}
 
 	.recipe-nav-controls {
@@ -1114,9 +1073,9 @@
 
 	.recipe-quick-card.is-active,
 	.recipe-quick-card:hover {
-		background: color-mix(in srgb, var(--recipe-accent-highlight) 11%, transparent);
+		background: color-mix(in srgb, var(--recipe-accent-highlight) 11%, transparent) !important;
 		box-shadow: 0 10px 22px color-mix(in oklch, var(--shadow-soft) 52%, transparent);
-		border-color: color-mix(in srgb, var(--recipe-accent-highlight) 70%, white 30%);
+		border-color: color-mix(in srgb, var(--recipe-accent-highlight) 70%, white 30%) !important;
 		transform: translateY(-1px);
 	}
 
@@ -1179,9 +1138,9 @@
 
 		&.is-active,
 		&:hover {
-			background: color-mix(in srgb, var(--recipe-accent-highlight) 12%, transparent);
+			background: color-mix(in srgb, var(--recipe-accent-highlight) 12%, transparent) !important;
 			box-shadow: 0 10px 22px color-mix(in oklch, var(--shadow-soft) 38%, transparent);
-			border-color: color-mix(in srgb, var(--recipe-accent-highlight) 60%, var(--panel-border));
+			border-color: color-mix(in srgb, var(--recipe-accent-highlight) 60%, var(--panel-border)) !important;
 			transform: translateY(-1px);
 
 			& span {
@@ -1191,14 +1150,15 @@
 	}
 
 	.recipe-touchpoint-card {
-
 		display: grid;
 		gap: 0.55rem;
-		background: var(--recipe-touchpoint-panel);
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--recipe-touchpoint-highlight) 10%, transparent) 0%, transparent 34%),
+			linear-gradient(165deg, color-mix(in srgb, var(--recipe-touchpoint-panel) 88%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 88%, #16110f 12%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--recipe-touchpoint-highlight) 8%, transparent),
 			0 2px 4px color-mix(in srgb, var(--panel-bg) 70%, #000);
-		border: 1px solid color-mix(in srgb, var(--recipe-touchpoint-border) 54%, transparent);
+		border: 1px solid color-mix(in srgb, var(--recipe-touchpoint-border) 90%, transparent);
 		border-radius: 1rem;
 		padding-block: 1rem;
 		padding-inline: 1rem;
@@ -1219,7 +1179,9 @@
 	}
 
 	.recipe-touchpoint-card--link:hover {
-		background: color-mix(in srgb, var(--recipe-touchpoint-highlight) 10%, var(--recipe-touchpoint-panel) 90%);
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--recipe-touchpoint-highlight) 16%, transparent) 0%, transparent 38%),
+			linear-gradient(165deg, color-mix(in srgb, var(--recipe-touchpoint-panel) 84%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 84%, #16110f 16%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--recipe-touchpoint-highlight) 14%, transparent),
 			0 10px 22px color-mix(in oklch, var(--shadow-soft) 58%, transparent);
@@ -1260,6 +1222,20 @@
 		--recipe-touchpoint-highlight: color-mix(in srgb, var(--accent) 82%, #ffbf75 18%);
 		--recipe-touchpoint-highlight-strong: color-mix(in srgb, white 84%, var(--accent) 16%);
 		--recipe-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 82%, #2f1808 18%);
+	}
+
+	.recipe-touchpoint-card.is-publish {
+		--recipe-touchpoint-border: var(--surface-publish-border);
+		--recipe-touchpoint-highlight: var(--surface-publish-highlight);
+		--recipe-touchpoint-highlight-strong: var(--surface-publish-highlight-strong);
+		--recipe-touchpoint-panel: var(--surface-publish-panel);
+	}
+
+	.recipe-touchpoint-card.is-ui {
+		--recipe-touchpoint-border: var(--surface-ui-border);
+		--recipe-touchpoint-highlight: var(--surface-ui-highlight);
+		--recipe-touchpoint-highlight-strong: var(--surface-ui-highlight-strong);
+		--recipe-touchpoint-panel: var(--surface-ui-panel);
 	}
 
 	@media (width <= 1100px) {

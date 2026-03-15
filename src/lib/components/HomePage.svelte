@@ -1,6 +1,7 @@
 <svelte:options runes={true} />
 
 <script>
+	import SiteResourceDirectory from "./SiteResourceDirectory.svelte";
 	import luaData from "../data/civ-lua-api.json";
 	import { plannerDeliverables, plannerTracks, siteResourceGroups, tutorialTracks } from "../data/guidedPlannerData.js";
 	import { CURATED_EVENT_NAMES, CURATED_METHOD_NAMES } from "../data/luaQuickStarts.js";
@@ -338,41 +339,19 @@
 		return [...methodEntries, ...eventEntries].filter(Boolean);
 	}
 
-	function resourceTone(resource) {
-		return resource?.disabled ? "is-disabled" : "is-live";
-	}
-
-	function resourceSurfaceLabel(resource) {
-		const href = String(resource?.href || "");
-		const kind = String(resource?.kind || "").toLowerCase();
-
-		if (href.includes("/schema-browser")) return "Schema";
-		if (href.includes("/lua-api-explorer")) return "Lua API";
-		if (href.includes("/pattern-library")) return "Pattern";
-		if (href.includes("/template-generators")) return "Generator";
-		if (href.includes("/map-viewer") || href.includes("/tech-tree-viewer") || href.includes("/text-screen-viewer")) return "Viewer";
-		if (href.includes("/workshop-uploader") || href.includes("/modinfo-builder") || href.includes("/civ5mod-ziper")) return "Tool";
-		if (href.includes("/dds-converter") || href.includes("/civ-icon-maker")) return "Tool";
-		if (kind === "directory") return "Directory";
-		if (kind === "tutorial") return "Tutorial";
-		if (kind === "viewer") return "Viewer";
-		if (kind === "reference") return "Reference";
-		return resource?.kind || "Tool";
-	}
-
-	function resourceAccentClass(resource) {
-		const href = String(resource?.href || "");
-
-		if (href.includes("/schema-browser")) return "is-schema";
-		if (href.includes("/lua-api-explorer")) return "is-lua";
-		if (href.includes("/pattern-library")) return "is-pattern";
-		if (href.includes("/template-generators")) return "is-generator";
-		if (href.includes("/map-viewer") || href.includes("/text-screen-viewer") || href.includes("/tech-tree-viewer")) return "is-viewer";
-		if (href.includes("/religion-support") || href.includes("/modded-civs-pedia")) return "is-support";
-		return "is-tool";
-	}
-
 	function curatedAccentClass(entry) {
+		const href = String(entry?.href || "");
+
+		if (href.includes("/workshop-uploader") || href.includes("/modinfo-builder") || href.includes("/civ5mod-ziper")) {
+			return "is-publish";
+		}
+		if (href.includes("/dds-converter") || href.includes("/civ-icon-maker") || href.includes("/text-screen-viewer")) {
+			return "is-ui";
+		}
+		if (href.includes("/guided-planner")) {
+			return "is-planner";
+		}
+
 		switch (entry.surface) {
 			case "schema":
 				return "is-schema";
@@ -434,7 +413,7 @@
 		<div class="section-heading">
 			<div class="stack half">
 				<p class="eyebrow">Curated Lessons + Complete Documentation</p>
-				<h2 class="section-title">The site is built to give you the references, examples, and tooling you need to learn in one place</h2>
+				<h2 class="section-title text-box-trim">The site is built to give you the references, examples, and tooling you need to learn in one place</h2>
 				<p class="section-copy">Use these rotating picks as a quick peek into the broader resource library before diving into the knowledge base.</p>
 			</div>
 		</div>
@@ -460,7 +439,7 @@
 	<section class="home-section home-workshop">
 		<div class="stack half">
 			<p class="eyebrow">Release + Distribute</p>
-			<h2 class="section-title">When the mod is ready, use these tools to package and publish it.</h2>
+			<h2 class="section-title text-box-trim">When the mod is ready, use these tools to package and publish it.</h2>
 			<p class="section-copy">The same toolkit that packages your mod also helps you upload it to the Steam Workshop.</p>
 		</div>
 
@@ -516,11 +495,11 @@
 			</article>
 
 			<div class="workshop-support-grid">
-				<a class="support-link-card is-tool" href="/modinfo-builder">
+				<a class="support-link-card is-publish" href="/modinfo-builder">
 					<h3 class="card-title">.modinfo Builder</h3>
 					<p class="card-copy">Get the mod manifest clean and auto filled with the correct settings. No repeated clicks or frustrating setup errors.</p>
 				</a>
-				<a class="support-link-card is-tool" href="/civ5mod-ziper">
+				<a class="support-link-card is-publish" href="/civ5mod-ziper">
 					<h3 class="card-title">.civ5mod Ziper</h3>
 					<p class="card-copy">Package a proper Civ V archive in the proper format for distribution before the upload handoff.</p>
 				</a>
@@ -532,69 +511,14 @@
 		</div>
 	</section>
 
-	<section class="home-section home-resource-directory">
-		<div class="stack half">
-			<p class="eyebrow">All Site Resources</p>
-			<h2 class="section-title">Your full civ modding toolkit, for beginners and experts</h2>
-			<p class="section-copy">Browse the generators, references, art tools, viewers, and publishing helpers that make this site a one-stop workspace for learning and shipping a civ mod.</p>
-		</div>
-
-		<div class="surface-group-grid">
-			{#each siteResourceGroups as group (group.id)}
-				<section class="surface-group">
-					<div class="surface-group-head">
-						<div class="stack half">
-							<p class="eyebrow">{group.kicker}</p>
-							<h3 class="section-title">{group.label}</h3>
-						</div>
-						<p class="section-copy">{group.description}</p>
-					</div>
-
-					<div class="surface-card-grid">
-						{#each group.items as resource (resource.id)}
-							{#if resource.disabled}
-								<div
-									class={[
-										"surface-card",
-										resourceTone(resource),
-										resourceAccentClass(resource),
-										(resource.id === "guided-planner" || resource.id === "workshop-uploader") && "is-featured",
-									]}
-									aria-disabled="true"
-								>
-									<div class="surface-card-top">
-										<strong class="surface-badge">Coming Soon</strong>
-									</div>
-									<h4 class="card-title">{resource.label}</h4>
-									<p class="card-copy">{resource.description}</p>
-								</div>
-							{:else}
-								<a
-									class={[
-										"surface-card",
-										resourceTone(resource),
-										resourceAccentClass(resource),
-										(resource.id === "guided-planner" || resource.id === "workshop-uploader") && "is-featured",
-									]}
-									href={resource.href}
-								>
-									<h4 class="card-title">{resource.label}</h4>
-									<p class="card-copy">{resource.description}</p>
-								</a>
-							{/if}
-						{/each}
-					</div>
-				</section>
-			{/each}
-		</div>
-	</section>
+	<SiteResourceDirectory groups={siteResourceGroups} />
 </section>
 
 <style>
 	.home-page {
 		display: grid;
 		gap: 2rem;
-		--home-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 82%, #85511a 18%);
+		--home-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 82%, #85511a 5%);
 		--home-muted-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 92%, white 8%);
 		--home-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 88%, #1e140d 12%);
 		--home-panel-strong: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 80%, #221209 20%);
@@ -609,8 +533,8 @@
 			radial-gradient(circle at 12% 14%, color-mix(in srgb, var(--accent) 20%, transparent) 0%, transparent 34%),
 			radial-gradient(circle at 85% 18%, color-mix(in srgb, #8dc7ff 16%, transparent) 0%, transparent 30%),
 			linear-gradient(140deg, color-mix(in srgb, var(--home-panel) 84%, black 16%) 0%, color-mix(in srgb, var(--home-panel-strong) 76%, #130d09 24%) 100%);
-		padding-inline: 2vw;
 		padding-block: clamp(1.4rem, 2.8vw, 2rem) 2rem;
+		padding-inline: 2vw;
 	}
 
 	.home-hero,
@@ -634,8 +558,6 @@
 	.workshop-grid,
 	.workshop-support-grid,
 	.gallery-grid,
-	.surface-group-grid,
-	.surface-card-grid,
 	.credits-grid {
 		display: grid;
 		gap: 1rem;
@@ -679,7 +601,7 @@
 			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--control-bg)) 90%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 84%, #16110f 16%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight, var(--accent)) 14%, transparent),
-			0 18px 30px color-mix(in srgb, black 76%, transparent);
+			0 6px 8px color-mix(in srgb, black 76%, transparent);
 		border-color: color-mix(in srgb, var(--surface-highlight, var(--accent)) 74%, var(--home-muted-border));
 		transform: translateY(-2px);
 	}
@@ -694,7 +616,7 @@
 	.surface-card,
 	.credit-card {
 		background: color-mix(in srgb, var(--control-bg) 92%, #1d1410 8%);
-		box-shadow: 0 6px 14px color-mix(in srgb, black 78%, transparent);
+		box-shadow: 0 4px 8px color-mix(in srgb, black 78%, transparent);
 		border: 1px solid var(--home-muted-border);
 		border-radius: 1rem;
 	}
@@ -740,7 +662,7 @@
 			);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--surface-generator-highlight) 18%, transparent),
-			0 20px 36px color-mix(in srgb, #0f0914 34%, transparent);
+			0 6px 10px color-mix(in srgb, #0f0914 34%, transparent);
 		border-color: color-mix(in srgb, var(--surface-generator-highlight) 62%, var(--home-muted-border));
 	}
 
@@ -758,29 +680,29 @@
 
 	.onramp-card.is-path {
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-tool-highlight) 20%, transparent) 0%, transparent 34%),
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-planner-highlight) 20%, transparent) 0%, transparent 34%),
 			linear-gradient(
 				168deg,
-				color-mix(in srgb, var(--surface-tool-panel) 72%, var(--control-bg)) 0%,
-				color-mix(in srgb, #24160e 52%, var(--control-bg)) 58%,
-				color-mix(in srgb, var(--control-bg) 78%, #17100c 22%) 100%
+				color-mix(in srgb, var(--surface-planner-panel) 76%, var(--control-bg)) 0%,
+				color-mix(in srgb, #2f2619 54%, var(--control-bg)) 58%,
+				color-mix(in srgb, var(--control-bg) 80%, #1c160f 20%) 100%
 			);
 		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-tool-highlight) 18%, transparent),
-			0 20px 36px color-mix(in srgb, #110a06 34%, transparent);
-		border-color: color-mix(in srgb, var(--surface-tool-highlight) 62%, var(--home-muted-border));
+			inset 0 1px 0 color-mix(in srgb, var(--surface-planner-highlight) 18%, transparent),
+			0 6px 8px color-mix(in srgb, #15110a 34%, transparent);
+		border-color: color-mix(in srgb, var(--surface-planner-highlight) 62%, var(--home-muted-border));
 	}
 
 	.onramp-card.is-path:hover {
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-tool-highlight) 30%, transparent) 0%, transparent 38%),
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-planner-highlight) 30%, transparent) 0%, transparent 38%),
 			linear-gradient(
 				168deg,
-				color-mix(in srgb, var(--surface-tool-panel) 82%, var(--control-bg)) 0%,
-				color-mix(in srgb, #2a190f 60%, var(--control-bg)) 58%,
-				color-mix(in srgb, var(--control-bg) 70%, #17100c 30%) 100%
+				color-mix(in srgb, var(--surface-planner-panel) 84%, var(--control-bg)) 0%,
+				color-mix(in srgb, #382d1e 60%, var(--control-bg)) 58%,
+				color-mix(in srgb, var(--control-bg) 72%, #1c160f 28%) 100%
 			);
-		border-color: color-mix(in srgb, var(--surface-tool-highlight) 82%, var(--home-muted-border));
+		border-color: color-mix(in srgb, var(--surface-planner-highlight) 82%, var(--home-muted-border));
 	}
 
 	.is-generator {
@@ -801,8 +723,7 @@
 
 	.hero-microcopy span,
 	.hero-stat-label,
-	.onramp-kicker,
-	.surface-card-top strong {
+	.onramp-kicker {
 		text-transform: uppercase;
 		font-size: 0.74rem;
 		letter-spacing: 0.12em;
@@ -818,9 +739,7 @@
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 	}
 
-	.curated-card-head,
-	.surface-card-top,
-	.surface-group-head {
+	.curated-card-head {
 		display: flex;
 		justify-content: space-between;
 		align-items: start;
@@ -828,8 +747,7 @@
 	}
 
 	.curated-card .surface-badge,
-	.support-link-card .surface-badge,
-	.surface-card .surface-badge {
+	.support-link-card .surface-badge {
 		color: var(--surface-highlight-strong, var(--ink));
 		background: color-mix(in srgb, var(--surface-highlight, var(--accent)) 14%, transparent);
 		border-color: color-mix(in srgb, var(--surface-highlight, var(--accent)) 54%, var(--home-muted-border));
@@ -853,14 +771,14 @@
 	.curated-toolbar {
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: space-between;
+		justify-content: flex-end;
 		align-items: center;
-		gap: 0.85rem;
-		background: color-mix(in srgb, var(--surface-schema-panel) 38%, var(--control-bg));
-		border: 1px solid color-mix(in srgb, var(--surface-schema-highlight) 18%, var(--home-muted-border));
+		gap: 1.5rem;
+		/*background: color-mix(in srgb, var(--surface-schema-panel) 38%, var(--control-bg));
+		border: 1px solid color-mix(in srgb, var(--surface-schema-highlight) 18%, var(--home-muted-border));*/
 		border-radius: 1rem;
-		padding-block: 0.85rem;
-		padding-inline: 1rem;
+		padding-block: 0.75rem;
+		padding-inline: 0.5rem;
 	}
 
 	.curated-toolbar-copy {
@@ -906,7 +824,7 @@
 
 	.workshop-feature-shell {
 		display: grid;
-		grid-template-columns: minmax(0, 1.5fr) minmax(16rem, 0.9fr);
+		grid-template-columns: minmax(0, 1.5fr) minmax(18rem, 0.9fr);
 		align-items: stretch;
 		gap: 1.1rem;
 		padding: 1.2rem;
@@ -936,7 +854,7 @@
 			linear-gradient(165deg, color-mix(in srgb, var(--surface-tool-panel) 74%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 82%, #21130b 18%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
-			0 18px 28px color-mix(in srgb, black 78%, transparent);
+			0 6px 28px color-mix(in srgb, black 78%, transparent);
 		border: 1px solid color-mix(in srgb, var(--surface-tool-highlight) 34%, var(--home-muted-border));
 		border-radius: 1rem;
 		padding: 1rem;
@@ -944,7 +862,7 @@
 
 	.workshop-download-panel .home-cta.is-platform-download {
 		justify-content: flex-start;
-		gap: 0.75rem;
+		gap: 0.5rem;
 		padding-block: 0.5rem;
 		padding-inline: 0.65rem;
 	}
@@ -959,8 +877,8 @@
 	}
 
 	.workshop-download-panel .home-cta.is-platform-download svg {
-		inline-size: 1.2rem;
-		block-size: 1.2rem;
+		inline-size: 1.75rem;
+		block-size: 1.75rem;
 		flex: 0 0 auto;
 		fill: currentColor;
 	}
@@ -980,7 +898,7 @@
 		background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 28%, #5a2b15 72%) 0%, color-mix(in srgb, var(--accent) 18%, #3c1f12 82%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, white 12%, transparent),
-			0 14px 26px color-mix(in srgb, #180d08 72%, transparent);
+			0 4px 8px color-mix(in srgb, #180d08 72%, transparent);
 		border-radius: 1rem;
 		border-color: color-mix(in srgb, var(--accent) 72%, var(--surface-tool-highlight));
 	}
@@ -1025,16 +943,6 @@
 		border-color: color-mix(in srgb, var(--surface-generator-highlight) 44%, var(--home-muted-border));
 	}
 
-	.hero-stat-card strong {
-		font-family: "Rockwell", "Palatino Linotype", serif;
-		font-size: 1.7rem;
-	}
-
-	.surface-card.is-disabled {
-		opacity: 0.75;
-		border-style: dashed;
-	}
-
 	.workshop-support-grid,
 	.credits-grid {
 		grid-template-columns: 1fr;
@@ -1072,37 +980,6 @@
 		--surface-panel: var(--surface-tool-panel);
 	}
 
-	.home-resource-directory {
-		background: color-mix(in srgb, var(--home-panel) 96%, #0f0c0a 4%);
-	}
-
-	.surface-group-grid {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	.surface-group {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent) 12%, transparent) 0%, transparent 32%),
-			radial-gradient(circle at 0% 100%, color-mix(in srgb, #8dc7ff 7%, transparent) 0%, transparent 34%),
-			linear-gradient(165deg, color-mix(in srgb, var(--home-panel-strong) 62%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 84%, #191310 16%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
-			0 14px 26px color-mix(in srgb, black 78%, transparent);
-		border-color: color-mix(in srgb, var(--home-muted-border) 58%, white 12%);
-		padding: 1rem;
-	}
-
-	.surface-group-head {
-		display: grid;
-	}
-
-	.surface-card-grid {
-		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-	}
-
 	.credit-card {
 		background: color-mix(in srgb, var(--control-bg) 94%, #191412 6%);
 	}
@@ -1114,7 +991,7 @@
 			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--control-bg)) 90%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 84%, #16110f 16%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight, var(--accent)) 14%, transparent),
-			0 18px 30px color-mix(in srgb, black 76%, transparent);
+			0 6px 8px color-mix(in srgb, black 76%, transparent);
 		border-color: color-mix(in srgb, var(--surface-highlight, var(--accent)) 74%, var(--home-muted-border));
 		transform: translateY(-2px);
 	}
@@ -1205,6 +1082,13 @@
 		--surface-panel: var(--surface-schema-panel);
 	}
 
+	.is-planner {
+		--surface-border: var(--surface-planner-border);
+		--surface-highlight: var(--surface-planner-highlight);
+		--surface-highlight-strong: var(--surface-planner-highlight-strong);
+		--surface-panel: var(--surface-planner-panel);
+	}
+
 	.is-viewer,
 	.is-support {
 		--surface-border: var(--surface-support-border);
@@ -1213,22 +1097,18 @@
 		--surface-panel: var(--surface-support-panel);
 	}
 
-	.surface-card {
-		display: grid;
-		gap: 0.7rem;
-		color: var(--ink);
-		text-decoration: none;
-		padding: 1rem;
-		transition:
-			transform 160ms ease,
-			border-color 160ms ease,
-			background 160ms ease,
-			box-shadow 160ms ease;
+	.is-publish {
+		--surface-border: var(--surface-publish-border);
+		--surface-highlight: var(--surface-publish-highlight);
+		--surface-highlight-strong: var(--surface-publish-highlight-strong);
+		--surface-panel: var(--surface-publish-panel);
 	}
 
-	.surface-card.is-featured {
-		min-block-size: 100%;
-		grid-column: span 2;
+	.is-ui {
+		--surface-border: var(--surface-ui-border);
+		--surface-highlight: var(--surface-ui-highlight);
+		--surface-highlight-strong: var(--surface-ui-highlight-strong);
+		--surface-panel: var(--surface-ui-panel);
 	}
 
 	.workshop-actions {
@@ -1246,7 +1126,6 @@
 		.home-hero,
 		.onramp-grid,
 		.workshop-grid,
-		.surface-group-grid,
 		.gallery-grid {
 			grid-template-columns: 1fr;
 		}
@@ -1275,14 +1154,6 @@
 
 		.curated-toolbar {
 			align-items: start;
-		}
-
-		.surface-card-grid {
-			grid-template-columns: 1fr;
-		}
-
-		.surface-card.is-featured {
-			grid-column: auto;
 		}
 	}
 </style>

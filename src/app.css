@@ -70,6 +70,18 @@
 	--surface-support-highlight: #ffb3bc;
 	--surface-support-highlight-strong: #ffe4e8;
 	--surface-support-panel: color-mix(in srgb, var(--surface-color) 88%, #301217 12%);
+	--surface-planner-border: color-mix(in srgb, var(--border-color) 60%, #d7c7a1 40%);
+	--surface-planner-highlight: #f3e7c9;
+	--surface-planner-highlight-strong: #fff8ea;
+	--surface-planner-panel: color-mix(in srgb, var(--surface-color) 90%, #2f271a 10%);
+	--surface-publish-border: color-mix(in srgb, var(--border-color) 70%, #b85d16 30%);
+	--surface-publish-highlight: #ffb86a;
+	--surface-publish-highlight-strong: #ffe7c7;
+	--surface-publish-panel: color-mix(in srgb, var(--surface-color) 84%, #3a1c08 16%);
+	--surface-ui-border: color-mix(in srgb, var(--border-color) 72%, #b4528d 28%);
+	--surface-ui-highlight: #ffaddd;
+	--surface-ui-highlight-strong: #ffe1f2;
+	--surface-ui-panel: color-mix(in srgb, var(--surface-color) 86%, #341325 14%);
 	--surface-tool-border: color-mix(in srgb, var(--border-color) 72%, #9a5a1e 28%);
 	--surface-tool-highlight: color-mix(in srgb, var(--accent) 82%, #ffbf75 18%);
 	--surface-tool-highlight-strong: color-mix(in srgb, white 84%, var(--accent) 16%);
@@ -134,7 +146,7 @@ body {
 	display: grid;
 	gap: 1rem;
 	border-radius: 1rem;
-	background: linear-gradient(135deg, color-mix(in oklch, var(--panel-bg) 90%, black) 0%, color-mix(in oklch, var(--panel-bg) 90%, var(--accent) 2%) 100%);
+	background: linear-gradient(135deg, color-mix(in oklch, var(--panel-bg) 90%, black) 0%, color-mix(in oklch, var(--panel-bg) 90%, var(--accent) 10%) 100%);
 	border: 1px solid color-mix(in oklch, var(--accent) 60%, var(--panel-border));
 	box-shadow: 0 2px 4px var(--shadow-soft);
 	padding: 1.5rem;
@@ -142,8 +154,8 @@ body {
 
 .eyebrow {
 	color: var(--muted-ink);
-	font-size: 0.75rem;
-	letter-spacing: 0.14em;
+	font-size: 0.8rem;
+	letter-spacing: 0.15em;
 	text-transform: uppercase;
 	margin-block: 0;
 }
@@ -289,6 +301,23 @@ input,
 select,
 textarea {
 	field-sizing: content;
+}
+
+select {
+	background-image:
+		linear-gradient(45deg, transparent 50%, color-mix(in oklch, var(--muted-ink) 78%, var(--ink) 22%) 50%),
+		linear-gradient(135deg, color-mix(in oklch, var(--muted-ink) 78%, var(--ink) 22%) 50%, transparent 50%);
+	background-position:
+		calc(100% - 1rem) 50%,
+		calc(100% - 0.68rem) 50%;
+	background-repeat: no-repeat;
+	background-size:
+		0.38rem 0.38rem,
+		0.38rem 0.38rem;
+	padding-inline-end: 2rem;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
 }
 
 :root[data-theme="light"] .hero {

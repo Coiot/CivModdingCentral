@@ -1358,10 +1358,24 @@
 		inline-size: 100%;
 		display: grid;
 		gap: 1rem;
+		--dds-accent-border: var(--surface-ui-border);
+		--dds-accent-highlight: var(--surface-ui-highlight);
+		--dds-accent-highlight-strong: var(--surface-ui-highlight-strong);
+		--dds-accent-panel: var(--surface-ui-panel);
 	}
 
 	.dds-hero {
-		background: var(--panel-bg);
+		background:
+			/*radial-gradient(circle at 14% 18%, color-mix(in srgb, var(--dds-accent-highlight) 18%, transparent) 0%, transparent 32%),
+			radial-gradient(circle at 88% 16%, color-mix(in srgb, var(--dds-accent-highlight) 12%, transparent) 0%, transparent 28%),*/ linear-gradient(
+			135deg,
+			color-mix(in srgb, var(--panel-bg) 88%, black 12%) 0%,
+			color-mix(in srgb, var(--dds-accent-panel) 90%, var(--panel-bg) 10%) 100%
+		);
+		border-color: color-mix(in srgb, var(--dds-accent-highlight) 52%, var(--dds-accent-border));
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
+			0 8px 22px color-mix(in srgb, black 74%, transparent);
 	}
 
 	.dds-panel {
@@ -1371,7 +1385,7 @@
 		color: var(--ink);
 		background: var(--panel-bg);
 		box-shadow: 0 8px 20px var(--shadow-soft);
-		border: 1px solid color-mix(in oklch, var(--accent) 5%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--dds-accent-border) 32%, var(--panel-border));
 		border-radius: 1rem;
 		padding-block: 1.1rem;
 		padding-inline: 1.1rem;
@@ -1389,8 +1403,8 @@
 			min-block-size: 3ch;
 			color: var(--ink);
 			font-size: 0.95rem;
-			background: var(--input-bg);
-			border: 1px solid var(--panel-border);
+			background: color-mix(in srgb, var(--dds-accent-panel) 10%, var(--input-bg));
+			border: 1px solid color-mix(in srgb, var(--dds-accent-border) 38%, var(--panel-border));
 			border-radius: 0.65rem;
 			padding-block: 0.35rem;
 			padding-inline: 0.65rem;
@@ -1405,8 +1419,8 @@
 		inline-size: 100%;
 		display: grid;
 		gap: 0.75rem;
-		background: color-mix(in oklch, var(--panel-bg) 95%, var(--control-bg));
-		border: 1px solid color-mix(in oklch, var(--accent) 5%, var(--panel-border));
+		background: color-mix(in srgb, var(--dds-accent-panel) 12%, var(--panel-bg));
+		border: 1px solid color-mix(in srgb, var(--dds-accent-border) 28%, var(--panel-border));
 		border-radius: 0.9rem;
 		padding-block: 0.8rem;
 		padding-inline: 0.8rem;
@@ -1448,7 +1462,7 @@
 		gap: 0.6rem;
 		color: var(--ink);
 		background: var(--control-bg);
-		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--dds-accent-highlight) 42%, var(--panel-border));
 		border-radius: 0.75rem;
 		padding-block: 0.65rem;
 		padding-inline: 0.65rem;
@@ -1487,17 +1501,30 @@
 		color: var(--ink);
 		text-decoration: none;
 		background: var(--control-bg);
-		border: 1px solid color-mix(in oklch, var(--accent) 60%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--dds-accent-highlight) 58%, var(--panel-border));
 		border-radius: 0.65rem;
 		padding-block: 0.54rem;
 		padding-inline: 0.82rem;
+	}
+
+	.dds-actions button:hover,
+	.dds-actions button:focus-visible,
+	.dds-download:hover,
+	.dds-download:focus-visible,
+	.tiny-action:hover,
+	.tiny-action:focus-visible {
+		background: color-mix(in srgb, var(--dds-accent-panel) 42%, var(--control-bg)) !important;
+		border-color: color-mix(in srgb, var(--dds-accent-highlight) 76%, var(--panel-border)) !important;
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--dds-accent-highlight-strong) 12%, transparent),
+			0 2px 4px color-mix(in srgb, black 74%, transparent);
 	}
 
 	.tiny-action {
 		color: var(--ink);
 		font-size: 0.78rem;
 		background: var(--panel-bg);
-		border: 1px solid color-mix(in oklch, var(--accent) 60%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--dds-accent-highlight) 58%, var(--panel-border));
 		border-radius: 0.5rem;
 		padding-block: 0.35rem;
 		padding-inline: 0.25rem;
@@ -1529,7 +1556,7 @@
 			color: var(--ink);
 			font-size: 0.85rem;
 			background: var(--control-bg);
-			border: 1px solid color-mix(in oklch, var(--accent) 70%, var(--panel-border));
+			border: 1px solid color-mix(in srgb, var(--dds-accent-highlight) 66%, var(--panel-border));
 			border-radius: 0.55rem;
 			padding-block: 0.34rem;
 			padding-inline: 0.5rem;
@@ -1545,8 +1572,8 @@
 		gap: 0.5rem;
 		color: var(--ink);
 		text-align: center;
-		background: color-mix(in oklch, var(--accent) 4%, var(--control-bg));
-		border: 2px dashed color-mix(in oklch, var(--accent) 80%, var(--panel-border));
+		background: color-mix(in srgb, var(--dds-accent-panel) 18%, var(--control-bg));
+		border: 2px dashed color-mix(in srgb, var(--dds-accent-highlight) 74%, var(--panel-border));
 		border-radius: 0.85rem;
 		padding-block: 0.8rem;
 		padding-inline: 0.8rem;
@@ -1557,8 +1584,8 @@
 		cursor: pointer;
 
 		&.is-drag-over {
-			background: color-mix(in oklch, var(--accent) 10%, var(--control-bg));
-			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
+			background: color-mix(in srgb, var(--dds-accent-panel) 28%, var(--control-bg));
+			border-color: color-mix(in srgb, var(--dds-accent-highlight) 86%, var(--panel-border));
 			transform: translateY(-1px);
 		}
 
@@ -1576,7 +1603,7 @@
 		inline-size: min(320px, 100%);
 		block-size: auto;
 		box-shadow: 1px 1px 4px var(--panel-bg);
-		border: 1px solid color-mix(in oklch, var(--accent) 40%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--dds-accent-highlight) 52%, var(--panel-border));
 		border-radius: 0.65rem;
 		object-fit: contain;
 		margin-block-start: 0.5rem;
@@ -1589,7 +1616,7 @@
 		gap: 0.6rem;
 		color: var(--ink);
 		background: var(--control-bg);
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--dds-accent-border) 42%, var(--panel-border));
 		border-radius: 0.75rem;
 		padding-block: 0.65rem;
 		padding-inline: 0.65rem;
@@ -1670,7 +1697,7 @@
 		font-size: 0.76rem;
 		line-height: 1.35;
 		background: oklch(0.2 0 0 / 0.96);
-		border: 1px solid color-mix(in oklch, var(--accent) 65%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--dds-accent-highlight) 62%, var(--panel-border));
 		border-radius: 0.55rem;
 		padding-block: 0.45rem;
 		padding-inline: 0.6rem;
@@ -1695,7 +1722,7 @@
 	}
 
 	.dds-download {
-		background: color-mix(in oklch, var(--accent) 30%, var(--control-bg));
+		background: color-mix(in srgb, var(--dds-accent-panel) 42%, var(--control-bg));
 	}
 
 	.dds-status {
@@ -1709,6 +1736,24 @@
 
 	.dds-success {
 		color: oklch(0.82 0.14 145);
+	}
+
+	input,
+	textarea,
+	select {
+		inline-size: 100%;
+		color: color-mix(in oklch, white 60%, var(--ink));
+		font: inherit;
+		line-height: 1.25;
+		background: color-mix(in srgb, var(--dds-accent-panel) 14%, var(--input-bg)) !important;
+		border: 1px solid color-mix(in srgb, var(--dds-accent-border) 34%, var(--panel-border)) !important;
+		border-radius: 0.7rem;
+		padding-block: 0.7rem;
+		padding-inline: 0.8rem;
+		box-shadow:
+			inset 0 1px 0 color-mix(in oklch, white 10%, transparent),
+			0 0 0 1px color-mix(in srgb, var(--dds-accent-highlight) 12%, transparent);
+		box-sizing: border-box;
 	}
 
 	@media (width <= 550px) {

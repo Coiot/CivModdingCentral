@@ -248,7 +248,7 @@
 	.snippet-tabs-kicker {
 		color: color-mix(in oklch, white 78%, var(--ink));
 		text-transform: uppercase;
-		font-size: 0.7rem;
+		font-size: 0.9rem;
 		font-weight: 700;
 		letter-spacing: 0.14em;
 	}
@@ -333,7 +333,6 @@
 		position: relative;
 		max-width: 100%;
 		min-width: 0;
-		overflow-x: auto;
 	}
 
 	.snippet-file-actions {
@@ -382,7 +381,9 @@
 	.snippet-code-block {
 		inline-size: 100%;
 		min-inline-size: 0;
+		min-block-size: 0;
 		max-inline-size: 100%;
+		display: block;
 		color: color-mix(in oklch, white 88%, var(--ink));
 		white-space: pre;
 		font-size: 0.84rem;
@@ -395,6 +396,7 @@
 		margin: 0;
 		overflow-x: auto;
 		overflow-y: hidden;
+		overscroll-behavior-inline: contain;
 		scrollbar-color: #d8b24a color-mix(in srgb, var(--panel-bg) 78%, black 22%);
 		scrollbar-width: thin;
 	}
@@ -451,8 +453,8 @@
 	.snippet-tab.is-active,
 	.snippet-tab:hover {
 		color: color-mix(in oklch, white 84%, var(--ink));
-		background: color-mix(in oklch, var(--accent) 14%, var(--control-bg));
-		border-color: color-mix(in oklch, var(--accent) 42%, var(--panel-border));
+		background: color-mix(in oklch, var(--accent) 14%, var(--control-bg)) !important;
+		border-color: color-mix(in oklch, var(--accent) 42%, var(--panel-border)) !important;
 		transform: translateY(-1px);
 	}
 
@@ -463,11 +465,11 @@
 
 	.snippet-tab.is-recipe.is-active,
 	.snippet-tab.is-recipe:hover {
-		background: linear-gradient(180deg, color-mix(in srgb, #f5d36a 18%, transparent) 0%, color-mix(in srgb, var(--panel-bg) 72%, #352608 28%) 100%);
+		background: linear-gradient(180deg, color-mix(in srgb, #f5d36a 18%, transparent) 0%, color-mix(in srgb, var(--panel-bg) 72%, #352608 28%) 100%) !important;
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, #fff1bc 22%, transparent),
 			0 10px 22px color-mix(in oklch, var(--shadow-soft) 48%, transparent);
-		border-color: color-mix(in srgb, #f5d36a 72%, white 28%);
+		border-color: color-mix(in srgb, #f5d36a 72%, white 28%) !important;
 	}
 
 	.snippet-tab.is-wizard {
@@ -477,11 +479,11 @@
 
 	.snippet-tab.is-wizard.is-active,
 	.snippet-tab.is-wizard:hover {
-		background: linear-gradient(180deg, color-mix(in srgb, #caa6ff 18%, transparent) 0%, color-mix(in srgb, var(--panel-bg) 72%, #261735 28%) 100%);
+		background: linear-gradient(180deg, color-mix(in srgb, #caa6ff 18%, transparent) 0%, color-mix(in srgb, var(--panel-bg) 72%, #261735 28%) 100%) !important;
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, #f0e2ff 22%, transparent),
 			0 10px 22px color-mix(in oklch, var(--shadow-soft) 48%, transparent);
-		border-color: color-mix(in srgb, #caa6ff 72%, white 28%);
+		border-color: color-mix(in srgb, #caa6ff 72%, white 28%) !important;
 	}
 
 	.snippet-tabs-shell {

@@ -2425,7 +2425,7 @@
 			const lightB = (random() - 0.5) * 16;
 			rows.push({
 				id: `generated-${seed}-${index}`,
-				label: `Suggested ${index + 1}`,
+				label: `Randomized ${index + 1}`,
 				primary: withLocks(outer, transformColor(outer, { hShift: hueA, sAdd: satA, lAdd: lightA })),
 				icon: withLocks(inner, transformColor(inner, { hShift: hueB, sAdd: satB, lAdd: lightB })),
 			});
@@ -2742,7 +2742,7 @@
 							<button type="button" class="civ-icon-button civ-icon-button-subtle" onclick={resetTransform}>Reset Transform</button>
 						</div>
 					</div>
-					<p class="civ-icon-copy">Fit Scale keeps an inner guard.</p>
+					<p class="civ-icon-copy">Note: Fit Scale keeps an inner edge guard.</p>
 				</section>
 
 				<section class="civ-icon-control-group civ-icon-swiatlo-group">
@@ -2855,7 +2855,7 @@
 		<section class="civ-icon-suggestions">
 			<div class="civ-icon-suggestions-head">
 				<h2 class="civ-icon-subtitle">Color Scheme Suggestions</h2>
-				<p class="civ-icon-copy">Click a pair to apply it to the icon. Outer color maps to circle, inner color maps to alpha.</p>
+				<p class="civ-icon-copy">Click a pair to apply it to the icon.</p>
 			</div>
 			<div class="civ-icon-suggestion-controls">
 				<label class="civ-icon-inline-toggle">
@@ -2867,10 +2867,10 @@
 					<span>Lock Saturation</span>
 				</label>
 				<label class="civ-icon-inline-number">
-					<span>Generated</span>
+					<span>Randomized</span>
 					<input type="number" min="0" max="24" step="1" value={String(suggestionGeneratedCount)} oninput={(event) => onSuggestionGeneratedCountInput(event.currentTarget.value)} />
 				</label>
-				<button type="button" class="civ-icon-button civ-icon-button-subtle" onclick={regenerateSuggestions}>Generate Again</button>
+				<button type="button" class="civ-icon-button civ-icon-button-subtle" onclick={regenerateSuggestions}>Randomize Again</button>
 			</div>
 			<ul class="civ-icon-scheme-grid" aria-label="Color scheme suggestions">
 				{#each suggestedColorSchemes as scheme (scheme.id)}
@@ -2915,7 +2915,7 @@
 			background-position:
 				0 0,
 				13px 13px;
-			border-color: color-mix(in oklch, var(--accent) 12%, var(--panel-border));
+			border-color: color-mix(in oklch, var(--accent) 5%, var(--panel-border));
 		}
 
 		.civ-icon-preview-note {
@@ -3032,6 +3032,10 @@
 	}
 	.civ-icon-maker-page {
 		display: grid;
+		--civ-icon-accent-border: var(--surface-ui-border);
+		--civ-icon-accent-highlight: var(--surface-ui-highlight);
+		--civ-icon-accent-highlight-strong: var(--surface-ui-highlight-strong);
+		--civ-icon-accent-panel: var(--surface-ui-panel);
 	}
 
 	.civ-icon-upload-panel {
@@ -3045,14 +3049,14 @@
 		gap: 1rem;
 		background: var(--panel-bg);
 		box-shadow: 0 2px 4px var(--shadow-soft);
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-border) 34%, var(--panel-border));
 		border-radius: 1rem;
 		padding: 1rem;
 	}
 
 	.civ-icon-title {
 		font-family: "Rockwell", "Palatino Linotype", serif;
-		font-size: clamp(1.08rem, 1.4vw, 1.35rem);
+		font-size: clamp(1.5rem, 1.2vw, 2rem);
 		margin: 0;
 		text-box: trim-both cap alphabetic;
 	}
@@ -3069,8 +3073,8 @@
 		min-block-size: 132px;
 		display: grid;
 		place-items: center;
-		background: color-mix(in oklch, var(--accent) 8%, var(--control-bg));
-		border: 2px dashed color-mix(in oklch, var(--accent) 35%, var(--panel-border));
+		background: color-mix(in srgb, var(--civ-icon-accent-panel) 20%, var(--control-bg));
+		border: 2px dashed color-mix(in srgb, var(--civ-icon-accent-highlight) 46%, var(--panel-border));
 		border-radius: 0.8rem;
 		padding: 1rem;
 		transition:
@@ -3079,8 +3083,8 @@
 		cursor: pointer;
 
 		&.is-drag-over {
-			background: color-mix(in oklch, var(--accent) 18%, var(--control-bg));
-			border-color: color-mix(in oklch, var(--accent) 62%, var(--panel-border));
+			background: color-mix(in srgb, var(--civ-icon-accent-panel) 30%, var(--control-bg));
+			border-color: color-mix(in srgb, var(--civ-icon-accent-highlight) 68%, var(--panel-border));
 		}
 	}
 
@@ -3101,7 +3105,7 @@
 	.civ-icon-controls-panel input[type="text"] {
 		color: var(--ink);
 		background: var(--input-bg);
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-border) 36%, var(--panel-border));
 		border-radius: 0.5rem;
 		padding-block: 0.42rem;
 		padding-inline: 0.58rem;
@@ -3111,6 +3115,7 @@
 	.civ-icon-controls-panel input[type="text"],
 	.civ-icon-controls-panel input[type="range"] {
 		inline-size: 100%;
+		accent-color: var(--civ-icon-accent-highlight);
 	}
 
 	.civ-icon-inline-number input[type="number"] {
@@ -3152,7 +3157,7 @@
 		background-position:
 			0 0,
 			13px 13px;
-		border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-border) 28%, var(--panel-border));
 		border-radius: 0.7rem;
 		padding: 1rem;
 	}
@@ -3193,11 +3198,11 @@
 		font-size: 0.78rem;
 		font-weight: 600;
 		line-height: 1.2;
-		background: color-mix(in oklch, var(--accent) 18%, var(--panel-bg));
+		background: color-mix(in srgb, var(--civ-icon-accent-panel) 34%, var(--panel-bg));
 		box-shadow:
 			0 10px 30px color-mix(in oklch, black 28%, transparent),
 			0 0 0 1px color-mix(in oklch, white 8%, transparent) inset;
-		border: 1px solid color-mix(in oklch, var(--accent) 42%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-highlight) 52%, var(--panel-border));
 		border-radius: 999px;
 		padding-block: 0.6rem;
 		padding-inline: 0.95rem;
@@ -3250,7 +3255,7 @@
 	}
 
 	.civ-icon-preview:focus-visible {
-		box-shadow: 0 0 0 2px color-mix(in oklch, var(--accent) 60%, white 10%);
+		box-shadow: 0 0 0 2px color-mix(in srgb, var(--civ-icon-accent-highlight) 72%, white 28%);
 	}
 
 	.civ-icon-preview-reference {
@@ -3271,8 +3276,8 @@
 		text-decoration: none;
 		font-size: 0.84rem;
 		font-weight: 550;
-		background: color-mix(in oklch, var(--accent) 10%, var(--control-bg));
-		border: 1px solid color-mix(in oklch, var(--accent) 28%, var(--panel-border));
+		background: color-mix(in srgb, var(--civ-icon-accent-panel) 24%, var(--control-bg));
+		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-highlight) 32%, var(--panel-border));
 		border-radius: 0.6rem;
 		padding-block: 0.5rem;
 		padding-inline: 0.75rem;
@@ -3291,17 +3296,22 @@
 
 	.civ-icon-button:hover {
 		transform: translateY(-1px);
+		background: color-mix(in srgb, var(--civ-icon-accent-panel) 38%, var(--control-bg)) !important;
+		border-color: color-mix(in srgb, var(--civ-icon-accent-highlight) 58%, var(--panel-border)) !important;
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--civ-icon-accent-highlight-strong) 10%, transparent),
+			0 2px 4px color-mix(in srgb, black 70%, transparent);
 	}
 
 	.civ-icon-button-subtle {
-		background: color-mix(in oklch, var(--accent) 11%, var(--control-bg));
+		background: color-mix(in srgb, var(--civ-icon-accent-panel) 26%, var(--control-bg));
 	}
 
 	.civ-icon-controls-panel {
 		display: grid;
 		gap: 1.25rem;
 		background: color-mix(in oklch, var(--panel-bg) 88%, var(--control-bg));
-		border: 1px solid color-mix(in oklch, var(--accent) 16%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-border) 26%, var(--panel-border));
 		border-radius: 0.8rem;
 		padding: 1rem;
 	}
@@ -3316,7 +3326,7 @@
 	.civ-icon-controls-panel select {
 		color: var(--ink);
 		background: var(--input-bg);
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-border) 34%, var(--panel-border));
 		border-radius: 0.5rem;
 		padding-block: 0.42rem;
 		padding-inline: 0.58rem;
@@ -3424,6 +3434,10 @@
 		background: color-mix(in oklch, var(--panel-bg) 86%, var(--control-bg));
 	}
 
+	.civ-icon-button-ghost:hover {
+		background: color-mix(in srgb, var(--civ-icon-accent-panel) 24%, var(--panel-bg)) !important;
+	}
+
 	.civ-icon-inline-toggle {
 		display: inline-flex;
 		align-items: center;
@@ -3452,7 +3466,7 @@
 
 	.civ-icon-swiatlo-group {
 		background: linear-gradient(180deg, hsl(220deg 10% 20% / 0.9), hsl(220deg 10% 13% / 0.92)), color-mix(in oklch, var(--panel-bg) 85%, var(--control-bg));
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-border) 34%, var(--panel-border));
 		border-radius: 0.68rem;
 		padding: 1rem;
 	}
@@ -3540,8 +3554,13 @@
 
 	.civ-icon-button-primary {
 		font-weight: 640;
-		background: color-mix(in oklch, var(--accent) 28%, var(--control-bg));
-		border-color: color-mix(in oklch, var(--accent) 44%, var(--panel-border));
+		background: color-mix(in srgb, var(--civ-icon-accent-panel) 42%, var(--control-bg));
+		border-color: color-mix(in srgb, var(--civ-icon-accent-highlight) 48%, var(--panel-border));
+	}
+
+	.civ-icon-button-primary:hover {
+		background: color-mix(in srgb, var(--civ-icon-accent-panel) 54%, var(--control-bg)) !important;
+		border-color: color-mix(in srgb, var(--civ-icon-accent-highlight) 68%, var(--panel-border)) !important;
 	}
 
 	.civ-icon-button-danger {
@@ -3592,7 +3611,7 @@
 		color: var(--ink);
 		text-align: left;
 		background: color-mix(in oklch, var(--panel-bg) 90%, var(--control-bg));
-		border: 1px solid color-mix(in oklch, var(--accent) 20%, var(--panel-border));
+		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-border) 34%, var(--panel-border));
 		border-radius: 0.7rem;
 		padding: 1.25rem;
 		transition:
@@ -3604,7 +3623,7 @@
 
 	.civ-icon-scheme-card:hover {
 		box-shadow: 0 4px 10px color-mix(in oklch, var(--shadow-soft) 70%, transparent);
-		border-color: color-mix(in oklch, var(--accent) 44%, var(--panel-border));
+		border-color: color-mix(in srgb, var(--civ-icon-accent-highlight) 50%, var(--panel-border));
 		transform: translateY(-1px);
 	}
 

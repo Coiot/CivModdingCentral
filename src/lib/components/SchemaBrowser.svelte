@@ -8,32 +8,32 @@
 		{
 			tableName: "Buildings",
 			label: "Buildings",
-			copy: "High-density gameplay table with a large companion surface for yields, classes, flavors, prerequisites, and free content hooks.",
+			copy: "Table most needed for proxies and uniques with yields, classes, flavors, and prerequisites.",
 		},
 		{
 			tableName: "Units",
 			label: "Units",
-			copy: "Strong place to inspect promotion links, class relationships, AI roles, art hooks, and prerequisite wiring before building generators.",
+			copy: "Inspect promotion links, class relationships, AI roles, art hooks, and prerequisites.",
 		},
 		{
 			tableName: "Civilizations",
 			label: "Civilizations",
-			copy: "Identity-level content entry point for colors, text keys, icons, and the side tables that make full civ packages actually work.",
+			copy: "Content entry point for colors, text keys, icons, and the side tables that make civ packages actually work.",
 		},
 		{
 			tableName: "Improvements",
 			label: "Improvements",
-			copy: "Useful for terrain-aware yields, route interactions, build actions, and the side tables that usually get touched with worker and tile changes.",
+			copy: "Useful for terrain aware yields, route interactions, build actions, and the side tables for worker and tile changes.",
 		},
 		{
 			tableName: "Technologies",
 			label: "Technologies",
-			copy: "Core progression surface for prerequisite chains, unlock tables, and common lookups used by both schema and Lua tooling.",
+			copy: "Core progression table for prerequisite chains, unlock tables, and common lookups used by both schema and Lua tooling.",
 		},
 		{
 			tableName: "Traits",
 			label: "Traits",
-			copy: "Compact but high-value table for civilization package design, especially when cross-checking uniques and trait-driven effect buckets.",
+			copy: "Compact but useful table for civilization package design, especially when cross checking uniques and trait-driven effects.",
 		},
 	];
 	const TABLE_PREFIX_MAP = {
@@ -1932,7 +1932,7 @@
 	.schema-page {
 		display: grid;
 		gap: 1.15rem;
-		--schema-bg: linear-gradient(180deg, color-mix(in srgb, var(--page-background, #0f1014) 85%, #17304d 15%) 0%, color-mix(in srgb, var(--page-background, #0f1014) 92%, #08131f 8%) 100%);
+		--schema-bg: linear-gradient(145deg, color-mix(in srgb, var(--page-bg) 82%, black) 0%, color-mix(in srgb, var(--page-bg) 40%, #35658c 80%) 100%);
 		--schema-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #35658c 28%);
 		--schema-copy: color-mix(in srgb, currentColor 80%, transparent);
 		--schema-highlight: #8dc7ff;
@@ -1945,7 +1945,8 @@
 	}
 
 	.schema-hero {
-		background: var(--schema-bg);
+		background: linear-gradient(145deg, color-mix(in srgb, var(--panel-bg) 82%, black) 0%, color-mix(in srgb, var(--panel-bg) 40%, #11263a 40%) 100%);
+		border-color: var(--schema-border);
 	}
 
 	.schema-hero h1,
@@ -1970,7 +1971,6 @@
 
 	.schema-hero,
 	.schema-panel {
-		background: var(--schema-panel);
 		box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
 		border: 1px solid var(--schema-border);
 		border-radius: 1.5rem;
@@ -1980,6 +1980,10 @@
 	.schema-panel {
 		padding-block: 1.3rem;
 		padding-inline: 1.3rem;
+	}
+
+	.schema-panel {
+		background: var(--schema-panel);
 	}
 
 	.schema-table-card p,
@@ -2008,22 +2012,6 @@
 	code {
 		font-family: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
 		font-size: 0.92em;
-	}
-
-	.schema-row-inspector div {
-		display: grid;
-		gap: 0.08rem;
-		border-block-start: 1px solid rgba(255, 255, 255, 0.08);
-		padding-block-start: 0.32rem;
-	}
-
-	.schema-row-inspector div:first-child {
-		border-block-start: none;
-		padding-block-start: 0;
-	}
-
-	.schema-section-head {
-		margin-block-end: 0.9rem;
 	}
 
 	.schema-companion-card span {
@@ -2075,6 +2063,22 @@
 
 	.schema-table-meta span {
 		white-space: nowrap;
+	}
+
+	.schema-row-inspector div {
+		display: grid;
+		gap: 0.08rem;
+		border-block-start: 1px solid rgba(255, 255, 255, 0.08);
+		padding-block-start: 0.32rem;
+	}
+
+	.schema-row-inspector div:first-child {
+		border-block-start: none;
+		padding-block-start: 0;
+	}
+
+	.schema-section-head {
+		margin-block-end: 0.9rem;
 	}
 
 	.schema-quick-grid {
@@ -2130,11 +2134,6 @@
 		gap: 0.8rem;
 	}
 
-	.schema-toolbar-secondary {
-		display: flex;
-		gap: 0.8rem;
-	}
-
 	.schema-mode-group {
 		display: inline-flex;
 		flex-wrap: nowrap;
@@ -2155,12 +2154,6 @@
 	.schema-mode-group > .schema-filter-chip--scope:last-child {
 		border-radius: 0 999px 999px 0;
 		border-inline-end: none;
-	}
-
-	.schema-recent-list {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.55rem;
 	}
 
 	.schema-mode-group:has(.schema-filter-chip--scope) {
@@ -2216,6 +2209,11 @@
 		gap: 0.45rem;
 	}
 
+	.schema-toolbar-secondary {
+		display: flex;
+		gap: 0.8rem;
+	}
+
 	.schema-filter-group,
 	.schema-table-tags,
 	.schema-column-flags {
@@ -2231,14 +2229,20 @@
 		letter-spacing: 0.08em;
 	}
 
+	.schema-recent-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.55rem;
+	}
+
 	.schema-inline-link {
 		color: var(--schema-highlight-strong);
 		font: inherit;
 		text-align: left;
 		background: none;
 		border: none;
-		cursor: pointer;
 		padding: 0;
+		cursor: pointer;
 
 		&:hover {
 			color: white;
@@ -2250,6 +2254,16 @@
 	.schema-inline-link--chip {
 		color: var(--schema-highlight-strong);
 		text-decoration: none;
+	}
+
+	.schema-inline-link--chip {
+		display: inline-flex;
+		align-items: center;
+		background: rgba(255, 255, 255, 0.04);
+		border: 1px solid var(--schema-border);
+		border-radius: 999px;
+		padding-block: 0.42rem;
+		padding-inline: 0.7rem;
 	}
 
 	.schema-link,
@@ -2280,16 +2294,6 @@
 		background: rgba(255, 255, 255, 0.03);
 		border: 1px solid var(--schema-border);
 		cursor: pointer;
-	}
-
-	.schema-inline-link--chip {
-		display: inline-flex;
-		align-items: center;
-		background: rgba(255, 255, 255, 0.04);
-		border: 1px solid var(--schema-border);
-		border-radius: 999px;
-		padding-block: 0.42rem;
-		padding-inline: 0.7rem;
 	}
 
 	.schema-explorer-grid {
@@ -2761,8 +2765,8 @@
 	.schema-companion-card:hover,
 	.schema-quick-card:hover,
 	.schema-table-card:hover {
-		background: rgba(141, 199, 255, 0.1);
-		border-color: color-mix(in srgb, var(--schema-highlight) 70%, white 30%);
+		background: rgba(141, 199, 255, 0.1) !important;
+		border-color: color-mix(in srgb, var(--schema-highlight) 70%, white 30%) !important;
 		transform: translateY(-1px);
 	}
 

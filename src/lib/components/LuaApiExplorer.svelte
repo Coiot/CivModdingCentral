@@ -1524,7 +1524,7 @@
 	.lua-page {
 		display: grid;
 		gap: 1.15rem;
-		--lua-bg: linear-gradient(180deg, color-mix(in srgb, var(--page-background, #0f1014) 86%, #24381d 14%) 0%, color-mix(in srgb, var(--page-background, #0f1014) 94%, #11180e 6%) 100%);
+		--lua-bg: linear-gradient(145deg, color-mix(in srgb, var(--panel-bg) 82%, black) 0%, color-mix(in srgb, var(--panel-bg) 40%, #20301b 40%) 100%);
 		--lua-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #638f4f 28%);
 		--lua-copy: color-mix(in srgb, currentColor 72%, transparent);
 		--lua-highlight: #b7ef84;
@@ -1577,10 +1577,14 @@
 	.lua-hero,
 	.lua-panel,
 	.lua-docs-nav-card {
-		background: var(--lua-panel);
 		box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
 		border: 1px solid var(--lua-border);
 		border-radius: 1.5rem;
+	}
+
+	.lua-panel,
+	.lua-docs-nav-card {
+		background: var(--lua-panel);
 	}
 
 	.lua-empty-note,
@@ -1605,15 +1609,6 @@
 		margin-block-end: 0.45rem;
 	}
 
-	.lua-entry-card-top > div:first-child {
-		min-inline-size: 0;
-		display: block;
-	}
-
-	.lua-section-head {
-		margin-block-end: 0.75rem;
-	}
-
 	.lua-filter-chip span {
 		inline-size: fit-content;
 		min-inline-size: 2rem;
@@ -1621,9 +1616,10 @@
 		display: inline-grid;
 		place-items: center;
 		font-size: 0.8rem;
+		text-box: trim-both;
 		background: rgba(255, 255, 255, 0.08);
 		border-radius: 999px;
-		text-box: trim-both;
+		padding-inline: 0.5rem;
 	}
 
 	.lua-launcher-card-meta,
@@ -1680,6 +1676,15 @@
 	.lua-sort-field span {
 		color: var(--lua-copy);
 		font-size: 0.9rem;
+	}
+
+	.lua-entry-card-top > div:first-child {
+		min-inline-size: 0;
+		display: block;
+	}
+
+	.lua-section-head {
+		margin-block-end: 0.75rem;
 	}
 
 	.lua-launcher-grid,
@@ -2231,8 +2236,8 @@
 	.lua-launcher-card:hover,
 	.lua-entry-card:hover,
 	.lua-see-also-card:hover {
-		background: rgba(183, 239, 132, 0.11);
-		border-color: color-mix(in srgb, var(--lua-highlight) 70%, white 30%);
+		background: rgba(183, 239, 132, 0.11) !important;
+		border-color: color-mix(in srgb, var(--lua-highlight) 70%, white 30%) !important;
 		transform: translateY(-1px);
 	}
 
@@ -2292,6 +2297,12 @@
 		color: white;
 		background: rgba(183, 239, 132, 0.13);
 		border-color: color-mix(in srgb, var(--lua-highlight) 70%, white 30%);
+	}
+
+	.lua-docs-nav-link:hover {
+		color: white;
+		background: rgba(183, 239, 132, 0.09);
+		border-color: color-mix(in srgb, var(--lua-highlight) 56%, white 24%);
 	}
 
 	.lua-entry-card {

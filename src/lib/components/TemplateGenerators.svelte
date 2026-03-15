@@ -1,8 +1,6 @@
-<svelte:options runes={true} />
-
 <script>
 	import WizardExamplePreview from "./WizardExamplePreview.svelte";
-	import { datasetNotes, exampleSupportsLanguage, guardrails, implementationStages, internalCrossLinks, wizardCards } from "../data/generatorPageData.js";
+	import { exampleSupportsLanguage, wizardCards } from "../data/generatorPageData.js";
 
 	let activeSnippetLanguage = $state("all");
 	let activeWizardIndex = $state(0);
@@ -80,8 +78,11 @@
 		if (href?.startsWith("/lua-api-explorer")) {
 			return "Lua API";
 		}
-		if (href?.startsWith("/map-viewer")) {
-			return "Viewer";
+		if (href?.startsWith("/workshop-uploader") || href?.startsWith("/modinfo-builder") || href?.startsWith("/civ5mod-ziper")) {
+			return "Publish";
+		}
+		if (href?.startsWith("/dds-converter") || href?.startsWith("/civ-icon-maker") || href?.startsWith("/text-screen-viewer")) {
+			return "UI";
 		}
 		return "Tool";
 	}
@@ -99,8 +100,11 @@
 		if (href?.startsWith("/lua-api-explorer")) {
 			return "is-lua";
 		}
-		if (href?.startsWith("/map-viewer")) {
-			return "is-viewer";
+		if (href?.startsWith("/workshop-uploader") || href?.startsWith("/modinfo-builder") || href?.startsWith("/civ5mod-ziper")) {
+			return "is-publish";
+		}
+		if (href?.startsWith("/dds-converter") || href?.startsWith("/civ-icon-maker") || href?.startsWith("/text-screen-viewer")) {
+			return "is-ui";
 		}
 		return "is-tool";
 	}
@@ -246,7 +250,7 @@
 	}
 
 	.wizard-hero {
-		background: linear-gradient(145deg, color-mix(in srgb, var(--panel-bg) 82%, black) 0%, color-mix(in srgb, var(--panel-bg) 90%, #261735 10%) 100%);
+		background: linear-gradient(145deg, color-mix(in srgb, var(--panel-bg) 82%, black) 0%, color-mix(in srgb, var(--panel-bg) 40%, #261735 40%) 100%);
 		border-color: var(--wizard-accent-border);
 	}
 
@@ -525,7 +529,6 @@
 	.wizard-block {
 		display: grid;
 		gap: 0.75rem;
-		border-block-start: 1px solid color-mix(in oklch, var(--panel-border) 40%, transparent);
 		padding-block: 0.95rem;
 		padding-inline: 0;
 	}
@@ -539,6 +542,7 @@
 
 	.wizard-block--touchpoints {
 		gap: 0.9rem;
+		padding-block: 1rem 0;
 	}
 
 	.wizard-touchpoint-head {
@@ -546,6 +550,10 @@
 		justify-content: space-between;
 		align-items: center;
 		gap: 0.75rem;
+
+		h4 {
+			font-size: 1.125rem;
+		}
 	}
 
 	.wizard-touchpoint-grid {
@@ -645,11 +653,11 @@
 
 	.wizard-quick-card--button.is-active,
 	.wizard-quick-card--button:hover {
-		background: color-mix(in srgb, var(--wizard-accent-panel) 42%, var(--panel-bg) 58%);
+		background: color-mix(in srgb, var(--wizard-accent-panel) 42%, var(--panel-bg) 58%) !important;
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--wizard-accent-highlight) 16%, transparent),
 			0 12px 28px color-mix(in oklch, var(--shadow-soft) 68%, transparent);
-		border-color: color-mix(in srgb, var(--wizard-accent-highlight) 36%, var(--panel-border));
+		border-color: color-mix(in srgb, var(--wizard-accent-highlight) 36%, var(--panel-border)) !important;
 		transform: translateY(-1px);
 	}
 
@@ -680,17 +688,21 @@
 
 	.wizard-touchpoint-card {
 		display: grid;
-		gap: 0.45rem;
-		background: var(--wizard-touchpoint-panel);
-		box-shadow: inset 0 1px 0 color-mix(in srgb, var(--wizard-touchpoint-highlight) 12%, transparent);
-		border: 1px solid var(--wizard-touchpoint-border);
+		gap: 0.55rem;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--wizard-touchpoint-highlight) 10%, transparent) 0%, transparent 34%),
+			linear-gradient(165deg, color-mix(in srgb, var(--wizard-touchpoint-panel) 88%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 88%, #16110f 12%) 100%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--wizard-touchpoint-highlight) 8%, transparent),
+			0 2px 4px color-mix(in srgb, var(--panel-bg) 70%, #000);
+		border: 1px solid color-mix(in srgb, var(--wizard-touchpoint-border) 90%, transparent);
 		border-radius: 1rem;
-		padding-block: 0.8rem;
-		padding-inline: 0.85rem;
-		--wizard-touchpoint-border: color-mix(in oklch, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, oklch(0.52 0.09 246) 28%);
-		--wizard-touchpoint-highlight: oklch(0.82 0.1 243);
-		--wizard-touchpoint-highlight-strong: oklch(0.93 0.04 243);
-		--wizard-touchpoint-panel: color-mix(in oklch, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, oklch(0.29 0.05 244) 10%);
+		padding-block: 1rem;
+		padding-inline: 1rem;
+		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #35658c 28%);
+		--wizard-touchpoint-highlight: #8dc7ff;
+		--wizard-touchpoint-highlight-strong: #d6ecff;
+		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, #11263a 10%);
 	}
 
 	.wizard-touchpoint-card--link {
@@ -704,54 +716,70 @@
 	}
 
 	.wizard-touchpoint-card--link:hover {
-		background: color-mix(in srgb, var(--wizard-touchpoint-highlight) 10%, var(--wizard-touchpoint-panel) 90%);
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--wizard-touchpoint-highlight) 16%, transparent) 0%, transparent 38%),
+			linear-gradient(165deg, color-mix(in srgb, var(--wizard-touchpoint-panel) 84%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 84%, #16110f 16%) 100%);
 		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--wizard-touchpoint-highlight) 18%, transparent),
-			0 12px 28px color-mix(in oklch, var(--shadow-soft) 68%, transparent);
-		border-color: color-mix(in srgb, var(--wizard-touchpoint-highlight) 74%, white 26%);
+			inset 0 1px 0 color-mix(in srgb, var(--wizard-touchpoint-highlight) 14%, transparent),
+			0 10px 22px color-mix(in oklch, var(--shadow-soft) 58%, transparent);
+		border-color: color-mix(in srgb, var(--wizard-touchpoint-highlight) 52%, var(--wizard-touchpoint-border));
 		transform: translateY(-1px);
 	}
 
 	.wizard-touchpoint-card.is-generator {
-		--wizard-touchpoint-border: color-mix(in oklch, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, oklch(0.56 0.14 301) 28%);
-		--wizard-touchpoint-highlight: oklch(0.84 0.12 303);
-		--wizard-touchpoint-highlight-strong: oklch(0.95 0.05 303);
-		--wizard-touchpoint-panel: color-mix(in oklch, var(--surface-color, rgba(14, 18, 24, 0.94)) 88%, oklch(0.31 0.06 302) 12%);
+		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #7b4bd1 28%);
+		--wizard-touchpoint-highlight: #d4b2ff;
+		--wizard-touchpoint-highlight-strong: #f4e8ff;
+		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 88%, #2b1740 12%);
 	}
 
 	.wizard-touchpoint-card.is-lua {
-		--wizard-touchpoint-border: color-mix(in oklch, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, oklch(0.49 0.08 166) 28%);
-		--wizard-touchpoint-highlight: oklch(0.84 0.11 161);
-		--wizard-touchpoint-highlight-strong: oklch(0.95 0.04 161);
-		--wizard-touchpoint-panel: color-mix(in oklch, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, oklch(0.28 0.04 165) 10%);
+		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #2f6b53 28%);
+		--wizard-touchpoint-highlight: #7de0ae;
+		--wizard-touchpoint-highlight-strong: #daf8e8;
+		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, #10271d 10%);
 	}
 
 	.wizard-touchpoint-card.is-pattern {
-		--wizard-touchpoint-border: color-mix(in oklch, var(--border-color, rgba(255, 255, 255, 0.14)) 70%, oklch(0.74 0.14 86) 30%);
-		--wizard-touchpoint-highlight: oklch(0.9 0.14 91);
-		--wizard-touchpoint-highlight-strong: oklch(0.97 0.05 97);
-		--wizard-touchpoint-panel: color-mix(in oklch, var(--surface-color, rgba(14, 18, 24, 0.94)) 88%, oklch(0.46 0.08 89) 12%);
+		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 68%, #b48922 32%);
+		--wizard-touchpoint-highlight: #f5d36a;
+		--wizard-touchpoint-highlight-strong: #fff1bc;
+		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 78%, #3b2810 22%);
 	}
 
 	.wizard-touchpoint-card.is-schema {
-		--wizard-touchpoint-border: color-mix(in oklch, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, oklch(0.52 0.09 246) 28%);
-		--wizard-touchpoint-highlight: oklch(0.82 0.1 243);
-		--wizard-touchpoint-highlight-strong: oklch(0.93 0.04 243);
-		--wizard-touchpoint-panel: color-mix(in oklch, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, oklch(0.29 0.05 244) 10%);
+		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #35658c 28%);
+		--wizard-touchpoint-highlight: #8dc7ff;
+		--wizard-touchpoint-highlight-strong: #d6ecff;
+		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, #11263a 10%);
 	}
 
 	.wizard-touchpoint-card.is-tool {
-		--wizard-touchpoint-border: color-mix(in oklch, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, oklch(0.55 0.11 55) 28%);
-		--wizard-touchpoint-highlight: color-mix(in oklch, var(--accent) 82%, oklch(0.84 0.09 67) 18%);
-		--wizard-touchpoint-highlight-strong: color-mix(in oklch, white 84%, var(--accent) 16%);
-		--wizard-touchpoint-panel: color-mix(in oklch, var(--surface-color, rgba(14, 18, 24, 0.94)) 82%, oklch(0.29 0.05 55) 18%);
+		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #9a5a1e 28%);
+		--wizard-touchpoint-highlight: color-mix(in srgb, var(--accent) 82%, #ffbf75 18%);
+		--wizard-touchpoint-highlight-strong: color-mix(in srgb, white 84%, var(--accent) 16%);
+		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 82%, #2f1808 18%);
+	}
+
+	.wizard-touchpoint-card.is-publish {
+		--wizard-touchpoint-border: var(--surface-publish-border);
+		--wizard-touchpoint-highlight: var(--surface-publish-highlight);
+		--wizard-touchpoint-highlight-strong: var(--surface-publish-highlight-strong);
+		--wizard-touchpoint-panel: var(--surface-publish-panel);
+	}
+
+	.wizard-touchpoint-card.is-ui {
+		--wizard-touchpoint-border: var(--surface-ui-border);
+		--wizard-touchpoint-highlight: var(--surface-ui-highlight);
+		--wizard-touchpoint-highlight-strong: var(--surface-ui-highlight-strong);
+		--wizard-touchpoint-panel: var(--surface-ui-panel);
 	}
 
 	.wizard-touchpoint-card.is-viewer {
-		--wizard-touchpoint-border: color-mix(in oklch, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, oklch(0.56 0.25 15) 28%);
-		--wizard-touchpoint-highlight: oklch(0.8 0.25 15);
-		--wizard-touchpoint-highlight-strong: oklch(0.9 0.2 15);
-		--wizard-touchpoint-panel: color-mix(in oklch, var(--surface-color, rgba(14, 18, 24, 0.94)) 88%, oklch(0.35 0.1 15) 12%);
+		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #8d3c44 28%);
+		--wizard-touchpoint-highlight: #ffb3bc;
+		--wizard-touchpoint-highlight-strong: #ffe4e8;
+		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 88%, #301217 12%);
 	}
 
 	@media (width <= 1100px) {
