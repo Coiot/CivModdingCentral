@@ -2143,9 +2143,9 @@
 		padding: 0.7rem 0.75rem;
 		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 90%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 84%, #18120d 16%) 100%);
 		box-shadow:
-			inset 0 1px 0 color-mix(in oklch, white 7%, transparent),
-			0 6px 14px color-mix(in oklch, black 16%, transparent);
-		border: 1px solid color-mix(in oklch, var(--planner-border-soft) 88%, white 12%);
+			inset 0 1px 0 color-mix(in oklch, white 30%, transparent),
+			0 6px 6px color-mix(in oklch, black 50%, transparent);
+		/*border: 1px solid color-mix(in oklch, var(--planner-border-soft) 88%, white 12%);*/
 		border-radius: 0.85rem;
 		min-inline-size: 0;
 		--hero-track-accent: var(--planner-brass);
@@ -2189,10 +2189,10 @@
 
 	.planner-hero-route-card.is-active {
 		transform: translateY(-1px);
-		border-color: color-mix(in oklch, var(--hero-track-accent) 72%, white 28%);
+		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 80%, var(--hero-track-accent)) 0%, color-mix(in oklch, var(--planner-panel-muted) 40%, #18120d 30%) 100%);
 		box-shadow:
-			inset 0 1px 0 color-mix(in oklch, white 9%, transparent),
-			0 8px 18px color-mix(in oklch, black 22%, transparent);
+			inset 0 1px 0 color-mix(in oklch, var(--hero-track-accent) 90%, transparent),
+			0 8px 8px color-mix(in oklch, black 60%, transparent);
 	}
 
 	.planner-hero-route-card.is-complete {
