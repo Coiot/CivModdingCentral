@@ -47,6 +47,12 @@ const ROUTE_SEO = {
 		keywords: "Civilization V map viewer, Civ 5 community maps, Civ 5 map browser, scenario maps, tile inspection",
 		pageType: "CollectionPage",
 	},
+	"/tech-tree-viewer": {
+		title: "Civ V Tech Tree Viewer and Unlock Reference | Civ Modding Central",
+		description: "Browse Civilization V technologies by era with prerequisites, unlock lists, resource reveals, and support effects for planning uniques and progression gates.",
+		keywords: "Civilization V tech tree viewer, Civ 5 technology unlocks, Civ 5 tech prerequisites, Civ 5 progression reference",
+		pageType: "CollectionPage",
+	},
 	"/pattern-library": {
 		title: "Pattern Library for Civ V Modding Workflows | Civ Modding Central",
 		description: "Browse our Pattern Library for curated code examples covering the most common tasks and implementations.",

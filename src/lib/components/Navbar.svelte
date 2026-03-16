@@ -25,8 +25,8 @@
 		{
 			id: "learn",
 			kicker: "Learn",
-			label: "Tutorials & Patterns",
-			description: "Follow guided tutorials and starter workflows.",
+			label: "Tutorials & Recipes",
+			description: "Follow guided tutorials and starters to get started with Civ V modding.",
 			panelTitle: "Learning Paths",
 			panelCopy: "Use these when you need help getting started or inspiration for your next mod.",
 			links: [
@@ -95,8 +95,6 @@
 					href: "/tech-tree-viewer",
 					label: "Tech Tree Viewer",
 					description: "Browse technologies, prerequisites, and progression layout to plot your civ uniques.",
-					disabled: true,
-					statusLabel: "Coming Soon",
 				},
 				{
 					href: "/religion-support",

@@ -40,9 +40,11 @@
 	let MapViewerComponent = $state(null);
 	let SchemaBrowserComponent = $state(null);
 	let LuaApiExplorerComponent = $state(null);
+	let TechTreeViewerComponent = $state(null);
 	let mapViewerLoadError = $state("");
 	let schemaBrowserLoadError = $state("");
 	let luaApiExplorerLoadError = $state("");
+	let techTreeViewerLoadError = $state("");
 	let authRestoreStarted = $state(false);
 	let routeShellEl = $state();
 	let shouldFocusRouteHeading = $state(false);
@@ -159,6 +161,18 @@
 		}
 	}
 
+	async function ensureTechTreeViewerLoaded() {
+		if (TechTreeViewerComponent || techTreeViewerLoadError) {
+			return;
+		}
+		try {
+			const module = await import("./lib/components/TechTreeViewer.svelte");
+			TechTreeViewerComponent = module.default;
+		} catch (error) {
+			techTreeViewerLoadError = error?.message || "Unable to load tech tree viewer.";
+		}
+	}
+
 	function isInternalNavClick(event) {
 		if (event.defaultPrevented || event.button !== 0) {
 			return null;
@@ -236,6 +250,10 @@
 		}
 		if (currentPath === "/lua-api-explorer") {
 			void ensureLuaApiExplorerLoaded();
+			return;
+		}
+		if (currentPath === "/tech-tree-viewer") {
+			void ensureTechTreeViewerLoaded();
 			return;
 		}
 		if (
@@ -859,6 +877,12 @@
 					<MapViewerComponent {canEdit} {authUser} authAccessToken={authSession.accessToken} />
 				{:else if currentPath === "/map-viewer"}
 					<p class="status">Loading map viewer...</p>
+				{:else if currentPath === "/tech-tree-viewer" && techTreeViewerLoadError}
+					<p class="status error">{techTreeViewerLoadError}</p>
+				{:else if currentPath === "/tech-tree-viewer" && TechTreeViewerComponent}
+					<TechTreeViewerComponent />
+				{:else if currentPath === "/tech-tree-viewer"}
+					<p class="status">Loading tech tree viewer...</p>
 				{:else if mapViewerLoadError}
 					<p class="status error">Page not found. {mapViewerLoadError}</p>
 				{:else}

@@ -120,6 +120,33 @@
 		return [tableName, ...Object.entries(row || {}).flatMap(([key, value]) => [key, stringifyValue(value)])].join(" ");
 	}
 
+	function formatIdentifier(value, prefixes = []) {
+		const normalized = String(value || "").trim();
+		if (!normalized) {
+			return "";
+		}
+
+		let next = normalized;
+		for (const prefix of prefixes) {
+			if (next.startsWith(prefix)) {
+				next = next.slice(prefix.length);
+				break;
+			}
+		}
+
+		return next
+			.toLowerCase()
+			.replace(/_/g, " ")
+			.replace(/\b\w/g, (letter) => letter.toUpperCase());
+	}
+
+	function resolveTextTag(value, textByTag) {
+		if (!value) {
+			return "";
+		}
+		return textByTag[value] || formatIdentifier(value, ["TXT_KEY_", "TECH_", "ERA_"]);
+	}
+
 	function withSearchIndex(item) {
 		const titleIndex = normalizeText(item.title);
 		const subtitleIndex = normalizeText(item.subtitle);
@@ -216,6 +243,21 @@
 				copy: "Browse Civ V methods and GameEvents with signatures, notes, schema touchpoints, and authored examples.",
 				meta: buildPreviewMeta("Methods", "GameEvents"),
 				details: ["Filter by family or scope", "Jump to exact doc sections", "See related schema tables and patterns"],
+			},
+		},
+		{
+			id: "page-tech-tree-viewer",
+			type: "Viewer",
+			title: "Tech Tree Viewer",
+			subtitle: "Browse eras, prerequisites, unlocks, and support effects.",
+			href: "/tech-tree-viewer",
+			keywords: ["tech tree", "technology viewer", "unlocks", "prerequisites", "eras"],
+			featured: true,
+			priority: 10,
+			preview: {
+				copy: "Inspect the full Civ V technology tree by era and see what each tech unlocks or modifies before placing uniques.",
+				meta: buildPreviewMeta("81 technologies", "Era-separated"),
+				details: ["Prerequisite chains", "Unit, building, and route unlocks", "Improvement and support modifiers"],
 			},
 		},
 		{
@@ -447,6 +489,51 @@
 		);
 	}
 
+	function buildTechTreeItems(schemaData, textByTag) {
+		const technologyRows = schemaData.tables.find((table) => table.name === "Technologies")?.rows || [];
+		const eraRows = schemaData.tables.find((table) => table.name === "Eras")?.rows || [];
+		const eraByType = Object.fromEntries(eraRows.map((row) => [row.Type, row]));
+
+		return technologyRows.map((row) => {
+			const eraRow = eraByType[row.Era] || null;
+			const title = resolveTextTag(row.Description, textByTag);
+			const help = resolveTextTag(row.Help, textByTag);
+			const eraLabel = eraRow ? resolveTextTag(eraRow.Description, textByTag) : formatIdentifier(row.Era, ["ERA_"]);
+			return withSearchIndex({
+				id: `tech-tree-${row.Type}`,
+				type: "Technology",
+				title,
+				subtitle: `${eraLabel} · ${row.Cost} science · G ${row.GridX},${row.GridY}`,
+				href: `/tech-tree-viewer#${row.Type}`,
+				keywords: [row.Type, row.Description, row.Help, row.Civilopedia, row.Quote, eraLabel, help],
+				priority: 9,
+				featured: row.Type === "TECH_AGRICULTURE" || row.Type === "TECH_WRITING" || row.Type === "TECH_RADIO",
+				preview: {
+					copy: compactText(help || resolveTextTag(row.Civilopedia, textByTag), 180),
+					meta: buildPreviewMeta(eraLabel, `${row.Cost} science`, `Grid ${row.GridX},${row.GridY}`),
+					details: [row.Type, help ? compactText(help, 96) : "", row.Quote ? compactText(resolveTextTag(row.Quote, textByTag), 96) : ""].filter(Boolean),
+				},
+			});
+		});
+	}
+
+	function openItemHref(href) {
+		if (typeof window === "undefined" || !href) {
+			return;
+		}
+		window.open(href, "_blank", "noopener,noreferrer");
+	}
+
+	function basePathFromHref(href) {
+		try {
+			return new URL(href, "https://example.invalid").pathname;
+		} catch {
+			return String(href || "")
+				.split("?")[0]
+				.split("#")[0];
+		}
+	}
+
 	let isOpen = $state(false);
 	let query = $state("");
 	let activeIndex = $state(0);
@@ -538,7 +625,12 @@
 		indexError = "";
 
 		try {
-			const [generatorModule, schemaModule, luaModule] = await Promise.all([import("../data/generatorPageData.js"), import("../data/civ-schema.json"), import("../data/civ-lua-api.json")]);
+			const [generatorModule, schemaModule, luaModule, civTextModule] = await Promise.all([
+				import("../data/generatorPageData.js"),
+				import("../data/civ-schema.json"),
+				import("../data/civ-lua-api.json"),
+				import("../data/civ-text-en-us.json"),
+			]);
 			const generatorItems = buildGeneratorItems(generatorModule.wizardCards || []);
 			const patternItems = buildPatternItems(generatorModule.recipeLaunchRecipes || []);
 			const luaMethodItems = buildLuaMethodItems(luaModule.default);
@@ -546,8 +638,9 @@
 			const schemaTableItems = buildSchemaTableItems(schemaModule.default);
 			const schemaColumnItems = buildSchemaColumnItems(schemaModule.default);
 			const schemaRowItems = buildSchemaRowItems(schemaModule.default);
+			const techTreeItems = buildTechTreeItems(schemaModule.default, civTextModule.default || {});
 
-			coreJumpItems = [...PAGE_ITEMS, ...generatorItems, ...patternItems, ...luaMethodItems, ...luaEventItems, ...schemaTableItems];
+			coreJumpItems = [...PAGE_ITEMS, ...generatorItems, ...patternItems, ...techTreeItems, ...luaMethodItems, ...luaEventItems, ...schemaTableItems];
 			extendedJumpItems = [...coreJumpItems, ...schemaColumnItems, ...schemaRowItems];
 			indexReady = true;
 		} catch (error) {
@@ -576,7 +669,7 @@
 	function activateItem(item) {
 		if (!item) return;
 		closePalette();
-		onJump(item.href);
+		openItemHref(item.href);
 	}
 
 	function selectAdjacent(delta) {
@@ -660,17 +753,19 @@
 						{#if results.length}
 							{#each results as item, index (item.id)}
 								<li class="quick-jump-item">
-									<button
-										type="button"
-										class={["quick-jump-item-button", index === resolvedActiveIndex && "is-active", currentPath === item.href.split("?")[0] && "is-current"]}
+									<a
+										href={item.href}
+										target="_blank"
+										rel="noopener noreferrer"
+										class={["quick-jump-item-button", index === resolvedActiveIndex && "is-active", currentPath === basePathFromHref(item.href) && "is-current"]}
 										onmouseenter={() => setActiveIndex(index)}
 										onfocus={() => setActiveIndex(index)}
-										onclick={() => activateItem(item)}
+										onclick={() => closePalette()}
 									>
 										<span class="quick-jump-item-meta">{item.type}</span>
 										<span class="quick-jump-item-title">{item.title}</span>
 										<span class="quick-jump-item-subtitle">{item.subtitle}</span>
-									</button>
+									</a>
 								</li>
 							{/each}
 						{:else}

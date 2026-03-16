@@ -282,7 +282,7 @@ export const tutorialById = Object.fromEntries(tutorialTracks.map((item) => [ite
 export const plannerTracks = [
 	{
 		id: "foundation",
-		label: "Blueprint",
+		label: "Design Blueprint",
 		kicker: "Start Here",
 		description: "Form the civ's identity, design the uniques, and prep the foundation.",
 		risk: "Critical gorup of tasks which shape the civ's identity and gameplay.",
