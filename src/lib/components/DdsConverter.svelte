@@ -1372,10 +1372,10 @@
 			color-mix(in srgb, var(--panel-bg) 88%, black 12%) 0%,
 			color-mix(in srgb, var(--dds-accent-panel) 90%, var(--panel-bg) 10%) 100%
 		);
-		border-color: color-mix(in srgb, var(--dds-accent-highlight) 52%, var(--dds-accent-border));
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
 			0 8px 22px color-mix(in srgb, black 74%, transparent);
+		border-color: color-mix(in srgb, var(--dds-accent-highlight) 52%, var(--dds-accent-border));
 	}
 
 	.dds-panel {
@@ -1448,6 +1448,24 @@
 		gap: 0.85rem;
 	}
 
+	input,
+	textarea,
+	select {
+		inline-size: 100%;
+		color: color-mix(in oklch, white 60%, var(--ink));
+		font: inherit;
+		line-height: 1.25;
+		background: color-mix(in srgb, var(--dds-accent-panel) 14%, var(--input-bg)) !important;
+		box-shadow:
+			inset 0 1px 0 color-mix(in oklch, white 10%, transparent),
+			0 0 0 1px color-mix(in srgb, var(--dds-accent-highlight) 12%, transparent);
+		border: 1px solid color-mix(in srgb, var(--dds-accent-border) 34%, var(--panel-border)) !important;
+		border-radius: 0.7rem;
+		padding-block: 0.7rem;
+		padding-inline: 0.8rem;
+		box-sizing: border-box;
+	}
+
 	.atlas-size-grid > .atlas-size-check input[type="checkbox"] {
 		inline-size: auto;
 		padding-block: 0;
@@ -1514,10 +1532,10 @@
 	.tiny-action:hover,
 	.tiny-action:focus-visible {
 		background: color-mix(in srgb, var(--dds-accent-panel) 42%, var(--control-bg)) !important;
-		border-color: color-mix(in srgb, var(--dds-accent-highlight) 76%, var(--panel-border)) !important;
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--dds-accent-highlight-strong) 12%, transparent),
 			0 2px 4px color-mix(in srgb, black 74%, transparent);
+		border-color: color-mix(in srgb, var(--dds-accent-highlight) 76%, var(--panel-border)) !important;
 	}
 
 	.tiny-action {
@@ -1736,24 +1754,6 @@
 
 	.dds-success {
 		color: oklch(0.82 0.14 145);
-	}
-
-	input,
-	textarea,
-	select {
-		inline-size: 100%;
-		color: color-mix(in oklch, white 60%, var(--ink));
-		font: inherit;
-		line-height: 1.25;
-		background: color-mix(in srgb, var(--dds-accent-panel) 14%, var(--input-bg)) !important;
-		border: 1px solid color-mix(in srgb, var(--dds-accent-border) 34%, var(--panel-border)) !important;
-		border-radius: 0.7rem;
-		padding-block: 0.7rem;
-		padding-inline: 0.8rem;
-		box-shadow:
-			inset 0 1px 0 color-mix(in oklch, white 10%, transparent),
-			0 0 0 1px color-mix(in srgb, var(--dds-accent-highlight) 12%, transparent);
-		box-sizing: border-box;
 	}
 
 	@media (width <= 550px) {

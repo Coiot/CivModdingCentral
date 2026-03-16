@@ -271,6 +271,7 @@
 					label: resolveDisplayName(row, "Type"),
 					rawType: row.Type,
 					detail: summarizeUnit(row),
+					preview: buildEntityPreview("Units", row),
 					href: schemaRowHref("Units", row.Type),
 				}),
 			}),
@@ -285,6 +286,7 @@
 					label: resolveDisplayName(row, "Type"),
 					rawType: row.Type,
 					detail: summarizeBuilding(row),
+					preview: buildEntityPreview("Buildings", row),
 					href: schemaRowHref("Buildings", row.Type),
 				}),
 			}),
@@ -299,6 +301,7 @@
 					label: resolveDisplayName(row, "Type"),
 					rawType: row.Type,
 					detail: summarizeBuilding(row),
+					preview: buildEntityPreview("Buildings", row),
 					href: schemaRowHref("Buildings", row.Type),
 				}),
 			}),
@@ -312,6 +315,7 @@
 					label: resolveDisplayName(row, "Type"),
 					rawType: row.Type,
 					detail: summarizeProject(row),
+					preview: buildEntityPreview("Projects", row),
 					href: schemaRowHref("Projects", row.Type),
 				}),
 			}),
@@ -325,6 +329,7 @@
 					label: resolveDisplayName(row, "Type"),
 					rawType: row.Type,
 					detail: summarizeProcess(row),
+					preview: buildEntityPreview("Processes", row),
 					href: schemaRowHref("Processes", row.Type),
 				}),
 			}),
@@ -338,6 +343,7 @@
 					label: resolveDisplayName(row, "Type"),
 					rawType: row.Type,
 					detail: summarizeImprovement(row, build),
+					preview: buildEntityPreview("Improvements", row, build),
 					href: schemaRowHref("Improvements", row.Type),
 				}),
 			),
@@ -351,6 +357,7 @@
 					label: resolveDisplayName(row, "Type"),
 					rawType: row.Type,
 					detail: summarizeRoute(row, build),
+					preview: buildEntityPreview("Routes", row, build),
 					href: schemaRowHref("Routes", row.Type),
 				}),
 			),
@@ -365,6 +372,7 @@
 					label: resolveDisplayName(row, "Type"),
 					rawType: row.Type,
 					detail: summarizeBuild(row),
+					preview: buildEntityPreview("Builds", row),
 					href: schemaRowHref("Builds", row.Type),
 				}),
 			}),
@@ -378,6 +386,7 @@
 					label: resolveDisplayName(row, "Type"),
 					rawType: row.Type,
 					detail: summarizePromotion(row),
+					preview: buildEntityPreview("UnitPromotions", row),
 					href: schemaRowHref("UnitPromotions", row.Type),
 				}),
 			}),
@@ -391,6 +400,7 @@
 					label: resolveDisplayName(row, "Type"),
 					rawType: row.Type,
 					detail: summarizeResource(row, "Reveal"),
+					preview: buildEntityPreview("Resources", row),
 					href: schemaRowHref("Resources", row.Type),
 				}),
 			}),
@@ -404,6 +414,7 @@
 					label: resolveDisplayName(row, "Type"),
 					rawType: row.Type,
 					detail: summarizeResource(row, "City trade"),
+					preview: buildEntityPreview("Resources", row),
 					href: schemaRowHref("Resources", row.Type),
 				}),
 			}),
@@ -425,6 +436,11 @@
 					label: resolveTypeName("Improvements", row.ImprovementType),
 					rawType: row.ImprovementType,
 					detail: `${formatSignedNumber(row.Yield)} ${formatYieldName(row.YieldType)}${row.condition ? ` ${row.condition}` : ""}`,
+					preview: buildEntityPreview(
+						"Improvements",
+						(TABLE_BY_NAME.get("Improvements")?.rows || []).find((entry) => entry.Type === row.ImprovementType),
+						row,
+					),
 					href: schemaRowHref("Improvements", row.ImprovementType),
 				}),
 			}),
@@ -437,6 +453,11 @@
 					label: resolveTypeName("Routes", row.RouteType),
 					rawType: row.RouteType,
 					detail: `${formatSignedNumber(row.MovementChange)} cost`,
+					preview: buildEntityPreview(
+						"Routes",
+						(TABLE_BY_NAME.get("Routes")?.rows || []).find((entry) => entry.Type === row.RouteType),
+						row,
+					),
 					href: schemaRowHref("Routes", row.RouteType),
 				}),
 			}),
@@ -449,6 +470,7 @@
 					label: formatIdentifier(row.DomainType, ["DOMAIN_"]),
 					rawType: row.DomainType,
 					detail: `${formatSignedNumber(row.Range)} range`,
+					preview: buildEntityPreview("Technologies", tech, row),
 					href: schemaRowHref("Technologies", row.TechType),
 				}),
 			}),
@@ -461,6 +483,7 @@
 					label: formatIdentifier(row.DomainType, ["DOMAIN_"]),
 					rawType: row.DomainType,
 					detail: `${formatSignedNumber(row.Moves)} moves`,
+					preview: buildEntityPreview("Technologies", tech, row),
 					href: schemaRowHref("Technologies", row.TechType),
 				}),
 			}),
@@ -473,6 +496,11 @@
 					label: resolveTypeName("UnitPromotions", row.PromotionType),
 					rawType: row.PromotionType,
 					detail: "Granted on research",
+					preview: buildEntityPreview(
+						"UnitPromotions",
+						(TABLE_BY_NAME.get("UnitPromotions")?.rows || []).find((entry) => entry.Type === row.PromotionType),
+						row,
+					),
 					href: schemaRowHref("UnitPromotions", row.PromotionType),
 				}),
 			}),
@@ -494,10 +522,15 @@
 				rows: TABLE_BY_NAME.get("Civilization_DisableTechs")?.rows || [],
 				techValue: tech.Type,
 				buildItem: (row) => ({
-					label: formatIdentifier(row.CivilizationType, ["CIVILIZATION_"]),
+					label: resolveTypeName("Civilizations", row.CivilizationType),
 					rawType: row.CivilizationType,
 					detail: "Cannot research",
-					href: schemaRowHref("Civilization_DisableTechs", row.CivilizationType),
+					preview: buildEntityPreview(
+						"Civilizations",
+						(TABLE_BY_NAME.get("Civilizations")?.rows || []).find((entry) => entry.Type === row.CivilizationType),
+						row,
+					),
+					href: schemaRowHref("Civilizations", row.CivilizationType),
 				}),
 			}),
 		];
@@ -699,6 +732,151 @@
 		return formatIdentifier(yieldType, ["YIELD_"]);
 	}
 
+	function collectTypeYieldLines(tableName, typeField, typeValue, label = "Yields") {
+		const rows = (TABLE_BY_NAME.get(tableName)?.rows || []).filter((entry) => entry[typeField] === typeValue && Number(entry.Yield || entry.YieldChange || 0) !== 0);
+		if (!rows.length) {
+			return "";
+		}
+		const values = rows.map((entry) => `${formatSignedNumber(entry.Yield ?? entry.YieldChange)} ${formatYieldName(entry.YieldType)}`);
+		return `${label}: ${values.join(", ")}`;
+	}
+
+	function collectResourceRequirementLine(unitType) {
+		const rows = (TABLE_BY_NAME.get("Unit_ResourceQuantityRequirements")?.rows || []).filter((entry) => entry.UnitType === unitType);
+		if (!rows.length) {
+			return "";
+		}
+		return `Requires: ${rows.map((entry) => `${resolveTypeName("Resources", entry.ResourceType)}${Number(entry.Cost || 0) > 1 ? ` x${entry.Cost}` : ""}`).join(", ")}`;
+	}
+
+	function collectProcessYieldLine(processType) {
+		const rows = (TABLE_BY_NAME.get("Process_ProductionYields")?.rows || []).filter((entry) => entry.ProcessType === processType && Number(entry.Yield || 0) !== 0);
+		if (!rows.length) {
+			return "";
+		}
+		return `Converts: ${rows.map((entry) => `${formatSignedNumber(entry.Yield)} ${formatYieldName(entry.YieldType)}`).join(", ")}`;
+	}
+
+	function buildPreviewFallback(preview) {
+		if (!preview) {
+			return "";
+		}
+		return [preview.title, preview.rawType, ...preview.stats, preview.description].filter(Boolean).join("\n");
+	}
+
+	function buildEntityPreview(tableName, row, contextRow = null) {
+		if (!row) {
+			return null;
+		}
+
+		const displayName = resolveDisplayName(row, "Type");
+		const stats = [];
+		let description = "";
+
+		switch (tableName) {
+			case "Units":
+				if (row.Class) stats.push(`Class: ${formatIdentifier(row.Class, ["UNITCLASS_"])}`);
+				if (row.Domain) stats.push(`Domain: ${formatIdentifier(row.Domain, ["DOMAIN_"])}`);
+				if (Number(row.Cost || 0) > 0) stats.push(`Cost: ${row.Cost}`);
+				if (Number(row.FaithCost || 0) > 0) stats.push(`Faith: ${row.FaithCost}`);
+				if (Number(row.Combat || 0) > 0) stats.push(`Combat: ${row.Combat}`);
+				if (Number(row.RangedCombat || 0) > 0) stats.push(`Ranged: ${row.RangedCombat}`);
+				if (Number(row.Range || 0) > 0) stats.push(`Range: ${row.Range}`);
+				if (Number(row.Moves || 0) > 0) stats.push(`Moves: ${row.Moves}`);
+				if (row.CombatClass) stats.push(`Role: ${formatIdentifier(row.CombatClass, ["UNITCOMBAT_"])}`);
+				const unitRequirementLine = collectResourceRequirementLine(row.Type);
+				if (unitRequirementLine) stats.push(unitRequirementLine);
+				break;
+			case "Buildings":
+				if (row.BuildingClass) stats.push(`Class: ${formatIdentifier(row.BuildingClass, ["BUILDINGCLASS_"])}`);
+				if (Number(row.Cost || 0) > 0) stats.push(`Cost: ${row.Cost}`);
+				if (Number(row.GoldMaintenance || 0) > 0) stats.push(`Maintenance: ${row.GoldMaintenance}`);
+				if (Number(row.FaithCost || 0) > 0) stats.push(`Faith: ${row.FaithCost}`);
+				if (Number(row.MaxGlobalInstances || 0) > 0 || row.WonderSplashImage) stats.push("World Wonder");
+				if (Number(row.MaxPlayerInstances || 0) > 0) stats.push("National Wonder");
+				if (Number(row.Happiness || 0) !== 0) stats.push(`Happiness: ${formatSignedNumber(row.Happiness)}`);
+				if (Number(row.CultureRateModifier || 0) !== 0) stats.push(`Culture mod: ${formatSignedNumber(row.CultureRateModifier)}%`);
+				if (Number(row.GreatPeopleRateModifier || 0) !== 0) stats.push(`Great people: ${formatSignedNumber(row.GreatPeopleRateModifier)}%`);
+				if (row.SpecialistType) stats.push(`Specialist: ${formatIdentifier(row.SpecialistType, ["SPECIALIST_"])}`);
+				const buildingYieldLine = collectTypeYieldLines("Building_YieldChanges", "BuildingType", row.Type);
+				if (buildingYieldLine) stats.push(buildingYieldLine);
+				break;
+			case "Projects":
+				if (Number(row.Cost || 0) > 0) stats.push(`Cost: ${row.Cost}`);
+				if (row.VictoryPrereq) stats.push(`Victory: ${formatIdentifier(row.VictoryPrereq, ["VICTORY_"])}`);
+				if (Number(row.MaxGlobalInstances || 0) > 0) stats.push(`Global cap: ${row.MaxGlobalInstances}`);
+				if (Number(row.MaxTeamInstances || 0) > 0) stats.push(`Team cap: ${row.MaxTeamInstances}`);
+				break;
+			case "Processes":
+				const processYieldLine = collectProcessYieldLine(row.Type);
+				if (processYieldLine) stats.push(processYieldLine);
+				break;
+			case "Builds":
+				if (Number(row.Time || 0) > 0) stats.push(`Time: ${row.Time}`);
+				if (row.FeatureType) stats.push(`Feature: ${resolveTypeName("Features", row.FeatureType)}`);
+				if (row.ImprovementType) stats.push(`Improvement: ${resolveTypeName("Improvements", row.ImprovementType)}`);
+				if (row.RouteType) stats.push(`Route: ${resolveTypeName("Routes", row.RouteType)}`);
+				if (row.ResourceType) stats.push(`Resource: ${resolveTypeName("Resources", row.ResourceType)}`);
+				if (row.RemoveRoute) stats.push("Removes route");
+				if (row.Repair) stats.push("Repairs tile");
+				break;
+			case "Improvements":
+				if (contextRow?.YieldType && Number(contextRow.Yield || 0) !== 0) stats.push(`Yield: ${formatSignedNumber(contextRow.Yield)} ${formatYieldName(contextRow.YieldType)}`);
+				if (Number(contextRow?.Time || 0) > 0) stats.push(`Build time: ${contextRow.Time}`);
+				if (row.CivilizationType) stats.push(`Civ: ${formatIdentifier(row.CivilizationType, ["CIVILIZATION_"])}`);
+				if (row.CreatedByGreatPerson) stats.push("Great person improvement");
+				const improvementYieldLine = collectTypeYieldLines("Improvement_Yields", "ImprovementType", row.Type, "Base yields");
+				if (improvementYieldLine) stats.push(improvementYieldLine);
+				break;
+			case "Routes":
+				if (Number(contextRow?.MovementChange || 0) !== 0) stats.push(`Move change: ${formatSignedNumber(contextRow.MovementChange)}`);
+				if (Number(contextRow?.Time || 0) > 0) stats.push(`Build time: ${contextRow.Time}`);
+				if (Number(row.Movement || 0) !== 0) stats.push(`Base movement: ${row.Movement}`);
+				if (Number(row.GoldMaintenance || 0) > 0) stats.push(`Maintenance: ${row.GoldMaintenance}`);
+				const routeYieldLine = collectTypeYieldLines("Route_Yields", "RouteType", row.Type);
+				if (routeYieldLine) stats.push(routeYieldLine);
+				break;
+			case "UnitPromotions":
+				if (Number(row.CombatPercent || 0) !== 0) stats.push(`Combat: ${formatSignedNumber(row.CombatPercent)}%`);
+				if (Number(row.CityAttack || 0) !== 0) stats.push(`City attack: ${formatSignedNumber(row.CityAttack)}%`);
+				if (Number(row.CityDefense || 0) !== 0) stats.push(`City defense: ${formatSignedNumber(row.CityDefense)}%`);
+				if (Number(row.MovesChange || 0) !== 0) stats.push(`Moves: ${formatSignedNumber(row.MovesChange)}`);
+				if (Number(row.RangeChange || 0) !== 0) stats.push(`Range: ${formatSignedNumber(row.RangeChange)}`);
+				if (Number(row.VisibilityChange || 0) !== 0) stats.push(`Sight: ${formatSignedNumber(row.VisibilityChange)}`);
+				break;
+			case "Resources":
+				if (row.ResourceClassType) stats.push(`Class: ${formatIdentifier(row.ResourceClassType, ["RESOURCECLASS_"])}`);
+				if (row.TechReveal) stats.push(`Reveal: ${resolveTypeName("Technologies", row.TechReveal)}`);
+				if (row.TechCityTrade) stats.push(`Trade: ${resolveTypeName("Technologies", row.TechCityTrade)}`);
+				if (Number(row.Happiness || 0) !== 0) stats.push(`Happiness: ${formatSignedNumber(row.Happiness)}`);
+				break;
+			case "Technologies":
+				if (contextRow?.DomainType) stats.push(`Domain: ${formatIdentifier(contextRow.DomainType, ["DOMAIN_"])}`);
+				if (Number(contextRow?.Range || 0) !== 0) stats.push(`Range: ${formatSignedNumber(contextRow.Range)}`);
+				if (Number(contextRow?.Moves || 0) !== 0) stats.push(`Moves: ${formatSignedNumber(contextRow.Moves)}`);
+				if (contextRow?.CivilizationType) stats.push(`Civ: ${formatIdentifier(contextRow.CivilizationType, ["CIVILIZATION_"])}`);
+				break;
+			case "Civilizations":
+				if (row.ShortDescription) stats.push(`Short: ${resolveText(row.ShortDescription)}`);
+				if (row.Adjective) stats.push(`Adjective: ${resolveText(row.Adjective)}`);
+				if (row.DefaultPlayerColor) stats.push(`Color: ${formatIdentifier(row.DefaultPlayerColor, ["PLAYERCOLOR_"])}`);
+				if (row.ArtStyleType) stats.push(`Art style: ${formatIdentifier(row.ArtStyleType, ["ARTSTYLE_"])}`);
+				if (contextRow?.TechType) stats.push(`Blocked tech: ${resolveTypeName("Technologies", contextRow.TechType)}`);
+				break;
+		}
+
+		if (row.Help) {
+			description = resolveText(row.Help);
+		}
+
+		return {
+			title: displayName || formatIdentifier(row.Type || "Unknown"),
+			rawType: row.Type || "",
+			stats: stats.filter(Boolean),
+			description,
+		};
+	}
+
 	function summarizeUnit(row) {
 		const bits = [];
 		if (Number(row.Combat || 0) > 0) bits.push(`C${row.Combat}`);
@@ -831,7 +1009,7 @@
 
 					<div class="era-grid">
 						{#each era.techs as tech (tech.type)}
-							<article class="tech-card" id={tech.type} style={`grid-column:${tech.columnIndex}; grid-row:${tech.rowIndex};`}>
+							<article class:near-top={tech.rowIndex <= 2} class="tech-card" id={tech.type} style={`grid-column:${tech.columnIndex}; grid-row:${tech.rowIndex};`}>
 								<header class="tech-head">
 									<div class="tech-title">
 										<h3>{tech.title}</h3>
@@ -868,8 +1046,31 @@
 											<div class="dense-group">
 												<strong>{group.label} {group.items.length}</strong>
 												<span
-													>{#each group.previewItems as item, index (`${group.id}-${item.rawType}-${index}`)}<a href={item.href} target="_blank" rel="noopener noreferrer"
-															>{item.label}</a
+													>{#each group.previewItems as item, index (`${group.id}-${item.rawType}-${index}`)}<a
+															href={item.href}
+															target="_blank"
+															rel="noopener noreferrer"
+															class:has-preview={Boolean(item.preview)}
+														>
+															{item.label}
+															{#if item.preview}
+																<span class="dense-preview" role="tooltip">
+																	<strong>{item.preview.title}</strong>
+																	{#if item.preview.rawType}
+																		<code>{item.preview.rawType}</code>
+																	{/if}
+																	{#if item.preview.stats.length}
+																		<ul>
+																			{#each item.preview.stats as stat (`${item.rawType}-${stat}`)}
+																				<li>{stat}</li>
+																			{/each}
+																		</ul>
+																	{/if}
+																	{#if item.preview.description}
+																		<p>{item.preview.description}</p>
+																	{/if}
+																</span>
+															{/if}</a
 														>{index < group.previewItems.length - 1 ? ", " : ""}{/each}{#if group.remainingCount}
 														+{group.remainingCount}{/if}</span
 												>
@@ -883,13 +1084,37 @@
 										{#each tech.supportPreview as group (group.id)}
 											<div class="dense-group support">
 												<strong>{group.label} {group.items.length}</strong>
-												<span
-													>{#each group.previewItems as item, index (`${group.id}-${item.rawType}-${index}`)}<a href={item.href} target="_blank" rel="noopener noreferrer"
-															>{item.label}</a
-														>{#if item.detail}
-															{item.detail}{/if}{index < group.previewItems.length - 1 ? ", " : ""}{/each}{#if group.remainingCount}
-														+{group.remainingCount}{/if}</span
-												>
+												<span>
+													{#each group.previewItems as item, index (`${group.id}-${item.rawType}-${index}`)}
+														<a href={item.href} target="_blank" rel="noopener noreferrer" class:has-preview={Boolean(item.preview)}>
+															{item.label}
+															{#if item.preview}
+																<span class="dense-preview" role="tooltip">
+																	<strong>{item.preview.title}</strong>
+																	{#if item.preview.rawType}
+																		<code>{item.preview.rawType}</code>
+																	{/if}
+																	{#if item.preview.stats.length}
+																		<ul>
+																			{#each item.preview.stats as stat (`${item.rawType}-${stat}`)}
+																				<li>{stat}</li>
+																			{/each}
+																		</ul>
+																	{/if}
+																	{#if item.preview.description}
+																		<p>{item.preview.description}</p>
+																	{/if}
+																</span>
+															{/if}
+														</a>
+														{#if item.detail}
+															{item.detail}
+														{/if}
+														{index < group.previewItems.length - 1 ? ", " : ""}{/each}
+													{#if group.remainingCount}
+														+{group.remainingCount}
+													{/if}
+												</span>
 											</div>
 										{/each}
 									</div>
@@ -1039,7 +1264,7 @@
 		grid-auto-flow: column;
 		grid-auto-columns: max-content;
 		overflow-x: auto;
-		overflow-y: clip;
+		overflow-y: visible;
 		align-items: start;
 		/*border-inline-end: 1px solid color-mix(in oklch, var(--surface-tool-border) 72%, var(--panel-border));*/
 		border-radius: 0.85rem;
@@ -1233,6 +1458,7 @@
 	}
 
 	.dense-group a {
+		position: relative;
 		color: var(--ink);
 		font-size: 1rem;
 		text-decoration: none;
@@ -1241,6 +1467,86 @@
 		&:hover {
 			color: var(--accent-soft);
 		}
+	}
+
+	.dense-preview {
+		position: absolute;
+		inset-block-end: calc(100% + 0.45rem);
+		inset-inline-start: 0;
+		min-inline-size: 14rem;
+		inline-size: fit-content;
+		max-inline-size: min(24rem, 50vw);
+		display: grid;
+		gap: 0.5rem;
+		padding: 1rem;
+		border-radius: 0.65rem;
+		border: 1px solid color-mix(in oklch, var(--surface-highlight) 58%, var(--panel-border));
+		background: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 12%, transparent) 0%, transparent 36%), color-mix(in oklch, var(--panel-bg) 94%, black 6%);
+		box-shadow: 0 10px 24px var(--shadow-soft);
+		color: var(--ink);
+		line-height: 1.35;
+		opacity: 0;
+		transform: translateY(0.2rem);
+		pointer-events: none;
+		transition:
+			opacity 130ms ease,
+			transform 130ms ease;
+		z-index: 10;
+	}
+
+	.tech-card.near-top .dense-preview {
+		inset-block-start: calc(100% + 0.45rem);
+		inset-block-end: auto;
+		transform: translateY(-0.2rem);
+	}
+
+	.dense-group a.has-preview:hover .dense-preview,
+	.dense-group a.has-preview:focus-visible .dense-preview {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.dense-preview strong {
+		font-size: 1.125rem;
+		font-weight: 700;
+		letter-spacing: 0;
+		text-transform: none;
+		line-height: 1.05;
+	}
+
+	.dense-preview code {
+		color: var(--muted-ink);
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.75rem;
+		overflow-wrap: anywhere;
+	}
+
+	.dense-preview ul {
+		display: grid;
+		gap: 0.25rem;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+	}
+
+	.dense-preview li {
+		font-size: 0.9rem;
+		line-height: 1.32;
+	}
+
+	.dense-preview li::before {
+		content: "•";
+		color: var(--accent-soft);
+		margin-inline-end: 0.45rem;
+	}
+
+	.dense-preview p {
+		margin: 0;
+		padding-top: 0.45rem;
+		border-top: 1px solid color-mix(in oklch, var(--panel-border) 82%, transparent);
+		color: var(--muted-ink);
+		font-size: 0.88rem;
+		line-height: 1.4;
 	}
 
 	.tech-details {

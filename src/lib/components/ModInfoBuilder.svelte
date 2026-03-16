@@ -1656,12 +1656,12 @@
 		}
 	}
 	.modinfo-page {
+		display: grid;
+		gap: 1rem;
 		--modinfo-accent-border: var(--surface-publish-border);
 		--modinfo-accent-highlight: var(--surface-publish-highlight);
 		--modinfo-accent-highlight-strong: var(--surface-publish-highlight-strong);
 		--modinfo-accent-panel: var(--surface-publish-panel);
-		display: grid;
-		gap: 1rem;
 	}
 
 	.modinfo-page .hero {
@@ -1732,9 +1732,19 @@
 		cursor: not-allowed;
 	}
 
+	.btn:hover {
+		background: linear-gradient(145deg, color-mix(in oklch, var(--modinfo-accent-highlight) 92%, #e4893b), color-mix(in oklch, var(--modinfo-accent-highlight) 68%, #9f4b10)) !important;
+		box-shadow: 0 2px 4px color-mix(in oklch, var(--modinfo-accent-highlight) 22%, transparent);
+		border-color: color-mix(in oklch, var(--modinfo-accent-highlight) 72%, var(--modinfo-accent-border)) !important;
+	}
+
 	.btn.secondary {
 		background: color-mix(in oklch, var(--modinfo-accent-panel) 72%, var(--control-bg));
 		border-color: color-mix(in oklch, var(--modinfo-accent-border) 80%, transparent);
+	}
+
+	.btn.secondary:hover {
+		background: color-mix(in oklch, var(--modinfo-accent-highlight) 14%, var(--modinfo-accent-panel)) !important;
 	}
 
 	.small {
@@ -1755,13 +1765,13 @@
 		font: inherit;
 		line-height: 1.25;
 		background: color-mix(in oklch, var(--modinfo-accent-highlight) 3%, var(--input-bg)) !important;
+		box-shadow:
+			inset 0 1px 0 color-mix(in oklch, white 10%, transparent),
+			0 0 0 1px color-mix(in oklch, var(--modinfo-accent-highlight) 10%, transparent);
 		border: 1px solid color-mix(in oklch, var(--modinfo-accent-highlight) 10%, var(--modinfo-accent-border)) !important;
 		border-radius: 0.7rem;
 		padding-block: 0.7rem;
 		padding-inline: 0.8rem;
-		box-shadow:
-			inset 0 1px 0 color-mix(in oklch, white 10%, transparent),
-			0 0 0 1px color-mix(in oklch, var(--modinfo-accent-highlight) 10%, transparent);
 		box-sizing: border-box;
 	}
 
@@ -2181,16 +2191,6 @@
 	.companion-card.is-site-accent:hover {
 		background: color-mix(in oklch, var(--panel-bg) 88%, var(--accent) 4%);
 		border-color: color-mix(in oklch, var(--accent) 85%, var(--panel-border));
-	}
-
-	.btn:hover {
-		background: linear-gradient(145deg, color-mix(in oklch, var(--modinfo-accent-highlight) 92%, #e4893b), color-mix(in oklch, var(--modinfo-accent-highlight) 68%, #9f4b10)) !important;
-		border-color: color-mix(in oklch, var(--modinfo-accent-highlight) 72%, var(--modinfo-accent-border)) !important;
-		box-shadow: 0 2px 4px color-mix(in oklch, var(--modinfo-accent-highlight) 22%, transparent);
-	}
-
-	.btn.secondary:hover {
-		background: color-mix(in oklch, var(--modinfo-accent-highlight) 14%, var(--modinfo-accent-panel)) !important;
 	}
 
 	@media (max-width: 980px) {

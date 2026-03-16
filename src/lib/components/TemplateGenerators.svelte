@@ -768,6 +768,13 @@
 		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 78%, #3b2810 22%);
 	}
 
+	.wizard-touchpoint-card.is-publish {
+		--wizard-touchpoint-border: var(--surface-publish-border);
+		--wizard-touchpoint-highlight: var(--surface-publish-highlight);
+		--wizard-touchpoint-highlight-strong: var(--surface-publish-highlight-strong);
+		--wizard-touchpoint-panel: var(--surface-publish-panel);
+	}
+
 	.wizard-touchpoint-card.is-schema {
 		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #35658c 28%);
 		--wizard-touchpoint-highlight: #8dc7ff;
@@ -780,13 +787,6 @@
 		--wizard-touchpoint-highlight: color-mix(in srgb, var(--accent) 82%, #ffbf75 18%);
 		--wizard-touchpoint-highlight-strong: color-mix(in srgb, white 84%, var(--accent) 16%);
 		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 82%, #2f1808 18%);
-	}
-
-	.wizard-touchpoint-card.is-publish {
-		--wizard-touchpoint-border: var(--surface-publish-border);
-		--wizard-touchpoint-highlight: var(--surface-publish-highlight);
-		--wizard-touchpoint-highlight-strong: var(--surface-publish-highlight-strong);
-		--wizard-touchpoint-panel: var(--surface-publish-panel);
 	}
 
 	.wizard-touchpoint-card.is-ui {

@@ -3295,12 +3295,12 @@
 	}
 
 	.civ-icon-button:hover {
-		transform: translateY(-1px);
 		background: color-mix(in srgb, var(--civ-icon-accent-panel) 38%, var(--control-bg)) !important;
-		border-color: color-mix(in srgb, var(--civ-icon-accent-highlight) 58%, var(--panel-border)) !important;
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--civ-icon-accent-highlight-strong) 10%, transparent),
 			0 2px 4px color-mix(in srgb, black 70%, transparent);
+		border-color: color-mix(in srgb, var(--civ-icon-accent-highlight) 58%, var(--panel-border)) !important;
+		transform: translateY(-1px);
 	}
 
 	.civ-icon-button-subtle {

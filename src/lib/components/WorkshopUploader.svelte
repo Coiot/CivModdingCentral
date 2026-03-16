@@ -235,12 +235,12 @@
 		}
 	}
 	.workshop-app-page {
+		display: grid;
+		gap: 1rem;
 		--workshop-accent-border: var(--surface-publish-border);
 		--workshop-accent-highlight: var(--surface-publish-highlight);
 		--workshop-accent-highlight-strong: var(--surface-publish-highlight-strong);
 		--workshop-accent-panel: var(--surface-publish-panel);
-		display: grid;
-		gap: 1rem;
 	}
 
 	.workshop-app-hero {
@@ -423,13 +423,13 @@
 		white-space: nowrap;
 		font-size: 0.76rem;
 		font-weight: 700;
-		text-shadow: 1px 1px 2px #000;
 		background: color-mix(in oklch, var(--workshop-accent-highlight) 30%, transparent);
 		border: 1px solid color-mix(in oklch, var(--workshop-accent-highlight) 90%, var(--workshop-accent-border));
 		border-radius: 999px;
 		padding-block: 0.22rem;
 		padding-inline: 0.55rem;
 		margin-inline-start: auto;
+		text-shadow: 1px 1px 2px #000;
 	}
 
 	.workshop-app-button {
@@ -454,8 +454,8 @@
 
 	.workshop-app-button:hover {
 		background: color-mix(in oklch, var(--workshop-accent-highlight) 15%, #000) !important;
-		border-color: color-mix(in oklch, var(--workshop-accent-highlight) 55%, var(--workshop-accent-border)) !important;
 		box-shadow: 0 4px 12px color-mix(in oklch, var(--workshop-accent-highlight) 18%, transparent);
+		border-color: color-mix(in oklch, var(--workshop-accent-highlight) 55%, var(--workshop-accent-border)) !important;
 		transform: translateY(-1px);
 	}
 

@@ -981,14 +981,26 @@
 			0 6px 10px color-mix(in srgb, black 74%, transparent);
 		border: 1px solid color-mix(in oklch, var(--panel-border) 80%, transparent);
 		border-radius: 1rem;
-		padding: 1.25rem 1rem;
+		padding-block: 1.25rem;
+		padding-inline: 1rem;
 	}
 
-	.site-footer-meta,
-	.site-footer-tester-block,
-	.site-footer-chip-row {
-		display: grid;
-		gap: 0.55rem;
+	.site-footer-title {
+		color: var(--ink);
+		font-size: 1rem;
+		font-weight: 700;
+		line-height: 1.45;
+	}
+
+	.site-footer-title,
+	.site-footer-note {
+		margin: 0;
+	}
+
+	.site-footer-note {
+		color: var(--muted-ink);
+		font-size: 0.9rem;
+		line-height: 1.55;
 	}
 
 	.site-footer-kicker,
@@ -1002,26 +1014,15 @@
 		margin: 0;
 	}
 
-	.site-footer-title,
-	.site-footer-note {
-		margin: 0;
-	}
-
-	.site-footer-title {
-		color: var(--ink);
-		font-size: 1rem;
-		font-weight: 700;
-		line-height: 1.45;
-	}
-
-	.site-footer-note {
-		color: var(--muted-ink);
-		font-size: 0.9rem;
-		line-height: 1.55;
-	}
-
 	.site-footer-meta {
 		align-content: start;
+	}
+
+	.site-footer-meta,
+	.site-footer-tester-block,
+	.site-footer-chip-row {
+		display: grid;
+		gap: 0.55rem;
 	}
 
 	.site-footer-chip-row {
@@ -1038,24 +1039,15 @@
 		color: color-mix(in srgb, white 82%, var(--chip-highlight, var(--accent)) 18%);
 		font-size: 0.85rem;
 		font-weight: 700;
-		text-shadow: 1px 1px 2px color-mix(in srgb, var(--chip-highlight, var(--accent)) 20%, #000);
 		background:
 			radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--chip-highlight, var(--accent)) 8%, transparent) 0%, transparent 72%),
 			color-mix(in srgb, var(--chip-highlight, var(--accent)) 6%, transparent);
 		box-shadow: inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
 		border: 1px solid color-mix(in srgb, var(--chip-highlight, var(--accent)) 40%, var(--panel-border));
 		border-radius: 0.5rem;
-		padding: 0.5rem 1rem;
-	}
-
-	@media (max-width: 720px) {
-		.site-footer-card {
-			grid-template-columns: 1fr;
-		}
-
-		.site-footer-chip-row {
-			grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
-		}
+		padding-block: 0.5rem;
+		padding-inline: 1rem;
+		text-shadow: 1px 1px 2px color-mix(in srgb, var(--chip-highlight, var(--accent)) 20%, #000);
 	}
 
 	:global(::view-transition-new(route-shell)) {
@@ -1070,6 +1062,16 @@
 	:global(::view-transition-new(route-shell)) {
 		animation-timing-function: ease;
 		animation-duration: 180ms;
+	}
+
+	@media (max-width: 720px) {
+		.site-footer-card {
+			grid-template-columns: 1fr;
+		}
+
+		.site-footer-chip-row {
+			grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+		}
 	}
 
 	@keyframes app-route-fade-out {

@@ -1628,11 +1628,6 @@
 		border-radius: 1.5rem;
 	}
 
-	.lua-panel,
-	.lua-docs-nav-card {
-		background: var(--lua-panel);
-	}
-
 	.lua-empty-note,
 	.lua-parameter-row p,
 	.lua-card-copy {
@@ -1662,10 +1657,10 @@
 		display: inline-grid;
 		place-items: center;
 		font-size: 0.8rem;
-		text-box: trim-both;
 		background: rgba(255, 255, 255, 0.08);
 		border-radius: 999px;
 		padding-inline: 0.5rem;
+		text-box: trim-both;
 	}
 
 	.lua-launcher-card-meta,
@@ -1722,6 +1717,11 @@
 	.lua-sort-field span {
 		color: var(--lua-copy);
 		font-size: 0.9rem;
+	}
+
+	.lua-panel,
+	.lua-docs-nav-card {
+		background: var(--lua-panel);
 	}
 
 	.lua-entry-card-top > div:first-child {
@@ -2339,16 +2339,16 @@
 		align-items: stretch;
 	}
 
-	.lua-docs-nav-link.is-active {
-		color: white;
-		background: rgba(183, 239, 132, 0.13);
-		border-color: color-mix(in srgb, var(--lua-highlight) 70%, white 30%);
-	}
-
 	.lua-docs-nav-link:hover {
 		color: white;
 		background: rgba(183, 239, 132, 0.09);
 		border-color: color-mix(in srgb, var(--lua-highlight) 56%, white 24%);
+	}
+
+	.lua-docs-nav-link.is-active {
+		color: white;
+		background: rgba(183, 239, 132, 0.13);
+		border-color: color-mix(in srgb, var(--lua-highlight) 70%, white 30%);
 	}
 
 	.lua-entry-card {

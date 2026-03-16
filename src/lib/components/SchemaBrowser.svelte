@@ -8,12 +8,12 @@
 		{
 			tableName: "Buildings",
 			label: "Buildings",
-			copy: "Table most needed for proxies and uniques with yields, classes, flavors, and prerequisites.",
+			copy: "Table most needed for proxies and uniques for all the yields, classes, abilities, and prerequisites.",
 		},
 		{
 			tableName: "Units",
 			label: "Units",
-			copy: "Inspect promotion links, class relationships, AI roles, art hooks, and prerequisites.",
+			copy: "Lookup strength, cost, movement, rage, promotion links, class relationships, and many other attributes.",
 		},
 		{
 			tableName: "Civilizations",
@@ -2047,10 +2047,6 @@
 		padding-inline: 1.3rem;
 	}
 
-	.schema-panel {
-		background: var(--schema-panel);
-	}
-
 	.schema-table-card p,
 	.schema-quick-card p,
 	.schema-link-list span,
@@ -2128,6 +2124,10 @@
 
 	.schema-table-meta span {
 		white-space: nowrap;
+	}
+
+	.schema-panel {
+		background: var(--schema-panel);
 	}
 
 	.schema-row-inspector div {

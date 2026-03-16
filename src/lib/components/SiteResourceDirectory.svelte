@@ -54,12 +54,12 @@
 								<div class="surface-card-top">
 									<strong class="surface-badge">Coming Soon</strong>
 								</div>
-								<h4 class="card-title">{resource.label}</h4>
+								<h4 class="card-title text-lg">{resource.label}</h4>
 								<p class="card-copy">{resource.description}</p>
 							</div>
 						{:else}
 							<a class={["surface-card", resourceTone(resource), resourceAccentClass(resource), isFeaturedResource(resource) && "is-featured"]} href={resource.href}>
-								<h4 class="card-title">{resource.label}</h4>
+								<h4 class="card-title text-lg">{resource.label}</h4>
 								<p class="card-copy">{resource.description}</p>
 							</a>
 						{/if}
@@ -116,7 +116,7 @@
 		position: relative;
 		display: flex;
 		flex-direction: column;
-		gap: 0.75rem;
+		gap: 0.5rem;
 		color: var(--ink);
 		text-decoration: none;
 		background:
@@ -124,7 +124,7 @@
 			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--control-bg)) 88%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 88%, #16110f 12%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
-			0 6px 8px color-mix(in srgb, black 72%, transparent);
+			0 6px 8px color-mix(in srgb, black 80%, transparent);
 		border: 1px solid color-mix(in srgb, var(--surface-highlight, var(--surface-border, var(--accent))) 44%, var(--surface-border, var(--home-muted-border)));
 		border-radius: 1rem;
 		padding: 1rem;
@@ -143,7 +143,7 @@
 			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--control-bg)) 90%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 84%, #16110f 16%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight, var(--accent)) 14%, transparent),
-			0 6px 10px color-mix(in srgb, black 76%, transparent);
+			0 4px 8px color-mix(in srgb, black 76%, transparent);
 		border-color: color-mix(in srgb, var(--surface-highlight, var(--accent)) 74%, var(--home-muted-border));
 		transform: translateY(-2px);
 	}
