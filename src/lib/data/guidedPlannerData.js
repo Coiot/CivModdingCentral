@@ -191,10 +191,9 @@ export const siteResourceGroups = [
 				id: "tech-tree-viewer",
 				label: "Tech Tree Viewer",
 				href: "/tech-tree-viewer",
-				status: "Coming Soon",
+				status: "Live",
 				description: "Helper for placement of your mod's uniques and abilities.",
 				kind: "Viewer",
-				disabled: true,
 			},
 			{
 				id: "religion-support",

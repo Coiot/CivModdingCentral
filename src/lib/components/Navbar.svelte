@@ -33,7 +33,7 @@
 				{
 					href: "/guided-planner",
 					label: "Guided Planner",
-					description: "Weighted civ-mod planner with linked tools, references, and tutorial placeholders.",
+					description: "Mod planner with progression tracking guide filled with advice, references, and tutorials.",
 				},
 				{
 					href: "/template-generators",
