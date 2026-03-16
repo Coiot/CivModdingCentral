@@ -91,6 +91,38 @@
 		});
 	}
 
+	function jumpToHref(href, options = {}) {
+		if (typeof window === "undefined" || !href) {
+			return;
+		}
+
+		const url = new URL(href, window.location.href);
+		const normalizedPath = normalizePathname(url.pathname);
+		const nextHref = `${normalizedPath}${url.search}${url.hash}`;
+		const currentHref = `${currentPath}${window.location.search}${window.location.hash}`;
+		const replace = Boolean(options.replace);
+		const preserveScroll = Boolean(options.preserveScroll);
+		const pathChanged = normalizedPath !== currentPath;
+
+		if (nextHref === currentHref) {
+			return;
+		}
+
+		shouldFocusRouteHeading = pathChanged;
+		shouldResetScroll = pathChanged && !preserveScroll;
+		runPageTransition(() => {
+			if (replace) {
+				window.history.replaceState({}, "", nextHref);
+			} else {
+				window.history.pushState({}, "", nextHref);
+			}
+			if (pathChanged) {
+				currentPath = normalizedPath;
+			}
+		});
+		window.dispatchEvent(new PopStateEvent("popstate"));
+	}
+
 	async function ensureMapViewerLoaded() {
 		if (MapViewerComponent || mapViewerLoadError) {
 			return;
@@ -181,12 +213,8 @@
 				if (!url) {
 					return;
 				}
-				const nextPath = normalizePathname(url.pathname);
-				if (nextPath === currentPath) {
-					return;
-				}
 				event.preventDefault();
-				navigateTo(nextPath);
+				jumpToHref(`${url.pathname}${url.search}${url.hash}`);
 			};
 			window.addEventListener("popstate", handlePopState);
 			window.addEventListener("click", handleDocumentClick);
@@ -783,6 +811,7 @@
 		onToggleTheme={toggleTheme}
 		onSetThemeMode={setThemeMode}
 		{onAuthEmailInput}
+		onQuickJump={jumpToHref}
 		onSendMagicLink={sendMagicLink}
 		onLogout={logout}
 	/>

@@ -145,8 +145,10 @@
 	let signatureCopied = $state(false);
 	let activeDocSectionId = $state("signature");
 	let pendingDocSectionId = $state("");
+	let pendingLuaDetailScroll = $state(false);
 	let pendingLuaHistoryPush = $state(false);
 	let luaHydrating = $state(true);
+	let luaSearchInputEl = $state(null);
 
 	const normalizedQuery = $derived(searchQuery.trim().toLowerCase());
 	const emptySearchExamples = $derived.by(() => (activeDataset === "methods" ? METHOD_SEARCH_EXAMPLES : EVENT_SEARCH_EXAMPLES));
@@ -479,6 +481,13 @@
 		}
 
 		tick().then(() => {
+			if (pendingLuaDetailScroll) {
+				detailPanelElement?.scrollIntoView({
+					behavior: "auto",
+					block: "start",
+				});
+				pendingLuaDetailScroll = false;
+			}
 			const targetSectionId = pendingDocSectionId && selectedEntrySections.some((section) => section.id === pendingDocSectionId) ? pendingDocSectionId : "";
 			if (targetSectionId) {
 				scrollDocSectionIntoView(targetSectionId, "auto");
@@ -786,6 +795,38 @@
 		}
 	}
 
+	function isTypingTarget(target) {
+		return Boolean(target?.closest?.("input, textarea, select, [contenteditable='true']"));
+	}
+
+	function focusPrimaryLuaSearch() {
+		luaSearchInputEl?.focus();
+		luaSearchInputEl?.select?.();
+	}
+
+	function handleWindowKeyDown(event) {
+		if (isTypingTarget(event.target)) {
+			return;
+		}
+
+		if (event.key === "f" || event.key === "F") {
+			event.preventDefault();
+			focusPrimaryLuaSearch();
+			return;
+		}
+
+		if (event.key === "[") {
+			event.preventDefault();
+			selectAdjacentEntry(-1);
+			return;
+		}
+
+		if (event.key === "]") {
+			event.preventDefault();
+			selectAdjacentEntry(1);
+		}
+	}
+
 	function schemaTableHref(table) {
 		const params = new URLSearchParams({
 			table,
@@ -1027,6 +1068,7 @@
 		selectedEntryId = nextEntry;
 		activeDocSectionId = nextSection || "signature";
 		pendingDocSectionId = nextSection;
+		pendingLuaDetailScroll = params.has("entry") || Boolean(nextSection);
 
 		const nextSnapshot = snapshotLuaUrlState();
 		lastLuaUrlSnapshot = nextSnapshot;
@@ -1041,6 +1083,8 @@
 		return previous.dataset !== next.dataset || previous.family !== next.family || previous.scope !== next.scope || previous.entry !== next.entry || previous.sort !== next.sort;
 	}
 </script>
+
+<svelte:window onkeydown={handleWindowKeyDown} />
 
 <section class="lua-page">
 	<header class="lua-hero">
@@ -1096,7 +1140,7 @@
 
 					<label class="lua-search-field">
 						<span>Search the lua references</span>
-						<input type="search" bind:value={searchQuery} onkeydown={handleSearchKeyDown} placeholder={searchPlaceholder} />
+						<input bind:this={luaSearchInputEl} type="search" bind:value={searchQuery} onkeydown={handleSearchKeyDown} placeholder={searchPlaceholder} />
 					</label>
 
 					<label class="lua-sort-field">

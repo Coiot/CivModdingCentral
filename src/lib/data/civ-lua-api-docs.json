@@ -117,7 +117,7 @@
 			"summary": "Returns the player ID currently treated as active by the running game or UI context.",
 			"notes": [
 				"In UI code this is usually the local human player, and the usual next step is Players[Game.GetActivePlayer()].",
-				"This is a stable helper for front-end and in-game UI code that needs a player handle without already carrying one around.",
+				"This is a stable helper for frontend and in-game UI code that needs a player handle without already carrying one around.",
 				"It is also a common bridge into player-scoped methods like notifications, production lookups, and diplomacy UI."
 			],
 			"example": {

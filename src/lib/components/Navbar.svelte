@@ -1,4 +1,6 @@
 <script>
+	import QuickJumpPalette from "./QuickJumpPalette.svelte";
+
 	let {
 		themeMode = "light",
 		onToggleTheme = () => {},
@@ -15,6 +17,7 @@
 		onAuthEmailInput = () => {},
 		onSendMagicLink = () => {},
 		onLogout = () => {},
+		onQuickJump = () => {},
 		currentPath = "/",
 	} = $props();
 
@@ -396,6 +399,8 @@
 		</div>
 
 		<div class="nav-actions">
+			<QuickJumpPalette {currentPath} onJump={onQuickJump} />
+
 			<a class="social-trigger" href={REDDIT_URL} aria-label="Reddit" title="Reddit" target="_blank" rel="noopener noreferrer">
 				<svg class="social-icon" viewBox="0 0 512 512" aria-hidden="true">
 					<path
@@ -516,8 +521,12 @@
 							<h4>Keyboard</h4>
 							<ul class="help-list">
 								<li><kbd>?</kbd> Toggle help menu</li>
+								<li><kbd>Ctrl/Cmd K</kbd> Open quick jump</li>
+								<li><kbd>F</kbd> Focus the main page search on schema and Lua pages</li>
 								<li><kbd>U</kbd> Toggle user menu</li>
 								<li><kbd>T</kbd> Toggle light/dark mode</li>
+								<li><kbd>[</kbd> Previous result on supported pages</li>
+								<li><kbd>]</kbd> Next result on supported pages</li>
 								<li><kbd>Esc</kbd> Close open menus</li>
 								<li><kbd>Mouse wheel</kbd> Zoom map</li>
 								<li><kbd>Drag</kbd> Pan map</li>

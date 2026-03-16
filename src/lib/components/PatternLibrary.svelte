@@ -291,6 +291,27 @@
 		syncStateFromUrl(window.location.search);
 	}
 
+	function isTypingTarget(target) {
+		return Boolean(target?.closest?.("input, textarea, select, [contenteditable='true']"));
+	}
+
+	function handleWindowKeyDown(event) {
+		if (isTypingTarget(event.target)) {
+			return;
+		}
+
+		if (event.key === "[") {
+			event.preventDefault();
+			selectAdjacentRecipe(-1);
+			return;
+		}
+
+		if (event.key === "]") {
+			event.preventDefault();
+			selectAdjacentRecipe(1);
+		}
+	}
+
 	function isQuickStartActive(title) {
 		return activeRecipe?.title === title;
 	}
@@ -437,7 +458,7 @@
 	});
 </script>
 
-<svelte:window onpopstate={handleWindowPopState} />
+<svelte:window onpopstate={handleWindowPopState} onkeydown={handleWindowKeyDown} />
 
 <section class="recipe-page">
 	<header class="hero recipe-hero">

@@ -383,6 +383,27 @@
 		selectDeliverable(nextDeliverable.id);
 	}
 
+	function isTypingTarget(target) {
+		return Boolean(target?.closest?.("input, textarea, select, [contenteditable='true']"));
+	}
+
+	function handleWindowKeyDown(event) {
+		if (isTypingTarget(event.target)) {
+			return;
+		}
+
+		if (event.key === "[") {
+			event.preventDefault();
+			selectAdjacentDeliverable(-1);
+			return;
+		}
+
+		if (event.key === "]") {
+			event.preventDefault();
+			selectAdjacentDeliverable(1);
+		}
+	}
+
 	function isDeliverableDone(deliverableId) {
 		return completedDeliverableSet.has(deliverableId);
 	}
@@ -1401,6 +1422,8 @@
 	}
 </script>
 
+<svelte:window onkeydown={handleWindowKeyDown} />
+
 <section class="planner-page">
 	<header class="hero planner-hero">
 		<div class="planner-hero-layout">
@@ -2111,16 +2134,6 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
 		gap: 0.75rem;
-	}
-
-	.planner-hero-route::before {
-		content: "";
-		position: absolute;
-		inset: 1.45rem 0 auto 0;
-		block-size: 1px;
-		background: linear-gradient(90deg, color-mix(in oklch, var(--planner-brass) 40%, transparent) 0%, color-mix(in oklch, var(--planner-sky) 28%, transparent) 100%);
-		opacity: 0.55;
-		pointer-events: none;
 	}
 
 	.planner-hero-route-card {

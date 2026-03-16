@@ -65,6 +65,27 @@
 		syncStateFromUrl(window.location.search);
 	}
 
+	function isTypingTarget(target) {
+		return Boolean(target?.closest?.("input, textarea, select, [contenteditable='true']"));
+	}
+
+	function handleWindowKeyDown(event) {
+		if (isTypingTarget(event.target)) {
+			return;
+		}
+
+		if (event.key === "[") {
+			event.preventDefault();
+			setActiveWizard(activeWizardIndex - 1);
+			return;
+		}
+
+		if (event.key === "]") {
+			event.preventDefault();
+			setActiveWizard(activeWizardIndex + 1);
+		}
+	}
+
 	function touchpointSurfaceLabel(href) {
 		if (href?.startsWith("/pattern-library")) {
 			return "Pattern";
@@ -138,7 +159,7 @@
 	});
 </script>
 
-<svelte:window onpopstate={handleWindowPopState} />
+<svelte:window onpopstate={handleWindowPopState} onkeydown={handleWindowKeyDown} />
 
 <section class="wizard-page">
 	<header class="hero wizard-hero">

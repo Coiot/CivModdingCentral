@@ -181,6 +181,9 @@
 	let selectedRowScopeKey = $state("");
 	let selectedTableScopeKey = $state("");
 	let recentTableNames = $state([]);
+	let schemaDetailPanelElement = $state(null);
+	let schemaSearchInputEl = $state(null);
+	let pendingSchemaDetailScroll = $state(false);
 	let queryLogic = $state("and");
 	let querySortColumn = $state("");
 	let querySortDirection = $state("asc");
@@ -466,6 +469,25 @@
 		void scrollSelectedTableCardIntoView(tableName);
 	});
 
+	$effect(() => {
+		const tableId = selectedTable?.id;
+		if (!pendingSchemaDetailScroll || !tableId) {
+			return;
+		}
+
+		tick().then(async () => {
+			schemaDetailPanelElement?.scrollIntoView({
+				block: "start",
+				inline: "nearest",
+				behavior: "auto",
+			});
+			if (detailTab === "rows" && selectedRowTableIndex >= 0) {
+				await scrollMatchedRowIntoView(tableId, selectedRowTableIndex);
+			}
+			pendingSchemaDetailScroll = false;
+		});
+	});
+
 	onMount(() => {
 		if (typeof window === "undefined") {
 			return;
@@ -642,6 +664,46 @@
 				return;
 			}
 			goToNextMatch();
+		}
+	}
+
+	function isTypingTarget(target) {
+		return Boolean(target?.closest?.("input, textarea, select, [contenteditable='true']"));
+	}
+
+	function focusPrimarySchemaSearch() {
+		schemaSearchInputEl?.focus();
+		schemaSearchInputEl?.select?.();
+	}
+
+	function handleWindowKeyDown(event) {
+		if (isTypingTarget(event.target)) {
+			return;
+		}
+
+		if (event.key === "f" || event.key === "F") {
+			event.preventDefault();
+			focusPrimarySchemaSearch();
+			return;
+		}
+
+		if (event.key === "[") {
+			event.preventDefault();
+			if (activeRowSearchQuery && selectedMatchedRowCount > 0) {
+				goToPreviousMatch();
+				return;
+			}
+			selectAdjacentTable(-1);
+			return;
+		}
+
+		if (event.key === "]") {
+			event.preventDefault();
+			if (activeRowSearchQuery && selectedMatchedRowCount > 0) {
+				goToNextMatch();
+				return;
+			}
+			selectAdjacentTable(1);
 		}
 	}
 
@@ -1217,6 +1279,7 @@
 		columnFilter = params.get("columnFilter") || "";
 		rowFilter = params.get("rowFilter") || "";
 		selectedRowTableIndex = Number.isInteger(parsedRowIndex) && parsedRowIndex >= 0 ? parsedRowIndex : -1;
+		pendingSchemaDetailScroll = params.has("table") || params.has("columnFilter") || params.has("rowFilter") || params.has("rowIndex");
 		queryLogic = parsedStructuredQuery?.logic || "and";
 		querySortColumn = parsedStructuredQuery?.sortColumn || "";
 		querySortDirection = parsedStructuredQuery?.sortDirection || "asc";
@@ -1271,6 +1334,8 @@
 	}
 </script>
 
+<svelte:window onkeydown={handleWindowKeyDown} />
+
 <section class="schema-page">
 	<header class="schema-hero">
 		<p class="schema-eyebrow">Database Reference</p>
@@ -1321,7 +1386,7 @@
 					</div>
 					<label class="schema-search-field">
 						<span>Search schema data</span>
-						<input type="search" bind:value={searchQuery} onkeydown={handleSearchKeyDown} placeholder={searchPlaceholder} />
+						<input bind:this={schemaSearchInputEl} type="search" bind:value={searchQuery} onkeydown={handleSearchKeyDown} placeholder={searchPlaceholder} />
 					</label>
 					<label class="schema-sort-field">
 						<span>Sort tables</span>
@@ -1423,7 +1488,7 @@
 				</aside>
 
 				{#if selectedTable}
-					<section class="schema-detail-panel" aria-label="Selected table details">
+					<section class="schema-detail-panel" bind:this={schemaDetailPanelElement} aria-label="Selected table details">
 						<div class="schema-detail-hero">
 							<div class="schema-detail-hero-copy">
 								<p class="schema-kicker">Selected table</p>

@@ -41,6 +41,12 @@ const ROUTE_SEO = {
 		keywords: "Civilization V modding links, Civ 5 Discord, Civ modding resources, community hubs",
 		pageType: "CollectionPage",
 	},
+	"/map-viewer": {
+		title: "Civ V Map Viewer and Community Map Browser | Civ Modding Central",
+		description: "Browse Civilization V maps with an interactive map viewer for community scenarios, tile inspection, regional context, and shared map exploration.",
+		keywords: "Civilization V map viewer, Civ 5 community maps, Civ 5 map browser, scenario maps, tile inspection",
+		pageType: "CollectionPage",
+	},
 	"/pattern-library": {
 		title: "Pattern Library for Civ V Modding Workflows | Civ Modding Central",
 		description: "Browse our Pattern Library for curated code examples covering the most common tasks and implementations.",
@@ -54,10 +60,9 @@ const ROUTE_SEO = {
 		pageType: "CollectionPage",
 	},
 	"/guided-planner": {
-		title: "Guided Planner for Civilization V Civ Mods | Civ Modding Central",
-		description:
-			"Plan a full Civilization V civ mod with a step-by-step guide for code, art, world support, text, packaging, and release follow-up using links into Civ Modding Central's tools and references.",
-		keywords: "Civilization V guided planner, Civ 5 civ mod checklist, civ mod planner, Civ 5 mod workflow, Civilization V mod release planning",
+		title: "Guided Planner for Civilization V Civ Mods and Release Workflow | Civ Modding Central",
+		description: "Build a full Civilization V civ mod like a campaign instead of a flat checklist, with grouped lanes for design, gameplay, art, text, packaging, and workshop release.",
+		keywords: "Civilization V guided planner, Civ 5 civ mod checklist, civ mod planner, Civ 5 mod workflow, Civilization V mod release planning, civ mod campaign workflow",
 		pageType: "CollectionPage",
 	},
 	"/schema-browser": {
@@ -68,7 +73,7 @@ const ROUTE_SEO = {
 	},
 	"/lua-api-explorer": {
 		title: "Civ V Lua API Explorer and GameEvents Reference | Civ Modding Central",
-		description: "Search throuahl all the Lua methods and GameEvents with parameter lists, examples, and known gotchas",
+		description: "Search through Civilization V Lua methods and GameEvents with parameter lists, examples, schema touchpoints, and known gotchas.",
 		keywords: "Civilization V Lua API explorer, Civ 5 GameEvents, Civ 5 Lua methods, Player API, City API",
 		pageType: "CollectionPage",
 	},

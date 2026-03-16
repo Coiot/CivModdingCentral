@@ -1,6 +1,6 @@
 name: Civ Modding Central
 url: https://civmoddingcentral.dev/
-summary: Interactive Civilization map viewer with community pins and notes.
+summary: Civilization V modding workspace with guided planning, generators, schema and Lua references, art helpers, packaging tools, and publishing support.
 llms: https://civmoddingcentral.dev/llms.txt
 sitemap: https://civmoddingcentral.dev/sitemap.xml
 robots: https://civmoddingcentral.dev/robots.txt

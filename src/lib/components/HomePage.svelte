@@ -372,7 +372,7 @@
 		<div class="hero-copy">
 			<p class="eyebrow">New to Civilization V Modding? Start Here</p>
 			<h1>Learn how to build Civilization V mods with a smooth on-ramp, custom tooling, and fewer dead ends.</h1>
-			<p>Civ Modding Central will reduce the early doubts and chaos. From first draft to final release.</p>
+			<p>Civ Modding Central makes it easy to go from first draft to final release.</p>
 		</div>
 	</header>
 
@@ -385,7 +385,7 @@
 		</div>
 
 		<div class="onramp-grid">
-			<a class="onramp-card is-generator" href="/template-generators">
+			<a class="onramp-card is-generator" href="/template-generators" target="_blank" rel="noopener noreferrer">
 				<span class="onramp-kicker">Step 1</span>
 				<h3 class="card-title">Civilization Starter</h3>
 				<p class="card-copy">Copying an existing civ can be scary touching what you don't understand, this starter makes it safe and easy.</p>
@@ -396,7 +396,7 @@
 				</ul>
 			</a>
 
-			<a class="onramp-card is-path" href="/guided-planner">
+			<a class="onramp-card is-path" href="/guided-planner" target="_blank" rel="noopener noreferrer">
 				<span class="onramp-kicker">Step 2</span>
 				<h3 class="card-title">Guided Planner</h3>
 				<p class="card-copy">See the full civ workload laid out in manageable chunks, weighted priority, dependencies, progress tracking, and linked supporting learning resources.</p>
@@ -420,7 +420,7 @@
 
 		<div class="curated-grid">
 			{#each selectedCuratedEntries as entry (entry.id)}
-				<a class={["curated-card", curatedAccentClass(entry)]} href={entry.href}>
+				<a class={["curated-card", curatedAccentClass(entry)]} href={entry.href} target="_blank" rel="noopener noreferrer">
 					<div class="curated-card-head">
 						<span class="surface-badge">{entry.kicker}</span>
 					</div>
@@ -495,15 +495,15 @@
 			</article>
 
 			<div class="workshop-support-grid">
-				<a class="support-link-card is-publish" href="/modinfo-builder">
+				<a class="support-link-card is-publish" href="/modinfo-builder" target="_blank" rel="noopener noreferrer">
 					<h3 class="card-title">.modinfo Builder</h3>
 					<p class="card-copy">Get the mod manifest clean and auto filled with the correct settings. No repeated clicks or frustrating setup errors.</p>
 				</a>
-				<a class="support-link-card is-publish" href="/civ5mod-ziper">
+				<a class="support-link-card is-publish" href="/civ5mod-ziper" target="_blank" rel="noopener noreferrer">
 					<h3 class="card-title">.civ5mod Ziper</h3>
 					<p class="card-copy">Package a proper Civ V archive in the proper format for distribution before the upload handoff.</p>
 				</a>
-				<a class="support-link-card is-tool" href="/community-links">
+				<a class="support-link-card is-tool" href="/community-links" target="_blank" rel="noopener noreferrer">
 					<h3 class="card-title">Community Links</h3>
 					<p class="card-copy">Useful when you need release help or sharing your mod with the community.</p>
 				</a>

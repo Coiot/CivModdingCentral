@@ -1,12 +1,18 @@
 # Civ Modding Central
 
-> Civilization V modding tools, with the cross-platform CMC Workshop Uploader and companion web utilities.
+> Civilization V modding workspace with guided planning, generators, references, art tools, packaging helpers, and publishing support.
 
-Civ Modding Central provides the standalone CMC Workshop Uploader for Windows, macOS, and Linux plus web tools for working with Civilization V mod files, textures, archives, and map data.
+Civ Modding Central provides guided planning, template generators, a pattern library, schema and Lua references, art helpers, packaging tools, community resources, and the standalone CMC Workshop Uploader for Windows, macOS, and Linux.
 
 ## Main pages
 
-- Home / Workshop Uploader landing page: https://civmoddingcentral.dev/
+- Home: https://civmoddingcentral.dev/
+- Guided Planner: https://civmoddingcentral.dev/guided-planner
+- Template Generators: https://civmoddingcentral.dev/template-generators
+- Pattern Library: https://civmoddingcentral.dev/pattern-library
+- Schema Browser: https://civmoddingcentral.dev/schema-browser
+- Lua API Explorer: https://civmoddingcentral.dev/lua-api-explorer
+- Civ Icon Maker: https://civmoddingcentral.dev/civ-icon-maker
 - CMC Workshop Uploader: https://civmoddingcentral.dev/workshop-uploader
 - DDS Converter: https://civmoddingcentral.dev/dds-converter
 - .modinfo Builder: https://civmoddingcentral.dev/modinfo-builder
@@ -16,16 +22,22 @@ Civ Modding Central provides the standalone CMC Workshop Uploader for Windows, m
 
 ## What the site offers
 
+- Guided civ-mod planning from concept through release
+- Template generators for common Civ V content scaffolds
+- Pattern recipes for repeatable data and Lua implementation work
+- Searchable schema tables, columns, row data, and Lua/GameEvents references
+- Civ icon and DDS tooling for UI and art pipelines
 - Desktop upload and update guidance for the standalone cross-platform CMC Workshop Uploader app
-- Interactive Civilization V map viewing and community map exploration
 - DDS conversion for Civ V UI, icon, unit, and terrain textures
 - `.modinfo` file generation and editing, including MD5 handling
 - `.civ5mod` browser-side packaging for Civilization V mods
+- Interactive Civilization V map viewing and community map exploration
 - Curated links to Civ V modding communities and references
 
 ## Audience
 
 - Civilization V modders
+- First-time civ creators who need guided workflows and reference links
 - Civ V scenario and map creators
 - Workshop maintainers publishing and updating Steam items
 - Modders working across Windows, macOS, and Linux
