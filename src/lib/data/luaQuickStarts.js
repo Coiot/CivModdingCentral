@@ -71,7 +71,7 @@ if player:IsHuman() and plot then
 end`,
 	},
 	"methods:GetActivePlayer": {
-		summary: "Only show UI-facing feedback when the local player is the one who triggered the unique effect.",
+		summary: "Only show UI facing feedback when the local player is the one who triggered the unique effect.",
 		code: `local activePlayerID = Game.GetActivePlayer()
 
 if activePlayerID ~= ePlayer then
@@ -101,7 +101,7 @@ if not player:IsAlive() then
 \treturn
 end
 
--- Safe place to start a turn-based unique after early-game setup settles.`,
+-- Safe place to start a turn based function after early-game setup settles.`,
 	},
 	"methods:GetCapitalCity": {
 		summary: "Resolve the capital when a trait or policy branch should apply a dummy building to one city only.",
@@ -139,7 +139,7 @@ if ownerID < 0 then
 end
 
 local owner = Players[ownerID]
--- Apply your tile-based unique only to the actual owner.`,
+-- Apply your tile based unique only to the actual owner.`,
 	},
 	"methods:GetNumBuilding": {
 		summary: "Check whether a city already has the hidden marker building that powers a unique effect.",
@@ -159,7 +159,7 @@ local shouldEnable = city:IsHasBuilding(GameInfoTypes.BUILDING_WALLS)
 city:SetNumRealBuilding(dummyBuildingID, shouldEnable and 1 or 0)`,
 	},
 	"methods:GetReligiousMajority": {
-		summary: "Refresh a city-only bonus when the city follows your target religion.",
+		summary: "Refresh a city only bonus when the city follows your target religion.",
 		code: `local religionID = city:GetReligiousMajority()
 local dummyBuildingID = GameInfoTypes.BUILDING_DUMMY_PILGRIM_HOSTEL
 local requiredReligionID = GameInfoTypes.RELIGION_ORTHODOXY
@@ -188,7 +188,7 @@ end
 player:InitUnit(unitTypeID, city:GetX(), city:GetY())`,
 	},
 	"methods:CanAirliftAt": {
-		summary: "Check whether a city pair qualifies before scripting a free redeploy effect for an airport-style unique.",
+		summary: "Check whether a city pair qualifies before scripting a free redeploy effect for an airport style unique.",
 		code: `local fromCity = player:GetCityByID(iOriginCity)
 local toCity = player:GetCityByID(iDestinationCity)
 
@@ -257,7 +257,7 @@ end
 plot:SetResourceType(GameInfoTypes.RESOURCE_HORSE, 1)`,
 	},
 	"methods:PlotDistance": {
-		summary: "Keep a city or tile-based effect within a controlled radius of the capital or holy city.",
+		summary: "Keep a city or tile based effect within a controlled radius of the capital or holy city.",
 		code: `local capital = player:GetCapitalCity()
 if not capital then
 \treturn
@@ -363,7 +363,7 @@ end)`,
 end)`,
 	},
 	"game-events:CityCaptureComplete": {
-		summary: "Clean up or reapply Lua-driven city effects when control changes hands.",
+		summary: "Clean up or reapply Lua driven city effects when control changes hands.",
 		code: `GameEvents.CityCaptureComplete.Add(function(iOldOwner, bIsCapital, iX, iY, iNewOwner)
 \tlocal plot = Map.GetPlot(iX, iY)
 \tlocal city = plot and plot:GetPlotCity()
@@ -398,7 +398,7 @@ end)`,
 end)`,
 	},
 	"game-events:CityConvertsReligion": {
-		summary: "Update a religion-sensitive unique effect immediately when a city changes majority religion.",
+		summary: "Update a religion sensitive unique effect immediately when a city changes majority religion.",
 		code: `GameEvents.CityConvertsReligion.Add(function(ePlayer, iCity, eReligion)
 \tlocal city = Players[ePlayer]:GetCityByID(iCity)
 \tif not city then
@@ -443,7 +443,7 @@ end)`,
 end)`,
 	},
 	"game-events:UnitPromoted": {
-		summary: "Grant a chained reward or side-effect the moment a unit earns a promotion.",
+		summary: "Grant a chained reward or side effect the moment a unit earns a promotion.",
 		code: `GameEvents.UnitPromoted.Add(function(ePlayer, iUnit, ePromotion)
 \tif ePromotion ~= GameInfoTypes.PROMOTION_DRILL_1 then
 \t\treturn
@@ -465,7 +465,7 @@ end)`,
 end)`,
 	},
 	"game-events:UnitSetXY": {
-		summary: "Check tile entry triggers for border, terrain, or region-based unique effects.",
+		summary: "Check tile entry triggers for border, terrain, or region based unique effects.",
 		code: `GameEvents.UnitSetXY.Add(function(ePlayer, iUnit, iX, iY)
 \tlocal player = Players[ePlayer]
 \tlocal unit = player:GetUnitByID(iUnit)
@@ -528,7 +528,7 @@ end)`,
 end)`,
 	},
 	"game-events:TeamSetHasTech": {
-		summary: "Refresh tech-driven effects even when the tech is granted outside normal research flow.",
+		summary: "Refresh tech driven effects even when the tech is granted outside normal research flow.",
 		code: `GameEvents.TeamSetHasTech.Add(function(eTeam, eTech, bAdopted)
 \tif not bAdopted or eTech ~= GameInfoTypes.TECH_NAVIGATION then
 \t\treturn
@@ -590,7 +590,7 @@ end)`,
 end)`,
 	},
 	"game-events:MakePeace": {
-		summary: "Clear temporary war-only effects when peace is signed.",
+		summary: "Clear temporary war only effects when peace is signed.",
 		code: `GameEvents.MakePeace.Add(function(eTeam, eOtherTeam)
 \tfor ePlayer = 0, GameDefines.MAX_MAJOR_CIVS - 1 do
 \t\tlocal player = Players[ePlayer]
@@ -603,7 +603,7 @@ end)`,
 end)`,
 	},
 	"game-events:GreatPersonExpended": {
-		summary: "Pay out a civ-specific reward when a Great Person is consumed.",
+		summary: "Pay out a civ specific reward when a Great Person is consumed.",
 		code: `GameEvents.GreatPersonExpended.Add(function(ePlayer, eUnit, iUnitX, iUnitY)
 \tif eUnit ~= GameInfoTypes.UNIT_GREAT_ENGINEER then
 \t\treturn
