@@ -280,6 +280,21 @@
 				tableName: "Buildings",
 				techField: "PrereqTech",
 				techValue: tech.Type,
+				filter: (row) => Number(row.MaxGlobalInstances || 0) <= 0 && !row.WonderSplashImage,
+				buildItem: (row) => ({
+					label: resolveDisplayName(row, "Type"),
+					rawType: row.Type,
+					detail: summarizeBuilding(row),
+					href: schemaRowHref("Buildings", row.Type),
+				}),
+			}),
+			buildEntityGroup({
+				id: "world-wonders",
+				label: "Wonders",
+				tableName: "Buildings",
+				techField: "PrereqTech",
+				techValue: tech.Type,
+				filter: (row) => Number(row.MaxGlobalInstances || 0) > 0 || Boolean(row.WonderSplashImage),
 				buildItem: (row) => ({
 					label: resolveDisplayName(row, "Type"),
 					rawType: row.Type,
@@ -624,6 +639,8 @@
 		return String(value || "")
 			.replace(/\[NEWLINE\]/g, " ")
 			.replace(/\[LINK=[^\]]+\]/gi, "")
+			.replace(/\[\/LINK\]/gi, "")
+			.replace(/\[\\LINK\]/gi, "")
 			.replace(/\[LINK\]/gi, "")
 			.replace(/\[[A-Z0-9_]+\]/g, "")
 			.replace(/\s+/g, " ")
@@ -795,13 +812,12 @@
 			<section class="era-panel panel-surface" id={era.eraType} aria-labelledby={`${era.eraType}-heading`}>
 				<header class="era-header">
 					<div class="era-heading">
-						<p class="eyebrow">Era</p>
 						<h2 id={`${era.eraType}-heading`}>{era.eraLabel}</h2>
 						<p>
 							{era.techs.length} techs · {numberFormatter.format(era.costMin)}-{numberFormatter.format(era.costMax)} science · {numberFormatter.format(era.unlockCount)} unlocks
 						</p>
 					</div>
-					<div class="era-key"><span>Cols {era.gridColumns}</span><span>Rows {era.gridRows}</span></div>
+					<!-- <div class="era-key"><span>Cols {era.gridColumns}</span><span>Rows {era.gridRows}</span></div> -->
 				</header>
 
 				<div class="era-grid-wrap" style={`--grid-columns:${era.gridColumns}; --grid-rows:${era.gridRows};`}>
@@ -819,21 +835,16 @@
 								<header class="tech-head">
 									<div class="tech-title">
 										<h3>{tech.title}</h3>
-										<div class="tech-meta"><span>{numberFormatter.format(tech.cost)}</span><span>G {tech.gridX},{tech.gridY}</span></div>
+										<!-- <div class="tech-meta"><span>{numberFormatter.format(tech.cost)}</span><span>G {tech.gridX},{tech.gridY}</span></div> -->
 									</div>
 									<a class="schema-link" href={tech.schemaHref} target="_blank" rel="noopener noreferrer">Schema</a>
 								</header>
 
 								<div class="tech-prereqs">
 									{#if tech.prereqs.length}
+										<span class="text-sm">Prereqs:</span>
 										{#each tech.prereqs as prereq (prereq.type)}
-											<a
-												class:current-era={tech.sameEraPrereqs.some((entry) => entry.type === prereq.type)}
-												class="mini-pill"
-												href={`/tech-tree-viewer#${prereq.type}`}
-												target="_blank"
-												rel="noopener noreferrer"
-											>
+											<a class:current-era={tech.sameEraPrereqs.some((entry) => entry.type === prereq.type)} class="mini-pill" href={`/tech-tree-viewer#${prereq.type}`}>
 												{prereq.label}
 											</a>
 										{/each}
@@ -887,14 +898,18 @@
 								{#if tech.help || tech.description || tech.priorEraPrereqs.length || tech.orPrereqs.length}
 									<details class="tech-details">
 										<summary>More</summary>
-										{#if tech.priorEraPrereqs.length}<div class="detail-row">
-												<strong>Earlier era prereqs</strong><span>{tech.priorEraPrereqs.map((prereq) => prereq.label).join(", ")}</span>
-											</div>{/if}
-										{#if tech.orPrereqs.length}<div class="detail-row"><strong>OR prereqs</strong><span>{tech.orPrereqs.map((prereq) => prereq.label).join(", ")}</span></div>{/if}
-										{#if tech.help}<div class="detail-row"><strong>Help</strong><span>{tech.help}</span></div>{/if}
-										{#if tech.description && tech.description !== tech.title}<div class="detail-row"><strong>Description</strong><span>{tech.description}</span></div>{/if}
-										<div class="detail-row"><strong>Type</strong><code>{tech.type}</code></div>
-										{#if tech.descriptionKey}<div class="detail-row"><strong>Text key</strong><code>{tech.descriptionKey}</code></div>{/if}
+										<div class="stack half">
+											{#if tech.priorEraPrereqs.length}<div class="detail-row">
+													<strong>Earlier era prereqs</strong><span>{tech.priorEraPrereqs.map((prereq) => prereq.label).join(", ")}</span>
+												</div>{/if}
+											{#if tech.orPrereqs.length}<div class="detail-row">
+													<strong>OR prereqs</strong><span>{tech.orPrereqs.map((prereq) => prereq.label).join(", ")}</span>
+												</div>{/if}
+											{#if tech.help}<div class="detail-row"><strong>Help</strong><span>{tech.help}</span></div>{/if}
+											{#if tech.description && tech.description !== tech.title}<div class="detail-row"><strong>Description</strong><span>{tech.description}</span></div>{/if}
+											<div class="detail-row"><strong>Type</strong><code>{tech.type}</code></div>
+											{#if tech.descriptionKey}<div class="detail-row"><strong>Text key</strong><code>{tech.descriptionKey}</code></div>{/if}
+										</div>
 									</details>
 								{/if}
 							</article>
@@ -918,8 +933,7 @@
 		gap: 0.45rem;
 	}
 
-	.panel-surface,
-	.tech-card {
+	.panel-surface {
 		border-radius: 0.85rem;
 		border: 1px solid color-mix(in oklch, var(--surface-tool-border) 72%, var(--panel-border));
 		background: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent) 8%, transparent) 0%, transparent 30%), color-mix(in oklch, var(--surface-tool-panel) 72%, var(--panel-bg) 28%);
@@ -938,7 +952,7 @@
 
 	.viewer-toolbar,
 	.era-panel {
-		padding: 0.7rem;
+		padding: 1.25rem 1rem;
 	}
 
 	.viewer-toolbar {
@@ -982,6 +996,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.35rem;
+		margin-block-start: 0.25rem;
 	}
 
 	.chip-group button,
@@ -1020,11 +1035,14 @@
 	}
 
 	.era-stack.horizontal {
+		max-inline-size: calc(100vw - 4rem);
 		grid-auto-flow: column;
 		grid-auto-columns: max-content;
 		overflow-x: auto;
-		overflow-y: hidden;
+		overflow-y: clip;
 		align-items: start;
+		/*border-inline-end: 1px solid color-mix(in oklch, var(--surface-tool-border) 72%, var(--panel-border));*/
+		border-radius: 0.85rem;
 		padding-block-end: 0.2rem;
 		scroll-snap-type: x proximity;
 	}
@@ -1059,13 +1077,14 @@
 
 	.era-heading h2,
 	.tech-title h3 {
-		margin: 0;
+		font-size: 2rem;
 		font-family: "Rockwell", "Palatino Linotype", serif;
+		text-box: trim-both cap alphabetic;
 	}
 
 	.era-heading {
 		display: grid;
-		gap: 0.25rem;
+		gap: 0.5rem;
 	}
 
 	.era-key {
@@ -1112,51 +1131,56 @@
 	}
 
 	.tech-card {
-		display: grid;
-		gap: 0.4rem;
-		padding: 0.5rem;
+		--surface-border: var(--surface-schema-border);
+		--surface-highlight: var(--surface-schema-highlight);
+		--surface-highlight-strong: var(--surface-schema-highlight-strong);
+		--surface-panel: var(--surface-schema-panel);
+
 		min-inline-size: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		border: 1px solid color-mix(in oklch, var(--surface-border) 80%, var(--panel-border));
+		border-radius: 0.85rem;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 10%, transparent) 0%, transparent 35%), color-mix(in oklch, var(--surface-panel) 90%, var(--panel-bg) 20%);
+		padding: 1.25rem 1rem;
 	}
 
 	.tech-head {
 		display: flex;
 		justify-content: space-between;
-		gap: 0.4rem;
-		align-items: start;
+		gap: 0.5rem;
+		align-items: center;
 	}
 
 	.tech-title {
 		display: grid;
-		gap: 0.18rem;
+		gap: 0.25rem;
 		min-inline-size: 0;
 	}
 
 	.tech-title h3 {
-		font-size: 0.9rem;
+		font-size: 1.25rem;
 		line-height: 1.05;
 		text-wrap: balance;
 	}
 
-	.tech-meta {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.28rem;
-		font-size: 0.66rem;
-	}
-
 	.schema-link {
-		font-size: 0.66rem;
+		color: var(--surface-highlight-strong);
+		font-size: 0.85rem;
 		text-decoration: none;
-		color: var(--accent-soft);
+		text-box: trim-both cap alphabetic;
 	}
 
 	.mini-pill {
-		padding: 0.2rem 0.44rem;
+		text-box: trim-both cap alphabetic;
+		padding: 0.35rem 0.5rem 0.5rem;
 	}
 
 	.mini-pill.current-era {
-		border-color: color-mix(in oklch, var(--accent) 70%, var(--surface-tool-border));
-		background: color-mix(in oklch, var(--accent) 16%, var(--control-bg));
+		border-color: color-mix(in oklch, var(--surface-highlight) 95%, var(--surface-tool-border));
+		background: color-mix(in oklch, var(--surface-panel) 70%, var(--control-bg));
 	}
 
 	.mini-pill.muted {
@@ -1166,13 +1190,13 @@
 	.dense-line,
 	.detail-row {
 		display: grid;
-		gap: 0.12rem;
+		gap: 0.15rem;
 	}
 
 	.dense-line strong,
 	.dense-group strong,
 	.detail-row strong {
-		font-size: 0.67rem;
+		font-size: 0.8rem;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--ink);
@@ -1181,23 +1205,26 @@
 	.dense-line span,
 	.dense-group span,
 	.detail-row span {
-		font-size: 0.7rem;
+		font-size: 0.8rem;
 		line-height: 1.24;
 	}
 
 	.group-preview-grid {
 		display: grid;
-		gap: 0.32rem;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.5rem;
+		grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
 	}
 
 	.dense-group {
-		display: grid;
-		gap: 0.12rem;
-		padding: 0.34rem 0.4rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: 0.75rem;
 		border-radius: 0.6rem;
-		background: color-mix(in oklch, var(--control-bg) 76%, var(--panel-bg) 24%);
-		border: 1px solid color-mix(in oklch, var(--surface-tool-border) 40%, var(--panel-border));
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--surface-highlight)) 10%, transparent) 0%, transparent 34%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--control-bg)) 88%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 88%, #16110f 12%) 100%);
+		border: 1px solid color-mix(in srgb, var(--surface-highlight, var(--surface-border, var(--surface-highlight))) 44%, var(--surface-border, var(--home-muted-border)));
 		min-inline-size: 0;
 	}
 
@@ -1207,8 +1234,13 @@
 
 	.dense-group a {
 		color: var(--ink);
+		font-size: 1rem;
 		text-decoration: none;
 		overflow-wrap: anywhere;
+
+		&:hover {
+			color: var(--accent-soft);
+		}
 	}
 
 	.tech-details {
@@ -1217,21 +1249,22 @@
 	}
 
 	.tech-details summary {
-		cursor: pointer;
-		font-size: 0.72rem;
 		color: var(--accent-soft);
+		font-size: 0.85rem;
+		font-weight: 600;
+		cursor: pointer;
 	}
 
 	.tech-details[open] {
 		display: grid;
-		gap: 0.35rem;
+		gap: 0.5rem;
 	}
 
 	.tech-details code,
 	.detail-row code {
-		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-		font-size: 0.68rem;
 		color: var(--ink);
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.75rem;
 		overflow-wrap: anywhere;
 	}
 

@@ -50,20 +50,23 @@ async function collectXmlFiles(rootDir) {
 
 function extractRows(content) {
 	const rows = [];
-	const rowRegex = /<Row\b[^>]*\bTag="([^"]+)"[^>]*>([\s\S]*?)<\/Row>/g;
-	for (const match of content.matchAll(rowRegex)) {
-		const [, tag, body] = match;
-		const textMatch = body.match(/<Text>([\s\S]*?)<\/Text>/);
-		if (!textMatch) {
-			continue;
+	const languageBlocks = [...content.matchAll(/<Language_en_US\b[^>]*>([\s\S]*?)<\/Language_en_US>/gi)];
+	for (const [, block] of languageBlocks) {
+		const rowRegex = /<Row\b[^>]*\bTag="([^"]+)"[^>]*>([\s\S]*?)<\/Row>/g;
+		for (const match of block.matchAll(rowRegex)) {
+			const [, tag, body] = match;
+			const textMatch = body.match(/<Text>([\s\S]*?)<\/Text>/);
+			if (!textMatch) {
+				continue;
+			}
+			rows.push([tag, cleanText(textMatch[1])]);
 		}
-		rows.push([tag, cleanText(textMatch[1])]);
-	}
 
-	const inlineRowRegex = /<Row\b[^>]*\bTag="([^"]+)"[^>]*\bText="([^"]*)"[^>]*\/>/g;
-	for (const match of content.matchAll(inlineRowRegex)) {
-		const [, tag, text] = match;
-		rows.push([tag, cleanText(text)]);
+		const inlineRowRegex = /<Row\b[^>]*\bTag="([^"]+)"[^>]*\bText="([^"]*)"[^>]*\/>/g;
+		for (const match of block.matchAll(inlineRowRegex)) {
+			const [, tag, text] = match;
+			rows.push([tag, cleanText(text)]);
+		}
 	}
 
 	return rows;
