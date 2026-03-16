@@ -162,7 +162,7 @@ city:SetNumRealBuilding(dummyBuildingID, shouldEnable and 1 or 0)`,
 		summary: "Refresh a city only bonus when the city follows your target religion.",
 		code: `local religionID = city:GetReligiousMajority()
 local dummyBuildingID = GameInfoTypes.BUILDING_DUMMY_PILGRIM_HOSTEL
-local requiredReligionID = GameInfoTypes.RELIGION_ORTHODOXY
+local requiredReligionID = GameInfoTypes.RELIGION_BUDDHISM
 
 city:SetNumRealBuilding(dummyBuildingID, religionID == requiredReligionID and 1 or 0)`,
 	},
@@ -405,7 +405,7 @@ end)`,
 \t\treturn
 \tend
 
-\tcity:SetNumRealBuilding(GameInfoTypes.BUILDING_DUMMY_STATE_RELIGION, eReligion == GameInfoTypes.RELIGION_PROTESTANTISM and 1 or 0)
+\tcity:SetNumRealBuilding(GameInfoTypes.BUILDING_DUMMY_STATE_RELIGION, eReligion == GameInfoTypes.RELIGION_BUDDHISM and 1 or 0)
 end)`,
 	},
 	"game-events:ReligionFounded": {

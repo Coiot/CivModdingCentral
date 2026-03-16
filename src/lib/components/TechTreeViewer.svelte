@@ -15,8 +15,8 @@
 	const TECH_ROW_BY_TYPE = new Map(TECHNOLOGY_ROWS.map((row) => [row.Type, row]));
 	const ERA_BY_TYPE = new Map(ERA_ROWS.map((row, index) => [row.Type, { ...row, index }]));
 	const DISPLAY_LIMITS = {
-		effects: 4,
-		previewItems: 5,
+		effects: 5,
+		previewItems: 10,
 	};
 	const searchableCategoryFields = ["label", "detail", "rawType"];
 	const SUPPORT_EFFECT_DEFS = [
@@ -48,8 +48,7 @@
 
 	let searchQuery = $state("");
 	let selectedEra = $state("all");
-	let showSupport = $state(true);
-	let showConnectors = $state(true);
+	let eraFlow = $state("horizontal");
 
 	const TECH_GRAPH = buildTechGraph();
 	const ERA_GROUPS = buildEraGroups(TECH_GRAPH);
@@ -65,7 +64,7 @@
 		return eraScoped.filter((tech) => matchesTechSearch(tech, normalizedSearch));
 	});
 	const visibleTechTypes = $derived.by(() => filteredTechs.map((tech) => tech.type));
-	const visibleEraGroups = $derived.by(() => ERA_GROUPS.map((era) => buildVisibleEra(era, visibleTechTypes, showSupport)).filter((era) => era.techs.length));
+	const visibleEraGroups = $derived.by(() => ERA_GROUPS.map((era) => buildVisibleEra(era, visibleTechTypes)).filter((era) => era.techs.length));
 
 	onMount(() => {
 		if (typeof window === "undefined") {
@@ -191,7 +190,7 @@
 			}));
 	}
 
-	function buildVisibleEra(era, visibleTypes, supportVisible) {
+	function buildVisibleEra(era, visibleTypes) {
 		const techs = era.techs.filter((tech) => visibleTypes.includes(tech.type));
 		if (!techs.length) {
 			return { ...era, techs: [], connectors: [] };
@@ -205,16 +204,14 @@
 		const placedTechs = techs.map((tech) => {
 			const sameEraPrereqs = tech.prereqs.filter((prereq) => techByType.has(prereq.type));
 			const priorEraPrereqs = tech.prereqs.filter((prereq) => !techByType.has(prereq.type));
-			const visibleSupportGroups = supportVisible ? tech.supportGroups.filter((group) => group.items.length) : [];
 			return {
 				...tech,
 				columnIndex: columnIndexByGridX.get(tech.gridX) || 1,
 				rowIndex: rowIndexByGridY.get(tech.gridY) || 1,
 				sameEraPrereqs,
 				priorEraPrereqs,
-				visibleSupportGroups,
 				unlockPreview: buildGroupPreview(tech.unlockGroups),
-				supportPreview: buildGroupPreview(visibleSupportGroups),
+				supportPreview: buildGroupPreview(tech.supportGroups.filter((group) => group.items.length)),
 				effectPreview: buildEffectPreview(tech.notableEffects),
 			};
 		});
@@ -464,18 +461,18 @@
 					href: schemaRowHref("UnitPromotions", row.PromotionType),
 				}),
 			}),
-			buildDeltaGroup({
-				id: "free-tech-civs",
-				label: "Start civs",
-				rows: TABLE_BY_NAME.get("Civilization_FreeTechs")?.rows || [],
-				techValue: tech.Type,
-				buildItem: (row) => ({
-					label: formatIdentifier(row.CivilizationType, ["CIVILIZATION_"]),
-					rawType: row.CivilizationType,
-					detail: "Starts with tech",
-					href: schemaRowHref("Civilization_FreeTechs", row.CivilizationType),
-				}),
-			}),
+			// buildDeltaGroup({
+			// 	id: "free-tech-civs",
+			// 	label: "Start civs",
+			// 	rows: TABLE_BY_NAME.get("Civilization_FreeTechs")?.rows || [],
+			// 	techValue: tech.Type,
+			// 	buildItem: (row) => ({
+			// 		label: formatIdentifier(row.CivilizationType, ["CIVILIZATION_"]),
+			// 		rawType: row.CivilizationType,
+			// 		detail: " Starts with tech",
+			// 		href: schemaRowHref("Civilization_FreeTechs", row.CivilizationType),
+			// 	}),
+			// }),
 			buildDeltaGroup({
 				id: "disabled-civs",
 				label: "Disabled civs",
@@ -626,6 +623,8 @@
 	function cleanLocalizedText(value) {
 		return String(value || "")
 			.replace(/\[NEWLINE\]/g, " ")
+			.replace(/\[LINK=[^\]]+\]/gi, "")
+			.replace(/\[LINK\]/gi, "")
 			.replace(/\[[A-Z0-9_]+\]/g, "")
 			.replace(/\s+/g, " ")
 			.trim();
@@ -761,16 +760,16 @@
 		<h1>Tech Tree Viewer</h1>
 		<p>Compact era-separated view of tech placement, prerequisites, unlocks, reveals, and secondary tech effects.</p>
 	</div>
-
-	<div class="hero-stats" aria-label="Tech tree summary">
-		<div class="stat-card"><strong>{numberFormatter.format(TECH_GRAPH.length)}</strong><span>Techs</span></div>
-		<div class="stat-card"><strong>{numberFormatter.format(totalUnlockEntries)}</strong><span>Unlock entries</span></div>
-		<div class="stat-card"><strong>{numberFormatter.format(totalSupportEntries)}</strong><span>Support entries</span></div>
-		<div class="stat-card"><strong>{HAS_LOCALIZATION_SOURCE ? "Live" : "Fallback"}</strong><span>{HAS_LOCALIZATION_SOURCE ? "Localization" : "Text formatting"}</span></div>
-	</div>
 </section>
 
 <section class="viewer-toolbar panel-surface margin-block-end" aria-label="Viewer controls">
+	<p class="toolbar-copy">Visual Flow</p>
+
+	<div class="toggle-row" role="list" aria-label="Era layout">
+		<button class:selected={eraFlow === "vertical"} type="button" onclick={() => (eraFlow = "vertical")}>Vertical</button>
+		<button class:selected={eraFlow === "horizontal"} type="button" onclick={() => (eraFlow = "horizontal")}>Horizontal</button>
+	</div>
+
 	<label class="search-field">
 		<span>Search</span>
 		<input bind:value={searchQuery} type="search" placeholder="archery, farm, congress, longswordsman, reveal, ocean..." />
@@ -783,26 +782,15 @@
 				<button class:selected={selectedEra === era.eraType} type="button" onclick={() => (selectedEra = era.eraType)}>{era.eraLabel}</button>
 			{/each}
 		</div>
-
-		<div class="toggle-row">
-			<label><input bind:checked={showSupport} type="checkbox" /> Support</label>
-			<label><input bind:checked={showConnectors} type="checkbox" /> Connectors</label>
-		</div>
 	</div>
 
 	<p class="toolbar-copy">Showing {numberFormatter.format(filteredTechs.length)} techs across {visibleEraGroups.length} era blocks.</p>
 </section>
 
-<nav class="era-jump panel-surface margin-block-end" aria-label="Era quick jump">
-	{#each visibleEraGroups as era (era.eraType)}
-		<a href={`/tech-tree-viewer#${era.eraType}`} target="_blank" rel="noopener noreferrer">{era.eraLabel} <small>{era.techs.length}</small></a>
-	{/each}
-</nav>
-
 {#if !filteredTechs.length}
 	<p class="status">No technologies matched that search.</p>
 {:else}
-	<div class="era-stack">
+	<div class:horizontal={eraFlow === "horizontal"} class="era-stack">
 		{#each visibleEraGroups as era (era.eraType)}
 			<section class="era-panel panel-surface" id={era.eraType} aria-labelledby={`${era.eraType}-heading`}>
 				<header class="era-header">
@@ -810,15 +798,14 @@
 						<p class="eyebrow">Era</p>
 						<h2 id={`${era.eraType}-heading`}>{era.eraLabel}</h2>
 						<p>
-							{era.techs.length} techs · {numberFormatter.format(era.costMin)}-{numberFormatter.format(era.costMax)} science · {numberFormatter.format(era.unlockCount)} unlocks{#if showSupport}
-								· {numberFormatter.format(era.supportCount)} support{/if}
+							{era.techs.length} techs · {numberFormatter.format(era.costMin)}-{numberFormatter.format(era.costMax)} science · {numberFormatter.format(era.unlockCount)} unlocks
 						</p>
 					</div>
 					<div class="era-key"><span>Cols {era.gridColumns}</span><span>Rows {era.gridRows}</span></div>
 				</header>
 
 				<div class="era-grid-wrap" style={`--grid-columns:${era.gridColumns}; --grid-rows:${era.gridRows};`}>
-					{#if showConnectors && era.connectors.length}
+					{#if era.connectors.length}
 						<svg class="era-connectors" viewBox={`0 0 ${era.gridColumns * 100} ${era.gridRows * 100}`} preserveAspectRatio="none" aria-hidden="true">
 							{#each era.connectors as connector (connector.id)}
 								<path d={connector.path}></path>
@@ -880,7 +867,7 @@
 									</div>
 								{/if}
 
-								{#if showSupport && tech.supportPreview.length}
+								{#if tech.supportPreview.length}
 									<div class="group-preview-grid support-grid">
 										{#each tech.supportPreview as group (group.id)}
 											<div class="dense-group support">
@@ -926,18 +913,12 @@
 		gap: 0.6rem;
 	}
 
-	.hero-copy,
-	.hero-stats {
+	.hero-copy {
 		display: grid;
 		gap: 0.45rem;
 	}
 
-	.hero-stats {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
 	.panel-surface,
-	.stat-card,
 	.tech-card {
 		border-radius: 0.85rem;
 		border: 1px solid color-mix(in oklch, var(--surface-tool-border) 72%, var(--panel-border));
@@ -945,19 +926,6 @@
 		box-shadow: 0 14px 24px var(--shadow-soft);
 	}
 
-	.stat-card {
-		display: grid;
-		gap: 0.1rem;
-		padding: 0.7rem;
-	}
-
-	.stat-card strong {
-		font-family: "Rockwell", "Palatino Linotype", serif;
-		font-size: 1.35rem;
-		line-height: 1;
-	}
-
-	.stat-card span,
 	.toolbar-copy,
 	.era-header p,
 	.tech-meta,
@@ -969,7 +937,6 @@
 	}
 
 	.viewer-toolbar,
-	.era-jump,
 	.era-panel {
 		padding: 0.7rem;
 	}
@@ -1018,7 +985,7 @@
 	}
 
 	.chip-group button,
-	.era-jump a,
+	.toggle-row button,
 	.mini-pill {
 		border-radius: 999px;
 		border: 1px solid color-mix(in oklch, var(--surface-tool-border) 75%, var(--panel-border));
@@ -1033,7 +1000,12 @@
 		padding: 0.4rem 0.7rem;
 	}
 
-	.chip-group button.selected {
+	.toggle-row button {
+		padding: 0.4rem 0.7rem;
+	}
+
+	.chip-group button.selected,
+	.toggle-row button.selected {
 		background: color-mix(in oklch, var(--accent) 26%, var(--control-bg));
 		border-color: color-mix(in oklch, var(--accent) 66%, var(--surface-tool-border));
 	}
@@ -1042,30 +1014,40 @@
 		font-size: 0.78rem;
 	}
 
-	.era-jump {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.38rem;
-	}
-
-	.era-jump a {
-		padding: 0.42rem 0.68rem;
-	}
-
-	.era-jump small {
-		color: var(--muted-ink);
-		margin-inline-start: 0.2rem;
-	}
-
 	.era-stack {
 		display: grid;
 		gap: 0.8rem;
+	}
+
+	.era-stack.horizontal {
+		grid-auto-flow: column;
+		grid-auto-columns: max-content;
+		overflow-x: auto;
+		overflow-y: hidden;
+		align-items: start;
+		padding-block-end: 0.2rem;
+		scroll-snap-type: x proximity;
 	}
 
 	.era-panel {
 		display: grid;
 		gap: 0.6rem;
 		scroll-margin-top: 5rem;
+	}
+
+	.era-stack.horizontal .era-panel {
+		inline-size: max-content;
+		min-inline-size: 22rem;
+		scroll-snap-align: start;
+	}
+
+	.era-stack.horizontal .era-grid-wrap {
+		inline-size: max-content;
+		min-inline-size: max-content;
+	}
+
+	.era-stack.horizontal .era-grid {
+		grid-template-columns: repeat(var(--grid-columns), minmax(12rem, 25rem));
 	}
 
 	.era-header {
@@ -1226,6 +1208,7 @@
 	.dense-group a {
 		color: var(--ink);
 		text-decoration: none;
+		overflow-wrap: anywhere;
 	}
 
 	.tech-details {
@@ -1271,6 +1254,15 @@
 
 		.group-preview-grid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.era-stack.horizontal {
+			grid-auto-columns: max-content;
+		}
+
+		.era-stack.horizontal .era-panel {
+			inline-size: max-content;
+			min-inline-size: 19rem;
 		}
 	}
 

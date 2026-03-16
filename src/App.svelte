@@ -905,11 +905,12 @@
 					<span class="site-footer-label">Tested & Curated with help from</span>
 					<div class="site-footer-chip-row" aria-label="Testers">
 						<span class="site-footer-chip" style="--chip-highlight:#d8d474">TopHatPaladin</span>
-						<span class="site-footer-chip" style="--chip-highlight:#1abc9c">DarthKyofu</span>
+						<span class="site-footer-chip" style="--chip-highlight:#d47afe">NopeCopter</span>
 						<span class="site-footer-chip" style="--chip-highlight:#f1c40f">JFD</span>
 						<span class="site-footer-chip" style="--chip-highlight:#e67e23">Orange</span>
-						<span class="site-footer-chip" style="--chip-highlight:#d47afe">NopeCopter</span>
+						<span class="site-footer-chip" style="--chip-highlight:#1abc9c">DarthKyofu</span>
 						<span class="site-footer-chip" style="--chip-highlight:#d0c939">Rhoze</span>
+						<span class="site-footer-chip" style="--chip-highlight:#8ff460">ExplosiveWatermelon</span>
 					</div>
 				</div>
 			</div>
