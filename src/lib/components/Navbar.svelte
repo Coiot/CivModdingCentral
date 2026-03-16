@@ -153,7 +153,7 @@
 				{
 					href: "/civ5mod-ziper",
 					label: ".civ5mod Ziper",
-					description: "Package a mod folder into Civ V's distributable `.civ5mod` format.",
+					description: "Package a mod folder into Civ V's distributable .civ5mod format.",
 				},
 			],
 		},

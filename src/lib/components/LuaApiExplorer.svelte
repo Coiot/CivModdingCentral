@@ -2,7 +2,7 @@
 	import { onMount, tick } from "svelte";
 
 	import luaData from "../data/civ-lua-api.json";
-	import { CURATED_EVENT_NAMES, CURATED_METHOD_NAMES } from "../data/luaQuickStarts.js";
+	import { CURATED_EVENT_NAMES, CURATED_LUA_EXAMPLES, CURATED_METHOD_NAMES } from "../data/luaQuickStarts.js";
 
 	const numberFormatter = new Intl.NumberFormat("en-US");
 	const DATASET_TABS = [
@@ -518,6 +518,7 @@
 	});
 
 	function buildMethodEntry(entry) {
+		const authoredExample = CURATED_LUA_EXAMPLES[`methods:${entry.methodName}`] || null;
 		const nameTarget = [entry.family, entry.methodName, entry.callSurface].filter(Boolean).join(" ").toLowerCase();
 		const signatureTarget = [entry.displaySignature, entry.returnType, entry.callKind].filter(Boolean).join(" ").toLowerCase();
 		const parameterTarget = entry.parameters
@@ -535,9 +536,9 @@
 			heading: entry.methodName,
 			secondaryLabel: `${entry.returnType || "unknown"} return`,
 			summary: typeof entry.summary === "string" ? entry.summary.trim() : "",
-			exampleSummary: typeof entry.example?.summary === "string" ? entry.example.summary.trim() : "",
-			exampleCode: typeof entry.example?.code === "string" ? entry.example.code.trim() : "",
-			exampleLanguage: entry.example?.code ? entry.example?.language || "lua" : "",
+			exampleSummary: authoredExample?.summary || (typeof entry.example?.summary === "string" ? entry.example.summary.trim() : ""),
+			exampleCode: authoredExample?.code || (typeof entry.example?.code === "string" ? entry.example.code.trim() : ""),
+			exampleLanguage: authoredExample?.code ? authoredExample.language || "lua" : entry.example?.code ? entry.example?.language || "lua" : "",
 			notes: normalizeStringList(entry.notes),
 			gotchas: normalizeStringList(entry.gotchas),
 			relatedSchemaNotes: normalizeRelatedSchemaNotes(entry.relatedSchemaNotes),
@@ -552,6 +553,7 @@
 	}
 
 	function buildGameEventEntry(entry) {
+		const authoredExample = CURATED_LUA_EXAMPLES[`game-events:${entry.name}`] || null;
 		const nameTarget = [entry.name, `GameEvents.${entry.name}`, entry.scope].filter(Boolean).join(" ").toLowerCase();
 		const signatureTarget = [entry.displaySignature, entry.scope, "callback"].filter(Boolean).join(" ").toLowerCase();
 		const parameterTarget = entry.parameters
@@ -569,9 +571,9 @@
 			heading: entry.name,
 			secondaryLabel: `${entry.scope || "unscoped"} callback`,
 			summary: typeof entry.summary === "string" ? entry.summary.trim() : "",
-			exampleSummary: typeof entry.example?.summary === "string" ? entry.example.summary.trim() : "",
-			exampleCode: typeof entry.example?.code === "string" ? entry.example.code.trim() : "",
-			exampleLanguage: entry.example?.code ? entry.example?.language || "lua" : "",
+			exampleSummary: authoredExample?.summary || (typeof entry.example?.summary === "string" ? entry.example.summary.trim() : ""),
+			exampleCode: authoredExample?.code || (typeof entry.example?.code === "string" ? entry.example.code.trim() : ""),
+			exampleLanguage: authoredExample?.code ? authoredExample.language || "lua" : entry.example?.code ? entry.example?.language || "lua" : "",
 			notes: normalizeStringList(entry.notes),
 			gotchas: normalizeStringList(entry.gotchas),
 			relatedSchemaNotes: normalizeRelatedSchemaNotes(entry.relatedSchemaNotes),
