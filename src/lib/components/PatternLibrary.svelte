@@ -1,5 +1,3 @@
-<svelte:options runes={true} />
-
 <script>
 	import { tick } from "svelte";
 	import SnippetExample from "./SnippetExample.svelte";

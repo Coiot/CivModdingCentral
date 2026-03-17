@@ -1008,6 +1008,334 @@ return resolveCapitalOrCoastalCity`,
 		],
 	},
 	{
+		title: "Trade Route Conditional Reward Router",
+		focus: "Route state as a trigger",
+		status: "Lua Pattern",
+		copy: "Use this when a trade route or city connection should unlock a reward only if extra conditions also hold. Common cases are internal sea connections, routes that carry religious pressure, or routes to specific foreign civs. Resolve the route or connection first, then route the effect into one small reward helper.",
+		deliverables: [
+			"A per-turn route scan that filters active trade routes instead of assuming the route still exists.",
+			"A clean branch for internal versus international route logic and religion or diplomacy side conditions.",
+			"A reusable reward helper for gold, faith, notifications, or city follow-up effects once the route qualifies.",
+		],
+		example: {
+			title: "Reward internal sea routes that carry your religion",
+			summary: "This example scans the active trade routes, checks for internal sea routes, then grants Faith if the destination city is adding pressure for the religion founded by the player.",
+			files: [
+				snippetFile(
+					"Lua/Gameplay/TradeRouteConditionalReward.lua",
+					"lua",
+					'local TriggerGuards = include("TriggerGuards")\n\nlocal function rewardQualifiedRoute(pPlayer, pOriginCity, pDestCity)\n\tif not pPlayer or not pOriginCity or not pDestCity then\n\t\treturn\n\tend\n\tpPlayer:ChangeFaith(4)\n\tpPlayer:AddNotification(\n\t\tNotificationTypes.NOTIFICATION_GENERIC,\n\t\tstring.format("%s sent a qualified sea route to %s.", pOriginCity:GetName(), pDestCity:GetName()),\n\t\t"Trade Route Reward",\n\t\tpDestCity:GetX(),\n\t\tpDestCity:GetY()\n\t)\nend\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal eReligion = pPlayer and pPlayer:GetReligionCreatedByPlayer()\n\tif not pPlayer or eReligion == -1 or not TriggerGuards.oncePerPlayerTurn(iPlayer, "TradeRouteFaith") then\n\t\treturn\n\tend\n\n\tfor _, route in ipairs(pPlayer:GetTradeRoutes()) do\n\t\tif route.FromID == iPlayer and route.ToID == iPlayer and route.Domain == DomainTypes.DOMAIN_SEA then\n\t\t\tlocal pOriginCity = pPlayer:GetCityByID(route.FromCity)\n\t\t\tlocal pDestCity = pPlayer:GetCityByID(route.ToCity)\n\t\t\tif pDestCity and pDestCity:GetNumTradeRoutesAddingPressure(eReligion) > 0 then\n\t\t\t\trewardQualifiedRoute(pPlayer, pOriginCity, pDestCity)\n\t\t\tend\n\t\tend\n\tend\nend)',
+					"Route state recipe that turns an active route plus a religion-side condition into one reward handoff instead of scattering the checks across multiple files.",
+				),
+			],
+		},
+		touchpoints: [
+			linkToLua("Player:GetTradeRoutes", "player-gettraderoutes-547", "methods", "Primary runtime surface for iterating the player's active trade routes."),
+			linkToLua(
+				"City:GetNumTradeRoutesAddingPressure",
+				"city-getnumtraderoutesaddingpressure-194",
+				"methods",
+				"Useful when the route reward depends on religion pressure actually being added to the destination city.",
+			),
+			linkToLua(
+				"Player:IsCapitalConnectedToCity",
+				"player-iscapitalconnectedtocity-636",
+				"methods",
+				"Helpful companion when the mechanic really wants city-connection state instead of explicit caravan or cargo route records.",
+			),
+			linkToPage("Religion / Belief Condition Check", "/pattern-library", "Read this next when the route bonus depends on belief ownership or more detailed religion filters."),
+		],
+	},
+	{
+		title: "Great Work / Slot State Resolver",
+		focus: "Great Work aware city logic",
+		status: "Lua Pattern",
+		copy: "Use this when a city bonus depends on whether a Great Work slot is filled, which building holds the work, or whether a theming bonus is active. Resolve the slot state in one helper and hand that result to the reward logic instead of scattering building-class checks throughout the mechanic.",
+		deliverables: [
+			"A helper that checks whether a target building class is holding Great Works and how many slots are filled.",
+			"A branch for theming-bonus logic versus simple filled slot logic.",
+			"A city reward or sync example that reacts only when the Great Work state is valid.",
+		],
+		example: {
+			title: "Reward filled Great Work slots in a target building",
+			summary: "This example checks whether the city's Writer's Guild is holding a Great Work and grants a small Culture reward only while the slot is filled.",
+			files: [
+				snippetFile(
+					"Lua/Gameplay/GreatWorkSlotResolver.lua",
+					"lua",
+					"local iWritersGuildClass = GameInfoTypes.BUILDINGCLASS_WRITERS_GUILD\n\nlocal function resolveGreatWorkState(pCity, iBuildingClass)\n\tif not pCity then\n\t\treturn nil\n\tend\n\treturn {\n\t\tfilled = pCity:GetNumGreatWorksInBuilding(iBuildingClass),\n\t\thasAny = pCity:IsHoldingGreatWork(iBuildingClass),\n\t\ttheming = pCity:GetThemingBonus(iBuildingClass),\n\t}\nend\n\nlocal function rewardFilledGuild(pPlayer, pCity)\n\tlocal state = resolveGreatWorkState(pCity, iWritersGuildClass)\n\tif not state or not state.hasAny then\n\t\treturn\n\tend\n\tpPlayer:ChangeJONSCulture(2 + math.max(0, state.theming))\nend\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() then\n\t\treturn\n\tend\n\tfor pCity in pPlayer:Cities() do\n\t\trewardFilledGuild(pPlayer, pCity)\n\tend\nend)",
+					"Slot state resolver for mechanics that care about a specific Great Work building, filled-slot count, or theming bonus before they pay out.",
+				),
+			],
+		},
+		touchpoints: [
+			linkToLua("City:GetNumGreatWorksInBuilding", "city-getnumgreatworksinbuilding-186", "methods", "Use this to count filled slots in one target building class."),
+			linkToLua("City:IsHoldingGreatWork", "city-isholdinggreatwork-300", "methods", "Fast yes or no check when the mechanic only cares whether a building is currently holding any Great Work."),
+			linkToLua("City:GetThemingBonus", "city-getthemingbonus-253", "methods", "Needed when the reward scales from the active theming bonus instead of only the filled-slot count."),
+			linkToSchema("Buildings", "Keep the building-class lookup aligned with the building that owns the slot or theming mechanic.", "rows"),
+		],
+	},
+	{
+		title: "Worked vs Unworked Resource / Plot Scanner",
+		focus: "City plot state differences",
+		status: "Lua Pattern",
+		copy: "Use this when a mechanic cares whether a resource or improvement is merely present in the city's workable ring, actually being worked by a citizen, or deliberately left idle. This is common for uniques that pay one reward when the plot is unworked and a different reward when the same plot is worked.",
+		deliverables: [
+			"A city-plot loop that resolves workable plots safely from the city index rather than map-wide scans.",
+			"A clean split between worked and unworked counts for the same resource or improvement target.",
+			"A city reward example that changes output depending on how those plots are being used right now.",
+		],
+		example: {
+			title: "Count worked and unworked edible resources",
+			summary: "This example counts Sheep, Cattle, and Deer in the city's ring, then pays one reward for worked plots and another for unworked plots.",
+			files: [
+				snippetFile(
+					"Lua/Gameplay/WorkedUnworkedResourceScan.lua",
+					"lua",
+					"local TRACKED_RESOURCES = {\n\t[GameInfoTypes.RESOURCE_SHEEP] = true,\n\t[GameInfoTypes.RESOURCE_CATTLE] = true,\n\t[GameInfoTypes.RESOURCE_DEER] = true,\n}\n\nlocal function scanTrackedPlots(pCity)\n\tlocal worked = 0\n\tlocal unworked = 0\n\tfor i = 0, pCity:GetNumCityPlots() - 1 do\n\t\tlocal pPlot = pCity:GetCityIndexPlot(i)\n\t\tif pPlot and pCity:CanWork(pPlot) then\n\t\t\tlocal eResource = pPlot:GetResourceType(pCity:GetTeam())\n\t\t\tif TRACKED_RESOURCES[eResource] then\n\t\t\t\tif pCity:IsWorkingPlot(pPlot) then\n\t\t\t\t\tworked = worked + 1\n\t\t\t\telse\n\t\t\t\t\tunworked = unworked + 1\n\t\t\t\tend\n\t\t\tend\n\t\tend\n\tend\n\treturn worked, unworked\nend\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() then\n\t\treturn\n\tend\n\tfor pCity in pPlayer:Cities() do\n\t\tlocal worked, unworked = scanTrackedPlots(pCity)\n\t\tif worked > 0 then\n\t\t\tpPlayer:ChangeJONSCulture(worked)\n\t\tend\n\t\tif unworked > 0 then\n\t\t\tpPlayer:ChangeGold(unworked * 2)\n\t\tend\n\tend\nend)",
+					"City ring scanner for mechanics that pay one reward when a tracked plot is worked and a different reward when it is only present in range.",
+				),
+			],
+		},
+		touchpoints: [
+			linkToLua("City:GetCityIndexPlot", "city-getcityindexplot-106", "methods", "Primary way to iterate a city's workable ring without a wider map scan."),
+			linkToLua("City:IsWorkingPlot", "city-isworkingplot-330", "methods", "Core distinction when the reward changes based on whether a citizen is actually assigned to that plot."),
+			linkToLua("City:CanWork", "city-canwork-26", "methods", "Useful early gate before counting a plot toward the mechanic."),
+			linkToSchema("Resources", "Reference the concrete resource rows behind the tracked plot types.", "rows"),
+		],
+	},
+	{
+		title: "Nearby Improvement Threshold / Cluster Bonus",
+		focus: "Nearby count unlocks",
+		status: "Lua Pattern",
+		copy: "Use this when a city or unit should gain something only after enough matching improvements or resources exist nearby. The pattern is to count qualifying plots in a radius, compare against a threshold, then hand the result into one reward or sync helper.",
+		deliverables: [
+			"A city centered scan that counts matching plots within a chosen radius.",
+			"A threshold gate that switches a reward on only after the count is high enough.",
+			"A reusable sync example for granting a city bonus when the nearby cluster is present and removing it when the cluster falls apart.",
+		],
+		example: {
+			title: "Grant a city bonus for three nearby unique improvements",
+			summary: "This example counts qualifying unique improvements within three tiles of the city and turns on a hidden bonus only when the threshold reaches three or more.",
+			files: [
+				snippetFile(
+					"Lua/Gameplay/NearbyImprovementThreshold.lua",
+					"lua",
+					"local iImprovement = GameInfoTypes.IMPROVEMENT_CMC_ABBAIGH\nlocal iDummy = GameInfoTypes.BUILDING_CMC_ABBAIGH_CLUSTER_DUMMY\nlocal iRadius = 3\nlocal iThreshold = 3\n\nlocal function countNearbyImprovements(pCity)\n\tif not pCity then\n\t\treturn 0\n\tend\n\tlocal iCount = 0\n\tfor i = 0, pCity:GetNumCityPlots() - 1 do\n\t\tlocal pPlot = pCity:GetCityIndexPlot(i)\n\t\tif pPlot and pPlot:GetOwner() == pCity:GetOwner() and Map.PlotDistance(pCity:GetX(), pCity:GetY(), pPlot:GetX(), pPlot:GetY()) <= iRadius then\n\t\t\tif pPlot:GetImprovementType() == iImprovement and not pPlot:IsImprovementPillaged() then\n\t\t\t\tiCount = iCount + 1\n\t\t\tend\n\t\tend\n\tend\n\treturn iCount\nend\n\nlocal function syncClusterBonus(pCity)\n\tlocal iCount = countNearbyImprovements(pCity)\n\tpCity:SetNumRealBuilding(iDummy, iCount >= iThreshold and 1 or 0)\nend\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() then\n\t\treturn\n\tend\n\tfor pCity in pPlayer:Cities() do\n\t\tsyncClusterBonus(pCity)\n\tend\nend)",
+					"Threshold count recipe for uniques that unlock only after enough nearby matching improvements exist around the city.",
+				),
+			],
+		},
+		touchpoints: [
+			linkToLua("City:GetCityIndexPlot", "city-getcityindexplot-106", "methods", "Use this to scan plots in the city's ring before applying the threshold rule."),
+			linkToLua("City:GetNumCityPlots", "city-getnumcityplots-180", "methods", "Needed for safe city-ring iteration instead of a wider map scan."),
+			linkToLua("Map.PlotDistance", "map-plotdistance-32", "methods", "Simple radius check when the mechanic wants a nearby threshold rather than any plot in the city's full workable ring."),
+			linkToSchema("Improvements", "Reference the concrete improvement rows behind the threshold condition.", "rows"),
+		],
+	},
+	{
+		title: "Religious Pressure Scalar",
+		focus: "Pressure as an input value",
+		status: "Lua Pattern",
+		copy: "Use this when religious pressure itself should be turned into yields, XP, training speed, or city-side effects. Instead of checking only majority religion, read the pressure numbers directly and convert that live amount into the bonus you want.",
+		deliverables: [
+			"A helper that resolves own religion and foreign religion pressure for a city.",
+			"A scalar function that converts pressure into a reward amount or threshold result.",
+			"A city example that treats pressure as a changing input instead of a simple yes or no religion gate.",
+		],
+		example: {
+			title: "Convert foreign pressure into Faith and own pressure into Culture",
+			summary: "This example reads the city's founded religion pressure, compares it with the majority religion pressure, and turns those values into different rewards each turn.",
+			files: [
+				snippetFile(
+					"Lua/Gameplay/ReligiousPressureScalar.lua",
+					"lua",
+					"local function getPressureState(pPlayer, pCity)\n\tif not pPlayer or not pCity then\n\t\treturn nil\n\tend\n\tlocal eFoundedReligion = pPlayer:GetReligionCreatedByPlayer()\n\tlocal eMajorityReligion = pCity:GetReligiousMajority()\n\tlocal iOwnPressure = eFoundedReligion ~= -1 and pCity:GetPressurePerTurn(eFoundedReligion) or 0\n\tlocal iMajorityPressure = eMajorityReligion ~= -1 and pCity:GetPressurePerTurn(eMajorityReligion) or 0\n\tlocal iForeignPressure = eMajorityReligion ~= -1 and eMajorityReligion ~= eFoundedReligion and iMajorityPressure or 0\n\treturn {\n\t\town = iOwnPressure,\n\t\tforeign = iForeignPressure,\n\t}\nend\n\nlocal function applyPressureRewards(pPlayer, pCity)\n\tlocal pressure = getPressureState(pPlayer, pCity)\n\tif not pressure then\n\t\treturn\n\tend\n\tif pressure.own > 0 then\n\t\tpPlayer:ChangeJONSCulture(math.floor(pressure.own / 10))\n\tend\n\tif pressure.foreign > 0 then\n\t\tpPlayer:ChangeFaith(math.floor(pressure.foreign / 10))\n\tend\nend\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() then\n\t\treturn\n\tend\n\tfor pCity in pPlayer:Cities() do\n\t\tapplyPressureRewards(pPlayer, pCity)\n\tend\nend)",
+					"Pressure scaling recipe that treats own and foreign pressure as numeric inputs and converts them into different rewards.",
+				),
+			],
+		},
+		touchpoints: [
+			linkToLua("City:GetPressurePerTurn", "city-getpressureperturn-204", "methods", "Primary way to read the actual pressure amount for one religion in a city."),
+			linkToLua(
+				"City:GetReligiousMajority",
+				"city-getreligiousmajority-233",
+				"methods",
+				"Use this when the scalar should compare founded religion pressure against the city's current majority religion.",
+			),
+			linkToLua("Player:GetReligionCreatedByPlayer", "player-getreligioncreatedbyplayer-490", "methods", "Needed when the pressure scalar should key off the religion founded by the player."),
+			linkToPage(
+				"Religion / Belief Condition Check",
+				"/pattern-library",
+				"Read this first when the mechanic still needs a belief or founded religion gate before pressure is converted into value.",
+			),
+		],
+	},
+	{
+		title: "Foreign Continent / Landmass Gate",
+		focus: "Overseas and foreign-landmass checks",
+		status: "Lua Pattern",
+		copy: "Use this when a mechanic should behave differently on a foreign continent or overseas landmass. In Civ V Lua, the practical runtime gate is usually land area rather than a richer continent system, so the pattern is to compare the city or plot area against the capital's home area and treat different land areas as foreign landmass logic.",
+		deliverables: [
+			"A helper that resolves the player's home land area from the capital or first city.",
+			"A city or plot gate that checks whether the target is on a different land area from the home core.",
+			"A starter initialization example for overseas settles, foreign landmass rewards, or alternate spawn logic.",
+		],
+		example: {
+			title: "Grant an overseas settle bonus on a foreign landmass",
+			summary: "This example treats a newly founded city as overseas if it is on a different land area from the capital and grants a bonus only in that case.",
+			files: [
+				snippetFile(
+					"Lua/Gameplay/ForeignLandmassGate.lua",
+					"lua",
+					'local function getHomeAreaID(pPlayer)\n\tlocal pCapital = pPlayer and pPlayer:GetCapitalCity()\n\tlocal pCapitalPlot = pCapital and pCapital:Plot()\n\treturn pCapitalPlot and pCapitalPlot:GetArea() or -1\nend\n\nlocal function isOnForeignLandmass(pPlayer, pCity)\n\tif not pPlayer or not pCity then\n\t\treturn false\n\tend\n\tlocal iHomeArea = getHomeAreaID(pPlayer)\n\tlocal pCityPlot = pCity:Plot()\n\treturn iHomeArea ~= -1 and pCityPlot and pCityPlot:GetArea() ~= iHomeArea\nend\n\nGameEvents.PlayerCityFounded.Add(function(iPlayer, iX, iY)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pPlot = Map.GetPlot(iX, iY)\n\tlocal pCity = pPlot and pPlot:GetPlotCity()\n\tif not pPlayer or not pCity or not isOnForeignLandmass(pPlayer, pCity) then\n\t\treturn\n\tend\n\tpPlayer:ChangeGold(100)\n\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "An overseas settlement triggered its foreign-landmass reward.", pCity:GetName(), iX, iY)\nend)',
+					"Foreign landmass gate for overseas settles and other mechanics that should trigger only when the city is off the player's home land area.",
+				),
+			],
+		},
+		touchpoints: [
+			linkToLua("Plot:GetArea", "plot-getarea-30", "methods", "Core runtime landmass proxy when the mechanic wants to know if two plots belong to different land areas."),
+			linkToLua("City:Area", "city-area-5", "methods", "Useful city counterpart when the mechanic starts from the city instead of the plot."),
+			linkToLua("Player:GetCapitalCity", "player-getcapitalcity-141", "methods", "Common home area anchor for deciding whether a later city or plot is overseas."),
+			linkToPage("City Founded Initialization", "/pattern-library", "Closest companion when the landmass gate should feed into city start bonuses or setup work right after founding."),
+		],
+	},
+	{
+		title: "Foreign City Effect Host",
+		focus: "Placing or syncing effects inside another civ's city",
+		status: "Lua Pattern",
+		copy: "Use this when your civ's mechanic lives in somebody else's city instead of your own. The usual pattern is to scan foreign cities that meet an influence, tourism, religion, or diplomacy rule, then host the effect there through a dummy building, pressure pulse, resistance tweak, or some other local change.",
+		deliverables: [
+			"A foreign city scanner that resolves which outside cities are valid hosts for the effect.",
+			"A sync helper that applies or removes the hosted city effect without leaving stale state behind.",
+			"A starter example for influence, religion, or tourism foreign city mechanics.",
+		],
+		example: {
+			title: "Place a hidden building in influential foreign cities",
+			summary: "This example gives a civ a hosted effect in foreign cities once it becomes influential over that civ, then removes the effect if influence is lost later.",
+			files: [
+				snippetFile(
+					"Lua/Gameplay/ForeignCityEffectHost.lua",
+					"lua",
+					"local iDummyBuilding = GameInfoTypes.BUILDING_CMC_FOREIGN_CITY_HOST\n\nlocal function shouldHostEffect(pOwner, iForeignPlayer)\n\treturn pOwner:GetInfluenceLevel(iForeignPlayer) >= InfluenceLevelTypes.INFLUENCE_LEVEL_INFLUENTIAL\nend\n\nlocal function syncHostedEffectForPair(pOwner, pForeignPlayer)\n\tlocal bHost = shouldHostEffect(pOwner, pForeignPlayer:GetID())\n\tfor pCity in pForeignPlayer:Cities() do\n\t\tpCity:SetNumRealBuilding(iDummyBuilding, bHost and 1 or 0)\n\tend\nend\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pOwner = Players[iPlayer]\n\tif not pOwner or not pOwner:IsAlive() or pOwner:IsMinorCiv() or pOwner:IsBarbarian() then\n\t\treturn\n\tend\n\tfor iOtherPlayer, pForeignPlayer in ipairs(Players) do\n\t\tif pForeignPlayer and pForeignPlayer:IsAlive() and iOtherPlayer ~= iPlayer and pForeignPlayer:GetTeam() ~= pOwner:GetTeam() then\n\t\t\tsyncHostedEffectForPair(pOwner, pForeignPlayer)\n\t\tend\n\tend\nend)",
+					"Foreign city host pattern. Replace the dummy building payload with the exact effect that should live inside qualifying outside cities.",
+				),
+			],
+		},
+		touchpoints: [
+			linkToLua(
+				"Player:GetInfluenceLevel",
+				"player-getinfluencelevel-292",
+				"methods",
+				"Simple threshold gate when the hosted foreign city effect should turn on at a specific tourism influence level.",
+			),
+			linkToLua("Player:GetInfluenceOn", "player-getinfluenceon-294", "methods", "Use this if the hosted effect should scale from raw influence amount instead of a named level."),
+			linkToLua(
+				"Player:GetTourismModifierWith",
+				"player-gettourismmodifierwith-544",
+				"methods",
+				"Useful when the foreign city host depends on route, religion, or open borders tourism context.",
+			),
+			linkToPage("Dynamic Dummy Building Updater", "/pattern-library", "Best companion when the hosted effect itself is implemented through a local dummy building sync."),
+		],
+	},
+	{
+		title: "Adjacency Aura / Shared Bonus Network",
+		focus: "Spatial bonuses between nearby units or plots",
+		status: "Lua Pattern",
+		copy: "Use this when one unit, plot, or improvement should project a local bonus onto nearby recipients. The core loop is to detect qualifying neighbors, count or validate the aura source, then grant and strip the bonus cleanly as units move around the map.",
+		deliverables: [
+			"An adjacency resolver that checks whether a target is inside the aura network.",
+			"A sync pass that grants the bonus only while the target remains in range of a valid source.",
+			"A reusable scaffold for embarked movement auras, adjacent combat buffs, and networked support bonuses.",
+		],
+		example: {
+			title: "Grant an aura promotion to adjacent friendly units",
+			summary: "This example gives nearby friendly units a temporary promotion whenever they stand next to a qualifying aura source unit.",
+			files: [
+				snippetFile(
+					"Lua/Gameplay/AdjacencyAuraNetwork.lua",
+					"lua",
+					"local iAuraSourcePromotion = GameInfoTypes.PROMOTION_CMC_AURA_SOURCE\nlocal iAuraBonusPromotion = GameInfoTypes.PROMOTION_CMC_AURA_BONUS\n\nlocal function hasAdjacentAuraSource(pUnit)\n\tlocal pPlot = pUnit and pUnit:GetPlot()\n\tif not pPlot then\n\t\treturn false\n\tend\n\tfor iDirection = 0, DirectionTypes.NUM_DIRECTION_TYPES - 1 do\n\t\tlocal pAdjacentPlot = Map.PlotDirection(pPlot:GetX(), pPlot:GetY(), iDirection)\n\t\tif pAdjacentPlot then\n\t\t\tfor i = 0, pAdjacentPlot:GetNumUnits() - 1 do\n\t\t\t\tlocal pAdjacentUnit = pAdjacentPlot:GetUnit(i)\n\t\t\t\tif pAdjacentUnit and pAdjacentUnit:GetOwner() == pUnit:GetOwner() and pAdjacentUnit:IsHasPromotion(iAuraSourcePromotion) then\n\t\t\t\t\treturn true\n\t\t\t\tend\n\t\t\tend\n\t\tend\n\tend\n\treturn false\nend\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() then\n\t\treturn\n\tend\n\tfor pUnit in pPlayer:Units() do\n\t\tlocal bShouldHaveAura = hasAdjacentAuraSource(pUnit)\n\t\tpUnit:SetHasPromotion(iAuraBonusPromotion, bShouldHaveAura)\n\tend\nend)",
+					"Adjacency aura sync that grants a shared bonus only while a friendly aura source remains next to the recipient unit.",
+				),
+			],
+		},
+		touchpoints: [
+			linkToLua(
+				"Unit:IsFriendlyUnitAdjacent",
+				"unit-isfriendlyunitadjacent-276",
+				"methods",
+				"Fast builtin check when the aura only cares whether some friendly unit is adjacent, not which exact unit it is.",
+			),
+			linkToLua("Unit:GetAdjacentModifier", "unit-getadjacentmodifier-100", "methods", "Helpful reference for mechanics that want to mirror or inspect existing adjacency style combat bonuses."),
+			linkToSchema("UnitPromotions", "Use promotions as the cleanest temporary carrier for adjacency aura effects on units.", "rows"),
+			linkToPage("Promotion Grant / Strip Logic", "/pattern-library", "Natural companion when the aura network needs a reusable promotion sync helper."),
+		],
+	},
+	{
+		title: "Pillage Mechanics",
+		focus: "Reading and reacting to damaged plots",
+		status: "Lua Pattern",
+		copy: "Use this when a mechanic keys off whether plots are pillaged. The common structure is to scan owned territory or a city ring, count pillaged improvements and routes, then convert that damage state into rewards, penalties, attrition, or restoration logic.",
+		deliverables: [
+			"A plot-state helper that detects pillaged improvements and routes.",
+			"A city or territory scan that converts pillage count into a live effect.",
+			"A starter example for pillage rewards, damaged land penalties, or repair mechanics.",
+		],
+		example: {
+			title: "Turn pillaged plots into a city penalty and recovery hook",
+			summary: "This example counts pillaged plots in a city's workable ring and mirrors that total into a dummy building penalty that shrinks as repairs are completed.",
+			files: [
+				snippetFile(
+					"Lua/Gameplay/PillageStateMechanics.lua",
+					"lua",
+					"local iDummyBuilding = GameInfoTypes.BUILDING_CMC_PILLAGE_PRESSURE\n\nlocal function countPillagedPlots(pCity)\n\tlocal iCount = 0\n\tfor iPlot = 0, pCity:GetNumCityPlots() - 1 do\n\t\tlocal pPlot = pCity:GetCityIndexPlot(iPlot)\n\t\tif pPlot and (pPlot:IsImprovementPillaged() or pPlot:IsRoutePillaged()) then\n\t\t\tiCount = iCount + 1\n\t\tend\n\tend\n\treturn iCount\nend\n\nlocal function syncPillagePenalty(pCity)\n\tpCity:SetNumRealBuilding(iDummyBuilding, countPillagedPlots(pCity))\nend\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() then\n\t\treturn\n\tend\n\tfor pCity in pPlayer:Cities() do\n\t\tsyncPillagePenalty(pCity)\n\tend\nend)",
+					"Pillage scanner that turns damaged plots into a local effect and naturally updates as workers repair the land.",
+				),
+			],
+		},
+		touchpoints: [
+			linkToLua("Plot:IsImprovementPillaged", "plot-isimprovementpillaged-122", "methods", "Primary improvement damage check for pillage mechanics."),
+			linkToLua("Plot:IsRoutePillaged", "plot-isroutepillaged-147", "methods", "Needed when roads and railroads should count alongside improvements."),
+			linkToLua("Unit:GetPillageChange", "unit-getpillagechange-202", "methods", "Useful when the recipe wants to scale rewards around pillage performance on the unit side too."),
+			linkToPage(
+				"Worked vs Unworked Resource / Plot Scanner",
+				"/pattern-library",
+				"Closest sibling when the mechanic needs a city ring plot scan, but the condition is damaged state instead of worked state.",
+			),
+		],
+	},
+	{
+		title: "City Output Conversion Pattern",
+		focus: "Turning one live city yield into another effect",
+		status: "Lua Pattern",
+		copy: "Use this when a city's current output should be partially converted into something else. Instead of hard coding a flat reward, read the city's live yield rate, scale it, then route the result into Production, Culture, Food, or some other destination each turn or on a trigger.",
+		deliverables: [
+			"A conversion helper that reads a city's current source yield and computes a scaled amount.",
+			"A destination payload that spends or mirrors that value somewhere else without hard coded constants.",
+			"A starter example for per-turn yield conversion, crosscity sharing, or threshold based remapping.",
+		],
+		example: {
+			title: "Convert part of Culture output into Production",
+			summary: "This example reads each city's live Culture output, converts 25% of it into Production, and pushes that amount into the city's current build each turn.",
+			files: [
+				snippetFile(
+					"Lua/Gameplay/CityOutputConversion.lua",
+					"lua",
+					"local function getConvertedOutput(pCity)\n\tlocal iCultureRate = pCity:GetYieldRate(YieldTypes.YIELD_CULTURE)\n\treturn math.floor(iCultureRate * 0.25)\nend\n\nlocal function applyConversion(pCity)\n\tlocal iBonusProduction = getConvertedOutput(pCity)\n\tif iBonusProduction > 0 then\n\t\tpCity:ChangeProduction(iBonusProduction)\n\tend\nend\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() then\n\t\treturn\n\tend\n\tfor pCity in pPlayer:Cities() do\n\t\tapplyConversion(pCity)\n\tend\nend)",
+					"Live city output conversion pattern. Swap the source yield, ratio, and destination payload to build other remapping mechanics.",
+				),
+			],
+		},
+		touchpoints: [
+			linkToLua("City:GetYieldRate", "city-getyieldrate-271", "methods", "Preferred runtime source when the conversion should read the city's current full output for a yield."),
+			linkToLua("City:GetYieldRateTimes100", "city-getyieldratetimes100-275", "methods", "Use this instead when the recipe needs fractional precision before rounding the converted result."),
+			linkToLua("City:GetBaseYieldRate", "city-getbaseyieldrate-83", "methods", "Useful when the mechanic should convert only base city output and ignore temporary modifiers."),
+			linkToPage("Yield Burst Helper", "/pattern-library", "Good companion when the converted value should be routed outward as a reward instead of directly changing city production."),
+		],
+	},
+	{
 		title: "Tech Unlock Listener",
 		focus: "Tech reactions",
 		status: "Lua Pattern",
@@ -1967,6 +2295,147 @@ end`,
 			linkToSchema("Units", "Filter against the specific Great Person unit rows that should trigger the reaction.", "rows"),
 			linkToSchema("UnitClasses", "Useful when the scripted reward should care about GP class rather than one exact unit row.", "rows"),
 			linkToSchema("Specialists", "Companion surface when the GP mechanic also mirrors specialist-side rate or city-state logic.", "rows"),
+		],
+	},
+	{
+		title: "Golden Age Active Effect Sync",
+		focus: "Golden Age only effects",
+		status: "High-Use Recipe",
+		copy: "Use this when a bonus should exist only while the player is currently inside a Golden Age. The common pattern is to check `GetGoldenAgeTurns() > 0`, sync a hidden city-side carrier while the state is active, and remove it cleanly as soon as the Golden Age ends.",
+		deliverables: [
+			"A recurring Golden Age state check with one clear helper that decides whether the effect should be on or off.",
+			"A city-side sync loop that grants and removes the hidden payload without stacking duplicates.",
+			"Schema touchpoints for the hidden building row and the effect tables that actually carry the temporary bonus.",
+		],
+		example: {
+			title: "Turn on a Golden Age only city bonus",
+			summary: "This example grants a hidden building to every owned city only while the player has Golden Age turns remaining.",
+			files: [
+				snippetFile(
+					"SQL/Buildings/GoldenAgeCarrier.sql",
+					"sql",
+					"INSERT INTO BuildingClasses (Type, DefaultBuilding, Description)\nVALUES\n\t('BUILDINGCLASS_CMC_GOLDEN_AGE_STUDIO_DUMMY', 'BUILDING_CMC_GOLDEN_AGE_STUDIO_DUMMY', 'TXT_KEY_BUILDING_CMC_GOLDEN_AGE_STUDIO_DUMMY');\n\nINSERT INTO Buildings\n\t(Type, BuildingClass, Cost, FaithCost, GreatWorkCount, NeverCapture, NukeImmune, ConquestProb, Description, Help)\nVALUES\n\t('BUILDING_CMC_GOLDEN_AGE_STUDIO_DUMMY', 'BUILDINGCLASS_CMC_GOLDEN_AGE_STUDIO_DUMMY', -1, -1, -1, 1, 1, 0, 'TXT_KEY_BUILDING_CMC_GOLDEN_AGE_STUDIO_DUMMY', 'TXT_KEY_BUILDING_CMC_GOLDEN_AGE_STUDIO_DUMMY_HELP');\n\nINSERT INTO Building_YieldChanges (BuildingType, YieldType, Yield)\nVALUES\n\t('BUILDING_CMC_GOLDEN_AGE_STUDIO_DUMMY', 'YIELD_CULTURE', 2);",
+					"Minimal hidden carrier for a Golden Age-only city bonus. Keep the class dedicated so the sync logic always resolves the intended row.",
+				),
+				snippetFile(
+					"Lua/Gameplay/GoldenAgeEffectSync.lua",
+					"lua",
+					"local iDummy = GameInfoTypes.BUILDING_CMC_GOLDEN_AGE_STUDIO_DUMMY\n\nlocal function syncGoldenAgeCityEffects(pPlayer)\n\tif not pPlayer or not pPlayer:IsAlive() or pPlayer:IsMinorCiv() or pPlayer:IsBarbarian() then\n\t\treturn\n\tend\n\tlocal shouldHaveBonus = pPlayer:GetGoldenAgeTurns() > 0\n\tfor pCity in pPlayer:Cities() do\n\t\tpCity:SetNumRealBuilding(iDummy, shouldHaveBonus and 1 or 0)\n\tend\nend\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tsyncGoldenAgeCityEffects(Players[iPlayer])\nend)",
+					"Recurring state sync for temporary Golden Age bonuses. This is the safe pattern when the effect must disappear immediately after the Golden Age ends.",
+				),
+			],
+		},
+		touchpoints: [
+			linkToLua("GameEvents.PlayerDoTurn", "game-event-playerdoturn-72", "gameEvents", "Reliable recurring hook for checking whether the player is currently in a Golden Age."),
+			linkToSchema("Buildings", "Hidden carriers for Golden Age-only city effects still need a valid building row.", "rows"),
+			linkToSchema("Building_YieldChanges", "One example payload table for the temporary effect once the hidden carrier is present.", "rows"),
+			linkToPage("Dynamic Dummy Building Updater", "/pattern-library", "Closest companion when the temporary bonus depends on more city state than only Golden Age status."),
+		],
+	},
+	{
+		title: "Golden Age Progress Meter Reward",
+		focus: "Granting Golden Age points",
+		status: "High-Use Recipe",
+		copy: "Use this when a unique ability, building, or scripted trigger should add Golden Age points to the progress meter instead of directly starting a Golden Age. The key is to isolate one event as the reward handoff point and call `ChangeGoldenAgeProgressMeter` there.",
+		deliverables: [
+			"A narrow reward hook that filters the exact event or object that should pay out Golden Age points.",
+			"A reusable helper for adding Golden Age meter progress and anchoring a notification to the relevant city or plot.",
+			"Schema touchpoints for the building, unit, or other row that represents the unique reward source.",
+		],
+		example: {
+			title: "Grant Golden Age points from a completed unique building",
+			summary: "This example adds 75 Golden Age points when a tracked building finishes construction in one of your cities.",
+			files: [
+				snippetFile(
+					"Lua/Gameplay/GoldenAgeProgressReward.lua",
+					"lua",
+					'local iRewardBuilding = GameInfoTypes.BUILDING_CMC_SOLAR_COURT\nlocal iRewardAmount = 75\n\nlocal function grantGoldenAgeProgress(pPlayer, pCity, amount)\n\tif not pPlayer or not pCity or amount <= 0 then\n\t\treturn\n\tend\n\tpPlayer:ChangeGoldenAgeProgressMeter(amount)\n\tpPlayer:AddNotification(\n\t\tNotificationTypes.NOTIFICATION_GENERIC,\n\t\tstring.format(\"%s granted %i Golden Age points.\", pCity:GetName(), amount),\n\t\t\"Golden Age Progress\",\n\t\tpCity:GetX(),\n\t\tpCity:GetY()\n\t)\nend\n\nGameEvents.CityConstructed.Add(function(iPlayer, iCity, eBuilding)\n\tif eBuilding ~= iRewardBuilding then\n\t\treturn\n\tend\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pCity = pPlayer and pPlayer:GetCityByID(iCity)\n\tgrantGoldenAgeProgress(pPlayer, pCity, iRewardAmount)\nend)',
+					"Focused Golden Age point reward pattern for uniques that should fill the meter when a tracked building, project, or other event resolves.",
+				),
+			],
+		},
+		touchpoints: [
+			{ label: "GameEvents.CityConstructed", href: "/lua-api-explorer", note: "Preferred building-complete hook when a unique structure should award Golden Age progress." },
+			linkToSchema("Buildings", "Track the exact building row that should award Golden Age points.", "rows"),
+			linkToPage("Great Person Expended Reaction", "/pattern-library", "Closest companion when the reward source is a spent Great Person instead of a city-side event."),
+			linkToPage("Notification Utility Wrapper", "/pattern-library", "Useful follow-up when multiple Golden Age progress sources should reuse the same notification helper."),
+		],
+	},
+	{
+		title: "Tourism Yield Wiring",
+		focus: "YIELD_TOURISM effects",
+		status: "High-Use Recipe",
+		copy: "Use this when a building, improvement, or other content row should directly grant Tourism through the normal yield tables. Tourism does not need a dummy building just because it is a late-game yield; in many cases the regular building-side or improvement-side yield tables are the right place to start.",
+		deliverables: [
+			"A direct building Tourism example using `Building_YieldChanges`.",
+			"A direct improvement Tourism example using `Improvement_Yields`.",
+			"Schema touchpoints for the rows that own the Tourism output and the table that actually stores the yield payload.",
+		],
+		example: {
+			title: "Tourism on a building and landmark-style improvement",
+			summary: "This example adds Tourism directly through the yield tables instead of routing it through a separate hidden carrier.",
+			files: [
+				snippetFile(
+					"SQL/Tourism/DirectTourismYields.sql",
+					"sql",
+					"INSERT INTO Building_YieldChanges (BuildingType, YieldType, Yield)\nVALUES\n\t('BUILDING_MUSEUM', 'YIELD_TOURISM', 2);\n\nINSERT INTO Improvement_Yields (ImprovementType, YieldType, Yield)\nVALUES\n\t('IMPROVEMENT_LANDMARK', 'YIELD_TOURISM', 1);",
+					"Starter Tourism-yield patch showing the two most common places to attach direct Tourism output: buildings and improvements.",
+				),
+				snippetFile(
+					"XML/Text/DirectTourismYieldsText.xml",
+					"xml",
+					'<GameData>\n\t<Language_en_US>\n\t\t<Row Tag="TXT_KEY_BUILDING_CMC_MUSEUM_HELP" Text="[COLOR_POSITIVE_TEXT]+2[ENDCOLOR] [ICON_TOURISM] Tourism from the building itself." />\n\t\t<Row Tag="TXT_KEY_CMC_LANDMARK_TOURISM_NOTE" Text="[ICON_BULLET] Landmarks can also carry direct Tourism through Improvement_Yields." />\n\t</Language_en_US>\n</GameData>',
+					"Optional text-side reminder that the player-facing help should match the Tourism rows you just added.",
+				),
+			],
+		},
+		touchpoints: [
+			linkToSchema("Building_YieldChanges", "Most direct building-side Tourism patches live here.", "rows"),
+			linkToSchema("Improvement_Yields", "Most direct improvement-side Tourism patches live here.", "rows"),
+			linkToSchema("Buildings", "The building row still owns the description, prerequisites, and the visible player-facing identity.", "rows"),
+			linkToSchema("Improvements", "Use the improvement row when Tourism belongs on a tile itself rather than on a city building.", "rows"),
+		],
+	},
+	{
+		title: "Direct Tile Yield Tables",
+		focus: "Plot yields without dummy buildings",
+		status: "High-Use Recipe",
+		copy: "Use this when the tile itself should change during gameplay and the effect should live on the plot rather than on a city dummy building. Database rows define the baseline improvement, but runtime changes need Lua. The main pattern is to resolve the plot, decide what its bonus should be right now, and write that value with `Game.SetPlotExtraYield`.",
+		deliverables: [
+			"A build finished scaffold for applying a new extra yield directly to the finished plot.",
+			"A percent-based yield scaler that reads the tile's current output and writes an extra amount back onto the same plot.",
+			"A resync pattern reminder so the plot bonus can be recalculated if the improvement is removed, pillaged, or otherwise changes state later.",
+		],
+		example: {
+			title: "Apply runtime tile yields to a unique improvement",
+			summary:
+				"The first file adds a new Tourism yield directly to plots that finish your unique improvement. The second file scales the plot's current Culture yield by 50% and writes the extra amount back onto that same tile.",
+			files: [
+				snippetFile(
+					"Lua/Gameplay/UniqueImprovementExtraYield.lua",
+					"lua",
+					"local iBuild = GameInfoTypes.BUILD_CMC_SUN_GARDEN\nlocal iImprovement = GameInfoTypes.IMPROVEMENT_CMC_SUN_GARDEN\nlocal iTourism = YieldTypes.YIELD_TOURISM\nlocal iTourismBonus = 2\n\nlocal function applyUniqueImprovementBonus(pPlot)\n\tif not pPlot then\n\t\treturn\n\tend\n\n\tlocal iX = pPlot:GetX()\n\tlocal iY = pPlot:GetY()\n\tif pPlot:GetImprovementType() == iImprovement and not pPlot:IsImprovementPillaged() then\n\t\tGame.SetPlotExtraYield(iX, iY, iTourism, iTourismBonus)\n\telse\n\t\tGame.SetPlotExtraYield(iX, iY, iTourism, 0)\n\tend\nend\n\nGameEvents.BuildFinished.Add(function(iPlayer, iX, iY, iFinishedBuild)\n\tif iFinishedBuild ~= iBuild then\n\t\treturn\n\tend\n\tapplyUniqueImprovementBonus(Map.GetPlot(iX, iY))\nend)",
+					"Runtime plot-yield grant for a unique improvement that should add a brand-new yield directly to the tile when the build completes.",
+				),
+				snippetFile(
+					"Lua/Gameplay/UniqueImprovementPercentYield.lua",
+					"lua",
+					"local iImprovement = GameInfoTypes.IMPROVEMENT_CMC_SUN_GARDEN\nlocal iYield = YieldTypes.YIELD_CULTURE\nlocal iPercent = 50\n\nlocal function syncPercentYieldBonus(pPlot)\n\tif not pPlot then\n\t\treturn\n\tend\n\n\tlocal iX = pPlot:GetX()\n\tlocal iY = pPlot:GetY()\n\tGame.SetPlotExtraYield(iX, iY, iYield, 0)\n\n\tif pPlot:GetImprovementType() ~= iImprovement or pPlot:IsImprovementPillaged() then\n\t\treturn\n\tend\n\n\tlocal iBaseYield = pPlot:GetYield(iYield)\n\tlocal iExtraYield = math.floor(iBaseYield * iPercent / 100)\n\tGame.SetPlotExtraYield(iX, iY, iYield, iExtraYield)\nend\n\nGameEvents.BuildFinished.Add(function(iPlayer, iX, iY)\n\tsyncPercentYieldBonus(Map.GetPlot(iX, iY))\nend)\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() then\n\t\treturn\n\tend\n\tfor pCity in pPlayer:Cities() do\n\t\tfor i = 0, pCity:GetNumCityPlots() - 1 do\n\t\t\tlocal pPlot = pCity:GetCityIndexPlot(i)\n\t\t\tif pPlot and pPlot:GetOwner() == iPlayer and pPlot:GetImprovementType() == iImprovement then\n\t\t\t\tsyncPercentYieldBonus(pPlot)\n\t\t\tend\n\t\tend\n\tend\nend)",
+					"Percent-based plot-yield scaler that clears the previous extra yield first, reads the current Culture output, and then writes the recalculated bonus back onto the tile. The turn sync keeps it accurate if other effects change the underlying tile output later.",
+				),
+			],
+		},
+		touchpoints: [
+			linkToLua("Game.SetPlotExtraYield", "game-setplotextrayield-251", "methods", "Primary runtime API for writing a plot-local extra yield directly onto the map tile."),
+			linkToLua("Plot:GetYield", "plot-getyield-90", "methods", "Use this when the runtime bonus should scale from the tile's current output instead of using a flat amount."),
+			linkToLua(
+				"GameEvents.BuildFinished",
+				"game-event-buildfinished-1",
+				"gameEvents",
+				"Natural first hook when the effect should appear as soon as the worker finishes the unique improvement.",
+			),
+			linkToSchema("Improvements", "The improvement row still defines which tile state should receive the scripted runtime yield.", "rows"),
+			linkToSchema("Builds", "Use the build row to filter the exact worker action that should trigger the runtime yield write.", "rows"),
 		],
 	},
 	{

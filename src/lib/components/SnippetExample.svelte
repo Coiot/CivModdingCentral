@@ -15,14 +15,21 @@
 	const isWizardVariant = $derived(variant === "wizard");
 
 	function normalizeFiles(source, fallbackTitle = "snippet") {
-		return (source?.length ? source : []).filter(Boolean).map((file, index) => ({
-			key: file.key || file.path || file.label || `${fallbackTitle}-${index}`,
-			label: file.label || file.path || `Snippet ${index + 1}`,
-			path: file.path || "",
-			language: normalizeSnippetLanguage(file.language || "text"),
-			code: file.code || "",
-			note: file.note || "",
-		}));
+		const seenKeys = new Map();
+		return (source?.length ? source : []).filter(Boolean).map((file, index) => {
+			const baseKey = file.key || file.path || file.label || `${fallbackTitle}-${index}`;
+			const duplicateCount = seenKeys.get(baseKey) || 0;
+			seenKeys.set(baseKey, duplicateCount + 1);
+
+			return {
+				key: duplicateCount ? `${baseKey}::${duplicateCount}` : baseKey,
+				label: file.label || file.path || `Snippet ${index + 1}`,
+				path: file.path || "",
+				language: normalizeSnippetLanguage(file.language || "text"),
+				code: file.code || "",
+				note: file.note || "",
+			};
+		});
 	}
 
 	function filterByLanguage(files) {

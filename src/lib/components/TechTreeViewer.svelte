@@ -47,7 +47,7 @@
 	const HAS_LOCALIZATION_SOURCE = TEXT_BY_TAG.size > 0;
 
 	let searchQuery = $state("");
-	let selectedEra = $state("all");
+	let selectedEras = $state([]);
 	let eraFlow = $state("horizontal");
 
 	const TECH_GRAPH = buildTechGraph();
@@ -56,8 +56,9 @@
 	const totalSupportEntries = TECH_GRAPH.reduce((sum, tech) => sum + tech.supportCount, 0);
 
 	const normalizedSearch = $derived(normalizeText(searchQuery));
+	const hasEraFilter = $derived(selectedEras.length > 0);
 	const filteredTechs = $derived.by(() => {
-		const eraScoped = selectedEra === "all" ? TECH_GRAPH : TECH_GRAPH.filter((tech) => tech.eraType === selectedEra);
+		const eraScoped = hasEraFilter ? TECH_GRAPH.filter((tech) => selectedEras.includes(tech.eraType)) : TECH_GRAPH;
 		if (!normalizedSearch) {
 			return eraScoped;
 		}
@@ -65,6 +66,14 @@
 	});
 	const visibleTechTypes = $derived.by(() => filteredTechs.map((tech) => tech.type));
 	const visibleEraGroups = $derived.by(() => ERA_GROUPS.map((era) => buildVisibleEra(era, visibleTechTypes)).filter((era) => era.techs.length));
+
+	function clearEraFilter() {
+		selectedEras = [];
+	}
+
+	function toggleEraFilter(eraType) {
+		selectedEras = selectedEras.includes(eraType) ? selectedEras.filter((entry) => entry !== eraType) : [...selectedEras, eraType];
+	}
 
 	onMount(() => {
 		if (typeof window === "undefined") {
@@ -958,28 +967,34 @@
 </section>
 
 <section class="viewer-toolbar panel-surface margin-block-end" aria-label="Viewer controls">
-	<p class="toolbar-copy">Visual Flow</p>
-
-	<div class="toggle-row" role="list" aria-label="Era layout">
-		<button class:selected={eraFlow === "vertical"} type="button" onclick={() => (eraFlow = "vertical")}>Vertical</button>
-		<button class:selected={eraFlow === "horizontal"} type="button" onclick={() => (eraFlow = "horizontal")}>Horizontal</button>
-	</div>
-
 	<label class="search-field">
-		<span>Search</span>
+		<span>Search Techs, Unlocks, Effects</span>
 		<input bind:value={searchQuery} type="search" placeholder="archery, farm, congress, longswordsman, reveal, ocean..." />
 	</label>
 
-	<div class="toolbar-row">
-		<div class="chip-group" role="list" aria-label="Era filter">
-			<button class:selected={selectedEra === "all"} type="button" onclick={() => (selectedEra = "all")}>All</button>
-			{#each ERA_GROUPS as era (era.eraType)}
-				<button class:selected={selectedEra === era.eraType} type="button" onclick={() => (selectedEra = era.eraType)}>{era.eraLabel}</button>
-			{/each}
+	<div class="toolbar-section inline align-start" style="gap: 2rem">
+		<div class="toolbar-section-head">
+			<span class="toolbar-label">Era Filter</span>
+			<p class="toolbar-copy">Toggle any combination of eras, or reset to the full tree.</p>
+			<div class="toolbar-row">
+				<div class="chip-group" role="list" aria-label="Era filter">
+					<button class:selected={!hasEraFilter} type="button" onclick={clearEraFilter}>All</button>
+					{#each ERA_GROUPS as era (era.eraType)}
+						<button class:selected={selectedEras.includes(era.eraType)} type="button" onclick={() => toggleEraFilter(era.eraType)}>{era.eraLabel}</button>
+					{/each}
+				</div>
+			</div>
+		</div>
+
+		<div class="toolbar-section-head">
+			<span class="toolbar-label">Visual Flow</span>
+			<p class="toolbar-copy">Choose the full tree layout.</p>
+			<div class="toggle-row" role="list" aria-label="Era layout">
+				<button class:selected={eraFlow === "vertical"} type="button" onclick={() => (eraFlow = "vertical")}>Vertical</button>
+				<button class:selected={eraFlow === "horizontal"} type="button" onclick={() => (eraFlow = "horizontal")}>Horizontal</button>
+			</div>
 		</div>
 	</div>
-
-	<p class="toolbar-copy">Showing {numberFormatter.format(filteredTechs.length)} techs across {visibleEraGroups.length} era blocks.</p>
 </section>
 
 {#if !filteredTechs.length}
@@ -1124,12 +1139,12 @@
 									<details class="tech-details">
 										<summary>More</summary>
 										<div class="stack half">
-											{#if tech.priorEraPrereqs.length}<div class="detail-row">
+											<!-- {#if tech.priorEraPrereqs.length}<div class="detail-row">
 													<strong>Earlier era prereqs</strong><span>{tech.priorEraPrereqs.map((prereq) => prereq.label).join(", ")}</span>
-												</div>{/if}
-											{#if tech.orPrereqs.length}<div class="detail-row">
+												</div>{/if} -->
+											<!-- {#if tech.orPrereqs.length}<div class="detail-row">
 													<strong>OR prereqs</strong><span>{tech.orPrereqs.map((prereq) => prereq.label).join(", ")}</span>
-												</div>{/if}
+												</div>{/if} -->
 											{#if tech.help}<div class="detail-row"><strong>Help</strong><span>{tech.help}</span></div>{/if}
 											{#if tech.description && tech.description !== tech.title}<div class="detail-row"><strong>Description</strong><span>{tech.description}</span></div>{/if}
 											<div class="detail-row"><strong>Type</strong><code>{tech.type}</code></div>
@@ -1182,17 +1197,76 @@
 
 	.viewer-toolbar {
 		display: grid;
-		gap: 0.55rem;
+		gap: 0.9rem;
+		padding: 1rem;
+	}
+
+	.toolbar-top {
+		display: grid;
+		grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
+		gap: 0.9rem;
+		align-items: stretch;
+	}
+
+	.toolbar-section {
+		padding: 0.85rem 0.9rem;
+		border-radius: 0.85rem;
+		border: 1px solid color-mix(in oklch, var(--surface-tool-border) 70%, var(--panel-border));
+		background: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent) 7%, transparent) 0%, transparent 34%), color-mix(in oklch, var(--control-bg) 76%, var(--panel-bg) 24%);
+	}
+
+	.toolbar-section-head {
+		display: grid;
+		gap: 0.15rem;
+	}
+
+	.toolbar-label {
+		font-size: 0.73rem;
+		font-weight: 700;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: color-mix(in oklch, var(--accent-soft) 58%, var(--ink));
+	}
+
+	.toolbar-summary {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		align-items: stretch;
+	}
+
+	.toolbar-stat {
+		display: grid;
+		gap: 0.18rem;
+		padding: 0.7rem 0.75rem;
+		border-radius: 0.75rem;
+		border: 1px solid color-mix(in oklch, var(--surface-tool-border) 68%, var(--panel-border));
+		background: color-mix(in oklch, var(--panel-bg) 86%, black 14%);
+	}
+
+	.toolbar-stat strong {
+		font-size: 1rem;
+		line-height: 1.05;
+	}
+
+	.toolbar-stat span {
+		font-size: 0.72rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--muted-ink);
+	}
+
+	.toolbar-stat--mode strong {
+		font-size: 0.92rem;
 	}
 
 	.search-field {
 		display: grid;
-		gap: 0.25rem;
+		gap: 0.35rem;
 	}
 
 	.search-field span {
-		font-size: 0.75rem;
-		letter-spacing: 0.08em;
+		font-size: 0.73rem;
+		font-weight: 700;
+		letter-spacing: 0.14em;
 		text-transform: uppercase;
 		color: var(--muted-ink);
 	}
@@ -1211,8 +1285,8 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.55rem;
-		justify-content: space-between;
 		align-items: center;
+		margin-block-start: 0.25rem;
 	}
 
 	.chip-group,
@@ -1221,7 +1295,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.35rem;
-		margin-block-start: 0.25rem;
 	}
 
 	.chip-group button,
@@ -1252,6 +1325,7 @@
 
 	.toggle-row {
 		font-size: 0.78rem;
+		margin-block-start: 0.25rem;
 	}
 
 	.era-stack {
@@ -1269,7 +1343,6 @@
 		/*border-inline-end: 1px solid color-mix(in oklch, var(--surface-tool-border) 72%, var(--panel-border));*/
 		border-radius: 0.85rem;
 		padding-block-end: 0.2rem;
-		scroll-snap-type: x proximity;
 	}
 
 	.era-panel {
@@ -1281,7 +1354,6 @@
 	.era-stack.horizontal .era-panel {
 		inline-size: max-content;
 		min-inline-size: 22rem;
-		scroll-snap-align: start;
 	}
 
 	.era-stack.horizontal .era-grid-wrap {
@@ -1581,6 +1653,14 @@
 	}
 
 	@media (max-width: 900px) {
+		.toolbar-top {
+			grid-template-columns: 1fr;
+		}
+
+		.toolbar-summary {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
 		.era-header,
 		.toolbar-row {
 			flex-direction: column;
@@ -1606,6 +1686,19 @@
 	}
 
 	@media (max-width: 760px) {
+		.viewer-toolbar {
+			padding: 0.85rem;
+		}
+
+		.toolbar-section,
+		.toolbar-summary {
+			padding: 0.75rem;
+		}
+
+		.toolbar-summary {
+			grid-template-columns: 1fr;
+		}
+
 		.era-grid {
 			grid-template-columns: 1fr;
 			grid-template-rows: none;
