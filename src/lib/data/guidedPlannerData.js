@@ -353,7 +353,7 @@ export const plannerDeliverables = [
 		focus: "Resolve identity, scope, and support promises here so later implementation decisions are not re-doing design work by accident.",
 		hint: "Weak design discipline leaks into every later step because code, art, and text start feeling incoherent.",
 		dependencies: [],
-		resourceIds: ["community-links", "template-generators", "pattern-library"],
+		resourceIds: ["community-links", "template-generators", "pattern-library", "tech-tree-viewer"],
 		tutorialIds: ["civ-design-research", "setup-environment"],
 	},
 	{
@@ -379,7 +379,7 @@ export const plannerDeliverables = [
 		summary: "Wire icon atlases, unit art definitions, and any supporting art table entries before the game asks for them.",
 		doneLabel: "No missing icons, pink boxes, or broken art references when content appears.",
 		focus: "Keep atlas naming predictable and make the UI-sized assets land before testing gameplay.",
-		hint: "If art defines are late, your gameplay test feedback gets polluted by presentation error noise.",
+		hint: "If art defines are late, your gameplay test feedback gets filled by presentation error noise.",
 		dependencies: ["core-code"],
 		resourceIds: ["dds-converter", "civ-icon-maker", "schema-browser"],
 		tutorialIds: ["icons-and-alphas", "models-and-textures"],
@@ -409,7 +409,7 @@ export const plannerDeliverables = [
 		focus: "Design around the intended player story first, then pick the lightest SQL or Lua that can deliver it.",
 		hint: "A clever UA with weak active player feedback feels boring even when the numbers are correct.",
 		dependencies: ["core-code"],
-		resourceIds: ["lua-api-explorer", "pattern-library", "schema-browser"],
+		resourceIds: ["lua-api-explorer", "pattern-library", "schema-browser", "tech-tree-viewer"],
 		tutorialIds: ["sql-uniques", "lua-gameplay-hooks"],
 	},
 	{
@@ -423,7 +423,7 @@ export const plannerDeliverables = [
 		focus: "Keep replacement data, free promotions, and art references aligned in one pass.",
 		hint: "A UU that technically spawns but drops art, text, or upgrade behavior is still unfinished.",
 		dependencies: ["core-code", "art-defines"],
-		resourceIds: ["schema-browser", "pattern-library", "dds-converter"],
+		resourceIds: ["schema-browser", "pattern-library", "dds-converter", "tech-tree-viewer"],
 		tutorialIds: ["sql-uniques", "lua-gameplay-hooks", "models-and-textures"],
 	},
 	{
@@ -437,7 +437,7 @@ export const plannerDeliverables = [
 		focus: "Use this unique to reinforce the civ's identity rather than repeating or creating another UA in a second form.",
 		hint: "A second non-unit unique is where scope creep quietly enters because it feels like bonus space to add many abilities.",
 		dependencies: ["core-code"],
-		resourceIds: ["schema-browser", "pattern-library", "template-generators"],
+		resourceIds: ["schema-browser", "pattern-library", "template-generators", "tech-tree-viewer"],
 		tutorialIds: ["sql-uniques", "lua-gameplay-hooks"],
 	},
 	{
@@ -451,7 +451,7 @@ export const plannerDeliverables = [
 		focus: "Use one structured pass to check state changes, promotions, replacement rules, persistence, and timing across all three uniques.",
 		hint: "Gameplay issues often look isolated until one combined test run shows the civ breaking at handoff points between systems.",
 		dependencies: ["ua", "uu", "uc2"],
-		resourceIds: ["pattern-library", "lua-api-explorer", "schema-browser", "community-links"],
+		resourceIds: ["pattern-library", "lua-api-explorer", "schema-browser", "community-links", "tech-tree-viewer"],
 		tutorialIds: ["sql-uniques", "lua-gameplay-hooks", "cpu-only-setup"],
 	},
 	{
