@@ -911,6 +911,8 @@
 						<span class="site-footer-chip" style="--chip-highlight:#1abc9c">DarthKyofu</span>
 						<span class="site-footer-chip" style="--chip-highlight:#d0c939">Rhoze</span>
 						<span class="site-footer-chip" style="--chip-highlight:#8ff460">ExplosiveWatermelon</span>
+						<span class="site-footer-chip" style="--chip-highlight:#ffbf00">ThyReformer</span>
+						<span class="site-footer-chip" style="--chip-highlight:#3ee773">EmeraldRange</span>
 					</div>
 				</div>
 			</div>

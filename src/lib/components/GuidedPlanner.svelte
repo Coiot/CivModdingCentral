@@ -1407,10 +1407,10 @@
 			{
 				title: "While Building",
 				copy: resourceLabels.length
-					? `Keep ${joinLabelList(resourceLabels.slice(0, 4))} open while you work so you can check game context, references, and supporting files as you go.${tutorialLabels.length ? ` Planned tutorial coverage for this step includes ${joinLabelList(tutorialLabels.slice(0, 3))}.` : ""}`
+					? `Keep ${joinLabelList(resourceLabels.slice(0, 4))} open while you work so you can check game context, references, and supporting files as you go.${tutorialLabels.length ? `Tutorials for this step includes ${joinLabelList(tutorialLabels.slice(0, 3))}.` : ""}`
 					: tutorialLabels.length
-						? `Use the linked planner surfaces as your main support, and treat ${joinLabelList(tutorialLabels.slice(0, 3))} as the future tutorial routes for this step.`
-						: "Use the linked planner surfaces as your working support while you build, test, and verify the step.",
+						? `Use the linked planner tools as your support, and treat ${joinLabelList(tutorialLabels.slice(0, 3))} as the future tutorial routes for this step.`
+						: "Use the linked planner toolsx as your working support while you build, test, and verify the step.",
 			},
 			{
 				title: "Do Not Move On Until",
@@ -1499,7 +1499,7 @@
 				<div class="project-hub-summary-copy">
 					<p class="eyebrow">Project Desk</p>
 					<h2 class="section-title">{activeProject?.name || "Planner projects"}</h2>
-					<p class="project-hub-summary-note">Open your desk to access the civ switcher and export controls.</p>
+					<!-- <p class="project-hub-summary-note">Open your desk to access the civ switcher and export controls.</p> -->
 				</div>
 				<div class="project-hub-summary-meta">
 					<span>{plannerProjects.length} civs</span>
@@ -1534,7 +1534,7 @@
 								<p class="eyebrow">Project Switcher</p>
 								<h3 class="card-title">Choose the civ you are actively working.</h3>
 							</div>
-							<p class="card-copy">Each civ project preserves its current route, completion state, icon, and share setup.</p>
+							<p class="card-copy">Each project preserves its current progress.</p>
 						</div>
 
 						<div class="project-toolbar" aria-label="Planner project actions">

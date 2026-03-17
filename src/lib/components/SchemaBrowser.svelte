@@ -31,9 +31,9 @@
 			copy: "Core progression table for prerequisite chains, unlock tables, and common lookups used by both schema and Lua tooling.",
 		},
 		{
-			tableName: "Traits",
-			label: "Traits",
-			copy: "Compact but useful table for civilization package design, especially when cross checking uniques and trait-driven effects.",
+			tableName: "UnitPromotions",
+			label: "Unit Promotions",
+			copy: "High impact table for unique units, aura logic, combat tuning, embark behavior, and many Lua driven bonuses.",
 		},
 	];
 	const TABLE_PREFIX_MAP = {
