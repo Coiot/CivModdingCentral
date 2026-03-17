@@ -1402,9 +1402,7 @@
 		return [
 			{
 				title: "Start With",
-				copy: dependencyLabels.length
-					? `Lock ${joinLabelList(dependencyLabels)} first, then use this pass to do the specific work described here: ${deliverable.focus}`
-					: `Use this pass to do the specific work described here: ${deliverable.focus}`,
+				copy: dependencyLabels.length ? `Ideally start with ${joinLabelList(dependencyLabels)} first, then proceed with: ${deliverable.focus}` : `${deliverable.focus}`,
 			},
 			{
 				title: "While Building",
@@ -2791,18 +2789,6 @@
 		display: none;
 	}
 
-	.surface-directory a.surface-card:hover,
-	.surface-directory a.surface-card:focus-visible {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 18%, transparent) 0%, transparent 34%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--control-bg)) 90%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 84%, #16110f 16%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight, var(--accent)) 14%, transparent),
-			0 18px 30px color-mix(in srgb, black 76%, transparent);
-		border-color: color-mix(in srgb, var(--surface-highlight, var(--accent)) 74%, var(--planner-border-soft));
-		transform: translateY(-2px);
-	}
-
 	a.resource-card:hover,
 	a.resource-card:focus-visible,
 	a.surface-card:hover,
@@ -2932,8 +2918,8 @@
 		align-content: start;
 		gap: 0.55rem;
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--compass-accent) 16%, transparent) 0%, transparent 34%),
-			linear-gradient(180deg, color-mix(in oklch, var(--compass-panel) 96%, white 4%) 0%, color-mix(in oklch, var(--compass-panel) 88%, #130f0c 12%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--compass-accent) 15%, transparent) 0%, transparent 25%),
+			linear-gradient(180deg, color-mix(in oklch, var(--compass-panel) 55%, white 4%) 0%, color-mix(in oklch, var(--compass-panel) 50%, #130f0c 10%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 8%, transparent),
 			var(--planner-shadow);
@@ -3407,12 +3393,6 @@
 		padding-inline: 0.55rem;
 	}
 
-	.surface-directory .surface-card .surface-badge {
-		color: var(--surface-highlight-strong, var(--ink));
-		background: color-mix(in srgb, var(--surface-highlight, var(--accent)) 14%, transparent);
-		border-color: color-mix(in srgb, var(--surface-highlight, var(--accent)) 54%, var(--planner-border-soft));
-	}
-
 	.resource-card,
 	.surface-card {
 		display: grid;
@@ -3420,11 +3400,11 @@
 		color: var(--ink);
 		text-decoration: none;
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 20%, transparent) 0%, transparent 34%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--planner-panel-soft)) 80%, var(--control-bg)) 0%, color-mix(in srgb, var(--planner-panel-muted) 85%, #17110d 5%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 20%, transparent) 0%, transparent 35%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--planner-panel-soft)) 99%, var(--control-bg)) 0%, color-mix(in srgb, var(--planner-panel-soft) 90%, #17110d 5%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
-			0 12px 24px color-mix(in srgb, black 75%, transparent);
+			0 12px 12px color-mix(in srgb, black 75%, transparent);
 		border: 1px solid color-mix(in srgb, var(--surface-border, var(--planner-border-soft)) 60%, var(--planner-border-soft));
 		border-radius: 1rem;
 		padding: 1.1rem;
@@ -3567,10 +3547,10 @@
 		gap: 0.8rem;
 		color: var(--ink);
 		text-align: left;
-		background: linear-gradient(165deg, color-mix(in oklch, var(--planner-panel-soft) 90%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 86%, #18120d 14%) 100%);
+		background: linear-gradient(165deg, color-mix(in oklch, var(--planner-panel-soft) 95%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 85%, #18120d 5%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 7%, transparent),
-			0 12px 22px color-mix(in oklch, black 16%, transparent);
+			0 6px 8px color-mix(in oklch, black 16%, transparent);
 		border: 1px solid color-mix(in oklch, var(--planner-highlight) 18%, var(--planner-border-soft));
 		border-radius: 1rem;
 		padding: 1.1rem;
@@ -3585,21 +3565,21 @@
 	}
 
 	.deliverable-pill {
-		gap: 0.9rem;
+		gap: 0.5rem;
 	}
 
 	.deliverable-pill:hover,
 	.deliverable-pill:focus-visible {
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 7%, transparent),
-			0 14px 24px color-mix(in oklch, black 22%, transparent);
-		border-color: color-mix(in oklch, var(--planner-brass) 52%, white 18%);
+			0 6px 8px color-mix(in oklch, black 22%, transparent);
+		border-color: color-mix(in oklch, var(--planner-brass) 40%, white 18%);
 		transform: translateY(-1px);
 	}
 
 	.deliverable-pill.is-complete {
-		opacity: 0.68;
-		filter: saturate(0.28);
+		opacity: 0.5;
+		filter: saturate(0.25);
 	}
 
 	.deliverable-toggle.is-complete,
@@ -3673,7 +3653,6 @@
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, var(--hero-track-accent) 90%, transparent),
 			0 8px 8px color-mix(in oklch, black 60%, transparent);
-		transform: translateY(-1px);
 	}
 
 	.planner-hero-route-card.is-art {
@@ -3939,8 +3918,8 @@
 		color: var(--ink);
 		text-align: left;
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--track-accent) 20%, transparent) 0%, transparent 32%),
-			linear-gradient(180deg, color-mix(in oklch, var(--planner-panel-soft) 70%, var(--track-accent) 30%) 0%, color-mix(in oklch, var(--planner-panel-muted) 84%, #17110d 16%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--track-accent) 50%, transparent) 0%, transparent 40%),
+			linear-gradient(180deg, color-mix(in oklch, var(--planner-panel-soft) 95%, var(--track-accent) 70%) 0%, color-mix(in oklch, var(--planner-panel-muted) 95%, #17110d 5%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 8%, transparent),
 			0 6px 12px color-mix(in oklch, var(--shadow-soft) 85%, var(--track-accent) 5%);
@@ -3950,6 +3929,10 @@
 		--track-accent: #d8b06f;
 		--track-accent-soft: #f0d5a6;
 		text-shadow: 1px 1px 3px #222;
+
+		&:hover {
+			border: 1px solid color-mix(in oklch, var(--track-accent) 90%, var(--planner-border-soft)) !important;
+		}
 	}
 
 	.track-card.is-active {
@@ -3960,28 +3943,36 @@
 
 	.track-card.is-active,
 	.deliverable-pill.is-active {
-		box-shadow: 0 7px 14px color-mix(in oklch, var(--shadow-soft) 60%, #ba8a35 40%);
+		box-shadow: 0 6px 8px color-mix(in oklch, var(--shadow-soft) 60%, #ba8a35 40%);
 		border-color: color-mix(in oklch, var(--planner-brass) 20%, white 60%);
 	}
 
 	.track-card.is-active.is-critical,
 	.deliverable-pill.is-active.is-critical {
-		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 65%, #6a2b24 35%) 0%, color-mix(in oklch, var(--control-bg) 55%, #381512 45%) 100%);
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in oklch, #ff9b8f 26%, transparent) 0%, transparent 34%),
+			linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 18%, #9b3d32 82%) 0%, color-mix(in oklch, var(--control-bg) 26%, #5b1e19 74%) 100%);
 	}
 
 	.track-card.is-active.is-high,
 	.deliverable-pill.is-active.is-high {
-		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 65%, #6b5122 35%) 0%, color-mix(in oklch, var(--control-bg) 55%, #382912 45%) 100%);
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in oklch, #ffd07a 24%, transparent) 0%, transparent 34%),
+			linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 18%, #9b7024 82%) 0%, color-mix(in oklch, var(--control-bg) 26%, #634415 74%) 100%);
 	}
 
 	.track-card.is-active.is-medium,
 	.deliverable-pill.is-active.is-medium {
-		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 65%, #284a62 35%) 0%, color-mix(in oklch, var(--control-bg) 55%, #162b39 45%) 100%);
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in oklch, #8fc7ff 24%, transparent) 0%, transparent 34%),
+			linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 18%, #356d98 82%) 0%, color-mix(in oklch, var(--control-bg) 26%, #1c4360 74%) 100%);
 	}
 
 	.track-card.is-active.is-support,
 	.deliverable-pill.is-active.is-support {
-		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 60%, #38302a 40%) 0%, color-mix(in oklch, var(--control-bg) 60%, #201914 40%) 100%);
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in oklch, #f0d3a8 18%, transparent) 0%, transparent 34%),
+			linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 16%, #5a4734 84%) 0%, color-mix(in oklch, var(--control-bg) 24%, #34271d 76%) 100%);
 	}
 
 	.track-card.is-art {

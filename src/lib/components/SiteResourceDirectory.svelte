@@ -120,14 +120,18 @@
 		color: var(--ink);
 		text-decoration: none;
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 10%, transparent) 0%, transparent 34%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--control-bg)) 88%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 88%, #16110f 12%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 20%, transparent) 0%, transparent 45%),
+			linear-gradient(
+				165deg,
+				color-mix(in srgb, var(--surface-panel, var(--control-bg)) 99%, var(--control-bg)) 0%,
+				color-mix(in srgb, var(--surface-panel, var(--control-bg)) 95%, #16110f 5%) 100%
+			);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
 			0 6px 8px color-mix(in srgb, black 80%, transparent);
 		border: 1px solid color-mix(in srgb, var(--surface-highlight, var(--surface-border, var(--accent))) 44%, var(--surface-border, var(--home-muted-border)));
 		border-radius: 1rem;
-		padding: 1rem;
+		padding: 1.25rem 1rem;
 		overflow: hidden;
 		transition:
 			transform 160ms ease,

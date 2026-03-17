@@ -153,6 +153,30 @@
 			href: "/pattern-library?pattern=promotion-chain-setup",
 		},
 		{
+			id: "pattern-per-turn-city-scanner",
+			surface: "pattern",
+			kicker: "Pattern",
+			title: "Per-Turn City Scanner",
+			copy: "Useful when a unique needs a steady city pass to refresh dummy buildings, thresholds, or passive state each turn.",
+			href: "/pattern-library?pattern=per-turn-city-scanner",
+		},
+		{
+			id: "pattern-city-bought-plot-trigger",
+			surface: "pattern",
+			kicker: "Pattern",
+			title: "City Bought Plot Trigger",
+			copy: "Helpful when a civ reward should fire from border expansion purchases instead of broader city polling.",
+			href: "/pattern-library?pattern=city-bought-plot-trigger",
+		},
+		{
+			id: "pattern-holy-city-reward-resolver",
+			surface: "pattern",
+			kicker: "Pattern",
+			title: "Holy City / Largest City Reward Resolver",
+			copy: "A practical companion when rewards should land in the capital, holy city, or best fallback city without brittle lookup code.",
+			href: "/pattern-library?pattern=holy-city-largest-city-reward-resolver",
+		},
+		{
 			id: "generator-city-spy-names",
 			surface: "generator",
 			kicker: "Generator",
@@ -201,6 +225,14 @@
 			href: "/map-viewer",
 		},
 		{
+			id: "tool-tech-tree-viewer",
+			surface: "tool",
+			kicker: "Tool",
+			title: "Tech Tree Viewer",
+			copy: "Useful when placing uniques, reveals, or support effects and you need the full tech context at a glance.",
+			href: "/tech-tree-viewer",
+		},
+		{
 			id: "tool-icon-maker",
 			surface: "tool",
 			kicker: "Tool",
@@ -234,6 +266,8 @@
 		"pattern-unit-spawn-workflow",
 		"pattern-city-hooks",
 		"pattern-savedata-cooldown",
+		"pattern-per-turn-city-scanner",
+		"pattern-holy-city-reward-resolver",
 	];
 	const selectedCuratedEntries = $state(pickCuratedEntries());
 	const workshopPlatformIcons = {
@@ -265,6 +299,12 @@
 			chosenIds.add(patternPick.id);
 			picks.push(patternPick);
 		}
+
+		// const secondaryPatternPick = pickFirstAvailable(shuffleEntries(curatedEntries.filter((entry) => entry.surface === "pattern")), chosenIds);
+		// if (secondaryPatternPick) {
+		// 	chosenIds.add(secondaryPatternPick.id);
+		// 	picks.push(secondaryPatternPick);
+		// }
 
 		const schemaPick = pickFirstAvailable(shuffleEntries(curatedEntries.filter((entry) => entry.surface === "schema")), chosenIds);
 		if (schemaPick) {
@@ -372,7 +412,7 @@
 		<div class="hero-copy">
 			<p class="eyebrow">New to Civilization V Modding? Start Here</p>
 			<h1>Learn how to build Civilization V mods with a smooth on-ramp, custom tooling, and fewer dead ends.</h1>
-			<p>Civ Modding Central makes it easy to go from first draft to final release.</p>
+			<p>Civ Modding Central makes it easier to go from first draft to final release.</p>
 		</div>
 	</header>
 
@@ -774,11 +814,11 @@
 		justify-content: flex-end;
 		align-items: center;
 		gap: 1.5rem;
-		/*background: color-mix(in srgb, var(--surface-schema-panel) 38%, var(--control-bg));
-		border: 1px solid color-mix(in srgb, var(--surface-schema-highlight) 18%, var(--home-muted-border));*/
 		border-radius: 1rem;
 		padding-block: 0.75rem;
 		padding-inline: 0.5rem;
+		/*background: color-mix(in srgb, var(--surface-schema-panel) 38%, var(--control-bg));
+		border: 1px solid color-mix(in srgb, var(--surface-schema-highlight) 18%, var(--home-muted-border));*/
 	}
 
 	.curated-toolbar-copy {
@@ -973,6 +1013,13 @@
 		border-color: color-mix(in srgb, var(--surface-highlight, var(--surface-border, var(--accent))) 44%, var(--surface-border, var(--home-muted-border)));
 	}
 
+	.is-publish {
+		--surface-border: var(--surface-publish-border);
+		--surface-highlight: var(--surface-publish-highlight);
+		--surface-highlight-strong: var(--surface-publish-highlight-strong);
+		--surface-panel: var(--surface-publish-panel);
+	}
+
 	.is-tool {
 		--surface-border: var(--surface-tool-border);
 		--surface-highlight: var(--surface-tool-highlight);
@@ -1075,6 +1122,13 @@
 		--surface-panel: var(--surface-pattern-panel);
 	}
 
+	.is-planner {
+		--surface-border: var(--surface-planner-border);
+		--surface-highlight: var(--surface-planner-highlight);
+		--surface-highlight-strong: var(--surface-planner-highlight-strong);
+		--surface-panel: var(--surface-planner-panel);
+	}
+
 	.is-schema {
 		--surface-border: var(--surface-schema-border);
 		--surface-highlight: var(--surface-schema-highlight);
@@ -1082,11 +1136,11 @@
 		--surface-panel: var(--surface-schema-panel);
 	}
 
-	.is-planner {
-		--surface-border: var(--surface-planner-border);
-		--surface-highlight: var(--surface-planner-highlight);
-		--surface-highlight-strong: var(--surface-planner-highlight-strong);
-		--surface-panel: var(--surface-planner-panel);
+	.is-ui {
+		--surface-border: var(--surface-ui-border);
+		--surface-highlight: var(--surface-ui-highlight);
+		--surface-highlight-strong: var(--surface-ui-highlight-strong);
+		--surface-panel: var(--surface-ui-panel);
 	}
 
 	.is-viewer,
@@ -1095,20 +1149,6 @@
 		--surface-highlight: var(--surface-support-highlight);
 		--surface-highlight-strong: var(--surface-support-highlight-strong);
 		--surface-panel: var(--surface-support-panel);
-	}
-
-	.is-publish {
-		--surface-border: var(--surface-publish-border);
-		--surface-highlight: var(--surface-publish-highlight);
-		--surface-highlight-strong: var(--surface-publish-highlight-strong);
-		--surface-panel: var(--surface-publish-panel);
-	}
-
-	.is-ui {
-		--surface-border: var(--surface-ui-border);
-		--surface-highlight: var(--surface-ui-highlight);
-		--surface-highlight-strong: var(--surface-ui-highlight-strong);
-		--surface-panel: var(--surface-ui-panel);
 	}
 
 	.workshop-actions {
