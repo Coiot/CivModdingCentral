@@ -1416,6 +1416,14 @@
 				title: "Do Not Move On Until",
 				copy: `${deliverable.doneLabel} Watch for this failure mode while closing the step: ${deliverable.hint}`,
 			},
+			...(deliverable.advice
+				? [
+						{
+							title: "Advice",
+							copy: deliverable.advice,
+						},
+					]
+				: []),
 		];
 	}
 </script>
@@ -1870,34 +1878,6 @@
 						</div>
 					</div>
 
-					{#if activeDeliverable.doneLabel || activeDeliverable.focus || activeDeliverable.hint}
-						<div class="detail-grid">
-							{#if activeDeliverable.doneLabel}
-								<section class="detail-card">
-									<p class="eyebrow">Definition Of Done</p>
-									<h3 class="card-title">What finished looks like</h3>
-									<p class="card-copy">{activeDeliverable.doneLabel}</p>
-								</section>
-							{/if}
-
-							{#if activeDeliverable.focus}
-								<section class="detail-card">
-									<p class="eyebrow">Focus</p>
-									<h3 class="card-title">Where to spend the effort</h3>
-									<p class="card-copy">{activeDeliverable.focus}</p>
-								</section>
-							{/if}
-
-							{#if activeDeliverable.hint}
-								<section class="detail-card">
-									<p class="eyebrow">Watch For</p>
-									<h3 class="card-title">Common failure mode</h3>
-									<p class="card-copy">{activeDeliverable.hint}</p>
-								</section>
-							{/if}
-						</div>
-					{/if}
-
 					{#if activeInstructionBlocks.length}
 						<section class="detail-playbook" aria-label="Execution notes">
 							<div class="section-heading">
@@ -1942,39 +1922,6 @@
 						</section>
 					{/if}
 
-					{#if activeResources.length}
-						<section class="support-panel">
-							<div class="section-heading">
-								<p class="eyebrow">References</p>
-								<h3 class="section-title">Suggested site resources for this step</h3>
-								<p class="section-copy">Use these tools, guides, and references to move the current step forward without losing your place in the planner.</p>
-							</div>
-
-							<div class="resource-grid">
-								{#each activeResources as resource (resource.id)}
-									{#if resource.disabled}
-										<div class={["resource-card", resourceTone(resource), resourceAccentClass(resource)]} aria-disabled="true">
-											<div class="resource-card-head">
-												<span class="surface-badge">{resourceSurfaceLabel(resource)}</span>
-												<strong>Coming Soon</strong>
-											</div>
-											<h4 class="card-title">{resource.label}</h4>
-											<p class="card-copy">{resource.description}</p>
-										</div>
-									{:else}
-										<a class={["resource-card", resourceTone(resource), resourceAccentClass(resource)]} href={resource.href} target="_blank" rel="noopener noreferrer">
-											<div class="resource-card-head">
-												<span class="surface-badge">{resourceSurfaceLabel(resource)}</span>
-											</div>
-											<h4 class="card-title">{resource.label}</h4>
-											<p class="card-copy">{resource.description}</p>
-										</a>
-									{/if}
-								{/each}
-							</div>
-						</section>
-					{/if}
-
 					{#if activeTutorials.length}
 						<section class="support-panel">
 							<div class="section-heading">
@@ -1995,6 +1942,39 @@
 										<h4 class="card-title">{tutorial.label}</h4>
 										<p class="card-copy">{tutorial.description}</p>
 									</div>
+								{/each}
+							</div>
+						</section>
+					{/if}
+
+					{#if activeResources.length}
+						<section class="support-panel">
+							<div class="section-heading">
+								<p class="eyebrow">References</p>
+								<h3 class="section-title">Suggested site resources for this step</h3>
+								<p class="section-copy">Use these tools, guides, and references to move the current step forward without losing your place in the planner.</p>
+							</div>
+
+							<div class="resource-grid">
+								{#each activeResources as resource (resource.id)}
+									{#if resource.disabled}
+										<div class={["resource-card", resourceTone(resource), resourceAccentClass(resource)]} aria-disabled="true">
+											<div class="resource-card-head margin-block-end-half">
+												<span class="surface-badge">{resourceSurfaceLabel(resource)}</span>
+												<strong>Coming Soon</strong>
+											</div>
+											<h4 class="card-title">{resource.label}</h4>
+											<p class="card-copy">{resource.description}</p>
+										</div>
+									{:else}
+										<a class={["resource-card", resourceTone(resource), resourceAccentClass(resource)]} href={resource.href} target="_blank" rel="noopener noreferrer">
+											<div class="resource-card-head margin-block-end-half">
+												<span class="surface-badge">{resourceSurfaceLabel(resource)}</span>
+											</div>
+											<h4 class="card-title">{resource.label}</h4>
+											<p class="card-copy">{resource.description}</p>
+										</a>
+									{/if}
 								{/each}
 							</div>
 						</section>
@@ -3395,8 +3375,9 @@
 
 	.resource-card,
 	.surface-card {
-		display: grid;
-		gap: 0.75rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
 		color: var(--ink);
 		text-decoration: none;
 		background:
