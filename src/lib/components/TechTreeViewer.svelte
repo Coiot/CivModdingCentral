@@ -2,17 +2,6 @@
 
 <script>
 	import { onMount, tick } from "svelte";
-	import schemaData from "../data/civ-schema.json";
-	import civTextEnUs from "../data/civ-text-en-us.json";
-	import enlightenmentEraData from "../data/enlightenment-era-tech-tree.json";
-
-	const TABLE_BY_NAME = new Map(schemaData.tables.map((table) => [table.name, table]));
-	const BASE_ROWS_BY_TABLE = new Map(schemaData.tables.map((table) => [table.name, table.rows || []]));
-	const BASE_TECHNOLOGY_ROWS = BASE_ROWS_BY_TABLE.get("Technologies") || [];
-	const BASE_ERA_ROWS = BASE_ROWS_BY_TABLE.get("Eras") || [];
-	const BASE_TEXT_ROWS = BASE_ROWS_BY_TABLE.get("Language_en_US") || [];
-	const BASE_PREREQ_ROWS = BASE_ROWS_BY_TABLE.get("Technology_PrereqTechs") || [];
-	const OR_PREREQ_ROWS = BASE_ROWS_BY_TABLE.get("Technology_ORPrereqTechs") || [];
 	const numberFormatter = new Intl.NumberFormat("en-US");
 	const DISPLAY_LIMITS = {
 		effects: 5,
@@ -43,18 +32,33 @@
 		{ key: "Repeat", label: "Repeatable" },
 		{ key: "EndsGame", label: "Ends game" },
 	];
-	const BASE_TEXT_BY_TAG = new Map([...Object.entries(civTextEnUs || {}), ...buildTextLookup(BASE_TEXT_ROWS).entries()]);
 
 	let searchQuery = $state("");
 	let selectedEras = $state([]);
 	let eraFlow = $state("horizontal");
 	let includeEnlightenmentEra = $state(false);
+	let techTreeBaseData = $state(null);
+	let enlightenmentEraData = $state(null);
+	let techTreeDataLoading = $state(true);
+	let techTreeDataError = $state("");
+	let enlightenmentDataLoading = $state(false);
+	let enlightenmentDataError = $state("");
+	let techTreeBaseDataPromise = null;
+	let enlightenmentDataPromise = null;
 
-	const TEXT_BY_TAG = $derived.by(() => (includeEnlightenmentEra ? new Map([...BASE_TEXT_BY_TAG.entries(), ...Object.entries(enlightenmentEraData.textByTag || {})]) : BASE_TEXT_BY_TAG));
-	const OVERLAY_ROWS_BY_TABLE = $derived(new Map(Object.entries(enlightenmentEraData.tables || {})));
-	const TECHNOLOGY_ROWS = $derived(includeEnlightenmentEra ? enlightenmentEraData.technologies || [] : BASE_TECHNOLOGY_ROWS);
-	const ERA_ROWS = $derived(includeEnlightenmentEra ? enlightenmentEraData.eras || [] : BASE_ERA_ROWS);
-	const PREREQ_ROWS = $derived(includeEnlightenmentEra ? enlightenmentEraData.prereqs || [] : BASE_PREREQ_ROWS);
+	const BASE_ROWS_BY_TABLE = $derived(new Map(Object.entries(techTreeBaseData?.tables || {})));
+	const BASE_TECHNOLOGY_ROWS = $derived(BASE_ROWS_BY_TABLE.get("Technologies") || []);
+	const BASE_ERA_ROWS = $derived(BASE_ROWS_BY_TABLE.get("Eras") || []);
+	const BASE_PREREQ_ROWS = $derived(BASE_ROWS_BY_TABLE.get("Technology_PrereqTechs") || []);
+	const OR_PREREQ_ROWS = $derived(BASE_ROWS_BY_TABLE.get("Technology_ORPrereqTechs") || []);
+	const BASE_TEXT_BY_TAG = $derived(new Map(Object.entries(techTreeBaseData?.textByTag || {})));
+	const TEXT_BY_TAG = $derived.by(() =>
+		includeEnlightenmentEra && enlightenmentEraData ? new Map([...BASE_TEXT_BY_TAG.entries(), ...Object.entries(enlightenmentEraData.textByTag || {})]) : BASE_TEXT_BY_TAG,
+	);
+	const OVERLAY_ROWS_BY_TABLE = $derived(new Map(Object.entries(enlightenmentEraData?.tables || {})));
+	const TECHNOLOGY_ROWS = $derived(includeEnlightenmentEra && enlightenmentEraData ? enlightenmentEraData.technologies || [] : BASE_TECHNOLOGY_ROWS);
+	const ERA_ROWS = $derived(includeEnlightenmentEra && enlightenmentEraData ? enlightenmentEraData.eras || [] : BASE_ERA_ROWS);
+	const PREREQ_ROWS = $derived(includeEnlightenmentEra && enlightenmentEraData ? enlightenmentEraData.prereqs || [] : BASE_PREREQ_ROWS);
 	const TECH_ROW_BY_TYPE = $derived(new Map(TECHNOLOGY_ROWS.map((row) => [row.Type, row])));
 	const ERA_BY_TYPE = $derived(new Map(ERA_ROWS.map((row, index) => [row.Type, { ...row, index }])));
 	const TECH_GRAPH = $derived(buildTechGraph());
@@ -82,6 +86,77 @@
 		selectedEras = selectedEras.includes(eraType) ? selectedEras.filter((entry) => entry !== eraType) : [...selectedEras, eraType];
 	}
 
+	function unwrapModuleDefault(module) {
+		return module?.default || module || null;
+	}
+
+	async function ensureTechTreeBaseDataLoaded() {
+		if (techTreeBaseData) {
+			return techTreeBaseData;
+		}
+		if (techTreeBaseDataPromise) {
+			return techTreeBaseDataPromise;
+		}
+
+		techTreeDataLoading = true;
+		techTreeDataError = "";
+		techTreeBaseDataPromise = import("../data/tech-tree-base-data.json")
+			.then((module) => {
+				techTreeBaseData = unwrapModuleDefault(module);
+				return techTreeBaseData;
+			})
+			.catch((error) => {
+				console.error("Failed to load tech tree base data", error);
+				techTreeDataError = "Could not load tech tree data.";
+				return null;
+			})
+			.finally(() => {
+				techTreeDataLoading = false;
+				techTreeBaseDataPromise = null;
+			});
+
+		return techTreeBaseDataPromise;
+	}
+
+	async function ensureEnlightenmentDataLoaded() {
+		if (enlightenmentEraData) {
+			return enlightenmentEraData;
+		}
+		if (enlightenmentDataPromise) {
+			return enlightenmentDataPromise;
+		}
+
+		enlightenmentDataLoading = true;
+		enlightenmentDataError = "";
+		enlightenmentDataPromise = import("../data/enlightenment-era-tech-tree.json")
+			.then((module) => {
+				enlightenmentEraData = unwrapModuleDefault(module);
+				return enlightenmentEraData;
+			})
+			.catch((error) => {
+				console.error("Failed to load Enlightenment overlay data", error);
+				enlightenmentDataError = "Could not load Enlightenment Era overlay data.";
+				return null;
+			})
+			.finally(() => {
+				enlightenmentDataLoading = false;
+				enlightenmentDataPromise = null;
+			});
+
+		return enlightenmentDataPromise;
+	}
+
+	async function setEraOverlay(enabled) {
+		if (enabled) {
+			const loaded = await ensureEnlightenmentDataLoaded();
+			if (!loaded) {
+				includeEnlightenmentEra = false;
+				return;
+			}
+		}
+		includeEnlightenmentEra = enabled;
+	}
+
 	onMount(() => {
 		if (typeof window === "undefined") {
 			return;
@@ -98,36 +173,10 @@
 			target?.scrollIntoView({ block: "start", behavior: "smooth" });
 		};
 
-		void handleHashNavigation();
+		void ensureTechTreeBaseDataLoaded().then(() => handleHashNavigation());
 		window.addEventListener("hashchange", handleHashNavigation);
 		return () => window.removeEventListener("hashchange", handleHashNavigation);
 	});
-
-	function buildTextLookup(rows) {
-		const lookup = new Map();
-		for (const row of rows) {
-			const tag = String(row?.Tag || row?.tag || row?.Type || "").trim();
-			const textValue = extractTextValue(row);
-			if (!tag || !textValue) {
-				continue;
-			}
-			lookup.set(tag, String(textValue).trim());
-		}
-		return lookup;
-	}
-
-	function extractTextValue(row) {
-		if (!row || typeof row !== "object") {
-			return "";
-		}
-		for (const key of ["Text", "text", "Value", "value", "Description"]) {
-			const candidate = row[key];
-			if (typeof candidate === "string" && candidate.trim()) {
-				return candidate;
-			}
-		}
-		return "";
-	}
 
 	function buildTechGraph() {
 		const prereqMap = new Map();
@@ -167,7 +216,7 @@
 				supportGroups,
 				unlockCount: unlockGroups.reduce((sum, group) => sum + group.items.length, 0),
 				supportCount: supportGroups.reduce((sum, group) => sum + group.items.length, 0),
-				schemaHref: schemaRowHref("Technologies", row.Type),
+				schemaAvailable: hasBaseTypeRow("Technologies", row.Type),
 			};
 		}).sort((left, right) => {
 			if (left.eraIndex !== right.eraIndex) {
@@ -275,6 +324,15 @@
 		return `M ${startX} ${startY} C ${midX} ${startY}, ${midX} ${endY}, ${endX} ${endY}`;
 	}
 
+	function withSchemaState(tableName, typeValue, item) {
+		return {
+			...item,
+			schemaTableName: tableName,
+			schemaType: typeValue,
+			schemaAvailable: hasBaseTypeRow(tableName, typeValue),
+		};
+	}
+
 	function buildUnlockGroups(tech) {
 		return [
 			buildEntityGroup({
@@ -283,13 +341,13 @@
 				tableName: "Units",
 				techField: "PrereqTech",
 				techValue: tech.Type,
-				buildItem: (row) => ({
-					label: resolveDisplayName(row, "Type"),
-					rawType: row.Type,
-					detail: summarizeUnit(row),
-					preview: buildEntityPreview("Units", row),
-					href: schemaRowHref("Units", row.Type),
-				}),
+				buildItem: (row) =>
+					withSchemaState("Units", row.Type, {
+						label: resolveDisplayName(row, "Type"),
+						rawType: row.Type,
+						detail: summarizeUnit(row),
+						preview: buildEntityPreview("Units", row),
+					}),
 			}),
 			buildEntityGroup({
 				id: "buildings",
@@ -298,13 +356,13 @@
 				techField: "PrereqTech",
 				techValue: tech.Type,
 				filter: (row) => Number(row.MaxGlobalInstances || 0) <= 0 && !row.WonderSplashImage,
-				buildItem: (row) => ({
-					label: resolveDisplayName(row, "Type"),
-					rawType: row.Type,
-					detail: summarizeBuilding(row),
-					preview: buildEntityPreview("Buildings", row),
-					href: schemaRowHref("Buildings", row.Type),
-				}),
+				buildItem: (row) =>
+					withSchemaState("Buildings", row.Type, {
+						label: resolveDisplayName(row, "Type"),
+						rawType: row.Type,
+						detail: summarizeBuilding(row),
+						preview: buildEntityPreview("Buildings", row),
+					}),
 			}),
 			buildEntityGroup({
 				id: "world-wonders",
@@ -313,13 +371,13 @@
 				techField: "PrereqTech",
 				techValue: tech.Type,
 				filter: (row) => Number(row.MaxGlobalInstances || 0) > 0 || Boolean(row.WonderSplashImage),
-				buildItem: (row) => ({
-					label: resolveDisplayName(row, "Type"),
-					rawType: row.Type,
-					detail: summarizeBuilding(row),
-					preview: buildEntityPreview("Buildings", row),
-					href: schemaRowHref("Buildings", row.Type),
-				}),
+				buildItem: (row) =>
+					withSchemaState("Buildings", row.Type, {
+						label: resolveDisplayName(row, "Type"),
+						rawType: row.Type,
+						detail: summarizeBuilding(row),
+						preview: buildEntityPreview("Buildings", row),
+					}),
 			}),
 			buildEntityGroup({
 				id: "projects",
@@ -327,13 +385,13 @@
 				tableName: "Projects",
 				techField: "TechPrereq",
 				techValue: tech.Type,
-				buildItem: (row) => ({
-					label: resolveDisplayName(row, "Type"),
-					rawType: row.Type,
-					detail: summarizeProject(row),
-					preview: buildEntityPreview("Projects", row),
-					href: schemaRowHref("Projects", row.Type),
-				}),
+				buildItem: (row) =>
+					withSchemaState("Projects", row.Type, {
+						label: resolveDisplayName(row, "Type"),
+						rawType: row.Type,
+						detail: summarizeProject(row),
+						preview: buildEntityPreview("Projects", row),
+					}),
 			}),
 			buildEntityGroup({
 				id: "processes",
@@ -341,13 +399,13 @@
 				tableName: "Processes",
 				techField: "TechPrereq",
 				techValue: tech.Type,
-				buildItem: (row) => ({
-					label: resolveDisplayName(row, "Type"),
-					rawType: row.Type,
-					detail: summarizeProcess(row),
-					preview: buildEntityPreview("Processes", row),
-					href: schemaRowHref("Processes", row.Type),
-				}),
+				buildItem: (row) =>
+					withSchemaState("Processes", row.Type, {
+						label: resolveDisplayName(row, "Type"),
+						rawType: row.Type,
+						detail: summarizeProcess(row),
+						preview: buildEntityPreview("Processes", row),
+					}),
 			}),
 			buildBuildDerivedGroup(
 				tech,
@@ -355,13 +413,13 @@
 				"Improvements",
 				(build) => build.ImprovementType,
 				"Improvements",
-				(row, build) => ({
-					label: resolveDisplayName(row, "Type"),
-					rawType: row.Type,
-					detail: summarizeImprovement(row, build),
-					preview: buildEntityPreview("Improvements", row, build),
-					href: schemaRowHref("Improvements", row.Type),
-				}),
+				(row, build) =>
+					withSchemaState("Improvements", row.Type, {
+						label: resolveDisplayName(row, "Type"),
+						rawType: row.Type,
+						detail: summarizeImprovement(row, build),
+						preview: buildEntityPreview("Improvements", row, build),
+					}),
 			),
 			buildBuildDerivedGroup(
 				tech,
@@ -369,13 +427,13 @@
 				"Routes",
 				(build) => build.RouteType,
 				"Routes",
-				(row, build) => ({
-					label: resolveDisplayName(row, "Type"),
-					rawType: row.Type,
-					detail: summarizeRoute(row, build),
-					preview: buildEntityPreview("Routes", row, build),
-					href: schemaRowHref("Routes", row.Type),
-				}),
+				(row, build) =>
+					withSchemaState("Routes", row.Type, {
+						label: resolveDisplayName(row, "Type"),
+						rawType: row.Type,
+						detail: summarizeRoute(row, build),
+						preview: buildEntityPreview("Routes", row, build),
+					}),
 			),
 			buildEntityGroup({
 				id: "actions",
@@ -384,13 +442,13 @@
 				techField: "PrereqTech",
 				techValue: tech.Type,
 				filter: (row) => !row.ImprovementType && !row.RouteType,
-				buildItem: (row) => ({
-					label: resolveDisplayName(row, "Type"),
-					rawType: row.Type,
-					detail: summarizeBuild(row),
-					preview: buildEntityPreview("Builds", row),
-					href: schemaRowHref("Builds", row.Type),
-				}),
+				buildItem: (row) =>
+					withSchemaState("Builds", row.Type, {
+						label: resolveDisplayName(row, "Type"),
+						rawType: row.Type,
+						detail: summarizeBuild(row),
+						preview: buildEntityPreview("Builds", row),
+					}),
 			}),
 			buildEntityGroup({
 				id: "promotions",
@@ -398,13 +456,13 @@
 				tableName: "UnitPromotions",
 				techField: "TechPrereq",
 				techValue: tech.Type,
-				buildItem: (row) => ({
-					label: resolveDisplayName(row, "Type"),
-					rawType: row.Type,
-					detail: summarizePromotion(row),
-					preview: buildEntityPreview("UnitPromotions", row),
-					href: schemaRowHref("UnitPromotions", row.Type),
-				}),
+				buildItem: (row) =>
+					withSchemaState("UnitPromotions", row.Type, {
+						label: resolveDisplayName(row, "Type"),
+						rawType: row.Type,
+						detail: summarizePromotion(row),
+						preview: buildEntityPreview("UnitPromotions", row),
+					}),
 			}),
 			buildEntityGroup({
 				id: "resources-reveal",
@@ -412,13 +470,13 @@
 				tableName: "Resources",
 				techField: "TechReveal",
 				techValue: tech.Type,
-				buildItem: (row) => ({
-					label: resolveDisplayName(row, "Type"),
-					rawType: row.Type,
-					detail: summarizeResource(row, "Reveal"),
-					preview: buildEntityPreview("Resources", row),
-					href: schemaRowHref("Resources", row.Type),
-				}),
+				buildItem: (row) =>
+					withSchemaState("Resources", row.Type, {
+						label: resolveDisplayName(row, "Type"),
+						rawType: row.Type,
+						detail: summarizeResource(row, "Reveal"),
+						preview: buildEntityPreview("Resources", row),
+					}),
 			}),
 			buildEntityGroup({
 				id: "resources-trade",
@@ -426,13 +484,13 @@
 				tableName: "Resources",
 				techField: "TechCityTrade",
 				techValue: tech.Type,
-				buildItem: (row) => ({
-					label: resolveDisplayName(row, "Type"),
-					rawType: row.Type,
-					detail: summarizeResource(row, "City trade"),
-					preview: buildEntityPreview("Resources", row),
-					href: schemaRowHref("Resources", row.Type),
-				}),
+				buildItem: (row) =>
+					withSchemaState("Resources", row.Type, {
+						label: resolveDisplayName(row, "Type"),
+						rawType: row.Type,
+						detail: summarizeResource(row, "City trade"),
+						preview: buildEntityPreview("Resources", row),
+					}),
 			}),
 		];
 	}
@@ -448,65 +506,65 @@
 					...tableRows("Improvement_TechNoFreshWaterYieldChanges").map((row) => ({ ...row, condition: "No fresh water" })),
 				],
 				techValue: tech.Type,
-				buildItem: (row) => ({
-					label: resolveTypeName("Improvements", row.ImprovementType),
-					rawType: row.ImprovementType,
-					detail: `${formatSignedNumber(row.Yield)} ${formatYieldName(row.YieldType)}${row.condition ? ` ${row.condition}` : ""}`,
-					preview: buildEntityPreview("Improvements", findRowByType("Improvements", row.ImprovementType), row),
-					href: schemaRowHref("Improvements", row.ImprovementType),
-				}),
+				buildItem: (row) =>
+					withSchemaState("Improvements", row.ImprovementType, {
+						label: resolveTypeName("Improvements", row.ImprovementType),
+						rawType: row.ImprovementType,
+						detail: `${formatSignedNumber(row.Yield)} ${formatYieldName(row.YieldType)}${row.condition ? ` ${row.condition}` : ""}`,
+						preview: buildEntityPreview("Improvements", findRowByType("Improvements", row.ImprovementType), row),
+					}),
 			}),
 			buildDeltaGroup({
 				id: "route-movement",
 				label: "Route move",
 				rows: tableRows("Route_TechMovementChanges"),
 				techValue: tech.Type,
-				buildItem: (row) => ({
-					label: resolveTypeName("Routes", row.RouteType),
-					rawType: row.RouteType,
-					detail: `${formatSignedNumber(row.MovementChange)} cost`,
-					preview: buildEntityPreview("Routes", findRowByType("Routes", row.RouteType), row),
-					href: schemaRowHref("Routes", row.RouteType),
-				}),
+				buildItem: (row) =>
+					withSchemaState("Routes", row.RouteType, {
+						label: resolveTypeName("Routes", row.RouteType),
+						rawType: row.RouteType,
+						detail: `${formatSignedNumber(row.MovementChange)} cost`,
+						preview: buildEntityPreview("Routes", findRowByType("Routes", row.RouteType), row),
+					}),
 			}),
 			buildDeltaGroup({
 				id: "trade-range",
 				label: "Trade range",
 				rows: tableRows("Technology_TradeRouteDomainExtraRange"),
 				techValue: tech.Type,
-				buildItem: (row) => ({
-					label: formatIdentifier(row.DomainType, ["DOMAIN_"]),
-					rawType: row.DomainType,
-					detail: `${formatSignedNumber(row.Range)} range`,
-					preview: buildEntityPreview("Technologies", tech, row),
-					href: schemaRowHref("Technologies", row.TechType),
-				}),
+				buildItem: (row) =>
+					withSchemaState("Technologies", row.TechType, {
+						label: formatIdentifier(row.DomainType, ["DOMAIN_"]),
+						rawType: row.DomainType,
+						detail: `${formatSignedNumber(row.Range)} range`,
+						preview: buildEntityPreview("Technologies", tech, row),
+					}),
 			}),
 			buildDeltaGroup({
 				id: "domain-moves",
 				label: "Domain moves",
 				rows: tableRows("Technology_DomainExtraMoves"),
 				techValue: tech.Type,
-				buildItem: (row) => ({
-					label: formatIdentifier(row.DomainType, ["DOMAIN_"]),
-					rawType: row.DomainType,
-					detail: `${formatSignedNumber(row.Moves)} moves`,
-					preview: buildEntityPreview("Technologies", tech, row),
-					href: schemaRowHref("Technologies", row.TechType),
-				}),
+				buildItem: (row) =>
+					withSchemaState("Technologies", row.TechType, {
+						label: formatIdentifier(row.DomainType, ["DOMAIN_"]),
+						rawType: row.DomainType,
+						detail: `${formatSignedNumber(row.Moves)} moves`,
+						preview: buildEntityPreview("Technologies", tech, row),
+					}),
 			}),
 			buildDeltaGroup({
 				id: "free-promotions",
 				label: "Free promos",
 				rows: tableRows("Technology_FreePromotions"),
 				techValue: tech.Type,
-				buildItem: (row) => ({
-					label: resolveTypeName("UnitPromotions", row.PromotionType),
-					rawType: row.PromotionType,
-					detail: "Granted on research",
-					preview: buildEntityPreview("UnitPromotions", findRowByType("UnitPromotions", row.PromotionType), row),
-					href: schemaRowHref("UnitPromotions", row.PromotionType),
-				}),
+				buildItem: (row) =>
+					withSchemaState("UnitPromotions", row.PromotionType, {
+						label: resolveTypeName("UnitPromotions", row.PromotionType),
+						rawType: row.PromotionType,
+						detail: "Granted on research",
+						preview: buildEntityPreview("UnitPromotions", findRowByType("UnitPromotions", row.PromotionType), row),
+					}),
 			}),
 			// buildDeltaGroup({
 			// 	id: "free-tech-civs",
@@ -525,13 +583,13 @@
 				label: "Disabled civs",
 				rows: tableRows("Civilization_DisableTechs"),
 				techValue: tech.Type,
-				buildItem: (row) => ({
-					label: resolveTypeName("Civilizations", row.CivilizationType),
-					rawType: row.CivilizationType,
-					detail: "Cannot research",
-					preview: buildEntityPreview("Civilizations", findRowByType("Civilizations", row.CivilizationType), row),
-					href: schemaRowHref("Civilizations", row.CivilizationType),
-				}),
+				buildItem: (row) =>
+					withSchemaState("Civilizations", row.CivilizationType, {
+						label: resolveTypeName("Civilizations", row.CivilizationType),
+						rawType: row.CivilizationType,
+						detail: "Cannot research",
+						preview: buildEntityPreview("Civilizations", findRowByType("Civilizations", row.CivilizationType), row),
+					}),
 			}),
 		];
 	}
@@ -667,8 +725,16 @@
 		return includeEnlightenmentEra ? OVERLAY_ROWS_BY_TABLE.get(tableName) || BASE_ROWS_BY_TABLE.get(tableName) || [] : BASE_ROWS_BY_TABLE.get(tableName) || [];
 	}
 
+	function baseTableRows(tableName) {
+		return BASE_ROWS_BY_TABLE.get(tableName) || [];
+	}
+
 	function findRowByType(tableName, typeValue) {
 		return tableRows(tableName).find((entry) => entry.Type === typeValue);
+	}
+
+	function hasBaseTypeRow(tableName, typeValue) {
+		return baseTableRows(tableName).some((entry) => entry.Type === typeValue);
 	}
 
 	function resolveTypeName(tableName, typeValue) {
@@ -998,14 +1064,24 @@
 			<span class="toolbar-label">Era Overlay</span>
 			<p class="toolbar-copy">Toggle Enlightenment Era modded tree changes.</p>
 			<div class="toggle-row" role="list" aria-label="Enlightenment Era overlay">
-				<button class:selected={!includeEnlightenmentEra} type="button" onclick={() => (includeEnlightenmentEra = false)}>Base Game</button>
-				<button class:selected={includeEnlightenmentEra} type="button" onclick={() => (includeEnlightenmentEra = true)}>Enlightenment Era</button>
+				<button class:selected={!includeEnlightenmentEra} type="button" onclick={() => setEraOverlay(false)} disabled={enlightenmentDataLoading}>Base Game</button>
+				<button class:selected={includeEnlightenmentEra} type="button" onclick={() => setEraOverlay(true)} disabled={enlightenmentDataLoading}>Enlightenment Era</button>
 			</div>
+			{#if enlightenmentDataError}
+				<p class="toolbar-copy">{enlightenmentDataError}</p>
+			{/if}
 		</div>
 	</div>
 </section>
 
-{#if !filteredTechs.length}
+{#if techTreeDataLoading}
+	<p class="status status-loading" role="status" aria-live="polite">
+		<span class="status-spinner" aria-hidden="true"></span>
+		<span>Loading tech tree data...</span>
+	</p>
+{:else if techTreeDataError}
+	<p class="status error">{techTreeDataError}</p>
+{:else if !filteredTechs.length}
 	<p class="status">No technologies matched that search.</p>
 {:else}
 	<div class:horizontal={eraFlow === "horizontal"} class="era-stack">
@@ -1038,7 +1114,11 @@
 										<h3>{tech.title}</h3>
 										<!-- <div class="tech-meta"><span>{numberFormatter.format(tech.cost)}</span><span>G {tech.gridX},{tech.gridY}</span></div> -->
 									</div>
-									<a class="schema-link" href={tech.schemaHref} target="_blank" rel="noopener noreferrer">Schema</a>
+									{#if tech.schemaAvailable}
+										<a class="schema-link" href={schemaRowHref("Technologies", tech.type)} target="_blank" rel="noopener noreferrer">Schema</a>
+									{:else}
+										<span class="schema-link is-disabled">Enlightenment Era</span>
+									{/if}
 								</header>
 
 								<div class="tech-prereqs">
@@ -1069,32 +1149,58 @@
 											<div class="dense-group">
 												<strong>{group.label} {group.items.length}</strong>
 												<span
-													>{#each group.previewItems as item, index (`${group.id}-${item.rawType}-${index}`)}<a
-															href={item.href}
-															target="_blank"
-															rel="noopener noreferrer"
-															class:has-preview={Boolean(item.preview)}
-														>
-															{item.label}
-															{#if item.preview}
-																<span class="dense-preview" role="tooltip">
-																	<strong>{item.preview.title}</strong>
-																	{#if item.preview.rawType}
-																		<code>{item.preview.rawType}</code>
-																	{/if}
-																	{#if item.preview.stats.length}
-																		<ul>
-																			{#each item.preview.stats as stat (`${item.rawType}-${stat}`)}
-																				<li>{stat}</li>
-																			{/each}
-																		</ul>
-																	{/if}
-																	{#if item.preview.description}
-																		<p>{item.preview.description}</p>
-																	{/if}
-																</span>
-															{/if}</a
-														>{index < group.previewItems.length - 1 ? ", " : ""}{/each}{#if group.remainingCount}
+													>{#each group.previewItems as item, index (`${group.id}-${item.rawType}-${index}`)}
+														{#if item.schemaAvailable}
+															<a
+																href={schemaRowHref(item.schemaTableName, item.schemaType)}
+																target="_blank"
+																rel="noopener noreferrer"
+																class:has-preview={Boolean(item.preview)}
+															>
+																{item.label}
+																{#if item.preview}
+																	<span class="dense-preview" role="tooltip">
+																		<strong>{item.preview.title}</strong>
+																		{#if item.preview.rawType}
+																			<code>{item.preview.rawType}</code>
+																		{/if}
+																		{#if item.preview.stats.length}
+																			<ul>
+																				{#each item.preview.stats as stat (`${item.rawType}-${stat}`)}
+																					<li>{stat}</li>
+																				{/each}
+																			</ul>
+																		{/if}
+																		{#if item.preview.description}
+																			<p>{item.preview.description}</p>
+																		{/if}
+																	</span>
+																{/if}
+															</a>
+														{:else}
+															<span class:has-preview={Boolean(item.preview)} class="dense-item">
+																{item.label}*
+																{#if item.preview}
+																	<span class="dense-preview" role="tooltip">
+																		<strong>{item.preview.title}</strong>
+																		{#if item.preview.rawType}
+																			<code>{item.preview.rawType}</code>
+																		{/if}
+																		{#if item.preview.stats.length}
+																			<ul>
+																				{#each item.preview.stats as stat (`${item.rawType}-${stat}`)}
+																					<li>{stat}</li>
+																				{/each}
+																			</ul>
+																		{/if}
+																		{#if item.preview.description}
+																			<p>{item.preview.description}</p>
+																		{/if}
+																	</span>
+																{/if}
+															</span>
+														{/if}
+														{index < group.previewItems.length - 1 ? ", " : ""}{/each}{#if group.remainingCount}
 														+{group.remainingCount}{/if}</span
 												>
 											</div>
@@ -1109,27 +1215,56 @@
 												<strong>{group.label} {group.items.length}</strong>
 												<span>
 													{#each group.previewItems as item, index (`${group.id}-${item.rawType}-${index}`)}
-														<a href={item.href} target="_blank" rel="noopener noreferrer" class:has-preview={Boolean(item.preview)}>
-															{item.label}
-															{#if item.preview}
-																<span class="dense-preview" role="tooltip">
-																	<strong>{item.preview.title}</strong>
-																	{#if item.preview.rawType}
-																		<code>{item.preview.rawType}</code>
-																	{/if}
-																	{#if item.preview.stats.length}
-																		<ul>
-																			{#each item.preview.stats as stat (`${item.rawType}-${stat}`)}
-																				<li>{stat}</li>
-																			{/each}
-																		</ul>
-																	{/if}
-																	{#if item.preview.description}
-																		<p>{item.preview.description}</p>
-																	{/if}
-																</span>
-															{/if}
-														</a>
+														{#if item.schemaAvailable}
+															<a
+																href={schemaRowHref(item.schemaTableName, item.schemaType)}
+																target="_blank"
+																rel="noopener noreferrer"
+																class:has-preview={Boolean(item.preview)}
+															>
+																{item.label}
+																{#if item.preview}
+																	<span class="dense-preview" role="tooltip">
+																		<strong>{item.preview.title}</strong>
+																		{#if item.preview.rawType}
+																			<code>{item.preview.rawType}</code>
+																		{/if}
+																		{#if item.preview.stats.length}
+																			<ul>
+																				{#each item.preview.stats as stat (`${item.rawType}-${stat}`)}
+																					<li>{stat}</li>
+																				{/each}
+																			</ul>
+																		{/if}
+																		{#if item.preview.description}
+																			<p>{item.preview.description}</p>
+																		{/if}
+																	</span>
+																{/if}
+															</a>
+														{:else}
+															<span class:has-preview={Boolean(item.preview)} class="dense-item">
+																{item.label}
+																{#if item.preview}
+																	<span class="dense-preview" role="tooltip">
+																		<strong>{item.preview.title}</strong>
+																		{#if item.preview.rawType}
+																			<code>{item.preview.rawType}</code>
+																		{/if}
+																		{#if item.preview.stats.length}
+																			<ul>
+																				{#each item.preview.stats as stat (`${item.rawType}-${stat}`)}
+																					<li>{stat}</li>
+																				{/each}
+																			</ul>
+																		{/if}
+																		{#if item.preview.description}
+																			<p>{item.preview.description}</p>
+																		{/if}
+																	</span>
+																{/if}
+															</span>
+														{/if}
 														{#if item.detail}
 															{item.detail}
 														{/if}
@@ -1432,6 +1567,10 @@
 		text-box: trim-both cap alphabetic;
 	}
 
+	.schema-link.is-disabled {
+		opacity: 0.9;
+	}
+
 	.mini-pill {
 		text-box: trim-both cap alphabetic;
 		padding: 0.35rem 0.5rem 0.5rem;
@@ -1491,16 +1630,18 @@
 		border-style: dashed;
 	}
 
-	.dense-group a {
+	.dense-group a,
+	.dense-item {
 		position: relative;
 		color: var(--ink);
-		font-size: 1rem;
+		font-size: 1rem !important;
+		font-weight: 500;
 		text-decoration: none;
 		overflow-wrap: anywhere;
+	}
 
-		&:hover {
-			color: var(--accent-soft);
-		}
+	.dense-group a:hover {
+		color: var(--accent-soft);
 	}
 
 	.dense-preview {
@@ -1535,7 +1676,8 @@
 	}
 
 	.dense-group a.has-preview:hover .dense-preview,
-	.dense-group a.has-preview:focus-visible .dense-preview {
+	.dense-group a.has-preview:focus-visible .dense-preview,
+	.dense-item.has-preview:hover .dense-preview {
 		opacity: 1;
 		transform: translateY(0);
 	}

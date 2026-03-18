@@ -6,8 +6,6 @@
 
 	const numberFormatter = new Intl.NumberFormat("en-US");
 	const PACKS = religionSupportData.packs || [];
-	const totalReligionCount = religionSupportData.religionCount || PACKS.reduce((sum, pack) => sum + (pack.religionCount || 0), 0);
-	const totalAtlasCount = PACKS.reduce((sum, pack) => sum + (pack.customAtlasCount || 0), 0);
 
 	let searchQuery = $state("");
 	let selectedPacks = $state([]);
@@ -125,11 +123,6 @@
 						<h2 id={`${pack.id}-heading`}>{pack.title}</h2>
 						<p>{numberFormatter.format(pack.religions.length)} religions · {pack.folderName}</p>
 					</div>
-
-					<!-- <div class="pack-meta">
-						<span class="mini-pill">{pack.iconAtlases.length} atlases</span>
-						<span class="mini-pill">{pack.artFiles.length} art files</span>
-					</div> -->
 				</header>
 
 				<div class="religion-grid">
@@ -195,18 +188,12 @@
 			0 8px 20px color-mix(in oklch, var(--shadow-soft) 64%, transparent);
 	}
 
-	.hero-copy,
-	.hero-stats {
+	.hero-copy {
 		display: grid;
 		gap: 0.6rem;
 	}
 
-	.hero-stats {
-		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-	}
-
 	.panel-surface,
-	.stat-card,
 	.religion-card {
 		border-radius: 0.9rem;
 		border: 1px solid color-mix(in oklch, var(--surface-support-border) 72%, var(--panel-border));
@@ -218,22 +205,9 @@
 			0 8px 12px color-mix(in oklch, var(--shadow-soft) 64%, transparent);
 	}
 
-	.stat-card {
-		padding: 0.95rem 1rem;
-		display: grid;
-		gap: 0.18rem;
-	}
-
-	.stat-card strong {
-		font-size: 1.55rem;
-		line-height: 1;
-	}
-
-	.stat-card span,
 	.toolbar-copy,
 	.pack-heading p,
 	.religion-summary,
-	.fact-line span,
 	.detail-row p {
 		color: var(--muted-ink);
 	}
@@ -277,15 +251,13 @@
 		color: var(--ink);
 	}
 
-	.chip-group,
-	.pack-meta {
+	.chip-group {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.25rem;
 	}
 
-	.chip-group button,
-	.mini-pill {
+	.chip-group button {
 		padding: 0.4rem 0.65rem;
 		border-radius: 999px;
 		border: 1px solid color-mix(in oklch, var(--surface-support-border) 75%, var(--panel-border));
@@ -299,10 +271,6 @@
 	.chip-group button.selected {
 		background: color-mix(in oklch, var(--surface-support-highlight) 25%, var(--control-bg));
 		border-color: color-mix(in oklch, var(--surface-support-highlight) 65%, var(--surface-support-border));
-	}
-
-	.mini-pill.muted {
-		opacity: 0.74;
 	}
 
 	.pack-stack {
