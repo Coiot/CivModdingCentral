@@ -1773,13 +1773,13 @@
 			<section class="deliverable-strip-panel">
 				<div class="section-heading">
 					<p class="eyebrow">{activeTrack?.kicker}</p>
-					<h2 class="section-title">{activeTrack?.label}</h2>
-					<p class="section-copy">{activeTrack?.risk}</p>
+					<h2 class="section-title text-box-trim">{activeTrack?.label}</h2>
+					<p class="section-copy margin-block-start-half">{activeTrack?.risk}</p>
 				</div>
 
 				<div class="deliverable-path-overview">
 					<article class="path-overview-card">
-						<span class="path-overview-kicker">Path Progress</span>
+						<span class="path-overview-kicker">Lane Progress</span>
 						<strong class="card-title">{completedTrackCount(activeTrack?.id)} of {activeTrackDeliverables.length} steps finished</strong>
 						<p class="card-copy">Suggested to follow the numbered routes from top to bottom.</p>
 					</article>
@@ -1797,9 +1797,9 @@
 				<ol class="deliverable-path" aria-label={`${activeTrack?.label} deliverable path`}>
 					{#each activeTrackDeliverables as item (item.id)}
 						<li class={["deliverable-path-node", deliverablePathClass(item.id)]}>
-							<div class="deliverable-step-marker" aria-hidden="true">
+							<!-- <div class="deliverable-step-marker" aria-hidden="true">
 								<span>{deliverableStepNumber(item.id)}</span>
-							</div>
+							</div> -->
 
 							<div
 								class={["deliverable-pill", priorityTone(item.weight), activeDeliverable?.id === item.id && "is-active", isDeliverableDone(item.id) && "is-complete"]}
@@ -1855,8 +1855,16 @@
 							<h2 class="section-title">{activeDeliverable.label}</h2>
 							<p class="section-copy">{activeDeliverable.summary}</p>
 						</div>
-						<div class="deliverable-detail-actions">
-							<div class="deliverable-detail-nav" aria-label="Move between steps in this workstream">
+						<div class="deliverable-detail-actions width-full">
+							<div class="deliverable-detail-nav width-full" aria-label="Move between steps in this workstream">
+								<button
+									type="button"
+									class={["detail-progress-toggle", isDeliverableDone(activeDeliverable.id) && "is-complete", "margin-inline-end-auto"]}
+									aria-pressed={isDeliverableDone(activeDeliverable.id)}
+									onclick={() => toggleDeliverableDone(activeDeliverable.id)}
+								>
+									{isDeliverableDone(activeDeliverable.id) ? "Completed" : "Mark complete"}
+								</button>
 								<button type="button" class="deliverable-open-button" onclick={() => selectAdjacentDeliverable(-1)} disabled={activeDeliverableIndex <= 0}> Previous step </button>
 								<button
 									type="button"
@@ -1867,14 +1875,6 @@
 									Next step
 								</button>
 							</div>
-							<button
-								type="button"
-								class={["detail-progress-toggle", isDeliverableDone(activeDeliverable.id) && "is-complete"]}
-								aria-pressed={isDeliverableDone(activeDeliverable.id)}
-								onclick={() => toggleDeliverableDone(activeDeliverable.id)}
-							>
-								{isDeliverableDone(activeDeliverable.id) ? "Completed" : "Mark complete"}
-							</button>
 						</div>
 					</div>
 
@@ -1883,15 +1883,15 @@
 							<div class="section-heading">
 								<p class="eyebrow">Execution</p>
 								<h3 class="section-title">How to complete this step</h3>
-								<p class="section-copy">Use this as the working brief while you build, verify, and complete this step.</p>
+								<p class="section-copy">Use this as an outline to build, verify, and complete this step.</p>
 							</div>
 
 							<div class="instruction-grid">
 								{#each activeInstructionBlocks as block, index (`${activeDeliverable.id}-${block.title}`)}
 									<article class="instruction-card">
 										<div class="instruction-card-head">
-											<span class="instruction-step-index">0{index + 1}</span>
-											<h3 class="card-title">{block.title}</h3>
+											<!-- <span class="instruction-step-index">0{index + 1}</span> -->
+											<h3 class="card-title text-xl">{block.title}</h3>
 										</div>
 										<p class="card-copy">{block.copy}</p>
 									</article>
@@ -1952,7 +1952,7 @@
 							<div class="section-heading">
 								<p class="eyebrow">References</p>
 								<h3 class="section-title">Suggested site resources for this step</h3>
-								<p class="section-copy">Use these tools, guides, and references to move the current step forward without losing your place in the planner.</p>
+								<p class="section-copy">Use these tools, guides, and references to move forward.</p>
 							</div>
 
 							<div class="resource-grid">
@@ -1985,7 +1985,7 @@
 	</section>
 
 	<section class="planner-progress-footer" aria-label="Planner progress controls">
-		<div class="inline space-between">
+		<div class="inline space-between" style="gap: 2rem">
 			<div class="stack">
 				<div class="planner-progress-summary">
 					<p class="eyebrow">Project Progress</p>
@@ -2041,8 +2041,8 @@
 		--planner-panel-soft: color-mix(in oklch, var(--surface-planner-panel) 90%, var(--control-bg) 10%);
 		--planner-panel-strong: color-mix(in oklch, var(--surface-planner-panel) 82%, #18130e 18%);
 		--planner-red: oklch(0.66 0.19 30);
-		--planner-shadow: 0 6px 16px color-mix(in oklch, black 70%, transparent);
-		--planner-shadow-strong: 0 6px 18px color-mix(in oklch, black 80%, transparent);
+		--planner-shadow: 0 6px 8px color-mix(in oklch, black 50%, transparent);
+		--planner-shadow-strong: 0 6px 12px color-mix(in oklch, black 70%, transparent);
 		--planner-sky: oklch(0.85 0.05 98);
 	}
 
@@ -2101,7 +2101,7 @@
 			linear-gradient(165deg, color-mix(in oklch, var(--planner-panel-soft) 92%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 88%, #14100d 12%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 20%, transparent),
-			0 6px 12px color-mix(in oklch, black 70%, transparent);
+			0 2px 4px color-mix(in oklch, black 60%, transparent);
 		border-radius: 1rem;
 		padding: 1rem;
 		margin-block-start: 0.5rem;
@@ -2309,7 +2309,7 @@
 		background: linear-gradient(165deg, color-mix(in oklch, var(--planner-panel-soft) 94%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 88%, #140e09 12%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 9%, transparent),
-			var(--planner-shadow);
+			0 2px 2px color-mix(in oklch, black 60%, transparent);
 		border: 1px solid color-mix(in oklch, var(--planner-highlight) 28%, var(--planner-border-soft));
 		border-radius: 0.95rem;
 		padding-block: 0.75rem;
@@ -2331,7 +2331,7 @@
 			linear-gradient(160deg, color-mix(in oklch, var(--planner-panel-soft) 92%, #21160f 8%) 0%, color-mix(in oklch, var(--planner-panel-muted) 86%, #14100d 14%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 40%, transparent),
-			0 8px 16px color-mix(in oklch, black 90%, transparent);
+			0 4px 6px color-mix(in oklch, black 40%, transparent);
 		border-radius: 1rem;
 		padding-block: 1rem;
 		padding-inline: 1.05rem;
@@ -2419,7 +2419,7 @@
 			linear-gradient(165deg, color-mix(in oklch, var(--planner-panel-soft) 95%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 85%, #15110d 15%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 40%, transparent),
-			0 8px 14px color-mix(in oklch, black 45%, transparent);
+			0 6px 8px color-mix(in oklch, black 45%, transparent);
 		border-radius: 1rem;
 		padding-block: 1.05rem;
 		padding-inline: 1.15rem;
@@ -2443,7 +2443,7 @@
 			linear-gradient(165deg, color-mix(in oklch, var(--planner-panel-soft) 92%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 84%, #15110d 16%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 60%, transparent),
-			0 8px 14px color-mix(in oklch, black 60%, transparent);
+			0 6px 8px color-mix(in oklch, black 60%, transparent);
 		border-color: color-mix(in oklch, var(--planner-highlight) 86%, var(--planner-border-soft));
 		transform: translateY(-1px);
 	}
@@ -2546,12 +2546,12 @@
 	}
 
 	.compass-card .card-title {
-		font-size: 1.15rem;
+		font-size: 1.125rem;
 		line-height: 1.2;
 	}
 
 	.dependency-card .card-title {
-		font-size: 1rem;
+		font-size: 1.5rem;
 	}
 
 	.path-overview-card .card-title {
@@ -2646,7 +2646,7 @@
 		display: grid;
 		place-items: center;
 		background: linear-gradient(160deg, color-mix(in oklch, var(--planner-panel-soft) 92%, #26170f 8%) 0%, color-mix(in oklch, var(--planner-panel-muted) 88%, #17100d 12%) 100%);
-		box-shadow: 2px 4px 4px color-mix(in oklch, black 40%, transparent);
+		box-shadow: 0 4px 4px color-mix(in oklch, black 30%, transparent);
 		border-radius: 50%;
 		overflow: hidden;
 		--project-icon-crop-scale: 1.471264368;
@@ -2727,7 +2727,7 @@
 		background: color-mix(in oklch, var(--control-bg) 92%, #35251a 8%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 20%, transparent),
-			0 4px 6px color-mix(in oklch, black 60%, transparent);
+			0 4px 6px color-mix(in oklch, black 50%, transparent);
 		padding: 0.9rem;
 	}
 
@@ -2775,7 +2775,7 @@
 	a.surface-card:focus-visible {
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
-			0 16px 28px color-mix(in srgb, black 78%, transparent);
+			0 8px 12px color-mix(in srgb, black 78%, transparent);
 		transform: translateY(-2px);
 	}
 
@@ -2856,7 +2856,7 @@
 	.section-heading,
 	.surface-group-head {
 		display: grid;
-		gap: 0.25rem;
+		gap: 0.5rem;
 	}
 
 	.surface-directory .section-heading {
@@ -2944,7 +2944,7 @@
 		box-shadow: var(--planner-shadow);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 10%, transparent),
-			0 8px 12px color-mix(in oklch, black 80%, transparent);
+			0 4px 8px color-mix(in oklch, black 50%, transparent);
 		border-radius: 1rem;
 		padding: 1.3rem;
 		/*border: 1px solid color-mix(in oklch, var(--planner-highlight) 16%, var(--planner-border-soft));*/
@@ -3012,7 +3012,7 @@
 		background: linear-gradient(165deg, color-mix(in oklch, var(--planner-panel-soft) 92%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 88%, #17110d 12%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 30%, transparent),
-			0 4px 8px color-mix(in oklch, black 70%, transparent);
+			0 4px 6px color-mix(in oklch, black 70%, transparent);
 		border-radius: 1rem;
 		padding: 1rem;
 		/*border: 1px solid color-mix(in oklch, var(--planner-highlight) 18%, var(--planner-border-soft));*/
@@ -3035,10 +3035,10 @@
 		letter-spacing: 0.08em;
 	}
 
-	.deliverable-path-node.is-next::after,
+	/*.deliverable-path-node.is-next::after,
 	.deliverable-path-node.is-current::after {
 		background: linear-gradient(180deg, color-mix(in oklch, var(--planner-brass) 52%, transparent) 0%, color-mix(in oklch, var(--planner-border-soft) 62%, transparent) 100%);
-	}
+	}*/
 
 	.path-overview-action {
 		inline-size: fit-content;
@@ -3234,14 +3234,13 @@
 	.instruction-card {
 		display: flex;
 		flex-direction: column;
-		gap: 0.75rem;
+		gap: 0.5rem;
 		background: linear-gradient(165deg, color-mix(in oklch, var(--planner-panel-soft) 92%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 88%, #17110d 12%) 100%);
 		box-shadow:
-			inset 0 1px 0 color-mix(in oklch, white 30%, transparent),
-			0 6px 8px color-mix(in oklch, black 80%, transparent);
+			inset 0 1px 0 color-mix(in oklch, white 20%, transparent),
+			0 4px 6px color-mix(in oklch, black 30%, transparent);
 		border-radius: 0.95rem;
-		padding-block: 1rem;
-		padding-inline: 1.05rem;
+		padding: 1.5rem 1rem;
 		/*border: 1px solid color-mix(in oklch, var(--planner-highlight) 16%, var(--planner-border-soft));*/
 	}
 
@@ -3385,7 +3384,7 @@
 			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--planner-panel-soft)) 99%, var(--control-bg)) 0%, color-mix(in srgb, var(--planner-panel-soft) 90%, #17110d 5%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
-			0 12px 12px color-mix(in srgb, black 75%, transparent);
+			0 4px 6px color-mix(in srgb, black 75%, transparent);
 		border: 1px solid color-mix(in srgb, var(--surface-border, var(--planner-border-soft)) 60%, var(--planner-border-soft));
 		border-radius: 1rem;
 		padding: 1.1rem;
@@ -3470,16 +3469,17 @@
 		display: grid;
 		gap: 1rem;
 		background: linear-gradient(165deg, color-mix(in oklch, var(--planner-panel) 96%, transparent) 0%, color-mix(in oklch, var(--planner-panel-strong) 88%, #110e0b 12%) 100%);
-		box-shadow: var(--planner-shadow);
-		border: 1px solid color-mix(in oklch, var(--planner-highlight) 16%, var(--planner-border-soft));
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, white 30%, transparent),
+			0 4px 6px color-mix(in srgb, black 75%, transparent); /*border: 1px solid color-mix(in oklch, var(--planner-highlight) 16%, var(--planner-border-soft));*/
 		border-radius: 1rem;
-		padding-block: 1.2rem;
-		padding-inline: 1.3rem;
+		padding-block: 1.75rem;
+		padding-inline: 1.25rem;
 	}
 
 	.planner-progress-summary {
 		display: grid;
-		gap: 0.7rem;
+		gap: 0.5rem;
 	}
 
 	.planner-progress-actions {
@@ -3488,23 +3488,28 @@
 
 	.ship-reminder {
 		display: grid;
-		gap: 0.7rem;
+		gap: 0.5rem;
 		background: linear-gradient(165deg, color-mix(in oklch, var(--planner-panel-soft) 94%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 88%, #18120d 12%) 100%);
-		box-shadow: var(--planner-shadow);
-		border: 1px solid color-mix(in oklch, var(--planner-highlight) 16%, var(--planner-border-soft));
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, white 15%, transparent),
+			0 4px 6px color-mix(in srgb, black 75%, transparent); /*border: 1px solid color-mix(in oklch, var(--planner-highlight) 16%, var(--planner-border-soft));*/
 		border-radius: 1rem;
-		padding: 1.15rem;
+		padding: 1.5rem;
+
+		.section-title {
+			font-size: 1.75rem;
+		}
 	}
 
-	.deliverable-path-node {
+	/*.deliverable-path-node {
 		position: relative;
 		display: grid;
 		grid-template-columns: auto minmax(0, 1fr);
 		align-items: start;
 		gap: 0.9rem;
-	}
+	}*/
 
-	.deliverable-path-node::after {
+	/*.deliverable-path-node::after {
 		position: absolute;
 		inset-block-start: 2.6rem;
 		inset-inline-start: 1.02rem;
@@ -3513,15 +3518,15 @@
 		background: color-mix(in oklch, var(--planner-border-soft) 72%, transparent);
 		border-radius: 999px;
 		content: "";
-	}
+	}*/
 
-	.deliverable-path-node:last-child::after {
+	/*.deliverable-path-node:last-child::after {
 		display: none;
-	}
+	}*/
 
-	.deliverable-path-node.is-done::after {
+	/*.deliverable-path-node.is-done::after {
 		background: color-mix(in oklch, var(--planner-sky) 42%, transparent);
-	}
+	}*/
 
 	.deliverable-pill {
 		display: grid;
@@ -3620,7 +3625,7 @@
 		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 90%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 84%, #18120d 16%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 30%, transparent),
-			0 6px 6px color-mix(in oklch, black 50%, transparent);
+			0 2px 6px color-mix(in oklch, black 50%, transparent);
 		border-radius: 0.85rem;
 		padding-block: 0.7rem;
 		padding-inline: 0.75rem;
@@ -3633,7 +3638,7 @@
 		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 80%, var(--hero-track-accent)) 0%, color-mix(in oklch, var(--planner-panel-muted) 40%, #18120d 30%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, var(--hero-track-accent) 90%, transparent),
-			0 8px 8px color-mix(in oklch, black 60%, transparent);
+			0 4px 6px color-mix(in oklch, black 60%, transparent);
 	}
 
 	.planner-hero-route-card.is-art {
@@ -3692,7 +3697,7 @@
 
 	.project-icon-preview.is-clickable:hover,
 	.project-icon-preview.is-clickable:focus-visible {
-		box-shadow: 2px 4px 6px color-mix(in oklch, black 80%, transparent);
+		box-shadow: 0 4px 6px color-mix(in oklch, black 80%, transparent);
 	}
 
 	.project-notice {
@@ -3878,7 +3883,7 @@
 			linear-gradient(165deg, color-mix(in srgb, var(--planner-panel) 72%, var(--control-bg)) 0%, color-mix(in srgb, var(--planner-panel-strong) 86%, #191310 14%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
-			0 14px 26px color-mix(in srgb, black 78%, transparent);
+			0 8px 12px color-mix(in srgb, black 78%, transparent);
 		border-color: color-mix(in srgb, var(--planner-highlight) 18%, var(--planner-border-soft));
 		padding: 1rem;
 	}
@@ -3903,7 +3908,7 @@
 			linear-gradient(180deg, color-mix(in oklch, var(--planner-panel-soft) 95%, var(--track-accent) 70%) 0%, color-mix(in oklch, var(--planner-panel-muted) 95%, #17110d 5%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 8%, transparent),
-			0 6px 12px color-mix(in oklch, var(--shadow-soft) 85%, var(--track-accent) 5%);
+			0 6px 8px color-mix(in oklch, var(--shadow-soft) 85%, var(--track-accent) 5%);
 		border: 1px solid color-mix(in oklch, var(--track-accent) 28%, var(--planner-border-soft));
 		border-radius: 1rem;
 		padding: 1.1rem;
@@ -3918,7 +3923,7 @@
 
 	.track-card.is-active {
 		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 84%, var(--track-accent) 16%) 0%, color-mix(in oklch, var(--control-bg) 74%, #16110d 26%) 100%);
-		box-shadow: 0 7px 14px color-mix(in oklch, var(--shadow-soft) 68%, var(--track-accent) 32%);
+		box-shadow: 0 6px 8px color-mix(in oklch, var(--shadow-soft) 68%, var(--track-accent) 32%);
 		border-color: color-mix(in oklch, var(--track-accent) 74%, white 26%);
 	}
 

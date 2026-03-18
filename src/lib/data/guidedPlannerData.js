@@ -648,7 +648,7 @@ export const plannerDeliverables = [
 		track: "text",
 		pillar: "Text",
 		weight: 4,
-		summary: "Write and verify the city list so empire expansion remains on-theme and consistent.",
+		summary: "Write and verify the city list so empire expansion remains in theme and consistent.",
 		doneLabel: "Names are complete, ordered intentionally, and use the localization system correctly (if supporting).",
 		focus: "Treat this as structural data, not filler text, because players will see these names repeatedly.",
 		hint: "A weak city list is one of the fastest ways to make a civ feel under-researched.",

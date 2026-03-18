@@ -1,5 +1,3 @@
-<svelte:options runes={true} />
-
 <script>
 	import SiteResourceDirectory from "./SiteResourceDirectory.svelte";
 	import luaData from "../data/civ-lua-api.json";
