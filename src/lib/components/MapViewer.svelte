@@ -5026,6 +5026,32 @@
 		gap: 1.25rem;
 	}
 
+	.tile-map .hero,
+	.tile-map .tile-map-controls,
+	.tile-map .tile-pin-inspector,
+	.tile-map .side-panel {
+		border: 1px solid color-mix(in oklch, var(--surface-support-border) 72%, var(--panel-border));
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-support-highlight) 11%, transparent) 0%, transparent 30%),
+			color-mix(in oklch, var(--surface-support-panel) 74%, var(--panel-bg) 26%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--surface-support-highlight) 10%, transparent),
+			0 8px 12px color-mix(in oklch, var(--shadow-soft) 64%, transparent);
+	}
+
+	.tile-map .hero {
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-support-highlight) 18%, transparent) 0%, transparent 34%),
+			linear-gradient(
+				135deg,
+				color-mix(in oklch, var(--surface-support-panel) 84%, var(--panel-bg) 16%) 0%,
+				color-mix(in oklch, var(--surface-support-panel) 72%, var(--surface-support-highlight) 8%) 100%
+			);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--surface-support-highlight) 12%, transparent),
+			0 8px 20px color-mix(in oklch, var(--shadow-soft) 64%, transparent);
+	}
+
 	:global(:root[data-theme="dark"]) .tile-map {
 		& .viewport {
 			background: oklch(0.25 0.005 200);
@@ -5044,34 +5070,36 @@
 		}
 
 		& .tile-map-controls {
-			background: oklch(0.22 0.008 72 / 0.95);
-			border-color: oklch(0.42 0.012 74 / 0.5);
+			background:
+				radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-support-highlight) 12%, transparent) 0%, transparent 30%),
+				color-mix(in oklch, var(--surface-support-panel) 78%, var(--panel-bg) 22%);
+			border-color: color-mix(in oklch, var(--surface-support-border) 74%, var(--panel-border));
 		}
 
 		& .tile-map-control {
 			color: oklch(0.95 0.004 85);
-			background: oklch(0.255 0.01 72 / 0.96);
-			border-color: oklch(0.44 0.012 74 / 0.5);
+			background: color-mix(in oklch, var(--control-bg) 82%, var(--surface-support-panel) 18%);
+			border-color: color-mix(in oklch, var(--surface-support-border) 70%, var(--panel-border));
 
 			&:hover {
-				background: oklch(0.3 0.012 72 / 0.98);
+				background: color-mix(in oklch, var(--control-bg) 68%, var(--surface-support-highlight) 16%);
 			}
 		}
 
 		& .tile-map-select {
 			color: oklch(0.95 0.004 85);
-			background: oklch(0.255 0.01 72 / 0.96);
-			border-color: oklch(0.44 0.012 74 / 0.5);
+			background: color-mix(in oklch, var(--control-bg) 82%, var(--surface-support-panel) 18%);
+			border-color: color-mix(in oklch, var(--surface-support-border) 70%, var(--panel-border));
 		}
 
 		& .tile-map-toolbar-divider {
-			background: oklch(0.45 0.012 74 / 0.52);
+			background: color-mix(in oklch, var(--surface-support-border) 70%, transparent);
 		}
 
 		& .tile-map-control-pill {
 			color: oklch(0.97 0.006 85);
-			background: oklch(0.34 0.016 74 / 0.98);
-			border-color: oklch(0.63 0.04 78 / 0.5);
+			background: color-mix(in oklch, var(--surface-support-highlight) 18%, var(--surface-support-panel));
+			border-color: color-mix(in oklch, var(--surface-support-highlight) 54%, var(--surface-support-border));
 		}
 
 		& .tile-tooltip {
@@ -5194,8 +5222,6 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 0.5rem;
-		background: var(--control-bg);
-		border: 1px solid var(--panel-border);
 		border-radius: 0.75rem;
 		padding-block: 0.25rem;
 		padding-inline: 0.5rem;
@@ -5539,8 +5565,6 @@
 	.tile-pin-inspector {
 		display: grid;
 		gap: 0.5rem;
-		background: color-mix(in oklch, var(--panel-bg) 94%, var(--accent) 2%);
-		border: 1px solid var(--panel-border);
 		border-radius: 0.85rem;
 		padding: 0.75rem;
 	}
@@ -5631,8 +5655,6 @@
 		min-height: 540px;
 		display: grid;
 		grid-template-rows: auto 1fr;
-		background: var(--panel-bg);
-		border: 1px solid var(--panel-border);
 		border-radius: 1rem;
 		overflow: hidden;
 	}
@@ -5645,29 +5667,33 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(4.6rem, 1fr));
 		gap: 0.5rem;
-		background: var(--control-bg);
+		background: color-mix(in oklch, var(--surface-support-panel) 84%, var(--control-bg) 16%);
 		padding: 0.5rem;
 
 		& button {
 			color: var(--ink);
 			font: inherit;
-			background: var(--control-bg);
-			border: 1px solid var(--panel-border);
+			background: color-mix(in oklch, var(--control-bg) 86%, var(--surface-support-panel) 14%);
+			border: 1px solid color-mix(in oklch, var(--surface-support-border) 68%, var(--panel-border));
 			border-radius: 0.55rem;
 			padding-block: 0.45rem;
 			padding-inline: 0.4rem;
 			cursor: pointer;
 
 			&:not(:disabled):hover {
-				background: color-mix(in oklch, var(--control-bg) 70%, var(--accent) 12%);
-				border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+				background: color-mix(in oklch, var(--control-bg) 70%, var(--surface-support-highlight) 12%);
+				border-color: color-mix(in oklch, var(--surface-support-highlight) 30%, var(--surface-support-border));
 			}
 
 			&.active {
-				color: oklch(0.99 0.004 85);
-				background: linear-gradient(145deg, var(--accent), var(--accent-strong));
-				border-color: transparent;
-				text-shadow: 0 1px 2px oklch(0.19 0.2 85);
+				color: color-mix(in oklch, white 94%, var(--ink) 6%);
+				background: linear-gradient(
+					145deg,
+					color-mix(in oklch, var(--surface-support-highlight) 34%, var(--surface-support-panel)),
+					color-mix(in oklch, var(--surface-support-highlight) 18%, var(--surface-support-border))
+				);
+				border-color: color-mix(in oklch, var(--surface-support-highlight) 56%, var(--surface-support-border));
+				text-shadow: none;
 			}
 		}
 	}
@@ -5703,7 +5729,7 @@
 			color: var(--ink);
 			font: inherit;
 			background: var(--input-bg);
-			border: 1px solid var(--panel-border);
+			border: 1px solid color-mix(in oklch, var(--surface-support-border) 68%, var(--panel-border));
 			border-radius: 0.55rem;
 			padding-block: 0.44rem;
 			padding-inline: 0.5rem;
@@ -5713,16 +5739,16 @@
 			min-inline-size: 0;
 			color: var(--ink);
 			font: inherit;
-			background: var(--control-bg);
-			border: 1px solid var(--panel-border);
+			background: color-mix(in oklch, var(--control-bg) 88%, var(--surface-support-panel) 12%);
+			border: 1px solid color-mix(in oklch, var(--surface-support-border) 68%, var(--panel-border));
 			border-radius: 0.55rem;
 			padding-block: 0.42rem;
 			padding-inline: 0.62rem;
 			cursor: pointer;
 
 			&:not(:disabled):hover {
-				background: color-mix(in oklch, var(--control-bg) 70%, var(--accent) 12%);
-				border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
+				background: color-mix(in oklch, var(--control-bg) 72%, var(--surface-support-highlight) 12%);
+				border-color: color-mix(in oklch, var(--surface-support-highlight) 30%, var(--surface-support-border));
 			}
 		}
 	}

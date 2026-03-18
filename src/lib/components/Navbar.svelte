@@ -87,14 +87,14 @@
 					statusLabel: "Coming Soon",
 				},
 				{
-					href: "/map-viewer",
-					label: "Map Viewer",
-					description: "Inspect community maps down to each tile visually for mod support or CPU-only game setup.",
-				},
-				{
 					href: "/tech-tree-viewer",
 					label: "Tech Tree Viewer",
 					description: "Browse technologies, prerequisites, and progression layout to plot your civ uniques.",
+				},
+				{
+					href: "/map-viewer",
+					label: "Map Viewer",
+					description: "Inspect community maps down to each tile visually for mod support or CPU-only game setup.",
 				},
 				{
 					href: "/religion-support",
@@ -208,6 +208,7 @@
 			case "/community-links":
 			case "/tutorials":
 				return "is-";
+			case "/map-viewer":
 			case "/religion-support":
 				return "is-support";
 			default:

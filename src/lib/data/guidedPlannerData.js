@@ -113,15 +113,7 @@ export const siteResourceGroups = [
 					"Civ mod planner with progression tracking across one or many projects. Includes a step-by-step guide for every part of the process and comes linked to tools, references, and tutorials.",
 				kind: "Tool",
 			},
-			{
-				id: "tutorials",
-				label: "Tutorials",
-				href: "/tutorials",
-				status: "Coming Soon",
-				description: "Written and illustrated walkthroughs of the trickier parts of civ modding.",
-				kind: "Tutorial",
-				disabled: true,
-			},
+
 			{
 				id: "template-generators",
 				label: "Template Generators",
@@ -137,6 +129,15 @@ export const siteResourceGroups = [
 				status: "Live Hidden Surface",
 				description: "Recipes of the most common modding patterns to learn from and build upon.",
 				kind: "Reference",
+			},
+			{
+				id: "tutorials",
+				label: "Tutorials",
+				href: "/tutorials",
+				status: "Coming Soon",
+				description: "Written and illustrated walkthroughs of the trickier parts of civ modding.",
+				kind: "Tutorial",
+				disabled: true,
 			},
 			{
 				id: "community-links",
@@ -192,7 +193,7 @@ export const siteResourceGroups = [
 				label: "Tech Tree Viewer",
 				href: "/tech-tree-viewer",
 				status: "Live",
-				description: "Helper for placement of your mod's uniques and abilities.",
+				description: "Helper grid with filters for placement and organization of your mod's uniques and abilities.",
 				kind: "Viewer",
 			},
 			{

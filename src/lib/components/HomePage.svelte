@@ -562,7 +562,7 @@
 		--home-muted-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 92%, white 8%);
 		--home-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 88%, #1e140d 12%);
 		--home-panel-strong: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 80%, #221209 20%);
-		--home-shadow: 0 8px 18px color-mix(in srgb, black 80%, transparent);
+		--home-shadow: 0 6px 10px color-mix(in srgb, black 70%, transparent);
 	}
 
 	.home-hero {
@@ -637,11 +637,11 @@
 	a.surface-card:hover,
 	a.surface-card:focus-visible {
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 18%, transparent) 0%, transparent 34%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--control-bg)) 90%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 84%, #16110f 16%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 25%, transparent) 0%, transparent 40%),
+			linear-gradient(165deg, var(--surface-panel) 90%, color-mix(in srgb, var(--surface-panel) 90%, #16110f 10%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight, var(--accent)) 14%, transparent),
-			0 6px 8px color-mix(in srgb, black 76%, transparent);
+			0 6px 8px color-mix(in srgb, black 80%, transparent);
 		border-color: color-mix(in srgb, var(--surface-highlight, var(--accent)) 74%, var(--home-muted-border));
 		transform: translateY(-2px);
 	}
@@ -822,7 +822,6 @@
 	}
 
 	.curated-toolbar-copy {
-		max-inline-size: 40rem;
 		color: var(--muted-ink);
 		margin: 0;
 	}
@@ -1008,8 +1007,8 @@
 	.support-link-card,
 	.surface-card {
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 10%, transparent) 0%, transparent 34%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--control-bg)) 88%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 88%, #16110f 12%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 30%, transparent) 0%, transparent 35%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 100%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 80%, #16110f 5%) 100%);
 		border-color: color-mix(in srgb, var(--surface-highlight, var(--surface-border, var(--accent))) 44%, var(--surface-border, var(--home-muted-border)));
 	}
 

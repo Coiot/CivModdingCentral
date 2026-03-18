@@ -21,8 +21,8 @@
 		if (href.includes("/template-generators")) return "is-generator";
 		if (href.includes("/workshop-uploader") || href.includes("/modinfo-builder") || href.includes("/civ5mod-ziper")) return "is-publish";
 		if (href.includes("/dds-converter") || href.includes("/civ-icon-maker") || href.includes("/text-screen-viewer")) return "is-ui";
-		if (href.includes("/map-viewer") || href.includes("/tech-tree-viewer")) return "is-tool";
-		if (href.includes("/religion-support")) return "is-support";
+		if (href.includes("/tech-tree-viewer")) return "is-tool";
+		if (href.includes("/religion-support") || href.includes("/map-viewer")) return "is-support";
 		return "is-tool";
 	}
 
@@ -51,9 +51,9 @@
 					{#each group.items as resource (resource.id)}
 						{#if resource.disabled}
 							<div class={["surface-card", resourceTone(resource), resourceAccentClass(resource), isFeaturedResource(resource) && "is-featured"]} aria-disabled="true">
-								<div class="surface-card-top">
+								<!-- <div class="surface-card-top">
 									<strong class="surface-badge">Coming Soon</strong>
-								</div>
+								</div> -->
 								<h4 class="card-title text-lg">{resource.label}</h4>
 								<p class="card-copy">{resource.description}</p>
 							</div>
@@ -143,8 +143,8 @@
 	a.surface-card:hover,
 	a.surface-card:focus-visible {
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 18%, transparent) 0%, transparent 34%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--control-bg)) 90%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 84%, #16110f 16%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 40%, transparent) 0%, transparent 40%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 95%, #16110f 5%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight, var(--accent)) 14%, transparent),
 			0 4px 8px color-mix(in srgb, black 76%, transparent);
