@@ -308,6 +308,7 @@
 		background: color-mix(in oklch, var(--workshop-accent-panel) 40%, var(--panel-bg));
 		border: 1px solid color-mix(in oklch, var(--workshop-accent-border) 95%, transparent);
 		border-radius: 0.9rem;
+		box-shadow: 0 4px 6px #111;
 		padding: 1.25rem;
 	}
 

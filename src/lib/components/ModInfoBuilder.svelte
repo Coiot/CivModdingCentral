@@ -1701,6 +1701,7 @@
 		background: color-mix(in oklch, var(--modinfo-accent-panel) 40%, var(--control-bg));
 		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 40%, var(--panel-border));
 		border-radius: 0.78rem;
+		box-shadow: 0 4px 6px #111;
 		padding: 1rem;
 		margin-block-end: 0.8rem;
 	}
@@ -1722,6 +1723,7 @@
 		background: linear-gradient(145deg, color-mix(in oklch, var(--modinfo-accent-highlight) 86%, #d97706), color-mix(in oklch, var(--modinfo-accent-highlight) 62%, #8a3f0a));
 		border: 1px solid color-mix(in oklch, var(--modinfo-accent-highlight) 56%, var(--modinfo-accent-border));
 		border-radius: 0.62rem;
+		box-shadow: 0 2px 2px #111;
 		padding-block: 0.44rem;
 		padding-inline: 0.76rem;
 		cursor: pointer;
@@ -2160,6 +2162,7 @@
 		background: color-mix(in oklch, var(--modinfo-accent-panel) 88%, black);
 		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 76%, transparent);
 		border-radius: 0.9rem;
+		box-shadow: 0 4px 6px #111;
 		padding: 1.25rem;
 		transition:
 			transform 140ms ease,

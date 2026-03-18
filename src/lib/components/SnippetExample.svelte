@@ -398,6 +398,7 @@
 		background: color-mix(in oklch, black 24%, var(--panel-bg));
 		border: 1px solid color-mix(in oklch, var(--accent) 8%, var(--panel-border));
 		border-radius: 0.85rem;
+		box-shadow: 0 2px 6px #111;
 		padding-block: 1.5rem;
 		padding-inline: 1.15rem;
 		margin: 0;
@@ -446,6 +447,7 @@
 		background: color-mix(in oklch, var(--panel-bg) 80%, var(--control-bg));
 		border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--panel-border));
 		border-radius: 0.95rem;
+		box-shadow: 0 4px 6px #111;
 		padding-block: 0.65rem;
 		padding-inline: 0.8rem;
 		transition:
@@ -475,7 +477,7 @@
 		background: linear-gradient(180deg, color-mix(in srgb, #f5d36a 18%, transparent) 0%, color-mix(in srgb, var(--panel-bg) 72%, #352608 28%) 100%) !important;
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, #fff1bc 22%, transparent),
-			0 10px 22px color-mix(in oklch, var(--shadow-soft) 48%, transparent);
+			0 6px 8px color-mix(in oklch, var(--shadow-soft) 90%, transparent);
 		border-color: color-mix(in srgb, #f5d36a 72%, white 28%) !important;
 	}
 

@@ -1623,7 +1623,7 @@
 	.lua-hero,
 	.lua-panel,
 	.lua-docs-nav-card {
-		box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+		box-shadow: 0 8px 12px rgba(0, 0, 0, 0.25);
 		border: 1px solid var(--lua-border);
 		border-radius: 1.5rem;
 	}
@@ -1809,12 +1809,12 @@
 		align-items: stretch;
 		gap: 0;
 		background: rgba(255, 255, 255, 0.03);
+		box-shadow: inset 0 1px 0 color-mix(in srgb, var(--lua-highlight) 6%, transparent);
 		border: 1px solid var(--lua-border);
 		border-radius: 1.25rem;
 		overflow: hidden;
 	}
 
-	.lua-tab-row,
 	.lua-filter-group,
 	.lua-entry-tags,
 	.lua-detail-chips,
@@ -1935,7 +1935,10 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.55rem;
-		background: rgba(255, 255, 255, 0.025);
+		background: color-mix(in srgb, var(--panel-bg) 96%, transparent);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--lua-highlight) 8%, transparent),
+			0 8px 20px color-mix(in oklch, var(--shadow-soft) 64%, transparent);
 		border: 1px solid var(--lua-border);
 	}
 
@@ -1963,7 +1966,7 @@
 	.lua-note-list {
 		display: grid;
 		gap: 0.5rem;
-		padding: 0;
+		padding: 0.25rem 0;
 		margin: 0;
 		list-style: none;
 	}
@@ -2055,6 +2058,9 @@
 		align-items: start;
 		gap: 0.8rem;
 		background: linear-gradient(135deg, rgba(183, 239, 132, 0.11), rgba(255, 255, 255, 0.02));
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--lua-highlight) 12%, transparent),
+			0 8px 12px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
 		border-radius: 1.2rem;
 		padding-block: 0.95rem;
 		padding-inline: 1rem;
@@ -2211,7 +2217,9 @@
 		display: grid;
 		gap: 0.45rem;
 		background: color-mix(in srgb, var(--lua-schema-panel) 86%, transparent);
-		box-shadow: inset 0 1px 0 color-mix(in srgb, var(--lua-schema-highlight) 12%, transparent);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--lua-schema-highlight) 12%, transparent),
+			0 6px 8px color-mix(in oklch, var(--shadow-soft) 60%, transparent);
 		border: 1px solid var(--lua-schema-border);
 		border-radius: 1rem;
 		padding-block: 0.8rem;
@@ -2261,7 +2269,10 @@
 	.lua-filter-chip,
 	.lua-see-also-card {
 		font: inherit;
-		background: rgba(255, 255, 255, 0.03);
+		background: color-mix(in srgb, var(--panel-bg) 94%, transparent);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--lua-highlight) 6%, transparent),
+			0 2px 4px color-mix(in oklch, var(--shadow-soft) 50%, transparent);
 		border: 1px solid var(--lua-border);
 		cursor: pointer;
 	}
@@ -2283,8 +2294,16 @@
 	.lua-entry-card:hover,
 	.lua-see-also-card:hover {
 		background: rgba(183, 239, 132, 0.11) !important;
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--lua-highlight) 16%, transparent),
+			0 6px 8px color-mix(in oklch, var(--shadow-soft) 90%, transparent);
 		border-color: color-mix(in srgb, var(--lua-highlight) 70%, white 30%) !important;
 		transform: translateY(-1px);
+	}
+
+	.lua-tab.is-active,
+	.lua-tab:hover {
+		transform: none;
 	}
 
 	.lua-see-also-card {
@@ -2298,7 +2317,7 @@
 		background: color-mix(in srgb, var(--lua-panel) 80%, #3b2810 20%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, #f5d36a 10%, transparent),
-			0 12px 30px color-mix(in srgb, black 82%, transparent);
+			0 6px 8px color-mix(in srgb, black 40%, transparent);
 		border-color: color-mix(in srgb, var(--lua-border) 58%, #b48922 42%);
 	}
 
@@ -2352,6 +2371,7 @@
 	}
 
 	.lua-entry-card {
+		min-block-size: 5ch;
 		block-size: fit-content;
 		min-inline-size: 0;
 		display: flex;
@@ -2408,7 +2428,9 @@
 		gap: 0.55rem;
 		text-align: left;
 		background: linear-gradient(180deg, color-mix(in srgb, rgba(255, 255, 255, 0.03) 70%, #10271d 30%) 0%, rgba(255, 255, 255, 0.02) 100%);
-		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.04),
+			0 4px 6px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
 		border-radius: 0.95rem;
 		border-color: color-mix(in srgb, var(--lua-border) 72%, #2f6b53 28%);
 		padding-block: 0.82rem;
@@ -2459,18 +2481,23 @@
 		background: color-mix(in srgb, #f5d36a 10%, color-mix(in srgb, var(--lua-panel) 80%, #3b2810 20%) 90%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, #fff1bc 18%, transparent),
-			0 18px 38px color-mix(in srgb, black 78%, transparent);
+			0 10px 22px color-mix(in oklch, var(--shadow-soft) 58%, transparent);
 		border-color: color-mix(in srgb, var(--lua-border-strong) 48%, #ffd976 52%);
 		transform: translateY(-1px);
 	}
 
 	.lua-tab {
+		flex: 1 1 0;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
 		position: relative;
 		background: transparent;
 		border: 0;
 		border-radius: 0;
 		padding-block: 0.62rem;
 		padding-inline: 1.15rem;
+		text-align: center;
 
 		& + .lua-tab {
 			border-inline-start: 1px solid var(--lua-border);

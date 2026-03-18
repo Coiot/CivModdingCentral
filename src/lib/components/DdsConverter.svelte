@@ -1374,7 +1374,7 @@
 		);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
-			0 8px 22px color-mix(in srgb, black 74%, transparent);
+			0 6px 8px color-mix(in srgb, black 45%, transparent);
 		border-color: color-mix(in srgb, var(--dds-accent-highlight) 52%, var(--dds-accent-border));
 	}
 
@@ -1387,6 +1387,7 @@
 		box-shadow: 0 8px 20px var(--shadow-soft);
 		border: 1px solid color-mix(in srgb, var(--dds-accent-border) 32%, var(--panel-border));
 		border-radius: 1rem;
+		box-shadow: 0 6px 8px #111;
 		padding-block: 1.1rem;
 		padding-inline: 1.1rem;
 
@@ -1422,6 +1423,7 @@
 		background: color-mix(in srgb, var(--dds-accent-panel) 12%, var(--panel-bg));
 		border: 1px solid color-mix(in srgb, var(--dds-accent-border) 28%, var(--panel-border));
 		border-radius: 0.9rem;
+		box-shadow: 0 2px 4px #111;
 		padding-block: 0.8rem;
 		padding-inline: 0.8rem;
 	}
@@ -1521,6 +1523,7 @@
 		background: var(--control-bg);
 		border: 1px solid color-mix(in srgb, var(--dds-accent-highlight) 58%, var(--panel-border));
 		border-radius: 0.65rem;
+		box-shadow: 0 2px 4px color-mix(in srgb, black 55%, transparent);
 		padding-block: 0.54rem;
 		padding-inline: 0.82rem;
 	}
@@ -1534,7 +1537,7 @@
 		background: color-mix(in srgb, var(--dds-accent-panel) 42%, var(--control-bg)) !important;
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--dds-accent-highlight-strong) 12%, transparent),
-			0 2px 4px color-mix(in srgb, black 74%, transparent);
+			0 2px 4px color-mix(in srgb, black 85%, transparent);
 		border-color: color-mix(in srgb, var(--dds-accent-highlight) 76%, var(--panel-border)) !important;
 	}
 
@@ -1593,6 +1596,7 @@
 		background: color-mix(in srgb, var(--dds-accent-panel) 18%, var(--control-bg));
 		border: 2px dashed color-mix(in srgb, var(--dds-accent-highlight) 74%, var(--panel-border));
 		border-radius: 0.85rem;
+		box-shadow: 0 2px 4px #111;
 		padding-block: 0.8rem;
 		padding-inline: 0.8rem;
 		transition:
@@ -1600,6 +1604,10 @@
 			border-color 0.15s ease,
 			transform 0.15s ease;
 		cursor: pointer;
+
+		&:hover {
+			background: color-mix(in srgb, var(--dds-accent-panel) 70%, var(--control-bg));
+		}
 
 		&.is-drag-over {
 			background: color-mix(in srgb, var(--dds-accent-panel) 28%, var(--control-bg));

@@ -327,7 +327,7 @@
 	.wizard-selector--featured {
 		gap: 1.15rem;
 		background: linear-gradient(180deg, color-mix(in srgb, var(--panel-bg) 94%, transparent) 0%, color-mix(in srgb, var(--panel-bg) 86%, #261735 10%) 100%);
-		box-shadow: 0 8px 20px color-mix(in oklch, var(--shadow-soft) 52%, transparent);
+		box-shadow: 0 6px 8px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
 		border-color: color-mix(in srgb, var(--wizard-accent-border) 58%, var(--panel-border));
 		padding: 1.35rem;
 	}
@@ -438,7 +438,7 @@
 		background: linear-gradient(180deg, color-mix(in srgb, var(--wizard-accent-panel) 54%, var(--panel-bg) 46%) 0%, color-mix(in srgb, var(--panel-bg) 94%, transparent) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--wizard-accent-highlight) 12%, transparent),
-			0 12px 28px color-mix(in oklch, var(--shadow-soft) 74%, transparent);
+			0 8px 12px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
 		border: 1px solid color-mix(in srgb, var(--wizard-accent-highlight) 20%, var(--panel-border));
 		border-radius: 1rem;
 		padding-inline: 1.1rem;
@@ -500,6 +500,7 @@
 		background: color-mix(in srgb, var(--wizard-accent-highlight) 5%, var(--panel-bg) 95%);
 		border: 1px solid color-mix(in srgb, var(--wizard-accent-highlight) 14%, var(--panel-border));
 		border-radius: 0.9rem;
+		box-shadow: 0 4px 8px #111;
 		padding-block: 0.95rem;
 		padding-inline: 1rem;
 	}
@@ -660,6 +661,7 @@
 		color: inherit;
 		font: inherit;
 		text-align: left;
+		box-shadow: 0 4px 8px #111;
 		transition:
 			transform 140ms ease,
 			border-color 140ms ease,
@@ -677,7 +679,7 @@
 		background: color-mix(in srgb, var(--wizard-accent-panel) 42%, var(--panel-bg) 58%) !important;
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--wizard-accent-highlight) 16%, transparent),
-			0 12px 28px color-mix(in oklch, var(--shadow-soft) 68%, transparent);
+			0 8px 12px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
 		border-color: color-mix(in srgb, var(--wizard-accent-highlight) 36%, var(--panel-border)) !important;
 		transform: translateY(-1px);
 	}
@@ -711,11 +713,11 @@
 		display: grid;
 		gap: 0.55rem;
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--wizard-touchpoint-highlight) 10%, transparent) 0%, transparent 34%),
-			linear-gradient(165deg, color-mix(in srgb, var(--wizard-touchpoint-panel) 88%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 88%, #16110f 12%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--wizard-touchpoint-highlight) 30%, transparent) 0%, transparent 35%),
+			linear-gradient(165deg, color-mix(in srgb, var(--wizard-touchpoint-panel) 90%, var(--control-bg)) 0%, color-mix(in srgb, var(--wizard-touchpoint-panel) 85%, #16110f 15%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--wizard-touchpoint-highlight) 8%, transparent),
-			0 2px 4px color-mix(in srgb, var(--panel-bg) 70%, #000);
+			0 6px 8px color-mix(in srgb, var(--panel-bg) 40%, #000);
 		border: 1px solid color-mix(in srgb, var(--wizard-touchpoint-border) 90%, transparent);
 		border-radius: 1rem;
 		padding-block: 1rem;
@@ -738,8 +740,8 @@
 
 	.wizard-touchpoint-card--link:hover {
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--wizard-touchpoint-highlight) 16%, transparent) 0%, transparent 38%),
-			linear-gradient(165deg, color-mix(in srgb, var(--wizard-touchpoint-panel) 84%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 84%, #16110f 16%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--wizard-touchpoint-highlight) 35%, transparent) 0%, transparent 35%),
+			linear-gradient(165deg, color-mix(in srgb, var(--wizard-touchpoint-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--wizard-touchpoint-panel) 95%, #16110f 16%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--wizard-touchpoint-highlight) 14%, transparent),
 			0 10px 22px color-mix(in oklch, var(--shadow-soft) 58%, transparent);

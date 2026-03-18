@@ -2980,7 +2980,7 @@
 		box-shadow: inset 0 1px 0 color-mix(in oklch, white 6%, transparent);
 		border: 1px solid color-mix(in oklch, var(--panel-border) 36%, transparent);
 		border-radius: 1rem;
-
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 		padding-block: 1rem;
 		padding-inline: 1.05rem;
 	}

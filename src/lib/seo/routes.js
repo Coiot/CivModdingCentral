@@ -53,6 +53,12 @@ const ROUTE_SEO = {
 		keywords: "Civilization V tech tree viewer, Civ 5 technology unlocks, Civ 5 tech prerequisites, Civ 5 progression reference",
 		pageType: "CollectionPage",
 	},
+	"/religion-support": {
+		title: "Civ V Religion Support and Historical Religions Reference | Civ Modding Central",
+		description: "Browse Historical Religions and companion religion packs for Civilization V with grouped religion entries, icon atlas metadata, and Civilopedia support text.",
+		keywords: "Civilization V religion support, Civ 5 Historical Religions, Civ 5 religion packs, religion atlas reference, Civ 5 religion icons",
+		pageType: "CollectionPage",
+	},
 	"/pattern-library": {
 		title: "Pattern Library for Civ V Modding Workflows | Civ Modding Central",
 		description: "Browse our Pattern Library for curated code examples covering the most common tasks and implementations.",

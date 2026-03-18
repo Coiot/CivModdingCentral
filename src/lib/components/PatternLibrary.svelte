@@ -657,7 +657,9 @@
 		display: grid;
 		gap: 0.9rem;
 		background: linear-gradient(180deg, color-mix(in srgb, var(--panel-bg) 94%, transparent) 0%, color-mix(in srgb, var(--panel-bg) 86%, #352608 14%) 100%);
-		box-shadow: 0 24px 70px color-mix(in oklch, var(--shadow-soft) 54%, transparent);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--recipe-accent-highlight) 10%, transparent),
+			0 6px 8px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
 		border: 1px solid var(--recipe-accent-border);
 		border-radius: 1.5rem;
 		padding-block: 1.3rem;
@@ -749,6 +751,9 @@
 		gap: 0.75rem;
 		background: color-mix(in srgb, var(--panel-bg) 90%, #201706 10%);
 		border: 1px solid color-mix(in srgb, var(--recipe-accent-border) 54%, transparent);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--recipe-accent-highlight) 6%, transparent),
+			0 4px 8px color-mix(in oklch, var(--shadow-soft) 70%, transparent);
 		border-radius: 1rem;
 		padding-block: 1rem;
 		padding-inline: 1rem;
@@ -795,6 +800,9 @@
 	.recipe-selector {
 		gap: 1rem;
 		background: linear-gradient(180deg, color-mix(in srgb, var(--panel-bg) 92%, transparent) 0%, color-mix(in srgb, var(--panel-bg) 84%, #352608 16%) 100%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--recipe-accent-highlight) 6%, transparent),
+			0 4px 8px color-mix(in oklch, var(--shadow-soft) 70%, transparent);
 		border: 1px solid color-mix(in srgb, var(--recipe-accent-border) 48%, transparent);
 		border-radius: 1rem;
 		padding-block: 1rem;
@@ -872,7 +880,9 @@
 
 	.recipe-card--active {
 		background: linear-gradient(180deg, color-mix(in srgb, var(--panel-bg) 96%, transparent) 0%, color-mix(in srgb, var(--panel-bg) 86%, #352608 14%) 100%);
-		box-shadow: 0 20px 40px color-mix(in oklch, var(--shadow-soft) 34%, transparent);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--recipe-accent-highlight) 12%, transparent),
+			0 8px 12px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
 		border: 1px solid color-mix(in srgb, var(--recipe-accent-border) 54%, transparent);
 		border-radius: 1.15rem;
 		padding-block: 1.2rem 1rem;
@@ -937,9 +947,12 @@
 
 	.recipe-block--example {
 		background: color-mix(in srgb, var(--recipe-accent-panel) 14%, var(--panel-bg) 86%);
-		border: none;
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--recipe-accent-highlight) 8%, transparent),
+			0 4px 8px color-mix(in oklch, var(--shadow-soft) 70%, transparent);
+		border: 1px solid color-mix(in srgb, var(--recipe-accent-highlight) 16%, var(--panel-border));
 		border-radius: 0.9rem;
-		padding-block: 0.25rem;
+		padding: 1rem;
 	}
 
 	.recipe-block--touchpoints {
@@ -1072,7 +1085,10 @@
 		color: inherit;
 		font: inherit;
 		text-align: left;
-		background: rgba(255, 255, 255, 0.03);
+		background: color-mix(in srgb, var(--panel-bg) 94%, transparent);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--recipe-accent-highlight) 6%, transparent),
+			0 4px 8px color-mix(in oklch, var(--shadow-soft) 70%, transparent);
 		border: 1px solid var(--recipe-accent-border);
 		border-radius: 1.2rem;
 		padding-block: 0.95rem;
@@ -1087,8 +1103,10 @@
 
 	.recipe-quick-card.is-active,
 	.recipe-quick-card:hover {
-		background: color-mix(in srgb, var(--recipe-accent-highlight) 11%, transparent) !important;
-		box-shadow: 0 10px 22px color-mix(in oklch, var(--shadow-soft) 52%, transparent);
+		background: color-mix(in srgb, var(--recipe-accent-panel) 42%, var(--panel-bg) 58%) !important;
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--recipe-accent-highlight) 16%, transparent),
+			0 8px 12px color-mix(in oklch, var(--shadow-soft) 85%, transparent);
 		border-color: color-mix(in srgb, var(--recipe-accent-highlight) 70%, white 30%) !important;
 		transform: translateY(-1px);
 	}
@@ -1138,6 +1156,7 @@
 		background: color-mix(in srgb, var(--panel-bg) 92%, #17120a 8%);
 		border: 1px solid color-mix(in srgb, var(--recipe-accent-border) 42%, transparent);
 		border-radius: 0.95rem;
+		box-shadow: 0 4px 8px color-mix(in oklch, var(--shadow-soft) 70%, transparent);
 		padding-block: 0.85rem;
 		padding-inline: 0.95rem;
 		transition:
@@ -1158,7 +1177,9 @@
 		&.is-active,
 		&:hover {
 			background: color-mix(in srgb, var(--recipe-accent-highlight) 12%, transparent) !important;
-			box-shadow: 0 10px 22px color-mix(in oklch, var(--shadow-soft) 38%, transparent);
+			box-shadow:
+				inset 0 1px 0 color-mix(in srgb, var(--recipe-accent-highlight) 12%, transparent),
+				0 6px 8px color-mix(in oklch, var(--shadow-soft) 80%, transparent);
 			border-color: color-mix(in srgb, var(--recipe-accent-highlight) 60%, var(--panel-border)) !important;
 			transform: translateY(-1px);
 
@@ -1172,11 +1193,11 @@
 		display: grid;
 		gap: 0.55rem;
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--recipe-touchpoint-highlight) 10%, transparent) 0%, transparent 34%),
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--recipe-touchpoint-highlight) 30%, transparent) 0%, transparent 35%),
 			linear-gradient(165deg, color-mix(in srgb, var(--recipe-touchpoint-panel) 88%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 88%, #16110f 12%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--recipe-touchpoint-highlight) 8%, transparent),
-			0 2px 4px color-mix(in srgb, var(--panel-bg) 70%, #000);
+			0 6px 8px color-mix(in srgb, var(--panel-bg) 40%, #000);
 		border: 1px solid color-mix(in srgb, var(--recipe-touchpoint-border) 90%, transparent);
 		border-radius: 1rem;
 		padding-block: 1rem;
@@ -1199,8 +1220,8 @@
 
 	.recipe-touchpoint-card--link:hover {
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--recipe-touchpoint-highlight) 16%, transparent) 0%, transparent 38%),
-			linear-gradient(165deg, color-mix(in srgb, var(--recipe-touchpoint-panel) 84%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 84%, #16110f 16%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--recipe-touchpoint-highlight) 35%, transparent) 0%, transparent 35%),
+			linear-gradient(165deg, color-mix(in srgb, var(--recipe-touchpoint-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--recipe-touchpoint-panel) 95%, #16110f 16%) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--recipe-touchpoint-highlight) 14%, transparent),
 			0 10px 22px color-mix(in oklch, var(--shadow-soft) 58%, transparent);

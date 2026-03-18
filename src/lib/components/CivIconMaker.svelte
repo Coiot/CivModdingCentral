@@ -3279,6 +3279,7 @@
 		background: color-mix(in srgb, var(--civ-icon-accent-panel) 24%, var(--control-bg));
 		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-highlight) 32%, var(--panel-border));
 		border-radius: 0.6rem;
+		box-shadow: 0 2px 4px color-mix(in srgb, black 70%, transparent);
 		padding-block: 0.5rem;
 		padding-inline: 0.75rem;
 		transition:
@@ -3313,6 +3314,7 @@
 		background: color-mix(in oklch, var(--panel-bg) 88%, var(--control-bg));
 		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-border) 26%, var(--panel-border));
 		border-radius: 0.8rem;
+		box-shadow: 0 4px 6px color-mix(in srgb, black 50%, transparent);
 		padding: 1rem;
 	}
 
@@ -3468,6 +3470,7 @@
 		background: linear-gradient(180deg, hsl(220deg 10% 20% / 0.9), hsl(220deg 10% 13% / 0.92)), color-mix(in oklch, var(--panel-bg) 85%, var(--control-bg));
 		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-border) 34%, var(--panel-border));
 		border-radius: 0.68rem;
+		box-shadow: 0 2px 4px color-mix(in srgb, black 70%, transparent);
 		padding: 1rem;
 	}
 
@@ -3492,7 +3495,8 @@
 		font-size: 0.82rem;
 		font-weight: 600;
 		padding-block: 0.45rem;
-		padding-inline: 0.58rem;
+		padding-inline: 2rem 0.58rem;
+		margin-inline-start: 0.5rem;
 		cursor: pointer;
 	}
 
@@ -3504,7 +3508,7 @@
 	}
 
 	.civ-icon-swiatlo-layers-accordion > summary {
-		padding-inline: 0.48rem;
+		padding-inline: 2rem 0.48rem;
 	}
 
 	.civ-icon-swiatlo-accordion-body {
@@ -3613,6 +3617,7 @@
 		background: color-mix(in oklch, var(--panel-bg) 90%, var(--control-bg));
 		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-border) 34%, var(--panel-border));
 		border-radius: 0.7rem;
+		box-shadow: 0 2px 4px color-mix(in srgb, black 70%, transparent);
 		padding: 1.25rem;
 		transition:
 			transform 0.12s ease,

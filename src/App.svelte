@@ -41,10 +41,12 @@
 	let SchemaBrowserComponent = $state(null);
 	let LuaApiExplorerComponent = $state(null);
 	let TechTreeViewerComponent = $state(null);
+	let ReligionSupportComponent = $state(null);
 	let mapViewerLoadError = $state("");
 	let schemaBrowserLoadError = $state("");
 	let luaApiExplorerLoadError = $state("");
 	let techTreeViewerLoadError = $state("");
+	let religionSupportLoadError = $state("");
 	let authRestoreStarted = $state(false);
 	let routeShellEl = $state();
 	let shouldFocusRouteHeading = $state(false);
@@ -173,6 +175,18 @@
 		}
 	}
 
+	async function ensureReligionSupportLoaded() {
+		if (ReligionSupportComponent || religionSupportLoadError) {
+			return;
+		}
+		try {
+			const module = await import("./lib/components/ReligionSupport.svelte");
+			ReligionSupportComponent = module.default;
+		} catch (error) {
+			religionSupportLoadError = error?.message || "Unable to load religion support.";
+		}
+	}
+
 	function isInternalNavClick(event) {
 		if (event.defaultPrevented || event.button !== 0) {
 			return null;
@@ -254,6 +268,10 @@
 		}
 		if (currentPath === "/tech-tree-viewer") {
 			void ensureTechTreeViewerLoaded();
+			return;
+		}
+		if (currentPath === "/religion-support") {
+			void ensureReligionSupportLoaded();
 			return;
 		}
 		if (
@@ -883,6 +901,12 @@
 					<TechTreeViewerComponent />
 				{:else if currentPath === "/tech-tree-viewer"}
 					<p class="status">Loading tech tree viewer...</p>
+				{:else if currentPath === "/religion-support" && religionSupportLoadError}
+					<p class="status error">{religionSupportLoadError}</p>
+				{:else if currentPath === "/religion-support" && ReligionSupportComponent}
+					<ReligionSupportComponent />
+				{:else if currentPath === "/religion-support"}
+					<p class="status">Loading religion support...</p>
 				{:else if mapViewerLoadError}
 					<p class="status error">Page not found. {mapViewerLoadError}</p>
 				{:else}

@@ -420,6 +420,7 @@
 		background: color-mix(in oklch, var(--panel-bg) 98%, var(--civ5mod-accent-highlight) 1%);
 		border: 1px solid color-mix(in oklch, var(--civ5mod-accent-border) 5%, var(--panel-border));
 		border-radius: 1rem;
+		box-shadow: 0 4px 6px #111;
 		padding: 1.25rem;
 
 		& h2 {
@@ -444,7 +445,7 @@
 		display: grid;
 		gap: 1rem;
 		background: color-mix(in oklch, var(--civ5mod-accent-panel) 30%, var(--panel-bg));
-		box-shadow: 0 10px 26px var(--shadow-soft);
+		box-shadow: 0 6px 8px var(--shadow-soft);
 		border: 1px solid color-mix(in oklch, var(--civ5mod-accent-border) 15%, var(--panel-border));
 		border-radius: 1rem;
 		padding: 1.25rem;
@@ -553,6 +554,7 @@
 		background: linear-gradient(145deg, color-mix(in oklch, var(--civ5mod-accent-highlight) 86%, #d97706), color-mix(in oklch, var(--civ5mod-accent-highlight) 62%, #8a3f0a));
 		border: 1px solid color-mix(in oklch, var(--civ5mod-accent-highlight) 56%, var(--civ5mod-accent-border));
 		border-radius: 0.62rem;
+		box-shadow: 0 2px 2px #111;
 		padding-block: 0.42rem;
 		padding-inline: 0.72rem;
 		cursor: pointer;
@@ -638,6 +640,7 @@
 		background: color-mix(in oklch, var(--civ5mod-accent-panel) 96%, black);
 		border: 1px solid color-mix(in oklch, var(--civ5mod-accent-border) 80%, transparent);
 		border-radius: 0.9rem;
+		box-shadow: 0 4px 6px #111;
 		padding: 1.25rem;
 		transition:
 			transform 140ms ease,
@@ -677,6 +680,7 @@
 		background: color-mix(in oklch, var(--civ5mod-accent-panel) 95%, var(--civ5mod-accent-highlight) 5%);
 		border: 1px dashed color-mix(in oklch, var(--civ5mod-accent-border) 90%, transparent);
 		border-radius: 0.8rem;
+		box-shadow: 0 2px 4px #111;
 		padding: 0.9rem;
 		transition:
 			background 140ms ease,

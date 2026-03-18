@@ -208,7 +208,6 @@
 
 		.directory-card {
 			background: color-mix(in oklch, white 72%, var(--control-bg));
-			box-shadow: 0 8px 18px var(--shadow-soft);
 			border-color: color-mix(in oklch, var(--accent) 24%, var(--panel-border));
 		}
 
@@ -271,6 +270,7 @@
 		background: var(--control-bg);
 		border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--panel-border));
 		border-radius: 0.85rem;
+		box-shadow: 0 4px 6px #111;
 		padding: 1rem;
 		transition:
 			transform 0.2s ease,
@@ -279,7 +279,7 @@
 	}
 
 	.directory-card:hover {
-		box-shadow: 0 8px 14px var(--shadow-soft);
+		box-shadow: 0 6px 8px var(--shadow-soft);
 		border-color: color-mix(in oklch, var(--accent) 70%, var(--panel-border));
 		transform: translateY(-2px);
 	}

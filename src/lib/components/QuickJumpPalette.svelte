@@ -261,6 +261,21 @@
 			},
 		},
 		{
+			id: "page-religion-support",
+			type: "Reference",
+			title: "Religion Support",
+			subtitle: "Browse religion packs, icon atlases, and pedia support entries.",
+			href: "/religion-support",
+			keywords: ["religion support", "historical religions", "religions", "belief packs", "icon atlas"],
+			featured: true,
+			priority: 9,
+			preview: {
+				copy: "Compare religion choices from Historical Religions and companion packs with grouped pack sections, icon metadata, and localized pedia text.",
+				meta: buildPreviewMeta("198 religions", "7 packs"),
+				details: ["Grouped by source pack", "Atlas and portrait index lookup", "Civilopedia text and key references"],
+			},
+		},
+		{
 			id: "page-upload-mod",
 			type: "Publish",
 			title: "Workshop Uploader",

@@ -22,7 +22,7 @@
 		if (href.includes("/workshop-uploader") || href.includes("/modinfo-builder") || href.includes("/civ5mod-ziper")) return "is-publish";
 		if (href.includes("/dds-converter") || href.includes("/civ-icon-maker") || href.includes("/text-screen-viewer")) return "is-ui";
 		if (href.includes("/map-viewer") || href.includes("/tech-tree-viewer")) return "is-tool";
-		if (href.includes("/religion-support") || href.includes("/modded-civs-pedia")) return "is-support";
+		if (href.includes("/religion-support")) return "is-support";
 		return "is-tool";
 	}
 

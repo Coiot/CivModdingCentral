@@ -99,9 +99,7 @@
 				{
 					href: "/religion-support",
 					label: "Religion Support",
-					description: "Lookup refernces for Historical Religions and related religion mods for mod support.",
-					disabled: true,
-					statusLabel: "Coming Soon",
+					description: "Browse religion choices from Historical Religions and companion packs with pack grouping and icon metadata.",
 				},
 			],
 		},
@@ -209,6 +207,7 @@
 				return "is-planner";
 			case "/community-links":
 			case "/tutorials":
+				return "is-";
 			case "/religion-support":
 				return "is-support";
 			default:
