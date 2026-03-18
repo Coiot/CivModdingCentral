@@ -926,7 +926,7 @@
 
 			<div class="site-footer-meta">
 				<div class="site-footer-tester-block">
-					<span class="site-footer-label">Tested & Curated with help from</span>
+					<span class="site-footer-label">With QA help from</span>
 					<div class="site-footer-chip-row" aria-label="Testers">
 						<span class="site-footer-chip" style="--chip-highlight:#d8d474">TopHatPaladin</span>
 						<span class="site-footer-chip" style="--chip-highlight:#d47afe">NopeCopter</span>
