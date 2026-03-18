@@ -281,12 +281,12 @@
 	.pack-meta {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.4rem;
+		gap: 0.25rem;
 	}
 
 	.chip-group button,
 	.mini-pill {
-		padding: 0.42rem 0.72rem;
+		padding: 0.4rem 0.65rem;
 		border-radius: 999px;
 		border: 1px solid color-mix(in oklch, var(--surface-support-border) 75%, var(--panel-border));
 		background: color-mix(in oklch, var(--control-bg) 84%, var(--panel-bg) 16%);
