@@ -4,16 +4,16 @@
 	import { onMount, tick } from "svelte";
 	import schemaData from "../data/civ-schema.json";
 	import civTextEnUs from "../data/civ-text-en-us.json";
+	import enlightenmentEraData from "../data/enlightenment-era-tech-tree.json";
 
 	const TABLE_BY_NAME = new Map(schemaData.tables.map((table) => [table.name, table]));
-	const TECHNOLOGY_ROWS = TABLE_BY_NAME.get("Technologies")?.rows || [];
-	const ERA_ROWS = TABLE_BY_NAME.get("Eras")?.rows || [];
-	const TEXT_ROWS = TABLE_BY_NAME.get("Language_en_US")?.rows || [];
-	const PREREQ_ROWS = TABLE_BY_NAME.get("Technology_PrereqTechs")?.rows || [];
-	const OR_PREREQ_ROWS = TABLE_BY_NAME.get("Technology_ORPrereqTechs")?.rows || [];
+	const BASE_ROWS_BY_TABLE = new Map(schemaData.tables.map((table) => [table.name, table.rows || []]));
+	const BASE_TECHNOLOGY_ROWS = BASE_ROWS_BY_TABLE.get("Technologies") || [];
+	const BASE_ERA_ROWS = BASE_ROWS_BY_TABLE.get("Eras") || [];
+	const BASE_TEXT_ROWS = BASE_ROWS_BY_TABLE.get("Language_en_US") || [];
+	const BASE_PREREQ_ROWS = BASE_ROWS_BY_TABLE.get("Technology_PrereqTechs") || [];
+	const OR_PREREQ_ROWS = BASE_ROWS_BY_TABLE.get("Technology_ORPrereqTechs") || [];
 	const numberFormatter = new Intl.NumberFormat("en-US");
-	const TECH_ROW_BY_TYPE = new Map(TECHNOLOGY_ROWS.map((row) => [row.Type, row]));
-	const ERA_BY_TYPE = new Map(ERA_ROWS.map((row, index) => [row.Type, { ...row, index }]));
 	const DISPLAY_LIMITS = {
 		effects: 5,
 		previewItems: 10,
@@ -43,17 +43,24 @@
 		{ key: "Repeat", label: "Repeatable" },
 		{ key: "EndsGame", label: "Ends game" },
 	];
-	const TEXT_BY_TAG = new Map([...Object.entries(civTextEnUs || {}), ...buildTextLookup(TEXT_ROWS).entries()]);
-	const HAS_LOCALIZATION_SOURCE = TEXT_BY_TAG.size > 0;
+	const BASE_TEXT_BY_TAG = new Map([...Object.entries(civTextEnUs || {}), ...buildTextLookup(BASE_TEXT_ROWS).entries()]);
 
 	let searchQuery = $state("");
 	let selectedEras = $state([]);
 	let eraFlow = $state("horizontal");
+	let includeEnlightenmentEra = $state(false);
 
-	const TECH_GRAPH = buildTechGraph();
-	const ERA_GROUPS = buildEraGroups(TECH_GRAPH);
-	const totalUnlockEntries = TECH_GRAPH.reduce((sum, tech) => sum + tech.unlockCount, 0);
-	const totalSupportEntries = TECH_GRAPH.reduce((sum, tech) => sum + tech.supportCount, 0);
+	const TEXT_BY_TAG = $derived.by(() => (includeEnlightenmentEra ? new Map([...BASE_TEXT_BY_TAG.entries(), ...Object.entries(enlightenmentEraData.textByTag || {})]) : BASE_TEXT_BY_TAG));
+	const OVERLAY_ROWS_BY_TABLE = $derived(new Map(Object.entries(enlightenmentEraData.tables || {})));
+	const TECHNOLOGY_ROWS = $derived(includeEnlightenmentEra ? enlightenmentEraData.technologies || [] : BASE_TECHNOLOGY_ROWS);
+	const ERA_ROWS = $derived(includeEnlightenmentEra ? enlightenmentEraData.eras || [] : BASE_ERA_ROWS);
+	const PREREQ_ROWS = $derived(includeEnlightenmentEra ? enlightenmentEraData.prereqs || [] : BASE_PREREQ_ROWS);
+	const TECH_ROW_BY_TYPE = $derived(new Map(TECHNOLOGY_ROWS.map((row) => [row.Type, row])));
+	const ERA_BY_TYPE = $derived(new Map(ERA_ROWS.map((row, index) => [row.Type, { ...row, index }])));
+	const TECH_GRAPH = $derived(buildTechGraph());
+	const ERA_GROUPS = $derived(buildEraGroups(TECH_GRAPH));
+	const totalUnlockEntries = $derived(TECH_GRAPH.reduce((sum, tech) => sum + tech.unlockCount, 0));
+	const totalSupportEntries = $derived(TECH_GRAPH.reduce((sum, tech) => sum + tech.supportCount, 0));
 
 	const normalizedSearch = $derived(normalizeText(searchQuery));
 	const hasEraFilter = $derived(selectedEras.length > 0);
@@ -436,44 +443,36 @@
 				id: "improvement-yields",
 				label: "Imp yields",
 				rows: [
-					...(TABLE_BY_NAME.get("Improvement_TechYieldChanges")?.rows || []).map((row) => ({ ...row, condition: "Base" })),
-					...(TABLE_BY_NAME.get("Improvement_TechFreshWaterYieldChanges")?.rows || []).map((row) => ({ ...row, condition: "Fresh water" })),
-					...(TABLE_BY_NAME.get("Improvement_TechNoFreshWaterYieldChanges")?.rows || []).map((row) => ({ ...row, condition: "No fresh water" })),
+					...tableRows("Improvement_TechYieldChanges").map((row) => ({ ...row, condition: "Base" })),
+					...tableRows("Improvement_TechFreshWaterYieldChanges").map((row) => ({ ...row, condition: "Fresh water" })),
+					...tableRows("Improvement_TechNoFreshWaterYieldChanges").map((row) => ({ ...row, condition: "No fresh water" })),
 				],
 				techValue: tech.Type,
 				buildItem: (row) => ({
 					label: resolveTypeName("Improvements", row.ImprovementType),
 					rawType: row.ImprovementType,
 					detail: `${formatSignedNumber(row.Yield)} ${formatYieldName(row.YieldType)}${row.condition ? ` ${row.condition}` : ""}`,
-					preview: buildEntityPreview(
-						"Improvements",
-						(TABLE_BY_NAME.get("Improvements")?.rows || []).find((entry) => entry.Type === row.ImprovementType),
-						row,
-					),
+					preview: buildEntityPreview("Improvements", findRowByType("Improvements", row.ImprovementType), row),
 					href: schemaRowHref("Improvements", row.ImprovementType),
 				}),
 			}),
 			buildDeltaGroup({
 				id: "route-movement",
 				label: "Route move",
-				rows: TABLE_BY_NAME.get("Route_TechMovementChanges")?.rows || [],
+				rows: tableRows("Route_TechMovementChanges"),
 				techValue: tech.Type,
 				buildItem: (row) => ({
 					label: resolveTypeName("Routes", row.RouteType),
 					rawType: row.RouteType,
 					detail: `${formatSignedNumber(row.MovementChange)} cost`,
-					preview: buildEntityPreview(
-						"Routes",
-						(TABLE_BY_NAME.get("Routes")?.rows || []).find((entry) => entry.Type === row.RouteType),
-						row,
-					),
+					preview: buildEntityPreview("Routes", findRowByType("Routes", row.RouteType), row),
 					href: schemaRowHref("Routes", row.RouteType),
 				}),
 			}),
 			buildDeltaGroup({
 				id: "trade-range",
 				label: "Trade range",
-				rows: TABLE_BY_NAME.get("Technology_TradeRouteDomainExtraRange")?.rows || [],
+				rows: tableRows("Technology_TradeRouteDomainExtraRange"),
 				techValue: tech.Type,
 				buildItem: (row) => ({
 					label: formatIdentifier(row.DomainType, ["DOMAIN_"]),
@@ -486,7 +485,7 @@
 			buildDeltaGroup({
 				id: "domain-moves",
 				label: "Domain moves",
-				rows: TABLE_BY_NAME.get("Technology_DomainExtraMoves")?.rows || [],
+				rows: tableRows("Technology_DomainExtraMoves"),
 				techValue: tech.Type,
 				buildItem: (row) => ({
 					label: formatIdentifier(row.DomainType, ["DOMAIN_"]),
@@ -499,17 +498,13 @@
 			buildDeltaGroup({
 				id: "free-promotions",
 				label: "Free promos",
-				rows: TABLE_BY_NAME.get("Technology_FreePromotions")?.rows || [],
+				rows: tableRows("Technology_FreePromotions"),
 				techValue: tech.Type,
 				buildItem: (row) => ({
 					label: resolveTypeName("UnitPromotions", row.PromotionType),
 					rawType: row.PromotionType,
 					detail: "Granted on research",
-					preview: buildEntityPreview(
-						"UnitPromotions",
-						(TABLE_BY_NAME.get("UnitPromotions")?.rows || []).find((entry) => entry.Type === row.PromotionType),
-						row,
-					),
+					preview: buildEntityPreview("UnitPromotions", findRowByType("UnitPromotions", row.PromotionType), row),
 					href: schemaRowHref("UnitPromotions", row.PromotionType),
 				}),
 			}),
@@ -528,17 +523,13 @@
 			buildDeltaGroup({
 				id: "disabled-civs",
 				label: "Disabled civs",
-				rows: TABLE_BY_NAME.get("Civilization_DisableTechs")?.rows || [],
+				rows: tableRows("Civilization_DisableTechs"),
 				techValue: tech.Type,
 				buildItem: (row) => ({
 					label: resolveTypeName("Civilizations", row.CivilizationType),
 					rawType: row.CivilizationType,
 					detail: "Cannot research",
-					preview: buildEntityPreview(
-						"Civilizations",
-						(TABLE_BY_NAME.get("Civilizations")?.rows || []).find((entry) => entry.Type === row.CivilizationType),
-						row,
-					),
+					preview: buildEntityPreview("Civilizations", findRowByType("Civilizations", row.CivilizationType), row),
 					href: schemaRowHref("Civilizations", row.CivilizationType),
 				}),
 			}),
@@ -546,13 +537,13 @@
 	}
 
 	function buildEntityGroup({ id, label, tableName, techField, techValue, filter = null, buildItem }) {
-		const rows = (TABLE_BY_NAME.get(tableName)?.rows || []).filter((row) => row?.[techField] === techValue && (!filter || filter(row)));
+		const rows = tableRows(tableName).filter((row) => row?.[techField] === techValue && (!filter || filter(row)));
 		return finalizeGroup(id, label, rows.map(buildItem));
 	}
 
 	function buildBuildDerivedGroup(tech, id, label, refField, targetTableName, buildItem) {
-		const buildRows = (TABLE_BY_NAME.get("Builds")?.rows || []).filter((row) => row.PrereqTech === tech.Type && refField(row));
-		const targetByType = new Map((TABLE_BY_NAME.get(targetTableName)?.rows || []).map((row) => [row.Type, row]));
+		const buildRows = tableRows("Builds").filter((row) => row.PrereqTech === tech.Type && refField(row));
+		const targetByType = new Map(tableRows(targetTableName).map((row) => [row.Type, row]));
 		return finalizeGroup(
 			id,
 			label,
@@ -672,8 +663,16 @@
 		return cleanLocalizedText(text);
 	}
 
+	function tableRows(tableName) {
+		return includeEnlightenmentEra ? OVERLAY_ROWS_BY_TABLE.get(tableName) || BASE_ROWS_BY_TABLE.get(tableName) || [] : BASE_ROWS_BY_TABLE.get(tableName) || [];
+	}
+
+	function findRowByType(tableName, typeValue) {
+		return tableRows(tableName).find((entry) => entry.Type === typeValue);
+	}
+
 	function resolveTypeName(tableName, typeValue) {
-		const row = (TABLE_BY_NAME.get(tableName)?.rows || []).find((entry) => entry.Type === typeValue);
+		const row = findRowByType(tableName, typeValue);
 		return row ? resolveDisplayName(row, "Type") : formatIdentifier(typeValue);
 	}
 
@@ -742,7 +741,7 @@
 	}
 
 	function collectTypeYieldLines(tableName, typeField, typeValue, label = "Yields") {
-		const rows = (TABLE_BY_NAME.get(tableName)?.rows || []).filter((entry) => entry[typeField] === typeValue && Number(entry.Yield || entry.YieldChange || 0) !== 0);
+		const rows = tableRows(tableName).filter((entry) => entry[typeField] === typeValue && Number(entry.Yield || entry.YieldChange || 0) !== 0);
 		if (!rows.length) {
 			return "";
 		}
@@ -751,7 +750,7 @@
 	}
 
 	function collectResourceRequirementLine(unitType) {
-		const rows = (TABLE_BY_NAME.get("Unit_ResourceQuantityRequirements")?.rows || []).filter((entry) => entry.UnitType === unitType);
+		const rows = tableRows("Unit_ResourceQuantityRequirements").filter((entry) => entry.UnitType === unitType);
 		if (!rows.length) {
 			return "";
 		}
@@ -759,7 +758,7 @@
 	}
 
 	function collectProcessYieldLine(processType) {
-		const rows = (TABLE_BY_NAME.get("Process_ProductionYields")?.rows || []).filter((entry) => entry.ProcessType === processType && Number(entry.Yield || 0) !== 0);
+		const rows = tableRows("Process_ProductionYields").filter((entry) => entry.ProcessType === processType && Number(entry.Yield || 0) !== 0);
 		if (!rows.length) {
 			return "";
 		}
@@ -992,6 +991,15 @@
 			<div class="toggle-row" role="list" aria-label="Era layout">
 				<button class:selected={eraFlow === "vertical"} type="button" onclick={() => (eraFlow = "vertical")}>Vertical</button>
 				<button class:selected={eraFlow === "horizontal"} type="button" onclick={() => (eraFlow = "horizontal")}>Horizontal</button>
+			</div>
+		</div>
+
+		<div class="toolbar-section-head">
+			<span class="toolbar-label">Era Overlay</span>
+			<p class="toolbar-copy">Toggle Enlightenment Era modded tree changes.</p>
+			<div class="toggle-row" role="list" aria-label="Enlightenment Era overlay">
+				<button class:selected={!includeEnlightenmentEra} type="button" onclick={() => (includeEnlightenmentEra = false)}>Base Game</button>
+				<button class:selected={includeEnlightenmentEra} type="button" onclick={() => (includeEnlightenmentEra = true)}>Enlightenment Era</button>
 			</div>
 		</div>
 	</div>
