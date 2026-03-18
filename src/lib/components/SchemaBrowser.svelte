@@ -36,6 +36,7 @@
 			copy: "High impact table for unique units, aura logic, combat tuning, embark behavior, and many Lua driven bonuses.",
 		},
 	];
+	const PRIORITY_TABLES = new Set(QUICK_STARTS.map((item) => item.tableName));
 	const TABLE_PREFIX_MAP = {
 		Buildings: ["Building"],
 		Units: ["Unit"],
@@ -573,7 +574,8 @@
 					matchesQuery = tableNameMatch || matchedColumns.length > 0 || matchedRelations.length > 0 || rowValuesMatch;
 			}
 		}
-		const score = (tableNameMatch ? 5 : 0) + matchedColumns.length * 2 + matchedRelations.length * 2 + matchedRows.length * 3 + (rowValuesMatch ? 1 : 0);
+		const priorityBoost = PRIORITY_TABLES.has(table.name) ? 4 : 0;
+		const score = priorityBoost + (tableNameMatch ? 5 : 0) + matchedColumns.length * 2 + matchedRelations.length * 2 + matchedRows.length * 3 + (rowValuesMatch ? 1 : 0);
 		return {
 			...table,
 			tableNameMatch,
@@ -2405,6 +2407,7 @@
 		flex: 1 1 auto;
 		align-content: start;
 		padding-inline-end: 0.15rem;
+		padding-block: 0.25rem;
 		overflow: auto;
 	}
 

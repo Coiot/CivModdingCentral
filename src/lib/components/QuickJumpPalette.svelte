@@ -9,6 +9,7 @@
 	const ROW_SEARCH_MIN_LENGTH = 3;
 	const COLUMN_SEARCH_MIN_LENGTH = 3;
 	const PRIMARY_ROW_KEYS = ["Type", "Tag", "Name", "Description", "ShortDescription", "CivilizationType", "LeaderheadType", "BuildingType", "UnitType", "TraitType", "PolicyType", "PromotionType"];
+	const PRIORITY_SCHEMA_TABLES = new Set(["Buildings", "Units", "Civilizations", "Improvements", "Technologies", "UnitPromotions"]);
 
 	function normalizeText(value) {
 		return String(value || "")
@@ -120,6 +121,22 @@
 		return [tableName, ...Object.entries(row || {}).flatMap(([key, value]) => [key, stringifyValue(value)])].join(" ");
 	}
 
+	function schemaTableKeywords(table) {
+		const keywords = new Set((table.columns || []).map((column) => column.name).filter(Boolean));
+
+		for (const row of table.rows || []) {
+			for (const key of PRIMARY_ROW_KEYS) {
+				const value = stringifyValue(row?.[key]).trim();
+				if (!value || value.length > 96) {
+					continue;
+				}
+				keywords.add(value);
+			}
+		}
+
+		return [...keywords];
+	}
+
 	function formatIdentifier(value, prefixes = []) {
 		const normalized = String(value || "").trim();
 		if (!normalized) {
@@ -155,6 +172,7 @@
 		const searchIndex = normalizeText([item.title, item.subtitle, item.type, ...(item.keywords || [])].join(" "));
 		return {
 			priority: 0,
+			searchBoost: 0,
 			featured: false,
 			...item,
 			titleIndex,
@@ -445,8 +463,8 @@
 				title: table.name,
 				subtitle: `${table.rowCount} rows · ${table.columnCount} columns`,
 				href: schemaTableHref(table.name),
-				keywords: [...(table.columns || []).map((column) => column.name)],
-				priority: 6,
+				keywords: schemaTableKeywords(table),
+				priority: PRIORITY_SCHEMA_TABLES.has(table.name) ? 10 : 6,
 				featured: table.name === "Traits" || table.name === "Buildings" || table.name === "Civilizations",
 				preview: {
 					copy: `${table.name} has ${table.rowCount} rows, ${table.columnCount} columns, and ${table.foreignKeyCount} outgoing foreign keys in the local snapshot.`,
@@ -468,6 +486,7 @@
 					href: schemaColumnHref(table.name, column.name),
 					keywords: [table.name, column.name, column.type, column.defaultValue, column.primaryKey ? "primary key" : "", column.notNull ? "not null" : ""],
 					priority: 4,
+					searchBoost: PRIORITY_SCHEMA_TABLES.has(table.name) ? 42 : 0,
 					preview: {
 						copy: `${column.name} is a ${column.type} column on ${table.name}.`,
 						meta: buildPreviewMeta(table.name, column.primaryKey ? "Primary key" : "", column.notNull ? "Not null" : ""),
@@ -491,6 +510,7 @@
 					href: schemaRowHref(table.name, index, primaryValue),
 					keywords: [table.name, rowSearchText(table.name, row)],
 					priority: 2,
+					searchBoost: PRIORITY_SCHEMA_TABLES.has(table.name) ? 56 : 0,
 					preview: {
 						copy: `${primaryValue} in ${table.name}.`,
 						meta: buildPreviewMeta(table.name, `Row ${index + 1}`),
@@ -577,23 +597,61 @@
 
 		const terms = normalizedQuery.split(" ").filter(Boolean);
 		let score = 0;
+		let matched = false;
 
-		if (item.titleIndex === normalizedQuery || item.keywordIndex.includes(normalizedQuery)) score += 120;
-		if (item.titleIndex.startsWith(normalizedQuery)) score += 80;
-		if (item.titleIndex.includes(normalizedQuery)) score += 55;
-		if (item.keywordIndex.startsWith(normalizedQuery)) score += 45;
-		if (item.subtitleIndex.includes(normalizedQuery)) score += 28;
-		if (item.typeIndex.includes(normalizedQuery)) score += 18;
-		if (item.searchIndex.includes(normalizedQuery)) score += 14;
-
-		for (const term of terms) {
-			if (item.titleIndex.includes(term)) score += 18;
-			if (item.keywordIndex.includes(term)) score += 14;
-			if (item.subtitleIndex.includes(term)) score += 8;
-			if (item.searchIndex.includes(term)) score += 5;
+		if (item.titleIndex === normalizedQuery || item.keywordIndex.includes(normalizedQuery)) {
+			score += 120;
+			matched = true;
+		}
+		if (item.titleIndex.startsWith(normalizedQuery)) {
+			score += 80;
+			matched = true;
+		}
+		if (item.titleIndex.includes(normalizedQuery)) {
+			score += 55;
+			matched = true;
+		}
+		if (item.keywordIndex.startsWith(normalizedQuery)) {
+			score += 45;
+			matched = true;
+		}
+		if (item.subtitleIndex.includes(normalizedQuery)) {
+			score += 28;
+			matched = true;
+		}
+		if (item.typeIndex.includes(normalizedQuery)) {
+			score += 18;
+			matched = true;
+		}
+		if (item.searchIndex.includes(normalizedQuery)) {
+			score += 14;
+			matched = true;
 		}
 
-		return score + (item.priority || 0);
+		for (const term of terms) {
+			if (item.titleIndex.includes(term)) {
+				score += 18;
+				matched = true;
+			}
+			if (item.keywordIndex.includes(term)) {
+				score += 14;
+				matched = true;
+			}
+			if (item.subtitleIndex.includes(term)) {
+				score += 8;
+				matched = true;
+			}
+			if (item.searchIndex.includes(term)) {
+				score += 5;
+				matched = true;
+			}
+		}
+
+		if (!matched) {
+			return 0;
+		}
+
+		return score + (item.priority || 0) + (item.searchBoost || 0);
 	}
 
 	const results = $derived.by(() => {
