@@ -122,19 +122,7 @@
 	}
 
 	function schemaTableKeywords(table) {
-		const keywords = new Set((table.columns || []).map((column) => column.name).filter(Boolean));
-
-		for (const row of table.rows || []) {
-			for (const key of PRIMARY_ROW_KEYS) {
-				const value = stringifyValue(row?.[key]).trim();
-				if (!value || value.length > 96) {
-					continue;
-				}
-				keywords.add(value);
-			}
-		}
-
-		return [...keywords];
+		return [...new Set((table.columns || []).map((column) => column.name).filter(Boolean))];
 	}
 
 	function formatIdentifier(value, prefixes = []) {
@@ -174,6 +162,7 @@
 			priority: 0,
 			searchBoost: 0,
 			featured: false,
+			resultGroup: "navigate",
 			...item,
 			titleIndex,
 			subtitleIndex,
@@ -427,6 +416,7 @@
 					...(entry.parameters || []).flatMap((param) => [param.name, param.type, param.raw]),
 				],
 				priority: 7,
+				resultGroup: "content",
 				preview: {
 					copy: compactText(entry.displaySignature, 180),
 					meta: buildPreviewMeta(entry.family, entry.returnType, `${entry.parameterCount} params`),
@@ -446,6 +436,7 @@
 				href: luaEntryHref("game-events", entry.id, `GameEvents.${entry.name}`),
 				keywords: [entry.scope, entry.displaySignature, ...(entry.schemaTables || []), ...(entry.parameters || []).flatMap((param) => [param.name, param.type, param.raw])],
 				priority: 7,
+				resultGroup: "content",
 				preview: {
 					copy: compactText(entry.displaySignature, 180),
 					meta: buildPreviewMeta(entry.scope, `${entry.parameterCount} params`, `${entry.schemaTables?.length || 0} schema links`),
@@ -487,6 +478,7 @@
 					keywords: [table.name, column.name, column.type, column.defaultValue, column.primaryKey ? "primary key" : "", column.notNull ? "not null" : ""],
 					priority: 4,
 					searchBoost: PRIORITY_SCHEMA_TABLES.has(table.name) ? 42 : 0,
+					resultGroup: "content",
 					preview: {
 						copy: `${column.name} is a ${column.type} column on ${table.name}.`,
 						meta: buildPreviewMeta(table.name, column.primaryKey ? "Primary key" : "", column.notNull ? "Not null" : ""),
@@ -511,6 +503,7 @@
 					keywords: [table.name, rowSearchText(table.name, row)],
 					priority: 2,
 					searchBoost: PRIORITY_SCHEMA_TABLES.has(table.name) ? 56 : 0,
+					resultGroup: "content",
 					preview: {
 						copy: `${primaryValue} in ${table.name}.`,
 						meta: buildPreviewMeta(table.name, `Row ${index + 1}`),
@@ -543,6 +536,7 @@
 				keywords: [row.Type, row.Description, row.Help, row.Civilopedia, row.Quote, eraLabel, help],
 				priority: 9,
 				featured: row.Type === "TECH_AGRICULTURE" || row.Type === "TECH_WRITING" || row.Type === "TECH_RADIO",
+				resultGroup: "content",
 				preview: {
 					copy: compactText(help || resolveTextTag(row.Civilopedia, textByTag), 180),
 					meta: buildPreviewMeta(eraLabel, `${row.Cost} science`, `Grid ${row.GridX},${row.GridY}`),
@@ -654,6 +648,24 @@
 		return score + (item.priority || 0) + (item.searchBoost || 0);
 	}
 
+	function hasDirectNavigateMatch(item, normalizedQuery) {
+		if (!normalizedQuery || item.resultGroup !== "navigate") {
+			return false;
+		}
+
+		return item.titleIndex === normalizedQuery || item.titleIndex.startsWith(normalizedQuery) || item.subtitleIndex.startsWith(normalizedQuery) || item.typeIndex === normalizedQuery;
+	}
+
+	function resultBucket(item, normalizedQuery) {
+		if (!normalizedQuery) {
+			return 0;
+		}
+		if (hasDirectNavigateMatch(item, normalizedQuery)) {
+			return 0;
+		}
+		return item.resultGroup === "content" ? 1 : 2;
+	}
+
 	const results = $derived.by(() => {
 		const normalizedQuery = normalizeText(query);
 		const shouldIncludeColumns = normalizedQuery.length >= COLUMN_SEARCH_MIN_LENGTH;
@@ -671,6 +683,7 @@
 			.filter((entry) => entry.score > 0)
 			.sort(
 				(left, right) =>
+					resultBucket(left.item, normalizedQuery) - resultBucket(right.item, normalizedQuery) ||
 					right.score - left.score ||
 					(right.item.priority || 0) - (left.item.priority || 0) ||
 					Number(right.item.featured) - Number(left.item.featured) ||

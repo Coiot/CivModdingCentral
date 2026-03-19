@@ -20,7 +20,7 @@
 		if (href.includes("/pattern-library")) return "is-pattern";
 		if (href.includes("/template-generators")) return "is-generator";
 		if (href.includes("/workshop-uploader") || href.includes("/modinfo-builder") || href.includes("/civ5mod-ziper")) return "is-publish";
-		if (href.includes("/dds-converter") || href.includes("/civ-icon-maker") || href.includes("/text-screen-viewer")) return "is-ui";
+		if (href.includes("/dds-converter") || href.includes("/civ-icon-maker") || href.includes("/ui-screen-viewer")) return "is-ui";
 		if (href.includes("/tech-tree-viewer")) return "is-tool";
 		if (href.includes("/religion-support") || href.includes("/map-viewer")) return "is-support";
 		return "is-tool";

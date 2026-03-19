@@ -233,6 +233,33 @@
 	};
 
 	const SQL_HISTORY_STORAGE_KEY = "cmc_dds_sql_history_v1";
+	const DDS_RELATED_TOOLS = [
+		{
+			label: "Text Screen Viewer",
+			description: "Use this to validate splash, leader, and screen art fit after conversion against the actual Civ V UI frames.",
+			href: "/text-screen-viewer",
+		},
+		{
+			label: "Art + Audio Generator",
+			description: "Double check if you used the generator when the converted files are ready and you need atlas rows, colors, and art-def wiring.",
+			href: "/template-generators?generator=art-audio-setup",
+		},
+		{
+			label: "IconTextureAtlases Table",
+			description: "Check the schema rows behind atlas registration when the generated SQL or atlas names need manual verification.",
+			href: "/schema-browser?table=IconTextureAtlases&tab=rows",
+		},
+		{
+			label: "Civ Icon Maker",
+			description: "When the converted DDS files are part of a civ icon set and you still need color and icon composition work.",
+			href: "/civ-icon-maker",
+		},
+		{
+			label: "Religion Support",
+			description: "Useful companion when religion alpha atlases are the destination and you want to confirm real pack naming and usage patterns.",
+			href: "/religion-support",
+		},
+	];
 
 	function buildSizeSelection(selectedSizes = []) {
 		const selection = {};
@@ -240,6 +267,32 @@
 			selection[size] = selectedSizes.includes(size);
 		}
 		return selection;
+	}
+
+	function relatedToolAccentClass(href) {
+		const value = String(href || "");
+		if (value.includes("/schema-browser")) return "is-schema";
+		if (value.includes("/lua-api-explorer")) return "is-lua";
+		if (value.includes("/pattern-library")) return "is-pattern";
+		if (value.includes("/template-generators")) return "is-generator";
+		if (value.includes("/guided-planner")) return "is-planner";
+		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "is-publish";
+		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "is-ui";
+		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "is-support";
+		return "is-tool";
+	}
+
+	function relatedToolTypeLabel(href) {
+		const value = String(href || "");
+		if (value.includes("/schema-browser")) return "Schema";
+		if (value.includes("/lua-api-explorer")) return "Lua";
+		if (value.includes("/pattern-library")) return "Pattern";
+		if (value.includes("/template-generators")) return "Generator";
+		if (value.includes("/guided-planner")) return "Planner";
+		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "Publish";
+		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "UI";
+		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "Support";
+		return "Tool";
 	}
 
 	let workflow = $state("icon_bundle");
@@ -1292,6 +1345,24 @@
 				<p class="dds-status dds-success">{successMessage}</p>
 			{/if}
 		</section>
+
+		<section class="dds-related-panel" aria-label="Related DDS converter tools">
+			<div class="dds-related-head">
+				<p class="eyebrow">Helpful Links</p>
+			</div>
+
+			<div class="dds-related-grid">
+				{#each DDS_RELATED_TOOLS as tool (tool.href)}
+					<a class={`dds-related-card ${relatedToolAccentClass(tool.href)}`} href={tool.href}>
+						<div class="dds-related-card-head">
+							<h3>{tool.label}</h3>
+							<span class="dds-related-card-kind">{relatedToolTypeLabel(tool.href)}</span>
+						</div>
+						<p>{tool.description}</p>
+					</a>
+				{/each}
+			</div>
+		</section>
 	</section>
 </section>
 
@@ -1762,6 +1833,139 @@
 
 	.dds-success {
 		color: oklch(0.82 0.14 145);
+	}
+
+	.dds-related-panel {
+		display: grid;
+		gap: 0.8rem;
+		border-radius: 0.95rem;
+		border: 1px solid color-mix(in srgb, var(--dds-accent-border) 38%, var(--panel-border));
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--dds-accent-highlight) 12%, transparent) 0%, transparent 30%), color-mix(in srgb, var(--dds-accent-panel) 18%, var(--panel-bg));
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--dds-accent-highlight) 10%, transparent),
+			0 6px 8px color-mix(in srgb, black 45%, transparent);
+		padding: 1rem;
+	}
+
+	.dds-related-head,
+	.dds-related-grid {
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	.dds-related-grid {
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+	}
+
+	.dds-related-card {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		color: var(--ink);
+		text-decoration: none;
+		border-radius: 1rem;
+		padding: 1rem 0.95rem;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 20%, transparent) 0%, transparent 45%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 94%, #16110f 6%) 100%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 10%, transparent),
+			0 6px 8px color-mix(in srgb, black 76%, transparent);
+		border: 1px solid color-mix(in srgb, var(--surface-highlight) 44%, var(--surface-border));
+	}
+
+	.dds-related-card-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: start;
+		gap: 0.7rem;
+	}
+
+	.dds-related-card h3 {
+		margin: 0;
+		font-family: "Rockwell", "Palatino Linotype", serif;
+		font-size: 1.02rem;
+	}
+
+	.dds-related-card-kind {
+		flex: 0 0 auto;
+		color: color-mix(in srgb, var(--surface-highlight) 58%, var(--muted-ink) 42%);
+		font-size: 0.78rem;
+		white-space: nowrap;
+		text-box: trim-both cap alphabetic;
+	}
+
+	.dds-related-card p {
+		margin: 0;
+		color: var(--muted-ink);
+		line-height: 1.4;
+	}
+
+	.dds-related-card:hover,
+	.dds-related-card:focus-visible {
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 34%, transparent) 0%, transparent 40%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 92%, #16110f 8%) 100%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 16%, transparent),
+			0 10px 16px color-mix(in oklch, var(--shadow-soft) 66%, transparent);
+		border-color: color-mix(in srgb, var(--surface-highlight) 72%, var(--surface-border));
+		transform: translateY(-2px);
+	}
+
+	.dds-related-card.is-generator {
+		--surface-border: var(--surface-generator-border);
+		--surface-highlight: var(--surface-generator-highlight);
+		--surface-panel: var(--surface-generator-panel);
+	}
+
+	.dds-related-card.is-lua {
+		--surface-border: var(--surface-lua-border);
+		--surface-highlight: var(--surface-lua-highlight);
+		--surface-panel: var(--surface-lua-panel);
+	}
+
+	.dds-related-card.is-pattern {
+		--surface-border: var(--surface-pattern-border);
+		--surface-highlight: var(--surface-pattern-highlight);
+		--surface-panel: var(--surface-pattern-panel);
+	}
+
+	.dds-related-card.is-schema {
+		--surface-border: var(--surface-schema-border);
+		--surface-highlight: var(--surface-schema-highlight);
+		--surface-panel: var(--surface-schema-panel);
+	}
+
+	.dds-related-card.is-tool {
+		--surface-border: var(--surface-tool-border);
+		--surface-highlight: var(--surface-tool-highlight);
+		--surface-panel: var(--surface-tool-panel);
+	}
+
+	.dds-related-card.is-publish {
+		--surface-border: var(--surface-publish-border);
+		--surface-highlight: var(--surface-publish-highlight);
+		--surface-panel: var(--surface-publish-panel);
+	}
+
+	.dds-related-card.is-ui {
+		--surface-border: var(--surface-ui-border);
+		--surface-highlight: var(--surface-ui-highlight);
+		--surface-panel: var(--surface-ui-panel);
+	}
+
+	.dds-related-card.is-support {
+		--surface-border: var(--surface-support-border);
+		--surface-highlight: var(--surface-support-highlight);
+		--surface-panel: var(--surface-support-panel);
+	}
+
+	.dds-related-card.is-planner {
+		--surface-border: var(--surface-planner-border);
+		--surface-highlight: var(--surface-planner-highlight);
+		--surface-panel: var(--surface-planner-panel);
 	}
 
 	@media (width <= 550px) {

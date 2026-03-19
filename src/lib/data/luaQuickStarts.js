@@ -3,15 +3,18 @@ export const CURATED_METHOD_NAMES = [
 	"GetActivePlayer",
 	"GetGameTurn",
 	"GetCapitalCity",
+	"Cities",
 	"GetCityByID",
 	"GetOwner",
-	"GetNumBuilding",
+	// "GetNumBuilding",
 	"SetNumRealBuilding",
 	"GetReligiousMajority",
 	"IsHasTech",
 	"CanTrain",
 	"CanAirliftAt",
 	"InitUnit",
+	"Units",
+	"GetUnitType",
 	"PushMission",
 	"SetHasPromotion",
 	"SetImprovementType",
@@ -113,6 +116,17 @@ end
 
 capital:SetNumRealBuilding(GameInfoTypes.BUILDING_DUMMY_ROYAL_ARCHIVE, 1)`,
 	},
+	"methods:player-cities-84": {
+		summary: "Iterate over every city a player owns when you need to refresh an empire-wide city effect.",
+		code: `local player = Players[ePlayer]
+if not player then
+\treturn
+end
+
+for city in player:Cities() do
+\tprint(city:GetName())
+end`,
+	},
 	"methods:GetCityByID": {
 		summary: "Turn event IDs into a city object before applying a unique reward or construction rule.",
 		code: `local player = Players[ePlayer]
@@ -126,8 +140,22 @@ if city:GetNumBuilding(GameInfoTypes.BUILDING_MONUMENT) > 0 then
 \tcity:SetNumRealBuilding(GameInfoTypes.BUILDING_DUMMY_FOUNDERS_PRIDE, 1)
 end`,
 	},
-	"methods:GetOwner": {
-		summary: "Resolve ownership from the affected object before applying bonuses or penalties.",
+	"methods:city-getowner-201": {
+		summary: "Resolve the city's current owner before applying a city bonus or penalty.",
+		code: `if not city then
+\treturn
+end
+
+local ownerID = city:GetOwner()
+if ownerID < 0 then
+\treturn
+end
+
+local owner = Players[ownerID]
+-- Apply your city based unique only to the actual owner.`,
+	},
+	"methods:plot-getowner-60": {
+		summary: "Resolve plot ownership from coordinates before applying a plot effect.",
 		code: `local plot = Map.GetPlot(iPlotX, iPlotY)
 if not plot then
 \treturn
@@ -142,10 +170,10 @@ local owner = Players[ownerID]
 -- Apply your tile based unique only to the actual owner.`,
 	},
 	"methods:GetNumBuilding": {
-		summary: "Check whether a city already has the hidden marker building that powers a unique effect.",
+		summary: "Use a simple yes or no check before adding a building effect to the city.",
 		code: `local dummyBuildingID = GameInfoTypes.BUILDING_DUMMY_CARAVAN_HOUSE
 
-if city:GetNumBuilding(dummyBuildingID) > 0 then
+if city:IsHasBuilding(dummyBuildingID) then
 \treturn
 end
 
@@ -159,7 +187,7 @@ local shouldEnable = city:IsHasBuilding(GameInfoTypes.BUILDING_WALLS)
 city:SetNumRealBuilding(dummyBuildingID, shouldEnable and 1 or 0)`,
 	},
 	"methods:GetReligiousMajority": {
-		summary: "Refresh a city only bonus when the city follows your target religion.",
+		summary: "Refresh a city only bonus when a religion has the most followers in the city.",
 		code: `local religionID = city:GetReligiousMajority()
 local dummyBuildingID = GameInfoTypes.BUILDING_DUMMY_PILGRIM_HOSTEL
 local requiredReligionID = GameInfoTypes.RELIGION_BUDDHISM
@@ -209,6 +237,21 @@ if unit then
 \tunit:SetHasPromotion(GameInfoTypes.PROMOTION_IGNORE_TERRAIN_COST, true)
 end`,
 	},
+	"methods:player-units-782": {
+		summary: "Iterate over every unit a player owns when you need to find a specific unit type.",
+		code: `local player = Players[ePlayer]
+local scoutID = GameInfoTypes.UNIT_SCOUT
+
+if not player then
+\treturn
+end
+
+for unit in player:Units() do
+\tif unit:GetUnitType() == scoutID then
+\t\tprint("Scout found:", unit:GetID())
+\tend
+end`,
+	},
 	"methods:PushMission": {
 		summary: "Give a freshly spawned support unit an immediate move order so the reward feels intentional.",
 		code: `local unit = player:InitUnit(GameInfoTypes.UNIT_WORKER, city:GetX(), city:GetY())
@@ -236,25 +279,40 @@ if unit:GetDomainType() == DomainTypes.DOMAIN_LAND then
 \tunit:SetHasPromotion(promotionID, true)
 end`,
 	},
+	"methods:unit-getunittype-232": {
+		summary: "Check a unit's type before applying effects that should only hit one unit row.",
+		code: `local player = Players[ePlayer]
+local scoutID = GameInfoTypes.UNIT_SCOUT
+
+if not player then
+\treturn
+end
+
+for unit in player:Units() do
+\tif unit:GetUnitType() == scoutID then
+\t\tunit:ChangeDamage(-10)
+\tend
+end`,
+	},
 	"methods:SetImprovementType": {
-		summary: "Replace the finished build with your custom improvement once the worker action resolves.",
+		summary: "Swap or remove an improvement directly after you resolve the target plot.",
 		code: `local plot = Map.GetPlot(iPlotX, iPlotY)
 if not plot then
 \treturn
 end
 
-if plot:GetTerrainType() == GameInfoTypes.TERRAIN_DESERT then
-\tplot:SetImprovementType(GameInfoTypes.IMPROVEMENT_KASBAH)
+if plot:GetImprovementType() == GameInfoTypes.IMPROVEMENT_TRADING_POST then
+\tplot:SetImprovementType(-1)
 end`,
 	},
 	"methods:SetResourceType": {
-		summary: "Place a temporary or permanent bonus resource on a tile when a unique trigger fires.",
+		summary: "Place or remove a resource on a plot, remembering that the resource amount still matters.",
 		code: `local plot = Map.GetPlot(iPlotX, iPlotY)
 if not plot or plot:GetResourceType() ~= -1 then
 \treturn
 end
 
-plot:SetResourceType(GameInfoTypes.RESOURCE_HORSE, 1)`,
+plot:SetResourceType(GameInfoTypes.RESOURCE_GEMS, 1)`,
 	},
 	"methods:PlotDistance": {
 		summary: "Keep a city or tile based effect within a controlled radius of the capital or holy city.",
@@ -269,16 +327,22 @@ if distance <= 3 then
 end`,
 	},
 	"game-events:BuildFinished": {
-		summary: "Reward a specific finished improvement with yields, a swap, or a marker effect.",
-		code: `GameEvents.BuildFinished.Add(function(ePlayer, iPlotX, iPlotY, eImprovement)
+		summary: "Guard against the duplicate callback before rewarding a finished improvement.",
+		code: `local save = Modding.OpenSaveData()
+
+GameEvents.BuildFinished.Add(function(ePlayer, iPlotX, iPlotY, eImprovement)
+\tlocal key = string.format("BuildFinished_%d_%d_%d_%d_%d", Game.GetGameTurn(), ePlayer, iPlotX, iPlotY, eImprovement)
+\tif save:GetValue(key) then
+\t\treturn
+\tend
+\tsave:SetValue(key, 1)
+
 \tif eImprovement ~= GameInfoTypes.IMPROVEMENT_FARM then
 \t\treturn
 \tend
 
 \tlocal player = Players[ePlayer]
-\tlocal plot = Map.GetPlot(iPlotX, iPlotY)
-\tif plot and plot:IsRiver() then
-\t\tplot:SetImprovementType(GameInfoTypes.IMPROVEMENT_POLDER)
+\tif player then
 \t\tplayer:ChangeGoldenAgeProgressMeter(25)
 \tend
 end)`,
@@ -343,11 +407,12 @@ end)`,
 end)`,
 	},
 	"game-events:CityCreated": {
-		summary: "Initialize hidden buildings or counters as soon as a city object exists.",
-		code: `GameEvents.CityCreated.Add(function(iCity, ePlayer)
-\tlocal city = Players[ePlayer]:GetCityByID(iCity)
+		summary: "React when a city finishes a project.",
+		code: `GameEvents.CityCreated.Add(function(ePlayer, iCity, eProject, bGold, bFaithOrCulture)
+\tlocal player = Players[ePlayer]
+\tlocal city = player and player:GetCityByID(iCity)
 \tif city then
-\t\tcity:SetNumRealBuilding(GameInfoTypes.BUILDING_DUMMY_NEW_CITY_BUFFER, 1)
+\t\tprint("Project completed in", city:GetName(), eProject, bGold, bFaithOrCulture)
 \tend
 end)`,
 	},
@@ -376,13 +441,13 @@ end)`,
 end)`,
 	},
 	"game-events:CityBoughtPlot": {
-		summary: "Reward plot purchases that fit your unique expansion rule.",
-		code: `GameEvents.CityBoughtPlot.Add(function(ePlayer, iCity, iPlotX, iPlotY)
-\tlocal city = Players[ePlayer]:GetCityByID(iCity)
-\tlocal plot = Map.GetPlot(iPlotX, iPlotY)
+		summary: "Handle city plot purchase rewards.",
+		code: `GameEvents.CityBoughtPlot.Add(function(ePlayer, iCity, iPlotX, iPlotY, bGold, bFaithOrCulture)
+\tlocal player = Players[ePlayer]
+\tlocal city = player and player:GetCityByID(iCity)
 
-\tif city and plot and plot:IsResourceConnectedByImprovement(ePlayer) then
-\t\tcity:SetNumRealBuilding(GameInfoTypes.BUILDING_DUMMY_LAND_GRAB_BONUS, 1)
+\tif city then
+\t\tprint("Plot purchase in", city:GetName(), bGold, bFaithOrCulture)
 \tend
 end)`,
 	},
@@ -410,9 +475,9 @@ end)`,
 	},
 	"game-events:ReligionFounded": {
 		summary: "Grant a one-time founder reward when the player establishes a religion.",
-		code: `GameEvents.ReligionFounded.Add(function(ePlayer, eReligion, iHolyCityX, iHolyCityY)
+		code: `GameEvents.ReligionFounded.Add(function(ePlayer, iCity, eReligion, eBelief1, eBelief2, eBelief3, eBelief4, eBelief5)
 \tlocal player = Players[ePlayer]
-\tlocal holyCity = Map.GetPlot(iHolyCityX, iHolyCityY):GetPlotCity()
+\tlocal holyCity = player and player:GetCityByID(iCity)
 
 \tif holyCity then
 \t\tholyCity:SetNumRealBuilding(GameInfoTypes.BUILDING_DUMMY_FOUNDER_BONUS, 1)
@@ -477,14 +542,21 @@ end)`,
 end)`,
 	},
 	"game-events:UnitPrekill": {
-		summary: "Catch a death event before the unit disappears so you can spawn a replacement or trigger a reward.",
+		summary: "Handle the first UnitPrekill callback immediately if you need the dying unit or its location.",
 		code: `GameEvents.UnitPrekill.Add(function(ePlayer, iUnit, eUnitType, iX, iY, bDelay, eByPlayer)
-\tif eUnitType ~= GameInfoTypes.UNIT_GREAT_GENERAL then
+\tif not bDelay then
 \t\treturn
 \tend
 
 \tlocal player = Players[ePlayer]
-\tplayer:InitUnit(GameInfoTypes.UNIT_SPEARMAN, iX, iY)
+\tlocal unit = player and player:GetUnitByID(iUnit)
+\tif eUnitType ~= GameInfoTypes.UNIT_GREAT_GENERAL then
+\t\treturn
+\tend
+
+\tif unit then
+\t\tprint("Great General removed at", iX, iY, unit:GetName())
+\tend
 end)`,
 	},
 	"game-events:PlayerDoTurn": {
@@ -604,7 +676,7 @@ end)`,
 	},
 	"game-events:GreatPersonExpended": {
 		summary: "Pay out a civ specific reward when a Great Person is consumed.",
-		code: `GameEvents.GreatPersonExpended.Add(function(ePlayer, eUnit, iUnitX, iUnitY)
+		code: `GameEvents.GreatPersonExpended.Add(function(ePlayer, eUnit)
 \tif eUnit ~= GameInfoTypes.UNIT_GREAT_ENGINEER then
 \t\treturn
 \tend
@@ -615,7 +687,7 @@ end)`,
 	},
 	"game-events:MinorAlliesChanged": {
 		summary: "Refresh city-state ally benefits whenever the ally count changes.",
-		code: `GameEvents.MinorAlliesChanged.Add(function(ePlayer, eMinor, bNowAllied, iOldAlly)
+		code: `GameEvents.MinorAlliesChanged.Add(function(eMinor, ePlayer, bGainedLost, iOldValue, iNewValue)
 \tlocal player = Players[ePlayer]
 \tlocal capital = player:GetCapitalCity()
 \tif capital then
@@ -625,7 +697,7 @@ end)`,
 	},
 	"game-events:MinorFriendsChanged": {
 		summary: "Track city-state friendship thresholds for diplomacy-driven uniques.",
-		code: `GameEvents.MinorFriendsChanged.Add(function(ePlayer, eMinor, bNowFriends, iOldFriend)
+		code: `GameEvents.MinorFriendsChanged.Add(function(eMinor, ePlayer, bGainedLost, iOldValue, iNewValue)
 \tlocal player = Players[ePlayer]
 \tfor city in player:Cities() do
 \t\tcity:SetNumRealBuilding(GameInfoTypes.BUILDING_DUMMY_PATRONAGE_TRADE, player:GetNumMinorCivsFriends() >= 3 and 1 or 0)

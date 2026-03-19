@@ -518,7 +518,7 @@
 	});
 
 	function buildMethodEntry(entry) {
-		const authoredExample = CURATED_LUA_EXAMPLES[`methods:${entry.methodName}`] || null;
+		const authoredExample = CURATED_LUA_EXAMPLES[`methods:${entry.id}`] || CURATED_LUA_EXAMPLES[`methods:${entry.methodName}`] || null;
 		const nameTarget = [entry.family, entry.methodName, entry.callSurface].filter(Boolean).join(" ").toLowerCase();
 		const signatureTarget = [entry.displaySignature, entry.returnType, entry.callKind].filter(Boolean).join(" ").toLowerCase();
 		const parameterTarget = entry.parameters
@@ -553,7 +553,7 @@
 	}
 
 	function buildGameEventEntry(entry) {
-		const authoredExample = CURATED_LUA_EXAMPLES[`game-events:${entry.name}`] || null;
+		const authoredExample = CURATED_LUA_EXAMPLES[`game-events:${entry.id}`] || CURATED_LUA_EXAMPLES[`game-events:${entry.name}`] || null;
 		const nameTarget = [entry.name, `GameEvents.${entry.name}`, entry.scope].filter(Boolean).join(" ").toLowerCase();
 		const signatureTarget = [entry.displaySignature, entry.scope, "callback"].filter(Boolean).join(" ").toLowerCase();
 		const parameterTarget = entry.parameters
@@ -653,7 +653,7 @@
 					return null;
 				}
 				const normalized = {};
-				for (const key of ["entryId", "entryKey", "ref", "label", "note"]) {
+				for (const key of ["entryId", "entryKey", "ref", "label", "note", "href", "type"]) {
 					if (typeof item[key] === "string" && item[key].trim()) {
 						normalized[key] = item[key].trim();
 					}
@@ -899,6 +899,45 @@
 		);
 	}
 
+	function resolveSeeAlsoSurface(item = {}) {
+		const href = String(item.href || "");
+		const type = String(item.type || "").toLowerCase();
+		if (type === "pattern" || href.startsWith("/pattern-library")) {
+			return "pattern";
+		}
+		if (type === "generator" || href.startsWith("/template-generators")) {
+			return "generator";
+		}
+		if (type === "schema" || href.startsWith("/schema-browser")) {
+			return "schema";
+		}
+		if (type === "support" || href.startsWith("/religion-support") || href.startsWith("/map-viewer")) {
+			return "support";
+		}
+		if (type === "planner" || href.startsWith("/guided-planner")) {
+			return "planner";
+		}
+		if (type === "publish" || href.startsWith("/workshop-uploader") || href.startsWith("/modinfo-builder") || href.startsWith("/civ5mod-ziper")) {
+			return "publish";
+		}
+		if (type === "ui" || href.startsWith("/dds-converter") || href.startsWith("/civ-icon-maker") || href.startsWith("/text-screen-viewer")) {
+			return "ui";
+		}
+		return "tool";
+	}
+
+	function seeAlsoKindLabel(surface, item = {}) {
+		if (surface === "pattern") return "Pattern";
+		if (surface === "generator") return "Generator";
+		if (surface === "schema") return "Schema";
+		if (surface === "support") return "Support";
+		if (surface === "planner") return "Planner";
+		if (surface === "publish") return "Publish";
+		if (surface === "ui") return "UI";
+		if (surface === "tool") return "Tool";
+		return item.type || "Link";
+	}
+
 	function resolveSeeAlsoItem(item, index) {
 		if (!item) {
 			return null;
@@ -920,13 +959,15 @@
 		if (!item.href) {
 			return null;
 		}
+		const surface = resolveSeeAlsoSurface(item);
 		return {
 			id: `${item.type || "link"}-${index}-${item.href}`,
 			type: item.type || "link",
 			label: item.label || item.href,
 			copy: item.note || "Related reference",
 			href: item.href,
-			surface: item.type === "pattern" || item.href.startsWith("/pattern-library") ? "pattern" : "link",
+			surface,
+			kindLabel: seeAlsoKindLabel(surface, item),
 		};
 	}
 
@@ -1353,7 +1394,7 @@
 											<span>{selectedEntry.parameters.length}</span>
 										</div>
 										<div class="lua-parameter-list" role="list">
-											{#each selectedEntry.parameters as parameter (parameter.raw)}
+											{#each selectedEntry.parameters as parameter, index (`${parameter.raw}-${parameter.name || "param"}-${index}`)}
 												<div class="lua-parameter-row" role="listitem">
 													<div>
 														<strong>{parameter.name || parameter.raw}</strong>
@@ -1461,12 +1502,10 @@
 														<p>{item.copy}</p>
 													</button>
 												{:else}
-													<a class={`lua-see-also-card lua-see-also-card--link ${item.surface === "pattern" ? "is-pattern" : ""}`} href={item.href}>
+													<a class={`lua-see-also-card lua-see-also-card--link is-${item.surface}`} href={item.href}>
 														<div class="lua-see-also-head">
 															<strong>{item.label}</strong>
-															{#if item.surface === "pattern"}
-																<span class="lua-see-also-kind">Pattern</span>
-															{/if}
+															<span class="lua-see-also-kind">{item.kindLabel}</span>
 														</div>
 														<p>{item.copy}</p>
 													</a>
@@ -1635,8 +1674,22 @@
 	}
 
 	.lua-see-also-card.is-pattern p,
-	.lua-see-also-card.is-pattern .lua-see-also-kind {
-		color: color-mix(in srgb, #f5d36a 82%, white 18%);
+	.lua-see-also-card.is-pattern .lua-see-also-kind,
+	.lua-see-also-card.is-generator p,
+	.lua-see-also-card.is-generator .lua-see-also-kind,
+	.lua-see-also-card.is-schema p,
+	.lua-see-also-card.is-schema .lua-see-also-kind,
+	.lua-see-also-card.is-support p,
+	.lua-see-also-card.is-support .lua-see-also-kind,
+	.lua-see-also-card.is-planner p,
+	.lua-see-also-card.is-planner .lua-see-also-kind,
+	.lua-see-also-card.is-publish p,
+	.lua-see-also-card.is-publish .lua-see-also-kind,
+	.lua-see-also-card.is-ui p,
+	.lua-see-also-card.is-ui .lua-see-also-kind,
+	.lua-see-also-card.is-tool p,
+	.lua-see-also-card.is-tool .lua-see-also-kind {
+		color: color-mix(in srgb, var(--see-also-highlight) 82%, white 18%);
 	}
 
 	.lua-eyebrow,
@@ -2182,8 +2235,15 @@
 		}
 	}
 
-	.lua-see-also-card.is-pattern strong {
-		color: #fff1bc;
+	.lua-see-also-card.is-pattern strong,
+	.lua-see-also-card.is-generator strong,
+	.lua-see-also-card.is-schema strong,
+	.lua-see-also-card.is-support strong,
+	.lua-see-also-card.is-planner strong,
+	.lua-see-also-card.is-publish strong,
+	.lua-see-also-card.is-ui strong,
+	.lua-see-also-card.is-tool strong {
+		color: color-mix(in srgb, var(--see-also-highlight) 64%, white 36%);
 	}
 
 	.lua-see-also-head strong {
@@ -2312,13 +2372,21 @@
 		text-align: left;
 	}
 
-	.lua-see-also-card.is-pattern {
-		color: #f5d36a;
-		background: color-mix(in srgb, var(--lua-panel) 80%, #3b2810 20%);
+	.lua-see-also-card.is-pattern,
+	.lua-see-also-card.is-generator,
+	.lua-see-also-card.is-schema,
+	.lua-see-also-card.is-support,
+	.lua-see-also-card.is-planner,
+	.lua-see-also-card.is-publish,
+	.lua-see-also-card.is-ui,
+	.lua-see-also-card.is-tool {
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--see-also-highlight) 18%, transparent) 0%, transparent 46%),
+			linear-gradient(165deg, color-mix(in srgb, var(--see-also-panel) 97%, var(--panel-bg)) 0%, color-mix(in srgb, var(--see-also-panel) 92%, #16110f 8%) 100%);
 		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, #f5d36a 10%, transparent),
+			inset 0 1px 0 color-mix(in srgb, var(--see-also-highlight) 12%, transparent),
 			0 6px 8px color-mix(in srgb, black 40%, transparent);
-		border-color: color-mix(in srgb, var(--lua-border) 58%, #b48922 42%);
+		border-color: color-mix(in srgb, var(--see-also-highlight) 42%, var(--see-also-border));
 	}
 
 	.lua-see-also-head {
@@ -2477,13 +2545,70 @@
 			color 140ms ease;
 	}
 
-	.lua-see-also-card--link.is-pattern:hover {
-		background: color-mix(in srgb, #f5d36a 10%, color-mix(in srgb, var(--lua-panel) 80%, #3b2810 20%) 90%);
+	.lua-see-also-card--link.is-pattern:hover,
+	.lua-see-also-card--link.is-generator:hover,
+	.lua-see-also-card--link.is-schema:hover,
+	.lua-see-also-card--link.is-support:hover,
+	.lua-see-also-card--link.is-planner:hover,
+	.lua-see-also-card--link.is-publish:hover,
+	.lua-see-also-card--link.is-ui:hover,
+	.lua-see-also-card--link.is-tool:hover {
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--see-also-highlight) 26%, transparent) 0%, transparent 42%),
+			linear-gradient(165deg, color-mix(in srgb, var(--see-also-panel) 94%, var(--panel-bg)) 0%, color-mix(in srgb, var(--see-also-panel) 90%, #16110f 10%) 100%);
 		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, #fff1bc 18%, transparent),
+			inset 0 1px 0 color-mix(in srgb, var(--see-also-highlight) 18%, transparent),
 			0 10px 22px color-mix(in oklch, var(--shadow-soft) 58%, transparent);
-		border-color: color-mix(in srgb, var(--lua-border-strong) 48%, #ffd976 52%);
+		border-color: color-mix(in srgb, var(--see-also-highlight) 70%, var(--see-also-border));
 		transform: translateY(-1px);
+	}
+
+	.lua-see-also-card.is-pattern {
+		--see-also-border: var(--surface-pattern-border);
+		--see-also-highlight: var(--surface-pattern-highlight);
+		--see-also-panel: var(--surface-pattern-panel);
+	}
+
+	.lua-see-also-card.is-generator {
+		--see-also-border: var(--surface-generator-border);
+		--see-also-highlight: var(--surface-generator-highlight);
+		--see-also-panel: var(--surface-generator-panel);
+	}
+
+	.lua-see-also-card.is-schema {
+		--see-also-border: var(--surface-schema-border);
+		--see-also-highlight: var(--surface-schema-highlight);
+		--see-also-panel: var(--surface-schema-panel);
+	}
+
+	.lua-see-also-card.is-support {
+		--see-also-border: var(--surface-support-border);
+		--see-also-highlight: var(--surface-support-highlight);
+		--see-also-panel: var(--surface-support-panel);
+	}
+
+	.lua-see-also-card.is-planner {
+		--see-also-border: var(--surface-planner-border);
+		--see-also-highlight: var(--surface-planner-highlight);
+		--see-also-panel: var(--surface-planner-panel);
+	}
+
+	.lua-see-also-card.is-publish {
+		--see-also-border: var(--surface-publish-border);
+		--see-also-highlight: var(--surface-publish-highlight);
+		--see-also-panel: var(--surface-publish-panel);
+	}
+
+	.lua-see-also-card.is-ui {
+		--see-also-border: var(--surface-ui-border);
+		--see-also-highlight: var(--surface-ui-highlight);
+		--see-also-panel: var(--surface-ui-panel);
+	}
+
+	.lua-see-also-card.is-tool {
+		--see-also-border: var(--surface-tool-border);
+		--see-also-highlight: var(--surface-tool-highlight);
+		--see-also-panel: var(--surface-tool-panel);
 	}
 
 	.lua-tab {

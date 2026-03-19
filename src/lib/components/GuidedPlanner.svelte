@@ -572,7 +572,7 @@
 		if (href.includes("/lua-api-explorer")) return "Lua API";
 		if (href.includes("/pattern-library")) return "Pattern";
 		if (href.includes("/template-generators")) return "Generator";
-		if (href.includes("/map-viewer")) return "Viewer";
+		if (href.includes("/map-viewer") || href.includes("/religion-support")) return "Support";
 		if (href.includes("/modinfo-builder") || href.includes("/civ5mod-ziper") || href.includes("/workshop-uploader")) return "Publish";
 		if (href.includes("/dds-converter") || href.includes("/civ-icon-maker") || href.includes("/text-screen-viewer")) return "UI";
 		if (kind === "directory") return "Directory";
@@ -590,9 +590,9 @@
 		if (href.includes("/pattern-library")) return "is-pattern";
 		if (href.includes("/template-generators")) return "is-generator";
 		if (href.includes("/workshop-uploader") || href.includes("/modinfo-builder") || href.includes("/civ5mod-ziper")) return "is-publish";
-		if (href.includes("/dds-converter") || href.includes("/civ-icon-maker") || href.includes("/text-screen-viewer")) return "is-ui";
-		if (href.includes("/map-viewer") || href.includes("/tech-tree-viewer")) return "is-viewer";
-		if (href.includes("/religion-support")) return "is-support";
+		if (href.includes("/dds-converter") || href.includes("/civ-icon-maker") || href.includes("/ui-screen-viewer")) return "is-ui";
+		if (href.includes("/tech-tree-viewer")) return "is-tool";
+		if (href.includes("/map-viewer") || href.includes("/religion-support")) return "is-support";
 		return "is-tool";
 	}
 
@@ -1959,19 +1959,18 @@
 								{#each activeResources as resource (resource.id)}
 									{#if resource.disabled}
 										<div class={["resource-card", resourceTone(resource), resourceAccentClass(resource)]} aria-disabled="true">
-											<div class="resource-card-head margin-block-end-half">
-												<span class="surface-badge">{resourceSurfaceLabel(resource)}</span>
-												<strong>Coming Soon</strong>
+											<div class="resource-card-head resource-card-head--reference">
+												<h4 class="card-title">{resource.label}</h4>
+												<span class="resource-card-kind">Coming Soon</span>
 											</div>
-											<h4 class="card-title">{resource.label}</h4>
 											<p class="card-copy">{resource.description}</p>
 										</div>
 									{:else}
 										<a class={["resource-card", resourceTone(resource), resourceAccentClass(resource)]} href={resource.href} target="_blank" rel="noopener noreferrer">
-											<div class="resource-card-head margin-block-end-half">
-												<span class="surface-badge">{resourceSurfaceLabel(resource)}</span>
+											<div class="resource-card-head resource-card-head--reference">
+												<h4 class="card-title">{resource.label}</h4>
+												<span class="resource-card-kind">{resourceSurfaceLabel(resource)}</span>
 											</div>
-											<h4 class="card-title">{resource.label}</h4>
 											<p class="card-copy">{resource.description}</p>
 										</a>
 									{/if}
@@ -2843,8 +2842,10 @@
 	a.resource-card.is-support:focus-visible,
 	a.surface-card.is-support:hover,
 	a.surface-card.is-support:focus-visible {
-		background: linear-gradient(180deg, color-mix(in srgb, var(--control-bg) 80%, #4a2019 20%) 0%, color-mix(in srgb, var(--control-bg) 74%, #28130f 26%) 100%);
-		border-color: color-mix(in srgb, var(--planner-border-soft) 42%, #da765f 58%);
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-support-highlight) 34%, transparent) 0%, transparent 40%),
+			linear-gradient(180deg, color-mix(in srgb, var(--surface-support-panel) 94%, var(--control-bg) 6%) 0%, color-mix(in srgb, var(--surface-support-panel) 88%, #17110d 12%) 100%);
+		border-color: color-mix(in srgb, var(--surface-support-highlight) 76%, var(--surface-support-border));
 	}
 
 	.project-share-panel {
@@ -2940,7 +2941,7 @@
 	.surface-group {
 		display: grid;
 		gap: 1.15rem;
-		background: linear-gradient(165deg, color-mix(in oklch, var(--planner-panel) 94%, transparent) 0%, color-mix(in oklch, var(--planner-panel-strong) 88%, #110e0b 12%) 100%);
+		background: linear-gradient(165deg, color-mix(in oklch, var(--planner-panel) 98%, transparent) 0%, color-mix(in oklch, var(--planner-panel-strong) 90%, #110e0b 2%) 100%);
 		box-shadow: var(--planner-shadow);
 		box-shadow:
 			inset 0 1px 0 color-mix(in oklch, white 10%, transparent),
@@ -2972,6 +2973,28 @@
 		justify-content: space-between;
 		align-items: center;
 		gap: 0.55rem;
+	}
+
+	.resource-card-head--reference {
+		align-items: start;
+		flex-wrap: nowrap;
+		gap: 0.7rem;
+	}
+
+	.resource-card-head--reference .card-title {
+		margin: 0;
+		font-size: 1.05rem;
+		text-wrap: balance;
+		word-break: word;
+		line-height: 1.15;
+	}
+
+	.resource-card-kind {
+		flex: 0 0 auto;
+		color: color-mix(in srgb, var(--surface-highlight-strong, var(--surface-highlight, var(--accent))) 76%, var(--muted-ink) 24%);
+		font-size: 0.78rem;
+		white-space: nowrap;
+		text-box: trim-both cap alphabetic;
 	}
 
 	.track-kicker {
@@ -3319,17 +3342,17 @@
 
 	.resource-card.is-generator .surface-badge,
 	.surface-card.is-generator .surface-badge {
-		color: #d4b2ff;
+		color: var(--surface-generator-highlight-strong);
 	}
 
 	.resource-card.is-lua .surface-badge,
 	.surface-card.is-lua .surface-badge {
-		color: #b7ef84;
+		color: var(--surface-lua-highlight-strong);
 	}
 
 	.resource-card.is-pattern .surface-badge,
 	.surface-card.is-pattern .surface-badge {
-		color: #f5d36a;
+		color: var(--surface-pattern-highlight-strong);
 	}
 
 	.resource-card.is-publish .surface-badge,
@@ -3339,7 +3362,7 @@
 
 	.resource-card.is-schema .surface-badge,
 	.surface-card.is-schema .surface-badge {
-		color: #8dc7ff;
+		color: var(--surface-schema-highlight-strong);
 	}
 
 	.resource-card.is-tool .surface-badge,
@@ -3356,7 +3379,7 @@
 	.surface-card.is-viewer .surface-badge,
 	.resource-card.is-support .surface-badge,
 	.surface-card.is-support .surface-badge {
-		color: #f1afa4;
+		color: var(--surface-support-highlight-strong);
 	}
 
 	.surface-badge {
@@ -3385,7 +3408,7 @@
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
 			0 4px 6px color-mix(in srgb, black 75%, transparent);
-		border: 1px solid color-mix(in srgb, var(--surface-border, var(--planner-border-soft)) 60%, var(--planner-border-soft));
+		border: 1px solid color-mix(in srgb, var(--surface-border, var(--planner-border-soft)) 80%, var(--planner-border-soft));
 		border-radius: 1rem;
 		padding: 1.1rem;
 		transition:
@@ -3406,18 +3429,20 @@
 	.surface-card.is-generator {
 		--surface-border: var(--surface-generator-border);
 		--surface-highlight: var(--surface-generator-highlight);
+		--surface-highlight-strong: var(--surface-generator-highlight-strong);
 		--surface-panel: var(--surface-generator-panel);
 	}
 
-	.resource-card.is-live,
+	/*.resource-card.is-live,
 	.surface-card.is-live {
 		border-color: color-mix(in oklch, var(--planner-sky) 30%, var(--planner-border-soft));
-	}
+	}*/
 
 	.resource-card.is-lua,
 	.surface-card.is-lua {
 		--surface-border: var(--surface-lua-border);
 		--surface-highlight: var(--surface-lua-highlight);
+		--surface-highlight-strong: var(--surface-lua-highlight-strong);
 		--surface-panel: var(--surface-lua-panel);
 	}
 
@@ -3425,6 +3450,7 @@
 	.surface-card.is-pattern {
 		--surface-border: var(--surface-pattern-border);
 		--surface-highlight: var(--surface-pattern-highlight);
+		--surface-highlight-strong: var(--surface-pattern-highlight-strong);
 		--surface-panel: var(--surface-pattern-panel);
 	}
 
@@ -3432,6 +3458,7 @@
 	.surface-card.is-publish {
 		--surface-border: var(--surface-publish-border);
 		--surface-highlight: var(--surface-publish-highlight);
+		--surface-highlight-strong: var(--surface-publish-highlight-strong);
 		--surface-panel: var(--surface-publish-panel);
 	}
 
@@ -3439,6 +3466,7 @@
 	.surface-card.is-schema {
 		--surface-border: var(--surface-schema-border);
 		--surface-highlight: var(--surface-schema-highlight);
+		--surface-highlight-strong: var(--surface-schema-highlight-strong);
 		--surface-panel: var(--surface-schema-panel);
 	}
 
@@ -3446,6 +3474,7 @@
 	.surface-card.is-tool {
 		--surface-border: var(--surface-tool-border);
 		--surface-highlight: var(--surface-tool-highlight);
+		--surface-highlight-strong: var(--surface-tool-highlight-strong);
 		--surface-panel: var(--surface-tool-panel);
 	}
 
@@ -3453,6 +3482,7 @@
 	.surface-card.is-ui {
 		--surface-border: var(--surface-ui-border);
 		--surface-highlight: var(--surface-ui-highlight);
+		--surface-highlight-strong: var(--surface-ui-highlight-strong);
 		--surface-panel: var(--surface-ui-panel);
 	}
 
@@ -3462,6 +3492,7 @@
 	.surface-card.is-support {
 		--surface-border: var(--surface-support-border);
 		--surface-highlight: var(--surface-support-highlight);
+		--surface-highlight-strong: var(--surface-support-highlight-strong);
 		--surface-panel: var(--surface-support-panel);
 	}
 
@@ -3612,10 +3643,10 @@
 		border-color: color-mix(in oklch, var(--planner-sky) 52%, var(--planner-border-soft));
 	}
 
-	.is-support {
+	/*.is-support {
 		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 80%, #2d2622 20%) 0%, color-mix(in oklch, var(--control-bg) 75%, #1c1714 25%) 100%);
 		border-color: var(--planner-border-soft);
-	}
+	}*/
 
 	.planner-hero-route-card {
 		position: relative;
@@ -3624,8 +3655,9 @@
 		gap: 0.45rem;
 		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 90%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 84%, #18120d 16%) 100%);
 		box-shadow:
-			inset 0 1px 0 color-mix(in oklch, white 30%, transparent),
-			0 2px 6px color-mix(in oklch, black 50%, transparent);
+			inset 0 1px 0 color-mix(in oklch, white 20%, transparent),
+			0 2px 4px color-mix(in oklch, black 35%, transparent);
+		border: 1px solid color-mix(in oklch, var(--hero-track-accent) 30%, #000 10%);
 		border-radius: 0.85rem;
 		padding-block: 0.7rem;
 		padding-inline: 0.75rem;
@@ -3637,8 +3669,8 @@
 	.planner-hero-route-card.is-active {
 		background: linear-gradient(180deg, color-mix(in oklch, var(--control-bg) 80%, var(--hero-track-accent)) 0%, color-mix(in oklch, var(--planner-panel-muted) 40%, #18120d 30%) 100%);
 		box-shadow:
-			inset 0 1px 0 color-mix(in oklch, var(--hero-track-accent) 90%, transparent),
-			0 4px 6px color-mix(in oklch, black 60%, transparent);
+			inset 0 1px 0 color-mix(in oklch, var(--hero-track-accent) 80%, transparent),
+			0 2px 4px color-mix(in oklch, black 40%, transparent);
 	}
 
 	.planner-hero-route-card.is-art {

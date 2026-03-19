@@ -7,6 +7,8 @@
 		effects: 5,
 		previewItems: 10,
 	};
+	const schemaHref = (table, tab = "rows") => `/schema-browser?table=${encodeURIComponent(table)}&tab=${encodeURIComponent(tab)}`;
+	const luaHref = (entryId, dataset = "gameEvents") => `/lua-api-explorer?${new URLSearchParams({ dataset, entry: entryId }).toString()}`;
 	const searchableCategoryFields = ["label", "detail", "rawType"];
 	const SUPPORT_EFFECT_DEFS = [
 		{ key: "AllowsEmbarking", label: "Embark" },
@@ -45,6 +47,38 @@
 	let enlightenmentDataError = $state("");
 	let techTreeBaseDataPromise = null;
 	let enlightenmentDataPromise = null;
+	const TECH_TREE_RELATED_TOOLS = [
+		{
+			label: "Technologies Table",
+			description: "Inspect tech rows, IDs, era placement, and prerequisite fields.",
+			href: schemaHref("Technologies", "rows"),
+		},
+		{
+			label: "Technology Prereqs",
+			description: "Cross check prerequisite and OR-prerequisite joins when a tech path looks off.",
+			href: schemaHref("Technology_PrereqTechs", "rows"),
+		},
+		{
+			label: "TeamSetHasTech Hook",
+			description: "Lua trigger for tech unlock reactions, one-time rewards, and research setup.",
+			href: luaHref("game-event-teamsethastech-81"),
+		},
+		{
+			label: "Team:IsHasTech",
+			description: "Use this for tech gates when the viewer tells you what the dependency should be.",
+			href: luaHref("team-ishastech-110", "methods"),
+		},
+		{
+			label: "Requirements Gate Pattern",
+			description: "Pattern companion when a tech unlock should open or close a unit, building, or scripted mechanic.",
+			href: "/pattern-library?pattern=requirements-gate-pattern",
+		},
+		{
+			label: "Tech Reward Trigger",
+			description: "Use this when a researched tech should immediately pay out a reward, unit, dummy building, or notification.",
+			href: "/pattern-library?pattern=tech-reward-trigger",
+		},
+	];
 
 	const BASE_ROWS_BY_TABLE = $derived(new Map(Object.entries(techTreeBaseData?.tables || {})));
 	const BASE_TECHNOLOGY_ROWS = $derived(BASE_ROWS_BY_TABLE.get("Technologies") || []);
@@ -785,6 +819,32 @@
 			.trim();
 	}
 
+	function relatedToolAccentClass(href) {
+		const value = String(href || "");
+		if (value.includes("/schema-browser")) return "is-schema";
+		if (value.includes("/lua-api-explorer")) return "is-lua";
+		if (value.includes("/pattern-library")) return "is-pattern";
+		if (value.includes("/template-generators")) return "is-generator";
+		if (value.includes("/guided-planner")) return "is-planner";
+		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "is-publish";
+		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "is-ui";
+		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "is-support";
+		return "is-tool";
+	}
+
+	function relatedToolTypeLabel(href) {
+		const value = String(href || "");
+		if (value.includes("/schema-browser")) return "Schema";
+		if (value.includes("/lua-api-explorer")) return "Lua";
+		if (value.includes("/pattern-library")) return "Pattern";
+		if (value.includes("/template-generators")) return "Generator";
+		if (value.includes("/guided-planner")) return "Planner";
+		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "Publish";
+		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "UI";
+		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "Support";
+		return "Tool";
+	}
+
 	function pushToMapArray(map, key, value) {
 		if (!map.has(key)) {
 			map.set(key, []);
@@ -1062,7 +1122,7 @@
 
 		<div class="toolbar-section-head">
 			<span class="toolbar-label">Era Overlay</span>
-			<p class="toolbar-copy">Toggle Enlightenment Era modded tree changes.</p>
+			<p class="toolbar-copy">Toggle Pouākai's Enlightenment Era.</p>
 			<div class="toggle-row" role="list" aria-label="Enlightenment Era overlay">
 				<button class:selected={!includeEnlightenmentEra} type="button" onclick={() => setEraOverlay(false)} disabled={enlightenmentDataLoading}>Base Game</button>
 				<button class:selected={includeEnlightenmentEra} type="button" onclick={() => setEraOverlay(true)} disabled={enlightenmentDataLoading}>Enlightenment Era</button>
@@ -1304,6 +1364,26 @@
 	</div>
 {/if}
 
+<section class="related-tools-panel panel-surface" aria-label="Related tech tree tools">
+	<div class="related-tools-head">
+		<div class="stack half">
+			<p class="eyebrow">Helpful Links</p>
+		</div>
+	</div>
+
+	<div class="related-tool-grid">
+		{#each TECH_TREE_RELATED_TOOLS as tool (tool.href)}
+			<a class={`related-tool-card ${relatedToolAccentClass(tool.href)}`} href={tool.href}>
+				<div class="related-tool-card-head">
+					<h3>{tool.label}</h3>
+					<span class="related-tool-card-kind">{relatedToolTypeLabel(tool.href)}</span>
+				</div>
+				<p>{tool.description}</p>
+			</a>
+		{/each}
+	</div>
+</section>
+
 <style>
 	.tech-tree-hero {
 		display: grid;
@@ -1334,6 +1414,133 @@
 	.viewer-toolbar,
 	.era-panel {
 		padding: 1.25rem 1rem;
+	}
+
+	.related-tools-panel {
+		margin-block-start: 1rem;
+		padding: 1.05rem 1rem;
+		display: grid;
+		gap: 0.8rem;
+	}
+
+	.related-tools-head,
+	.related-tool-grid {
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	.related-tool-grid {
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+	}
+
+	.related-tool-card {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		color: var(--ink);
+		text-decoration: none;
+		border-radius: 1rem;
+		padding: 1rem 0.95rem;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 20%, transparent) 0%, transparent 45%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 94%, #16110f 6%) 100%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 10%, transparent),
+			0 6px 8px color-mix(in srgb, black 76%, transparent);
+		border: 1px solid color-mix(in srgb, var(--surface-highlight) 44%, var(--surface-border));
+	}
+
+	.related-tool-card-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: start;
+		gap: 0.7rem;
+	}
+
+	.related-tool-card h3 {
+		margin: 0;
+		font-family: "Rockwell", "Palatino Linotype", serif;
+		font-size: 1.02rem;
+	}
+
+	.related-tool-card-kind {
+		flex: 0 0 auto;
+		color: color-mix(in srgb, var(--surface-highlight) 58%, var(--muted-ink) 42%);
+		font-size: 0.78rem;
+		white-space: nowrap;
+		text-box: trim-both cap alphabetic;
+	}
+
+	.related-tool-card p {
+		margin: 0;
+		color: var(--muted-ink);
+		line-height: 1.4;
+	}
+
+	.related-tool-card:hover,
+	.related-tool-card:focus-visible {
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 34%, transparent) 0%, transparent 40%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 92%, #16110f 8%) 100%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 16%, transparent),
+			0 10px 16px color-mix(in oklch, var(--shadow-soft) 66%, transparent);
+		border-color: color-mix(in srgb, var(--surface-highlight) 72%, var(--surface-border));
+		transform: translateY(-2px);
+	}
+
+	.related-tool-card.is-generator {
+		--surface-border: var(--surface-generator-border);
+		--surface-highlight: var(--surface-generator-highlight);
+		--surface-panel: var(--surface-generator-panel);
+	}
+
+	.related-tool-card.is-lua {
+		--surface-border: var(--surface-lua-border);
+		--surface-highlight: var(--surface-lua-highlight);
+		--surface-panel: var(--surface-lua-panel);
+	}
+
+	.related-tool-card.is-pattern {
+		--surface-border: var(--surface-pattern-border);
+		--surface-highlight: var(--surface-pattern-highlight);
+		--surface-panel: var(--surface-pattern-panel);
+	}
+
+	.related-tool-card.is-schema {
+		--surface-border: var(--surface-schema-border);
+		--surface-highlight: var(--surface-schema-highlight);
+		--surface-panel: var(--surface-schema-panel);
+	}
+
+	.related-tool-card.is-tool {
+		--surface-border: var(--surface-tool-border);
+		--surface-highlight: var(--surface-tool-highlight);
+		--surface-panel: var(--surface-tool-panel);
+	}
+
+	.related-tool-card.is-publish {
+		--surface-border: var(--surface-publish-border);
+		--surface-highlight: var(--surface-publish-highlight);
+		--surface-panel: var(--surface-publish-panel);
+	}
+
+	.related-tool-card.is-ui {
+		--surface-border: var(--surface-ui-border);
+		--surface-highlight: var(--surface-ui-highlight);
+		--surface-panel: var(--surface-ui-panel);
+	}
+
+	.related-tool-card.is-support {
+		--surface-border: var(--surface-support-border);
+		--surface-highlight: var(--surface-support-highlight);
+		--surface-panel: var(--surface-support-panel);
+	}
+
+	.related-tool-card.is-planner {
+		--surface-border: var(--surface-planner-border);
+		--surface-highlight: var(--surface-planner-highlight);
+		--surface-panel: var(--surface-planner-panel);
 	}
 
 	.viewer-toolbar {

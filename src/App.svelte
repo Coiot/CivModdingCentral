@@ -937,6 +937,7 @@
 						<span class="site-footer-chip" style="--chip-highlight:#8ff460">ExplosiveWatermelon</span>
 						<span class="site-footer-chip" style="--chip-highlight:#ffbf00">ThyReformer</span>
 						<span class="site-footer-chip" style="--chip-highlight:#3ee773">EmeraldRange</span>
+						<span class="site-footer-chip" style="--chip-highlight:#e74b3c">Pouākai</span>
 					</div>
 				</div>
 			</div>

@@ -47,6 +47,45 @@
 		flattenLandWater: false,
 		grayscaleTerrain: false,
 	};
+	const schemaHref = (table, tab = "rows") => `/schema-browser?table=${encodeURIComponent(table)}&tab=${encodeURIComponent(tab)}`;
+	const luaHref = (entryId, dataset = "gameEvents") => `/lua-api-explorer?${new URLSearchParams({ dataset, entry: entryId }).toString()}`;
+	const MAP_RELATED_TOOLS = [
+		{
+			label: "Terrains Table",
+			description: "Lookup base terrain rows when the map effect depends on land, water, hills, or terrain-class filtering.",
+			href: schemaHref("Terrains", "rows"),
+		},
+		{
+			label: "Resources Table",
+			description: "Lookup resource rows before debugging scripted reveals, placement, or placement eligibility.",
+			href: schemaHref("Resources", "rows"),
+		},
+		{
+			label: "Improvements Table",
+			description: "Useful when map logic or worker effects need the improvement row behind a plot mutation.",
+			href: schemaHref("Improvements", "rows"),
+		},
+		{
+			label: "Plot:SetResourceType",
+			description: "Lua resource placement helper for map rewards, discoveries, and scenario setup.",
+			href: luaHref("plot-setresourcetype-179", "methods"),
+		},
+		{
+			label: "Plot:SetImprovementType",
+			description: "Lua improvement helper for scripted swaps, cleanup, and plot setup.",
+			href: luaHref("plot-setimprovementtype-172", "methods"),
+		},
+		{
+			label: "Plot Search Pattern",
+			description: "Pattern handoff for finding a legal nearby tile before placing a unit, improvement, or resource.",
+			href: "/pattern-library?pattern=plot-search-pattern",
+		},
+		{
+			label: "Build Finished Trigger",
+			description: "Use this when map effects should resolve from completed worker builds instead of direct plot writes.",
+			href: "/pattern-library?pattern=build-finished-trigger",
+		},
+	];
 	const PANEL_TAB_ORDER = ["edit", "labels", "notes", "export", "settings"];
 	const KNOWN_NATURAL_WONDER_FEATURES = new Set([
 		"FEATURE_CRATER",
@@ -3932,6 +3971,32 @@
 		}
 		return formatMapLabel(String(value).replace(/^FEATURE_/, ""));
 	}
+
+	function relatedToolAccentClass(href) {
+		const value = String(href || "");
+		if (value.includes("/schema-browser")) return "is-schema";
+		if (value.includes("/lua-api-explorer")) return "is-lua";
+		if (value.includes("/pattern-library")) return "is-pattern";
+		if (value.includes("/template-generators")) return "is-generator";
+		if (value.includes("/guided-planner")) return "is-planner";
+		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "is-publish";
+		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "is-ui";
+		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "is-support";
+		return "is-tool";
+	}
+
+	function relatedToolTypeLabel(href) {
+		const value = String(href || "");
+		if (value.includes("/schema-browser")) return "Schema";
+		if (value.includes("/lua-api-explorer")) return "Lua";
+		if (value.includes("/pattern-library")) return "Pattern";
+		if (value.includes("/template-generators")) return "Generator";
+		if (value.includes("/guided-planner")) return "Planner";
+		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "Publish";
+		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "UI";
+		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "Support";
+		return "Tool";
+	}
 </script>
 
 <section class="viewer-page tile-map" aria-live="polite">
@@ -5018,6 +5083,24 @@
 			</aside>
 		</div>
 	{/if}
+
+	<section class="viewer-related-panel" aria-label="Related map tools">
+		<div class="viewer-related-head">
+			<p class="eyebrow">Helpful Links</p>
+		</div>
+
+		<div class="viewer-related-grid">
+			{#each MAP_RELATED_TOOLS as tool (tool.href)}
+				<a class={`viewer-related-card ${relatedToolAccentClass(tool.href)}`} href={tool.href}>
+					<div class="viewer-related-card-head">
+						<h3>{tool.label}</h3>
+						<span class="viewer-related-card-kind">{relatedToolTypeLabel(tool.href)}</span>
+					</div>
+					<p>{tool.description}</p>
+				</a>
+			{/each}
+		</div>
+	</section>
 </section>
 
 <style>
@@ -5185,6 +5268,140 @@
 		align-items: baseline;
 		gap: 0.25rem;
 		padding-block: 0.1rem;
+	}
+
+	.viewer-related-panel {
+		display: grid;
+		gap: 0.8rem;
+		padding: 1.05rem 1rem;
+		border-radius: 0.95rem;
+		border: 1px solid color-mix(in oklch, var(--surface-support-border) 72%, var(--panel-border));
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-support-highlight) 11%, transparent) 0%, transparent 30%),
+			color-mix(in oklch, var(--surface-support-panel) 74%, var(--panel-bg) 26%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--surface-support-highlight) 10%, transparent),
+			0 8px 12px color-mix(in oklch, var(--shadow-soft) 64%, transparent);
+	}
+
+	.viewer-related-head,
+	.viewer-related-grid {
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	.viewer-related-grid {
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+	}
+
+	.viewer-related-card {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		color: var(--ink);
+		text-decoration: none;
+		border-radius: 1rem;
+		padding: 1rem 0.95rem;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 20%, transparent) 0%, transparent 45%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 94%, #16110f 6%) 100%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 10%, transparent),
+			0 6px 8px color-mix(in srgb, black 76%, transparent);
+		border: 1px solid color-mix(in srgb, var(--surface-highlight) 44%, var(--surface-border));
+	}
+
+	.viewer-related-card-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: start;
+		gap: 0.7rem;
+	}
+
+	.viewer-related-card h3 {
+		margin: 0;
+		font-family: "Rockwell", "Palatino Linotype", serif;
+		font-size: 1.02rem;
+	}
+
+	.viewer-related-card-kind {
+		flex: 0 0 auto;
+		color: color-mix(in srgb, var(--surface-highlight) 58%, var(--muted-ink) 42%);
+		font-size: 0.78rem;
+		white-space: nowrap;
+		text-box: trim-both cap alphabetic;
+	}
+
+	.viewer-related-card p {
+		margin: 0;
+		color: var(--muted-ink);
+		line-height: 1.4;
+	}
+
+	.viewer-related-card:hover,
+	.viewer-related-card:focus-visible {
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 34%, transparent) 0%, transparent 40%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 92%, #16110f 8%) 100%);
+		box-shadow:
+			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 16%, transparent),
+			0 10px 16px color-mix(in oklch, var(--shadow-soft) 66%, transparent);
+		border-color: color-mix(in srgb, var(--surface-highlight) 72%, var(--surface-border));
+		transform: translateY(-2px);
+	}
+
+	.viewer-related-card.is-generator {
+		--surface-border: var(--surface-generator-border);
+		--surface-highlight: var(--surface-generator-highlight);
+		--surface-panel: var(--surface-generator-panel);
+	}
+
+	.viewer-related-card.is-lua {
+		--surface-border: var(--surface-lua-border);
+		--surface-highlight: var(--surface-lua-highlight);
+		--surface-panel: var(--surface-lua-panel);
+	}
+
+	.viewer-related-card.is-pattern {
+		--surface-border: var(--surface-pattern-border);
+		--surface-highlight: var(--surface-pattern-highlight);
+		--surface-panel: var(--surface-pattern-panel);
+	}
+
+	.viewer-related-card.is-schema {
+		--surface-border: var(--surface-schema-border);
+		--surface-highlight: var(--surface-schema-highlight);
+		--surface-panel: var(--surface-schema-panel);
+	}
+
+	.viewer-related-card.is-tool {
+		--surface-border: var(--surface-tool-border);
+		--surface-highlight: var(--surface-tool-highlight);
+		--surface-panel: var(--surface-tool-panel);
+	}
+
+	.viewer-related-card.is-publish {
+		--surface-border: var(--surface-publish-border);
+		--surface-highlight: var(--surface-publish-highlight);
+		--surface-panel: var(--surface-publish-panel);
+	}
+
+	.viewer-related-card.is-ui {
+		--surface-border: var(--surface-ui-border);
+		--surface-highlight: var(--surface-ui-highlight);
+		--surface-panel: var(--surface-ui-panel);
+	}
+
+	.viewer-related-card.is-support {
+		--surface-border: var(--surface-support-border);
+		--surface-highlight: var(--surface-support-highlight);
+		--surface-panel: var(--surface-support-panel);
+	}
+
+	.viewer-related-card.is-planner {
+		--surface-border: var(--surface-planner-border);
+		--surface-highlight: var(--surface-planner-highlight);
+		--surface-panel: var(--surface-planner-panel);
 	}
 
 	.viewer-header {

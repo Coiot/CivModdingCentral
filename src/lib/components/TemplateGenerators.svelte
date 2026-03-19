@@ -127,6 +127,12 @@
 		if (href?.startsWith("/dds-converter") || href?.startsWith("/civ-icon-maker") || href?.startsWith("/text-screen-viewer")) {
 			return "is-ui";
 		}
+		if (href?.startsWith("/guided-planner")) {
+			return "is-planner";
+		}
+		if (href?.startsWith("/religion-support") || href?.startsWith("/map-viewer")) {
+			return "is-support";
+		}
 		return "is-tool";
 	}
 
@@ -246,8 +252,8 @@
 							{#each activeWizardCard.touchpoints as touchpoint (`${touchpoint.href}:${touchpoint.label}`)}
 								<a class={`wizard-touchpoint-card wizard-touchpoint-card--link ${touchpointSurfaceClass(touchpoint.href)}`} href={touchpoint.href} target="_blank" rel="noreferrer">
 									<div class="wizard-touchpoint-card-head">
-										<span class="wizard-touchpoint-pill">{touchpoint.label}</span>
-										<span>{touchpointSurfaceLabel(touchpoint.href)}</span>
+										<h5 class="wizard-touchpoint-title">{touchpoint.label}</h5>
+										<span class="wizard-touchpoint-kind">{touchpointSurfaceLabel(touchpoint.href)}</span>
 									</div>
 									<p class="wizard-card-meta">{touchpoint.note}</p>
 								</a>
@@ -360,7 +366,6 @@
 	}
 
 	.wizard-touchpoint-card-head span {
-		color: color-mix(in srgb, var(--wizard-touchpoint-highlight) 66%, var(--muted-ink) 34%);
 		font-size: 0.76rem;
 	}
 
@@ -581,26 +586,37 @@
 	.wizard-touchpoint-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-		gap: 0.75rem;
+		gap: 1rem;
 	}
 
 	.wizard-touchpoint-card-head {
 		display: flex;
-		flex-wrap: wrap;
 		justify-content: space-between;
-		align-items: center;
-		gap: 0.55rem;
+		align-items: start;
+		gap: 0.7rem;
 	}
 
-	.wizard-touchpoint-pill {
-		color: var(--wizard-touchpoint-highlight-strong);
-		font-size: 0.95rem !important;
-		font-weight: 700;
+	.wizard-touchpoint-title {
+		margin: 0;
+		color: var(--ink);
+		font-family: "Rockwell", "Palatino Linotype", serif;
+		font-size: 1.1rem;
+		text-wrap: wrap;
+		word-break: break-word;
+		line-height: 1.15;
+	}
+
+	.wizard-touchpoint-kind {
+		flex: 0 0 auto;
+		color: color-mix(in srgb, var(--surface-highlight) 58%, var(--muted-ink) 42%);
+		font-size: 0.78rem;
+		white-space: nowrap;
+		text-box: trim-both cap alphabetic;
 	}
 
 	.wizard-card-meta {
 		color: var(--muted-ink);
-		line-height: 1.55;
+		line-height: 1.4;
 		margin: 0;
 	}
 
@@ -710,22 +726,22 @@
 	}
 
 	.wizard-touchpoint-card {
-		display: grid;
-		gap: 0.55rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--wizard-touchpoint-highlight) 30%, transparent) 0%, transparent 35%),
-			linear-gradient(165deg, color-mix(in srgb, var(--wizard-touchpoint-panel) 90%, var(--control-bg)) 0%, color-mix(in srgb, var(--wizard-touchpoint-panel) 85%, #16110f 15%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 20%, transparent) 0%, transparent 45%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 94%, #16110f 6%) 100%);
 		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--wizard-touchpoint-highlight) 8%, transparent),
-			0 6px 8px color-mix(in srgb, var(--panel-bg) 40%, #000);
-		border: 1px solid color-mix(in srgb, var(--wizard-touchpoint-border) 90%, transparent);
+			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 10%, transparent),
+			0 6px 8px color-mix(in srgb, black 76%, transparent);
+		border: 1px solid color-mix(in srgb, var(--surface-highlight) 44%, var(--surface-border));
 		border-radius: 1rem;
-		padding-block: 1rem;
-		padding-inline: 1rem;
-		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #35658c 28%);
-		--wizard-touchpoint-highlight: #8dc7ff;
-		--wizard-touchpoint-highlight-strong: #d6ecff;
-		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, #11263a 10%);
+		padding: 1rem 0.95rem;
+		--surface-border: var(--surface-schema-border);
+		--surface-highlight: var(--surface-schema-highlight);
+		--surface-highlight-strong: var(--surface-schema-highlight-strong);
+		--surface-panel: var(--surface-schema-panel);
 	}
 
 	.wizard-touchpoint-card--link {
@@ -740,69 +756,77 @@
 
 	.wizard-touchpoint-card--link:hover {
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--wizard-touchpoint-highlight) 35%, transparent) 0%, transparent 35%),
-			linear-gradient(165deg, color-mix(in srgb, var(--wizard-touchpoint-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--wizard-touchpoint-panel) 95%, #16110f 16%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 34%, transparent) 0%, transparent 40%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 92%, #16110f 8%) 100%);
 		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--wizard-touchpoint-highlight) 14%, transparent),
-			0 10px 22px color-mix(in oklch, var(--shadow-soft) 58%, transparent);
-		border-color: color-mix(in srgb, var(--wizard-touchpoint-highlight) 52%, var(--wizard-touchpoint-border));
-		transform: translateY(-1px);
+			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 16%, transparent),
+			0 10px 16px color-mix(in oklch, var(--shadow-soft) 66%, transparent);
+		border-color: color-mix(in srgb, var(--surface-highlight) 72%, var(--surface-border));
+		transform: translateY(-2px);
 	}
 
 	.wizard-touchpoint-card.is-generator {
-		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #7b4bd1 28%);
-		--wizard-touchpoint-highlight: #d4b2ff;
-		--wizard-touchpoint-highlight-strong: #f4e8ff;
-		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 88%, #2b1740 12%);
+		--surface-border: var(--surface-generator-border);
+		--surface-highlight: var(--surface-generator-highlight);
+		--surface-highlight-strong: var(--surface-generator-highlight-strong);
+		--surface-panel: var(--surface-generator-panel);
 	}
 
 	.wizard-touchpoint-card.is-lua {
-		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #2f6b53 28%);
-		--wizard-touchpoint-highlight: #7de0ae;
-		--wizard-touchpoint-highlight-strong: #daf8e8;
-		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, #10271d 10%);
+		--surface-border: var(--surface-lua-border);
+		--surface-highlight: var(--surface-lua-highlight);
+		--surface-highlight-strong: var(--surface-lua-highlight-strong);
+		--surface-panel: var(--surface-lua-panel);
 	}
 
 	.wizard-touchpoint-card.is-pattern {
-		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 68%, #b48922 32%);
-		--wizard-touchpoint-highlight: #f5d36a;
-		--wizard-touchpoint-highlight-strong: #fff1bc;
-		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 78%, #3b2810 22%);
+		--surface-border: var(--surface-pattern-border);
+		--surface-highlight: var(--surface-pattern-highlight);
+		--surface-highlight-strong: var(--surface-pattern-highlight-strong);
+		--surface-panel: var(--surface-pattern-panel);
 	}
 
 	.wizard-touchpoint-card.is-publish {
-		--wizard-touchpoint-border: var(--surface-publish-border);
-		--wizard-touchpoint-highlight: var(--surface-publish-highlight);
-		--wizard-touchpoint-highlight-strong: var(--surface-publish-highlight-strong);
-		--wizard-touchpoint-panel: var(--surface-publish-panel);
+		--surface-border: var(--surface-publish-border);
+		--surface-highlight: var(--surface-publish-highlight);
+		--surface-highlight-strong: var(--surface-publish-highlight-strong);
+		--surface-panel: var(--surface-publish-panel);
 	}
 
 	.wizard-touchpoint-card.is-schema {
-		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #35658c 28%);
-		--wizard-touchpoint-highlight: #8dc7ff;
-		--wizard-touchpoint-highlight-strong: #d6ecff;
-		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, #11263a 10%);
+		--surface-border: var(--surface-schema-border);
+		--surface-highlight: var(--surface-schema-highlight);
+		--surface-highlight-strong: var(--surface-schema-highlight-strong);
+		--surface-panel: var(--surface-schema-panel);
 	}
 
 	.wizard-touchpoint-card.is-tool {
-		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #9a5a1e 28%);
-		--wizard-touchpoint-highlight: color-mix(in srgb, var(--accent) 82%, #ffbf75 18%);
-		--wizard-touchpoint-highlight-strong: color-mix(in srgb, white 84%, var(--accent) 16%);
-		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 82%, #2f1808 18%);
+		--surface-border: var(--surface-tool-border);
+		--surface-highlight: var(--surface-tool-highlight);
+		--surface-highlight-strong: var(--surface-tool-highlight-strong);
+		--surface-panel: var(--surface-tool-panel);
 	}
 
 	.wizard-touchpoint-card.is-ui {
-		--wizard-touchpoint-border: var(--surface-ui-border);
-		--wizard-touchpoint-highlight: var(--surface-ui-highlight);
-		--wizard-touchpoint-highlight-strong: var(--surface-ui-highlight-strong);
-		--wizard-touchpoint-panel: var(--surface-ui-panel);
+		--surface-border: var(--surface-ui-border);
+		--surface-highlight: var(--surface-ui-highlight);
+		--surface-highlight-strong: var(--surface-ui-highlight-strong);
+		--surface-panel: var(--surface-ui-panel);
 	}
 
-	.wizard-touchpoint-card.is-viewer {
-		--wizard-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #8d3c44 28%);
-		--wizard-touchpoint-highlight: #ffb3bc;
-		--wizard-touchpoint-highlight-strong: #ffe4e8;
-		--wizard-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 88%, #301217 12%);
+	.wizard-touchpoint-card.is-viewer,
+	.wizard-touchpoint-card.is-support {
+		--surface-border: var(--surface-support-border);
+		--surface-highlight: var(--surface-support-highlight);
+		--surface-highlight-strong: var(--surface-support-highlight-strong);
+		--surface-panel: var(--surface-support-panel);
+	}
+
+	.wizard-touchpoint-card.is-planner {
+		--surface-border: var(--surface-planner-border);
+		--surface-highlight: var(--surface-planner-highlight);
+		--surface-highlight-strong: var(--surface-planner-highlight-strong);
+		--surface-panel: var(--surface-planner-panel);
 	}
 
 	@media (width <= 1100px) {

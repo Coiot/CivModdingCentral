@@ -229,11 +229,11 @@ export const siteResourceGroups = [
 				kind: "Tool",
 			},
 			{
-				id: "text-screen-viewer",
-				label: "Text Screen Helper",
-				href: "/text-screen-viewer",
+				id: "ui-screen-viewer",
+				label: "UI Screen Helper",
+				href: "/ui-screen-viewer",
 				status: "Coming Soon",
-				description: "Helper for checking how text for mods read across in-game screens.",
+				description: "Helper for checking how artwork, icons, and text for mods look across in-game screens.",
 				kind: "Viewer",
 				disabled: true,
 			},
@@ -296,7 +296,7 @@ export const plannerTracks = [
 		description: "Lock the names, diplo, civilopedia, and supporting copy early enough that the rest of the project builds with final language instead of placeholders.",
 		risk: "If this lane is neglected, the rest of production drifts around placeholders, stale key names, and release dsy text cleanup.",
 		deliverableIds: ["city-list", "spy-names", "dom-text", "diplo-lines", "civ-pedia", "leader-pedia", "uu-pedia", "uc2-pedia"],
-		resourceIds: ["community-links", "pattern-library", "text-screen-viewer", "modded-civs-pedia", "tutorials"],
+		resourceIds: ["community-links", "pattern-library", "ui-screen-viewer", "modded-civs-pedia", "tutorials"],
 		tutorialIds: ["civ-design-research", "sql-uniques", "ingame-ui"],
 	},
 	{
@@ -316,7 +316,7 @@ export const plannerTracks = [
 		description: "Produce the icon, model, flag, and audio assets that appear in the game.",
 		risk: "This group creates the all the in-game icons and UI assets that appear all through the game.",
 		deliverableIds: ["civ-icon", "unit-icon", "uc2-icon", "leader-icon", "unit-flags", "models"],
-		resourceIds: ["dds-converter", "civ-icon-maker", "text-screen-viewer", "community-links"],
+		resourceIds: ["dds-converter", "civ-icon-maker", "ui-screen-viewer", "community-links"],
 		tutorialIds: ["icons-and-alphas", "models-and-textures", "tile-improvements-and-3d-models", "ingame-ui"],
 	},
 	{
@@ -326,7 +326,7 @@ export const plannerTracks = [
 		description: "The heaviest load of any civ mod: the map, the leaderscene, and the DoM screen.",
 		risk: "This lane is technically challenging and usually underestimated by beginners, especially because the leaderscene is the hardest item to clear in the civ pipeline.",
 		deliverableIds: ["map", "leaderscene", "dawn-of-man"],
-		resourceIds: ["map-viewer", "dds-converter", "community-links", "text-screen-viewer"],
+		resourceIds: ["map-viewer", "dds-converter", "community-links", "ui-screen-viewer"],
 		tutorialIds: ["leaderscene-art", "map-art", "ingame-ui"],
 	},
 	{
@@ -336,7 +336,7 @@ export const plannerTracks = [
 		description: "Close out compatibility, final testing, and the Steam Wor facingkshop copy once the main mod is ready.",
 		risk: "This lane comes at the end and gets often overlloked because it feels administrative until it blocks a proper release right at the end.",
 		deliverableIds: ["music", "mod-support-text", "tsl", "full-test", "publish-text"],
-		resourceIds: ["workshop-uploader", "modinfo-builder", "civ5mod-ziper", "map-viewer", "text-screen-viewer", "community-links", "religion-support"],
+		resourceIds: ["workshop-uploader", "modinfo-builder", "civ5mod-ziper", "map-viewer", "ui-screen-viewer", "community-links", "religion-support"],
 		tutorialIds: ["workshop-packaging-and-publishing"],
 	},
 ];
@@ -474,7 +474,7 @@ export const plannerDeliverables = [
 		hint: "This is where small independent bugs and embarassing lua mistakes become apparent. Best to catch them before release.",
 		advice: "Play at least one quick mock session like a normal user, without much debug shortcuts, because that is where pacing and readability problems show up.",
 		dependencies: ["gameplay-test"],
-		resourceIds: ["map-viewer", "community-links", "workshop-uploader", "text-screen-viewer"],
+		resourceIds: ["map-viewer", "community-links", "workshop-uploader", "ui-screen-viewer"],
 		tutorialIds: [],
 	},
 	{
@@ -534,7 +534,7 @@ export const plannerDeliverables = [
 		hint: "If the opening screen feels crowded, simplify the composition until the leader, map art, and title card each get a clear place to read.",
 		advice: "Check DoM in the actual game resolution you care about. Text and layout problems often look fine in source files but look awkward in-game.",
 		dependencies: ["leaderscene", "map", "dom-text"],
-		resourceIds: ["text-screen-viewer", "dds-converter"],
+		resourceIds: ["ui-screen-viewer", "dds-converter"],
 		tutorialIds: ["leaderscene-art", "map-art", "ingame-ui"],
 	},
 	{
@@ -564,7 +564,7 @@ export const plannerDeliverables = [
 		hint: "This is the icon players remember, so overly detail with poor negative space usually hurts more than it helps.",
 		advice: "Zoom the icon down early and often. If it only works at large size, it is not ready for Civ V UI use.",
 		dependencies: ["art-defines"],
-		resourceIds: ["civ-icon-maker", "dds-converter", "text-screen-viewer"],
+		resourceIds: ["civ-icon-maker", "dds-converter", "ui-screen-viewer"],
 		tutorialIds: ["icons-and-alphas", "ingame-ui"],
 	},
 	{
@@ -579,7 +579,7 @@ export const plannerDeliverables = [
 		hint: "Unit icons become functional UI, so style cannot outrank clear and fast recognition.",
 		advice: "Differentiate the UU from the base unit. Both visually and in gameplay.",
 		dependencies: ["art-defines"],
-		resourceIds: ["dds-converter", "text-screen-viewer"],
+		resourceIds: ["dds-converter", "ui-screen-viewer"],
 		tutorialIds: ["icons-and-alphas", "ingame-ui"],
 	},
 	{
@@ -594,7 +594,7 @@ export const plannerDeliverables = [
 		hint: "Follow the same icon guidelines as the UA and UU icons, unless it is a unique improvement that requires a different style.",
 		advice: "If the UC2 icon is unclear, borrow visual cues from the base building, unit, or improvement so players understand it faster.",
 		dependencies: ["art-defines"],
-		resourceIds: ["dds-converter", "text-screen-viewer"],
+		resourceIds: ["dds-converter", "ui-screen-viewer"],
 		tutorialIds: ["icons-and-alphas", "ingame-ui"],
 	},
 	{
@@ -624,7 +624,7 @@ export const plannerDeliverables = [
 		hint: "Be aware that flags feel different for civilian and combat units because they appear in different shapes.",
 		advice: "Test flags against map colors and terrain tones, not just on a neutral background, because contrast is what players actually read in-game.",
 		dependencies: ["art-defines"],
-		resourceIds: ["dds-converter", "text-screen-viewer"],
+		resourceIds: ["dds-converter", "ui-screen-viewer"],
 		tutorialIds: ["icons-and-alphas", "ingame-ui"],
 	},
 	{
@@ -669,7 +669,7 @@ export const plannerDeliverables = [
 		hint: "Aim for three strong paragraphs, and watch for UI overflow if you write too much.",
 		advice: "Write DoM after the mechanics stabilize. It is much easier to sound confident when you already know what the civ actually does in play.",
 		dependencies: ["ua", "uu", "uc2"],
-		resourceIds: ["text-screen-viewer", "community-links"],
+		resourceIds: ["ui-screen-viewer", "community-links"],
 		tutorialIds: ["civ-design-research", "ingame-ui"],
 	},
 	{

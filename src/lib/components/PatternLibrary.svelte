@@ -386,6 +386,12 @@
 		if (href?.startsWith("/dds-converter") || href?.startsWith("/civ-icon-maker") || href?.startsWith("/text-screen-viewer")) {
 			return "is-ui";
 		}
+		if (href?.startsWith("/guided-planner")) {
+			return "is-planner";
+		}
+		if (href?.startsWith("/religion-support") || href?.startsWith("/map-viewer")) {
+			return "is-support";
+		}
 		return "is-tool";
 	}
 
@@ -589,8 +595,8 @@
 				{#if touchpoint.disabled}
 					<div class={`recipe-touchpoint-card ${touchpointSurfaceClass(touchpoint)}`} aria-disabled="true">
 						<div class="recipe-touchpoint-card-head">
-							<span class="recipe-touchpoint-pill">{touchpoint.label}</span>
-							<span>{touchpoint.statusLabel || touchpointSurfaceLabel(touchpoint)}</span>
+							<h5 class="recipe-touchpoint-title">{touchpoint.label}</h5>
+							<span class="recipe-touchpoint-kind">{touchpoint.statusLabel || touchpointSurfaceLabel(touchpoint)}</span>
 						</div>
 						<p class="recipe-card-meta">{touchpoint.note}</p>
 					</div>
@@ -601,8 +607,8 @@
 						onclick={(event) => handleTouchpointClick(event, touchpoint)}
 					>
 						<div class="recipe-touchpoint-card-head">
-							<span class="recipe-touchpoint-pill">{touchpoint.label}</span>
-							<span>{touchpointSurfaceLabel(touchpoint)}</span>
+							<h5 class="recipe-touchpoint-title">{touchpoint.label}</h5>
+							<span class="recipe-touchpoint-kind">{touchpointSurfaceLabel(touchpoint)}</span>
 						</div>
 						<p class="recipe-card-meta">{touchpoint.note}</p>
 					</a>
@@ -698,7 +704,6 @@
 	}
 
 	.recipe-touchpoint-card-head span {
-		color: color-mix(in srgb, var(--recipe-touchpoint-highlight) 66%, var(--muted-ink) 34%);
 		font-size: 0.76rem;
 	}
 
@@ -969,7 +974,7 @@
 
 	.recipe-card-meta {
 		color: var(--muted-ink);
-		line-height: 1.55;
+		line-height: 1.4;
 		margin: 0;
 	}
 
@@ -981,16 +986,27 @@
 
 	.recipe-touchpoint-card-head {
 		display: flex;
-		flex-wrap: wrap;
 		justify-content: space-between;
-		align-items: center;
-		gap: 0.55rem;
+		align-items: start;
+		gap: 0.7rem;
 	}
 
-	.recipe-touchpoint-pill {
-		color: var(--recipe-touchpoint-highlight-strong);
-		font-size: 0.95rem !important;
-		font-weight: 700;
+	.recipe-touchpoint-title {
+		margin: 0;
+		color: var(--ink);
+		font-family: "Rockwell", "Palatino Linotype", serif;
+		font-size: 1.1rem;
+		text-wrap: wrap;
+		word-break: break-word;
+		line-height: 1.15;
+	}
+
+	.recipe-touchpoint-kind {
+		flex: 0 0 auto;
+		color: color-mix(in srgb, var(--surface-highlight) 58%, var(--muted-ink) 42%);
+		font-size: 0.78rem;
+		white-space: nowrap;
+		text-box: trim-both cap alphabetic;
 	}
 
 	.recipe-card--compact {
@@ -1080,8 +1096,9 @@
 	}
 
 	.recipe-quick-card {
-		display: grid;
-		gap: 0.55rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
 		color: inherit;
 		font: inherit;
 		text-align: left;
@@ -1191,21 +1208,20 @@
 
 	.recipe-touchpoint-card {
 		display: grid;
-		gap: 0.55rem;
+		gap: 0.65rem;
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--recipe-touchpoint-highlight) 30%, transparent) 0%, transparent 35%),
-			linear-gradient(165deg, color-mix(in srgb, var(--recipe-touchpoint-panel) 88%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 88%, #16110f 12%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 20%, transparent) 0%, transparent 45%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 94%, #16110f 6%) 100%);
 		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--recipe-touchpoint-highlight) 8%, transparent),
-			0 6px 8px color-mix(in srgb, var(--panel-bg) 40%, #000);
-		border: 1px solid color-mix(in srgb, var(--recipe-touchpoint-border) 90%, transparent);
+			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 10%, transparent),
+			0 6px 8px color-mix(in srgb, black 76%, transparent);
+		border: 1px solid color-mix(in srgb, var(--surface-highlight) 44%, var(--surface-border));
 		border-radius: 1rem;
-		padding-block: 1rem;
-		padding-inline: 1rem;
-		--recipe-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 70%, #a8861f 30%);
-		--recipe-touchpoint-highlight: #f5d36a;
-		--recipe-touchpoint-highlight-strong: #fff1bc;
-		--recipe-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, #352608 10%);
+		padding: 1rem 0.95rem;
+		--surface-border: var(--surface-pattern-border);
+		--surface-highlight: var(--surface-pattern-highlight);
+		--surface-highlight-strong: var(--surface-pattern-highlight-strong);
+		--surface-panel: var(--surface-pattern-panel);
 	}
 
 	.recipe-touchpoint-card--link {
@@ -1220,62 +1236,76 @@
 
 	.recipe-touchpoint-card--link:hover {
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--recipe-touchpoint-highlight) 35%, transparent) 0%, transparent 35%),
-			linear-gradient(165deg, color-mix(in srgb, var(--recipe-touchpoint-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--recipe-touchpoint-panel) 95%, #16110f 16%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 34%, transparent) 0%, transparent 40%),
+			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 92%, #16110f 8%) 100%);
 		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--recipe-touchpoint-highlight) 14%, transparent),
-			0 10px 22px color-mix(in oklch, var(--shadow-soft) 58%, transparent);
-		border-color: color-mix(in srgb, var(--recipe-touchpoint-highlight) 52%, var(--recipe-touchpoint-border));
-		transform: translateY(-1px);
+			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 16%, transparent),
+			0 10px 16px color-mix(in oklch, var(--shadow-soft) 66%, transparent);
+		border-color: color-mix(in srgb, var(--surface-highlight) 72%, var(--surface-border));
+		transform: translateY(-2px);
 	}
 
 	.recipe-touchpoint-card.is-generator {
-		--recipe-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #7b4bd1 28%);
-		--recipe-touchpoint-highlight: #d4b2ff;
-		--recipe-touchpoint-highlight-strong: #f4e8ff;
-		--recipe-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 88%, #2b1740 12%);
+		--surface-border: var(--surface-generator-border);
+		--surface-highlight: var(--surface-generator-highlight);
+		--surface-highlight-strong: var(--surface-generator-highlight-strong);
+		--surface-panel: var(--surface-generator-panel);
 	}
 
 	.recipe-touchpoint-card.is-lua {
-		--recipe-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #2f6b53 28%);
-		--recipe-touchpoint-highlight: #7de0ae;
-		--recipe-touchpoint-highlight-strong: #daf8e8;
-		--recipe-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, #10271d 10%);
+		--surface-border: var(--surface-lua-border);
+		--surface-highlight: var(--surface-lua-highlight);
+		--surface-highlight-strong: var(--surface-lua-highlight-strong);
+		--surface-panel: var(--surface-lua-panel);
 	}
 
 	.recipe-touchpoint-card.is-pattern {
-		--recipe-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 68%, #b48922 32%);
-		--recipe-touchpoint-highlight: color-mix(in srgb, var(--recipe-accent-highlight) 88%, #ffd976 12%);
-		--recipe-touchpoint-highlight-strong: color-mix(in srgb, white 90%, var(--recipe-accent-highlight) 10%);
-		--recipe-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 78%, #3b2810 22%);
+		--surface-border: var(--surface-pattern-border);
+		--surface-highlight: var(--surface-pattern-highlight);
+		--surface-highlight-strong: var(--surface-pattern-highlight-strong);
+		--surface-panel: var(--surface-pattern-panel);
 	}
 
 	.recipe-touchpoint-card.is-publish {
-		--recipe-touchpoint-border: var(--surface-publish-border);
-		--recipe-touchpoint-highlight: var(--surface-publish-highlight);
-		--recipe-touchpoint-highlight-strong: var(--surface-publish-highlight-strong);
-		--recipe-touchpoint-panel: var(--surface-publish-panel);
+		--surface-border: var(--surface-publish-border);
+		--surface-highlight: var(--surface-publish-highlight);
+		--surface-highlight-strong: var(--surface-publish-highlight-strong);
+		--surface-panel: var(--surface-publish-panel);
 	}
 
 	.recipe-touchpoint-card.is-schema {
-		--recipe-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #35658c 28%);
-		--recipe-touchpoint-highlight: #8dc7ff;
-		--recipe-touchpoint-highlight-strong: #d6ecff;
-		--recipe-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 90%, #11263a 10%);
+		--surface-border: var(--surface-schema-border);
+		--surface-highlight: var(--surface-schema-highlight);
+		--surface-highlight-strong: var(--surface-schema-highlight-strong);
+		--surface-panel: var(--surface-schema-panel);
 	}
 
 	.recipe-touchpoint-card.is-tool {
-		--recipe-touchpoint-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #9a5a1e 28%);
-		--recipe-touchpoint-highlight: color-mix(in srgb, var(--accent) 82%, #ffbf75 18%);
-		--recipe-touchpoint-highlight-strong: color-mix(in srgb, white 84%, var(--accent) 16%);
-		--recipe-touchpoint-panel: color-mix(in srgb, var(--surface-color, rgba(14, 18, 24, 0.94)) 82%, #2f1808 18%);
+		--surface-border: var(--surface-tool-border);
+		--surface-highlight: var(--surface-tool-highlight);
+		--surface-highlight-strong: var(--surface-tool-highlight-strong);
+		--surface-panel: var(--surface-tool-panel);
 	}
 
 	.recipe-touchpoint-card.is-ui {
-		--recipe-touchpoint-border: var(--surface-ui-border);
-		--recipe-touchpoint-highlight: var(--surface-ui-highlight);
-		--recipe-touchpoint-highlight-strong: var(--surface-ui-highlight-strong);
-		--recipe-touchpoint-panel: var(--surface-ui-panel);
+		--surface-border: var(--surface-ui-border);
+		--surface-highlight: var(--surface-ui-highlight);
+		--surface-highlight-strong: var(--surface-ui-highlight-strong);
+		--surface-panel: var(--surface-ui-panel);
+	}
+
+	.recipe-touchpoint-card.is-support {
+		--surface-border: var(--surface-support-border);
+		--surface-highlight: var(--surface-support-highlight);
+		--surface-highlight-strong: var(--surface-support-highlight-strong);
+		--surface-panel: var(--surface-support-panel);
+	}
+
+	.recipe-touchpoint-card.is-planner {
+		--surface-border: var(--surface-planner-border);
+		--surface-highlight: var(--surface-planner-highlight);
+		--surface-highlight-strong: var(--surface-planner-highlight-strong);
+		--surface-panel: var(--surface-planner-panel);
 	}
 
 	@media (width <= 1100px) {

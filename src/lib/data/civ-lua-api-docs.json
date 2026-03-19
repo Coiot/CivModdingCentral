@@ -65,14 +65,18 @@
 			"notes": [
 				"Use this to test whether a city already has a building before granting yields, promotions, or dummy-building side effects.",
 				"For most standard buildings the answer is 0 or 1, but dummy-building patterns can intentionally stack counts above one.",
-				"This is usually the cleanest city-level read when you need an actual building row instead of a building class abstraction."
+				"If you only need a yes or no answer, City:IsHasBuilding is usually simpler to read."
 			],
 			"example": {
-				"summary": "Check whether the selected city already has a Monument row applied.",
+				"summary": "Use a yes or no building check before applying a city effect.",
 				"language": "lua",
-				"code": "local iBuilding = GameInfoTypes.BUILDING_MONUMENT\nlocal pCity = UI.GetHeadSelectedCity()\nif pCity and pCity:GetNumBuilding(iBuilding) > 0 then\n\tprint(\"The selected city already has a Monument\")\nend"
+				"code": "local iBuilding = GameInfoTypes.BUILDING_MONUMENT\nlocal pCity = UI.GetHeadSelectedCity()\nif pCity and pCity:IsHasBuilding(iBuilding) then\n\tprint(\"The selected city already has a Monument\")\nend"
 			},
-			"gotchas": ["The parameter is a BuildingType row ID, not a BuildingClass.", "Dummy-building systems may legitimately return values greater than one."],
+			"gotchas": [
+				"The parameter is a BuildingType row ID, not a BuildingClass.",
+				"Dummy-building systems may legitimately return values greater than one.",
+				"If you care about stacked real-building counts specifically, City:GetNumRealBuilding is usually the clearer read."
+			],
 			"relatedSchemaNotes": [
 				{
 					"table": "Buildings",
@@ -164,6 +168,40 @@
 				}
 			]
 		},
+		"player-cities-84": {
+			"summary": "Returns an iterator over every city the player currently owns.",
+			"notes": [
+				"Use this when you need one or more city objects and already have the player.",
+				"The iterator yields City objects directly, so it is a common bridge into city-scoped logic without resolving city IDs first.",
+				"This is one of the most common patterns for per-city maintenance, dummy-building refreshes, and empire-wide checks."
+			],
+			"example": {
+				"summary": "Loop through every city a player owns and print its name.",
+				"language": "lua",
+				"code": "local pPlayer = Players[ePlayer]\nif not pPlayer then\n\treturn\nend\n\nfor pCity in pPlayer:Cities() do\n\tprint(pCity:GetName())\nend"
+			},
+			"gotchas": [
+				"This must be used as an iterator in a for loop; it does not return a table of cities.",
+				"The set changes with ownership, so do not assume it is stable across capture or liberation without rerunning the iterator."
+			]
+		},
+		"player-units-782": {
+			"summary": "Returns an iterator over every unit the player currently owns.",
+			"notes": [
+				"Use this when you need one or more unit objects and already have the player.",
+				"The iterator yields Unit objects directly, so it is a common starting point for promotion refreshes, per-unit scans, and unique-unit checks.",
+				"This is especially useful when you want to inspect units by type without first collecting unit IDs."
+			],
+			"example": {
+				"summary": "Loop through every unit a player owns and check whether it is a Scout.",
+				"language": "lua",
+				"code": "local pPlayer = Players[ePlayer]\nlocal iScout = GameInfoTypes.UNIT_SCOUT\nif not pPlayer then\n\treturn\nend\n\nfor pUnit in pPlayer:Units() do\n\tif pUnit:GetUnitType() == iScout then\n\t\tprint(\"Scout found:\", pUnit:GetID())\n\tend\nend"
+			},
+			"gotchas": [
+				"This must be used as an iterator in a for loop; it does not return a table of units.",
+				"Because it yields live Unit objects, units removed during the surrounding logic can change what later iterations see."
+			]
+		},
 		"game-getgameturn-80": {
 			"summary": "Returns the current game turn index used by the running match.",
 			"notes": [
@@ -216,6 +254,26 @@
 				}
 			]
 		},
+		"unit-getunittype-232": {
+			"summary": "Returns the unit type row ID for a specific unit object.",
+			"notes": [
+				"Use this when logic should only affect specific unit types.",
+				"This is commonly paired with unique-unit checks, replacement logic, or promotion systems that only apply to certain rows in Units.",
+				"It pairs naturally with Player:Units() when you need to scan a player's roster for one type of unit."
+			],
+			"example": {
+				"summary": "Loop through every unit a player owns and heal Scouts by 10.",
+				"language": "lua",
+				"code": "local pPlayer = Players[ePlayer]\nlocal iScout = GameInfoTypes.UNIT_SCOUT\nif not pPlayer then\n\treturn\nend\n\nfor pUnit in pPlayer:Units() do\n\tif pUnit:GetUnitType() == iScout then\n\t\tpUnit:ChangeDamage(-10)\n\tend\nend"
+			},
+			"gotchas": ["This returns a unit type row ID, not a UnitClass.", "You need the database ID you want to compare against, usually from GameInfoTypes."],
+			"relatedSchemaNotes": [
+				{
+					"table": "Units",
+					"note": "Use the unit row to inspect costs, combat values, class mappings, and other gameplay fields behind the returned type ID."
+				}
+			]
+		},
 		"plot-getowner-60": {
 			"summary": "Returns the owning player ID for a plot, or -1 when the plot is unowned.",
 			"notes": [
@@ -233,6 +291,132 @@
 				{
 					"entryId": "game-event-cityboughtplot-17",
 					"note": "Natural event hook for reacting after plot ownership changes."
+				}
+			]
+		},
+		"city-getowner-201": {
+			"summary": "Returns the owning player ID for the city.",
+			"notes": [
+				"Use this when a city object is already in hand and you need to branch on its current owner.",
+				"This is useful after city transfer, capture, or liberation flows where the city's owner may have changed since the surrounding logic began.",
+				"The return value is lightweight and easy to combine with Players[...] lookups or team checks."
+			],
+			"example": {
+				"summary": "Resolve the owner of a city object before applying a city-scoped effect.",
+				"language": "lua",
+				"code": "local pCity = UI.GetHeadSelectedCity()\nif pCity then\n\tlocal iOwner = pCity:GetOwner()\n\tif iOwner ~= -1 then\n\t\tprint(\"City owner:\", Players[iOwner]:GetName())\n\tend\nend"
+			},
+			"gotchas": ["The return value is a player ID, not a Player object.", "This reports the city's current owner, not the original founder or previous owner."],
+			"seeAlso": [
+				{
+					"entryId": "plot-getowner-60",
+					"note": "Plot-side ownership helper when you start from map coordinates instead of a City object."
+				}
+			]
+		},
+		"city-getreligiousmajority-233": {
+			"summary": "Returns the religion with the most followers in the city.",
+			"notes": [
+				"Use this when a city-level effect should track whichever religion currently has the most followers there.",
+				"This is a follower-count result, so it is a natural fit for majority-religion dummy buildings or conversion-sensitive city bonuses.",
+				"If you need to branch on pantheons, remember they all share the same religion ID."
+			],
+			"example": {
+				"summary": "Refresh a city-only bonus when Buddhism has the most followers.",
+				"language": "lua",
+				"code": "local iReligion = city:GetReligiousMajority()\nlocal iRequiredReligion = GameInfoTypes.RELIGION_BUDDHISM\ncity:SetNumRealBuilding(GameInfoTypes.BUILDING_DUMMY_PILGRIM_HOSTEL, iReligion == iRequiredReligion and 1 or 0)"
+			},
+			"gotchas": [
+				"This reports the religion with the most followers, not the religion exerting the most pressure.",
+				"All pantheons share the same religion ID, so this call cannot distinguish one pantheon belief package from another by ID alone."
+			],
+			"seeAlso": [
+				{
+					"entryId": "game-event-cityconvertsreligion-29",
+					"note": "Hook-side companion when the majority change itself should trigger the follow-up effect."
+				},
+				{
+					"type": "pattern",
+					"label": "Religion / Belief Condition Check",
+					"href": "/pattern-library?pattern=religion-belief-condition-check",
+					"note": "Pattern companion for city-level religion gates, dummy buildings, and belief-aware rewards."
+				},
+				{
+					"type": "support",
+					"label": "Religion Support",
+					"href": "/religion-support",
+					"note": "Use the support reference when you need to confirm religion names, text keys, and related support metadata."
+				}
+			]
+		},
+		"plot-setimprovementtype-172": {
+			"summary": "Sets the improvement on a plot directly, including removing it with -1.",
+			"notes": [
+				"Use this for direct plot mutation after your logic has already decided what the improvement state should become.",
+				"This is useful for scripted swaps, cleanup, or reward logic that should not wait for a worker to perform a build.",
+				"Passing -1 removes the current improvement from the plot."
+			],
+			"example": {
+				"summary": "Remove a Trading Post directly from the target plot.",
+				"language": "lua",
+				"code": "local pPlot = Map.GetPlot(iPlotX, iPlotY)\nif pPlot and pPlot:GetImprovementType() == GameInfoTypes.IMPROVEMENT_TRADING_POST then\n\tpPlot:SetImprovementType(-1)\nend"
+			},
+			"gotchas": [
+				"The first parameter is an ImprovementTypes row ID, or -1 to clear the improvement.",
+				"The optional builder parameter does not recreate the normal worker build pipeline or validation for you."
+			],
+			"seeAlso": [
+				{
+					"entryId": "game-event-buildfinished-1",
+					"note": "Common upstream hook when the improvement write happens as a follow-up to a completed worker action."
+				},
+				{
+					"type": "pattern",
+					"label": "Plot Search Pattern",
+					"href": "/pattern-library?pattern=plot-search-pattern",
+					"note": "Pattern companion when the script must find a legal destination before mutating the plot."
+				},
+				{
+					"type": "support",
+					"label": "Map Viewer",
+					"href": "/map-viewer",
+					"note": "Useful for checking terrain, feature, resource, and improvement context while debugging plot mutations."
+				}
+			]
+		},
+		"plot-setresourcetype-179": {
+			"summary": "Sets the resource on a plot directly, including removing it with -1.",
+			"notes": [
+				"Use this for direct resource placement after your logic has already picked the target plot and resource row.",
+				"This is useful for scripted resource discovery, map rewards, or scenario setup that should not depend on map generation alone.",
+				"Passing -1 removes the current resource from the plot."
+			],
+			"example": {
+				"summary": "Place Gems on an empty plot and give the resource a count of one.",
+				"language": "lua",
+				"code": "local pPlot = Map.GetPlot(iPlotX, iPlotY)\nif pPlot and pPlot:GetResourceType() == -1 then\n\tpPlot:SetResourceType(GameInfoTypes.RESOURCE_GEMS, 1)\nend"
+			},
+			"gotchas": [
+				"The first parameter is a ResourceTypes row ID, or -1 to clear the resource.",
+				"iResourceNum is still required even for luxuries; for example, a spawned luxury usually needs 1 to grant happiness correctly.",
+				"This method mutates the plot directly, so it does not validate whether the resource would normally appear there."
+			],
+			"seeAlso": [
+				{
+					"entryId": "plot-setimprovementtype-172",
+					"note": "Common companion when resource placement also stamps or swaps the plot improvement."
+				},
+				{
+					"type": "pattern",
+					"label": "Plot Search Pattern",
+					"href": "/pattern-library?pattern=plot-search-pattern",
+					"note": "Pattern companion when resource placement needs a legality search instead of a hardcoded target tile."
+				},
+				{
+					"type": "support",
+					"label": "Map Viewer",
+					"href": "/map-viewer",
+					"note": "Useful for checking map-side terrain and resource context when direct placement logic is not behaving as expected."
 				}
 			]
 		},
@@ -267,16 +451,18 @@
 		"game-event-buildfinished-1": {
 			"summary": "Hook fired when a build action finishes on a plot and resolves into an improvement result.",
 			"notes": [
-				"Use this after an improvement actually lands on the map, not while a worker is still deciding whether the action is legal.",
+				"Use this after a build has resolved on the map, not while a worker is still deciding whether the action is legal.",
 				"The hook gives you player and plot coordinates, which is enough to resolve the plot and inspect terrain, owner, and follow-up effects.",
-				"This is a good place for post-build rewards, terrain cleanup, or progress systems that only care about finished work."
+				"In practice this hook is bugged and can fire twice, so real gameplay effects should defensively dedupe themselves."
 			],
 			"example": {
-				"summary": "Grant a simple log message when a worker build finishes.",
+				"summary": "Guard against the duplicate callback before rewarding a finished Farm.",
 				"language": "lua",
-				"code": "GameEvents.BuildFinished.Add(function(iPlayer, iPlotX, iPlotY, eImprovement)\n\tlocal pPlot = Map.GetPlot(iPlotX, iPlotY)\n\tif pPlot then\n\t\tprint(\"Build finished for player\", iPlayer, \"at\", iPlotX, iPlotY, eImprovement)\n\tend\nend)"
+				"code": "local save = Modding.OpenSaveData()\n\nGameEvents.BuildFinished.Add(function(iPlayer, iPlotX, iPlotY, eImprovement)\n\tlocal sKey = string.format(\"BuildFinished_%d_%d_%d_%d_%d\", Game.GetGameTurn(), iPlayer, iPlotX, iPlotY, eImprovement)\n\tif save:GetValue(sKey) then\n\t\treturn\n\tend\n\tsave:SetValue(sKey, 1)\n\n\tif eImprovement == GameInfoTypes.IMPROVEMENT_FARM then\n\t\tPlayers[iPlayer]:ChangeGoldenAgeProgressMeter(25)\n\tend\nend)"
 			},
 			"gotchas": [
+				"This hook is bugged and commonly fires twice for the same resolved build.",
+				"Builds without an associated improvement row, such as roads, route removal, improvement removal, or terrain clearing, all report eImprovement as -1 here.",
 				"The improvement parameter reflects the completed improvement row, not necessarily the original build action enum chosen by the unit.",
 				"If you need to reason about the worker action itself, you will often need to cross-check Builds as well as Improvements."
 			],
@@ -292,7 +478,9 @@
 			],
 			"seeAlso": [
 				{
-					"table": "Builds",
+					"type": "schema",
+					"label": "Builds",
+					"href": "/schema-browser?table=Builds&tab=rows",
 					"note": "Cross-check build actions when the finished improvement alone is not enough context."
 				},
 				{
@@ -302,6 +490,18 @@
 				{
 					"entryId": "plot-getimprovementtype-45",
 					"note": "Resolve the completed plot state once the improvement has actually landed on the map."
+				},
+				{
+					"type": "pattern",
+					"label": "Build Finished Trigger",
+					"href": "/pattern-library?pattern=build-finished-trigger",
+					"note": "Recipe companion for deduping the hook and routing the finished build into a safe reward or plot-side effect."
+				},
+				{
+					"type": "support",
+					"label": "Map Viewer",
+					"href": "/map-viewer",
+					"note": "Use the map tools when the finished build logic needs terrain, feature, resource, or plotted follow-up debugging."
 				}
 			]
 		},
@@ -335,6 +535,12 @@
 				{
 					"entryId": "player-cantrain-42",
 					"note": "Method-side validation for the same production question."
+				},
+				{
+					"type": "pattern",
+					"label": "Requirements Gate Pattern",
+					"href": "/pattern-library?pattern=requirements-gate-pattern",
+					"note": "Pattern companion for layered train veto logic built from traits, techs, religions, or scenario rules."
 				}
 			]
 		},
@@ -409,6 +615,12 @@
 				{
 					"entryId": "city-getnumbuilding-178",
 					"note": "Common helper when the construct rule depends on existing building counts."
+				},
+				{
+					"type": "pattern",
+					"label": "Requirements Gate Pattern",
+					"href": "/pattern-library?pattern=requirements-gate-pattern",
+					"note": "Pattern companion for city-scoped construction gates and explicit yes-or-no requirement stacks."
 				}
 			]
 		},
@@ -438,17 +650,18 @@
 		"game-event-cityboughtplot-17": {
 			"summary": "Hook fired after a city acquires a plot through gold, faith, or culture purchase logic.",
 			"notes": [
-				"Use this after plot ownership has actually changed and the new plot can be resolved from map coordinates.",
-				"This is a strong fit for border-growth side effects, terrain-triggered bonuses, or city acquisition tracking.",
-				"The booleans help distinguish purchase pathways without requiring the hook to infer intent from the city state afterward."
+				"Use this for city-level border-growth side effects, purchase tracking, or rewards that only care that a plot was bought.",
+				"The booleans help distinguish purchase pathways without requiring the hook to infer intent from the city state afterward.",
+				"If the purchase used gold, be careful about trusting the returned plot coordinates."
 			],
 			"example": {
-				"summary": "Log a newly purchased plot and the purchase path that was used.",
+				"summary": "Resolve the city and purchase path without depending on the returned plot coordinates.",
 				"language": "lua",
-				"code": "GameEvents.CityBoughtPlot.Add(function(iPlayer, iCity, iPlotX, iPlotY, bGold, bFaithOrCulture)\n\tlocal pPlot = Map.GetPlot(iPlotX, iPlotY)\n\tif pPlot then\n\t\tprint(\"City bought plot:\", iPlayer, iCity, iPlotX, iPlotY, bGold, bFaithOrCulture)\n\tend\nend)"
+				"code": "GameEvents.CityBoughtPlot.Add(function(iPlayer, iCity, iPlotX, iPlotY, bGold, bFaithOrCulture)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pCity = pPlayer and pPlayer:GetCityByID(iCity)\n\tif pCity then\n\t\tprint(\"Plot purchase in\", pCity:GetName(), bGold, bFaithOrCulture)\n\tend\nend)"
 			},
 			"gotchas": [
 				"The city parameter is a city ID, not a City object.",
+				"Because of a game bug, gold-bought plots can report the city tile coordinates instead of the purchased plot coordinates.",
 				"bFaithOrCulture only tells you the purchase came through the non-gold path; additional mod rules may still be needed to distinguish the exact source."
 			],
 			"seeAlso": [
@@ -613,10 +826,34 @@
 				{
 					"entryId": "city-convertpercentfollowers-60",
 					"note": "Useful when follow-up logic depends on how follower counts were shifted during conversion."
+				},
+				{
+					"type": "pattern",
+					"label": "Religion Founded / Conversion Hooks",
+					"href": "/pattern-library?pattern=religion-founded-conversion-hooks",
+					"note": "Recipe companion for separating one-time founding reactions from repeatable city-conversion payloads."
+				},
+				{
+					"type": "support",
+					"label": "Religion Support",
+					"href": "/religion-support",
+					"note": "Useful when the conversion logic needs quick access to religion names, text keys, and support-side metadata."
 				}
 			]
 		},
 		"game-event-citycreated-30": {
+			"summary": "Despite the name, this hook fires after a city completes a project row.",
+			"notes": [
+				"Use this for post-project rewards or notifications that should happen after the project is actually finished.",
+				"Resolve the city through the owning player and city ID before reading local city state.",
+				"If you want actual city founding logic, use PlayerCityFounded instead."
+			],
+			"example": {
+				"summary": "Log a completed project from the city that produced it.",
+				"language": "lua",
+				"code": "GameEvents.CityCreated.Add(function(iPlayer, iCity, eProject, bGold, bFaithOrCulture)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pCity = pPlayer and pPlayer:GetCityByID(iCity)\n\tif pCity then\n\t\tprint(\"Project completed in\", pCity:GetName(), eProject, bGold, bFaithOrCulture)\n\tend\nend)"
+			},
+			"gotchas": ["This is not a city-founding hook even though the name suggests it.", "The project parameter is a ProjectTypes row ID, not a Project object."],
 			"seeAlso": [
 				{
 					"entryId": "player-initcity-613",
@@ -713,6 +950,21 @@
 			]
 		},
 		"game-event-greatpersonexpended-48": {
+			"summary": "Hook fired when a great person unit is consumed for its special action.",
+			"notes": [
+				"Use this for cooldowns, reward followups, or analytics tied to great-person consumption.",
+				"The payload gives the owning player and the unit row, which is enough for most type-based branching.",
+				"Pair this with UnitPrekill if you also need the specific unit instance or map location during removal."
+			],
+			"example": {
+				"summary": "Branch on the expended great person row without assuming you have location data.",
+				"language": "lua",
+				"code": "GameEvents.GreatPersonExpended.Add(function(iPlayer, eUnit)\n\tif eUnit == GameInfoTypes.UNIT_GREAT_ENGINEER then\n\t\tPlayers[iPlayer]:ChangeGoldenAgeProgressMeter(200)\n\tend\nend)"
+			},
+			"gotchas": [
+				"The unit parameter is a UnitTypes row ID, not a live Unit object or unit ID.",
+				"This hook does not provide location data, so location-specific effects need another hook such as UnitPrekill."
+			],
 			"seeAlso": [
 				{
 					"entryId": "unit-isgreatperson-280",
@@ -721,10 +973,28 @@
 				{
 					"entryId": "game-event-unitprekill-86",
 					"note": "Sibling hook if you also need the exact unit ID or plot during removal."
+				},
+				{
+					"type": "pattern",
+					"label": "Great Person Expended Reaction",
+					"href": "/pattern-library?pattern=great-person-expended-reaction",
+					"note": "Recipe companion for post-expended rewards, cooldowns, and scripted aftermath tied to specific GP rows."
 				}
 			]
 		},
 		"game-event-minorallieschanged-52": {
+			"summary": "Hook fired when a major civ gains or loses ally status with a city-state.",
+			"notes": [
+				"Use this for ally-threshold rewards, influence tracking, or diplomatic logic that only cares about the ally transition.",
+				"The callback gives both the city-state player ID and the major player involved in the relationship change.",
+				"The old and new values let you inspect how the relationship total shifted around the ally threshold."
+			],
+			"example": {
+				"summary": "Apply a major-civ bonus after an ally-state change with a city-state.",
+				"language": "lua",
+				"code": "GameEvents.MinorAlliesChanged.Add(function(eCS, ePlayer, bGainedLost, iOldValue, iNewValue)\n\tlocal pPlayer = Players[ePlayer]\n\tlocal pCapital = pPlayer and pPlayer:GetCapitalCity()\n\tif pCapital then\n\t\tpCapital:SetNumRealBuilding(GameInfoTypes.BUILDING_DUMMY_ALLY_NETWORK, pPlayer:GetNumMinorCivsAllied() > 0 and 1 or 0)\n\tend\nend)"
+			},
+			"gotchas": ["The first player ID is the city-state, not the major civ.", "This is the ally-threshold hook, so it does not cover every friendship change by itself."],
 			"seeAlso": [
 				{
 					"entryId": "player-getally-116",
@@ -737,6 +1007,18 @@
 			]
 		},
 		"game-event-minorfriendschanged-53": {
+			"summary": "Hook fired when a major civ gains or loses friend status with a city-state.",
+			"notes": [
+				"Use this for friendship-threshold rewards, diplomacy UI updates, or city-state tracking that should react at the friend breakpoint.",
+				"The callback gives both sides of the relationship plus the old and new influence values.",
+				"This is the friend-threshold companion to MinorAlliesChanged when you want earlier city-state relationship transitions."
+			],
+			"example": {
+				"summary": "Refresh a major-civ bonus after a friendship-state change with a city-state.",
+				"language": "lua",
+				"code": "GameEvents.MinorFriendsChanged.Add(function(eCS, ePlayer, bGainedLost, iOldValue, iNewValue)\n\tlocal pPlayer = Players[ePlayer]\n\tif pPlayer then\n\t\tfor pCity in pPlayer:Cities() do\n\t\t\tpCity:SetNumRealBuilding(GameInfoTypes.BUILDING_DUMMY_PATRONAGE_TRADE, pPlayer:GetNumMinorCivsFriends() >= 3 and 1 or 0)\n\t\tend\n\tend\nend)"
+			},
+			"gotchas": ["The first player ID is the city-state, not the major civ.", "This is a threshold hook, so it will not fire for every small influence adjustment."],
 			"seeAlso": [
 				{
 					"entryId": "player-getminorcivfriendshipwithmajor-359",
@@ -869,6 +1151,21 @@
 			]
 		},
 		"game-event-religionfounded-76": {
+			"summary": "Hook fired when a player founds a religion and its initial belief package is locked in.",
+			"notes": [
+				"Use this for founder rewards, religion-specific setup, or one-time belief-dependent state initialization.",
+				"The city parameter is the holy city ID for the founding player, so resolve it through the player if you need the City object.",
+				"The hook includes the founded religion plus the belief selections chosen during the founding flow."
+			],
+			"example": {
+				"summary": "Resolve the holy city through the city ID after a religion is founded.",
+				"language": "lua",
+				"code": "GameEvents.ReligionFounded.Add(function(iPlayer, iCity, eReligion, eBelief1, eBelief2, eBelief3, eBelief4, eBelief5)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pCity = pPlayer and pPlayer:GetCityByID(iCity)\n\tif pCity then\n\t\tprint(\"Religion founded in\", pCity:GetName(), eReligion)\n\tend\nend)"
+			},
+			"gotchas": [
+				"The city parameter is a city ID, not a City object.",
+				"Belief slots can include unused or context-dependent values, so do not assume every belief parameter is meaningful in every founding case."
+			],
 			"seeAlso": [
 				{
 					"entryId": "game-foundreligion-40",
@@ -877,6 +1174,18 @@
 				{
 					"entryId": "player-getreligioncreatedbyplayer-490",
 					"note": "Resolve the religion row associated with the founding player."
+				},
+				{
+					"type": "pattern",
+					"label": "Religion Founded / Conversion Hooks",
+					"href": "/pattern-library?pattern=religion-founded-conversion-hooks",
+					"note": "Recipe companion for founder rewards, holy-city setup, and belief-aware founding logic."
+				},
+				{
+					"type": "support",
+					"label": "Religion Support",
+					"href": "/religion-support",
+					"note": "Use the support reference when a religion lifecycle hook needs quick religion-name, text-key, or support-side lookup help."
 				}
 			]
 		},
@@ -953,6 +1262,22 @@
 			]
 		},
 		"game-event-unitprekill-86": {
+			"summary": "Hook fired just before a unit is removed from the game.",
+			"notes": [
+				"Use this for death rewards, cleanup, or final state capture that must happen before the unit disappears.",
+				"UnitPrekill fires twice in practice, first with bDelay true and then again with bDelay false.",
+				"If you need live unit data, do the work on the bDelay true call before the unit is cleared from the game."
+			],
+			"example": {
+				"summary": "Capture the dying unit's location on the first callback only.",
+				"language": "lua",
+				"code": "GameEvents.UnitPrekill.Add(function(iPlayer, iUnit, eUnit, iPlotX, iPlotY, bDelay, eByPlayer)\n\tif not bDelay then\n\t\treturn\n\tend\n\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pUnit = pPlayer and pPlayer:GetUnitByID(iUnit)\n\tif pUnit then\n\t\tprint(\"Unit removed at\", iPlotX, iPlotY, pUnit:GetName())\n\tend\nend)"
+			},
+			"gotchas": [
+				"On the second callback the dying unit has already been cleared out, so resolving it by unit ID will usually fail.",
+				"eByPlayer is unreliable here and is commonly -1.",
+				"Melee killers may already have moved onto the tile by the time you inspect the plot, so test location-sensitive logic carefully."
+			],
 			"seeAlso": [
 				{
 					"entryId": "player-getunitbyid-579",
@@ -961,6 +1286,12 @@
 				{
 					"entryId": "game-event-unitkilledincombat-85",
 					"note": "Combat-specific sibling hook for kills caused by battle resolution."
+				},
+				{
+					"type": "support",
+					"label": "Map Viewer",
+					"href": "/map-viewer",
+					"note": "Helpful when testing location-sensitive death logic against terrain, features, starting regions, or plotted tile changes."
 				}
 			]
 		},

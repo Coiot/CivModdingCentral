@@ -122,9 +122,9 @@
 					description: "Generate styled civ icons for atlas sheets and UI use.",
 				},
 				{
-					href: "/text-screen-viewer",
-					label: "Text Screen Helper",
-					description: "Browse and test text with Civ V icons across the various in-game screens.",
+					href: "/ui-screen-viewer",
+					label: "UI Screen Helper",
+					description: "Test artwork, icons, and text across the various in-game screens.",
 					disabled: true,
 					statusLabel: "Coming Soon",
 				},
@@ -201,7 +201,7 @@
 				return "is-publish";
 			case "/dds-converter":
 			case "/civ-icon-maker":
-			case "/text-screen-viewer":
+			case "/ui-screen-viewer":
 				return "is-ui";
 			case "/guided-planner":
 				return "is-planner";
