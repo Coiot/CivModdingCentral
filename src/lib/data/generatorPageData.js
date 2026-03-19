@@ -2067,24 +2067,29 @@ end`,
 		status: "Archive Pattern",
 		copy: "Use this when you want something to happen before a unit is removed from the map. It is good for death rewards, cleanup, small area effects, or clearing tracked data.",
 		deliverables: [
-			"A “UnitPrekill” hook scaffold with plot and owner resolution.",
+			"A “UnitPrekill” hook scaffold that only acts on the first callback while the dying unit still exists.",
 			"A clean branch for yield bursts, spawned aftermath units, or cleanup of tracked data.",
 			"Schema touchpoints for units, promotions, and any tables mirrored by the death effect.",
 		],
 		example: {
 			title: "Death payout and cleanup",
-			summary: "This example removes tracked state for the dead unit and gives the killer 15 gold at the death tile.",
+			summary: "This example clears tracked state on the first callback only and only pays out if the reported killer player is usable.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/UnitPrekillPayload.lua",
 					"lua",
-					'local trackedUnits = trackedUnits or {}\n\nGameEvents.UnitPrekill.Add(function(iPlayer, iUnit, iUnitType, iX, iY, bDelay, iByPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pKiller = Players[iByPlayer]\n\tlocal pPlot = Map.GetPlot(iX, iY)\n\ttrackedUnits[string.format(\'%d:%d\', iPlayer, iUnit)] = nil\n\tif pKiller and pPlot then\n\t\tpKiller:ChangeGold(15)\n\t\tpKiller:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "A defeated enemy yielded spoils.", "Unit Prekill Payload", iX, iY)\n\tend\nend)',
-					"Prekill scaffold that clears tracked state first, then pays out a simple on-death reward at the death plot.",
+					'local trackedUnits = trackedUnits or {}\n\nGameEvents.UnitPrekill.Add(function(iPlayer, iUnit, iUnitType, iX, iY, bDelay, iByPlayer)\n\tif not bDelay then\n\t\treturn\n\tend\n\n\ttrackedUnits[string.format(\'%d:%d\', iPlayer, iUnit)] = nil\n\n\tif iByPlayer == -1 then\n\t\treturn\n\tend\n\n\tlocal pKiller = Players[iByPlayer]\n\tlocal pPlot = Map.GetPlot(iX, iY)\n\tif pKiller and pPlot then\n\t\tpKiller:ChangeGold(15)\n\t\tpKiller:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "A defeated enemy yielded spoils.", "Unit Prekill Payload", iX, iY)\n\tend\nend)',
+					"Prekill scaffold that does its work on the live-unit callback, clears tracked state first, and treats killer resolution as optional rather than guaranteed.",
 				),
 			],
 		},
 		touchpoints: [
-			linkToLua("GameEvents.UnitPrekill", "game-event-unitprekill-86", "gameEvents", "Use prekill when the unit and its plot data still need to be resolved before removal."),
+			linkToLua(
+				"GameEvents.UnitPrekill",
+				"game-event-unitprekill-86",
+				"gameEvents",
+				"Use prekill when the unit and its plot data still need to be resolved before removal, but gate your logic to the first callback.",
+			),
 			linkToSchema("Units", "Typical filter table when only some unit types should trigger the payload.", "rows"),
 			linkToSchema("UnitPromotions", "Common companion table when the death logic depends on a promotion marker or death-state promotion removal.", "rows"),
 			{ label: "Yield Burst Helper", href: "/pattern-library", note: "Use a small yield-burst helper when the prekill event should immediately pay out gold, culture, or similar rewards." },
@@ -2217,25 +2222,30 @@ end`,
 		copy: "Use this when something should happen after a worker finishes a build on a tile. Good uses are small rewards, resource reveals, or placing a follow-up effect nearby.",
 		deliverables: [
 			"A “BuildFinished” scaffold for plot-level improvement completion.",
-			"A clear split between validating the finished build and applying the resulting effect.",
+			"A clear split between validating the finished improvement result and applying the resulting effect.",
 			"Schema touchpoints for builds, improvements, and plot-side resources that the effect may touch.",
 		],
 		example: {
 			title: "Reward a completed mine",
-			summary: "This example gives 10 gold when a Mine finishes and shows the player where it happened.",
+			summary: "This example dedupes the duplicate callback and gives 10 gold when a Mine improvement finishes.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/BuildFinishedTrigger.lua",
 					"lua",
-					'local iMine = GameInfoTypes.BUILD_MINE\n\nGameEvents.BuildFinished.Add(function(iPlayer, iX, iY, iBuild)\n\tif iBuild ~= iMine then\n\t\treturn\n\tend\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pPlot = Map.GetPlot(iX, iY)\n\tif not pPlayer or not pPlot then\n\t\treturn\n\tend\n\tpPlayer:ChangeGold(10)\n\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "A finished build yielded a bonus.", "Build Finished Trigger", iX, iY)\nend)',
-					"Tile-completion reaction that keys off the build type and then awards a simple plot-side bonus.",
+					'local save = Modding.OpenSaveData()\nlocal iMine = GameInfoTypes.IMPROVEMENT_MINE\n\nGameEvents.BuildFinished.Add(function(iPlayer, iX, iY, eImprovement)\n\tif eImprovement ~= iMine then\n\t\treturn\n\tend\n\n\tlocal sKey = string.format("BuildFinished_%d_%d_%d_%d_%d", Game.GetGameTurn(), iPlayer, iX, iY, eImprovement)\n\tif save:GetValue(sKey) then\n\t\treturn\n\tend\n\tsave:SetValue(sKey, 1)\n\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pPlot = Map.GetPlot(iX, iY)\n\tif not pPlayer or not pPlot then\n\t\treturn\n\tend\n\tpPlayer:ChangeGold(10)\n\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "A finished build yielded a bonus.", "Build Finished Trigger", iX, iY)\nend)',
+					"Tile-completion reaction that keys off the finished improvement row and defensively dedupes the hook before paying out the reward.",
 				),
 			],
 		},
 		touchpoints: [
-			linkToLua("GameEvents.BuildFinished", "game-event-buildfinished-1", "gameEvents", "Primary hook for reacting when workers complete an improvement or other build."),
-			linkToSchema("Builds", "Filter by the exact build that just completed before applying the effect.", "rows"),
-			linkToSchema("Improvements", "Useful when the reward depends on the finished improvement now on the plot.", "rows"),
+			linkToLua(
+				"GameEvents.BuildFinished",
+				"game-event-buildfinished-1",
+				"gameEvents",
+				"Primary hook for reacting when a finished improvement result lands on the plot, but remember it can fire twice.",
+			),
+			linkToSchema("Builds", "Cross-check the originating worker action here when the finished improvement row alone is not enough context.", "rows"),
+			linkToSchema("Improvements", "Primary filter table because the hook reports the finished improvement row now on the plot.", "rows"),
 			linkToSchema("Resources", "Common follow-up when build completion should reveal or place a nearby resource.", "rows"),
 			linkToLua("Plot:SetResourceType", "plot-setresourcetype-179", "methods", "Useful follow-up when the finished build should reveal or place a resource directly onto the plot."),
 			linkToPage(
@@ -2290,26 +2300,27 @@ end`,
 		title: "Great Person Expended Reaction",
 		focus: "GP aftermath",
 		status: "Archive Pattern",
-		copy: "Use this when spending a Great Person should also trigger a second effect. Good uses are extra rewards, saved state, or a short area effect at the same tile.",
+		copy: "Use this when spending a Great Person should also trigger a second effect. Good uses are extra rewards, saved state, or a follow-up notification that does not need the exact map tile.",
 		deliverables: [
-			"A “GreatPersonExpended” scaffold that resolves the unit type and plot.",
+			"A “GreatPersonExpended” scaffold that resolves the expended unit row from the hook payload.",
 			"A branch for post-expended rewards, notifications, or saved state updates.",
-			"Schema touchpoints for GP units, unit classes, and any related specialist-side logic.",
+			"A reminder to pair the hook with UnitPrekill when the followup effect really needs map location.",
 		],
 		example: {
 			title: "Reward a Great Person expenditure",
-			summary: "This example gives Golden Age points when a Great Engineer is used and shows the player where it happened.",
+			summary: "This example gives Golden Age points when a Great Engineer is used and anchors the notification on the capital because the hook does not provide location data.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/GreatPersonExpendedReaction.lua",
 					"lua",
-					'local iGreatEngineer = GameInfoTypes.UNIT_ENGINEER\n\nGameEvents.GreatPersonExpended.Add(function(iPlayer, iUnit, iUnitType, iX, iY)\n\tif iUnitType ~= iGreatEngineer then\n\t\treturn\n\tend\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer then\n\t\treturn\n\tend\n\tpPlayer:ChangeGoldenAgeProgressMeter(100)\n\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "A Great Person triggered a follow-up reward.", "Great Person Expended", iX, iY)\nend)',
-					"Expended-unit reaction scaffold for one-time GP aftermath rewards or state changes.",
+					'local iGreatEngineer = GameInfoTypes.UNIT_ENGINEER\n\nGameEvents.GreatPersonExpended.Add(function(iPlayer, eUnit)\n\tif eUnit ~= iGreatEngineer then\n\t\treturn\n\tend\n\tlocal pPlayer = Players[iPlayer]\n\tlocal pCapital = pPlayer and pPlayer:GetCapitalCity()\n\tif not pPlayer then\n\t\treturn\n\tend\n\tpPlayer:ChangeGoldenAgeProgressMeter(100)\n\tif pCapital then\n\t\tpPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, "A Great Person triggered a follow-up reward.", "Great Person Expended", pCapital:GetX(), pCapital:GetY())\n\tend\nend)',
+					"Expended-unit reaction scaffold for one-time GP aftermath rewards that only need the player and expended unit row, not the consumed unit's exact tile.",
 				),
 			],
 		},
 		touchpoints: [
 			linkToLua("GameEvents.GreatPersonExpended", "game-event-greatpersonexpended-48", "gameEvents", "Primary hook for scripted aftermath once a Great Person is consumed."),
+			linkToLua("GameEvents.UnitPrekill", "game-event-unitprekill-86", "gameEvents", "Pair this with prekill when the expended-unit effect truly needs plot or unit-instance data."),
 			linkToSchema("Units", "Filter against the specific Great Person unit rows that should trigger the reaction.", "rows"),
 			linkToSchema("UnitClasses", "Useful when the scripted reward should care about GP class rather than one exact unit row.", "rows"),
 			linkToSchema("Specialists", "Companion surface when the GP mechanic also mirrors specialist-side rate or city-state logic.", "rows"),
@@ -2432,13 +2443,13 @@ end`,
 				snippetFile(
 					"Lua/Gameplay/UniqueImprovementExtraYield.lua",
 					"lua",
-					"local iBuild = GameInfoTypes.BUILD_CMC_SUN_GARDEN\nlocal iImprovement = GameInfoTypes.IMPROVEMENT_CMC_SUN_GARDEN\nlocal iTourism = YieldTypes.YIELD_TOURISM\nlocal iTourismBonus = 2\n\nlocal function applyUniqueImprovementBonus(pPlot)\n\tif not pPlot then\n\t\treturn\n\tend\n\n\tlocal iX = pPlot:GetX()\n\tlocal iY = pPlot:GetY()\n\tif pPlot:GetImprovementType() == iImprovement and not pPlot:IsImprovementPillaged() then\n\t\tGame.SetPlotExtraYield(iX, iY, iTourism, iTourismBonus)\n\telse\n\t\tGame.SetPlotExtraYield(iX, iY, iTourism, 0)\n\tend\nend\n\nGameEvents.BuildFinished.Add(function(iPlayer, iX, iY, iFinishedBuild)\n\tif iFinishedBuild ~= iBuild then\n\t\treturn\n\tend\n\tapplyUniqueImprovementBonus(Map.GetPlot(iX, iY))\nend)",
-					"Runtime plot-yield grant for a unique improvement that should add a brand-new yield directly to the tile when the build completes.",
+					"local iImprovement = GameInfoTypes.IMPROVEMENT_CMC_SUN_GARDEN\nlocal iTourism = YieldTypes.YIELD_TOURISM\nlocal iTourismBonus = 2\n\nlocal function applyUniqueImprovementBonus(pPlot)\n\tif not pPlot then\n\t\treturn\n\tend\n\n\tlocal iX = pPlot:GetX()\n\tlocal iY = pPlot:GetY()\n\tif pPlot:GetImprovementType() == iImprovement and not pPlot:IsImprovementPillaged() then\n\t\tGame.SetPlotExtraYield(iX, iY, iTourism, iTourismBonus)\n\telse\n\t\tGame.SetPlotExtraYield(iX, iY, iTourism, 0)\n\tend\nend\n\nGameEvents.BuildFinished.Add(function(iPlayer, iX, iY, eImprovement)\n\tif eImprovement ~= iImprovement then\n\t\treturn\n\tend\n\tapplyUniqueImprovementBonus(Map.GetPlot(iX, iY))\nend)",
+					"Runtime plot-yield grant for a unique improvement that keys off the finished improvement row. The write is idempotent, so the duplicate callback just rewrites the same tile state safely.",
 				),
 				snippetFile(
 					"Lua/Gameplay/UniqueImprovementPercentYield.lua",
 					"lua",
-					"local iImprovement = GameInfoTypes.IMPROVEMENT_CMC_SUN_GARDEN\nlocal iYield = YieldTypes.YIELD_CULTURE\nlocal iPercent = 50\n\nlocal function syncPercentYieldBonus(pPlot)\n\tif not pPlot then\n\t\treturn\n\tend\n\n\tlocal iX = pPlot:GetX()\n\tlocal iY = pPlot:GetY()\n\tGame.SetPlotExtraYield(iX, iY, iYield, 0)\n\n\tif pPlot:GetImprovementType() ~= iImprovement or pPlot:IsImprovementPillaged() then\n\t\treturn\n\tend\n\n\tlocal iBaseYield = pPlot:GetYield(iYield)\n\tlocal iExtraYield = math.floor(iBaseYield * iPercent / 100)\n\tGame.SetPlotExtraYield(iX, iY, iYield, iExtraYield)\nend\n\nGameEvents.BuildFinished.Add(function(iPlayer, iX, iY)\n\tsyncPercentYieldBonus(Map.GetPlot(iX, iY))\nend)\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() then\n\t\treturn\n\tend\n\tfor pCity in pPlayer:Cities() do\n\t\tfor i = 0, pCity:GetNumCityPlots() - 1 do\n\t\t\tlocal pPlot = pCity:GetCityIndexPlot(i)\n\t\t\tif pPlot and pPlot:GetOwner() == iPlayer and pPlot:GetImprovementType() == iImprovement then\n\t\t\t\tsyncPercentYieldBonus(pPlot)\n\t\t\tend\n\t\tend\n\tend\nend)",
+					"local iImprovement = GameInfoTypes.IMPROVEMENT_CMC_SUN_GARDEN\nlocal iYield = YieldTypes.YIELD_CULTURE\nlocal iPercent = 50\n\nlocal function syncPercentYieldBonus(pPlot)\n\tif not pPlot then\n\t\treturn\n\tend\n\n\tlocal iX = pPlot:GetX()\n\tlocal iY = pPlot:GetY()\n\tGame.SetPlotExtraYield(iX, iY, iYield, 0)\n\n\tif pPlot:GetImprovementType() ~= iImprovement or pPlot:IsImprovementPillaged() then\n\t\treturn\n\tend\n\n\tlocal iBaseYield = pPlot:GetYield(iYield)\n\tlocal iExtraYield = math.floor(iBaseYield * iPercent / 100)\n\tGame.SetPlotExtraYield(iX, iY, iYield, iExtraYield)\nend\n\nGameEvents.BuildFinished.Add(function(iPlayer, iX, iY, eImprovement)\n\tif eImprovement == iImprovement then\n\t\tsyncPercentYieldBonus(Map.GetPlot(iX, iY))\n\tend\nend)\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() then\n\t\treturn\n\tend\n\tfor pCity in pPlayer:Cities() do\n\t\tfor i = 0, pCity:GetNumCityPlots() - 1 do\n\t\t\tlocal pPlot = pCity:GetCityIndexPlot(i)\n\t\t\tif pPlot and pPlot:GetOwner() == iPlayer and pPlot:GetImprovementType() == iImprovement then\n\t\t\t\tsyncPercentYieldBonus(pPlot)\n\t\t\tend\n\t\tend\n\tend\nend)",
 					"Percent-based plot-yield scaler that clears the previous extra yield first, reads the current Culture output, and then writes the recalculated bonus back onto the tile. The turn sync keeps it accurate if other effects change the underlying tile output later.",
 				),
 			],
@@ -2450,10 +2461,10 @@ end`,
 				"GameEvents.BuildFinished",
 				"game-event-buildfinished-1",
 				"gameEvents",
-				"Natural first hook when the effect should appear as soon as the worker finishes the unique improvement.",
+				"Natural first hook when the effect should appear as soon as the unique improvement result lands on the map.",
 			),
 			linkToSchema("Improvements", "The improvement row still defines which tile state should receive the scripted runtime yield.", "rows"),
-			linkToSchema("Builds", "Use the build row to filter the exact worker action that should trigger the runtime yield write.", "rows"),
+			linkToSchema("Builds", "Cross check Builds only when the worker action matters separately from the finished improvement result.", "rows"),
 		],
 	},
 	{
@@ -3634,13 +3645,14 @@ end)`,
 		status: "High-Use Recipe",
 		copy: "React when a city buys a tile instead of trying to infer border expansion from later map state. This is a practical place for one-time rewards, improvement placement, or civ-specific plot purchase mechanics.",
 		deliverables: [
-			"A “CityBoughtPlot” scaffold with city and plot resolution.",
+			"A “CityBoughtPlot” scaffold with city resolution and defensive handling of the returned plot coordinates.",
 			"A city lookup using “GetCityByID” so the purchase stays tied to the correct owner city.",
-			"A plot payload example that changes the tile after the purchase happens.",
+			"A split between safe reward logic for any purchase and direct tile mutation only when the coordinates are trustworthy.",
 		],
 		example: {
 			title: "Purchased-plot variants",
-			summary: "Use one version for immediate tile changes, then a second when the purchased plot should instead produce a local reward without mutating the terrain.",
+			summary:
+				"Use one version for non-gold purchases where the returned coordinates are safer to trust, then a second when every purchase should instead produce a city reward without mutating the terrain.",
 			files: [
 				snippetFile(
 					"Lua/Gameplay/CityBoughtPlotTrigger.lua",
@@ -3650,14 +3662,17 @@ end)`,
 GameEvents.CityBoughtPlot.Add(function(iPlayer, iCity, iPlotX, iPlotY, bGold, bFaithOrCulture)
 	local pPlayer = Players[iPlayer]
 	local pCity = pPlayer and pPlayer:GetCityByID(iCity)
+	if bGold or not pPlayer or not pCity then
+		return
+	end
 	local pPlot = Map.GetPlot(iPlotX, iPlotY)
-	if not pCity or not pPlot or pPlot:IsWater() or pPlot:GetImprovementType() ~= -1 then
+	if not pPlot or pPlot:IsWater() or pPlot:GetImprovementType() ~= -1 then
 		return
 	end
 	pPlot:SetImprovementType(iLandmark)
 	pPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, pCity:GetName() .. " improved its newly purchased tile.", "City Bought Plot", iPlotX, iPlotY)
 end)`,
-					"Practical border-purchase example that uses the hook payload directly and modifies the purchased tile immediately.",
+					"Practical border-purchase example that only mutates the plot on the non-gold yield, where the returned coordinates are less likely to be the city tile by mistake.",
 				),
 				snippetFile(
 					"Lua/Gameplay/CityBoughtPlotReward.lua",
@@ -3669,16 +3684,21 @@ end)`,
 		return
 	end
 	pPlayer:ChangeGold(15)
-	pPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, pCity:GetName() .. " earned a border-expansion reward.", "City Bought Plot", iPlotX, iPlotY)
+	pPlayer:AddNotification(NotificationTypes.NOTIFICATION_GENERIC, pCity:GetName() .. " earned a border-expansion reward.", "City Bought Plot", pCity:GetX(), pCity:GetY())
 end)`,
-					"Reward-only variant. Use this when the purchased tile itself should stay unchanged but the city or player should still get a border-expansion bonus.",
+					"Reward-only variant. Use this when the purchased tile itself should stay unchanged and the effect should remain safe even on gold bought plots.",
 				),
 			],
 		},
 		touchpoints: [
-			linkToLua("GameEvents.CityBoughtPlot", "game-event-cityboughtplot-17", "gameEvents", "Best hook when the effect should happen exactly on a tile purchase."),
+			linkToLua(
+				"GameEvents.CityBoughtPlot",
+				"game-event-cityboughtplot-17",
+				"gameEvents",
+				"Best hook when the effect should happen exactly on a tile purchase, but be careful with the returned plot coordinates on gold buys.",
+			),
 			linkToLua("Player:GetCityByID", "player-getcitybyid-146", "methods", "Resolve the owner city from the hook before attaching the reward or marker."),
-			linkToLua("Plot:SetImprovementType", "plot-setimprovementtype-172", "methods", "Useful when the purchased tile should immediately gain a scripted improvement or marker."),
+			linkToLua("Plot:SetImprovementType", "plot-setimprovementtype-172", "methods", "Useful when a trusted purchased tile should immediately gain a scripted improvement or marker."),
 			linkToSchema("Improvements", "Validate the improvement row used by the purchased-tile follow-up effect.", "rows"),
 			linkToPage(
 				"Yield Burst Helper",
