@@ -251,7 +251,7 @@ export const siteResourceGroups = [
 				href: "/workshop-uploader",
 				status: "Live",
 				description:
-					"Dedicated OS agnostic app for uploads and updates to the Steam Workshop. Comes with everything you need to package and publish mods without requiring the 2010 version of Vsiaul Studio to run ModBuddy.",
+					"Dedicated OS agnostic app for uploads and updates to the Steam Workshop. Comes with everything you need to package and publish mods without requiring the 2010 version of Visual Studio to run ModBuddy.",
 				kind: "Tool",
 			},
 			{
