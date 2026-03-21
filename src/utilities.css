@@ -150,7 +150,7 @@
 /* Width utilities */
 
 .fit-content {
-	width: fit-content;
+	width: fit-content !important;
 }
 
 .min-content {

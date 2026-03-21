@@ -1,0 +1,158 @@
+{{Infobox civs
+|title = The Lenca
+|image = LencaMap.png
+|imagecaption = Map by Tradboy and DarthKyofu
+|bgcolour = #cfcac1
+|iconcolour = #0064b2
+|leader = Lempira
+|bias = Hills
+|religion = Catholicism<br>Tzolk'in (HR)
+|empire_name = Lenca Empire
+|adjectives = Lenca
+|capital = Cerquín
+|government = Monarchy
+|maplabelslanguage = 
+|mercenaries =
+|religiousintolerance =
+|slavery =
+|traits =
+|culture= Mesoamerican}The Lenca led by Lempira are a custom civilization mod by Tradboy, with contributions from DarthKyofu and NopeCopter.
+
+This mod requires Brave New World.
+
+== Overview ==
+=== '''Dawn of Man''' ===
+=
+Blessings to you Lempira, Lord of the Hills of Cerquín and military leader of the Lenca, the ferocious Jaguar people of El Salvador and Honduras. Your people lived alongside the Maya and Pipiles, thriving among them as great builders of pyramids and fierce warriors. Under your command, you unified the Lencas, creating a military force to push back against the Spanish, with poisonous spears on hand and deep knowledge of the mountain ranges.
+Great hero of Central America, will you sharpen your arrows and poison the tips of your spears to prove to the world stage that the Jaguar people will not be forgotten. Can you build a civilization that will stand the test of time?
+Introduction:  You've entered the territory of the Jaguar People, I, Lempira, recognize you're bravery for stepping towards us,beware not to cross me.
+Defeat: You’ve bested the people of the Jaguar, but you will never be as fierce as my people are, so keep in mind that you will never be the Jaguar, just the lucky hand stand stumble to it's heart!
+
+=== '''Lempira''' ===
+
+
+==== '''Dawn of Man''' ====
+[[File:Lempira.png|thumb|left|290x290px|Art by Tradboy and DarthKyofu]]
+Blessings to you Lempira, Lord of the Hills of Cerquín and military leader of the Lenca, the ferocious Jaguar people of El Salvador and Honduras. Your people lived alongside the Maya and Pipiles, thriving among them as great builders of pyramids and fierce warriors. Under your command, you unified the Lencas, creating a military force to push back against the Spanish, with poisonous spears on hand and deep knowledge of the mountain ranges.
+
+'''Introduction: ''' You've entered the territory of the Jaguar People, I, Lempira, recognize you're bravery for stepping towards us,beware not to cross me.
+
+'''Defeat:''' You’ve bested the people of the Jaguar, but you will never be as fierce as my people are, so keep in mind that you will never be the Jaguar, just the lucky hand stand stumble to it's heart!
+
+== Unique Attributes ==
+{| class="article-table"
+! colspan="2" style="border-color:#0064b2;background-color:#cfcac1;"|<div style="font-size:12pt;color:#0064b2;">The Lenca (Lempira)</div>
+|-
+|[[File:Placeholder.png|left|thumb|145px|Art credit pending]]
+|style="vertical-align:top;" |'''Lord of Hills and Mountains'''<br />
+Enemy units take damage when beginning their turn adjacent to owned mountains. Mines adjacent to mountains may spawn the {{WhiteClayIcon}}White Clay bonus resource when built, allowing the construction of Stone Works in cities.
+|-
+|[[File:Placeholder.png|left|thumb|145px|Art credit pending]]
+|style="vertical-align:top;" |'''Poisoned Tip Spearman''' ([[Pikeman]])<br />
+* Poisoned Tip Spearman (Pikeman)
+* -20 ProductionProduction Cost.
+* -2 StrengthCombat Strength.
+* Deals attrition damage to injured enemy units that start their turn adjacent to it.
+* Heals 35 HP from killing units.
+|-
+|[[File:Placeholder.png|left|thumb|145px|Art credit pending]]
+|style="vertical-align:top;" |'''Altar of Life''' ([[Shrine]])<br />
+* Altar of Life (Shrine)
+* +1 FoodFood and +1 FaithFaith on Bonus Resources
+* +2 CultureCulture on {{WhiteClayIcon}}White Clay.
+|}
+{| border="0" cellpadding="1" cellspacing="1" class="article-table" style="width: 300px;"
+|-
+| class="mw-collapsible mw-collapsed" data-collapsetext="Collapse" data-expandtext="Expand"|'''City List'''
+
+<div class="mw-collapsible-content">
+#Cerquín
+#Congolón
+#Mayapaquin
+#Contao
+#Quelepa
+#Yarumela
+#Tenampúa
+#Los Naranjos
+#El Chircal
+#Tazumal
+#Trapíche
+#Cerén
+#Care
+#Potón
+#Tecuzincalpan
+#Acajutla
+#Xiro-yo
+#Echironga
+#Gualan
+#Lepaera
+#Talgua
+#Jucuarán
+#Pomola
+</div>
+|-
+| class="mw-collapsible mw-collapsed" data-collapsetext="Collapse" data-expandtext="Expand"|'''Spy List'''
+
+<div class="mw-collapsible-content">
+*Managuara
+*Raffi
+*Entepica
+*Tapica
+*Erandique
+*Ilanguipuca
+*Icelaca
+*Itanipuca
+*Comizahual
+*Cacalote
+*Cusuco
+*Tacuacín
+</div>
+|}
+
+[[File:Lenca.png|frameless|thumb|right|172px]]
+
+==Music==
+{| border="0" cellpadding="1" cellspacing="1" class="article-table article-table-selected" style="width: 700px;"
+|-
+! scope="col"|Peace Theme
+! scope="col"|War Theme
+|-
+|'''Solo le pido a Dios''' by Altiplano Lenca
+|'''Lamento Lenca''' by Job Sis
+|}
+
+== Mod Support ==
+{{Template:Mod Support Infobox
+|aa=No
+|civivtraits=No
+|claimscoloniescrimes=No
+|culdiv=Yes
+|ethnicunits=No
+|eandd=No
+|maplabels=No
+|piety=Yes
+|uci=No
+|ynaemp=Yes
+|histreligions=Yes
+|mercenaries=No
+|enlightenmentera=No}}
+
+== Full Credits List ==
+{| class="wikia-infobox"
+|-
+| class="wikia-infobox-image" colspan="2"| [https://steamcommunity.com/sharedfiles/filedetails/?id=3598796431 '''Steam Workshop''']
+|-
+|Latest Version:
+|v 1
+|-
+|Last Updated:
+|November 2025
+|}
+* ''Tradboy'': Author
+* ''DarthKyofu'': Art Revision
+* ''NopeCopter'': Code (Lua)
+
+{{TradboyNav}}
+[[Category:Tradboy]]
+[[Category:All Civilizations]]
+[[Category:Mesoamerican Cultures]]

@@ -4172,7 +4172,7 @@ export const wizardCards = [
 			linkToSchema("Civilizations", "Core civ shell the scaffold clones and rewires around the generated civ keys.", "rows"),
 			linkToSchema("Civilization_Leaders", "Binds the generated leader into the civ package.", "rows"),
 			linkToSchema("Leader_Traits", "Attaches the generated trait to the generated leader.", "rows"),
-			linkToSchema("Civilization_UnitClassOverrides", "Primary unique-unit override table emitted by the scaffold.", "rows"),
+			linkToSchema("Civilization_UnitClassOverrides", "Primary unique unit override table emitted by the scaffold.", "rows"),
 			linkToSchema("Civilization_BuildingClassOverrides", "Used only when the optional second unique is a building.", "rows"),
 			linkToSchema("Improvements", "Needed when the optional second unique is a tile improvement instead of a building or unit.", "rows"),
 			linkToPage(

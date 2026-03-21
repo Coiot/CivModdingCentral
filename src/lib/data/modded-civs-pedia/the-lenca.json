@@ -1,0 +1,203 @@
+{
+  "id": "civ-the-lenca-lempira",
+  "slug": "the-lenca",
+  "kind": "civilization",
+  "title": "The Lenca",
+  "leader": "Lempira",
+  "summary": "The Lenca led by Lempira are a custom civilization mod by Tradboy, with contributions from DarthKyofu and NopeCopter.",
+  "source": {
+    "type": "wiki",
+    "wikiPageTitle": "The Lenca",
+    "wikiUrl": "",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3598796431",
+    "version": "v 1",
+    "lastUpdated": "November 2025",
+    "modFolderName": ""
+  },
+  "identity": {
+    "empireName": "Lenca Empire",
+    "adjectives": "Lenca",
+    "capital": "Cerquín",
+    "bias": "Hills",
+    "religion": [
+      "Catholicism",
+      "Tzolk'in (HR)"
+    ],
+    "government": "Monarchy",
+    "culture": "Mesoamerican",
+    "mapLabelsLanguage": "",
+    "requiredContent": [
+      "Brave New World"
+    ]
+  },
+  "presentation": {
+    "mapImage": "LencaMap.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LencaMap.png",
+    "mapImageCaption": "Map by Tradboy and DarthKyofu",
+    "iconImage": "Lenca.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Lenca.png",
+    "leaderSceneImage": "Lempira.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Lempira.png",
+    "leaderSceneArtCredit": "Art by Tradboy and DarthKyofu",
+    "colors": {
+      "background": "#cfcac1",
+      "icon": "#0064b2"
+    }
+  },
+  "overview": {
+    "civilization": {
+      "title": "Dawn of Man",
+      "url": "",
+      "body": "=\nBlessings to you Lempira, Lord of the Hills of Cerquín and military leader of the Lenca, the ferocious Jaguar people of El Salvador and Honduras. Your people lived alongside the Maya and Pipiles, thriving among them as great builders of pyramids and fierce warriors. Under your command, you unified the Lencas, creating a military force to push back against the Spanish, with poisonous spears on hand and deep knowledge of the mountain ranges.\nGreat hero of Central America, will you sharpen your arrows and poison the tips of your spears to prove to the world stage that the Jaguar people will not be forgotten. Can you build a civilization that will stand the test of time?\nIntroduction:  You've entered the territory of the Jaguar People, I, Lempira, recognize you're bravery for stepping towards us,beware not to cross me.\nDefeat: You’ve bested the people of the Jaguar, but you will never be as fierce as my people are, so keep in mind that you will never be the Jaguar, just the lucky hand stand stumble to it's heart!"
+    },
+    "leader": {
+      "title": "",
+      "body": "",
+      "url": ""
+    }
+  },
+  "dawnOfMan": {
+    "blessing": "Blessings to you Lempira, Lord of the Hills of Cerquín and military leader of the Lenca, the ferocious Jaguar people of El Salvador and Honduras. Your people lived alongside the Maya and Pipiles, thriving among them as great builders of pyramids and fierce warriors. Under your command, you unified the Lencas, creating a military force to push back against the Spanish, with poisonous spears on hand and deep knowledge of the mountain ranges.",
+    "introduction": "You've entered the territory of the Jaguar People, I, Lempira, recognize you're bravery for stepping towards us,beware not to cross me.",
+    "defeat": "You’ve bested the people of the Jaguar, but you will never be as fierce as my people are, so keep in mind that you will never be the Jaguar, just the lucky hand stand stumble to it's heart!"
+  },
+  "uniques": [
+    {
+      "slot": "unique ability",
+      "name": "Lord of Hills and Mountains",
+      "replaces": "",
+      "art": "",
+      "artUrl": "",
+      "artCredit": "",
+      "body": "Enemy units take damage when beginning their turn adjacent to owned mountains. Mines adjacent to mountains may spawn the {{WhiteClayIcon}}White Clay bonus resource when built, allowing the construction of Stone Works in cities.",
+      "bullets": []
+    },
+    {
+      "slot": "unique unit",
+      "name": "Poisoned Tip Spearman",
+      "replaces": "Pikeman",
+      "art": "",
+      "artUrl": "",
+      "artCredit": "",
+      "body": "",
+      "bullets": [
+        "Poisoned Tip Spearman (Pikeman)",
+        "-20 ProductionProduction Cost.",
+        "-2 StrengthCombat Strength.",
+        "Deals attrition damage to injured enemy units that start their turn adjacent to it.",
+        "Heals 35 HP from killing units."
+      ]
+    },
+    {
+      "slot": "unique unit",
+      "name": "Altar of Life",
+      "replaces": "Shrine",
+      "art": "",
+      "artUrl": "",
+      "artCredit": "",
+      "body": "",
+      "bullets": [
+        "Altar of Life (Shrine)",
+        "+1 FoodFood and +1 FaithFaith on Bonus Resources",
+        "+2 CultureCulture on {{WhiteClayIcon}}White Clay."
+      ]
+    }
+  ],
+  "nameLists": [
+    {
+      "title": "City List",
+      "items": [
+        "Cerquín",
+        "Congolón",
+        "Mayapaquin",
+        "Contao",
+        "Quelepa",
+        "Yarumela",
+        "Tenampúa",
+        "Los Naranjos",
+        "El Chircal",
+        "Tazumal",
+        "Trapíche",
+        "Cerén",
+        "Care",
+        "Potón",
+        "Tecuzincalpan",
+        "Acajutla",
+        "Xiro-yo",
+        "Echironga",
+        "Gualan",
+        "Lepaera",
+        "Talgua",
+        "Jucuarán",
+        "Pomola"
+      ]
+    },
+    {
+      "title": "Spy List",
+      "items": [
+        "Managuara",
+        "Raffi",
+        "Entepica",
+        "Tapica",
+        "Erandique",
+        "Ilanguipuca",
+        "Icelaca",
+        "Itanipuca",
+        "Comizahual",
+        "Cacalote",
+        "Cusuco",
+        "Tacuacín"
+      ]
+    }
+  ],
+  "music": {
+    "peace": {
+      "title": "Solo le pido a Dios",
+      "credit": "Altiplano Lenca"
+    },
+    "war": {
+      "title": "Lamento Lenca",
+      "credit": "Job Sis"
+    }
+  },
+  "modSupport": {
+    "aa": false,
+    "civivtraits": false,
+    "claimscoloniescrimes": false,
+    "culdiv": true,
+    "ethnicunits": false,
+    "eandd": false,
+    "maplabels": false,
+    "piety": true,
+    "uci": false,
+    "ynaemp": true,
+    "histreligions": true,
+    "mercenaries": false,
+    "enlightenmentera": false
+  },
+  "credits": [
+    {
+      "name": "Tradboy",
+      "role": "Author"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art Revision"
+    },
+    {
+      "name": "NopeCopter",
+      "role": "Code (Lua)"
+    }
+  ],
+  "categories": [
+    "Tradboy",
+    "All Civilizations",
+    "Mesoamerican Cultures"
+  ],
+  "navTemplate": "TradboyNav",
+  "issues": [],
+  "meta": {
+    "formatVersion": 1,
+    "createdAt": "2026-03-21T20:29:39.657Z"
+  }
+}

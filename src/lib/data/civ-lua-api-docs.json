@@ -189,7 +189,7 @@
 			"summary": "Returns an iterator over every unit the player currently owns.",
 			"notes": [
 				"Use this when you need one or more unit objects and already have the player.",
-				"The iterator yields Unit objects directly, so it is a common starting point for promotion refreshes, per-unit scans, and unique-unit checks.",
+				"The iterator yields Unit objects directly, so it is a common starting point for promotion refreshes, per-unit scans, and unique unit checks.",
 				"This is especially useful when you want to inspect units by type without first collecting unit IDs."
 			],
 			"example": {
@@ -258,7 +258,7 @@
 			"summary": "Returns the unit type row ID for a specific unit object.",
 			"notes": [
 				"Use this when logic should only affect specific unit types.",
-				"This is commonly paired with unique-unit checks, replacement logic, or promotion systems that only apply to certain rows in Units.",
+				"This is commonly paired with unique unit checks, replacement logic, or promotion systems that only apply to certain rows in Units.",
 				"It pairs naturally with Player:Units() when you need to scan a player's roster for one type of unit."
 			],
 			"example": {
@@ -751,7 +751,7 @@
 			"summary": "Unit-level veto hook for whether a specific unit may upgrade into a target unit type and class.",
 			"notes": [
 				"Use this to enforce custom upgrade restrictions that depend on civ rules, scenarios, or temporary gameplay states.",
-				"The hook provides both the unit class and the target unit row, which makes it useful for unique-unit replacement logic.",
+				"The hook provides both the unit class and the target unit row, which makes it useful for unique unit replacement logic.",
 				"This is one of the cleaner places to stop an upgrade path before it appears to the player as valid."
 			],
 			"example": {

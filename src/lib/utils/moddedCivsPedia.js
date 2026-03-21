@@ -338,7 +338,7 @@ function parseUniqueAttributes(section, wikiUrl = "") {
 		const bullets = lines.filter((line) => line.length > 0 && body.includes("*"));
 		const textBody = body.includes("*") ? "" : lines.join(" ");
 		uniques.push({
-			slot: index === 0 ? "trait" : "unique-unit",
+			slot: index === 0 ? "unique ability" : "unique unit",
 			name,
 			replaces,
 			art,
@@ -1430,7 +1430,7 @@ export async function createPediaEntryFromModFolderFiles(fileList) {
 
 	if (traitRow) {
 		entry.uniques.push({
-			slot: "trait",
+			slot: "unique ability",
 			name: findTextForTag(textByTag, traitRow.ShortDescription) || formatIdentifier(traitRow.Type),
 			replaces: "",
 			art: "",
@@ -1442,7 +1442,7 @@ export async function createPediaEntryFromModFolderFiles(fileList) {
 
 	for (const row of unitOverrides.filter((item) => item.CivilizationType === civRow.Type)) {
 		const unitRow = units.get(row.UnitType);
-		const unique = buildUniqueFromClassOverride(row, unitRow, "unique-unit", textByTag);
+		const unique = buildUniqueFromClassOverride(row, unitRow, "unique unit", textByTag);
 		if (unique) {
 			entry.uniques.push(unique);
 		}
@@ -1450,7 +1450,7 @@ export async function createPediaEntryFromModFolderFiles(fileList) {
 
 	for (const row of buildingOverrides.filter((item) => item.CivilizationType === civRow.Type)) {
 		const buildingRow = buildings.get(row.BuildingType);
-		const unique = buildUniqueFromClassOverride(row, buildingRow, "unique-building", textByTag);
+		const unique = buildUniqueFromClassOverride(row, buildingRow, "unique building", textByTag);
 		if (unique) {
 			entry.uniques.push(unique);
 		}
