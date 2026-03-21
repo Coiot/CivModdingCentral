@@ -1,5 +1,6 @@
 <script>
 	import { tick } from "svelte";
+	import HelpfulLinksPanel from "./HelpfulLinksPanel.svelte";
 	import { buildHexVertices, computeMapMetrics, tileCenter } from "../map/hex.js";
 	import { resolveTerrainColor } from "../map/colors.js";
 	import { computeTooltipBridgeRect, computeTooltipCoords } from "../map/tooltip.js";
@@ -3971,32 +3972,6 @@
 		}
 		return formatMapLabel(String(value).replace(/^FEATURE_/, ""));
 	}
-
-	function relatedToolAccentClass(href) {
-		const value = String(href || "");
-		if (value.includes("/schema-browser")) return "is-schema";
-		if (value.includes("/lua-api-explorer")) return "is-lua";
-		if (value.includes("/pattern-library")) return "is-pattern";
-		if (value.includes("/template-generators")) return "is-generator";
-		if (value.includes("/guided-planner")) return "is-planner";
-		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "is-publish";
-		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "is-ui";
-		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "is-support";
-		return "is-tool";
-	}
-
-	function relatedToolTypeLabel(href) {
-		const value = String(href || "");
-		if (value.includes("/schema-browser")) return "Schema";
-		if (value.includes("/lua-api-explorer")) return "Lua";
-		if (value.includes("/pattern-library")) return "Pattern";
-		if (value.includes("/template-generators")) return "Generator";
-		if (value.includes("/guided-planner")) return "Planner";
-		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "Publish";
-		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "UI";
-		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "Support";
-		return "Tool";
-	}
 </script>
 
 <section class="viewer-page tile-map" aria-live="polite">
@@ -4022,7 +3997,7 @@
 				<span>{loadingMessage}</span>
 			</p>
 		{/if}
-		<div class="viewer-header">
+		<div class="viewer-header inline flex-wrap">
 			<div class="map-meta">
 				<h2>{currentMap?.title || "Map Viewer"}</h2>
 				<p class="meta-line">
@@ -4030,7 +4005,7 @@
 				</p>
 			</div>
 
-			<div class="tile-map-controls" role="toolbar" aria-label="Map zoom controls">
+			<div class="tile-map-controls inline half flex-wrap" role="toolbar" aria-label="Map zoom controls">
 				<div class="tile-map-control-group">
 					<span class="tile-map-control-label">Map</span>
 					<select class="tile-map-select" value={activeMapId || currentMap?.id || ""} onchange={(event) => handleSelectMap(event.currentTarget.value)} aria-label="Select map">
@@ -4070,10 +4045,10 @@
 			</div>
 		</div>
 
-		<div class="workspace" class:panel-collapsed={panelCollapsed}>
+		<div class="workspace stack" class:panel-collapsed={panelCollapsed}>
 			<div class="stage-wrap">
 				<div
-					class="viewport"
+					class="viewport relative overflow-hidden"
 					role="region"
 					aria-label="Interactive hex map viewport"
 					use:mountViewport
@@ -4243,7 +4218,7 @@
 								{#if notesByKey[hoveredTile.key]}
 									<div class="tile-info-notes">
 										<div class="tile-info-label">Notes</div>
-										<div class="tile-info-notes-value">{notesByKey[hoveredTile.key]}</div>
+										<div class="tile-info-notes-value overflow">{notesByKey[hoveredTile.key]}</div>
 									</div>
 								{/if}
 							</div>
@@ -4253,13 +4228,13 @@
 
 				<section class="tile-pin-inspector" aria-live="polite" aria-label="Selected tile pin details">
 					{#if selectedTile}
-						<div class="tile-pin-inspector-head">
+						<div class="tile-pin-inspector-head inline half flex-wrap">
 							<h3>Tile {selectedTile.col}, {selectedTile.sourceRow}</h3>
 							<span>{selectedTilePins.length} pin{selectedTilePins.length === 1 ? "" : "s"}</span>
 						</div>
 
 						{#if selectedTilePins.length}
-							<div class="tile-pin-inspector-tabs" role="tablist" aria-label="Pins on selected tile">
+							<div class="tile-pin-inspector-tabs inline half flex-wrap" role="tablist" aria-label="Pins on selected tile">
 								{#each selectedTilePins as pin (pin.viewId || pin.id)}
 									<button type="button" class:active={String(inspectedTilePin?.id || "") === String(pin.id || "")} onclick={() => selectInspectedPin(pin.id)}>
 										{pinDisplayName(pin)}
@@ -4299,7 +4274,7 @@
 							<p class="panel-intro">No civilization pins on the selected tile.</p>
 						{/if}
 					{:else}
-						<div class="tile-pin-inspector-head">
+						<div class="tile-pin-inspector-head inline half flex-wrap">
 							<h3>Pin Details</h3>
 						</div>
 						<p class="panel-intro">Select a tile on the map to inspect Civilization pin metadata.</p>
@@ -4518,14 +4493,14 @@
 								</label>
 							</div>
 							<div class="button-row pin-action-row">
-								<span class="ui-tooltip-wrap">
+								<span class="ui-tooltip-wrap relative">
 									<button type="button" onclick={startNewPinEntry} disabled={!canEditPins}>New Pin</button>
 									{#if !canEditPins}
 										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
 									{/if}
 								</span>
 
-								<span class="ui-tooltip-wrap">
+								<span class="ui-tooltip-wrap relative">
 									<button type="button" onclick={addOrUpdatePin} disabled={!canEditPins || pinEditorMode === "idle"}>{upsertCivButtonLabel}</button>
 									{#if !canEditPins}
 										<span class="ui-tooltip">Sign in or switch to local to edit pins.</span>
@@ -4534,14 +4509,14 @@
 									{/if}
 								</span>
 
-								<span class="ui-tooltip-wrap">
+								<span class="ui-tooltip-wrap relative">
 									<button type="button" onclick={copyPin} disabled={!matchedSelectedPin}>Copy Pin</button>
 									{#if !matchedSelectedPin}
 										<span class="ui-tooltip">Load a pin first to copy it.</span>
 									{/if}
 								</span>
 
-								<span class="ui-tooltip-wrap">
+								<span class="ui-tooltip-wrap relative">
 									<button type="button" onclick={pastePin} disabled={!canPastePin}>Paste Pin</button>
 									{#if !copiedPinTemplate}
 										<span class="ui-tooltip">Copy a pin first.</span>
@@ -4590,7 +4565,7 @@
 										{@const source = resolvePinSource(pin)}
 										{@const canEditSource = source === "shared" ? canEdit : true}
 										<div class="tile-pin-item">
-											<span class="ui-tooltip-wrap">
+											<span class="ui-tooltip-wrap relative">
 												<button type="button" class="tile-pin-load" onclick={() => loadPinIntoEditor(pin, source)} disabled={!canEditSource}>
 													<span class="tile-pin-swatch" style={pinStyle(pin)}></span>
 													<span>{pinDisplayName(pin)}</span>
@@ -4600,7 +4575,7 @@
 													<span class="ui-tooltip">Sign in to edit shared pins.</span>
 												{/if}
 											</span>
-											<span class="ui-tooltip-wrap">
+											<span class="ui-tooltip-wrap relative">
 												<button
 													type="button"
 													class="tile-pin-remove danger-icon-button"
@@ -4780,10 +4755,10 @@
 							</div>
 
 							<div class="button-row pin-action-row">
-								<span class="ui-tooltip-wrap">
+								<span class="ui-tooltip-wrap relative">
 									<button type="button" onclick={addOrUpdateLabel} disabled={!canEdit || labelEditorMode === "idle"}>{upsertLabelButtonLabel}</button>
 								</span>
-								<span class="ui-tooltip-wrap">
+								<span class="ui-tooltip-wrap relative">
 									<button
 										type="button"
 										class="danger-icon-button"
@@ -4823,7 +4798,7 @@
 									<p class="tile-pin-list-title">Custom labels on tile ({selectedTileCustomLabels.length})</p>
 									{#each selectedTileCustomLabels as label (label.id)}
 										<div class="tile-pin-item">
-											<span class="ui-tooltip-wrap">
+											<span class="ui-tooltip-wrap relative">
 												<button type="button" class="tile-pin-load" onclick={() => loadLabelIntoEditor(label)} disabled={!canEdit}>
 													<span>{label.name}</span>
 													<span class="tile-label-meta">{labelSummary(label)}</span>
@@ -4832,7 +4807,7 @@
 													<span class="ui-tooltip">Sign in to edit labels.</span>
 												{/if}
 											</span>
-											<span class="ui-tooltip-wrap">
+											<span class="ui-tooltip-wrap relative">
 												<button
 													type="button"
 													class="tile-pin-remove danger-icon-button"
@@ -4886,11 +4861,11 @@
 									<span class="ui-tooltip">Sign in to edit notes.</span>
 								{/if}
 							</div>
-							<div class="button-row">
-								<span class="ui-tooltip-wrap">
+							<div class="button-row inline half flex-wrap">
+								<span class="ui-tooltip-wrap relative">
 									<button type="button" onclick={saveNotes} disabled={!canEdit}>Save Notes</button>
 								</span>
-								<span class="ui-tooltip-wrap">
+								<span class="ui-tooltip-wrap relative">
 									<button
 										type="button"
 										disabled={!canEdit}
@@ -4955,13 +4930,13 @@
 							<p class="status-inline">{exportStatus}</p>
 						{/if}
 						<div class="export-actions button-row">
-							<span class="ui-tooltip-wrap">
+							<span class="ui-tooltip-wrap relative">
 								<button type="button" onclick={downloadExportSql} disabled={!exportSqlText}>Download SQL</button>
 								{#if !exportSqlText}
 									<span class="ui-tooltip">Add pins to enable SQL export.</span>
 								{/if}
 							</span>
-							<span class="ui-tooltip-wrap">
+							<span class="ui-tooltip-wrap relative">
 								<button type="button" onclick={downloadExportZip} disabled={!exportLuaText || !exportModInfoText}>Download Zip</button>
 								{#if !exportLuaText || !exportModInfoText}
 									<span class="ui-tooltip">Add pins to enable zip export.</span>
@@ -4989,7 +4964,7 @@
 					<div id="map-tools-panel-settings" class="panel-body" role="tabpanel" aria-labelledby="map-tools-tab-settings">
 						<h3>Settings</h3>
 						<p class="panel-intro">Adjust map visibility and rendering options for quick focus while reviewing tiles.</p>
-						<div class="settings-group">
+						<div class="settings-group stack half">
 							<label class="check-row">
 								<input type="checkbox" checked={settings.showPins} onchange={() => toggleSetting("showPins")} />
 								<span class="check-row-copy">
@@ -5056,7 +5031,7 @@
 							</label>
 						</div>
 						<div class="pin-reset-row">
-							<span class="ui-tooltip-wrap">
+							<span class="ui-tooltip-wrap relative">
 								<button
 									type="button"
 									class="danger-text-button"
@@ -5075,7 +5050,7 @@
 							</span>
 							<p class="pin-reset-hint">Clears locally saved pins for this map only.</p>
 						</div>
-						<!-- <div class="button-row">
+						<!-- <div class="button-row inline half flex-wrap">
 							<button type="button" onclick={resetSettings}>Reset Settings</button>
 						</div> -->
 					</div>
@@ -5084,23 +5059,7 @@
 		</div>
 	{/if}
 
-	<section class="viewer-related-panel" aria-label="Related map tools">
-		<div class="viewer-related-head">
-			<p class="eyebrow">Helpful Links</p>
-		</div>
-
-		<div class="viewer-related-grid">
-			{#each MAP_RELATED_TOOLS as tool (tool.href)}
-				<a class={`viewer-related-card ${relatedToolAccentClass(tool.href)}`} href={tool.href}>
-					<div class="viewer-related-card-head">
-						<h3>{tool.label}</h3>
-						<span class="viewer-related-card-kind">{relatedToolTypeLabel(tool.href)}</span>
-					</div>
-					<p>{tool.description}</p>
-				</a>
-			{/each}
-		</div>
-	</section>
+	<HelpfulLinksPanel ariaLabel="Related map tools" links={MAP_RELATED_TOOLS} tone="support" />
 </section>
 
 <style>
@@ -5135,7 +5094,7 @@
 			0 8px 20px color-mix(in oklch, var(--shadow-soft) 64%, transparent);
 	}
 
-	:global(:root[data-theme="dark"]) .tile-map {
+	.tile-map {
 		& .viewport {
 			background: oklch(0.25 0.005 200);
 			box-shadow: 0 18px 32px hsl(35deg 22% 4% / 0.38);
@@ -5221,37 +5180,6 @@
 		}
 	}
 
-	:global(:root[data-theme="light"]) .tile-map {
-		& .tile-pin-inspector-tabs button.active,
-		& .tab-row button.active,
-		& .pin-edit-buttons button.active,
-		& .pin-mode-buttons button.active {
-			color: color-mix(in oklch, var(--ink) 92%, black 8%);
-			background: linear-gradient(145deg, color-mix(in oklch, white 28%, var(--accent)), color-mix(in oklch, white 18%, var(--accent-strong)));
-			border-color: color-mix(in oklch, var(--panel-border) 42%, var(--accent) 58%);
-			text-shadow: none;
-		}
-
-		& .tile-pin-inspector,
-		& .pin-edit-target,
-		& .pin-mode-group,
-		& .pin-editor-state,
-		& .export-summary {
-			background: color-mix(in oklch, white 84%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 82%, var(--accent) 18%);
-		}
-
-		& .check-row {
-			background: color-mix(in oklch, white 82%, var(--input-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 82%, var(--accent) 18%);
-
-			&:hover {
-				background: color-mix(in oklch, white 74%, var(--accent) 12%);
-				border-color: color-mix(in oklch, var(--panel-border) 64%, var(--accent) 36%);
-			}
-		}
-	}
-
 	.tile-pin-inspector-head span {
 		color: var(--muted-ink);
 		font-size: 0.8rem;
@@ -5268,140 +5196,6 @@
 		align-items: baseline;
 		gap: 0.25rem;
 		padding-block: 0.1rem;
-	}
-
-	.viewer-related-panel {
-		display: grid;
-		gap: 0.8rem;
-		padding: 1.05rem 1rem;
-		border-radius: 0.95rem;
-		border: 1px solid color-mix(in oklch, var(--surface-support-border) 72%, var(--panel-border));
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-support-highlight) 11%, transparent) 0%, transparent 30%),
-			color-mix(in oklch, var(--surface-support-panel) 74%, var(--panel-bg) 26%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-support-highlight) 10%, transparent),
-			0 8px 12px color-mix(in oklch, var(--shadow-soft) 64%, transparent);
-	}
-
-	.viewer-related-head,
-	.viewer-related-grid {
-		display: grid;
-		gap: 0.75rem;
-	}
-
-	.viewer-related-grid {
-		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-	}
-
-	.viewer-related-card {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		color: var(--ink);
-		text-decoration: none;
-		border-radius: 1rem;
-		padding: 1rem 0.95rem;
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 20%, transparent) 0%, transparent 45%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 94%, #16110f 6%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 10%, transparent),
-			0 6px 8px color-mix(in srgb, black 76%, transparent);
-		border: 1px solid color-mix(in srgb, var(--surface-highlight) 44%, var(--surface-border));
-	}
-
-	.viewer-related-card-head {
-		display: flex;
-		justify-content: space-between;
-		align-items: start;
-		gap: 0.7rem;
-	}
-
-	.viewer-related-card h3 {
-		margin: 0;
-		font-family: "Rockwell", "Palatino Linotype", serif;
-		font-size: 1.02rem;
-	}
-
-	.viewer-related-card-kind {
-		flex: 0 0 auto;
-		color: color-mix(in srgb, var(--surface-highlight) 58%, var(--muted-ink) 42%);
-		font-size: 0.78rem;
-		white-space: nowrap;
-		text-box: trim-both cap alphabetic;
-	}
-
-	.viewer-related-card p {
-		margin: 0;
-		color: var(--muted-ink);
-		line-height: 1.4;
-	}
-
-	.viewer-related-card:hover,
-	.viewer-related-card:focus-visible {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 34%, transparent) 0%, transparent 40%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 92%, #16110f 8%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 16%, transparent),
-			0 10px 16px color-mix(in oklch, var(--shadow-soft) 66%, transparent);
-		border-color: color-mix(in srgb, var(--surface-highlight) 72%, var(--surface-border));
-		transform: translateY(-2px);
-	}
-
-	.viewer-related-card.is-generator {
-		--surface-border: var(--surface-generator-border);
-		--surface-highlight: var(--surface-generator-highlight);
-		--surface-panel: var(--surface-generator-panel);
-	}
-
-	.viewer-related-card.is-lua {
-		--surface-border: var(--surface-lua-border);
-		--surface-highlight: var(--surface-lua-highlight);
-		--surface-panel: var(--surface-lua-panel);
-	}
-
-	.viewer-related-card.is-pattern {
-		--surface-border: var(--surface-pattern-border);
-		--surface-highlight: var(--surface-pattern-highlight);
-		--surface-panel: var(--surface-pattern-panel);
-	}
-
-	.viewer-related-card.is-schema {
-		--surface-border: var(--surface-schema-border);
-		--surface-highlight: var(--surface-schema-highlight);
-		--surface-panel: var(--surface-schema-panel);
-	}
-
-	.viewer-related-card.is-tool {
-		--surface-border: var(--surface-tool-border);
-		--surface-highlight: var(--surface-tool-highlight);
-		--surface-panel: var(--surface-tool-panel);
-	}
-
-	.viewer-related-card.is-publish {
-		--surface-border: var(--surface-publish-border);
-		--surface-highlight: var(--surface-publish-highlight);
-		--surface-panel: var(--surface-publish-panel);
-	}
-
-	.viewer-related-card.is-ui {
-		--surface-border: var(--surface-ui-border);
-		--surface-highlight: var(--surface-ui-highlight);
-		--surface-panel: var(--surface-ui-panel);
-	}
-
-	.viewer-related-card.is-support {
-		--surface-border: var(--surface-support-border);
-		--surface-highlight: var(--surface-support-highlight);
-		--surface-panel: var(--surface-support-panel);
-	}
-
-	.viewer-related-card.is-planner {
-		--surface-border: var(--surface-planner-border);
-		--surface-highlight: var(--surface-planner-highlight);
-		--surface-panel: var(--surface-planner-panel);
 	}
 
 	.viewer-header {

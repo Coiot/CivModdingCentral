@@ -1,0 +1,145 @@
+{
+	"id": "civ-tairona-guacanaoma",
+	"slug": "tairona-guacanaoma",
+	"kind": "civilization",
+	"title": "The Tairona",
+	"leader": "Guacanaoma",
+	"summary": "The Tairona led by Guacanaoma are a custom civilization mod by Tradboy, with contributions from DarthKyofu, Lasqueto, Pouakai, and NopeCopter.",
+	"source": {
+		"type": "wiki",
+		"wikiPageTitle": "The Tairona",
+		"wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Tairona_(Guacanaoma)",
+		"workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3634487993",
+		"version": "v 1",
+		"lastUpdated": "December 2025"
+	},
+	"identity": {
+		"empireName": "Tairona Empire",
+		"adjectives": "Tairona",
+		"capital": "Bonda",
+		"bias": "Hills",
+		"religion": ["Catholicism", "Chiminagua"],
+		"government": "Monarchy",
+		"culture": "Andean",
+		"mapLabelsLanguage": "",
+		"requiredContent": ["Brave New World"]
+	},
+	"presentation": {
+		"mapImage": "TaironaMap.png",
+		"mapImageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/cf/TaironaMap.png",
+		"mapImageCaption": "Map by Tradboy",
+		"iconImage": "Tairona.png",
+		"iconImageUrl": "",
+		"leaderSceneImage": "TaironaLS.png",
+		"leaderSceneImageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/0/0f/TaironaLS.png",
+		"leaderSceneArtCredit": "Art by Tradboy",
+		"colors": {
+			"background": "#dbdcd2",
+			"icon": "#704b14"
+		}
+	},
+	"overview": {
+		"civilization": {
+			"title": "The Tairona",
+			"url": "https://en.wikipedia.org/wiki/Tairona",
+			"body": "The Tairona were a Chibchan-speaking people of the Caribbean region of Colombia. Their history is commonly divided into the Nahuange and Tairona phases, and their homeland in the Sierra Nevada de Santa Marta made them a society comfortable in both coastal and mountain settlements."
+		},
+		"leader": {
+			"title": "Guacanaoma",
+			"body": "Guacanaoma, Naoma of Bonda, is remembered in early colonial chronicles as a leading power among the Tairona chiefdoms of the Caldera Valley."
+		}
+	},
+	"dawnOfMan": {
+		"blessing": "Blessings to you Guacanaoma, Chief and Naoma of Bonda and its neighboring settlements.",
+		"introduction": "The sea has guided you to our mountains, my friend. My name is Guacanaoma, and I speak here for every Tairona under the watchful gaze of the stars.",
+		"defeat": "Believe me when I say you will never be able to fully subjugate my people. Despite your efforts, our successors will thrive in the mountains."
+	},
+	"uniques": [
+		{
+			"slot": "trait",
+			"name": "Flight of the Gilded Bat",
+			"replaces": "",
+			"art": "TaironaLI.png",
+			"artUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/d/d4/TaironaLI.png",
+			"artCredit": "Art by Tradboy and DarthKyofu",
+			"body": "Internal Trade Routes between coastal and mountain cities yield extra Gold per Fishing Boat or Faith per Mountain. Units can be airlifted between these two types of cities if connected via Trade Route.",
+			"bullets": []
+		},
+		{
+			"slot": "unique-unit",
+			"name": "Manicato",
+			"replaces": "Crossbowman",
+			"art": "TaironaUU.png",
+			"artUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/7/7d/TaironaUU.png",
+			"artCredit": "Art by Tradboy",
+			"body": "",
+			"bullets": [
+				"Starts with Accuracy I if trained in a coastal city.",
+				"Starts with Altitude Training if trained in a city with a Mountain.",
+				"Starts with both if the city is connected to the other type through a Trade Route."
+			]
+		},
+		{
+			"slot": "unique-unit",
+			"name": "Naoma",
+			"replaces": "Great Prophet",
+			"art": "TaironaUGP.png",
+			"artUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/3/3e/TaironaUGP.png",
+			"artCredit": "Art by Tradboy and DarthKyofu",
+			"body": "",
+			"bullets": [
+				"May found Holy Sites on Mountains, which yield +2 Food and add a Scientist Specialist slot to a religious building.",
+				"Upon being expended, earn a burst of Gold per connected coastal city and Science per Mountain city."
+			]
+		}
+	],
+	"nameLists": [
+		{
+			"title": "City List",
+			"items": ["Bonda", "Jeriboca", "Ciudad Perdida", "Boca de Buritaca", "Charaima", "Nahuange", "Minca", "Gaira", "Mondigua", "Curinquita", "Taganga", "Aloglue"]
+		},
+		{
+			"title": "Spy List",
+			"items": ["Cuchacique", "Wassi", "Willka", "Punku", "Awka", "Killa", "Ti'ka", "Mayu", "Taphia", "Tamayu", "Ch'akun", "Qocha"]
+		},
+		{
+			"title": "Naoma List",
+			"items": ["Xebo", "Tamalameque", "Duginavi", "Sexus", "Torigua", "Mamatoco", "Gayraca", "Zampayan", "Zarate", "Gamita", "Coendo", "Masinga"]
+		}
+	],
+	"music": {
+		"peace": {
+			"title": "Ocarina Tairona",
+			"credit": "Cesar Pavez Alvarado"
+		},
+		"war": {
+			"title": "La ocarina Tayrona",
+			"credit": "Camilo Andres Clavijo"
+		}
+	},
+	"modSupport": {
+		"aa": false,
+		"civivtraits": false,
+		"claimscoloniescrimes": false,
+		"culdiv": true,
+		"ethnicunits": false,
+		"eandd": false,
+		"maplabels": false,
+		"piety": true,
+		"uci": false,
+		"ynaemp": true,
+		"histreligions": true,
+		"mercenaries": false,
+		"enlightenmentera": false
+	},
+	"credits": [
+		{ "name": "Tradboy", "role": "Author" },
+		{ "name": "DarthKyofu", "role": "Art Revision" },
+		{ "name": "Lasqueto", "role": "Art (Civilization Icon)" },
+		{ "name": "NopeCopter", "role": "Code (Lua)" },
+		{ "name": "Pouakai", "role": "Art (Dawn of Man)" }
+	],
+	"categories": ["Tradboy", "All Civilizations", "Andean Cultures"],
+	"navTemplate": "TradboyNav",
+	"issues": []
+}

@@ -1130,7 +1130,7 @@
 <svelte:window onkeydown={handleWindowKeyDown} />
 
 <section class="lua-page">
-	<header class="lua-hero">
+	<header class="page-hero page-hero--lua lua-hero">
 		<p class="lua-eyebrow">Scripting Reference</p>
 		<h1>Lua API Explorer</h1>
 		<p>Browse Civ V Lua methods and GameEvents, inspect signatures, parameters, notes, examples, and jump into related schema tables.</p>
@@ -1142,9 +1142,9 @@
 			<span>Loading Lua explorer...</span>
 		</p>
 	{:else}
-		<section class="lua-panel">
-			<div class="lua-section-head">
-				<span class="lua-kicker">Quick Starts</span>
+		<section class="surface-panel surface-panel--lua lua-panel">
+			<div class="section-head lua-section-head">
+				<span class="lua-kicker uppercase">Quick Starts</span>
 				<h2>Jump into the Lua entries modders use most often</h2>
 				<p>These are some of the most used hooks so are great starting points for exploring the Lua API and wiring up your own mods.</p>
 			</div>
@@ -1164,7 +1164,7 @@
 			</div>
 		</section>
 
-		<section class="lua-panel lua-panel--explorer">
+		<section class="surface-panel surface-panel--lua lua-panel lua-panel--explorer">
 			<div class="lua-toolbar">
 				<div class="lua-toolbar-primary">
 					<div class="lua-tab-row" role="tablist" aria-label="Lua datasets">
@@ -1204,7 +1204,7 @@
 				</div> -->
 
 					{#if activeDataset === "methods"}
-						<div class="lua-filter-group" role="group" aria-label="Method families">
+						<div class="lua-filter-group inline half flex-wrap" role="group" aria-label="Method families">
 							<button type="button" class={`lua-filter-chip lua-filter-chip--toggle ${familyFilter === "all" ? "is-active" : ""}`} onclick={() => (familyFilter = "all")}>
 								All
 								<span>{methodResults.filter((entry) => entry.matchesQuery).length}</span>
@@ -1217,7 +1217,7 @@
 							{/each}
 						</div>
 					{:else}
-						<div class="lua-filter-group" role="group" aria-label="GameEvent scopes">
+						<div class="lua-filter-group inline half flex-wrap" role="group" aria-label="GameEvent scopes">
 							<button type="button" class={`lua-filter-chip lua-filter-chip--toggle ${scopeFilter === "all" ? "is-active" : ""}`} onclick={() => (scopeFilter = "all")}>
 								All scopes
 								<span>{gameEventResults.filter((entry) => entry.matchesQuery).length}</span>
@@ -1233,8 +1233,8 @@
 
 					{#if recentEntries.length > 0}
 						<div class="lua-recent-group" aria-label="Recent Searches">
-							<span class="lua-toolbar-label">Recent Searches</span>
-							<div class="lua-recent-list">
+							<span class="lua-toolbar-label uppercase">Recent Searches</span>
+							<div class="lua-recent-list inline half flex-wrap">
 								{#each recentEntries as entry (entry.entryKey)}
 									<button type="button" class="lua-link lua-link--inline" onclick={() => revealEntry(entry.id, entry.datasetId)}>{entry.heading}</button>
 								{/each}
@@ -1245,17 +1245,17 @@
 			</div>
 
 			<div class="lua-explorer-grid">
-				<aside class="lua-list-panel" aria-label="Lua entries">
+				<aside class="lua-list-panel overflow-hidden" aria-label="Lua entries">
 					<div class="lua-list-head">
 						<h2>{activeDataset === "methods" ? "Methods" : "GameEvents"}</h2>
 						<span>{filteredEntries.length} matches</span>
 					</div>
-					<div class="lua-entry-list">
+					<div class="lua-entry-list overflow">
 						{#if filteredEntries.length === 0}
 							<div class="lua-empty-state">
 								<p class="lua-empty">No entries match the current search.</p>
 								<p class="lua-empty-note">Try one of these examples or clear the current dataset filters.</p>
-								<div class="lua-empty-actions">
+								<div class="lua-empty-actions inline half flex-wrap">
 									{#each emptySearchExamples as example (example)}
 										<button type="button" class="lua-link lua-link--inline" onclick={() => setSearchExample(example)}>{example}</button>
 									{/each}
@@ -1268,7 +1268,7 @@
 									<div class="lua-entry-card-top">
 										<div>
 											<h3>{entry.heading}</h3>
-											<p class="lua-entry-path">{entry.title}</p>
+											<p class="lua-entry-path overflow-hidden">{entry.title}</p>
 										</div>
 										<div class="lua-entry-card-metrics">
 											<span>{entry.parameterCount} params</span>
@@ -1279,7 +1279,7 @@
 									</div>
 									<!-- <p class="lua-entry-card-copy">{entry.secondaryLabel}</p>
 								{#if entry.summary}
-									<p class="lua-entry-summary">{entry.summary}</p>
+									<p class="lua-entry-summary overflow-hidden">{entry.summary}</p>
 								{/if} -->
 									<!-- {#if entry.summary || entry.gotchas.length > 0 || entry.seeAlso.length > 0}
 									<div class="lua-entry-property-strip" aria-label="Entry fields">
@@ -1304,7 +1304,7 @@
 					<section class="lua-detail-panel" bind:this={detailPanelElement} aria-label="Selected entry details">
 						<div class="lua-detail-hero">
 							<div class="lua-detail-hero-copy">
-								<p class="lua-kicker">Selected entry</p>
+								<p class="lua-kicker uppercase">Selected entry</p>
 								<h2>{selectedEntry.heading}</h2>
 								<code>{selectedEntry.displaySignature}</code>
 								{#if normalizedQuery && selectedMatchReasons.length > 0}
@@ -1321,7 +1321,7 @@
 								<button type="button" class="lua-link lua-link--inline" onclick={copyEntrySignature}>{signatureCopied ? "Copied" : "Copy signature"}</button>
 							</div> -->
 							</div>
-							<div class="lua-detail-chips">
+							<div class="lua-detail-chips inline half flex-wrap">
 								{#if selectedEntry.entryKind === "method"}
 									<span class="lua-metric-chip">{selectedEntry.family}</span>
 									<span class="lua-metric-chip">{selectedEntry.callKind}</span>
@@ -1450,7 +1450,7 @@
 										{#if selectedEntry.exampleSummary}
 											<p class="lua-card-copy">{selectedEntry.exampleSummary}</p>
 										{/if}
-										<pre class="lua-doc-example"><code>{selectedEntry.exampleCode}</code></pre>
+										<pre class="lua-doc-example overflow"><code>{selectedEntry.exampleCode}</code></pre>
 									</section>
 								{/if}
 
@@ -1518,7 +1518,7 @@
 
 							<aside class="lua-docs-nav">
 								<div class="lua-docs-nav-card">
-									<span class="lua-kicker">On This Page</span>
+									<span class="lua-kicker uppercase">On This Page</span>
 									<div class="lua-docs-nav-links">
 										{#each selectedEntrySections as section (section.id)}
 											<a
@@ -1534,7 +1534,7 @@
 								</div>
 								{#if selectedCounterpartEntries.length > 0}
 									<div class="lua-docs-nav-card">
-										<span class="lua-kicker">Other Surfaces</span>
+										<span class="lua-kicker uppercase">Other Surfaces</span>
 										<div class="lua-surface-list">
 											{#each selectedCounterpartEntries as entry (entry.entryKey)}
 												<button type="button" class="lua-see-also-card" onclick={() => revealEntry(entry.id, entry.datasetId)}>
@@ -1550,7 +1550,7 @@
 								{/if}
 								<!-- {#if selectedEntryContentMeta.length > 0}
 								<div class="lua-docs-nav-card">
-									<span class="lua-kicker">Authored Fields</span>
+									<span class="lua-kicker uppercase">Authored Fields</span>
 									<dl class="lua-quick-meta">
 										{#each selectedEntryContentMeta as item (item.label)}
 											<div>
@@ -1563,7 +1563,7 @@
 							{/if} -->
 								<!-- {#if selectedEntryQuickMeta.length > 0}
 								<div class="lua-docs-nav-card">
-									<span class="lua-kicker">Entry Facts</span>
+									<span class="lua-kicker uppercase">Entry Facts</span>
 									<dl class="lua-quick-meta">
 										{#each selectedEntryQuickMeta as item (item.label)}
 											<div>
@@ -1576,7 +1576,7 @@
 							{/if} -->
 								{#if selectedEntryQuickLinks.length > 0}
 									<div class="lua-docs-nav-card">
-										<span class="lua-kicker">Quick Links</span>
+										<span class="lua-kicker uppercase">Quick Links</span>
 										<div class="lua-docs-nav-links">
 											{#each selectedEntryQuickLinks as link (link.id)}
 												<a class="lua-link lua-link--inline" href={link.href} title={link.copy}>{link.label}</a>
@@ -1594,18 +1594,6 @@
 </section>
 
 <style>
-	:global(:root[data-theme="light"]) .lua-page {
-		--lua-bg: linear-gradient(180deg, rgba(241, 248, 236, 0.95) 0%, rgba(247, 250, 243, 0.98) 100%);
-		--lua-border: rgba(56, 85, 42, 0.16);
-		--lua-copy: rgba(38, 51, 31, 0.82);
-		--lua-highlight: #3f6f27;
-		--lua-highlight-strong: #22430f;
-		--lua-panel: rgba(255, 255, 255, 0.96);
-		--lua-schema-border: rgba(37, 67, 96, 0.16);
-		--lua-schema-highlight: #1c5a8f;
-		--lua-schema-highlight-strong: #123a59;
-		--lua-schema-panel: rgba(255, 255, 255, 0.96);
-	}
 	.lua-page {
 		display: grid;
 		gap: 1.15rem;
@@ -1653,14 +1641,6 @@
 		margin: 0;
 	}
 
-	.lua-hero,
-	.lua-panel {
-		padding-block: 1.3rem;
-		padding-inline: 1.3rem;
-	}
-
-	.lua-hero,
-	.lua-panel,
 	.lua-docs-nav-card {
 		box-shadow: 0 8px 12px rgba(0, 0, 0, 0.25);
 		border: 1px solid var(--lua-border);
@@ -1877,20 +1857,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
-	}
-
-	:global(:root[data-theme="light"]) .lua-link,
-	:global(:root[data-theme="light"]) .lua-list-panel,
-	:global(:root[data-theme="light"]) .lua-detail-card,
-	:global(:root[data-theme="light"]) .lua-launcher-card,
-	:global(:root[data-theme="light"]) .lua-entry-card,
-	:global(:root[data-theme="light"]) .lua-tab,
-	:global(:root[data-theme="light"]) .lua-filter-chip,
-	:global(:root[data-theme="light"]) .lua-docs-nav-card,
-	:global(:root[data-theme="light"]) .lua-see-also-card,
-	:global(:root[data-theme="light"]) .lua-search-field input,
-	:global(:root[data-theme="light"]) .lua-sort-field select {
-		background: rgba(255, 255, 255, 0.96);
 	}
 
 	.lua-search-field input,
@@ -2649,8 +2615,8 @@
 	}
 
 	@media (max-width: 760px) {
-		.lua-hero,
-		.lua-panel {
+		.page-hero.lua-hero,
+		.surface-panel.lua-panel {
 			padding-block: 1.1rem;
 			padding-inline: 1.1rem;
 		}

@@ -253,6 +253,20 @@
 			},
 		},
 		{
+			id: "page-modded-civs-pedia",
+			type: "Reference",
+			title: "Modded Civs Pedia",
+			subtitle: "Browse custom civilizations and convert fandom pages or mod folders into pedia entries.",
+			href: "/modded-civs-pedia",
+			keywords: ["modded civs", "pedia", "custom civilizations", "fandom wiki", "converter"],
+			priority: 10,
+			preview: {
+				copy: "Browse structured entries for custom civs and generate both site JSON and fandom wiki markup from source content.",
+				meta: buildPreviewMeta("Reference database", "Wiki + folder converter"),
+				details: ["Built-in sample entries", "Wiki markup conversion", "XML-first mod folder parsing"],
+			},
+		},
+		{
 			id: "page-tech-tree-viewer",
 			type: "Viewer",
 			title: "Tech Tree Viewer",
@@ -801,20 +815,20 @@
 
 <svelte:window onkeydown={handleWindowKeyDown} />
 
-<div class="quick-jump">
+<div class="quick-jump relative">
 	<button type="button" class="quick-jump-trigger" aria-label="Open quick jump" onclick={() => openPalette()}>
 		<svg class="quick-jump-trigger-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true">
 			<path
 				d="M208 80C137.3 80 80 137.3 80 208s57.3 128 128 128s128-57.3 128-128S278.7 80 208 80zM0 208C0 93.1 93.1 0 208 0s208 93.1 208 208c0 45.1-14.3 86.8-38.6 120.9l124.9 124.9c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L332.1 374.2C298.8 398.7 255.8 416 208 416C93.1 416 0 322.9 0 208z"
 			/>
 		</svg>
-		<span class="quick-jump-trigger-label">Search</span>
+		<span class="quick-jump-trigger-label uppercase">Search</span>
 		<kbd class="quick-jump-trigger-shortcut">{shortcutLabel()}</kbd>
 	</button>
 
 	{#if isOpen}
 		<div class="quick-jump-overlay" role="presentation" onclick={(event) => event.target === event.currentTarget && closePalette()} transition:fade={{ duration: 140 }}>
-			<div class="quick-jump-dialog" role="dialog" aria-modal="true" aria-label="Quick jump">
+			<div class="quick-jump-dialog overflow" role="dialog" aria-modal="true" aria-label="Quick jump">
 				<div class="quick-jump-input-wrap">
 					<input
 						bind:this={searchInputEl}
@@ -848,7 +862,7 @@
 										onfocus={() => setActiveIndex(index)}
 										onclick={() => closePalette()}
 									>
-										<span class="quick-jump-item-meta">{item.type}</span>
+										<span class="quick-jump-item-meta uppercase">{item.type}</span>
 										<span class="quick-jump-item-title">{item.title}</span>
 										<span class="quick-jump-item-subtitle">{item.subtitle}</span>
 									</a>
@@ -861,12 +875,12 @@
 
 					{#if activePreviewItem}
 						<aside class="quick-jump-preview" aria-label="Selected result preview">
-							<span class="quick-jump-preview-kicker">{activePreviewItem.type}</span>
+							<span class="quick-jump-preview-kicker uppercase">{activePreviewItem.type}</span>
 							<h3 class="quick-jump-preview-title">{activePreviewItem.title}</h3>
 							<p class="quick-jump-preview-copy">{activePreviewItem.preview?.copy || activePreviewItem.subtitle}</p>
 
 							{#if activePreviewItem.preview?.meta?.length}
-								<div class="quick-jump-preview-meta">
+								<div class="quick-jump-preview-meta inline half flex-wrap">
 									{#each activePreviewItem.preview.meta as meta (`${activePreviewItem.id}-${meta}`)}
 										<span>{meta}</span>
 									{/each}
@@ -889,10 +903,6 @@
 </div>
 
 <style>
-	.quick-jump {
-		position: relative;
-	}
-
 	.quick-jump-trigger {
 		display: inline-flex;
 		align-items: center;
@@ -926,7 +936,6 @@
 		font-size: 0.78rem;
 		font-weight: 800;
 		letter-spacing: 0.08em;
-		text-transform: uppercase;
 		text-box: trim-both cap alphabetic;
 	}
 
@@ -954,7 +963,6 @@
 	.quick-jump-dialog {
 		inline-size: min(720px, 100%);
 		max-block-size: 76vh;
-		overflow: auto;
 		color: var(--ink);
 		background: var(--panel-bg);
 		border: 1px solid color-mix(in oklch, var(--panel-border) 88%, black 12%);
@@ -1041,7 +1049,6 @@
 		font-size: 0.65rem;
 		font-weight: 800;
 		letter-spacing: 0.1em;
-		text-transform: uppercase;
 	}
 
 	.quick-jump-item-title {
@@ -1078,7 +1085,6 @@
 		font-size: 0.68rem;
 		font-weight: 800;
 		letter-spacing: 0.11em;
-		text-transform: uppercase;
 	}
 
 	.quick-jump-preview-title {
@@ -1096,8 +1102,6 @@
 	}
 
 	.quick-jump-preview-meta {
-		display: flex;
-		flex-wrap: wrap;
 		gap: 0.38rem;
 	}
 

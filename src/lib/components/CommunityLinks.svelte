@@ -200,33 +200,6 @@
 </section>
 
 <style>
-	:global(:root[data-theme="light"]) .directory-page {
-		.directory-group {
-			background: color-mix(in oklch, white 86%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 88%, var(--accent) 12%);
-		}
-
-		.directory-card {
-			background: color-mix(in oklch, white 72%, var(--control-bg));
-			border-color: color-mix(in oklch, var(--accent) 24%, var(--panel-border));
-		}
-
-		.directory-card:hover {
-			background: color-mix(in oklch, white 68%, var(--accent) 8%);
-			border-color: color-mix(in oklch, var(--accent) 34%, var(--panel-border));
-		}
-
-		.directory-card-preview,
-		.directory-card-fallback {
-			background: color-mix(in oklch, white 94%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 84%, var(--accent) 10%);
-		}
-
-		.directory-tagline,
-		.directory-url {
-			color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
-		}
-	}
 	.directory-page {
 		display: grid;
 		gap: 1.25rem;

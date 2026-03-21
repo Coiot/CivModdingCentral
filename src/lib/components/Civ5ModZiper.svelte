@@ -1,5 +1,6 @@
 <script>
 	import { onDestroy } from "svelte";
+	import ToolCompanionPanel from "./ToolCompanionPanel.svelte";
 
 	let fileInputEl = $state(null);
 	let sourceFiles = $state([]);
@@ -247,8 +248,8 @@
 	});
 </script>
 
-<section class="civ5mod-page">
-	<header class="hero civ5mod-hero">
+<section class="civ5mod-page stack">
+	<header class="page-hero page-hero--publish civ5mod-hero">
 		<h1>.civ5mod Ziper</h1>
 		<p>Package a mod folder into a legacy <code>7z</code>-format <code>.civ5mod</code> archive.</p>
 	</header>
@@ -280,7 +281,7 @@
 			</ul>
 		</section>
 	</div>
-	<section class="civ5mod-panel">
+	<section class="surface-panel surface-panel--publish civ5mod-panel">
 		<div
 			class={`civ5mod-dropzone ${dragOver ? "is-drag-over" : ""}`}
 			role="button"
@@ -305,13 +306,13 @@
 			<input type="text" value={outputFileName} oninput={(event) => (outputFileName = event.currentTarget.value)} placeholder="my-mod.civ5mod" />
 		</label>
 
-		<div class="civ5mod-checks">
+		<div class="civ5mod-checks inline half flex-wrap">
 			<span class={`civ5mod-check ${rootModinfoFound ? "ok" : "warn"}`}>{rootModinfoFound ? "✓" : "•"} Root .modinfo detected</span>
 			<span class={`civ5mod-check ${fileCount ? "ok" : "warn"}`}>{fileCount ? "✓" : "•"} Source files loaded</span>
 		</div>
 
-		<div class="civ5mod-build-row">
-			<span class="civ5mod-tooltip-wrap">
+		<div class="civ5mod-build-row inline half flex-wrap">
+			<span class="civ5mod-tooltip-wrap relative">
 				<button type="button" class="civ5mod-btn" disabled={!canBuild} onclick={buildCiv5mod}>{buildBusy ? "Building..." : "Build .civ5mod"}</button>
 				{#if !canBuild}
 					<span class="civ5mod-tooltip">{requiredIssues.join(" ")}</span>
@@ -323,74 +324,11 @@
 		</div>
 	</section>
 
-	<section class="civ5mod-panel">
-		<div class="civ5mod-section-head">
-			<h2>Use alongside the other tools</h2>
-			<p>Use the related publishing tools before or after packaging as needed.</p>
-		</div>
-
-		<div class="civ5mod-companion-grid">
-			{#each companionTools as tool (tool.title)}
-				<a class={`civ5mod-companion-card ${tool.href === "/community-links" ? "is-site-accent" : ""}`} href={tool.href}>
-					<h3>{tool.title}</h3>
-					<p>{tool.copy}</p>
-				</a>
-			{/each}
-		</div>
-	</section>
+	<ToolCompanionPanel copy="Use the related publishing tools before or after packaging as needed." tools={companionTools} />
 </section>
 
 <style>
-	:global(:root[data-theme="light"]) .civ5mod-page {
-		.civ5mod-guide,
-		.civ5mod-panel {
-			border-color: color-mix(in oklch, var(--panel-border) 86%, var(--accent) 14%);
-		}
-
-		.civ5mod-guide,
-		.civ5mod-dropzone {
-			background: color-mix(in oklch, white 82%, var(--panel-bg));
-		}
-
-		.civ5mod-panel {
-			background: color-mix(in oklch, white 88%, var(--panel-bg));
-		}
-
-		.civ5mod-dropzone:hover {
-			background: color-mix(in oklch, white 76%, var(--accent) 8%);
-		}
-
-		.civ5mod-dropzone.is-drag-over {
-			background: color-mix(in oklch, white 72%, var(--accent) 14%);
-		}
-
-		.civ5mod-drop-feedback {
-			color: color-mix(in oklch, var(--accent) 56%, var(--ink));
-		}
-
-		.civ5mod-tooltip {
-			color: var(--ink);
-			background: color-mix(in oklch, white 94%, var(--panel-bg));
-			box-shadow: 0 14px 28px var(--shadow-soft);
-			border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
-		}
-
-		.civ5mod-companion-card {
-			background: color-mix(in oklch, white 84%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 84%, var(--accent) 16%);
-
-			& p {
-				color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
-			}
-
-			&:hover {
-				background: color-mix(in oklch, white 78%, var(--accent) 10%);
-			}
-		}
-	}
 	.civ5mod-page {
-		display: grid;
-		gap: 1rem;
 		--civ5mod-accent-border: var(--surface-publish-border);
 		--civ5mod-accent-highlight: var(--surface-publish-highlight);
 		--civ5mod-accent-highlight-strong: var(--surface-publish-highlight-strong);
@@ -442,13 +380,8 @@
 	}
 
 	.civ5mod-panel {
-		display: grid;
-		gap: 1rem;
 		background: color-mix(in oklch, var(--civ5mod-accent-panel) 30%, var(--panel-bg));
-		box-shadow: 0 6px 8px var(--shadow-soft);
 		border: 1px solid color-mix(in oklch, var(--civ5mod-accent-border) 15%, var(--panel-border));
-		border-radius: 1rem;
-		padding: 1.25rem;
 
 		& input {
 			inline-size: 100%;
@@ -508,20 +441,15 @@
 	}
 
 	.civ5mod-checks {
-		display: flex;
-		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
 
 	.civ5mod-build-row {
-		display: flex;
-		flex-wrap: wrap;
 		align-items: center;
 		gap: 0.55rem;
 	}
 
 	.civ5mod-tooltip-wrap {
-		position: relative;
 		display: inline-flex;
 
 		& .civ5mod-tooltip {
@@ -585,27 +513,6 @@
 		margin: 0;
 	}
 
-	.civ5mod-section-head {
-		display: grid;
-		gap: 0.35rem;
-
-		& h2 {
-			font-family: "Rockwell", "Palatino Linotype", serif;
-			margin: 0;
-		}
-
-		& p {
-			color: var(--muted-ink);
-			margin: 0;
-		}
-	}
-
-	.civ5mod-companion-grid {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 0.8rem;
-	}
-
 	.civ5mod-actions-row {
 		display: flex;
 		flex-wrap: wrap;
@@ -629,49 +536,6 @@
 		&.warn {
 			background: color-mix(in oklch, oklch(0.72 0.12 35) 14%, transparent);
 		}
-	}
-
-	.civ5mod-companion-card {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		color: var(--ink);
-		text-decoration: none;
-		background: color-mix(in oklch, var(--civ5mod-accent-panel) 96%, black);
-		border: 1px solid color-mix(in oklch, var(--civ5mod-accent-border) 80%, transparent);
-		border-radius: 0.9rem;
-		box-shadow: 0 4px 6px #111;
-		padding: 1.25rem;
-		transition:
-			transform 140ms ease,
-			border-color 140ms ease,
-			background 140ms ease;
-
-		& h3 {
-			font-family: "Rockwell", "Palatino Linotype", serif;
-			margin: 0;
-		}
-
-		& p {
-			color: var(--muted-ink);
-			margin: 0;
-		}
-
-		&:hover {
-			background: color-mix(in oklch, var(--civ5mod-accent-panel) 85%, var(--civ5mod-accent-highlight) 10%);
-			border-color: color-mix(in oklch, var(--civ5mod-accent-highlight) 60%, var(--civ5mod-accent-border));
-			transform: translateY(-1px);
-		}
-	}
-
-	.civ5mod-companion-card.is-site-accent {
-		background: color-mix(in oklch, var(--panel-bg) 88%, black);
-		border-color: color-mix(in oklch, var(--accent) 26%, var(--panel-border));
-	}
-
-	.civ5mod-companion-card.is-site-accent:hover {
-		background: color-mix(in oklch, var(--panel-bg) 82%, var(--accent) 6%);
-		border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
 	}
 
 	.civ5mod-dropzone {
@@ -717,10 +581,6 @@
 
 	@media (max-width: 900px) {
 		.civ5mod-guide-row {
-			grid-template-columns: 1fr;
-		}
-
-		.civ5mod-companion-grid {
 			grid-template-columns: 1fr;
 		}
 	}

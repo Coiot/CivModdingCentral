@@ -2,9 +2,6 @@
 	import QuickJumpPalette from "./QuickJumpPalette.svelte";
 
 	let {
-		themeMode = "light",
-		onToggleTheme = () => {},
-		onSetThemeMode = () => {},
 		authEnabled = false,
 		authUser = null,
 		authEmail = "",
@@ -192,6 +189,7 @@
 			case "/pattern-library":
 				return "is-pattern";
 			case "/schema-browser":
+			case "/modded-civs-pedia":
 				return "is-schema";
 			case "/lua-api-explorer":
 				return "is-lua";
@@ -293,11 +291,6 @@
 			helpOpen = false;
 			closeNavMenus();
 			return;
-		}
-
-		if (event.key.toLowerCase() === "t") {
-			event.preventDefault();
-			onToggleTheme();
 		}
 	}
 
@@ -437,14 +430,6 @@
 
 				{#if userOpen}
 					<div class="user-dropdown">
-						<div class="user-theme">
-							<p class="user-label">Color Theme</p>
-							<div class="user-toggle" role="group" aria-label="Theme mode">
-								<button type="button" class={`user-chip ${themeMode === "light" ? "is-active" : ""}`} onclick={() => onSetThemeMode("light")}>Light</button>
-								<button type="button" class={`user-chip ${themeMode === "dark" ? "is-active" : ""}`} onclick={() => onSetThemeMode("dark")}>Dark</button>
-							</div>
-						</div>
-
 						{#if authUser}
 							<p class="user-heading">Signed in</p>
 							<p class="user-meta">{authUser.email}</p>
@@ -522,7 +507,6 @@
 								<li><kbd>Ctrl/Cmd K</kbd> Open quick jump</li>
 								<li><kbd>F</kbd> Focus the main page search on schema and Lua pages</li>
 								<li><kbd>U</kbd> Toggle user menu</li>
-								<li><kbd>T</kbd> Toggle light/dark mode</li>
 								<li><kbd>[</kbd> Previous result on supported pages</li>
 								<li><kbd>]</kbd> Next result on supported pages</li>
 								<li><kbd>Esc</kbd> Close open menus</li>
@@ -625,7 +609,6 @@
 	.help-trigger:focus-visible,
 	.user-trigger:focus-visible,
 	.user-actions button:focus-visible,
-	.user-chip:focus-visible,
 	.user-dropdown input:focus-visible {
 		outline: 2px solid color-mix(in oklch, white 78%, var(--accent));
 		outline-offset: 2px;
@@ -685,7 +668,6 @@
 	.nav-entry-copy,
 	.nav-group-panel-kicker,
 	.nav-group-panel-copy,
-	.user-label,
 	.help-section h4,
 	.user-meta,
 	.user-message,
@@ -693,25 +675,6 @@
 	.help-copy,
 	.help-list {
 		color: color-mix(in oklch, var(--muted-ink) 72%, var(--ink));
-	}
-
-	:global(:root[data-theme="light"]) .nav-group-trigger,
-	:global(:root[data-theme="light"]) .nav-menu-trigger {
-		background: color-mix(in oklch, white 82%, var(--control-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 76%, var(--accent) 24%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-group-trigger:hover,
-	:global(:root[data-theme="light"]) .nav-group.is-open .nav-group-trigger,
-	:global(:root[data-theme="light"]) .nav-menu-trigger:hover,
-	:global(:root[data-theme="light"]) .nav-menu-trigger.is-open {
-		background: color-mix(in oklch, white 74%, var(--control-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 60%, var(--accent) 40%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-group.is-active .nav-group-trigger {
-		background: color-mix(in oklch, white 68%, var(--accent) 32%);
-		border-color: color-mix(in oklch, var(--panel-border) 48%, var(--accent) 52%);
 	}
 
 	.nav-group-trigger {
@@ -750,10 +713,6 @@
 		gap: 0.55rem;
 	}
 
-	:global(:root[data-theme="light"]) .nav-group-count {
-		background: color-mix(in oklch, var(--control-bg) 95%, white);
-	}
-
 	.nav-group-count {
 		flex: 0 0 auto;
 		color: color-mix(in oklch, var(--accent) 25%, var(--ink));
@@ -772,12 +731,6 @@
 		font-size: 0.77rem;
 		line-height: 1.34;
 		margin-block: 0;
-	}
-
-	:global(:root[data-theme="light"]) .page-nav,
-	:global(:root[data-theme="light"]) .nav-group-panel {
-		background: color-mix(in oklch, white 88%, var(--panel-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 74%, var(--accent) 26%);
 	}
 
 	.nav-group-panel {
@@ -927,22 +880,6 @@
 		font-size: 0.78rem;
 	}
 
-	.user-theme {
-		display: grid;
-		gap: 0.25rem;
-		padding-block-end: 0.2rem;
-	}
-
-	.user-label {
-		font-size: 0.75rem;
-		margin-block: 0;
-	}
-
-	.user-toggle {
-		display: inline-flex;
-		gap: 0.5rem;
-	}
-
 	.user-heading {
 		font-size: 0.84rem;
 		margin-block-start: 0.5rem;
@@ -1025,46 +962,6 @@
 		font-size: 0.78rem;
 		line-height: 1.34;
 		margin-block: 0;
-	}
-
-	:global(:root[data-theme="light"]) .nav-entry {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--nav-entry-highlight) 12%, transparent) 0%, transparent 38%),
-			linear-gradient(145deg, color-mix(in srgb, white 88%, var(--nav-entry-panel) 12%) 0%, color-mix(in srgb, white 92%, var(--nav-entry-panel) 8%) 100%);
-		border-color: color-mix(in srgb, var(--nav-entry-border) 62%, white 38%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-entry:hover,
-	:global(:root[data-theme="light"]) .nav-entry:focus-visible {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--nav-entry-highlight) 16%, transparent) 0%, transparent 36%),
-			linear-gradient(145deg, color-mix(in srgb, white 84%, var(--nav-entry-panel) 16%) 0%, color-mix(in srgb, white 90%, var(--nav-entry-panel) 10%) 100%);
-		border-color: color-mix(in srgb, var(--nav-entry-highlight) 34%, var(--nav-entry-border));
-	}
-
-	:global(:root[data-theme="light"]) .nav-entry.is-active {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--nav-entry-highlight) 18%, transparent) 0%, transparent 34%),
-			linear-gradient(145deg, color-mix(in srgb, white 82%, var(--nav-entry-panel) 18%) 0%, color-mix(in srgb, white 88%, var(--nav-entry-panel) 12%) 100%);
-		border-color: color-mix(in srgb, var(--nav-entry-highlight) 42%, var(--nav-entry-border));
-	}
-
-	:global(:root[data-theme="light"]) .nav-entry.is-disabled {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--nav-entry-highlight) 8%, transparent) 0%, transparent 38%),
-			linear-gradient(145deg, color-mix(in srgb, white 92%, var(--nav-entry-panel) 8%) 0%, color-mix(in srgb, white 95%, var(--nav-entry-panel) 5%) 100%);
-		border-color: color-mix(in srgb, var(--nav-entry-border) 42%, white 58%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-menu-trigger-primary {
-		background: color-mix(in oklch, white 78%, var(--control-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 64%, var(--accent) 36%);
-	}
-
-	:global(:root[data-theme="light"]) .nav-menu-trigger-primary:hover,
-	:global(:root[data-theme="light"]) .nav-menu-trigger-primary.is-open {
-		background: color-mix(in oklch, white 70%, var(--control-bg));
-		border-color: color-mix(in oklch, var(--panel-border) 54%, var(--accent) 46%);
 	}
 
 	.nav-entry {
@@ -1284,23 +1181,6 @@
 
 	.user-access.is-enabled {
 		color: color-mix(in oklch, var(--accent) 68%, var(--ink));
-	}
-
-	.user-chip {
-		color: var(--ink);
-		font: inherit;
-		font-size: 0.85rem;
-		background: var(--control-bg);
-		border: 1px solid var(--panel-border);
-		border-radius: 0.5rem;
-		padding-block: 0.25rem;
-		padding-inline: 1rem;
-		cursor: pointer;
-
-		&.is-active {
-			background: color-mix(in oklch, var(--accent) 25%, var(--control-bg));
-			border-color: color-mix(in oklch, var(--accent) 90%, var(--panel-border));
-		}
 	}
 
 	@media (width <= 550px) {

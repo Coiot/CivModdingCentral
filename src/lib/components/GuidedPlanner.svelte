@@ -568,7 +568,7 @@
 		const href = String(resource?.href || "");
 		const kind = String(resource?.kind || "").toLowerCase();
 
-		if (href.includes("/schema-browser")) return "Schema";
+		if (href.includes("/schema-browser") || href.includes("/modded-civs-pedia")) return "Schema";
 		if (href.includes("/lua-api-explorer")) return "Lua API";
 		if (href.includes("/pattern-library")) return "Pattern";
 		if (href.includes("/template-generators")) return "Generator";
@@ -585,12 +585,12 @@
 	function resourceAccentClass(resource) {
 		const href = String(resource?.href || "");
 
-		if (href.includes("/schema-browser")) return "is-schema";
+		if (href.includes("/schema-browser") || href.includes("/modded-civs-pedia")) return "is-schema";
 		if (href.includes("/lua-api-explorer")) return "is-lua";
 		if (href.includes("/pattern-library")) return "is-pattern";
 		if (href.includes("/template-generators")) return "is-generator";
 		if (href.includes("/workshop-uploader") || href.includes("/modinfo-builder") || href.includes("/civ5mod-ziper")) return "is-publish";
-		if (href.includes("/dds-converter") || href.includes("/civ-icon-maker") || href.includes("/ui-screen-viewer")) return "is-ui";
+		if (href.includes("/dds-converter") || href.includes("/civ-icon-maker") || href.includes("/text-screen-viewer")) return "is-ui";
 		if (href.includes("/tech-tree-viewer")) return "is-tool";
 		if (href.includes("/map-viewer") || href.includes("/religion-support")) return "is-support";
 		return "is-tool";
@@ -1433,7 +1433,7 @@
 <section class="planner-page">
 	<header class="hero planner-hero">
 		<div class="planner-hero-layout">
-			<div class="planner-hero-copy">
+			<div class="planner-hero-copy stack">
 				<p class="eyebrow">Guided Planner</p>
 				<h1>Build a civ mod like a campaign,<br /> not a flat checklist.</h1>
 				<p>Work in grouped lanes, follow logical step progression, and keep progress saved while you move from design through workshop release.</p>
@@ -1494,7 +1494,7 @@
 	</header>
 
 	<section class="project-hub" aria-label="Planner projects">
-		<details class="project-hub-disclosure" bind:open={projectDeskOpen}>
+		<details class="project-hub-disclosure stack" bind:open={projectDeskOpen}>
 			<summary class="project-hub-summary">
 				<div class="project-hub-summary-copy">
 					<p class="eyebrow">Project Desk</p>
@@ -1513,7 +1513,7 @@
 				</div>
 			</summary>
 
-			<div class="project-hub-body">
+			<div class="project-hub-body stack">
 				<!-- <div class="project-hub-overview">
 					<div>
 						<p class="eyebrow">Project Desk</p>
@@ -1527,7 +1527,7 @@
 					</div>
 				</div> -->
 
-				<div class="project-hub-grid">
+				<div class="project-hub-grid stack">
 					<div class="project-rail">
 						<div class="project-rail-head">
 							<div class="stack half">
@@ -1703,7 +1703,7 @@
 		</details>
 	</section>
 
-	<section class="compass-panel" aria-label="Planning compass">
+	<section class="compass-panel stack" aria-label="Planning compass">
 		<div class="section-heading compass-heading">
 			<p class="eyebrow">New Modder Advice</p>
 			<h2 class="section-title">Start smaller than you think, finish one clean idea, then build outward.</h2>
@@ -1983,7 +1983,7 @@
 		</div>
 	</section>
 
-	<section class="planner-progress-footer" aria-label="Planner progress controls">
+	<section class="planner-progress-footer stack" aria-label="Planner progress controls">
 		<div class="inline space-between" style="gap: 2rem">
 			<div class="stack">
 				<div class="planner-progress-summary">
@@ -2015,17 +2015,6 @@
 </section>
 
 <style>
-	:global(:root[data-theme="light"]) .planner-page {
-		--planner-border: color-mix(in oklch, var(--panel-border) 64%, var(--accent) 36%);
-		--planner-border-soft: color-mix(in oklch, var(--panel-border) 84%, white 16%);
-		--planner-highlight-soft: color-mix(in oklch, var(--accent) 14%, white 86%);
-		--planner-panel: color-mix(in oklch, white 90%, var(--panel-bg) 10%);
-		--planner-panel-muted: color-mix(in oklch, white 90%, var(--control-bg) 10%);
-		--planner-panel-soft: color-mix(in oklch, white 84%, var(--control-bg) 16%);
-		--planner-panel-strong: color-mix(in oklch, white 82%, var(--panel-bg) 18%);
-		--planner-shadow: 0 6px 12px color-mix(in oklch, black 15%, transparent);
-		--planner-shadow-strong: 0 6px 14px color-mix(in oklch, black 25%, transparent);
-	}
 	.planner-page {
 		display: grid;
 		gap: 1.75rem;
@@ -2530,14 +2519,6 @@
 		gap: 0.5rem;
 	}
 
-	.stack {
-		display: grid;
-	}
-
-	.stack.half {
-		gap: 0.5rem;
-	}
-
 	.deliverable-pill.is-complete h3,
 	.deliverable-pill.is-complete .deliverable-path-copy,
 	.deliverable-pill.is-complete .deliverable-open-button {
@@ -2854,12 +2835,7 @@
 			0 4px 6px color-mix(in oklch, black 60%, transparent);
 	}
 
-	.section-heading,
-	.surface-group-head {
-		display: grid;
-		gap: 0.5rem;
-	}
-
+	.surface-group-head,
 	.surface-directory .section-heading {
 		display: grid;
 		gap: 0.5rem;

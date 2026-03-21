@@ -1339,7 +1339,7 @@
 <svelte:window onkeydown={handleWindowKeyDown} />
 
 <section class="schema-page">
-	<header class="schema-hero">
+	<header class="page-hero page-hero--schema schema-hero">
 		<p class="schema-eyebrow">Database Reference</p>
 		<h1>Schema Browser</h1>
 		<p>
@@ -1353,9 +1353,9 @@
 			<span>Loading schema browser...</span>
 		</p>
 	{:else}
-		<section class="schema-panel">
-			<div class="schema-section-head">
-				<span class="schema-kicker">Quick Starts</span>
+		<section class="surface-panel surface-panel--schema schema-panel">
+			<div class="section-head schema-section-head">
+				<span class="schema-kicker uppercase">Quick Starts</span>
 				<h2>Jump into the tables modders use most often</h2>
 				<p>These are the most useful starting points for documentation, planning, and debugging code for your mods.</p>
 			</div>
@@ -1371,7 +1371,7 @@
 			</div>
 		</section>
 
-		<section class="schema-panel schema-panel--explorer">
+		<section class="surface-panel surface-panel--schema schema-panel schema-panel--explorer">
 			<div class="schema-toolbar">
 				<div class="schema-toolbar-primary">
 					<div class="schema-mode-group" role="group" aria-label="Search scope">
@@ -1400,7 +1400,7 @@
 					</label>
 				</div>
 				<div class="schema-toolbar-secondary">
-					<div class="schema-filter-group" role="group" aria-label="Schema categories">
+					<div class="schema-filter-group inline half flex-wrap" role="group" aria-label="Schema categories">
 						{#each CATEGORY_DEFS as category (category.id)}
 							<button
 								type="button"
@@ -1416,8 +1416,8 @@
 				</div>
 				{#if recentTables.length > 0}
 					<div class="schema-recent-group" aria-label="Recent tables">
-						<span class="schema-toolbar-label">Recent tables</span>
-						<div class="schema-recent-list">
+						<span class="schema-toolbar-label uppercase">Recent tables</span>
+						<div class="schema-recent-list inline half flex-wrap">
 							{#each recentTables as table (table.name)}
 								<button type="button" class="schema-inline-link schema-inline-link--chip" onclick={() => selectTable(table.name)}>{table.name}</button>
 							{/each}
@@ -1427,12 +1427,12 @@
 			</div>
 
 			<div class="schema-explorer-grid">
-				<aside class="schema-list-panel" aria-label="Schema tables">
+				<aside class="schema-list-panel overflow-hidden" aria-label="Schema tables">
 					<div class="schema-list-head">
 						<h2>Tables</h2>
 						<span>{filteredTables.length} matches</span>
 					</div>
-					<div class="schema-table-list">
+					<div class="schema-table-list overflow">
 						{#if filteredTables.length === 0}
 							<div class="schema-empty-state">
 								<p class="schema-empty">No tables match the current search.</p>
@@ -1493,7 +1493,7 @@
 					<section class="schema-detail-panel" bind:this={schemaDetailPanelElement} aria-label="Selected table details">
 						<div class="schema-detail-hero">
 							<div class="schema-detail-hero-copy">
-								<p class="schema-kicker">Selected table</p>
+								<p class="schema-kicker uppercase">Selected table</p>
 								<h2>{selectedTable.name}</h2>
 								{#if normalizedQuery && selectedMatchReasons.length > 0}
 									<div class="schema-detail-match-summary">
@@ -1562,7 +1562,7 @@
 								{#if visibleColumns.length === 0}
 									<p class="schema-empty">No columns match the current column filter.</p>
 								{:else}
-									<div class="schema-column-list" role="list">
+									<div class="schema-column-list overflow" role="list">
 										{#each visibleColumns as column (column.name)}
 											<div class="schema-column-row" role="listitem">
 												<div>
@@ -1777,7 +1777,7 @@
 										{/if}
 									</article>
 
-									<article class="schema-detail-card schema-detail-card-inspector">
+									<article class="schema-detail-card schema-detail-card-inspector overflow-hidden">
 										<div class="schema-detail-card-head">
 											<div>
 												<h3>Row inspector</h3>
@@ -1796,7 +1796,7 @@
 										{:else if selectedInspectorFields.length === 0}
 											<p class="schema-empty">This row only contains empty values in the current sparse snapshot.</p>
 										{:else}
-											<dl class="schema-row-inspector">
+											<dl class="schema-row-inspector overflow">
 												{#each selectedInspectorFields as field (field.name)}
 													<div>
 														<dt>{field.name}</dt>
@@ -1910,7 +1910,7 @@
 	{/if}
 
 	<!-- <section class="schema-panel schema-panel--snapshot">
-		<div class="schema-section-head">
+		<div class="section-head schema-section-head">
 			<h2>Database Overview</h2>
 			<p>Just some neat stats about the database.</p>
 		</div>
@@ -1948,7 +1948,7 @@
 		</div>
 		<div class="schema-summary-grid">
 			<article class="schema-summary-card">
-				<span class="schema-kicker">LE CHUNKS</span>
+				<span class="schema-kicker uppercase">LE CHUNKS</span>
 				<h3>Widest tables</h3>
 				<ul class="schema-summary-list">
 					{#each WIDEST_TABLES as item (item.name)}
@@ -1960,7 +1960,7 @@
 				</ul>
 			</article>
 			<article class="schema-summary-card">
-				<span class="schema-kicker">SOCIAL BUTTERFLIES</span>
+				<span class="schema-kicker uppercase">SOCIAL BUTTERFLIES</span>
 				<h3>Most linked tables</h3>
 				<ul class="schema-summary-list">
 					{#each LINKED_TABLES as item (item.name)}
@@ -1972,7 +1972,7 @@
 				</ul>
 			</article>
 			<article class="schema-summary-card">
-				<span class="schema-kicker">ABSOLUTE UNITS</span>
+				<span class="schema-kicker uppercase">ABSOLUTE UNITS</span>
 				<h3>Row-heavy tables</h3>
 				<ul class="schema-summary-list">
 					{#each LARGEST_TABLES as item (item.name)}
@@ -1988,14 +1988,6 @@
 </section>
 
 <style>
-	:global(:root[data-theme="light"]) .schema-page {
-		--schema-bg: linear-gradient(180deg, rgba(231, 242, 252, 0.95) 0%, rgba(245, 248, 252, 0.98) 100%);
-		--schema-border: rgba(37, 67, 96, 0.16);
-		--schema-copy: rgba(32, 48, 62, 0.84);
-		--schema-highlight: #1c5a8f;
-		--schema-highlight-strong: #123a59;
-		--schema-panel: rgba(255, 255, 255, 0.96);
-	}
 	.schema-page {
 		display: grid;
 		gap: 1.15rem;
@@ -2034,19 +2026,6 @@
 	.schema-column-row p {
 		color: var(--schema-copy);
 		line-height: 1.45;
-	}
-
-	.schema-hero,
-	.schema-panel {
-		box-shadow: 0 6px 8px rgba(0, 0, 0, 0.25);
-		border: 1px solid var(--schema-border);
-		border-radius: 1.5rem;
-	}
-
-	.schema-hero,
-	.schema-panel {
-		padding-block: 1.3rem;
-		padding-inline: 1.3rem;
 	}
 
 	.schema-table-card p,
@@ -2225,20 +2204,6 @@
 
 	.schema-mode-group:has(.schema-filter-chip--scope) {
 		inline-size: fit-content;
-	}
-
-	:global(:root[data-theme="light"]) .schema-link,
-	:global(:root[data-theme="light"]) .schema-list-panel,
-	:global(:root[data-theme="light"]) .schema-detail-card,
-	:global(:root[data-theme="light"]) .schema-search-field input,
-	:global(:root[data-theme="light"]) .schema-sort-field select,
-	:global(:root[data-theme="light"]) .schema-local-filter input,
-	:global(:root[data-theme="light"]) .schema-table-card,
-	:global(:root[data-theme="light"]) .schema-quick-card,
-	:global(:root[data-theme="light"]) .schema-filter-chip,
-	:global(:root[data-theme="light"]) .schema-companion-card,
-	:global(:root[data-theme="light"]) .schema-inline-link--chip {
-		background: rgba(255, 255, 255, 0.82);
 	}
 
 	.schema-search-field {
@@ -3012,8 +2977,8 @@
 	}
 
 	@media (max-width: 720px) {
-		.schema-hero,
-		.schema-panel {
+		.page-hero.schema-hero,
+		.surface-panel.schema-panel {
 			padding-block: 1.1rem;
 			padding-inline: 1.1rem;
 		}

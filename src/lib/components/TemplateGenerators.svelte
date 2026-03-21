@@ -1,4 +1,5 @@
 <script>
+	import ReferenceSurfacePanel from "./ReferenceSurfacePanel.svelte";
 	import WizardExamplePreview from "./WizardExamplePreview.svelte";
 	import { exampleSupportsLanguage, wizardCards } from "../data/generatorPageData.js";
 
@@ -9,6 +10,16 @@
 	let nextUrlSyncMode = $state("replace");
 
 	const activeWizardCard = $derived(wizardCards[activeWizardIndex] || wizardCards[0]);
+	const activeWizardTouchpoints = $derived(
+		(activeWizardCard?.touchpoints || []).map((touchpoint) => ({
+			key: `${touchpoint.href}:${touchpoint.label}`,
+			label: touchpoint.label,
+			description: touchpoint.note,
+			href: touchpoint.href,
+			kind: touchpointSurfaceLabel(touchpoint.href),
+			surfaceClass: touchpointSurfaceClass(touchpoint.href),
+		})),
+	);
 
 	function generatorSlug(title) {
 		return String(title || "")
@@ -115,7 +126,7 @@
 		if (href?.startsWith("/template-generators")) {
 			return "is-generator";
 		}
-		if (href?.startsWith("/schema-browser")) {
+		if (href?.startsWith("/schema-browser") || href?.startsWith("/modded-civs-pedia")) {
 			return "is-schema";
 		}
 		if (href?.startsWith("/lua-api-explorer")) {
@@ -175,10 +186,10 @@
 	</header>
 
 	<section class="wizard-panel">
-		<div class="wizard-selection-shell">
+		<div class="wizard-selection-shell stack">
 			<div class="wizard-selector wizard-selector--featured" aria-label="Generator backlog">
 				<div class="wizard-quick-copy">
-					<span class="wizard-kicker">Generators</span>
+					<span class="wizard-kicker uppercase">Generators</span>
 					<h2>Choose a Generator to preview and use</h2>
 				</div>
 
@@ -208,11 +219,11 @@
 					<div class="wizard-card-intro">
 						<div class="wizard-card-head">
 							<div class="wizard-card-heading">
-								<span class="wizard-card-kicker">Selected Generator</span>
+								<span class="wizard-card-kicker uppercase">Selected Generator</span>
 								<h3>{activeWizardCard.title}</h3>
 								<p>{activeWizardCard.copy}</p>
 							</div>
-							<div class="wizard-card-stats" aria-label="Generator metadata">
+							<div class="wizard-card-stats inline half flex-wrap" aria-label="Generator metadata">
 								<span class="wizard-card-stat">{activeWizardCard.stage}</span>
 							</div>
 						</div>
@@ -245,20 +256,7 @@
 					{/if}
 
 					<section class="wizard-block wizard-block--touchpoints" aria-label="Reference touchpoints">
-						<div class="wizard-touchpoint-head">
-							<h4>Generator References</h4>
-						</div>
-						<div class="wizard-touchpoint-grid">
-							{#each activeWizardCard.touchpoints as touchpoint (`${touchpoint.href}:${touchpoint.label}`)}
-								<a class={`wizard-touchpoint-card wizard-touchpoint-card--link ${touchpointSurfaceClass(touchpoint.href)}`} href={touchpoint.href} target="_blank" rel="noreferrer">
-									<div class="wizard-touchpoint-card-head">
-										<h5 class="wizard-touchpoint-title">{touchpoint.label}</h5>
-										<span class="wizard-touchpoint-kind">{touchpointSurfaceLabel(touchpoint.href)}</span>
-									</div>
-									<p class="wizard-card-meta">{touchpoint.note}</p>
-								</a>
-							{/each}
-						</div>
+						<ReferenceSurfacePanel title="Generator References" ariaLabel="Generator references" items={activeWizardTouchpoints} tone="schema" />
 					</section>
 				</article>
 			</div>
@@ -365,10 +363,6 @@
 		padding-inline: 0.7rem;
 	}
 
-	.wizard-touchpoint-card-head span {
-		font-size: 0.76rem;
-	}
-
 	.wizard-kicker {
 		color: var(--muted-ink);
 		text-transform: uppercase;
@@ -398,8 +392,7 @@
 	}
 
 	.wizard-card h3,
-	.wizard-quick-card h3,
-	.wizard-block h4 {
+	.wizard-quick-card h3 {
 		margin: 0;
 	}
 
@@ -410,11 +403,6 @@
 
 	.wizard-grid--feature {
 		grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
-	}
-
-	:global(:root[data-theme="light"]) .wizard-card,
-	:global(:root[data-theme="light"]) .wizard-quick-card {
-		background: transparent;
 	}
 
 	.wizard-quick-card,
@@ -519,13 +507,6 @@
 		margin: 0;
 	}
 
-	.wizard-block h4 {
-		color: color-mix(in oklch, white 82%, var(--ink));
-		text-transform: uppercase;
-		font-size: 0.8rem;
-		letter-spacing: 0.08em;
-	}
-
 	.wizard-brief-list {
 		display: grid;
 		gap: 0.55rem;
@@ -565,53 +546,6 @@
 		border: 1px solid color-mix(in srgb, var(--wizard-accent-highlight) 18%, var(--panel-border));
 		border-radius: 0.9rem;
 		padding: 1rem;
-	}
-
-	.wizard-block--touchpoints {
-		gap: 0.9rem;
-		padding-block: 1rem 0;
-	}
-
-	.wizard-touchpoint-head {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 0.75rem;
-
-		h4 {
-			font-size: 1.125rem;
-		}
-	}
-
-	.wizard-touchpoint-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-		gap: 1rem;
-	}
-
-	.wizard-touchpoint-card-head {
-		display: flex;
-		justify-content: space-between;
-		align-items: start;
-		gap: 0.7rem;
-	}
-
-	.wizard-touchpoint-title {
-		margin: 0;
-		color: var(--ink);
-		font-family: "Rockwell", "Palatino Linotype", serif;
-		font-size: 1.1rem;
-		text-wrap: wrap;
-		word-break: break-word;
-		line-height: 1.15;
-	}
-
-	.wizard-touchpoint-kind {
-		flex: 0 0 auto;
-		color: color-mix(in srgb, var(--surface-highlight) 58%, var(--muted-ink) 42%);
-		font-size: 0.78rem;
-		white-space: nowrap;
-		text-box: trim-both cap alphabetic;
 	}
 
 	.wizard-card-meta {
@@ -720,113 +654,8 @@
 		padding: 1.35rem;
 	}
 
-	.wizard-section-head {
-		display: grid;
-		gap: 0.45rem;
-	}
-
-	.wizard-touchpoint-card {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 20%, transparent) 0%, transparent 45%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 94%, #16110f 6%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 10%, transparent),
-			0 6px 8px color-mix(in srgb, black 76%, transparent);
-		border: 1px solid color-mix(in srgb, var(--surface-highlight) 44%, var(--surface-border));
-		border-radius: 1rem;
-		padding: 1rem 0.95rem;
-		--surface-border: var(--surface-schema-border);
-		--surface-highlight: var(--surface-schema-highlight);
-		--surface-highlight-strong: var(--surface-schema-highlight-strong);
-		--surface-panel: var(--surface-schema-panel);
-	}
-
-	.wizard-touchpoint-card--link {
-		color: inherit;
-		text-decoration: none;
-		transition:
-			transform 140ms ease,
-			border-color 140ms ease,
-			background-color 140ms ease,
-			box-shadow 140ms ease;
-	}
-
-	.wizard-touchpoint-card--link:hover {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 34%, transparent) 0%, transparent 40%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 92%, #16110f 8%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 16%, transparent),
-			0 10px 16px color-mix(in oklch, var(--shadow-soft) 66%, transparent);
-		border-color: color-mix(in srgb, var(--surface-highlight) 72%, var(--surface-border));
-		transform: translateY(-2px);
-	}
-
-	.wizard-touchpoint-card.is-generator {
-		--surface-border: var(--surface-generator-border);
-		--surface-highlight: var(--surface-generator-highlight);
-		--surface-highlight-strong: var(--surface-generator-highlight-strong);
-		--surface-panel: var(--surface-generator-panel);
-	}
-
-	.wizard-touchpoint-card.is-lua {
-		--surface-border: var(--surface-lua-border);
-		--surface-highlight: var(--surface-lua-highlight);
-		--surface-highlight-strong: var(--surface-lua-highlight-strong);
-		--surface-panel: var(--surface-lua-panel);
-	}
-
-	.wizard-touchpoint-card.is-pattern {
-		--surface-border: var(--surface-pattern-border);
-		--surface-highlight: var(--surface-pattern-highlight);
-		--surface-highlight-strong: var(--surface-pattern-highlight-strong);
-		--surface-panel: var(--surface-pattern-panel);
-	}
-
-	.wizard-touchpoint-card.is-publish {
-		--surface-border: var(--surface-publish-border);
-		--surface-highlight: var(--surface-publish-highlight);
-		--surface-highlight-strong: var(--surface-publish-highlight-strong);
-		--surface-panel: var(--surface-publish-panel);
-	}
-
-	.wizard-touchpoint-card.is-schema {
-		--surface-border: var(--surface-schema-border);
-		--surface-highlight: var(--surface-schema-highlight);
-		--surface-highlight-strong: var(--surface-schema-highlight-strong);
-		--surface-panel: var(--surface-schema-panel);
-	}
-
-	.wizard-touchpoint-card.is-tool {
-		--surface-border: var(--surface-tool-border);
-		--surface-highlight: var(--surface-tool-highlight);
-		--surface-highlight-strong: var(--surface-tool-highlight-strong);
-		--surface-panel: var(--surface-tool-panel);
-	}
-
-	.wizard-touchpoint-card.is-ui {
-		--surface-border: var(--surface-ui-border);
-		--surface-highlight: var(--surface-ui-highlight);
-		--surface-highlight-strong: var(--surface-ui-highlight-strong);
-		--surface-panel: var(--surface-ui-panel);
-	}
-
-	.wizard-touchpoint-card.is-viewer,
-	.wizard-touchpoint-card.is-support {
-		--surface-border: var(--surface-support-border);
-		--surface-highlight: var(--surface-support-highlight);
-		--surface-highlight-strong: var(--surface-support-highlight-strong);
-		--surface-panel: var(--surface-support-panel);
-	}
-
-	.wizard-touchpoint-card.is-planner {
-		--surface-border: var(--surface-planner-border);
-		--surface-highlight: var(--surface-planner-highlight);
-		--surface-highlight-strong: var(--surface-planner-highlight-strong);
-		--surface-panel: var(--surface-planner-panel);
+	.wizard-block--touchpoints {
+		padding-block: 1rem 0;
 	}
 
 	@media (width <= 1100px) {

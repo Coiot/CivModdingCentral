@@ -89,6 +89,12 @@ const ROUTE_SEO = {
 		keywords: "Civilization V Lua API explorer, Civ 5 GameEvents, Civ 5 Lua methods, Player API, City API",
 		pageType: "CollectionPage",
 	},
+	"/modded-civs-pedia": {
+		title: "Modded Civs Pedia for Civilization V Custom Civilizations | Civ Modding Central",
+		description: "Browse structured entries for custom Civilization V civilizations and convert fandom wiki markup or mod folders into reusable pedia JSON and wiki outputs.",
+		keywords: "Civilization V modded civs pedia, Civ 5 custom civilizations database, fandom wiki converter, civ mod folder parser",
+		pageType: "CollectionPage",
+	},
 	"/civ-icon-maker": {
 		title: "Civ V Icon Maker and Alpha Atlas Tool | Civ Modding Central",
 		description: "Create Civilization V style icon renders with layered lighting, color controls, drag positioning, and export-ready alpha atlas styling.",

@@ -15,7 +15,7 @@
 		const href = String(resource?.href || "");
 
 		if (href.includes("/guided-planner")) return "is-planner";
-		if (href.includes("/schema-browser")) return "is-schema";
+		if (href.includes("/schema-browser") || href.includes("/modded-civs-pedia")) return "is-schema";
 		if (href.includes("/lua-api-explorer")) return "is-lua";
 		if (href.includes("/pattern-library")) return "is-pattern";
 		if (href.includes("/template-generators")) return "is-generator";
@@ -51,9 +51,6 @@
 					{#each group.items as resource (resource.id)}
 						{#if resource.disabled}
 							<div class={["surface-card", resourceTone(resource), resourceAccentClass(resource), isFeaturedResource(resource) && "is-featured"]} aria-disabled="true">
-								<!-- <div class="surface-card-top">
-									<strong class="surface-badge">Coming Soon</strong>
-								</div> -->
 								<h4 class="card-title text-lg">{resource.label}</h4>
 								<p class="card-copy">{resource.description}</p>
 							</div>
@@ -95,21 +92,14 @@
 			inset 0 1px 0 color-mix(in srgb, white 12.5%, transparent),
 			0 4px 8px color-mix(in srgb, black 80%, transparent);
 		/*border: 1px solid color-mix(in srgb, var(--home-muted-border) 58%, white 12%);*/
-		border-radius: 1rem;
 		padding: 1rem;
-	}
-
-	.surface-group-head {
-		display: flex;
-		justify-content: space-between;
-		align-items: start;
-		gap: 0.7rem;
+		border-radius: 1rem;
 	}
 
 	.surface-card-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
 		gap: 1rem;
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
 	}
 
 	.surface-card {
@@ -118,7 +108,6 @@
 		flex-direction: column;
 		gap: 0.5rem;
 		color: var(--ink);
-		text-decoration: none;
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 20%, transparent) 0%, transparent 45%),
 			linear-gradient(
@@ -133,6 +122,8 @@
 		border-radius: 1rem;
 		padding: 1.25rem 1rem;
 		overflow: hidden;
+		text-decoration: none;
+		overflow: hidden;
 		transition:
 			transform 160ms ease,
 			border-color 160ms ease,
@@ -140,40 +131,18 @@
 			box-shadow 160ms ease;
 	}
 
-	a.surface-card:hover,
-	a.surface-card:focus-visible {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 40%, transparent) 0%, transparent 40%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 95%, #16110f 5%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight, var(--accent)) 14%, transparent),
-			0 4px 8px color-mix(in srgb, black 76%, transparent);
-		border-color: color-mix(in srgb, var(--surface-highlight, var(--accent)) 74%, var(--home-muted-border));
-		transform: translateY(-2px);
-	}
-
-	.surface-card-top {
-		display: flex;
-		justify-content: space-between;
-		align-items: start;
-		gap: 0.7rem;
-	}
-
-	.surface-badge {
-		inline-size: fit-content;
-		display: inline-flex;
-		justify-content: center;
-		align-items: center;
-		color: var(--surface-highlight-strong, var(--ink));
-		text-transform: uppercase;
-		font-size: 0.75rem;
-		font-weight: 800;
-		letter-spacing: 0.08em;
-		background: color-mix(in srgb, var(--surface-highlight, var(--accent)) 14%, transparent);
-		border: 1px solid color-mix(in srgb, var(--surface-highlight, var(--accent)) 54%, var(--home-muted-border));
-		border-radius: 999px;
-		padding-block: 0.3rem;
-		padding-inline: 0.65rem;
+	a.surface-card {
+		&:hover,
+		&:focus-visible {
+			background:
+				radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--accent)) 40%, transparent) 0%, transparent 40%),
+				linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 95%, #16110f 5%) 100%);
+			box-shadow:
+				inset 0 1px 0 color-mix(in srgb, var(--surface-highlight, var(--accent)) 14%, transparent),
+				0 4px 8px color-mix(in srgb, black 76%, transparent);
+			border-color: color-mix(in srgb, var(--surface-highlight, var(--accent)) 74%, var(--home-muted-border));
+			transform: translateY(-2px);
+		}
 	}
 
 	.surface-card.is-disabled {

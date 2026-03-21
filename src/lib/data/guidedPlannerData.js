@@ -101,7 +101,7 @@ export const siteResourceGroups = [
 	{
 		id: "learn",
 		kicker: "Learn",
-		label: "Tutorials & Patterns",
+		label: "Tutorials & Recipes",
 		description: "Planning, examples, and community insights to get you started with civ modding.",
 		items: [
 			{

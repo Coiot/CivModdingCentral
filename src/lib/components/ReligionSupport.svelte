@@ -2,6 +2,7 @@
 
 <script>
 	import { onMount, tick } from "svelte";
+	import HelpfulLinksPanel from "./HelpfulLinksPanel.svelte";
 	import religionSupportData from "../data/religion-support.json";
 
 	const numberFormatter = new Intl.NumberFormat("en-US");
@@ -113,32 +114,6 @@
 			.replace(/\s+/g, " ")
 			.trim();
 	}
-
-	function relatedToolAccentClass(href) {
-		const value = String(href || "");
-		if (value.includes("/schema-browser")) return "is-schema";
-		if (value.includes("/lua-api-explorer")) return "is-lua";
-		if (value.includes("/pattern-library")) return "is-pattern";
-		if (value.includes("/template-generators")) return "is-generator";
-		if (value.includes("/guided-planner")) return "is-planner";
-		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "is-publish";
-		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "is-ui";
-		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "is-support";
-		return "is-tool";
-	}
-
-	function relatedToolTypeLabel(href) {
-		const value = String(href || "");
-		if (value.includes("/schema-browser")) return "Schema";
-		if (value.includes("/lua-api-explorer")) return "Lua";
-		if (value.includes("/pattern-library")) return "Pattern";
-		if (value.includes("/template-generators")) return "Generator";
-		if (value.includes("/guided-planner")) return "Planner";
-		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "Publish";
-		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "UI";
-		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "Support";
-		return "Tool";
-	}
 </script>
 
 <section class="hero religion-hero margin-block-end">
@@ -150,17 +125,17 @@
 </section>
 
 <section class="viewer-toolbar panel-surface margin-block-end" aria-label="Religion support controls">
-	<label class="search-field">
+	<label class="search-field stack quarter">
 		<span>Search Religions, Packs, Or Text</span>
 		<input bind:value={searchQuery} type="search" placeholder="shinto, australia, buddhism, atlas, mountain, dream..." />
 	</label>
 
 	<div class="toolbar-section">
 		<div class="toolbar-section-head">
-			<span class="toolbar-label">Pack Filter</span>
+			<span class="toolbar-label uppercase">Pack Filter</span>
 		</div>
 
-		<div class="chip-group" role="list" aria-label="Religion pack filter">
+		<div class="chip-group inline half flex-wrap" role="list" aria-label="Religion pack filter">
 			<button class:selected={!hasPackFilter} type="button" onclick={clearPackFilters}>All packs</button>
 			{#each PACKS as pack (pack.id)}
 				<button class:selected={selectedPacks.includes(pack.id)} type="button" onclick={() => togglePackFilter(pack.id)}>{pack.title}</button>
@@ -177,7 +152,7 @@
 	<div class="pack-stack">
 		{#each filteredPacks as pack (pack.id)}
 			<section class="pack-panel panel-surface" id={pack.id} aria-labelledby={`${pack.id}-heading`}>
-				<header class="pack-head">
+				<header class="pack-head inline half flex-wrap">
 					<div class="pack-heading">
 						<p class="eyebrow">Religion Pack</p>
 						<h2 id={`${pack.id}-heading`}>{pack.title}</h2>
@@ -231,25 +206,9 @@
 	</div>
 {/if}
 
-<section class="related-tools-panel panel-surface margin-block-start" aria-label="Related religion support tools">
-	<div class="related-tools-head">
-		<div class="stack half">
-			<p class="eyebrow">Helpful Links</p>
-		</div>
-	</div>
-
-	<div class="related-tool-grid">
-		{#each RELIGION_RELATED_TOOLS as tool (tool.href)}
-			<a class={`related-tool-card ${relatedToolAccentClass(tool.href)}`} href={tool.href}>
-				<div class="related-tool-card-head">
-					<h3>{tool.label}</h3>
-					<span class="related-tool-card-kind">{relatedToolTypeLabel(tool.href)}</span>
-				</div>
-				<p>{tool.description}</p>
-			</a>
-		{/each}
-	</div>
-</section>
+<div class="margin-block-start">
+	<HelpfulLinksPanel ariaLabel="Related religion support tools" links={RELIGION_RELATED_TOOLS} tone="support" />
+</div>
 
 <style>
 	.religion-hero {
@@ -268,21 +227,21 @@
 			0 8px 20px color-mix(in oklch, var(--shadow-soft) 64%, transparent);
 	}
 
-	.hero-copy {
-		display: grid;
-		gap: 0.6rem;
-	}
-
 	.panel-surface,
 	.religion-card {
-		border-radius: 0.9rem;
-		border: 1px solid color-mix(in oklch, var(--surface-support-border) 72%, var(--panel-border));
-		background:
+		--panel-surface-radius: 0.9rem;
+		--panel-surface-border: color-mix(in oklch, var(--surface-support-border) 72%, var(--panel-border));
+		--panel-surface-background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-support-highlight) 11%, transparent) 0%, transparent 30%),
 			color-mix(in oklch, var(--surface-support-panel) 74%, var(--panel-bg) 26%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-support-highlight) 10%, transparent),
-			0 8px 12px color-mix(in oklch, var(--shadow-soft) 64%, transparent);
+		--panel-surface-shadow: inset 0 1px 0 color-mix(in srgb, var(--surface-support-highlight) 10%, transparent), 0 8px 12px color-mix(in oklch, var(--shadow-soft) 64%, transparent);
+	}
+
+	.religion-card {
+		border-radius: var(--panel-surface-radius);
+		border: 1px solid var(--panel-surface-border);
+		background: var(--panel-surface-background);
+		box-shadow: var(--panel-surface-shadow);
 	}
 
 	.toolbar-copy,
@@ -293,135 +252,12 @@
 	}
 
 	.viewer-toolbar,
-	.related-tools-panel,
 	.pack-panel {
 		padding: 1.05rem 1rem;
 	}
 
 	.viewer-toolbar {
-		display: grid;
-		gap: 0.8rem;
-	}
-
-	.related-tools-panel,
-	.related-tools-head,
-	.related-tool-grid {
-		display: grid;
-		gap: 0.8rem;
-	}
-
-	.related-tool-grid {
-		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-	}
-
-	.related-tool-card {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		color: var(--ink);
-		text-decoration: none;
-		border-radius: 1rem;
-		padding: 1rem 0.95rem;
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 20%, transparent) 0%, transparent 45%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 94%, #16110f 6%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 10%, transparent),
-			0 6px 8px color-mix(in srgb, black 76%, transparent);
-		border: 1px solid color-mix(in srgb, var(--surface-highlight) 44%, var(--surface-border));
-	}
-
-	.related-tool-card-head {
-		display: flex;
-		justify-content: space-between;
-		align-items: start;
-		gap: 0.7rem;
-	}
-
-	.related-tool-card h3 {
-		margin: 0;
-		font-family: "Rockwell", "Palatino Linotype", serif;
-		font-size: 1.05rem;
-	}
-
-	.related-tool-card-kind {
-		flex: 0 0 auto;
-		color: color-mix(in srgb, var(--surface-highlight) 58%, var(--muted-ink) 42%);
-		font-size: 0.78rem;
-		white-space: nowrap;
-		text-box: trim-both cap alphabetic;
-	}
-
-	.related-tool-card p {
-		margin: 0;
-		color: var(--muted-ink);
-		line-height: 1.4;
-	}
-
-	.related-tool-card:hover,
-	.related-tool-card:focus-visible {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 34%, transparent) 0%, transparent 40%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 92%, #16110f 8%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 16%, transparent),
-			0 10px 16px color-mix(in oklch, var(--shadow-soft) 66%, transparent);
-		border-color: color-mix(in srgb, var(--surface-highlight) 72%, var(--surface-border));
-		transform: translateY(-2px);
-	}
-
-	.related-tool-card.is-generator {
-		--surface-border: var(--surface-generator-border);
-		--surface-highlight: var(--surface-generator-highlight);
-		--surface-panel: var(--surface-generator-panel);
-	}
-
-	.related-tool-card.is-lua {
-		--surface-border: var(--surface-lua-border);
-		--surface-highlight: var(--surface-lua-highlight);
-		--surface-panel: var(--surface-lua-panel);
-	}
-
-	.related-tool-card.is-pattern {
-		--surface-border: var(--surface-pattern-border);
-		--surface-highlight: var(--surface-pattern-highlight);
-		--surface-panel: var(--surface-pattern-panel);
-	}
-
-	.related-tool-card.is-schema {
-		--surface-border: var(--surface-schema-border);
-		--surface-highlight: var(--surface-schema-highlight);
-		--surface-panel: var(--surface-schema-panel);
-	}
-
-	.related-tool-card.is-tool {
-		--surface-border: var(--surface-tool-border);
-		--surface-highlight: var(--surface-tool-highlight);
-		--surface-panel: var(--surface-tool-panel);
-	}
-
-	.related-tool-card.is-publish {
-		--surface-border: var(--surface-publish-border);
-		--surface-highlight: var(--surface-publish-highlight);
-		--surface-panel: var(--surface-publish-panel);
-	}
-
-	.related-tool-card.is-ui {
-		--surface-border: var(--surface-ui-border);
-		--surface-highlight: var(--surface-ui-highlight);
-		--surface-panel: var(--surface-ui-panel);
-	}
-
-	.related-tool-card.is-support {
-		--surface-border: var(--surface-support-border);
-		--surface-highlight: var(--surface-support-highlight);
-		--surface-panel: var(--surface-support-panel);
-	}
-
-	.related-tool-card.is-planner {
-		--surface-border: var(--surface-planner-border);
-		--surface-highlight: var(--surface-planner-highlight);
-		--surface-panel: var(--surface-planner-panel);
+		--viewer-toolbar-gap: 0.8rem;
 	}
 
 	.toolbar-section,
@@ -431,17 +267,23 @@
 	}
 
 	.toolbar-section-head {
-		display: grid;
-		gap: 0.12rem;
+		--toolbar-section-head-gap: 0.12rem;
 	}
 
 	.toolbar-label,
+	.search-field span {
+		color: color-mix(in oklch, var(--surface-support-highlight-strong) 72%, var(--ink));
+	}
+
+	.toolbar-label {
+		--toolbar-label-color: color-mix(in oklch, var(--surface-support-highlight-strong) 72%, var(--ink));
+	}
+
 	.search-field span {
 		font-size: 0.74rem;
 		font-weight: 700;
 		letter-spacing: 0.13em;
 		text-transform: uppercase;
-		color: color-mix(in oklch, var(--surface-support-highlight-strong) 72%, var(--ink));
 	}
 
 	.search-field input {

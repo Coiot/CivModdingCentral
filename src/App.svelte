@@ -9,13 +9,13 @@
 	import CivIconMaker from "./lib/components/CivIconMaker.svelte";
 	import WorkshopUploader from "./lib/components/WorkshopUploader.svelte";
 	import ModInfoBuilder from "./lib/components/ModInfoBuilder.svelte";
+	import ModdedCivsPedia from "./lib/components/ModdedCivsPedia.svelte";
 	import Civ5ModZiper from "./lib/components/Civ5ModZiper.svelte";
 	import PatternLibrary from "./lib/components/PatternLibrary.svelte";
 	import TemplateGenerators from "./lib/components/TemplateGenerators.svelte";
 	import GuidedPlanner from "./lib/components/GuidedPlanner.svelte";
 	import UnitFlagPreviewer from "./lib/components/UnitFlagPreviewer.svelte";
 
-	const THEME_STORAGE_KEY = "cmc-theme-mode";
 	const AUTH_STORAGE_KEY = "cmc-auth-session";
 
 	const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
@@ -27,7 +27,6 @@
 	const GOOGLE_SHEET_PUB_URL = import.meta.env.VITE_GOOGLE_SHEET_PUB_URL || "";
 	const AUTH_ENABLED = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
-	let themeMode = $state("dark");
 	let authUser = $state(null);
 	let authEmail = $state("");
 	let authMessage = $state("");
@@ -223,7 +222,6 @@
 	}
 
 	onMount(() => {
-		restoreTheme();
 		if (typeof window !== "undefined") {
 			const handlePopState = () => {
 				const nextPath = normalizePathname(window.location.pathname);
@@ -281,6 +279,7 @@
 			currentPath === "/civ-icon-maker" ||
 			currentPath === "/workshop-uploader" ||
 			currentPath === "/modinfo-builder" ||
+			currentPath === "/modded-civs-pedia" ||
 			currentPath === "/civ5mod-ziper" ||
 			currentPath === "/pattern-library" ||
 			currentPath === "/template-generators" ||
@@ -344,35 +343,6 @@
 	function onAuthEmailInput(value) {
 		authEmail = value;
 		authMessage = "";
-	}
-
-	function toggleTheme() {
-		applyTheme(themeMode === "dark" ? "light" : "dark");
-	}
-
-	function setThemeMode(mode) {
-		applyTheme(mode);
-	}
-
-	function restoreTheme() {
-		if (typeof localStorage === "undefined") {
-			applyTheme("dark");
-			return;
-		}
-
-		const stored = localStorage.getItem(THEME_STORAGE_KEY);
-		const mode = stored === "light" ? "light" : "dark";
-		applyTheme(mode);
-	}
-
-	function applyTheme(mode) {
-		themeMode = mode === "dark" ? "dark" : "light";
-		if (typeof document !== "undefined") {
-			document.documentElement.dataset.theme = themeMode;
-		}
-		if (typeof localStorage !== "undefined") {
-			localStorage.setItem(THEME_STORAGE_KEY, themeMode);
-		}
 	}
 
 	async function restoreAuth() {
@@ -833,7 +803,6 @@
 
 <div class="app-shell">
 	<Navbar
-		{themeMode}
 		{currentPath}
 		{authUser}
 		{authEmail}
@@ -844,8 +813,6 @@
 		{authAccessLoading}
 		{authAccessChecked}
 		authEnabled={AUTH_ENABLED}
-		onToggleTheme={toggleTheme}
-		onSetThemeMode={setThemeMode}
 		{onAuthEmailInput}
 		onQuickJump={jumpToHref}
 		onSendMagicLink={sendMagicLink}
@@ -867,6 +834,8 @@
 					<WorkshopUploader />
 				{:else if currentPath === "/modinfo-builder"}
 					<ModInfoBuilder />
+				{:else if currentPath === "/modded-civs-pedia"}
+					<ModdedCivsPedia />
 				{:else if currentPath === "/civ5mod-ziper"}
 					<Civ5ModZiper />
 				{:else if currentPath === "/pattern-library"}

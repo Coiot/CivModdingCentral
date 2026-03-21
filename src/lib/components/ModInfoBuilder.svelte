@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { md5HexBytes as computeMd5HexBytes } from "../civ5mod/modinfo.js";
+	import ToolCompanionPanel from "./ToolCompanionPanel.svelte";
 
 	interface ModReferenceRow {
 		id: string;
@@ -1259,13 +1260,13 @@
 	}
 </script>
 
-<section class="modinfo-page">
-<header class="hero">
+<section class="modinfo-page stack">
+<header class="page-hero page-hero--publish modinfo-hero">
 		<h1>.modinfo Builder</h1>
 		<p>Scan a directory, auto-fill files / actions / entry points, then manually review before saving a <code>.modinfo</code>.</p>
 </header>
 
-<section class="card">
+<section class="card surface-panel surface-panel--publish modinfo-card">
 	<div class="panel-content">
 		<section class="block">
 			<div class="row-head">
@@ -1322,7 +1323,7 @@
 								Wrap Description Selection
 							</button>
 						</div>
-						<div class="color-chip-grid">
+						<div class="color-chip-grid overflow">
 							{#each CIV5_COLOR_OPTIONS as colorOption (colorOption)}
 								<button
 									class="color-chip"
@@ -1369,13 +1370,13 @@
 		</section>
 
 		<div class="builder-columns">
-			<div class="builder-column builder-column-primary">
+			<div class="builder-column builder-column-primary stack">
 				<section class="block">
 				<div class="row-head">
 					<h3>Files</h3>
 					<button class="btn secondary small" type="button" onclick={addEmptyFile}>Add File</button>
 				</div>
-				<div class="table-scroll">
+				<div class="table-scroll overflow">
 					<table>
 						<thead>
 							<tr><th>Path</th><th>MD5</th><th>Import</th><th></th></tr>
@@ -1385,8 +1386,8 @@
 								<tr>
 									<td><input class="input tight" bind:value={file.relativePath} /></td>
 									<td><input class="input tight mono" bind:value={file.md5} /></td>
-									<td class="center"><input type="checkbox" bind:checked={file.import} /></td>
-									<td class="center"><button class="btn secondary tiny" type="button" onclick={() => removeFile(index)}>Remove</button></td>
+									<td class="text-center"><input type="checkbox" bind:checked={file.import} /></td>
+									<td class="text-center"><button class="btn secondary tiny" type="button" onclick={() => removeFile(index)}>Remove</button></td>
 								</tr>
 							{/each}
 						</tbody>
@@ -1399,7 +1400,7 @@
 					<h3>Actions</h3>
 					<button class="btn secondary small" type="button" onclick={addAction}>Add Action</button>
 				</div>
-				<div class="table-scroll">
+				<div class="table-scroll overflow">
 					<table>
 						<thead>
 							<tr><th>Event</th><th>Action</th><th>File</th><th></th></tr>
@@ -1416,7 +1417,7 @@
 										</select>
 									</td>
 									<td><input class="input tight" bind:value={row.file} list="modinfo-file-options" /></td>
-									<td class="center"><button class="btn secondary tiny" type="button" onclick={() => removeAction(index)}>Remove</button></td>
+									<td class="text-center"><button class="btn secondary tiny" type="button" onclick={() => removeAction(index)}>Remove</button></td>
 								</tr>
 							{/each}
 						</tbody>
@@ -1429,7 +1430,7 @@
 					<h3>Entry Points</h3>
 					<button class="btn secondary small" type="button" onclick={addEntryPoint}>Add Entry Point</button>
 				</div>
-				<div class="table-scroll">
+				<div class="table-scroll overflow">
 					<table>
 						<thead>
 							<tr><th>Type</th><th>File</th><th>Name</th><th>Description</th><th></th></tr>
@@ -1447,7 +1448,7 @@
 									<td><input class="input tight" bind:value={row.file} list="modinfo-file-options" /></td>
 									<td><input class="input tight" bind:value={row.name} /></td>
 									<td><input class="input tight" bind:value={row.description} /></td>
-									<td class="center"><button class="btn secondary tiny" type="button" onclick={() => removeEntryPoint(index)}>Remove</button></td>
+									<td class="text-center"><button class="btn secondary tiny" type="button" onclick={() => removeEntryPoint(index)}>Remove</button></td>
 								</tr>
 							{/each}
 						</tbody>
@@ -1456,18 +1457,18 @@
 				</section>
 			</div>
 
-			<div class="builder-column builder-column-secondary">
+			<div class="builder-column builder-column-secondary stack">
 				<section class="block">
 				<div class="row-head">
 					<h3>Dependencies (DLC + Mods)</h3>
-					<div class="row-actions">
+					<div class="row-actions inline half">
 						<button class="btn secondary small" type="button" onclick={() => addDependency("Dlc")}>Add DLC</button>
 						<button class="btn secondary small" type="button" onclick={() => addDependency("Mod")}>Add Mod</button>
 					</div>
 				</div>
 				<details class="preset-details">
 					<summary>Common Dependencies</summary>
-					<div class="preset-chip-grid" role="group" aria-label="Common dependencies">
+					<div class="preset-chip-grid overflow" role="group" aria-label="Common dependencies">
 						{#each COMMON_DEPENDENCY_PRESETS as preset (`${preset.type}|${preset.id}|${preset.minversion}|${preset.maxversion}|${preset.title ?? ""}`)}
 							<button class="preset-chip" type="button" onclick={() => addDependencyPreset(preset)}>
 								<span class="preset-type">{preset.type}</span>
@@ -1476,7 +1477,7 @@
 						{/each}
 					</div>
 				</details>
-				<div class="table-scroll">
+				<div class="table-scroll overflow">
 					<table>
 						<thead>
 							<tr><th>Type</th><th>ID</th><th>Min</th><th>Max</th><th>Title (Mods)</th><th></th></tr>
@@ -1494,7 +1495,7 @@
 									<td><input class="input tight" bind:value={row.minversion} /></td>
 									<td><input class="input tight" bind:value={row.maxversion} /></td>
 									<td><input class="input tight" bind:value={row.title} disabled={row.type !== "Mod"} placeholder={row.type === "Mod" ? "Dependency title" : ""} /></td>
-									<td class="center"><button class="btn secondary tiny" type="button" onclick={() => removeDependency(index)}>Remove</button></td>
+									<td class="text-center"><button class="btn secondary tiny" type="button" onclick={() => removeDependency(index)}>Remove</button></td>
 								</tr>
 							{/each}
 						</tbody>
@@ -1509,7 +1510,7 @@
 				</div>
 				<details class="preset-details">
 					<summary>Common References</summary>
-					<div class="preset-chip-grid" role="group" aria-label="Common references">
+					<div class="preset-chip-grid overflow" role="group" aria-label="Common references">
 						{#each COMMON_REFERENCE_PRESETS as preset (`${preset.id}|${preset.minversion}|${preset.maxversion}|${preset.title}`)}
 							<button class="preset-chip" type="button" onclick={() => addReferencePreset(preset)}>
 								<span>{preset.title}</span>
@@ -1517,7 +1518,7 @@
 						{/each}
 					</div>
 				</details>
-				<div class="table-scroll">
+				<div class="table-scroll overflow">
 					<table>
 						<thead>
 							<tr><th>ID</th><th>Min</th><th>Max</th><th>Title</th><th></th></tr>
@@ -1529,7 +1530,7 @@
 									<td><input class="input tight" bind:value={row.minversion} /></td>
 									<td><input class="input tight" bind:value={row.maxversion} /></td>
 									<td><input class="input tight" bind:value={row.title} /></td>
-									<td class="center"><button class="btn secondary tiny" type="button" onclick={() => removeReference(index)}>Remove</button></td>
+									<td class="text-center"><button class="btn secondary tiny" type="button" onclick={() => removeReference(index)}>Remove</button></td>
 								</tr>
 							{/each}
 						</tbody>
@@ -1549,8 +1550,8 @@
 					<button class="btn secondary small" type="button" disabled={!api || localBusy} onclick={chooseOutputPath}>Choose Save Path</button>
 					<button class="btn secondary small" type="button" onclick={copyXml}>Copy XML</button>
 				</div>
-			<div class="btn-row">
-				<span class="tooltip-wrap">
+			<div class="btn-row inline half flex-wrap">
+				<span class="tooltip-wrap relative">
 					<button class="btn" type="button" disabled={!canSave} onclick={saveModinfo}>{localBusy ? "Saving..." : "Save .modinfo"}</button>
 					{#if !canSave}
 						<span class="tooltip">{disableReason}</span>
@@ -1569,22 +1570,7 @@
 			<pre>{modinfoXml}</pre>
 		</section>
 
-		<section class="modinfo-companion-panel">
-			<div class="modinfo-companion-head">
-				<div>
-					<h2>Use alongside the other tools</h2>
-					<p>Continue with packaging and publishing tools once the .modinfo file is ready.</p>
-				</div>
-			</div>
-			<div class="companion-grid">
-		{#each companionTools as tool (tool.title)}
-			<a class={`companion-card ${tool.href === "/community-links" ? "is-site-accent" : ""}`} href={tool.href}>
-				<h3>{tool.title}</h3>
-				<p>{tool.copy}</p>
-			</a>
-		{/each}
-			</div>
-		</section>
+		<ToolCompanionPanel copy="Continue with packaging and publishing tools once the .modinfo file is ready." tools={companionTools} />
 	</div>
 </section>
 </section>
@@ -1596,65 +1582,6 @@
 </datalist>
 
 <style>
-	:global(:root[data-theme="light"]) .modinfo-page {
-		.block,
-		.preset-details,
-		.color-helper,
-		.color-helper-details {
-			background: color-mix(in oklch, white 78%, var(--control-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 88%, var(--accent) 12%);
-		}
-
-		.preset-chip,
-		.color-chip,
-		.color-example,
-		pre {
-			color: var(--ink);
-			background: color-mix(in oklch, white 88%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 86%, var(--accent) 14%);
-		}
-
-		.preset-details > summary,
-		.color-helper-details > summary,
-		.field-hint,
-		.label {
-			color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
-		}
-
-		.preset-chip,
-		.color-chip {
-			color: color-mix(in oklch, var(--ink) 74%, var(--muted-ink));
-		}
-
-		.tooltip {
-			color: var(--ink);
-			background: color-mix(in oklch, white 94%, var(--panel-bg));
-			box-shadow: 0 14px 28px var(--shadow-soft);
-			border-color: color-mix(in oklch, var(--accent) 28%, var(--panel-border));
-		}
-
-		.companion-card {
-			background: color-mix(in oklch, white 84%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 84%, var(--accent) 16%);
-
-			& p {
-				color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
-			}
-
-			&:hover {
-				background: color-mix(in oklch, white 78%, var(--accent) 10%);
-			}
-		}
-
-		.modinfo-companion-panel {
-			background: color-mix(in oklch, white 86%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 88%, var(--accent) 12%);
-		}
-
-		.modinfo-companion-head p {
-			color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
-		}
-	}
 	.modinfo-page {
 		display: grid;
 		gap: 1rem;
@@ -1664,7 +1591,7 @@
 		--modinfo-accent-panel: var(--surface-publish-panel);
 	}
 
-	.modinfo-page .hero {
+	.modinfo-hero {
 		background:
 			/*radial-gradient(120% 140% at 100% 0%, color-mix(in oklch, var(--modinfo-accent-highlight) 16%, transparent) 0%, transparent 52%),*/
 			linear-gradient(135deg, color-mix(in oklch, var(--modinfo-accent-panel) 92%, black 8%) 0%, color-mix(in oklch, var(--modinfo-accent-panel) 95%, var(--modinfo-accent-highlight) 5%) 100%);
@@ -1682,11 +1609,9 @@
 		color: color-mix(in oklch, oklch(0.72 0.14 150) 85%, var(--ink));
 	}
 
-	.card {
+	.modinfo-card {
 		background: color-mix(in oklch, var(--modinfo-accent-panel) 20%, var(--panel-bg));
-		box-shadow: 0 10px 26px var(--shadow-soft);
 		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 20%, var(--panel-border));
-		border-radius: 1rem;
 	}
 
 	.panel-content {
@@ -1827,10 +1752,6 @@
 		margin-block-end: 0.35rem;
 	}
 
-	.span-2 {
-		grid-column: span 2;
-	}
-
 	.area {
 		resize: vertical;
 	}
@@ -1968,16 +1889,6 @@
 		gap: 0.5rem;
 	}
 
-	.builder-column {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
-	.table-scroll {
-		overflow: auto;
-	}
-
 	table {
 		width: 100%;
 		min-width: 780px;
@@ -2002,19 +1913,10 @@
 		font-size: 0.78rem;
 	}
 
-	.center {
-		text-align: center;
-	}
-
 	.tiny {
 		font-size: 0.78rem;
 		padding-block: 0.24rem;
 		padding-inline: 0.48rem;
-	}
-
-	.row-actions {
-		display: inline-flex;
-		gap: 0.5rem;
 	}
 
 	.preset-details {
@@ -2068,14 +1970,10 @@
 	}
 
 	.btn-row {
-		display: flex;
-		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.5rem;
 	}
 
 	.tooltip-wrap {
-		position: relative;
 		display: inline-flex;
 	}
 
@@ -2113,89 +2011,6 @@
 		overflow: auto;
 	}
 
-	.modinfo-companion-panel {
-		display: grid;
-		gap: 1rem;
-		background: color-mix(in oklch, var(--modinfo-accent-panel) 20%, var(--panel-bg));
-		box-shadow: 0 10px 26px var(--shadow-soft);
-		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 20%, var(--panel-border));
-		border-radius: 1rem;
-		padding: 1.25rem;
-	}
-
-	.modinfo-companion-head {
-		display: grid;
-		gap: 0.35rem;
-
-		& > div {
-			display: grid;
-			gap: 0.35rem;
-		}
-
-		& h2 {
-			font-family: "Rockwell", "Palatino Linotype", serif;
-			margin: 0;
-		}
-
-		& p {
-			color: var(--muted-ink);
-			margin: 0;
-		}
-	}
-
-	h2 {
-		font-family: "Rockwell", "Palatino Linotype", serif;
-	}
-
-	.companion-grid {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 0.8rem;
-	}
-
-	.companion-card {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		color: var(--ink);
-		text-decoration: none;
-		background: color-mix(in oklch, var(--modinfo-accent-panel) 88%, black);
-		border: 1px solid color-mix(in oklch, var(--modinfo-accent-border) 76%, transparent);
-		border-radius: 0.9rem;
-		box-shadow: 0 4px 6px #111;
-		padding: 1.25rem;
-		transition:
-			transform 140ms ease,
-			border-color 140ms ease,
-			background 140ms ease;
-
-		& h3 {
-			font-family: "Rockwell", "Palatino Linotype", serif;
-			margin: 0;
-		}
-
-		& p {
-			color: var(--muted-ink);
-			margin: 0;
-		}
-
-		&:hover {
-			background: color-mix(in oklch, var(--modinfo-accent-panel) 88%, var(--modinfo-accent-highlight) 8%);
-			border-color: color-mix(in oklch, var(--modinfo-accent-highlight) 85%, var(--modinfo-accent-border));
-			transform: translateY(-1px);
-		}
-	}
-
-	.companion-card.is-site-accent {
-		background: color-mix(in oklch, var(--panel-bg) 88%, black);
-		border-color: color-mix(in oklch, var(--accent) 26%, var(--panel-border));
-	}
-
-	.companion-card.is-site-accent:hover {
-		background: color-mix(in oklch, var(--panel-bg) 88%, var(--accent) 4%);
-		border-color: color-mix(in oklch, var(--accent) 85%, var(--panel-border));
-	}
-
 	@media (max-width: 980px) {
 		.color-helper-row {
 			grid-template-columns: 1fr;
@@ -2221,8 +2036,5 @@
 			grid-template-columns: minmax(0, 1fr);
 	}
 
-		.companion-grid {
-			grid-template-columns: 1fr;
-		}
 	}
 </style>

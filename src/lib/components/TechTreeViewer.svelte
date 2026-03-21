@@ -2,6 +2,7 @@
 
 <script>
 	import { onMount, tick } from "svelte";
+	import HelpfulLinksPanel from "./HelpfulLinksPanel.svelte";
 	const numberFormatter = new Intl.NumberFormat("en-US");
 	const DISPLAY_LIMITS = {
 		effects: 5,
@@ -819,32 +820,6 @@
 			.trim();
 	}
 
-	function relatedToolAccentClass(href) {
-		const value = String(href || "");
-		if (value.includes("/schema-browser")) return "is-schema";
-		if (value.includes("/lua-api-explorer")) return "is-lua";
-		if (value.includes("/pattern-library")) return "is-pattern";
-		if (value.includes("/template-generators")) return "is-generator";
-		if (value.includes("/guided-planner")) return "is-planner";
-		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "is-publish";
-		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "is-ui";
-		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "is-support";
-		return "is-tool";
-	}
-
-	function relatedToolTypeLabel(href) {
-		const value = String(href || "");
-		if (value.includes("/schema-browser")) return "Schema";
-		if (value.includes("/lua-api-explorer")) return "Lua";
-		if (value.includes("/pattern-library")) return "Pattern";
-		if (value.includes("/template-generators")) return "Generator";
-		if (value.includes("/guided-planner")) return "Planner";
-		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "Publish";
-		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "UI";
-		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "Support";
-		return "Tool";
-	}
-
 	function pushToMapArray(map, key, value) {
 		if (!map.has(key)) {
 			map.set(key, []);
@@ -1092,17 +1067,17 @@
 </section>
 
 <section class="viewer-toolbar panel-surface margin-block-end" aria-label="Viewer controls">
-	<label class="search-field">
+	<label class="search-field stack quarter">
 		<span>Search Techs, Unlocks, Effects</span>
 		<input bind:value={searchQuery} type="search" placeholder="archery, farm, congress, longswordsman, reveal, ocean..." />
 	</label>
 
 	<div class="toolbar-section inline align-start" style="gap: 2rem">
 		<div class="toolbar-section-head">
-			<span class="toolbar-label">Era Filter</span>
+			<span class="toolbar-label uppercase">Era Filter</span>
 			<p class="toolbar-copy">Toggle any combination of eras, or reset to the full tree.</p>
-			<div class="toolbar-row">
-				<div class="chip-group" role="list" aria-label="Era filter">
+			<div class="toolbar-row inline half flex-wrap">
+				<div class="chip-group inline half flex-wrap" role="list" aria-label="Era filter">
 					<button class:selected={!hasEraFilter} type="button" onclick={clearEraFilter}>All</button>
 					{#each ERA_GROUPS as era (era.eraType)}
 						<button class:selected={selectedEras.includes(era.eraType)} type="button" onclick={() => toggleEraFilter(era.eraType)}>{era.eraLabel}</button>
@@ -1112,18 +1087,18 @@
 		</div>
 
 		<div class="toolbar-section-head">
-			<span class="toolbar-label">Visual Flow</span>
+			<span class="toolbar-label uppercase">Visual Flow</span>
 			<p class="toolbar-copy">Choose the full tree layout.</p>
-			<div class="toggle-row" role="list" aria-label="Era layout">
+			<div class="toggle-row inline half flex-wrap" role="list" aria-label="Era layout">
 				<button class:selected={eraFlow === "vertical"} type="button" onclick={() => (eraFlow = "vertical")}>Vertical</button>
 				<button class:selected={eraFlow === "horizontal"} type="button" onclick={() => (eraFlow = "horizontal")}>Horizontal</button>
 			</div>
 		</div>
 
 		<div class="toolbar-section-head">
-			<span class="toolbar-label">Era Overlay</span>
+			<span class="toolbar-label uppercase">Era Overlay</span>
 			<p class="toolbar-copy">Toggle Pouākai's Enlightenment Era.</p>
-			<div class="toggle-row" role="list" aria-label="Enlightenment Era overlay">
+			<div class="toggle-row inline half flex-wrap" role="list" aria-label="Enlightenment Era overlay">
 				<button class:selected={!includeEnlightenmentEra} type="button" onclick={() => setEraOverlay(false)} disabled={enlightenmentDataLoading}>Base Game</button>
 				<button class:selected={includeEnlightenmentEra} type="button" onclick={() => setEraOverlay(true)} disabled={enlightenmentDataLoading}>Enlightenment Era</button>
 			</div>
@@ -1181,7 +1156,7 @@
 									{/if}
 								</header>
 
-								<div class="tech-prereqs">
+								<div class="tech-prereqs inline half flex-wrap">
 									{#if tech.prereqs.length}
 										<span class="text-sm">Prereqs:</span>
 										{#each tech.prereqs as prereq (prereq.type)}
@@ -1364,25 +1339,7 @@
 	</div>
 {/if}
 
-<section class="related-tools-panel panel-surface" aria-label="Related tech tree tools">
-	<div class="related-tools-head">
-		<div class="stack half">
-			<p class="eyebrow">Helpful Links</p>
-		</div>
-	</div>
-
-	<div class="related-tool-grid">
-		{#each TECH_TREE_RELATED_TOOLS as tool (tool.href)}
-			<a class={`related-tool-card ${relatedToolAccentClass(tool.href)}`} href={tool.href}>
-				<div class="related-tool-card-head">
-					<h3>{tool.label}</h3>
-					<span class="related-tool-card-kind">{relatedToolTypeLabel(tool.href)}</span>
-				</div>
-				<p>{tool.description}</p>
-			</a>
-		{/each}
-	</div>
-</section>
+<HelpfulLinksPanel ariaLabel="Related tech tree tools" links={TECH_TREE_RELATED_TOOLS} tone="tool" />
 
 <style>
 	.tech-tree-hero {
@@ -1392,15 +1349,15 @@
 	}
 
 	.hero-copy {
-		display: grid;
-		gap: 0.45rem;
+		--hero-copy-gap: 0.45rem;
 	}
 
 	.panel-surface {
-		border-radius: 0.85rem;
-		border: 1px solid color-mix(in oklch, var(--surface-tool-border) 72%, var(--panel-border));
-		background: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent) 8%, transparent) 0%, transparent 30%), color-mix(in oklch, var(--surface-tool-panel) 72%, var(--panel-bg) 28%);
-		box-shadow: 0 14px 24px var(--shadow-soft);
+		--panel-surface-radius: 0.85rem;
+		--panel-surface-border: color-mix(in oklch, var(--surface-tool-border) 72%, var(--panel-border));
+		--panel-surface-background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent) 8%, transparent) 0%, transparent 30%), color-mix(in oklch, var(--surface-tool-panel) 72%, var(--panel-bg) 28%);
+		--panel-surface-shadow: 0 14px 24px var(--shadow-soft);
 	}
 
 	.toolbar-copy,
@@ -1416,137 +1373,9 @@
 		padding: 1.25rem 1rem;
 	}
 
-	.related-tools-panel {
-		margin-block-start: 1rem;
-		padding: 1.05rem 1rem;
-		display: grid;
-		gap: 0.8rem;
-	}
-
-	.related-tools-head,
-	.related-tool-grid {
-		display: grid;
-		gap: 0.75rem;
-	}
-
-	.related-tool-grid {
-		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-	}
-
-	.related-tool-card {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		color: var(--ink);
-		text-decoration: none;
-		border-radius: 1rem;
-		padding: 1rem 0.95rem;
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 20%, transparent) 0%, transparent 45%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 94%, #16110f 6%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 10%, transparent),
-			0 6px 8px color-mix(in srgb, black 76%, transparent);
-		border: 1px solid color-mix(in srgb, var(--surface-highlight) 44%, var(--surface-border));
-	}
-
-	.related-tool-card-head {
-		display: flex;
-		justify-content: space-between;
-		align-items: start;
-		gap: 0.7rem;
-	}
-
-	.related-tool-card h3 {
-		margin: 0;
-		font-family: "Rockwell", "Palatino Linotype", serif;
-		font-size: 1.02rem;
-	}
-
-	.related-tool-card-kind {
-		flex: 0 0 auto;
-		color: color-mix(in srgb, var(--surface-highlight) 58%, var(--muted-ink) 42%);
-		font-size: 0.78rem;
-		white-space: nowrap;
-		text-box: trim-both cap alphabetic;
-	}
-
-	.related-tool-card p {
-		margin: 0;
-		color: var(--muted-ink);
-		line-height: 1.4;
-	}
-
-	.related-tool-card:hover,
-	.related-tool-card:focus-visible {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 34%, transparent) 0%, transparent 40%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 92%, #16110f 8%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 16%, transparent),
-			0 10px 16px color-mix(in oklch, var(--shadow-soft) 66%, transparent);
-		border-color: color-mix(in srgb, var(--surface-highlight) 72%, var(--surface-border));
-		transform: translateY(-2px);
-	}
-
-	.related-tool-card.is-generator {
-		--surface-border: var(--surface-generator-border);
-		--surface-highlight: var(--surface-generator-highlight);
-		--surface-panel: var(--surface-generator-panel);
-	}
-
-	.related-tool-card.is-lua {
-		--surface-border: var(--surface-lua-border);
-		--surface-highlight: var(--surface-lua-highlight);
-		--surface-panel: var(--surface-lua-panel);
-	}
-
-	.related-tool-card.is-pattern {
-		--surface-border: var(--surface-pattern-border);
-		--surface-highlight: var(--surface-pattern-highlight);
-		--surface-panel: var(--surface-pattern-panel);
-	}
-
-	.related-tool-card.is-schema {
-		--surface-border: var(--surface-schema-border);
-		--surface-highlight: var(--surface-schema-highlight);
-		--surface-panel: var(--surface-schema-panel);
-	}
-
-	.related-tool-card.is-tool {
-		--surface-border: var(--surface-tool-border);
-		--surface-highlight: var(--surface-tool-highlight);
-		--surface-panel: var(--surface-tool-panel);
-	}
-
-	.related-tool-card.is-publish {
-		--surface-border: var(--surface-publish-border);
-		--surface-highlight: var(--surface-publish-highlight);
-		--surface-panel: var(--surface-publish-panel);
-	}
-
-	.related-tool-card.is-ui {
-		--surface-border: var(--surface-ui-border);
-		--surface-highlight: var(--surface-ui-highlight);
-		--surface-panel: var(--surface-ui-panel);
-	}
-
-	.related-tool-card.is-support {
-		--surface-border: var(--surface-support-border);
-		--surface-highlight: var(--surface-support-highlight);
-		--surface-panel: var(--surface-support-panel);
-	}
-
-	.related-tool-card.is-planner {
-		--surface-border: var(--surface-planner-border);
-		--surface-highlight: var(--surface-planner-highlight);
-		--surface-panel: var(--surface-planner-panel);
-	}
-
 	.viewer-toolbar {
-		display: grid;
-		gap: 0.9rem;
-		padding: 1rem;
+		--viewer-toolbar-gap: 0.9rem;
+		--viewer-toolbar-padding: 1rem;
 	}
 
 	.toolbar-section {
@@ -1556,17 +1385,10 @@
 		background: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent) 7%, transparent) 0%, transparent 34%), color-mix(in oklch, var(--control-bg) 76%, var(--panel-bg) 24%);
 	}
 
-	.toolbar-section-head {
-		display: grid;
-		gap: 0.15rem;
-	}
-
 	.toolbar-label {
-		font-size: 0.73rem;
-		font-weight: 700;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		color: color-mix(in oklch, var(--accent-soft) 58%, var(--ink));
+		--toolbar-label-color: color-mix(in oklch, var(--accent-soft) 58%, var(--ink));
+		--toolbar-label-size: 0.73rem;
+		--toolbar-label-letter-spacing: 0.14em;
 	}
 
 	.search-field {

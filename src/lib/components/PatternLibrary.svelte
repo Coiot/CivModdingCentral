@@ -1,5 +1,6 @@
 <script>
 	import { tick } from "svelte";
+	import ReferenceSurfacePanel from "./ReferenceSurfacePanel.svelte";
 	import SnippetExample from "./SnippetExample.svelte";
 	import { recipeLaunchRecipes } from "../data/generatorPageData.js";
 
@@ -351,7 +352,7 @@
 		if (href?.startsWith("/template-generators")) {
 			return "Generator";
 		}
-		if (href?.startsWith("/schema-browser")) {
+		if (href?.startsWith("/schema-browser") || href?.startsWith("/modded-civs-pedia")) {
 			return "Schema";
 		}
 		if (href?.startsWith("/lua-api-explorer")) {
@@ -374,7 +375,7 @@
 		if (href?.startsWith("/template-generators")) {
 			return "is-generator";
 		}
-		if (href?.startsWith("/schema-browser")) {
+		if (href?.startsWith("/schema-browser") || href?.startsWith("/modded-civs-pedia")) {
 			return "is-schema";
 		}
 		if (href?.startsWith("/lua-api-explorer")) {
@@ -440,6 +441,24 @@
 	});
 	const activeRecipe = $derived(filteredRecipes.find((recipe) => recipe.title === activeRecipeTitle) || filteredRecipes[0] || null);
 	const activeRecipeIndex = $derived(activeRecipe ? filteredRecipes.findIndex((recipe) => recipe.title === activeRecipe.title) : -1);
+	const activeRecipeTouchpoints = $derived.by(() =>
+		(activeRecipe?.touchpoints || []).map((touchpoint) => ({
+			key: `${touchpoint.href}-${touchpoint.label}`,
+			label: touchpoint.label,
+			description: touchpoint.note,
+			href: touchpoint.disabled ? undefined : touchpointHref(touchpoint),
+			kind: touchpoint.disabled ? touchpoint.statusLabel || touchpointSurfaceLabel(touchpoint) : touchpointSurfaceLabel(touchpoint),
+			surfaceClass: touchpointSurfaceClass(touchpoint),
+			disabled: Boolean(touchpoint.disabled),
+			target: "_self",
+			rel: undefined,
+			onClick: touchpoint.disabled
+				? undefined
+				: (event) => {
+						handleTouchpointClick(event, touchpoint);
+					},
+		})),
+	);
 
 	if (typeof window !== "undefined" && !urlSyncReady) {
 		nextUrlSyncMode = "replace";
@@ -473,7 +492,7 @@
 
 	<section class="recipe-quick-starts" aria-label="Suggested recipes">
 		<div class="recipe-quick-copy">
-			<span class="recipe-kicker">Quick Starts</span>
+			<span class="recipe-kicker uppercase">Quick Starts</span>
 			<h2>Jump into these starter recipes if you're new to scripting</h2>
 			<p>These are the high impact starting points for learning how to begin scripting your own mods.</p>
 		</div>
@@ -497,13 +516,13 @@
 	</section>
 
 	<section class="recipe-panel">
-		<div class="recipe-selection-shell">
+		<div class="recipe-selection-shell stack">
 			<div class="recipe-filter-toolbar" aria-label="Pattern categories">
 				<div class="recipe-filter-copy">
-					<span class="recipe-toolbar-kicker">Categories</span>
+					<span class="recipe-toolbar-kicker uppercase">Categories</span>
 					<p>Filter by pattern type.</p>
 				</div>
-				<div class="recipe-filter-group" role="group" aria-label="Pattern categories">
+				<div class="recipe-filter-group inline half flex-wrap" role="group" aria-label="Pattern categories">
 					{#each RECIPE_FILTER_CATEGORY_DEFS as category (category.id)}
 						<button type="button" class={`recipe-filter-chip ${activeRecipeCategory === category.id ? "is-active" : ""}`} onclick={() => setRecipeCategory(category.id)}>
 							<span>{category.label}</span>
@@ -563,11 +582,11 @@
 				<article class="recipe-card recipe-card--active" bind:this={recipeDetailCard}>
 					<div class="recipe-card-head">
 						<div class="recipe-card-heading">
-							<span class="recipe-card-kicker">Selected Pattern</span>
+							<span class="recipe-card-kicker uppercase">Selected Pattern</span>
 							<h3>{activeRecipe.title}</h3>
 							<p>{activeRecipe.copy}</p>
 						</div>
-						<div class="recipe-card-stats" aria-label="Pattern metadata">
+						<div class="recipe-card-stats inline half flex-wrap" aria-label="Pattern metadata">
 							<span class="recipe-card-stat">{recipeCategoryLabel(activeRecipeCategory)}</span>
 						</div>
 					</div>
@@ -586,35 +605,7 @@
 	</section>
 
 	<section class="recipe-block recipe-block--touchpoints margin-block-start" aria-label="Reference touchpoints">
-		<div class="recipe-touchpoint-head">
-			<h4>Pattern References</h4>
-		</div>
-		<!-- <p class="recipe-card-meta">Open the strongest schema or Lua surfaces for this recipe, with the entries most likely to guide implementation.</p> -->
-		<div class="recipe-touchpoint-grid">
-			{#each activeRecipe.touchpoints as touchpoint (`${touchpoint.href}-${touchpoint.label}`)}
-				{#if touchpoint.disabled}
-					<div class={`recipe-touchpoint-card ${touchpointSurfaceClass(touchpoint)}`} aria-disabled="true">
-						<div class="recipe-touchpoint-card-head">
-							<h5 class="recipe-touchpoint-title">{touchpoint.label}</h5>
-							<span class="recipe-touchpoint-kind">{touchpoint.statusLabel || touchpointSurfaceLabel(touchpoint)}</span>
-						</div>
-						<p class="recipe-card-meta">{touchpoint.note}</p>
-					</div>
-				{:else}
-					<a
-						class={`recipe-touchpoint-card recipe-touchpoint-card--link ${touchpointSurfaceClass(touchpoint)}`}
-						href={touchpointHref(touchpoint)}
-						onclick={(event) => handleTouchpointClick(event, touchpoint)}
-					>
-						<div class="recipe-touchpoint-card-head">
-							<h5 class="recipe-touchpoint-title">{touchpoint.label}</h5>
-							<span class="recipe-touchpoint-kind">{touchpointSurfaceLabel(touchpoint)}</span>
-						</div>
-						<p class="recipe-card-meta">{touchpoint.note}</p>
-					</a>
-				{/if}
-			{/each}
-		</div>
+		<ReferenceSurfacePanel title="Pattern References" ariaLabel="Pattern references" items={activeRecipeTouchpoints} tone="pattern" />
 	</section>
 </section>
 
@@ -652,7 +643,6 @@
 		margin: 0;
 	}
 
-	.recipe-selector-copy p,
 	.recipe-selector-position {
 		color: var(--muted-ink);
 		line-height: 1.55;
@@ -701,10 +691,6 @@
 		padding-block: 0.5rem;
 		padding-inline: 0.6rem;
 		text-box: trim-both cap alphabetic;
-	}
-
-	.recipe-touchpoint-card-head span {
-		font-size: 0.76rem;
 	}
 
 	.recipe-kicker {
@@ -858,11 +844,6 @@
 		grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
 	}
 
-	:global(:root[data-theme="light"]) .recipe-card,
-	:global(:root[data-theme="light"]) .recipe-stage-card {
-		background: transparent;
-	}
-
 	.recipe-stage-card,
 	.recipe-card {
 		display: grid;
@@ -965,48 +946,10 @@
 		padding-block: 0;
 	}
 
-	.recipe-touchpoint-head {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 0.75rem;
-	}
-
 	.recipe-card-meta {
 		color: var(--muted-ink);
 		line-height: 1.4;
 		margin: 0;
-	}
-
-	.recipe-touchpoint-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-		gap: 1rem;
-	}
-
-	.recipe-touchpoint-card-head {
-		display: flex;
-		justify-content: space-between;
-		align-items: start;
-		gap: 0.7rem;
-	}
-
-	.recipe-touchpoint-title {
-		margin: 0;
-		color: var(--ink);
-		font-family: "Rockwell", "Palatino Linotype", serif;
-		font-size: 1.1rem;
-		text-wrap: wrap;
-		word-break: break-word;
-		line-height: 1.15;
-	}
-
-	.recipe-touchpoint-kind {
-		flex: 0 0 auto;
-		color: color-mix(in srgb, var(--surface-highlight) 58%, var(--muted-ink) 42%);
-		font-size: 0.78rem;
-		white-space: nowrap;
-		text-box: trim-both cap alphabetic;
 	}
 
 	.recipe-card--compact {
@@ -1128,11 +1071,6 @@
 		transform: translateY(-1px);
 	}
 
-	.recipe-section-head {
-		display: grid;
-		gap: 0.45rem;
-	}
-
 	.recipe-selector-footer {
 		justify-content: space-between;
 		align-items: center;
@@ -1204,108 +1142,6 @@
 				color: var(--recipe-accent-highlight-strong);
 			}
 		}
-	}
-
-	.recipe-touchpoint-card {
-		display: grid;
-		gap: 0.65rem;
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 20%, transparent) 0%, transparent 45%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 94%, #16110f 6%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 10%, transparent),
-			0 6px 8px color-mix(in srgb, black 76%, transparent);
-		border: 1px solid color-mix(in srgb, var(--surface-highlight) 44%, var(--surface-border));
-		border-radius: 1rem;
-		padding: 1rem 0.95rem;
-		--surface-border: var(--surface-pattern-border);
-		--surface-highlight: var(--surface-pattern-highlight);
-		--surface-highlight-strong: var(--surface-pattern-highlight-strong);
-		--surface-panel: var(--surface-pattern-panel);
-	}
-
-	.recipe-touchpoint-card--link {
-		color: inherit;
-		text-decoration: none;
-		transition:
-			transform 140ms ease,
-			border-color 140ms ease,
-			background-color 140ms ease,
-			box-shadow 140ms ease;
-	}
-
-	.recipe-touchpoint-card--link:hover {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 34%, transparent) 0%, transparent 40%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 92%, #16110f 8%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 16%, transparent),
-			0 10px 16px color-mix(in oklch, var(--shadow-soft) 66%, transparent);
-		border-color: color-mix(in srgb, var(--surface-highlight) 72%, var(--surface-border));
-		transform: translateY(-2px);
-	}
-
-	.recipe-touchpoint-card.is-generator {
-		--surface-border: var(--surface-generator-border);
-		--surface-highlight: var(--surface-generator-highlight);
-		--surface-highlight-strong: var(--surface-generator-highlight-strong);
-		--surface-panel: var(--surface-generator-panel);
-	}
-
-	.recipe-touchpoint-card.is-lua {
-		--surface-border: var(--surface-lua-border);
-		--surface-highlight: var(--surface-lua-highlight);
-		--surface-highlight-strong: var(--surface-lua-highlight-strong);
-		--surface-panel: var(--surface-lua-panel);
-	}
-
-	.recipe-touchpoint-card.is-pattern {
-		--surface-border: var(--surface-pattern-border);
-		--surface-highlight: var(--surface-pattern-highlight);
-		--surface-highlight-strong: var(--surface-pattern-highlight-strong);
-		--surface-panel: var(--surface-pattern-panel);
-	}
-
-	.recipe-touchpoint-card.is-publish {
-		--surface-border: var(--surface-publish-border);
-		--surface-highlight: var(--surface-publish-highlight);
-		--surface-highlight-strong: var(--surface-publish-highlight-strong);
-		--surface-panel: var(--surface-publish-panel);
-	}
-
-	.recipe-touchpoint-card.is-schema {
-		--surface-border: var(--surface-schema-border);
-		--surface-highlight: var(--surface-schema-highlight);
-		--surface-highlight-strong: var(--surface-schema-highlight-strong);
-		--surface-panel: var(--surface-schema-panel);
-	}
-
-	.recipe-touchpoint-card.is-tool {
-		--surface-border: var(--surface-tool-border);
-		--surface-highlight: var(--surface-tool-highlight);
-		--surface-highlight-strong: var(--surface-tool-highlight-strong);
-		--surface-panel: var(--surface-tool-panel);
-	}
-
-	.recipe-touchpoint-card.is-ui {
-		--surface-border: var(--surface-ui-border);
-		--surface-highlight: var(--surface-ui-highlight);
-		--surface-highlight-strong: var(--surface-ui-highlight-strong);
-		--surface-panel: var(--surface-ui-panel);
-	}
-
-	.recipe-touchpoint-card.is-support {
-		--surface-border: var(--surface-support-border);
-		--surface-highlight: var(--surface-support-highlight);
-		--surface-highlight-strong: var(--surface-support-highlight-strong);
-		--surface-panel: var(--surface-support-panel);
-	}
-
-	.recipe-touchpoint-card.is-planner {
-		--surface-border: var(--surface-planner-border);
-		--surface-highlight: var(--surface-planner-highlight);
-		--surface-highlight-strong: var(--surface-planner-highlight-strong);
-		--surface-panel: var(--surface-planner-panel);
 	}
 
 	@media (width <= 1100px) {

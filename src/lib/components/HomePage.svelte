@@ -407,7 +407,7 @@
 
 <section class="home-page">
 	<header class="hero home-hero">
-		<div class="hero-copy">
+		<div class="hero-copy stack">
 			<p class="eyebrow">New to Civilization V Modding? Start Here</p>
 			<h1>Learn how to build Civilization V mods with a smooth on-ramp, custom tooling, and fewer dead ends.</h1>
 			<p>Civ Modding Central makes it easier to go from first draft to final release.</p>
@@ -584,10 +584,9 @@
 
 	.hero-copy {
 		align-content: start;
-		gap: 1rem;
+		--hero-copy-gap: 1rem;
 	}
 
-	.hero-copy,
 	.hero-aside,
 	.hero-actions,
 	.hero-microcopy,
@@ -618,11 +617,6 @@
 		background:
 			linear-gradient(160deg, color-mix(in srgb, var(--surface-generator-panel) 22%, var(--home-panel)) 0%, color-mix(in srgb, var(--home-panel) 96%, #110d0b 4%) 58%),
 			color-mix(in srgb, var(--home-panel) 94%, #130f0d 6%);
-	}
-
-	.section-heading {
-		display: grid;
-		gap: 0.5rem;
 	}
 
 	.onramp-grid,

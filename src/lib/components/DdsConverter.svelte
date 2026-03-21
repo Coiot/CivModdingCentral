@@ -1,6 +1,7 @@
 <script>
 	import { onDestroy, onMount } from "svelte";
 	import { get } from "svelte/store";
+	import HelpfulLinksPanel from "./HelpfulLinksPanel.svelte";
 	import { ddsPreferences, syncDdsPreferences } from "../stores/toolPreferences.js";
 
 	const CONVERTER_ENDPOINT = resolveConverterEndpoint();
@@ -267,32 +268,6 @@
 			selection[size] = selectedSizes.includes(size);
 		}
 		return selection;
-	}
-
-	function relatedToolAccentClass(href) {
-		const value = String(href || "");
-		if (value.includes("/schema-browser")) return "is-schema";
-		if (value.includes("/lua-api-explorer")) return "is-lua";
-		if (value.includes("/pattern-library")) return "is-pattern";
-		if (value.includes("/template-generators")) return "is-generator";
-		if (value.includes("/guided-planner")) return "is-planner";
-		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "is-publish";
-		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "is-ui";
-		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "is-support";
-		return "is-tool";
-	}
-
-	function relatedToolTypeLabel(href) {
-		const value = String(href || "");
-		if (value.includes("/schema-browser")) return "Schema";
-		if (value.includes("/lua-api-explorer")) return "Lua";
-		if (value.includes("/pattern-library")) return "Pattern";
-		if (value.includes("/template-generators")) return "Generator";
-		if (value.includes("/guided-planner")) return "Planner";
-		if (value.includes("/workshop-uploader") || value.includes("/modinfo-builder") || value.includes("/civ5mod-ziper")) return "Publish";
-		if (value.includes("/dds-converter") || value.includes("/civ-icon-maker") || value.includes("/text-screen-viewer")) return "UI";
-		if (value.includes("/religion-support") || value.includes("/map-viewer")) return "Support";
-		return "Tool";
 	}
 
 	let workflow = $state("icon_bundle");
@@ -1023,15 +998,15 @@
 	}
 </script>
 
-<section class="dds-page">
+<section class="dds-page stack">
 	<header class="hero dds-hero">
 		<h1>PNG to DDS Converter</h1>
 		<p>Choose a workflow and export Civ5-ready DDS outputs.</p>
 	</header>
 
-	<section class="dds-panel">
+	<section class="dds-panel stack">
 		<section class="dds-section">
-			<div class="dds-section-head">
+			<div class="section-head section-head-tight">
 				<h2 class="dds-section-title">1. Configure Workflow</h2>
 				<p class="dds-section-copy">Choose workflow, atlas settings, and output options.</p>
 			</div>
@@ -1142,17 +1117,17 @@
 		</section>
 
 		<section class="dds-section">
-			<div class="dds-section-head">
+			<div class="section-head section-head-tight">
 				<h2 class="dds-section-title">2. Upload PNG</h2>
 				<p class="dds-section-copy">Drop your file here or click to upload.</p>
 			</div>
-			<div class="dds-meta">
+			<div class="dds-meta inline half flex-wrap">
 				{#if expectedDimensions}
 					<span>Required PNG: {expectedDimensions.width} x {expectedDimensions.height}</span>
 				{/if}
 			</div>
 			<label
-				class="dds-file-dropzone"
+				class="dds-file-dropzone text-center"
 				class:is-drag-over={isDragOver}
 				ondragenter={onDropzoneDragEnter}
 				ondragover={onDropzoneDragOver}
@@ -1176,12 +1151,12 @@
 		</section>
 
 		<section class="dds-section">
-			<div class="dds-section-head">
+			<div class="section-head section-head-tight">
 				<h2 class="dds-section-title">3. Review and Generate</h2>
 				<p class="dds-section-copy">{workflowConfig.description}</p>
 			</div>
 
-			<div class="dds-meta">
+			<div class="dds-meta inline half flex-wrap">
 				{#if isAtlasBundleWorkflow}
 					<span>Selected sizes: {atlasSelectedSizes.join(", ") || "none"}</span>
 				{/if}
@@ -1201,13 +1176,13 @@
 			</div>
 
 			{#if sqlWorkflowEnabled}
-				<div class="dds-preview-block">
+				<div class="dds-preview-block overflow-hidden">
 					<label>
 						Export Name
 						<input type="text" value={atlasExportName} oninput={(event) => (atlasExportName = event.currentTarget.value)} />
 					</label>
 					<p class="dds-preview-title">Standard: `EXPORT_NAME` -> `EXPORT_NAME_{activeSqlAtlasConfig?.atlasSuffix}` and `{atlasFilePrefix}_{activeSqlAtlasConfig?.fileSuffix}_SIZE.dds`</p>
-					<div class="dds-meta">
+					<div class="dds-meta inline half flex-wrap">
 						<span>Atlas SQL Name: {atlasSqlName}</span>
 						<span>Filename Prefix: {atlasFilePrefix}</span>
 						<!-- <span>Atlas Kind: {activeSqlAtlasConfig?.label}</span> -->
@@ -1238,19 +1213,19 @@
 					</div>
 				</div>
 
-				<div class="dds-preview-block">
+				<div class="dds-preview-block overflow-hidden">
 					<div class="dds-preview-list-wrap">
 						<p class="dds-preview-title">Generated SQL (saved in local storage)</p>
 						<textarea class="dds-sql-textarea" rows="11" readonly value={[sqlIconTextureAtlasesText, sqlStrategicRowsText].filter(Boolean).join("\n\n")}></textarea>
 					</div>
-					<div class="dds-actions">
-						<span class="dds-tooltip-wrap">
+					<div class="dds-actions inline flex-wrap">
+						<span class="dds-tooltip-wrap relative">
 							<button type="button" onclick={copySqlToClipboard} disabled={Boolean(copySqlDisabledReason)}>Copy SQL</button>
 							{#if copySqlDisabledReason}
 								<span class="dds-tooltip">{copySqlDisabledReason}</span>
 							{/if}
 						</span>
-						<span class="dds-tooltip-wrap">
+						<span class="dds-tooltip-wrap relative">
 							<button type="button" class="danger-action" onclick={resetSqlHistory} disabled={Boolean(resetSqlHistoryDisabledReason)}>Reset SQL History</button>
 							{#if resetSqlHistoryDisabledReason}
 								<span class="dds-tooltip">{resetSqlHistoryDisabledReason}</span>
@@ -1271,8 +1246,8 @@
 				</p>
 			{/if}
 
-			<div class="dds-actions">
-				<span class="dds-tooltip-wrap">
+			<div class="dds-actions inline flex-wrap">
+				<span class="dds-tooltip-wrap relative">
 					<button type="button" onclick={convertToDds} disabled={Boolean(convertDisabledReason)}>
 						{busy ? "Converting..." : isAtlasBundleWorkflow || workflow === "icon_sheet" ? "Generate DDS Bundle" : "Convert to DDS"}
 					</button>
@@ -1286,7 +1261,7 @@
 			</div>
 
 			{#if conversionMeta}
-				<div class="dds-meta">
+				<div class="dds-meta inline half flex-wrap">
 					<!-- <span>Input: {conversionMeta.sourceWidth}x{conversionMeta.sourceHeight}</span> -->
 					{#if conversionMeta.outputWidth && conversionMeta.outputHeight}
 						<span>Output: {conversionMeta.outputWidth}x{conversionMeta.outputHeight}</span>
@@ -1346,89 +1321,13 @@
 			{/if}
 		</section>
 
-		<section class="dds-related-panel" aria-label="Related DDS converter tools">
-			<div class="dds-related-head">
-				<p class="eyebrow">Helpful Links</p>
-			</div>
-
-			<div class="dds-related-grid">
-				{#each DDS_RELATED_TOOLS as tool (tool.href)}
-					<a class={`dds-related-card ${relatedToolAccentClass(tool.href)}`} href={tool.href}>
-						<div class="dds-related-card-head">
-							<h3>{tool.label}</h3>
-							<span class="dds-related-card-kind">{relatedToolTypeLabel(tool.href)}</span>
-						</div>
-						<p>{tool.description}</p>
-					</a>
-				{/each}
-			</div>
-		</section>
+		<HelpfulLinksPanel ariaLabel="Related DDS converter tools" links={DDS_RELATED_TOOLS} tone="ui" />
 	</section>
 </section>
 
 <style>
-	:global(:root[data-theme="light"]) .dds-page {
-		.dds-panel {
-			background: color-mix(in oklch, white 88%, var(--panel-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 86%, var(--accent) 14%);
-		}
-
-		.dds-section,
-		.atlas-size-block,
-		.dds-preview-block {
-			background: color-mix(in oklch, white 80%, var(--control-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 84%, var(--accent) 16%);
-		}
-
-		.dds-file-dropzone {
-			background: color-mix(in oklch, white 74%, var(--accent) 6%);
-			border-color: color-mix(in oklch, var(--accent) 30%, var(--panel-border));
-		}
-
-		.dds-file-dropzone:hover {
-			background: color-mix(in oklch, white 68%, var(--accent) 10%);
-		}
-
-		.dds-file-dropzone.is-drag-over {
-			background: color-mix(in oklch, white 62%, var(--accent) 16%);
-			border-color: color-mix(in oklch, var(--accent) 46%, var(--panel-border));
-		}
-
-		.dds-actions button,
-		.dds-download,
-		.tiny-action,
-		.dds-meta span {
-			background: color-mix(in oklch, white 84%, var(--control-bg));
-			border-color: color-mix(in oklch, var(--panel-border) 84%, var(--accent) 16%);
-		}
-
-		.dds-download {
-			background: color-mix(in oklch, white 72%, var(--accent) 12%);
-		}
-
-		.dds-warning {
-			background: color-mix(in oklch, white 70%, oklch(0.93 0.08 100));
-			border-color: color-mix(in oklch, oklch(0.85 0.1 95) 55%, var(--panel-border));
-		}
-
-		.dds-tooltip {
-			color: color-mix(in oklch, var(--ink) 90%, black);
-			background: color-mix(in oklch, white 92%, var(--control-bg));
-			box-shadow: 0 8px 18px var(--shadow-soft);
-			border-color: color-mix(in oklch, var(--panel-border) 80%, var(--accent) 20%);
-		}
-
-		.dds-section-copy,
-		.dds-preview-title,
-		.dds-preview-empty,
-		.dds-file-dropzone-copy {
-			color: color-mix(in oklch, var(--ink) 58%, var(--muted-ink));
-		}
-	}
 	.dds-page {
 		inline-size: 100%;
-		display: grid;
-		gap: 1rem;
 		--dds-accent-border: var(--surface-ui-border);
 		--dds-accent-highlight: var(--surface-ui-highlight);
 		--dds-accent-highlight-strong: var(--surface-ui-highlight-strong);
@@ -1451,8 +1350,6 @@
 
 	.dds-panel {
 		inline-size: 100%;
-		display: grid;
-		gap: 1rem;
 		color: var(--ink);
 		background: var(--panel-bg);
 		box-shadow: 0 8px 20px var(--shadow-soft);
@@ -1497,11 +1394,6 @@
 		box-shadow: 0 2px 4px #111;
 		padding-block: 0.8rem;
 		padding-inline: 0.8rem;
-	}
-
-	.dds-section-head {
-		display: grid;
-		gap: 0.25rem;
 	}
 
 	.dds-section-title {
@@ -1640,8 +1532,6 @@
 	}
 
 	.dds-meta {
-		display: flex;
-		flex-wrap: wrap;
 		gap: 0.5rem;
 
 		& span {
@@ -1663,7 +1553,6 @@
 		align-content: center;
 		gap: 0.5rem;
 		color: var(--ink);
-		text-align: center;
 		background: color-mix(in srgb, var(--dds-accent-panel) 18%, var(--control-bg));
 		border: 2px dashed color-mix(in srgb, var(--dds-accent-highlight) 74%, var(--panel-border));
 		border-radius: 0.85rem;
@@ -1717,8 +1606,6 @@
 		border-radius: 0.75rem;
 		padding-block: 0.65rem;
 		padding-inline: 0.65rem;
-		overflow: hidden;
-
 		input {
 			inline-size: fit-content;
 			min-inline-size: 12rem;
@@ -1767,14 +1654,11 @@
 	}
 
 	.dds-actions {
-		display: flex;
-		flex-wrap: wrap;
 		align-items: center;
 		gap: 0.7rem;
 	}
 
 	.dds-tooltip-wrap {
-		position: relative;
 		display: inline-flex;
 	}
 
@@ -1833,139 +1717,6 @@
 
 	.dds-success {
 		color: oklch(0.82 0.14 145);
-	}
-
-	.dds-related-panel {
-		display: grid;
-		gap: 0.8rem;
-		border-radius: 0.95rem;
-		border: 1px solid color-mix(in srgb, var(--dds-accent-border) 38%, var(--panel-border));
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--dds-accent-highlight) 12%, transparent) 0%, transparent 30%), color-mix(in srgb, var(--dds-accent-panel) 18%, var(--panel-bg));
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--dds-accent-highlight) 10%, transparent),
-			0 6px 8px color-mix(in srgb, black 45%, transparent);
-		padding: 1rem;
-	}
-
-	.dds-related-head,
-	.dds-related-grid {
-		display: grid;
-		gap: 0.75rem;
-	}
-
-	.dds-related-grid {
-		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-	}
-
-	.dds-related-card {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		color: var(--ink);
-		text-decoration: none;
-		border-radius: 1rem;
-		padding: 1rem 0.95rem;
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 20%, transparent) 0%, transparent 45%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 94%, #16110f 6%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 10%, transparent),
-			0 6px 8px color-mix(in srgb, black 76%, transparent);
-		border: 1px solid color-mix(in srgb, var(--surface-highlight) 44%, var(--surface-border));
-	}
-
-	.dds-related-card-head {
-		display: flex;
-		justify-content: space-between;
-		align-items: start;
-		gap: 0.7rem;
-	}
-
-	.dds-related-card h3 {
-		margin: 0;
-		font-family: "Rockwell", "Palatino Linotype", serif;
-		font-size: 1.02rem;
-	}
-
-	.dds-related-card-kind {
-		flex: 0 0 auto;
-		color: color-mix(in srgb, var(--surface-highlight) 58%, var(--muted-ink) 42%);
-		font-size: 0.78rem;
-		white-space: nowrap;
-		text-box: trim-both cap alphabetic;
-	}
-
-	.dds-related-card p {
-		margin: 0;
-		color: var(--muted-ink);
-		line-height: 1.4;
-	}
-
-	.dds-related-card:hover,
-	.dds-related-card:focus-visible {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight) 34%, transparent) 0%, transparent 40%),
-			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel) 95%, var(--control-bg)) 0%, color-mix(in srgb, var(--surface-panel) 92%, #16110f 8%) 100%);
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--surface-highlight) 16%, transparent),
-			0 10px 16px color-mix(in oklch, var(--shadow-soft) 66%, transparent);
-		border-color: color-mix(in srgb, var(--surface-highlight) 72%, var(--surface-border));
-		transform: translateY(-2px);
-	}
-
-	.dds-related-card.is-generator {
-		--surface-border: var(--surface-generator-border);
-		--surface-highlight: var(--surface-generator-highlight);
-		--surface-panel: var(--surface-generator-panel);
-	}
-
-	.dds-related-card.is-lua {
-		--surface-border: var(--surface-lua-border);
-		--surface-highlight: var(--surface-lua-highlight);
-		--surface-panel: var(--surface-lua-panel);
-	}
-
-	.dds-related-card.is-pattern {
-		--surface-border: var(--surface-pattern-border);
-		--surface-highlight: var(--surface-pattern-highlight);
-		--surface-panel: var(--surface-pattern-panel);
-	}
-
-	.dds-related-card.is-schema {
-		--surface-border: var(--surface-schema-border);
-		--surface-highlight: var(--surface-schema-highlight);
-		--surface-panel: var(--surface-schema-panel);
-	}
-
-	.dds-related-card.is-tool {
-		--surface-border: var(--surface-tool-border);
-		--surface-highlight: var(--surface-tool-highlight);
-		--surface-panel: var(--surface-tool-panel);
-	}
-
-	.dds-related-card.is-publish {
-		--surface-border: var(--surface-publish-border);
-		--surface-highlight: var(--surface-publish-highlight);
-		--surface-panel: var(--surface-publish-panel);
-	}
-
-	.dds-related-card.is-ui {
-		--surface-border: var(--surface-ui-border);
-		--surface-highlight: var(--surface-ui-highlight);
-		--surface-panel: var(--surface-ui-panel);
-	}
-
-	.dds-related-card.is-support {
-		--surface-border: var(--surface-support-border);
-		--surface-highlight: var(--surface-support-highlight);
-		--surface-panel: var(--surface-support-panel);
-	}
-
-	.dds-related-card.is-planner {
-		--surface-border: var(--surface-planner-border);
-		--surface-highlight: var(--surface-planner-highlight);
-		--surface-panel: var(--surface-planner-panel);
 	}
 
 	@media (width <= 550px) {
