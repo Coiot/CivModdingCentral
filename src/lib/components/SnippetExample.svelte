@@ -118,9 +118,9 @@
 		<p class="snippet-empty">No {activeLanguage === "all" ? "" : activeLanguage.toUpperCase()} snippet is available for this example.</p>
 	{:else}
 		{#if hasExampleVariants}
-			<div class={`snippet-tabs-shell ${isRecipeVariant ? "is-recipe" : ""} ${isWizardVariant ? "is-wizard" : ""}`}>
+			<div class={`snippet-tabs-shell stack ${isRecipeVariant ? "is-recipe" : ""} ${isWizardVariant ? "is-wizard" : ""}`}>
 				<div class="snippet-tabs-copy">
-					<span class="snippet-tabs-kicker">Example Variants</span>
+					<span class="snippet-tabs-kicker uppercase">Example Variants</span>
 					<p class="snippet-tabs-description">
 						{isRecipeVariant
 							? "These are alternative variants for the same type of example. Use the file switcher below only if that variant includes multiple files."
@@ -151,9 +151,9 @@
 		{/if}
 
 		{#if displayFiles.length > 1}
-			<div class={`snippet-tabs-shell ${isRecipeVariant ? "is-recipe" : ""} ${isWizardVariant ? "is-wizard" : ""}`}>
+			<div class={`snippet-tabs-shell stack ${isRecipeVariant ? "is-recipe" : ""} ${isWizardVariant ? "is-wizard" : ""}`}>
 				<div class="snippet-tabs-copy">
-					<span class="snippet-tabs-kicker">{isRecipeVariant ? "Recipe Files" : isWizardVariant ? "Generated Files" : "Included Files"}</span>
+					<span class="snippet-tabs-kicker uppercase">{isRecipeVariant ? "Recipe Files" : isWizardVariant ? "Generated Files" : "Included Files"}</span>
 					<p class="snippet-tabs-description">
 						{isRecipeVariant
 							? "Switch between the files this recipe uses together."
@@ -183,7 +183,7 @@
 		{#if selectedFile}
 			<div class="snippet-file-list">
 				<article class="snippet-file-card">
-					<div class="snippet-file-head">
+					<div class="snippet-file-head inline">
 						<div class="snippet-file-meta">
 							<span class="snippet-file-label">{selectedFile.label}</span>
 							<!-- {#if selectedFile.path}
@@ -196,9 +196,9 @@
 						<p class="snippet-file-note">{selectedFileNote}</p>
 					{/if}
 
-					<div class="snippet-code-shell">
-						<div class="snippet-file-actions">
-							<span class="snippet-file-language">{selectedFile.language}</span>
+					<div class="snippet-code-shell relative">
+						<div class="snippet-file-actions inline half">
+							<span class="snippet-file-language uppercase">{selectedFile.language}</span>
 							<button type="button" class="snippet-copy-button" onclick={() => copySnippet(selectedFile)}>
 								{copiedKey === selectedFile.key ? "Copied" : "Copy"}
 							</button>
@@ -254,7 +254,6 @@
 
 	.snippet-tabs-kicker {
 		color: color-mix(in oklch, white 78%, var(--ink));
-		text-transform: uppercase;
 		font-size: 0.9rem;
 		font-weight: 700;
 		letter-spacing: 0.14em;
@@ -299,7 +298,6 @@
 
 	.snippet-tab-meta {
 		color: var(--muted-ink);
-		text-transform: uppercase;
 		font-size: 0.68rem;
 		font-weight: 700;
 		letter-spacing: 0.12em;
@@ -315,14 +313,9 @@
 	}
 
 	.snippet-file-head {
-		display: flex;
 		justify-content: space-between;
-		align-items: center;
-		gap: 0.65rem;
-	}
-
-	.snippet-file-head {
 		align-items: start;
+		gap: 0.65rem;
 	}
 
 	.snippet-file-meta {
@@ -337,7 +330,6 @@
 	}
 
 	.snippet-code-shell {
-		position: relative;
 		max-width: 100%;
 		min-width: 0;
 	}
@@ -347,9 +339,6 @@
 		z-index: 1;
 		inset-block-start: 0.8rem;
 		inset-inline-end: 0.8rem;
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
 	}
 
 	.snippet-file-language {
@@ -360,10 +349,6 @@
 
 	.snippet-file-language,
 	.snippet-copy-button {
-		display: inline-flex;
-		justify-content: center;
-		align-items: center;
-		text-transform: uppercase;
 		font-size: 0.7rem;
 		font-weight: 700;
 		letter-spacing: 0.12em;

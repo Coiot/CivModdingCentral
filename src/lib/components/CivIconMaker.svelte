@@ -2536,19 +2536,19 @@
 
 <section class="civ-icon-maker-page">
 	{#if !hasSource}
-		<section class="civ-icon-upload-panel">
+		<section class="civ-icon-upload-panel stack">
 			<h1 class="civ-icon-title">Civ Icon Maker</h1>
 			<p class="civ-icon-copy">Upload a transparent PNG at least 256 x 256 in size to start.</p>
 
 			<label
-				class="civ-icon-dropzone"
+				class="civ-icon-dropzone relative"
 				class:is-drag-over={isDragOver}
 				ondragenter={onDropzoneDragEnter}
 				ondragover={onDropzoneDragOver}
 				ondragleave={onDropzoneDragLeave}
 				ondrop={onDropzoneDrop}
 			>
-				<span class="civ-icon-dropzone-copy">
+				<span class="civ-icon-dropzone-copy text-center">
 					{#if isDragOver}
 						Drop PNG here
 					{:else}
@@ -2573,7 +2573,7 @@
 					{sourceName} - {sourceWidth} x {sourceHeight} px - alpha {alphaPixelWidth} x {alphaPixelHeight} px
 				</p>
 
-				<div class="civ-icon-preview-wrap">
+				<div class="civ-icon-preview-wrap relative">
 					<p class="civ-icon-preview-note" role="note">Web Preview is approximate styling. Download PNG for accurate post-processing.</p>
 					{#if activityMessage}
 						<div class="civ-icon-activity-overlay" role="status" aria-live="polite">
@@ -2585,7 +2585,7 @@
 					{/if}
 					<div class={`civ-icon-preview-stack ${compareEnabled ? "is-compare" : ""}`}>
 						<div class="civ-icon-preview-pane">
-							<span class="civ-icon-preview-pane-label">Current</span>
+							<span class="civ-icon-preview-pane-label uppercase">Current</span>
 							<canvas
 								class={`civ-icon-preview ${isDragging ? "is-dragging" : ""}`}
 								bind:this={previewCanvasEl}
@@ -2600,7 +2600,7 @@
 						</div>
 						{#if compareEnabled}
 							<div class="civ-icon-preview-pane">
-								<span class="civ-icon-preview-pane-label">Reference</span>
+								<span class="civ-icon-preview-pane-label uppercase">Reference</span>
 								<canvas class="civ-icon-preview civ-icon-preview-reference" bind:this={compareCanvasEl} tabindex="-1" aria-label="Reference compare preview"></canvas>
 							</div>
 						{/if}
@@ -2609,7 +2609,7 @@
 
 				<p class="civ-icon-copy">Drag to move icon. Arrow keys nudge by 1px, Shift+Arrow nudges by 10px.</p>
 
-				<div class="civ-icon-action-row">
+				<div class="civ-icon-action-row inline half flex-wrap">
 					<button type="button" class="civ-icon-button civ-icon-button-subtle" onclick={undoChange} disabled={!canUndo}>Undo</button>
 					<button type="button" class="civ-icon-button civ-icon-button-subtle" onclick={redoChange} disabled={!canRedo}>Redo</button>
 				</div>
@@ -2620,12 +2620,12 @@
 			<aside class="civ-icon-controls-panel" aria-label="Icon controls">
 				<section class="civ-icon-control-group">
 					<h2 class="civ-icon-subtitle">Colors</h2>
-					<div class="color-row">
+					<div class="color-row stack half">
 						<div class="color-field">
 							<label class="civ-icon-input-label">
 								Background (Circle)
 								<div class="color-picker-row">
-									<div class="color-swatch-control">
+									<div class="color-swatch-control relative overflow-hidden">
 										<input
 											type="color"
 											value={primaryColor}
@@ -2637,7 +2637,7 @@
 									</div>
 									<input
 										type="text"
-										class="color-hex-input"
+										class="color-hex-input uppercase"
 										inputmode="text"
 										spellcheck="false"
 										placeholder={DEFAULT_PRIMARY_COLOR}
@@ -2658,7 +2658,7 @@
 							<label class="civ-icon-input-label">
 								Icon (Alpha)
 								<div class="color-picker-row">
-									<div class="color-swatch-control">
+									<div class="color-swatch-control relative overflow-hidden">
 										<input
 											type="color"
 											value={iconColor}
@@ -2670,7 +2670,7 @@
 									</div>
 									<input
 										type="text"
-										class="color-hex-input"
+										class="color-hex-input uppercase"
 										inputmode="text"
 										spellcheck="false"
 										placeholder={DEFAULT_ICON_COLOR}
@@ -2692,7 +2692,7 @@
 							{colorLegibilityWarning.text}
 						</p>
 					{/if}
-					<div class="civ-icon-action-row">
+					<div class="civ-icon-action-row inline half flex-wrap">
 						<button type="button" class="civ-icon-button civ-icon-button-ghost" onclick={captureCompareReference} disabled={!hasSource}>Set Reference</button>
 						<label class="civ-icon-inline-toggle">
 							<input type="checkbox" checked={compareEnabled} onchange={(event) => onCompareToggle(event.currentTarget.checked)} />
@@ -2735,8 +2735,8 @@
 							/>
 						</label>
 					</div>
-					<div class="civ-icon-actions">
-						<div class="civ-icon-action-row">
+					<div class="civ-icon-actions stack half">
+						<div class="civ-icon-action-row inline half flex-wrap">
 							<button type="button" class="civ-icon-button civ-icon-button-subtle" onclick={autoCenterFromAlpha}>Auto Center</button>
 							<button type="button" class="civ-icon-button civ-icon-button-subtle" onclick={applyFitScale}>Fit Scale</button>
 							<button type="button" class="civ-icon-button civ-icon-button-subtle" onclick={resetTransform}>Reset Transform</button>
@@ -2766,7 +2766,7 @@
 							</label>
 							<details class="civ-icon-swiatlo-layers-accordion">
 								<summary>Layer Visibility</summary>
-								<div class="civ-icon-swiatlo-list" role="list" aria-label="Light layers">
+								<div class="civ-icon-swiatlo-list overflow-hidden" role="list" aria-label="Light layers">
 									{#each SWIATLO_LAYER_DEFS as layer (layer.id)}
 										<div class={`civ-icon-swiatlo-row ${swiatloActiveLayerId === layer.id ? "is-active" : ""}`} role="listitem">
 											<button type="button" class="civ-icon-swiatlo-main" onclick={() => selectSwiatloLayer(layer.id)}>
@@ -2831,8 +2831,8 @@
 					{/if}
 				</section> -->
 
-				<div class="civ-icon-actions">
-					<div class="civ-icon-action-row">
+				<div class="civ-icon-actions stack half">
+					<div class="civ-icon-action-row inline half flex-wrap">
 						<button type="button" class="civ-icon-button civ-icon-button-primary" onclick={downloadPng} disabled={exportBusy}>
 							{exportBusy ? "Exporting..." : "Download"}
 						</button>
@@ -2852,12 +2852,12 @@
 			<canvas class="civ-icon-output-hidden" bind:this={outputCanvasEl} aria-hidden="true"></canvas>
 		</section>
 
-		<section class="civ-icon-suggestions">
+		<section class="civ-icon-suggestions stack">
 			<div class="civ-icon-suggestions-head">
 				<h2 class="civ-icon-subtitle">Color Scheme Suggestions</h2>
 				<p class="civ-icon-copy">Click a pair to apply it to the icon.</p>
 			</div>
-			<div class="civ-icon-suggestion-controls">
+			<div class="civ-icon-suggestion-controls inline half flex-wrap">
 				<label class="civ-icon-inline-toggle">
 					<input type="checkbox" checked={suggestionLockHue} onchange={(event) => (suggestionLockHue = event.currentTarget.checked)} />
 					<span>Lock Hue</span>
@@ -2877,13 +2877,13 @@
 					<li class="civ-icon-scheme-item">
 						<button
 							type="button"
-							class="civ-icon-scheme-card"
+							class="civ-icon-scheme-card stack half"
 							onclick={() => applyColorScheme(scheme)}
 							style={`--scheme-outer:${scheme.primary};--scheme-inner:${scheme.icon};`}
 							aria-label={`Apply ${scheme.label} scheme`}
 						>
 							<span class="civ-icon-scheme-title">{scheme.label}</span>
-							<span class="civ-icon-scheme-preview" aria-hidden="true">
+							<span class="civ-icon-scheme-preview relative overflow-hidden" aria-hidden="true">
 								<span class="civ-icon-scheme-inner-square"></span>
 							</span>
 							<span class="civ-icon-scheme-values">
@@ -2922,8 +2922,6 @@
 	.civ-icon-upload-panel,
 	.civ-icon-workspace,
 	.civ-icon-suggestions {
-		display: grid;
-		gap: 1rem;
 		background: var(--panel-bg);
 		box-shadow: 0 2px 4px var(--shadow-soft);
 		border: 1px solid color-mix(in srgb, var(--civ-icon-accent-border) 34%, var(--panel-border));
@@ -2946,7 +2944,6 @@
 	}
 
 	.civ-icon-dropzone {
-		position: relative;
 		min-block-size: 132px;
 		display: grid;
 		place-items: center;
@@ -2975,7 +2972,6 @@
 	.civ-icon-dropzone-copy {
 		color: var(--muted-ink);
 		font-size: 0.95rem;
-		text-align: center;
 	}
 
 	.civ-icon-controls-panel input[type="number"],
@@ -3013,8 +3009,10 @@
 	}
 
 	.civ-icon-workspace {
+		display: grid;
 		grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
 		align-items: start;
+		gap: 1rem;
 	}
 
 	.civ-icon-preview-column {
@@ -3023,7 +3021,6 @@
 	}
 
 	.civ-icon-preview-wrap {
-		position: relative;
 		display: grid;
 		gap: 0.6rem;
 		place-items: center;
@@ -3104,7 +3101,6 @@
 
 	.civ-icon-preview-pane-label {
 		color: var(--muted-ink);
-		text-transform: uppercase;
 		font-size: 0.74rem;
 		font-weight: 600;
 		letter-spacing: 0.04em;
@@ -3140,9 +3136,6 @@
 	}
 
 	.civ-icon-action-row {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.45rem;
 	}
 
 	.civ-icon-button {
@@ -3228,9 +3221,6 @@
 
 	.color-row {
 		min-inline-size: 0;
-		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		gap: 0.5rem;
 	}
 
 	.color-field {
@@ -3246,16 +3236,13 @@
 	}
 
 	.color-swatch-control {
-		position: relative;
 		z-index: 0;
 		inline-size: 2rem;
 		block-size: 2rem;
 		min-inline-size: 2rem;
 		min-block-size: 2rem;
-		display: block;
 		flex: 0 0 2rem;
 		border-radius: 0.45rem;
-		overflow: hidden;
 
 		& input[type="color"] {
 			position: absolute;
@@ -3292,7 +3279,6 @@
 		min-inline-size: 0;
 		flex: 1;
 		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-		text-transform: uppercase;
 	}
 
 	.color-values {
@@ -3339,8 +3325,6 @@
 	}
 
 	.civ-icon-actions {
-		display: grid;
-		gap: 0.5rem;
 	}
 
 	.civ-icon-swiatlo-group {
@@ -3400,7 +3384,6 @@
 		display: grid;
 		border: 1px solid hsl(0deg 0% 100% / 0.08);
 		border-radius: 0.52rem;
-		overflow: hidden;
 	}
 
 	.civ-icon-swiatlo-main {
@@ -3458,8 +3441,6 @@
 	}
 
 	.civ-icon-suggestion-controls {
-		display: flex;
-		flex-wrap: wrap;
 		align-items: center;
 		gap: 0.5rem 0.75rem;
 	}
@@ -3487,8 +3468,6 @@
 
 	.civ-icon-scheme-card {
 		inline-size: 100%;
-		display: grid;
-		gap: 0.5rem;
 		color: var(--ink);
 		text-align: left;
 		background: color-mix(in oklch, var(--panel-bg) 90%, var(--control-bg));
@@ -3515,13 +3494,11 @@
 	}
 
 	.civ-icon-scheme-preview {
-		position: relative;
 		inline-size: 12rem;
 		block-size: 12rem;
 		display: block;
 		background: var(--scheme-outer);
 		border-radius: 0.35rem;
-		overflow: hidden;
 	}
 
 	.civ-icon-scheme-inner-square {

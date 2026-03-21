@@ -122,16 +122,16 @@
 	}
 </script>
 
-<section class="directory-page">
+<section class="directory-page stack">
 	<header class="hero directory-hero">
 		<p class="eyebrow">Community Links</p>
 		<h1>Find the right place to ask, share, or collaborate.</h1>
 		<p>Quick links to support channels and related Civ communities.</p>
 	</header>
 
-	<div class="directory-grid">
+	<div class="directory-grid stack">
 		{#each groups as group}
-			<section class="directory-group">
+			<section class="directory-group stack">
 				<div class="directory-group-header">
 					<h2>{group.title}</h2>
 				</div>
@@ -140,7 +140,7 @@
 						{@const previewImage = item.image}
 						{@const previewTagline = item.tagline || "Community link"}
 						<a class="directory-card" href={item.url} target="_blank" rel="noopener noreferrer" data-kind={linkKind(item.url, item.kind)}>
-							<div class="directory-card-preview">
+							<div class="directory-card-preview overflow-hidden">
 								{#if previewImage}
 									<img src={previewImage} alt="" loading="lazy" />
 								{:else}
@@ -186,7 +186,7 @@
 									</div>
 								{/if}
 							</div>
-							<div class="directory-card-top">
+							<div class="directory-card-top stack half">
 								<span class="directory-title">{item.name}</span>
 								<span class="directory-tagline">{previewTagline}</span>
 							</div>
@@ -201,17 +201,14 @@
 
 <style>
 	.directory-page {
-		display: grid;
 		gap: 1.25rem;
 	}
 
 	.directory-grid {
-		display: grid;
 		gap: 1rem;
 	}
 
 	.directory-group {
-		display: grid;
 		gap: 1rem;
 		background: var(--panel-bg);
 		box-shadow: 0 10px 26px var(--shadow-soft);
@@ -264,7 +261,6 @@
 		background: var(--panel-bg);
 		border: 1px solid color-mix(in oklch, var(--accent) 10%, var(--panel-border));
 		border-radius: 0.75rem;
-		overflow: hidden;
 	}
 
 	.directory-card-preview img {
@@ -301,8 +297,6 @@
 	}
 
 	.directory-card-top {
-		display: grid;
-		gap: 0.5rem;
 		margin-block-start: 0.5rem;
 	}
 

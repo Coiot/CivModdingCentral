@@ -1155,9 +1155,9 @@
 						class={`lua-launcher-card ${selectedEntry?.id === entry.entryId && activeDataset === entry.datasetId ? "is-active" : ""}`}
 						onclick={() => revealEntryAndScroll(entry.entryId, entry.datasetId)}
 					>
-						<div class="lua-launcher-card-head">
+						<div class="lua-launcher-card-head inline">
 							<h3>{entry.title}</h3>
-							<span class="lua-launcher-card-meta">{entry.meta}</span>
+							<span class="lua-launcher-card-meta uppercase">{entry.meta}</span>
 						</div>
 					</button>
 				{/each}
@@ -1246,7 +1246,7 @@
 
 			<div class="lua-explorer-grid">
 				<aside class="lua-list-panel overflow-hidden" aria-label="Lua entries">
-					<div class="lua-list-head">
+					<div class="lua-list-head inline">
 						<h2>{activeDataset === "methods" ? "Methods" : "GameEvents"}</h2>
 						<span>{filteredEntries.length} matches</span>
 					</div>
@@ -1310,7 +1310,7 @@
 								{#if normalizedQuery && selectedMatchReasons.length > 0}
 									<div class="lua-detail-match-summary">
 										<p class="lua-card-copy">Matched in</p>
-										<div class="lua-entry-tags">
+										<div class="lua-entry-tags inline half flex-wrap">
 											{#each selectedMatchReasons as reason (reason)}
 												<span class="lua-tag">{reason}</span>
 											{/each}
@@ -1347,7 +1347,7 @@
 							<article class="lua-docs-article">
 								{#if selectedEntrySummary}
 									<section id="lua-doc-summary" class="lua-detail-card lua-doc-section" use:trackDocSection={"summary"}>
-										<div class="lua-detail-card-head">
+										<div class="lua-detail-card-head inline">
 											<h3>Summary</h3>
 										</div>
 										<p class="lua-card-copy">{selectedEntrySummary}</p>
@@ -1355,7 +1355,7 @@
 								{/if}
 
 								<section id="lua-doc-signature" class="lua-detail-card lua-doc-section" use:trackDocSection={"signature"}>
-									<div class="lua-detail-card-head">
+									<div class="lua-detail-card-head inline">
 										<h3>Signature</h3>
 										<span>{selectedEntry.entryKind === "method" ? selectedEntry.family : selectedEntry.scope || "GameEvents"}</span>
 									</div>
@@ -1389,7 +1389,7 @@
 
 								{#if selectedEntry.parameters.length > 0}
 									<section id="lua-doc-parameters" class="lua-detail-card lua-doc-section" use:trackDocSection={"parameters"}>
-										<div class="lua-detail-card-head">
+										<div class="lua-detail-card-head inline">
 											<h3>Parameters</h3>
 											<span>{selectedEntry.parameters.length}</span>
 										</div>
@@ -1400,7 +1400,7 @@
 														<strong>{parameter.name || parameter.raw}</strong>
 														<p>{parameter.type || "untyped"}</p>
 													</div>
-													<div class="lua-parameter-flags">
+													<div class="lua-parameter-flags inline half flex-wrap">
 														{#if parameter.optional}
 															<span class="lua-tag lua-tag--optional">Optional</span>
 														{/if}
@@ -1417,7 +1417,7 @@
 
 								{#if selectedEntry.notes.length > 0}
 									<section id="lua-doc-notes" class="lua-detail-card lua-doc-section" use:trackDocSection={"notes"}>
-										<div class="lua-detail-card-head">
+										<div class="lua-detail-card-head inline">
 											<h3>Notes</h3>
 										</div>
 										<ul class="lua-note-list">
@@ -1430,7 +1430,7 @@
 
 								{#if selectedEntry.gotchas.length > 0}
 									<section id="lua-doc-gotchas" class="lua-detail-card lua-doc-section" use:trackDocSection={"gotchas"}>
-										<div class="lua-detail-card-head">
+										<div class="lua-detail-card-head inline">
 											<h3>Gotchas</h3>
 											<!-- <span>{selectedEntry.gotchas.length}</span> -->
 										</div>
@@ -1444,7 +1444,7 @@
 
 								{#if selectedEntry.exampleCode}
 									<section id="lua-doc-example" class="lua-detail-card lua-doc-section" use:trackDocSection={"example"}>
-										<div class="lua-detail-card-head">
+										<div class="lua-detail-card-head inline">
 											<h3>Example</h3>
 										</div>
 										{#if selectedEntry.exampleSummary}
@@ -1456,7 +1456,7 @@
 
 								{#if selectedSchemaTouchpoints.length > 0}
 									<section id="lua-doc-schema" class="lua-detail-card lua-doc-section" use:trackDocSection={"schema"}>
-										<div class="lua-detail-card-head">
+										<div class="lua-detail-card-head inline">
 											<h3>Schema touchpoints</h3>
 											<span>{selectedSchemaTouchpoints.length}</span>
 										</div>
@@ -1488,7 +1488,7 @@
 
 								{#if selectedSeeAlsoItems.length > 0}
 									<section id="lua-doc-see-also" class="lua-detail-card lua-doc-section" use:trackDocSection={"see-also"}>
-										<div class="lua-detail-card-head">
+										<div class="lua-detail-card-head inline">
 											<h3>See also</h3>
 											<!-- <span>{selectedSeeAlsoItems.length}</span> -->
 										</div>
@@ -1519,7 +1519,7 @@
 							<aside class="lua-docs-nav">
 								<div class="lua-docs-nav-card">
 									<span class="lua-kicker uppercase">On This Page</span>
-									<div class="lua-docs-nav-links">
+									<div class="lua-docs-nav-links inline half flex-wrap">
 										{#each selectedEntrySections as section (section.id)}
 											<a
 												class={`lua-link lua-link--inline lua-docs-nav-link ${activeDocSectionId === section.id ? "is-active" : ""}`}
@@ -1577,7 +1577,7 @@
 								{#if selectedEntryQuickLinks.length > 0}
 									<div class="lua-docs-nav-card">
 										<span class="lua-kicker uppercase">Quick Links</span>
-										<div class="lua-docs-nav-links">
+										<div class="lua-docs-nav-links inline half flex-wrap">
 											{#each selectedEntryQuickLinks as link (link.id)}
 												<a class="lua-link lua-link--inline" href={link.href} title={link.copy}>{link.label}</a>
 											{/each}
@@ -1780,8 +1780,6 @@
 	.lua-launcher-card-head,
 	.lua-detail-card-head,
 	.lua-list-head {
-		display: flex;
-		align-items: center;
 		gap: 1rem;
 	}
 
@@ -1814,7 +1812,6 @@
 	}
 
 	.lua-launcher-card-meta {
-		text-transform: uppercase;
 		font-size: 0.72rem;
 		letter-spacing: 0.08em;
 	}
@@ -1854,8 +1851,6 @@
 	.lua-parameter-flags,
 	.lua-recent-list,
 	.lua-docs-nav-links {
-		display: flex;
-		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
 
@@ -1998,8 +1993,6 @@
 	}
 
 	.lua-empty-actions {
-		display: flex;
-		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
 
@@ -2049,8 +2042,6 @@
 	}
 
 	.lua-entry-property-strip {
-		display: flex;
-		flex-wrap: wrap;
 		gap: 0.35rem;
 	}
 
@@ -2110,7 +2101,6 @@
 	.lua-detail-chips,
 	.lua-parameter-flags,
 	.lua-entry-tags {
-		align-items: start;
 	}
 
 	.lua-entry-tags {

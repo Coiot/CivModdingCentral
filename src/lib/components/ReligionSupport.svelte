@@ -127,7 +127,7 @@
 <section class="viewer-toolbar panel-surface margin-block-end" aria-label="Religion support controls">
 	<label class="search-field stack quarter">
 		<span>Search Religions, Packs, Or Text</span>
-		<input bind:value={searchQuery} type="search" placeholder="shinto, australia, buddhism, atlas, mountain, dream..." />
+		<input bind:value={searchQuery} type="search" placeholder="shinto, australia, buddhism, mountain, dream..." />
 	</label>
 
 	<div class="toolbar-section">

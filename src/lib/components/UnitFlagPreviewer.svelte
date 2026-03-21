@@ -101,13 +101,16 @@
 
 <section class="unit-flag-page">
 	<header class="hero unit-flag-hero">
-		<div class="unit-flag-hero-copy">
+		<div class="unit-flag-hero-copy stack">
 			<p class="eyebrow">Art & UI Helper</p>
 			<h1>Unit Flag Previewer</h1>
-			<p>Preview how unit flag art actually reads before export. This first pass is a visual design mock for a future helper focused on banner contrast, alpha edges, and battlefield readability.</p>
+			<p>
+				Preview how unit flag art actually reads before export. This first pass is a visual design mock for a future helper focused on banner contrast, alpha edges, and battlefield
+				readability.
+			</p>
 		</div>
 
-		<div class="unit-flag-hero-meta">
+		<div class="unit-flag-hero-meta stack">
 			<article class="unit-flag-meta-card">
 				<span>Status</span>
 				<strong>Design Preview</strong>
@@ -122,7 +125,7 @@
 	</header>
 
 	<section class="unit-flag-panel unit-flag-stage">
-		<div class="unit-flag-stage-copy">
+		<div class="unit-flag-stage-copy stack">
 			<p class="eyebrow">Planned Interface</p>
 			<h2>A mock workbench for testing banner strength before the DDS stage</h2>
 			<p>The final tool should answer one question fast: will this unit flag still read once Civ V puts it on top of noisy terrain, team color, and gameplay scale?</p>
@@ -139,19 +142,19 @@
 
 		<div class="unit-flag-preview-shell">
 			<div class="unit-flag-preview-frame">
-				<div class="unit-flag-preview-head">
+				<div class="unit-flag-preview-head inline">
 					<div>
 						<p class="eyebrow">Preview Presets</p>
 						<h3>Readability Stress Test</h3>
 					</div>
-					<span class="unit-flag-preview-pill">Concept Layout</span>
+					<span class="unit-flag-preview-pill uppercase">Concept Layout</span>
 				</div>
 
 				<div class="unit-flag-scene-stack">
 					{#each previewScenes as scene (scene.id)}
 						<article class={["unit-flag-scene-card", scene.tone]}>
 							<div class="unit-flag-scene-copy">
-								<div class="unit-flag-scene-head">
+								<div class="unit-flag-scene-head inline">
 									<strong>{scene.label}</strong>
 									<span>{scene.state}</span>
 								</div>
@@ -171,7 +174,7 @@
 	</section>
 
 	<section class="unit-flag-panel unit-flag-plan-grid">
-		<div class="unit-flag-column">
+		<div class="unit-flag-column stack">
 			<div class="section-heading">
 				<p class="eyebrow">Tool Shape</p>
 				<h2>What this helper should eventually do</h2>
@@ -192,7 +195,7 @@
 			</div>
 		</div>
 
-		<div class="unit-flag-column">
+		<div class="unit-flag-column stack">
 			<div class="section-heading">
 				<p class="eyebrow">Workflow</p>
 				<h2>Where it would sit in the pipeline</h2>
@@ -258,17 +261,15 @@
 	.unit-flag-panel {
 		position: relative;
 		background:
-			radial-gradient(circle at top right, rgba(247, 123, 75, 0.16), transparent 34%),
-			radial-gradient(circle at bottom left, rgba(61, 96, 186, 0.12), transparent 32%),
+			radial-gradient(circle at top right, rgba(247, 123, 75, 0.16), transparent 34%), radial-gradient(circle at bottom left, rgba(61, 96, 186, 0.12), transparent 32%),
 			linear-gradient(180deg, rgba(11, 15, 26, 0.94), rgba(8, 11, 18, 0.98));
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 0.06),
 			0 20px 46px rgba(0, 0, 0, 0.34);
 		border: 1px solid rgba(247, 123, 75, 0.28);
 		border-radius: 30px;
-		padding-inline: 2vw,;
-		padding-block-start: clamp(1.4rem,;
-		padding-block-end: 2rem);
+		padding-inline: 2vw;
+		padding-block-start: clamp(1.4rem, ; padding-block-end: 2rem);
 	}
 
 	.unit-flag-hero-copy h1 {
@@ -299,7 +300,6 @@
 	.unit-flag-meta-card,
 	.unit-flag-check-card,
 	.unit-flag-scene-card {
-		display: grid;
 		gap: 0.75rem;
 	}
 
@@ -317,7 +317,6 @@
 
 	.unit-flag-meta-card span,
 	.unit-flag-step-card span {
-		text-transform: uppercase;
 		font-size: 0.75rem;
 		font-weight: 700;
 		letter-spacing: 0.16em;
@@ -359,9 +358,7 @@
 	}
 
 	.unit-flag-preview-frame {
-		background:
-			radial-gradient(circle at top right, rgba(247, 123, 75, 0.18), transparent 30%),
-			linear-gradient(180deg, rgba(15, 19, 31, 0.98), rgba(10, 13, 22, 1));
+		background: radial-gradient(circle at top right, rgba(247, 123, 75, 0.18), transparent 30%), linear-gradient(180deg, rgba(15, 19, 31, 0.98), rgba(10, 13, 22, 1));
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 0.06),
 			0 16px 34px rgba(0, 0, 0, 0.34);
@@ -372,14 +369,11 @@
 
 	.unit-flag-preview-head,
 	.unit-flag-scene-head {
-		display: flex;
 		justify-content: space-between;
-		align-items: center;
 		gap: 1rem;
 	}
 
 	.unit-flag-preview-pill {
-		text-transform: uppercase;
 		font-size: 0.72rem;
 		font-weight: 700;
 		letter-spacing: 0.14em;
@@ -435,7 +429,6 @@
 	}
 
 	.unit-flag-column {
-		display: grid;
 		gap: 1rem;
 	}
 
@@ -452,9 +445,7 @@
 
 	a.unit-flag-companion-card:hover,
 	a.unit-flag-companion-card:focus-visible {
-		background:
-			radial-gradient(circle at top right, rgba(247, 123, 75, 0.12), transparent 28%),
-			linear-gradient(180deg, rgba(22, 27, 40, 0.96), rgba(14, 18, 29, 1));
+		background: radial-gradient(circle at top right, rgba(247, 123, 75, 0.12), transparent 28%), linear-gradient(180deg, rgba(22, 27, 40, 0.96), rgba(14, 18, 29, 1));
 		box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28);
 		border-color: rgba(247, 123, 75, 0.4);
 		transform: translateY(-2px);
@@ -514,21 +505,15 @@
 	}
 
 	.unit-flag-scene-card.is-forest {
-		background:
-			radial-gradient(circle at right center, rgba(82, 188, 126, 0.2), transparent 32%),
-			linear-gradient(135deg, rgba(21, 53, 38, 0.84), rgba(18, 24, 35, 0.95));
+		background: radial-gradient(circle at right center, rgba(82, 188, 126, 0.2), transparent 32%), linear-gradient(135deg, rgba(21, 53, 38, 0.84), rgba(18, 24, 35, 0.95));
 	}
 
 	.unit-flag-scene-card.is-frost {
-		background:
-			radial-gradient(circle at right center, rgba(135, 190, 255, 0.2), transparent 32%),
-			linear-gradient(135deg, rgba(57, 70, 98, 0.86), rgba(18, 23, 37, 0.96));
+		background: radial-gradient(circle at right center, rgba(135, 190, 255, 0.2), transparent 32%), linear-gradient(135deg, rgba(57, 70, 98, 0.86), rgba(18, 23, 37, 0.96));
 	}
 
 	.unit-flag-scene-card.is-sun {
-		background:
-			radial-gradient(circle at right center, rgba(255, 190, 113, 0.24), transparent 32%),
-			linear-gradient(135deg, rgba(79, 52, 31, 0.7), rgba(24, 29, 44, 0.94));
+		background: radial-gradient(circle at right center, rgba(255, 190, 113, 0.24), transparent 32%), linear-gradient(135deg, rgba(79, 52, 31, 0.7), rgba(24, 29, 44, 0.94));
 	}
 
 	@media (max-width: 1024px) {

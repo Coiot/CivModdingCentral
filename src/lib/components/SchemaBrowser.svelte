@@ -1437,7 +1437,7 @@
 							<div class="schema-empty-state">
 								<p class="schema-empty">No tables match the current search.</p>
 								<p class="schema-empty-note">Try one of these examples or clear the current scope.</p>
-								<div class="schema-empty-actions">
+								<div class="schema-empty-actions inline half flex-wrap">
 									{#each EMPTY_SEARCH_EXAMPLES as example (example)}
 										<button type="button" class="schema-inline-link schema-inline-link--chip" onclick={() => setSearchExample(example)}>{example}</button>
 									{/each}
@@ -1463,14 +1463,14 @@
 									<div class="schema-table-card-head">
 										<h3 style="font-size: 1rem">{table.name}</h3>
 									</div>
-									<div class="schema-table-meta">
+									<div class="schema-table-meta inline half flex-wrap">
 										<!-- <span>{table.foreignKeyCount} outgoing refs</span>
 									<span>{table.incomingForeignKeys.length} incoming refs</span> -->
 										<span>{table.columnCount} cols</span>
 										<span>{formatNumber(table.rowCount)} rows</span>
 									</div>
 									{#if table.matchedColumns.length > 0}
-										<div class="schema-table-tags">
+										<div class="schema-table-tags inline half flex-wrap">
 											{#each table.matchedColumns as column (column.name)}
 												<span class="schema-tag">{column.name}</span>
 											{/each}
@@ -1498,15 +1498,15 @@
 								{#if normalizedQuery && selectedMatchReasons.length > 0}
 									<div class="schema-detail-match-summary">
 										<p class="schema-section-note">Why this table matched</p>
-										<div class="schema-table-tags">
+										<div class="schema-table-tags inline half flex-wrap">
 											{#each selectedMatchReasons as reason (reason)}
 												<span class="schema-tag">{reason}</span>
 											{/each}
 										</div>
 									</div>
 								{/if}
-								<div class="schema-detail-actions">
-									<div class="schema-detail-tabs" role="tablist" aria-label="Selected table views">
+								<div class="schema-detail-actions inline half flex-wrap">
+									<div class="schema-detail-tabs inline half flex-wrap" role="tablist" aria-label="Selected table views">
 										{#each DETAIL_TAB_DEFS as tab (tab.id)}
 											<button
 												type="button"
@@ -1524,7 +1524,7 @@
 								</div> -->
 								</div>
 							</div>
-							<div class="schema-detail-metrics">
+							<div class="schema-detail-metrics inline half flex-wrap">
 								<span class="schema-metric-chip">
 									<strong>{selectedTable.columnCount}</strong>
 									<span>columns</span>
@@ -1569,7 +1569,7 @@
 													<strong>{column.name}</strong>
 													<p>{column.type || "untyped"}</p>
 												</div>
-												<div class="schema-column-flags">
+												<div class="schema-column-flags inline half flex-wrap">
 													{#if column.primaryKey}
 														<span class="schema-tag schema-tag--key">PK</span>
 													{/if}
@@ -1705,9 +1705,9 @@
 													<span>Quick filter rows</span>
 													<input type="search" bind:value={rowFilter} placeholder="archer, TECH_ARCHERY, TXT_KEY..." />
 												</label>
-												<div class="schema-row-toolbar">
+												<div class="schema-row-toolbar inline half flex-wrap">
 													{#if activeRowSearchQuery && selectedMatchedRowCount > 1}
-														<div class="schema-match-nav" aria-label="Row match navigation">
+														<div class="schema-match-nav inline half flex-wrap" aria-label="Row match navigation">
 															<button type="button" class="schema-section-toggle" onclick={goToPreviousMatch} disabled={!canGoToPreviousMatch}>Previous match</button>
 															<button type="button" class="schema-section-toggle" onclick={goToNextMatch} disabled={!canGoToNextMatch}>Next match</button>
 														</div>
@@ -2249,8 +2249,6 @@
 	.schema-filter-group,
 	.schema-table-tags,
 	.schema-column-flags {
-		display: flex;
-		flex-wrap: wrap;
 		gap: 0.55rem;
 	}
 
@@ -2396,14 +2394,9 @@
 	}
 
 	.schema-empty-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
 	}
 
 	.schema-table-meta {
-		display: flex;
-		flex-wrap: wrap;
 		gap: 0.35rem 0.55rem;
 		color: var(--schema-copy);
 		font-size: 0.84rem;
@@ -2497,15 +2490,10 @@
 	}
 
 	.schema-detail-actions {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
 		gap: 0.65rem;
 	}
 
 	.schema-detail-tabs {
-		display: flex;
-		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
 
@@ -2540,8 +2528,6 @@
 	}
 
 	.schema-detail-metrics {
-		display: flex;
-		flex-wrap: wrap;
 		align-self: start;
 		gap: 0.55rem;
 	}
@@ -2603,16 +2589,11 @@
 	}
 
 	.schema-row-toolbar {
-		display: flex;
-		flex-wrap: wrap;
 		justify-content: flex-end;
-		align-items: center;
 		gap: 0.55rem;
 	}
 
 	.schema-match-nav {
-		display: flex;
-		flex-wrap: wrap;
 		justify-content: flex-end;
 		gap: 0.45rem;
 	}

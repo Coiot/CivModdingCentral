@@ -311,18 +311,18 @@
 <svelte:window onkeydown={handleWindowKeyDown} onclick={handleWindowClick} />
 
 <header class="navbar">
-	<div class="brand">
-		<a href="/" class="brand-link">
+	<div class="brand inline">
+		<a href="/" class="brand-link inline">
 			<img class="brand-logo" src="/brand/cmc-navbar-logo.jpg" alt="Civ Modding Central logo" width="100" height="100" />
 		</a>
 		<div>
-			<p class="brand-overline">Community Web Hub</p>
+			<p class="brand-overline uppercase">Community Web Hub</p>
 			<p class="brand-title">Civ Modding Central</p>
 		</div>
 	</div>
 
-	<div class="nav-tools">
-		<div class="page-nav-shell" bind:this={navWrapEl} role="group" aria-label="Tool navigation" onfocusout={handleNavShellFocusOut}>
+	<div class="nav-tools inline">
+		<div class="page-nav-shell relative" bind:this={navWrapEl} role="group" aria-label="Tool navigation" onfocusout={handleNavShellFocusOut}>
 			<button
 				type="button"
 				class={`nav-menu-trigger nav-menu-trigger-primary ${navMenuOpen ? "is-open" : ""}`}
@@ -345,7 +345,7 @@
 							onclick={() => toggleNavGroup(group.id)}
 						>
 							<span class="nav-group-kicker">{group.kicker}</span>
-							<span class="nav-group-title-row">
+							<span class="nav-group-title-row inline half">
 								<span class="nav-group-title">{group.label}</span>
 								<span class="nav-group-count">{group.links.length}</span>
 							</span>
@@ -362,7 +362,7 @@
 								{#each group.links as link, index (navLinkKey(group.id, link, index))}
 									{#if link.disabled}
 										<div class={`nav-entry ${navEntrySurfaceClass(link.href)} is-disabled`} aria-disabled="true">
-											<span class="nav-entry-head">
+											<span class="nav-entry-head inline half">
 												<span class="nav-entry-title">{link.label}</span>
 												<span class="nav-entry-status">{link.statusLabel || "Coming Soon"}</span>
 											</span>
@@ -375,7 +375,7 @@
 											aria-current={isActivePath(link.href) ? "page" : undefined}
 											onclick={closeNavMenus}
 										>
-											<span class="nav-entry-head">
+											<span class="nav-entry-head inline half">
 												<span class="nav-entry-title">{link.label}</span>
 											</span>
 											<span class="nav-entry-copy">{link.description}</span>
@@ -389,7 +389,7 @@
 			</nav>
 		</div>
 
-		<div class="nav-actions">
+		<div class="nav-actions inline">
 			<QuickJumpPalette {currentPath} onJump={onQuickJump} />
 
 			<a class="social-trigger" href={REDDIT_URL} aria-label="Reddit" title="Reddit" target="_blank" rel="noopener noreferrer">
@@ -408,7 +408,7 @@
 				</svg>
 			</a>
 
-			<div class="user-wrap" bind:this={userWrapEl}>
+			<div class="user-wrap relative" bind:this={userWrapEl}>
 				<button
 					type="button"
 					class="user-trigger"
@@ -444,7 +444,7 @@
 									Editor access pending
 								{/if}
 							</p>
-							<div class="user-actions">
+							<div class="user-actions inline half flex-wrap">
 								<button type="button" onclick={onLogout}>Sign Out</button>
 							</div>
 						{:else}
@@ -453,7 +453,7 @@
 								Email
 								<input type="email" placeholder="you@example.com" value={authEmail} oninput={(event) => onAuthEmailInput(event.currentTarget.value)} />
 							</label>
-							<div class="user-actions">
+							<div class="user-actions inline half flex-wrap">
 								{#if authEnabled}
 									<button type="button" onclick={onSendMagicLink} disabled={authLoading}>
 										{authLoading ? "Sending..." : "Send Sign-In Link"}
@@ -477,7 +477,7 @@
 				{/if}
 			</div>
 
-			<div class="help-wrap" bind:this={helpWrapEl}>
+			<div class="help-wrap relative" bind:this={helpWrapEl}>
 				<button
 					type="button"
 					class="help-trigger"
@@ -527,12 +527,10 @@
 
 <style>
 	.navbar {
-		position: relative;
 		z-index: 20;
-		display: flex;
 		container: navbar / inline-size;
+		display: flex;
 		justify-content: space-between;
-		align-items: center;
 		gap: clamp(0.75rem, 1.5cqi, 1.15rem);
 		background: var(--navbar-bg);
 		box-shadow: 0 2px 4px var(--shadow-soft);
@@ -544,15 +542,9 @@
 
 	.brand {
 		min-inline-size: 0;
-		display: flex;
+		inline-size: fit-content;
 		flex: 0 1 auto;
-		align-items: center;
 		gap: 0.75rem;
-	}
-
-	.brand-link {
-		display: flex;
-		align-items: center;
 	}
 
 	.brand-logo {
@@ -567,7 +559,6 @@
 
 	.brand-overline {
 		color: var(--muted-ink);
-		text-transform: uppercase;
 		font-size: 0.75rem;
 		letter-spacing: 0.12em;
 	}
@@ -588,15 +579,12 @@
 
 	.nav-tools {
 		min-inline-size: 0;
-		display: flex;
 		flex: 1 1 auto;
 		justify-content: flex-end;
-		align-items: center;
 		gap: clamp(0.45rem, 1cqi, 0.7rem);
 	}
 
 	.page-nav-shell {
-		position: relative;
 		z-index: 5;
 		min-inline-size: 0;
 		flex: 0 1 auto;
@@ -708,8 +696,6 @@
 	}
 
 	.nav-group-title-row {
-		display: flex;
-		align-items: center;
 		gap: 0.55rem;
 	}
 
@@ -774,7 +760,6 @@
 	}
 
 	.nav-entry-head {
-		display: flex;
 		justify-content: space-between;
 		align-items: start;
 		gap: 0.5rem;
@@ -795,9 +780,7 @@
 	}
 
 	.nav-actions {
-		display: inline-flex;
 		flex: 0 0 auto;
-		align-items: center;
 		gap: clamp(0.35rem, 0.8cqi, 0.5rem);
 	}
 
@@ -832,7 +815,6 @@
 
 	.user-wrap,
 	.help-wrap {
-		position: relative;
 	}
 
 	.user-trigger {
@@ -896,8 +878,6 @@
 	}
 
 	.user-actions {
-		display: flex;
-		flex-wrap: wrap;
 		gap: 0.4rem;
 	}
 

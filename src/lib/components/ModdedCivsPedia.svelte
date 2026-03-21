@@ -312,9 +312,9 @@
 <section class="pedia-page stack">
 	<header class="hero pedia-hero">
 		<div class="stack half">
-			<p class="eyebrow">Reference Database</p>
-			<h1>Browse modded civilizations and convert fandom pages or mod folders into pedia entries.</h1>
-			<p>Start with built-in sample entries, then grow the catalog by converting fandom markup into structured JSON or scanning civ mod folders directly.</p>
+			<p class="eyebrow">Civ Mod Pedia</p>
+			<h1>Browse modded civilizations</h1>
+			<!-- <p>Use sample entries, fandom markup, or mod folders to add more civs to the catalog.</p> -->
 		</div>
 	</header>
 
@@ -645,7 +645,7 @@
 		--pedia-panel: color-mix(in srgb, var(--surface-color) 90%, oklch(0.3 0.04 240) 10%);
 		--pedia-panel-soft: color-mix(in srgb, var(--surface-color) 95%, oklch(0.34 0.04 240) 5%);
 		--pedia-shadow: 0 14px 32px color-mix(in srgb, black 78%, transparent);
-		--pedia-shadow-soft: 0 10px 22px color-mix(in srgb, black 84%, transparent);
+		--pedia-shadow-soft: 0 6px 8px color-mix(in srgb, black 84%, transparent);
 		display: grid;
 		gap: 1rem;
 	}
@@ -660,15 +660,7 @@
 		border: 1px solid var(--pedia-border);
 	}
 
-	.pedia-hero-metrics {
-		display: grid;
-		gap: 0.9rem;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-	}
-
-	.pedia-hero-metric,
 	.pedia-toolbar,
-	.pedia-converter,
 	.pedia-catalog-shell,
 	.pedia-wiki {
 		display: grid;
@@ -678,11 +670,6 @@
 		border: 1px solid var(--pedia-border);
 		border-radius: 1rem;
 		padding: 1rem;
-	}
-
-	.pedia-hero-metric strong {
-		font-size: 1.45rem;
-		font-family: "Rockwell", "Palatino Linotype", serif;
 	}
 
 	.pedia-main {
@@ -703,12 +690,9 @@
 		justify-content: end;
 	}
 
-	.pedia-section-head,
 	.pedia-list-card-top,
 	.pedia-list-card-head,
-	.pedia-unique-head,
-	.pedia-preview-actions,
-	.pedia-action-row {
+	.pedia-unique-head {
 		display: flex;
 		justify-content: space-between;
 		align-items: start;
@@ -729,9 +713,7 @@
 		padding-inline-end: 0.25rem;
 	}
 
-	.pedia-search,
-	.pedia-markup-input,
-	.pedia-preview-panel textarea {
+	.pedia-search {
 		inline-size: 100%;
 		color: var(--ink);
 		font: inherit;
@@ -740,13 +722,6 @@
 		border: 1px solid color-mix(in srgb, var(--pedia-accent) 28%, var(--border-color));
 		border-radius: 0.85rem;
 		padding: 0.8rem 0.95rem;
-	}
-
-	.pedia-markup-input,
-	.pedia-preview-panel textarea {
-		max-block-size: 28rem;
-		overflow: auto;
-		resize: vertical;
 	}
 
 	.pedia-link-row {
@@ -785,8 +760,7 @@
 	}
 
 	.pedia-list-card-head span,
-	.pedia-unique-head span,
-	.pedia-preview-kicker {
+	.pedia-unique-head span {
 		color: var(--pedia-accent-strong);
 		font-size: 0.8rem;
 		letter-spacing: 0.12em;
@@ -866,29 +840,6 @@
 		background: color-mix(in srgb, var(--pedia-panel) 94%, black 6%);
 	}
 
-	.pedia-hidden-input {
-		display: none;
-	}
-
-	.pedia-status {
-		color: var(--pedia-accent-strong);
-		margin-block: 0;
-	}
-
-	.pedia-issues {
-		display: grid;
-		gap: 0.65rem;
-		background: color-mix(in srgb, var(--pedia-accent) 10%, transparent);
-		border: 1px dashed color-mix(in srgb, var(--pedia-accent) 42%, var(--border-color));
-		border-radius: 0.9rem;
-		padding: 0.9rem;
-	}
-
-	.pedia-preview-panel {
-		display: grid;
-		gap: 0.5rem;
-	}
-
 	.pedia-entry-toolbar {
 		display: flex;
 		align-items: center;
@@ -959,8 +910,7 @@
 		margin: 0;
 	}
 
-	.pedia-copy-grid,
-	.pedia-preview-grid {
+	.pedia-copy-grid {
 		display: grid;
 		gap: 1rem;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1075,15 +1025,10 @@
 	}
 
 	@media (max-width: 1100px) {
-		.pedia-preview-grid,
 		.pedia-copy-grid,
 		.pedia-dawn-layout,
 		.pedia-wiki-layout,
 		.pedia-unique-row {
-			grid-template-columns: 1fr;
-		}
-
-		.pedia-hero-metrics {
 			grid-template-columns: 1fr;
 		}
 
@@ -1095,10 +1040,7 @@
 
 	@media (max-width: 720px) {
 		.pedia-entry-toolbar,
-		.pedia-section-head,
-		.pedia-toolbar-actions,
-		.pedia-preview-actions,
-		.pedia-action-row {
+		.pedia-toolbar-actions {
 			flex-direction: column;
 		}
 

@@ -1777,22 +1777,22 @@
 					<p class="section-copy margin-block-start-half">{activeTrack?.risk}</p>
 				</div>
 
-				<div class="deliverable-path-overview">
+				<!-- <div class="deliverable-path-overview">
 					<article class="path-overview-card">
 						<span class="path-overview-kicker">Lane Progress</span>
 						<strong class="card-title">{completedTrackCount(activeTrack?.id)} of {activeTrackDeliverables.length} steps finished</strong>
 						<p class="card-copy">Suggested to follow the numbered routes from top to bottom.</p>
 					</article>
 
-					<!-- {#if activeTrackNextDeliverable}
+					{#if activeTrackNextDeliverable}
 						<article class="path-overview-card is-next">
 							<span class="path-overview-kicker">Next Stop</span>
 							<strong class="card-title">Step {deliverableStepNumber(activeTrackNextDeliverable.id)}: {activeTrackNextDeliverable.label}</strong>
 							<p class="card-copy">{activeTrackNextDeliverable.summary}</p>
 							<button type="button" class="path-overview-action" onclick={() => selectDeliverable(activeTrackNextDeliverable.id)}> Jump to recommended step </button>
 						</article>
-					{/if} -->
-				</div>
+					{/if}
+				</div> -->
 
 				<ol class="deliverable-path" aria-label={`${activeTrack?.label} deliverable path`}>
 					{#each activeTrackDeliverables as item (item.id)}

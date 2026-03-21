@@ -4254,14 +4254,14 @@
 								</div>
 
 								<div class="tile-pin-inspector-color-inline">
-									<div class="tile-pin-color-line">
+									<div class="tile-pin-color-line inline half flex-wrap">
 										<span class="tile-pin-color-dot" style={`--color:${inspectedTilePinPrimaryDisplay.hex}`}></span>
 										<span class="tile-pin-inspector-label">Primary</span>
 										<strong>{inspectedTilePinPrimaryDisplay.hex}</strong>
 										<span class="tile-pin-color-meta">RGB {inspectedTilePinPrimaryDisplay.rgb}</span>
 										<span class="tile-pin-color-meta">HSL {inspectedTilePinPrimaryDisplay.hsl}</span>
 									</div>
-									<div class="tile-pin-color-line">
+									<div class="tile-pin-color-line inline half flex-wrap">
 										<span class="tile-pin-color-dot" style={`--color:${inspectedTilePinSecondaryDisplay.hex}`}></span>
 										<span class="tile-pin-inspector-label">Secondary</span>
 										<strong>{inspectedTilePinSecondaryDisplay.hex}</strong>
@@ -4492,7 +4492,7 @@
 									{/if}
 								</label>
 							</div>
-							<div class="button-row pin-action-row">
+							<div class="button-row pin-action-row inline half flex-wrap">
 								<span class="ui-tooltip-wrap relative">
 									<button type="button" onclick={startNewPinEntry} disabled={!canEditPins}>New Pin</button>
 									{#if !canEditPins}
@@ -4754,7 +4754,7 @@
 								</label>
 							</div>
 
-							<div class="button-row pin-action-row">
+							<div class="button-row pin-action-row inline half flex-wrap">
 								<span class="ui-tooltip-wrap relative">
 									<button type="button" onclick={addOrUpdateLabel} disabled={!canEdit || labelEditorMode === "idle"}>{upsertLabelButtonLabel}</button>
 								</span>
@@ -4929,7 +4929,7 @@
 						{#if exportStatus}
 							<p class="status-inline">{exportStatus}</p>
 						{/if}
-						<div class="export-actions button-row">
+						<div class="export-actions button-row inline half flex-wrap">
 							<span class="ui-tooltip-wrap relative">
 								<button type="button" onclick={downloadExportSql} disabled={!exportSqlText}>Download SQL</button>
 								{#if !exportSqlText}
@@ -5634,9 +5634,6 @@
 	}
 
 	.tile-pin-color-line {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
 		gap: 0.5rem;
 		padding-block: 0.1rem;
 	}
@@ -6049,16 +6046,11 @@
 
 	.button-row {
 		min-inline-size: 0;
-		display: flex;
-		flex-wrap: wrap;
 		gap: 0.4rem;
 	}
 
 	.pin-action-row {
 		inline-size: stretch;
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
 
 		.ui-tooltip-wrap {
 			flex: 1;

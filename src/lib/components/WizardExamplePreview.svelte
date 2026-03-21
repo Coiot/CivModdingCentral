@@ -2014,7 +2014,7 @@
 					<article
 						class={`wizard-preview-step ${isInteractiveLeaderBuilder && step.title === "Leader Name" ? "wizard-preview-step--leader-key" : ""} ${isInteractiveLeaderBuilder && step.title === "Leader Personality" ? "wizard-preview-step--leader-personality" : ""} ${isInteractiveLeaderBuilder && step.title === "Approach Biases" ? "wizard-preview-step--leader-approach" : ""} ${isInteractiveLeaderBuilder && step.title === "Flavor Priorities" ? "wizard-preview-step--leader-flavors" : ""} ${isInteractiveArtBundle && step.title === "Identity assets" ? "wizard-preview-step--art-identity" : ""} ${isInteractiveArtBundle && step.title === "Leader audio" ? "wizard-preview-step--art-audio" : ""} ${isInteractiveArtBundle && step.title === "Unit art" ? "wizard-preview-step--art-unit" : ""} ${isInteractiveArtBundle && step.title === "Landmark / feature art" ? "wizard-preview-step--art-landmark" : ""}`}
 					>
-						<div class="wizard-preview-step-head">
+						<div class="wizard-preview-step-head inline half flex-wrap">
 							<span class="wizard-preview-step-index">Step {index + 1}</span>
 							<strong>{step.title}</strong>
 						</div>
@@ -2104,12 +2104,12 @@
 											<label class="wizard-form-field">
 												<span>Primary color</span>
 												<div class="wizard-color-picker-row">
-													<div class="wizard-color-swatch-control">
+													<div class="wizard-color-swatch-control relative overflow-hidden">
 														<input type="color" value={artPrimaryColorDisplay.hex} oninput={(event) => updateArtColorFromPicker("primary", event.currentTarget.value)} />
 														<span class="wizard-color-preview" style={`--preview:${artPrimaryColorDisplay.hex}`} aria-hidden="true"></span>
 													</div>
 													<input
-														class="wizard-color-hex-input"
+														class="wizard-color-hex-input uppercase"
 														type="text"
 														value={artPrimaryColorHexInput}
 														placeholder="#1f4f99"
@@ -2128,7 +2128,7 @@
 											<label class="wizard-form-field">
 												<span>Secondary color</span>
 												<div class="wizard-color-picker-row">
-													<div class="wizard-color-swatch-control">
+													<div class="wizard-color-swatch-control relative overflow-hidden">
 														<input
 															type="color"
 															value={artSecondaryColorDisplay.hex}
@@ -2137,7 +2137,7 @@
 														<span class="wizard-color-preview" style={`--preview:${artSecondaryColorDisplay.hex}`} aria-hidden="true"></span>
 													</div>
 													<input
-														class="wizard-color-hex-input"
+														class="wizard-color-hex-input uppercase"
 														type="text"
 														value={artSecondaryColorHexInput}
 														placeholder="#f4de9a"
@@ -2354,7 +2354,7 @@
 									<div class="wizard-preview-field">
 										<span class="wizard-preview-field-label">{field.label}</span>
 										{#if field.values?.length}
-											<div class="wizard-preview-value-list">
+											<div class="wizard-preview-value-list inline half flex-wrap">
 												{#each field.values as value (`${field.label}-${value}`)}
 													<span class="wizard-preview-value-chip">{value}</span>
 												{/each}
@@ -2383,8 +2383,8 @@
 	{#if isInteractiveLeaderBuilder && leaderPlaystyleSummary?.length}
 		<section class="wizard-analysis-preview" aria-label="Leader behavior summary">
 			<div class="wizard-analysis-card">
-				<span class="wizard-analysis-eyebrow">How This CPU May Play Like</span>
-				<span class="wizard-analysis-note">Note: This is a simplified plain output based on thresholded values, not a full simulation of the game’s behavior code.</span>
+				<span class="wizard-analysis-eyebrow uppercase">How This CPU May Play Like</span>
+				<span class="wizard-analysis-note">Note: This is a simplified plain output based on the numbers, not a full simulation of the game’s behavior code.</span>
 				{#each leaderPlaystyleSummary as paragraph (`leader-playstyle-${paragraph}`)}
 					<p>{paragraph}</p>
 				{/each}
@@ -2396,14 +2396,14 @@
 		<section class="wizard-download-preview" aria-label="Starter download">
 			<div class="wizard-download-card">
 				<div class="wizard-download-copy">
-					<span class="wizard-analysis-eyebrow">Your First Step</span>
+					<span class="wizard-analysis-eyebrow uppercase">Your First Step</span>
 					<h3>Get started with your new Civilization</h3>
 					<p>ZIP export the current civilization bundled with folders and generated core files.</p>
 				</div>
 
-				<a class="wizard-scaffold-download-link" href={scaffoldDownloadUrl} download={scaffoldDownloadName}>
+				<a class="wizard-scaffold-download-link relative" href={scaffoldDownloadUrl} download={scaffoldDownloadName}>
 					<div class="wizard-scaffold-download-link-copy">
-						<span class="wizard-scaffold-download-link-kicker">Civilization Starter Export</span>
+						<span class="wizard-scaffold-download-link-kicker uppercase">Civilization Starter Export</span>
 						<strong>Download Starter ZIP</strong>
 						<span class="wizard-scaffold-download-link-meta">{scaffoldDownloadName}</span>
 					</div>
@@ -2443,8 +2443,6 @@
 	}
 
 	.wizard-preview-step-head {
-		display: flex;
-		flex-wrap: wrap;
 		align-items: baseline;
 		gap: 0.45rem;
 
@@ -2457,7 +2455,6 @@
 	.wizard-preview-step-index {
 		inline-size: fit-content;
 		color: var(--muted-ink);
-		text-transform: uppercase;
 		font-size: 0.68rem;
 		font-weight: 700;
 		letter-spacing: 0.12em;
@@ -2592,8 +2589,6 @@
 	}
 
 	.wizard-color-swatch-control {
-		position: relative;
-
 		inline-size: 3rem;
 		block-size: 3rem;
 
@@ -2601,8 +2596,6 @@
 		box-shadow: inset 0 1px 0 color-mix(in oklch, white 6%, transparent);
 		border: 1px solid color-mix(in oklch, var(--panel-border) 44%, transparent);
 		border-radius: 0.9rem;
-
-		overflow: hidden;
 
 		& input[type="color"] {
 			position: absolute;
@@ -2630,7 +2623,6 @@
 
 	.wizard-color-hex-input {
 		font-family: inherit;
-		text-transform: uppercase;
 	}
 
 	.wizard-color-values {
@@ -2771,8 +2763,6 @@
 	}
 
 	.wizard-preview-value-list {
-		display: flex;
-		flex-wrap: wrap;
 		gap: 0.25rem 0.65rem;
 	}
 
@@ -2822,7 +2812,6 @@
 
 	.wizard-analysis-eyebrow {
 		color: var(--wizard-strong-highlight);
-		text-transform: uppercase;
 		font-size: 1.125rem;
 		font-weight: 800;
 		letter-spacing: 0.12em;
@@ -2871,7 +2860,6 @@
 	}
 
 	.wizard-scaffold-download-link {
-		position: relative;
 		inline-size: 100%;
 		max-inline-size: 100%;
 		display: grid;
@@ -2943,7 +2931,6 @@
 
 	.wizard-scaffold-download-link-kicker {
 		color: color-mix(in oklch, white 74%, #ffdff7);
-		text-transform: uppercase;
 		font-size: 0.75rem;
 		font-weight: 800;
 		letter-spacing: 0.08em;
