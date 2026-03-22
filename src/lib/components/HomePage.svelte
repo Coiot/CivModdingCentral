@@ -187,7 +187,7 @@
 			surface: "generator",
 			kicker: "Generator",
 			title: "Leader Behavior Tuning Generator",
-			copy: "A fast way to shape AI flavors and diplomatic behavior before hand-tuning every leader value by trial and error.",
+			copy: "A fast way to shape CPU flavors and diplomatic behavior before hand-tuning every leader value by trial and error.",
 			href: "/template-generators?generator=leader-behavior-tuning-generator",
 		},
 		{

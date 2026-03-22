@@ -1,0 +1,182 @@
+{
+	"id": "civ-palenque-el-lim-n-leonor",
+	"slug": "palenque-el-lim-n",
+	"kind": "civilization",
+	"title": "Palenque El Limón",
+	"leader": "Leonor",
+	"authors": ["Tradboy"],
+	"summary": "El Limón led by Leonor is a custom civilization mod by Tradboy, with contributions from DarthKyofu and Rhoze.",
+	"source": {
+		"type": "wiki",
+		"wikiPageTitle": "Palenque El Limón",
+		"wikiUrl": "",
+		"workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3595903904",
+		"version": "v 1",
+		"lastUpdated": "October 2025",
+		"modFolderName": ""
+	},
+	"identity": {
+		"empireName": "Palenque El Limón",
+		"adjectives": "Limonar",
+		"capital": "El Limón",
+		"bias": "Hills",
+		"religion": ["Catholicism", "Santería (HR)"],
+		"government": "Monarchy",
+		"culture": "Bantu",
+		"mapLabelsLanguage": "",
+		"requiredContent": ["Brave New World"]
+	},
+	"presentation": {
+		"mapImage": "LimonMap.png",
+		"mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LimonMap.png",
+		"mapImageCaption": "Map by Tradboy and DarthKyofu",
+		"iconImage": "ElLimon.png",
+		"iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ElLimon.png",
+		"leaderSceneImage": "LeonorDiplo.png",
+		"leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LeonorDiplo.png",
+		"leaderSceneArtCredit": "Art by Tradboy and DarthKyofu",
+		"colors": {
+			"background": "#d3d538",
+			"icon": "#3a0224"
+		}
+	},
+	"overview": {
+		"civilization": {
+			"title": "El Limón",
+			"url": "",
+			"body": "Before the reign of Leonor in 1632, Palenque El Limón had been known in Spanish records for at least 40 years, being one of the most well known maroon communities in Montes de María under the rulership of Captain and a Mandador. Leonor's reign is just a small chapter of its history, as two years later, it would come to an end after the Spanish goverment of Cartagena was able to destroy El Limón itself, although many of its inhabitants were able to escape to a new Palenque in the Magdalena region and ally themselves with the Palenque de Arenal. In 1655, people of Limonar origin would return to Montes de María under the leadershop of Domingo Criollo, who created a new confederation of Palenques in the region. In 1694, however, another Spanish attack forced the Palenqueros to move, resulting in the eventual foundation of the Palenque de San Miguel Arcángel, later coming to be known as Palenque de San Basilio."
+		},
+		"leader": {
+			"title": "Leonor",
+			"body": "In 1632, Leonor rose to power, becoming de facto leader of Palenque El Limón, being both a religious and militaristic leader, who organized Palenques in the region through alliance or force. Leonor seems to have been part of upper class in El Limón before becoming its queen. Her mother, a Criolla de Montañana (Person born in a Palenque in Montes de Maria) named Mohongo seem to have had some ammount of influence, during this period. The captain of El Limón was a man named Francisco Criollo who represented the interest of creoles in El Limón, but with the rising population of Malembas in the Palenque, Leonor, who wasn't Malemba herself but had married two Malemba men, rose into power with their support. She also was able to keep the support of Angolas and Creoles in the Palenque due to her parents belonging to these groups. Francisco Criollo remained a captain, but became a loyal servant of Leonor and worked alongside the queen through their expansion. Not much is known about her faith after the initial destruction of El Limón, two years after her bloody reign.",
+			"url": ""
+		}
+	},
+	"dawnOfMan": {
+		"blessing": "Greetings, Leonor, Mohana of the Montes de Maria and queen of Palenque El Limón, one of many runaway slave communities to turn the mountains into their fortified home. Where others Palenques only wanted to live in peace, your loyal Malembas advise you to subdue and make both maroon and Spaniard fear your bloodthirst.\nFeared queen of El Limón, she who drank the blood of enemy and ally alike, your people might have fear you then, but not they need you now more than ever, so fortifies your villages and stain the pages of history with the blood of your enemies once again. Can you build a civilization that will stand the test of time?",
+		"introduction": "Welcome brave stranger, my name is Leonor, queen of Palenque El Limón. I have the brave malembas on my side, so these mountains are mine alone to rule. Never forget that, if you don't want the blood of your people in our mouths.",
+		"defeat": "I accept my defeat. Drink my blood as I’ve done to my previous enemies, and maybe then some of my skill will shine through you."
+	},
+	"uniques": [
+		{
+			"slot": "unique ability",
+			"name": "Devil Within Her",
+			"replaces": "",
+			"art": "LeonorLI.png",
+			"artUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/7/77/LeonorLI.png",
+			"artCredit": "",
+			"body": "Afraid City-StateCity-States may gift units. Defeating City-StateCity-States units grants the March promotion to Melee units and InfluenceInfluence with the City-StateCity-State once you make peace with it.",
+			"bullets": []
+		},
+		{
+			"slot": "unique unit",
+			"name": "Malemba",
+			"replaces": "Musketman",
+			"art": "LeonorUU.png",
+			"artUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/d/d1/LeonorUU.png",
+			"artCredit": "",
+			"body": "",
+			"bullets": [
+				"Unlocked at Astronomy.",
+				"-6 StrengthCombat Strength.",
+				"-5 ProductionProduction Cost.",
+				"Receive two units when produced.",
+				"Has a one time action to sacrifice adjacent copies of themselves, increasing their combat strength. If done inside a City State, gain a burst of Influence with them."
+			]
+		},
+		{
+			"slot": "unique building",
+			"name": "Bajareke",
+			"replaces": "Walls",
+			"art": "LeonorUB.png",
+			"artUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/5/5b/LeonorUB.png",
+			"artCredit": "",
+			"body": "",
+			"bullets": [
+				"+5% ProductionProduction towards Units per Mountain tile in the city.",
+				"Enemy units that start their turn adjacent to the city center may get poisoned, losing HP the next time they move."
+			]
+		}
+	],
+	"nameLists": [
+		{
+			"title": "City List",
+			"items": [
+				"El Limón",
+				"Polín",
+				"Sanaguare",
+				"Domingo Angola",
+				"Arenal",
+				"Bongue",
+				"Bongue",
+				"Joyanca",
+				"San Miguel Arcángel",
+				"Maria Angola",
+				"Manuel Embuya",
+				"Zaragocilla",
+				"Catendo",
+				"Gonzalo",
+				"La Ramada",
+				"Manuel Mula",
+				"Arroyo Piñuela",
+				"Chambacú",
+				"Colosó",
+				"Chalan",
+				"Morroa",
+				"San Cristobal",
+				"El Paraíso",
+				"San Onofre"
+			]
+		},
+		{
+			"title": "Spy List",
+			"items": ["Susaña", "Inés", "Maquesu", "Banquesel", "Mohongo", "Marcos", "Cristóbal", "Francisco Criollo", "Antonio Angola", "Lazaro Angola", "Anton Angola", "Domingo Grande"]
+		}
+	],
+	"music": {
+		"peace": {
+			"title": "La Vida Vale la Pena",
+			"credit": "Petrona Martínez"
+		},
+		"war": {
+			"title": "Que se Quema el Monte",
+			"credit": "Etelvina Maldonado"
+		}
+	},
+	"modSupport": {
+		"aa": false,
+		"civivtraits": false,
+		"claimscoloniescrimes": false,
+		"culdiv": true,
+		"ethnicunits": false,
+		"eandd": false,
+		"maplabels": false,
+		"piety": true,
+		"uci": false,
+		"ynaemp": true,
+		"histreligions": true,
+		"mercenaries": false,
+		"enlightenmentera": false
+	},
+	"credits": [
+		{
+			"name": "Tradboy",
+			"role": "Author"
+		},
+		{
+			"name": "DarthKyofu",
+			"role": "Art (Revision, Leader Icon, Colours)"
+		},
+		{
+			"name": "Rhoze",
+			"role": "Code (Lua)"
+		}
+	],
+	"categories": ["Tradboy", "All Civilizations", "Civilizations with Female leaders", "Colombia", "Dark Days"],
+	"navTemplate": "DarkDaysNav",
+	"issues": [],
+	"meta": {
+		"formatVersion": 1,
+		"createdAt": "2026-03-21T21:34:21.927Z"
+	}
+}

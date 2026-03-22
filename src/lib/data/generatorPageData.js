@@ -4279,7 +4279,7 @@ export const wizardCards = [
 			"“Leader_Flavors” rows for the full flavor matrix",
 		],
 		example: {
-			title: "Leader AI tuning bundle",
+			title: "Leader CPU tuning bundle",
 			summary: "One SQL patch for leader values, bias tables, and the full flavor matrix.",
 			preview: {
 				interactiveKind: "leader-personality",
@@ -4360,7 +4360,7 @@ export const wizardCards = [
 				steps: [
 					{
 						title: "Leader Name",
-						copy: "Pick the leader row this AI patch should update.",
+						copy: "Pick the leader row this CPU patch should update.",
 						fields: [{ label: "Leader Name", value: "LEADER_MAITREYA" }],
 					},
 					{
@@ -4404,7 +4404,7 @@ export const wizardCards = [
 			linkToPage(
 				"Trait Driven Lua Effect",
 				"/pattern-library?pattern=trait-driven-lua-effect",
-				"Useful companion when AI tuning is only part of a broader leader mechanic that still needs scripted trait logic.",
+				"Useful companion when CPU tuning is only part of a broader leader mechanic that still needs scripted trait logic.",
 			),
 			linkToPage("Schema Browser", "/schema-browser?table=Leader_Flavors&tab=rows", "Best next stop when you want to inspect adjacent flavor rows and compare the tuning against base leaders."),
 		],
@@ -4539,7 +4539,7 @@ export const implementationStages = [
 	{
 		label: "Stage 2",
 		title: "Keep leader tuning separate",
-		copy: "Leader AI values still deserve their own focused builder so behavior tuning can happen without touching the full civilization shell each time.",
+		copy: "Leader CPU values still deserve their own focused builder so behavior tuning can happen without touching the full civilization shell each time.",
 	},
 	{
 		label: "Stage 3",

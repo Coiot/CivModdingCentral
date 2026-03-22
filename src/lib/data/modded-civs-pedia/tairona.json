@@ -4,6 +4,7 @@
 	"kind": "civilization",
 	"title": "The Tairona",
 	"leader": "Guacanaoma",
+	"authors": ["Tradboy"],
 	"summary": "The Tairona led by Guacanaoma are a custom civilization mod by Tradboy, with contributions from DarthKyofu, Lasqueto, Pouakai, and NopeCopter.",
 	"source": {
 		"type": "wiki",
@@ -20,9 +21,7 @@
 		"bias": "Hills",
 		"religion": ["Catholicism", "Chiminagua"],
 		"government": "Monarchy",
-		"culture": "Andean",
-		"mapLabelsLanguage": "",
-		"requiredContent": ["Brave New World"]
+		"culture": "Andean"
 	},
 	"presentation": {
 		"mapImage": "TaironaMap.png",
@@ -46,11 +45,11 @@
 		},
 		"leader": {
 			"title": "Guacanaoma",
-			"body": "Guacanaoma, Naoma of Bonda, is remembered in early colonial chronicles as a leading power among the Tairona chiefdoms of the Caldera Valley."
+			"body": "Guacanaoma, Naoma of Bonda, is remembered in early colonial chronicles as a leading power among the Tairona chiefdoms of the Caldera Valley. With around 250 towns under his command, the Spanish came into the province of Betoma knowing that Bonda and his leader were among the biggest powers in the pre-contact Tairona world."
 		}
 	},
 	"dawnOfMan": {
-		"blessing": "Blessings to you Guacanaoma, Chief and Naoma of Bonda and its neighboring settlements.",
+		"blessing": "Blessings to you Guacanaoma, Chief and Naoma of Bonda and its neighboring settlements. By following the teaching of the goddess Gauteovan, your people connected the stars in the night sky no matter if they lived by the mountains or the sea, through your wisdom, you connected this worlds through trade, giving you a bountiful reign. After many years of resistance, the Tairona star remain through your descendants, the Koguis, Arhuacos, Wiwas and Kankuamos, but the Tairona themselves call for your guidance to connect the stars once again. Can you build a civilization that will stand the test of time?",
 		"introduction": "The sea has guided you to our mountains, my friend. My name is Guacanaoma, and I speak here for every Tairona under the watchful gaze of the stars.",
 		"defeat": "Believe me when I say you will never be able to fully subjugate my people. Despite your efforts, our successors will thrive in the mountains."
 	},

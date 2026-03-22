@@ -26,6 +26,7 @@ const DEFAULT_ENTRY = {
 	kind: "civilization",
 	title: "",
 	leader: "",
+	authors: [],
 	summary: "",
 	source: {
 		type: "",
@@ -122,6 +123,9 @@ export function formatIdentifier(value) {
 function stripCivFormatting(value) {
 	return cleanText(
 		String(value || "")
+			.replace(/\\r\\n/g, "\n")
+			.replace(/\\n/g, "\n")
+			.replace(/\\r/g, "\n")
 			.replace(/\[COLOR_[^\]]+]\]?/gi, "")
 			.replace(/\[ENDCOLOR]/gi, "")
 			.replace(/\[NEWLINE]/gi, "\n")
@@ -159,8 +163,12 @@ function stripWikiMarkup(value) {
 	return cleanText(
 		String(value || "")
 			.replace(/<br\s*\/?>/gi, "\n")
-			.replace(/\{\{([^}|]+?) Icon\}\}/g, "$1")
+			.replace(/\{\{([^}|]+?) Icon\}\}/g, " $1 ")
+			.replace(/\{\{Citizen}}/g, " Citizens ")
+			.replace(/\{\{Golden Age}}/g, " Golden Age ")
+			.replace(/\{\{Diplomat}}/g, "Diplomat ")
 			.replace(/\{\{!}}/g, "|")
+			.replace(/\{\{[^}]+}}/g, " ")
 			.replace(/\[\[File:[^\]]+]]/gi, "")
 			.replace(/\[\[([^|\]]+)\|([^\]]+)]]/g, "$2")
 			.replace(/\[\[([^\]]+)]]/g, "$1")
@@ -171,6 +179,7 @@ function stripWikiMarkup(value) {
 			.replace(/&ndash;/gi, "-")
 			.replace(/&#160;/g, " ")
 			.replace(/<[^>]+>/g, "")
+			.replace(/[ \t]{2,}/g, " ")
 			.replace(/\s+\n/g, "\n")
 			.replace(/\n{3,}/g, "\n\n"),
 	);
@@ -266,7 +275,8 @@ function parseTemplateParams(block) {
 	const body = cleanText(block)
 		.replace(/^\{\{[^|\n]+/, "")
 		.replace(/}}$/, "");
-	const lines = body.split("\n");
+	const normalizedBody = body.replace(/\|(?=\s*[a-z_][a-z0-9_ ]*\s*=)/gi, "\n|");
+	const lines = normalizedBody.split("\n");
 	const params = {};
 	let currentKey = "";
 	for (const rawLine of lines) {
@@ -291,13 +301,15 @@ function extractSection(source, title) {
 
 function parseNamedOverviewBlocks(section) {
 	const blocks = [];
-	const pattern = /===\s*(?:\[(https?:\/\/[^\s]+)\s+)?'''([^']+)'''\s*===([\s\S]*?)(?=\n===|\n====|$)/g;
+	const pattern = /===\s*([\s\S]*?)\s*===([\s\S]*?)(?=\n===(?![=])|\n====|\n==[^=]|$)/g;
 	let match = pattern.exec(section);
 	while (match) {
+		const heading = cleanText(match[1]);
+		const url = cleanText(heading.match(/\[(https?:\/\/[^\s\]]+)/i)?.[1] || "");
 		blocks.push({
-			url: cleanText(match[1]),
-			title: cleanText(match[2]),
-			body: stripWikiMarkup(match[3]),
+			url,
+			title: stripWikiMarkup(heading),
+			body: stripWikiMarkup(match[2]),
 		});
 		match = pattern.exec(section);
 	}
@@ -305,52 +317,54 @@ function parseNamedOverviewBlocks(section) {
 }
 
 function parseDawnOfMan(section, wikiUrl = "") {
-	const dawnBlock = section.match(/====\s*'''Dawn of Man'''\s*====([\s\S]*?)(?=\n===|\n==|$)/i)?.[1] || "";
+	const dawnBlock = section.match(/={3,4}\s*(?:'''|''|)?\s*Dawn of Man\s*(?:'''|''|)?\s*={3,4}([\s\S]*?)(?=\n={2,4}\s*[^=\n][^\n]*={2,4}|\n\{\||$)/i)?.[1] || "";
 	const image = dawnBlock.match(/\[\[File:([^|\]]+)/i)?.[1] || "";
 	const artCredit = cleanText(dawnBlock.match(/\|([^|\]]+)\]\]/)?.[1] || "");
+	const withoutFiles = cleanText(dawnBlock.replace(/\[\[File:[\s\S]*?\]\]\s*/gi, ""));
+	const introductionMatch = withoutFiles.match(/'''?\s*Introduction\s*:?\s*'''?\s*([\s\S]*?)(?=\n\s*'''?\s*Defeat\s*:?\s*'''?|$)/i);
+	const defeatMatch = withoutFiles.match(/'''?\s*Defeat\s*:?\s*'''?\s*([\s\S]*?)$/i);
+	const blessingSource = cleanText(withoutFiles.replace(/'''?\s*Introduction\s*:?\s*'''?\s*[\s\S]*$/i, "").replace(/'''?\s*Defeat\s*:?\s*'''?\s*[\s\S]*$/i, ""));
 	return {
 		image: cleanText(image),
 		imageUrl: buildFandomFileRedirectUrl(image, wikiUrl),
 		artCredit,
-		blessing: stripWikiMarkup(dawnBlock.match(/Blessings to you[\s\S]*?(?=\n\n|'''Introduction:'''|$)/i)?.[0] || ""),
-		introduction: stripWikiMarkup(dawnBlock.match(/'''Introduction:\s*'''([\s\S]*?)(?=\n\n|'''Defeat:'''|$)/i)?.[1] || ""),
-		defeat: stripWikiMarkup(dawnBlock.match(/'''Defeat:'''([\s\S]*?)(?=\n\n|$)/i)?.[1] || ""),
+		blessing: stripWikiMarkup(blessingSource),
+		introduction: stripWikiMarkup(introductionMatch?.[1] || ""),
+		defeat: stripWikiMarkup(defeatMatch?.[1] || ""),
 	};
 }
 
-function parseUniqueAttributes(section, wikiUrl = "") {
-	const rowPattern = /\|style="vertical-align:top;" \|([\s\S]*?)(?=\n\|-(?:\n|\r\n)|\n\|})/g;
-	const uniques = [];
-	let match = rowPattern.exec(section);
-	let index = 0;
-	while (match) {
-		const rawBlock = match[1];
-		const art = cleanText(rawBlock.match(/\[\[File:([^|\]]+)/i)?.[1] || "");
-		const artCredit = cleanText(rawBlock.match(/\|thumb[^|]*\|([^|\]]+)\]\]/i)?.[1] || "");
-		const heading = cleanText(rawBlock.match(/'''([^']+)'''(?:\s*\(\[\[([^|\]]+)(?:\|[^\]]+)?]])?/i)?.[0] || "");
-		const name = stripWikiMarkup(heading.match(/'''([^']+)'''/)?.[1] || "");
-		const replaces = stripWikiMarkup(heading.match(/\(\[\[([^|\]]+)/)?.[1] || "");
-		const body = stripWikiMarkup(rawBlock.replace(/\[\[File:[\s\S]+?\]\]/i, "").replace(/'''[\s\S]+?'''(?:\s*\(\[\[[\s\S]+?\]\])?<br\s*\/?>/i, ""));
-		const lines = body
-			.split("\n")
-			.map((line) => cleanText(line.replace(/^\*\s*/, "")))
-			.filter(Boolean);
-		const bullets = lines.filter((line) => line.length > 0 && body.includes("*"));
-		const textBody = body.includes("*") ? "" : lines.join(" ");
-		uniques.push({
-			slot: index === 0 ? "unique ability" : "unique unit",
-			name,
-			replaces,
-			art,
-			artUrl: buildFandomFileRedirectUrl(art, wikiUrl),
-			artCredit,
-			body: textBody,
-			bullets,
-		});
-		index += 1;
-		match = rowPattern.exec(section);
+function parseStandaloneIconImage(source, wikiUrl = "", excludedFiles = []) {
+	const excluded = new Set(
+		ensureArray(excludedFiles)
+			.map((file) => cleanText(file).toLowerCase())
+			.filter(Boolean),
+	);
+	const strategySection = extractSection(source, "Strategy");
+	const strategyImage = cleanText(strategySection.match(/\[\[File:([^|\]]+)/i)?.[1] || "");
+	if (strategyImage && !excluded.has(strategyImage.toLowerCase())) {
+		return {
+			file: strategyImage,
+			url: buildFandomFileRedirectUrl(strategyImage, wikiUrl),
+		};
 	}
-	return uniques;
+
+	const standaloneMatches = [...source.matchAll(/^\s*\[\[File:([^|\]]+)(?:[^\]]*)\]\]\s*$/gim)];
+	for (const match of standaloneMatches) {
+		const file = cleanText(match[1]);
+		if (!file || excluded.has(file.toLowerCase())) {
+			continue;
+		}
+		return {
+			file,
+			url: buildFandomFileRedirectUrl(file, wikiUrl),
+		};
+	}
+
+	return {
+		file: "",
+		url: "",
+	};
 }
 
 function parseCollapsibleLists(section) {
@@ -372,9 +386,9 @@ function parseCollapsibleLists(section) {
 }
 
 function parseMusic(section) {
-	const titles = [...section.matchAll(/\|\s*'''([^']+)'''\s+by\s+([^\n|]+)/g)].map((match) => ({
-		title: cleanText(match[1]),
-		credit: cleanText(match[2]),
+	const titles = [...section.matchAll(/\|\s*"?(?:'''|''')?([^'\n|]+?)(?:'''|''')?"?\s+by\s+([^\n|]+)/gi)].map((match) => ({
+		title: stripWikiMarkup(match[1]),
+		credit: stripWikiMarkup(match[2]),
 	}));
 	return {
 		peace: titles[0] || { title: "", credit: "" },
@@ -383,15 +397,29 @@ function parseMusic(section) {
 }
 
 function parseCredits(section) {
-	return [...section.matchAll(/\*\s*''([^']+)''\s*:\s*(.+)/g)].map((match) => ({
-		name: cleanText(match[1]),
-		role: stripWikiMarkup(match[2]),
-	}));
+	const credits = [];
+	for (const rawLine of String(section || "").split("\n")) {
+		const line = cleanText(rawLine.replace(/\u00a0/g, " "));
+		if (!line.startsWith("*")) {
+			continue;
+		}
+		const match = line.match(/^\*\s*''([^']+?)'':?\s*(.*)$/);
+		if (!match) {
+			continue;
+		}
+		const name = cleanText(match[1].replace(/:$/, ""));
+		const role = stripWikiMarkup(match[2].replace(/,$/, ""));
+		if (!name || !role) {
+			continue;
+		}
+		credits.push({ name, role });
+	}
+	return mergeCreditsByName(credits);
 }
 
 function parseWorkshopTable(section) {
 	return {
-		workshopUrl: cleanText(section.match(/\[(https?:\/\/steamcommunity\.com[^\s]+)\s+'''Steam Workshop'''/i)?.[1] || ""),
+		workshopUrl: cleanText(section.match(/\[(https?:\/\/steamcommunity\.com[^\s\]]+)[^\]]*Steam Workshop[^\]]*]/i)?.[1] || ""),
 		version: stripWikiMarkup(section.match(/\|\s*Latest Version:\s*\n\|\s*([^\n]+)/i)?.[1] || ""),
 		lastUpdated: stripWikiMarkup(section.match(/\|\s*Last Updated:\s*\n\|\s*([^\n]+)/i)?.[1] || ""),
 	};
@@ -421,16 +449,26 @@ function parseAuthorSummary(source) {
 	const cleanedSource = stripLeadingInfoboxTemplate(source);
 	const summaryMatch = cleanedSource.match(/^([\s\S]*?)\n\n/);
 	const summary = sanitizePediaProse(summaryMatch?.[1] || "");
-	const authoredBy = summary.match(/ mod by ([^,]+)(?:,|$)/i)?.[1] || "";
+	const authoredBy = summary.match(/\b(?:is|are)\s+a\s+custom\s+civilization(?:\s+mod)?\s+by\s+([^.]+?)(?=,?\s+with contributions from|\.|$)/i)?.[1] || "";
 	const contributorLine = summary.match(/with contributions from ([^.]+)\./i)?.[1] || "";
 	return {
 		summary,
-		authors: cleanText(authoredBy),
-		contributors: contributorLine
+		authors: cleanText(authoredBy)
+			.replace(/\band\b/gi, ",")
 			.split(",")
-			.map((part) => cleanText(part.replace(/\band\b/i, "")))
+			.map((part) => cleanText(part))
+			.filter(Boolean),
+		contributors: contributorLine
+			.replace(/\band\b/gi, ",")
+			.split(",")
+			.map((part) => cleanText(part))
 			.filter(Boolean),
 	};
+}
+
+function summaryCredits(authorSummary) {
+	const credits = [...(authorSummary?.authors || []).map((name) => ({ name, role: "Author" })), ...(authorSummary?.contributors || []).map((name) => ({ name, role: "Contributor" }))];
+	return mergeCreditsByName(credits);
 }
 
 function parseCreditsText(text) {
@@ -512,7 +550,138 @@ function buildEntryId(title, leader) {
 	return `civ-${base}`;
 }
 
-export function createPediaEntryFromWikiMarkup(markup, options = {}) {
+function deriveAuthorsFromCredits(credits) {
+	const normalizedCredits = ensureArray(credits);
+	const explicitAuthors = normalizedCredits
+		.filter((credit) => /\bauthor\b/i.test(cleanText(credit?.role)))
+		.map((credit) => cleanText(credit?.name))
+		.filter(Boolean);
+
+	if (explicitAuthors.length) {
+		return [...new Set(explicitAuthors)];
+	}
+
+	if (normalizedCredits.length === 1) {
+		const onlyCreditName = cleanText(normalizedCredits[0]?.name);
+		return onlyCreditName ? [onlyCreditName] : [];
+	}
+
+	return [];
+}
+
+function buildFolderEntryIdentity({ title, leader, civType, leaderType, modId, folderName }) {
+	const baseSlug = slugifyPediaValue(`${title}-${leader}`) || slugifyPediaValue(title) || slugifyPediaValue(civType) || slugifyPediaValue(folderName) || "modded-civ";
+
+	const identitySeed = cleanText(civType) || cleanText(modId) || cleanText(leaderType) || `${title}-${leader}`;
+
+	return {
+		id: `civ-${slugifyPediaValue(identitySeed) || baseSlug}`,
+		slug: baseSlug,
+	};
+}
+
+function normalizeReplacementLabel(value) {
+	return cleanText(
+		String(value || "")
+			.replace(/^TXT_KEY_/, "")
+			.replace(/[_-]+/g, " ")
+			.toLowerCase(),
+	);
+}
+
+function buildReplacementKindLookup(schema) {
+	const lookup = new Map();
+	const slotByTableName = new Map([
+		["Units", "unique unit"],
+		["Buildings", "unique building"],
+		["Improvements", "unique improvement"],
+	]);
+
+	for (const [tableName, slot] of slotByTableName.entries()) {
+		const table = schema?.tables?.find((entry) => entry?.name === tableName);
+		for (const row of table?.rows || []) {
+			const type = cleanText(row?.Type);
+			if (!type) {
+				continue;
+			}
+			for (const candidate of [type, formatIdentifier(type)]) {
+				const normalized = normalizeReplacementLabel(candidate);
+				if (normalized && !lookup.has(normalized)) {
+					lookup.set(normalized, slot);
+				}
+			}
+		}
+	}
+
+	return lookup;
+}
+
+let replacementKindLookupPromise;
+
+async function getReplacementKindLookup() {
+	if (!replacementKindLookupPromise) {
+		replacementKindLookupPromise = import("../data/civ-schema.json").then((module) => buildReplacementKindLookup(module.default || module)).catch(() => new Map());
+	}
+	return replacementKindLookupPromise;
+}
+
+async function parseUniqueAttributes(section, wikiUrl = "") {
+	const replacementKindLookup = await getReplacementKindLookup();
+	const inferUniqueSlot = (index, replaces) => {
+		if (index === 0) {
+			return "unique ability";
+		}
+		return replacementKindLookup.get(normalizeReplacementLabel(replaces)) || "unique unit";
+	};
+
+	const uniqueTable = cleanText(section.match(/\{\|\s*class="article-table"[\s\S]*?\n\|\}/i)?.[0] || "");
+	const rowPattern = /\n\|-\s*\n([\s\S]*?)(?=\n\|-\s*\n|\n\|\}\s*$)/g;
+	const uniques = [];
+	let match = rowPattern.exec(uniqueTable);
+	let index = 0;
+	while (match) {
+		const rawBlock = cleanText(match[1]);
+		const art = cleanText(rawBlock.match(/\[\[File:([^|\]]+)/i)?.[1] || "");
+		const artCredit = cleanText(rawBlock.match(/\[\[File:[^\]]*?\|([^|\]]+)\]\]/i)?.[1] || "");
+		const headingMatch = rawBlock.match(/'''([\s\S]*?)'''(?:\s*\(\[\[([^|\]]+)(?:\|[^\]]+)?]])?\)?/i);
+		const name = stripWikiMarkup(headingMatch?.[1] || "");
+		const replaces = stripWikiMarkup(headingMatch?.[2] || "");
+		const withoutFile = rawBlock.replace(/\[\[File:[\s\S]*?\]\]\s*/gi, "");
+		const withoutHeading = headingMatch ? withoutFile.replace(headingMatch[0], "") : withoutFile;
+		const withoutCellMarkup = withoutHeading
+			.replace(/^\|[^\n]*\|/gm, "")
+			.replace(/^\|/gm, "")
+			.replace(/<br\s*\/?>/gi, "\n");
+		const content = stripWikiMarkup(withoutCellMarkup);
+		const lines = content
+			.split("\n")
+			.map((line) => cleanText(line))
+			.filter(Boolean);
+		const bulletLines = lines.filter((line) => /^[-*]/.test(line)).map((line) => cleanText(line.replace(/^[-*]+\s*/, "")));
+		const bullets = bulletLines;
+		const nonBulletLines = lines.filter((line) => !/^[-*]/.test(line));
+		const textBody = nonBulletLines.join(" ");
+		if (!name && !art && !textBody && !bullets.length) {
+			match = rowPattern.exec(uniqueTable);
+			continue;
+		}
+		uniques.push({
+			slot: inferUniqueSlot(index, replaces),
+			name,
+			replaces,
+			art,
+			artUrl: buildFandomFileRedirectUrl(art, wikiUrl),
+			artCredit,
+			body: textBody,
+			bullets,
+		});
+		index += 1;
+		match = rowPattern.exec(uniqueTable);
+	}
+	return uniques;
+}
+
+export async function createPediaEntryFromWikiMarkup(markup, options = {}) {
 	const source = cleanText(markup);
 	const issues = [];
 	const entry = cloneDefaultEntry();
@@ -528,9 +697,11 @@ export function createPediaEntryFromWikiMarkup(markup, options = {}) {
 	const musicSection = extractSection(source, "Music");
 	const creditsSection = extractSection(source, "Full Credits List");
 	const overviewBlocks = parseNamedOverviewBlocks(overviewSection);
-	const dawnOfMan = parseDawnOfMan(overviewSection, options.wikiUrl || "");
+	const dawnOfMan = parseDawnOfMan(source, options.wikiUrl || "");
 	const authorSummary = parseAuthorSummary(source);
 	const workshopTable = parseWorkshopTable(creditsSection);
+
+	const standaloneIcon = parseStandaloneIconImage(source, options.wikiUrl || "", [civInfoParams.image, dawnOfMan.image]);
 
 	entry.title = stripWikiMarkup(civInfoParams.title || overviewBlocks[0]?.title || options.title || "");
 	entry.leader = stripWikiMarkup(civInfoParams.leader || overviewBlocks[1]?.title || options.leader || "");
@@ -566,8 +737,8 @@ export function createPediaEntryFromWikiMarkup(markup, options = {}) {
 		mapImage: cleanText(civInfoParams.image),
 		mapImageUrl: buildFandomFileRedirectUrl(civInfoParams.image, options.wikiUrl || ""),
 		mapImageCaption: stripWikiMarkup(civInfoParams.imagecaption),
-		iconImage: cleanText(source.match(/\[\[File:([^|\]]+)\|frameless/i)?.[1] || ""),
-		iconImageUrl: buildFandomFileRedirectUrl(source.match(/\[\[File:([^|\]]+)\|frameless/i)?.[1] || "", options.wikiUrl || ""),
+		iconImage: cleanText(source.match(/\[\[File:([^|\]]+)\|frameless/i)?.[1] || standaloneIcon.file),
+		iconImageUrl: buildFandomFileRedirectUrl(source.match(/\[\[File:([^|\]]+)\|frameless/i)?.[1] || standaloneIcon.file, options.wikiUrl || ""),
 		leaderSceneImage: dawnOfMan.image,
 		leaderSceneImageUrl: dawnOfMan.imageUrl,
 		leaderSceneArtCredit: dawnOfMan.artCredit,
@@ -585,13 +756,22 @@ export function createPediaEntryFromWikiMarkup(markup, options = {}) {
 		introduction: dawnOfMan.introduction,
 		defeat: dawnOfMan.defeat,
 	};
-	entry.uniques = parseUniqueAttributes(uniqueAttributesSection, options.wikiUrl || "");
+	entry.uniques = await parseUniqueAttributes(uniqueAttributesSection, options.wikiUrl || "");
 	entry.nameLists = parseCollapsibleLists(uniqueAttributesSection);
 	entry.music = parseMusic(musicSection);
 	entry.modSupport = parseSupportFlags(modSupportParams);
 	entry.credits = parseCredits(creditsSection);
+	if (!entry.credits.length) {
+		entry.credits = summaryCredits(authorSummary);
+	}
+	entry.authors = authorSummary.authors?.length ? authorSummary.authors : deriveAuthorsFromCredits(entry.credits);
 	entry.categories = parseCategories(source);
 	entry.navTemplate = cleanText(source.match(/\{\{([^{}]+Nav)}}/i)?.[1] || "");
+
+	if (!entry.presentation.iconImage && entry.uniques[0]?.art) {
+		entry.presentation.iconImage = entry.uniques[0].art;
+		entry.presentation.iconImageUrl = buildFandomFileRedirectUrl(entry.uniques[0].art, options.wikiUrl || "");
+	}
 
 	if (!entry.title) {
 		issues.push("Could not resolve the civilization title from the wiki markup.");
@@ -755,6 +935,67 @@ function splitSqlTopLevel(value, separator = ",") {
 	return parts;
 }
 
+function splitSqlTopLevelKeyword(value, keyword = "AND") {
+	const parts = [];
+	let current = "";
+	let depth = 0;
+	let inSingleQuote = false;
+	let inDoubleQuote = false;
+	const upperKeyword = String(keyword || "").toUpperCase();
+
+	for (let index = 0; index < value.length; index += 1) {
+		const character = value[index];
+		const nextCharacter = value[index + 1];
+
+		if (!inDoubleQuote && character === "'" && value[index - 1] !== "\\") {
+			if (inSingleQuote && nextCharacter === "'") {
+				current += "''";
+				index += 1;
+				continue;
+			}
+			inSingleQuote = !inSingleQuote;
+			current += character;
+			continue;
+		}
+
+		if (!inSingleQuote && character === '"' && value[index - 1] !== "\\") {
+			inDoubleQuote = !inDoubleQuote;
+			current += character;
+			continue;
+		}
+
+		if (!inSingleQuote && !inDoubleQuote) {
+			if (character === "(") {
+				depth += 1;
+			} else if (character === ")") {
+				depth = Math.max(0, depth - 1);
+			} else if (depth === 0) {
+				const slice = value.slice(index, index + upperKeyword.length);
+				if (
+					slice.toUpperCase() === upperKeyword &&
+					(index === 0 || !/[A-Za-z0-9_]/.test(value[index - 1])) &&
+					(index + upperKeyword.length >= value.length || !/[A-Za-z0-9_]/.test(value[index + upperKeyword.length]))
+				) {
+					if (cleanText(current)) {
+						parts.push(cleanText(current));
+					}
+					current = "";
+					index += upperKeyword.length - 1;
+					continue;
+				}
+			}
+		}
+
+		current += character;
+	}
+
+	if (cleanText(current)) {
+		parts.push(cleanText(current));
+	}
+
+	return parts;
+}
+
 function splitSqlStatements(text) {
 	return splitSqlTopLevel(stripSqlComments(text), ";").filter(Boolean);
 }
@@ -828,7 +1069,11 @@ function parseSqlValue(value, whereEquals = new Map()) {
 
 function parseSqlWhereEquals(whereClause) {
 	const equals = new Map();
-	for (const match of String(whereClause || "").matchAll(/([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(N?'(?:''|[^'])*'|"(?:""|[^"])*")/g)) {
+	for (const clause of splitSqlTopLevelKeyword(String(whereClause || ""), "AND")) {
+		const match = clause.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(N?'(?:''|[^'])*'|"(?:""|[^"])*")\s*$/s);
+		if (!match) {
+			continue;
+		}
 		equals.set(match[1], stripSqlQuotes(match[2]));
 	}
 	return equals;
@@ -1040,6 +1285,7 @@ function buildUniqueFromOverride(unitOrBuildingRow, replacementName, slot, textB
 		artUrl: "",
 		artCredit: "",
 		body: findTextForTag(textByTag, unitOrBuildingRow.Help) || "",
+		civilopedia: resolveCivilopediaText(unitOrBuildingRow, textByTag),
 		bullets: [],
 	};
 }
@@ -1076,6 +1322,44 @@ function formatSqlIdentifier(value) {
 		.replace(/_/g, " ")
 		.toLowerCase()
 		.replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function clampColorChannel(value) {
+	const numeric = Number(value);
+	if (!Number.isFinite(numeric)) {
+		return 0;
+	}
+	if (numeric <= 1) {
+		return Math.max(0, Math.min(255, Math.round(numeric * 255)));
+	}
+	return Math.max(0, Math.min(255, Math.round(numeric)));
+}
+
+function toHexChannel(value) {
+	return clampColorChannel(value).toString(16).padStart(2, "0");
+}
+
+function colorRowToHex(row) {
+	if (!row) {
+		return "";
+	}
+	return `#${toHexChannel(row.Red)}${toHexChannel(row.Green)}${toHexChannel(row.Blue)}`;
+}
+
+function resolvePresentationColors(civRow, tableRows) {
+	const playerColors = mapRowsByKey(tableRows.get("PlayerColors") || [], "Type");
+	const colors = mapRowsByKey(tableRows.get("Colors") || [], "Type");
+	const defaultPlayerColor = cleanText(civRow?.DefaultPlayerColor);
+	const fallbackPlayerColor = defaultPlayerColor || `PLAYERCOLOR_${cleanText(civRow?.Type).replace(/^CIVILIZATION_/, "")}`;
+	const playerColorRow = playerColors.get(fallbackPlayerColor);
+	if (!playerColorRow) {
+		return { background: "", icon: "" };
+	}
+
+	return {
+		background: colorRowToHex(colors.get(playerColorRow.SecondaryColor)),
+		icon: colorRowToHex(colors.get(playerColorRow.PrimaryColor)),
+	};
 }
 
 function resolveReligionLabel(religionType, modSupport = {}) {
@@ -1125,6 +1409,29 @@ function firstExistingText(textByTag, candidates) {
 	return "";
 }
 
+function resolveCivilopediaText(row, textByTag) {
+	const directText = firstExistingText(textByTag, [row?.Civilopedia, row?.CivilopediaTag]);
+	if (directText) {
+		return directText;
+	}
+
+	const prefixes = [cleanText(row?.CivilopediaTag), cleanText(row?.Civilopedia).replace(/\d+$/, "")].filter(Boolean);
+
+	for (const prefix of prefixes) {
+		const series = textSeriesForPrefix(textByTag, `${prefix}_TEXT_`);
+		if (series.length) {
+			return series.join("\n\n");
+		}
+
+		const fallbackSeries = textSeriesForPrefix(textByTag, prefix);
+		if (fallbackSeries.length) {
+			return fallbackSeries.join("\n\n");
+		}
+	}
+
+	return "";
+}
+
 function buildUniqueBullets(helpText) {
 	const normalized = cleanText(helpText)
 		.replace(/^[^.]*Replacement[.,]?\s*/i, "")
@@ -1159,6 +1466,7 @@ function buildUniqueFromClassOverride(row, typeRow, slot, textByTag) {
 		artUrl: "",
 		artCredit: "",
 		body: bullets.length ? "" : helpText || strategyText,
+		civilopedia: resolveCivilopediaText(typeRow, textByTag),
 		bullets,
 	};
 }
@@ -1365,12 +1673,21 @@ export async function createPediaEntryFromModFolderFiles(fileList) {
 
 	entry.title = findTextForTag(textByTag, civRow.ShortDescription) || findTextForTag(textByTag, civRow.Description) || modinfo.name || formatIdentifier(civRow.Type);
 	entry.leader = findTextForTag(textByTag, leaderRow?.Description) || formatIdentifier(leaderRow?.Type);
-	entry.id = buildEntryId(entry.title, entry.leader);
-	entry.slug = slugifyPediaValue(entry.title || folderName);
+	const folderIdentity = buildFolderEntryIdentity({
+		title: entry.title,
+		leader: entry.leader,
+		civType: civRow?.Type,
+		leaderType: leaderRow?.Type,
+		modId: modinfo?.id,
+		folderName,
+	});
+	entry.id = folderIdentity.id;
+	entry.slug = folderIdentity.slug;
 	entry.summary = stripCivFormatting(modinfo.teaser || modinfo.description || "");
 	entry.source = {
 		...entry.source,
 		type: "folder",
+		modId: modinfo.id || "",
 		version: modinfo.version || "",
 		modFolderName: folderName,
 	};
@@ -1387,9 +1704,18 @@ export async function createPediaEntryFromModFolderFiles(fileList) {
 	};
 	entry.presentation = {
 		...entry.presentation,
-		mapImage: inferMapImage(modinfo, civRow),
-		leaderSceneImage: inferLeaderSceneImage(modinfo, civRow),
-		iconImage: inferIconImage(modinfo),
+		mapImage: "",
+		mapImageUrl: "",
+		mapImageCaption: "",
+		leaderSceneImage: "",
+		leaderSceneImageUrl: "",
+		leaderSceneArtCredit: "",
+		iconImage: "",
+		iconImageUrl: "",
+		colors: {
+			...entry.presentation.colors,
+			...resolvePresentationColors(civRow, tableRows),
+		},
 	};
 	entry.overview.civilization = {
 		title: entry.title,
@@ -1427,6 +1753,7 @@ export async function createPediaEntryFromModFolderFiles(fileList) {
 			},
 		];
 	}
+	entry.authors = deriveAuthorsFromCredits(entry.credits);
 
 	if (traitRow) {
 		entry.uniques.push({
@@ -1436,6 +1763,7 @@ export async function createPediaEntryFromModFolderFiles(fileList) {
 			art: "",
 			artCredit: "",
 			body: findTextForTag(textByTag, traitRow.Description),
+			civilopedia: resolveCivilopediaText(traitRow, textByTag),
 			bullets: [],
 		});
 	}
@@ -1614,6 +1942,9 @@ export function normalizePediaEntry(entryInput) {
 	entry.kind = cleanText(source.kind) || "civilization";
 	entry.title = cleanText(source.title);
 	entry.leader = cleanText(source.leader);
+	entry.authors = ensureArray(source.authors)
+		.map((author) => cleanText(author))
+		.filter(Boolean);
 	entry.summary = sanitizePediaProse(source.summary);
 	entry.source = { ...entry.source, ...(source.source || {}) };
 	entry.identity = {
@@ -1665,6 +1996,7 @@ export function normalizePediaEntry(entryInput) {
 		artUrl: cleanText(unique?.artUrl),
 		artCredit: cleanText(unique?.artCredit),
 		body: sanitizePediaProse(unique?.body),
+		civilopedia: sanitizePediaProse(unique?.civilopedia),
 		bullets: ensureArray(unique?.bullets)
 			.map((bullet) => sanitizePediaProse(bullet))
 			.filter(Boolean),
@@ -1684,6 +2016,9 @@ export function normalizePediaEntry(entryInput) {
 		name: cleanText(credit?.name),
 		role: cleanText(credit?.role),
 	}));
+	if (!entry.authors.length) {
+		entry.authors = deriveAuthorsFromCredits(entry.credits);
+	}
 	entry.categories = ensureArray(source.categories)
 		.map((item) => cleanText(item))
 		.filter(Boolean);

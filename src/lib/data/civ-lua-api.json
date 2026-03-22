@@ -64544,11 +64544,11 @@
 			"seeAlso": [
 				{
 					"entryId": "player-ai-updatefoundvalues-8",
-					"note": "AI helper often involved in settler and expansion evaluation around the same unit-update phase."
+					"note": "CPU helper often involved in settler and expansion evaluation around the same unit update phase."
 				},
 				{
 					"entryId": "game-event-playerdoturn-72",
-					"note": "Broader per-player turn hook when logic should run outside the narrower AI unit-update phase."
+					"note": "Broader per-player turn hook when logic should run outside the narrower CPU unit update phase."
 				}
 			]
 		},
@@ -65187,7 +65187,7 @@
 				},
 				{
 					"entryId": "game-event-playerpreaiunitupdate-73",
-					"note": "Often paired with AI movement logic during the same per-player update cycle."
+					"note": "Often paired with CPU movement logic during the same per-player update cycle."
 				}
 			]
 		},

@@ -3,8 +3,11 @@ export const SITE_NAME = "Civ Modding Central";
 export const SITE_IMAGE = `${SITE_URL}/brand/CMC-logo.jpg`;
 export const SITE_LOGO = `${SITE_URL}/icons/apple-touch-icon.png`;
 export const DEFAULT_ROBOTS = "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1";
+const MODDED_CIVS_PEDIA_PATH = "/modded-civs-pedia";
 
 const SAME_AS_URLS = ["https://discord.gg/yf8jUXf", "https://old.reddit.com/r/civmoddingcentral/"];
+
+import { BUILTIN_MODDED_CIVS } from "../data/moddedCivsPedia.js";
 
 const ROUTE_SEO = {
 	"/": {
@@ -120,6 +123,55 @@ const ROUTE_SEO = {
 	},
 };
 
+function slugifySeoValue(value) {
+	return String(value || "")
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "");
+}
+
+function primaryAuthor(entry) {
+	return (entry?.credits || []).find((credit) => /\bauthor\b/i.test(credit?.role || ""))?.name || entry?.credits?.[0]?.name || "Unknown Author";
+}
+
+function findPediaEntryByPath(pathname) {
+	const normalizedPath = normalizeSeoPath(pathname);
+	if (!normalizedPath.startsWith(`${MODDED_CIVS_PEDIA_PATH}/`)) {
+		return null;
+	}
+	const slug = normalizedPath.slice(MODDED_CIVS_PEDIA_PATH.length + 1);
+	if (!slug) {
+		return null;
+	}
+	return BUILTIN_MODDED_CIVS.find((entry) => slugifySeoValue(entry?.slug || entry?.title) === slug) || null;
+}
+
+function getPediaEntrySeo(pathname) {
+	const entry = findPediaEntryByPath(pathname);
+	if (!entry) {
+		return null;
+	}
+
+	const normalizedPath = normalizeSeoPath(pathname);
+	const titleBase = entry?.leader ? `${entry.title} (${entry.leader})` : entry.title;
+	const description = entry?.summary || entry?.overview?.civilization?.body || `Browse the ${entry?.title || "custom civilization"} entry in the Modded Civs Pedia on Civ Modding Central.`;
+	const keywords = [entry?.title, entry?.leader, primaryAuthor(entry), entry?.identity?.culture, "Civilization V custom civilization", "Civ 5 modded civs pedia"].filter(Boolean).join(", ");
+
+	return {
+		title: `${titleBase} | Modded Civs Pedia | Civ Modding Central`,
+		description,
+		keywords,
+		pageType: "Article",
+		pathname: normalizedPath,
+		canonical: `${SITE_URL}${normalizedPath}`,
+		image: entry?.presentation?.mapImageUrl || entry?.presentation?.iconImageUrl || SITE_IMAGE,
+		robots: DEFAULT_ROBOTS,
+		entry,
+		parentPath: MODDED_CIVS_PEDIA_PATH,
+		parentName: ROUTE_SEO[MODDED_CIVS_PEDIA_PATH].title.replace(/\s+\|\s+Civ Modding Central$/, ""),
+	};
+}
+
 export function normalizeSeoPath(value) {
 	const raw = String(value || "").trim();
 	if (!raw || raw === "/") {
@@ -136,6 +188,10 @@ export function normalizeSeoPath(value) {
 
 export function getRouteSeo(pathname) {
 	const normalizedPath = normalizeSeoPath(pathname);
+	const pediaSeo = getPediaEntrySeo(normalizedPath);
+	if (pediaSeo) {
+		return pediaSeo;
+	}
 	const routeSeo = ROUTE_SEO[normalizedPath] || ROUTE_SEO["/"];
 	const canonicalPath = normalizedPath === "/" ? "/" : normalizedPath;
 
@@ -170,22 +226,39 @@ export function buildStructuredData(pathname) {
 	];
 
 	if (seo.pathname !== "/") {
+		const breadcrumbItems = [
+			{
+				"@type": "ListItem",
+				position: 1,
+				name: "Home",
+				item: `${SITE_URL}/`,
+			},
+		];
+		if (seo.parentPath && seo.parentName) {
+			breadcrumbItems.push({
+				"@type": "ListItem",
+				position: 2,
+				name: seo.parentName,
+				item: `${SITE_URL}${seo.parentPath}`,
+			});
+			breadcrumbItems.push({
+				"@type": "ListItem",
+				position: 3,
+				name: seo.title.replace(/\s+\|\s+Civ Modding Central$/, ""),
+				item: seo.canonical,
+			});
+		} else {
+			breadcrumbItems.push({
+				"@type": "ListItem",
+				position: 2,
+				name: seo.title.replace(/\s+\|\s+Civ Modding Central$/, ""),
+				item: seo.canonical,
+			});
+		}
+
 		graph.push({
 			"@type": "BreadcrumbList",
-			itemListElement: [
-				{
-					"@type": "ListItem",
-					position: 1,
-					name: "Home",
-					item: `${SITE_URL}/`,
-				},
-				{
-					"@type": "ListItem",
-					position: 2,
-					name: seo.title.replace(/\s+\|\s+Civ Modding Central$/, ""),
-					item: seo.canonical,
-				},
-			],
+			itemListElement: breadcrumbItems,
 		});
 	}
 
@@ -214,6 +287,14 @@ export function buildStructuredData(pathname) {
 		if (seo.pageType === "WebApplication") {
 			pageObject.browserRequirements = "Requires a modern web browser and JavaScript.";
 		}
+	}
+
+	if (seo.pageType === "Article" && seo.entry) {
+		pageObject.author = {
+			"@type": "Person",
+			name: primaryAuthor(seo.entry),
+		};
+		pageObject.headline = seo.title.replace(/\s+\|\s+Civ Modding Central$/, "");
 	}
 
 	graph.push(pageObject);

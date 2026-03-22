@@ -9,15 +9,15 @@
 	let { example, activeLanguage = "all" } = $props();
 
 	const LEADER_PERSONALITY_FIELDS = [
-		{ key: "VictoryCompetitiveness", label: "Victory competitiveness", defaultValue: 7, note: "Weights how strongly the AI suspects and contests competing victory plans." },
+		{ key: "VictoryCompetitiveness", label: "Victory competitiveness", defaultValue: 7, note: "Weights how strongly the CPU suspects and contests competing victory plans." },
 		{ key: "WonderCompetitiveness", label: "Wonder competitiveness", defaultValue: 4, note: "Raises irritation when another civ beats this leader to wonders." },
 		{ key: "MinorCivCompetitiveness", label: "City-state competitiveness", defaultValue: 6, note: "Pushes rivalry around city-state influence and protection." },
 		{ key: "Boldness", label: "Boldness", defaultValue: 9, note: "Strong driver for conquest posture and aggressive demands." },
 		{ key: "DiploBalance", label: "Diplo balance", defaultValue: 6, note: "Nominally balance-of-power focused; often underused in base behavior." },
-		{ key: "WarmongerHate", label: "Warmonger hate", defaultValue: 3, note: "Controls how sharply the AI reacts to wars and eliminated civs." },
-		{ key: "DenounceWillingness", label: "Denounce willingness", defaultValue: 8, note: "Raises the chance that the AI denounces rivals." },
+		{ key: "WarmongerHate", label: "Warmonger hate", defaultValue: 3, note: "Controls how sharply the CPU reacts to wars and eliminated civs." },
+		{ key: "DenounceWillingness", label: "Denounce willingness", defaultValue: 8, note: "Raises the chance that the CPU denounces rivals." },
 		{ key: "DoFWillingness", label: "DoF willingness", defaultValue: 4, note: "Raises the weight for declarations of friendship." },
-		{ key: "Loyalty", label: "Loyalty", defaultValue: 3, note: "Makes the AI less likely to turn on current DoF partners." },
+		{ key: "Loyalty", label: "Loyalty", defaultValue: 3, note: "Makes the CPU less likely to turn on current DoF partners." },
 		{ key: "Neediness", label: "Neediness", defaultValue: 4, note: "Pushes denounce-pressure behavior when others refuse requests." },
 		{ key: "Forgiveness", label: "Forgiveness", defaultValue: 3, note: "Counterweight to neediness when relationships get strained." },
 		{ key: "Chattiness", label: "Chattiness", defaultValue: 6, note: "Controls how often the leader surfaces diplomatic chatter." },
@@ -1897,7 +1897,7 @@
 			toneParts.push("it is more likely to gloat rivals in diplomatic popups");
 		}
 		if (personality.DiploBalance >= 7) {
-			toneParts.push("its diplo-balance entry is high, though that field has little practical impact in the base AI");
+			toneParts.push("its diplo-balance entry is high, though that field has little practical impact in the base CPU settings");
 		}
 
 		let tone = "";
@@ -1915,7 +1915,7 @@
 
 		return {
 			...example,
-			title: `Interactive ${normalizedLeaderType} AI values`,
+			title: `Interactive ${normalizedLeaderType} CPU values`,
 			summary: `${normalizedLeaderType} with ${activeFlavorCount} flavor row${activeFlavorCount === 1 ? "" : "s"}${topMajor ? ` and ${topMajor.label.toLowerCase()}-leaning diplomacy` : ""}${topFlavor ? `, led by ${titleFromKey(topFlavor.type).toLowerCase()}` : ""}.`,
 			files: [
 				{

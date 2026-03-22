@@ -2,6 +2,7 @@
 	import { onMount, tick } from "svelte";
 	import { fade } from "svelte/transition";
 	import { applyDocumentSeo, normalizeSeoPath } from "./lib/seo/routes.js";
+	import { personHighlightStyle } from "./lib/utils/personHighlights.js";
 	import Navbar from "./lib/components/Navbar.svelte";
 	import HomePage from "./lib/components/HomePage.svelte";
 	import CommunityLinks from "./lib/components/CommunityLinks.svelte";
@@ -51,6 +52,7 @@
 	let shouldFocusRouteHeading = $state(false);
 	let shouldResetScroll = $state(false);
 	const currentYear = new Date().getFullYear();
+	const footerTesters = ["TopHatPaladin", "NopeCopter", "JFD", "Orangechrisy", "DarthKyofu", "Rhoze", "ExplosiveWatermelon", "ThyReformer", "EmeraldRange", "Pouākai"];
 	let authSession = $state({
 		accessToken: "",
 		refreshToken: "",
@@ -60,6 +62,10 @@
 
 	function normalizePathname(value) {
 		return normalizeSeoPath(value);
+	}
+
+	function isModdedCivsPediaRoute(pathname) {
+		return pathname === "/modded-civs-pedia" || pathname.startsWith("/modded-civs-pedia/");
 	}
 
 	function runPageTransition(update) {
@@ -279,7 +285,7 @@
 			currentPath === "/civ-icon-maker" ||
 			currentPath === "/workshop-uploader" ||
 			currentPath === "/modinfo-builder" ||
-			currentPath === "/modded-civs-pedia" ||
+			isModdedCivsPediaRoute(currentPath) ||
 			currentPath === "/civ5mod-ziper" ||
 			currentPath === "/pattern-library" ||
 			currentPath === "/template-generators" ||
@@ -834,8 +840,8 @@
 					<WorkshopUploader />
 				{:else if currentPath === "/modinfo-builder"}
 					<ModInfoBuilder />
-				{:else if currentPath === "/modded-civs-pedia"}
-					<ModdedCivsPedia />
+				{:else if isModdedCivsPediaRoute(currentPath)}
+					<ModdedCivsPedia routePath={currentPath} navigate={navigateTo} />
 				{:else if currentPath === "/civ5mod-ziper"}
 					<Civ5ModZiper />
 				{:else if currentPath === "/pattern-library"}
@@ -897,16 +903,9 @@
 				<div class="site-footer-tester-block">
 					<span class="site-footer-label">With QA help from</span>
 					<div class="site-footer-chip-row" aria-label="Testers">
-						<span class="site-footer-chip" style="--chip-highlight:#d8d474">TopHatPaladin</span>
-						<span class="site-footer-chip" style="--chip-highlight:#d47afe">NopeCopter</span>
-						<span class="site-footer-chip" style="--chip-highlight:#f1c40f">JFD</span>
-						<span class="site-footer-chip" style="--chip-highlight:#e67e23">Orange</span>
-						<span class="site-footer-chip" style="--chip-highlight:#1abc9c">DarthKyofu</span>
-						<span class="site-footer-chip" style="--chip-highlight:#d0c939">Rhoze</span>
-						<span class="site-footer-chip" style="--chip-highlight:#8ff460">ExplosiveWatermelon</span>
-						<span class="site-footer-chip" style="--chip-highlight:#ffbf00">ThyReformer</span>
-						<span class="site-footer-chip" style="--chip-highlight:#3ee773">EmeraldRange</span>
-						<span class="site-footer-chip" style="--chip-highlight:#e74b3c">Pouākai</span>
+						{#each footerTesters as tester (tester)}
+							<span class="site-footer-chip" style={personHighlightStyle(tester, "--chip-highlight")}>{tester}</span>
+						{/each}
 					</div>
 				</div>
 			</div>
