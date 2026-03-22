@@ -665,12 +665,12 @@
 
 				<div class="pedia-toolbar-actions">
 					<input class="pedia-search" type="search" bind:value={searchQuery} placeholder="Search civs, leaders, uniques, authors..." />
-					{#if canEdit}
+					<!-- {#if canEdit}
 						<div class="pedia-view-switch" role="tablist" aria-label="Pedia views">
 							<button type="button" class="pedia-view-chip is-active" role="tab" aria-selected="true">Catalog</button>
 							<button type="button" class="pedia-view-chip" role="tab" aria-selected="false" onclick={showConverter}>Converter</button>
 						</div>
-					{/if}
+					{/if} -->
 				</div>
 			</div>
 
