@@ -1,8 +1,16 @@
 <script>
+	import PEDIA_AUTHOR_PROFILES from "../data/pediaAuthorProfiles.json";
+	import PediaInlineText from "./PediaInlineText.svelte";
+	import { PEDIA_INLINE_ICONS, resolvePediaInlineIconRef } from "../data/pediaInlineIcons.js";
+	import { PEDIA_COLLECTIONS } from "../data/pediaCollections.js";
 	import { BUILTIN_MODDED_CIVS, MOD_SUPPORT_LABELS, sortModdedCivsEntries } from "../data/moddedCivsPedia.js";
 	import {
 		createPediaEntryFromModFolderFiles,
 		createPediaEntryFromWikiMarkup,
+		groupPediaCategories,
+		groupPediaCollections,
+		inferBrowsableCategoriesForEntry,
+		inferCollectionsForEntry,
 		normalizePediaEntry,
 		renderWikiMarkupFromEntry,
 		sanitizePediaProse,
@@ -21,6 +29,8 @@
 		{ id: "name-lists", label: "Lists" },
 		{ id: "music", label: "Music" },
 		{ id: "mod-support", label: "Mod Support" },
+		{ id: "collections", label: "Part of Collection" },
+		{ id: "categories", label: "Categories" },
 		{ id: "credits", label: "Credits" },
 		{ id: "more-by-author", label: "More by Author" },
 	];
@@ -38,6 +48,24 @@
 	let converterIssues = $state([]);
 	let entryEditorOpen = $state(false);
 	let entryEditorDraft = $state("");
+	let collectionEditorOpen = $state(false);
+	let collectionCreatorOpen = $state(false);
+	let collectionEditorDraft = $state([]);
+	let collectionEditorEntryId = $state("");
+	let collectionEditorSelection = $state("");
+	let collectionEditorStatus = $state("");
+	let categoryEditorOpen = $state(false);
+	let categoryEditorDraft = $state([]);
+	let categoryEditorEntryId = $state("");
+	let categoryEditorInput = $state("");
+	let categoryEditorStatus = $state("");
+	let customCollections = $state([]);
+	let newCollectionTitle = $state("");
+	let newCollectionId = $state("");
+	let newCollectionSourceTemplate = $state("");
+	let newCollectionBackground = $state("");
+	let newCollectionAccent = $state("");
+	let newCollectionAliases = $state("");
 	let entryStatus = $state("");
 	let deletedEntryIds = $state([]);
 	let folderInputEl = $state();
@@ -129,11 +157,107 @@
 		return entry?.uniques?.[index] || null;
 	}
 
+	function catalogComponentTypeLabel(entry, index) {
+		const unique = catalogUnique(entry, index);
+		const slot = String(unique?.slot || "").trim();
+		if (!slot) {
+			return index === 0 ? "Unique Ability" : `Unique ${index}`;
+		}
+		return slot.replace(/\b\w/g, (character) => character.toUpperCase());
+	}
+
 	function isValidHexColor(value) {
 		return /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(String(value || "").trim());
 	}
 
-	function catalogRowStyle(entry) {
+	function sanitizeHexColor(value) {
+		const normalized = String(value || "")
+			.trim()
+			.replace(/^#?/, "#");
+		return normalized.toUpperCase();
+	}
+
+	function normalizeCategoryValue(value) {
+		return String(value || "")
+			.replace(/\s+/g, " ")
+			.trim();
+	}
+
+	function colorInputValue(value, fallback = "#000000") {
+		return isValidHexColor(value) ? String(value).toUpperCase() : fallback;
+	}
+
+	function hexToRgb(value) {
+		const hex = colorInputValue(value).slice(1);
+		const expanded =
+			hex.length === 3
+				? hex
+						.split("")
+						.map((part) => `${part}${part}`)
+						.join("")
+				: hex;
+		return {
+			r: Number.parseInt(expanded.slice(0, 2), 16),
+			g: Number.parseInt(expanded.slice(2, 4), 16),
+			b: Number.parseInt(expanded.slice(4, 6), 16),
+		};
+	}
+
+	function rgbToHsl({ r, g, b }) {
+		const red = r / 255;
+		const green = g / 255;
+		const blue = b / 255;
+		const max = Math.max(red, green, blue);
+		const min = Math.min(red, green, blue);
+		const delta = max - min;
+		let hue = 0;
+		if (delta) {
+			if (max === red) {
+				hue = ((green - blue) / delta) % 6;
+			} else if (max === green) {
+				hue = (blue - red) / delta + 2;
+			} else {
+				hue = (red - green) / delta + 4;
+			}
+		}
+		const lightness = (max + min) / 2;
+		const saturation = delta === 0 ? 0 : delta / (1 - Math.abs(2 * lightness - 1));
+		return {
+			h: Math.round((hue * 60 + 360) % 360 || 0),
+			s: Math.round(saturation * 100),
+			l: Math.round(lightness * 100),
+		};
+	}
+
+	function colorDisplay(value, fallback) {
+		const hex = colorInputValue(value, fallback).toUpperCase();
+		const rgb = hexToRgb(hex);
+		const hsl = rgbToHsl(rgb);
+		return {
+			hex,
+			rgb: `${rgb.r}, ${rgb.g}, ${rgb.b}`,
+			hsl: `${hsl.h}deg ${hsl.s}% ${hsl.l}%`,
+		};
+	}
+
+	function updateNewCollectionColor(field, value) {
+		const next = sanitizeHexColor(value);
+		if (field === "accent") {
+			newCollectionAccent = next;
+			return;
+		}
+		newCollectionBackground = next;
+	}
+
+	function cssUrlValue(url) {
+		const value = String(url || "").trim();
+		if (!value) {
+			return "";
+		}
+		return `url("${value.replaceAll('"', '\\"')}")`;
+	}
+
+	function catalogRowStyle(entry, backdropImageUrl = "") {
 		const background = entry?.presentation?.colors?.background;
 		const accent = entry?.presentation?.colors?.icon;
 		const vars = [];
@@ -142,6 +266,9 @@
 		}
 		if (isValidHexColor(accent)) {
 			vars.push(`--catalog-accent:${accent}`);
+		}
+		if (String(backdropImageUrl || "").trim()) {
+			vars.push(`--catalog-backdrop-image:${cssUrlValue(backdropImageUrl)}`);
 		}
 		return vars.join(";");
 	}
@@ -155,8 +282,91 @@
 		return entryAuthors(entry).includes(creditName) ? creditName : primaryAuthor(entry);
 	}
 
+	function entryCollections(entry) {
+		return inferCollectionsForEntry(entry);
+	}
+
+	function entryCategories(entry) {
+		return inferBrowsableCategoriesForEntry(entry);
+	}
+
+	function collectionCardStyle(collection) {
+		const accent = collection?.colors?.accent;
+		const background = collection?.colors?.background;
+		const vars = [];
+		if (isValidHexColor(accent)) {
+			vars.push(`--collection-accent:${accent}`);
+		}
+		if (isValidHexColor(background)) {
+			vars.push(`--collection-background:${background}`);
+		}
+		return vars.join(";");
+	}
+
+	function collectionHeroStyle(collection) {
+		const vars = [collectionCardStyle(collection)];
+		const imageUrl = String(collection?.imageURL || "").trim();
+		if (imageUrl) {
+			vars.push(`--collection-hero-image:${cssUrlValue(imageUrl)}`);
+		}
+		return vars.filter(Boolean).join(";");
+	}
+
+	function entryCollectionPillStyle(collection) {
+		return collectionCardStyle(collection);
+	}
+
+	function visibleEntryCollections(entry, hiddenCollectionId = "") {
+		const hiddenId = String(hiddenCollectionId || "").trim();
+		return entryCollections(entry).filter((collection) => String(collection?.id || "").trim() !== hiddenId);
+	}
+
+	function collectionLinkStyle(collection) {
+		return collectionCardStyle(collection);
+	}
+
+	function collectionEntryCount(collection) {
+		const collectionId = String(collection?.id || "").trim();
+		if (!collectionId) {
+			return 0;
+		}
+		return allCollections.find((candidate) => candidate.id === collectionId)?.entries?.length || 0;
+	}
+
 	function catalogNotes(entry) {
 		return sanitizePediaProse(entry?.summary) || entryDisplaySummary(entry);
+	}
+
+	function unresolvedTemplateRefs(refs) {
+		return (refs || []).filter((ref) => !ref?.imageUrl);
+	}
+
+	const sharedInlineTemplateRefs = (() => {
+		const byKey = new Map();
+		for (const icon of PEDIA_INLINE_ICONS) {
+			const resolved = resolvePediaInlineIconRef(icon);
+			const key = normalizeSearch(resolved?.label || resolved?.template || resolved?.href);
+			if (!key || byKey.has(key)) {
+				continue;
+			}
+			byKey.set(key, resolved);
+		}
+		return [...byKey.values()];
+	})();
+
+	function entryTemplateRefs(entry, scopedRefs = []) {
+		const byKey = new Map();
+		for (const ref of [...(scopedRefs || []), ...(entry?.templateRefs || []), ...sharedInlineTemplateRefs]) {
+			const template = String(ref?.template || "").trim();
+			const label = String(ref?.label || "").trim();
+			const href = String(ref?.href || "").trim();
+			const key = normalizeSearch(label || template || href);
+			if (!key || byKey.has(key)) {
+				continue;
+			}
+			byKey.set(key, ref);
+		}
+		return [...byKey.values()];
 	}
 
 	function authorEntriesForName(authorName) {
@@ -186,8 +396,95 @@
 		return `${PEDIA_BASE_PATH}/${slugifyPediaValue(entry?.slug || entry?.title)}`;
 	}
 
+	function collectionPath(collection) {
+		return `${PEDIA_BASE_PATH}/collection/${slugifyPediaValue(collection?.id || collection?.title)}`;
+	}
+
+	function categoryPath(category) {
+		return `${PEDIA_BASE_PATH}/category/${slugifyPediaValue(category?.id || category?.title)}`;
+	}
+
 	function authorPath(name) {
 		return `${PEDIA_BASE_PATH}/author/${slugifyPediaValue(name)}`;
+	}
+
+	function authorHeadingId(name) {
+		return `author-group-${slugifyPediaValue(name)}`;
+	}
+
+	function authorAccordionId(name) {
+		return `author-civs-${slugifyPediaValue(name)}`;
+	}
+
+	function scrollToAuthorGroup(name) {
+		if (typeof document === "undefined") {
+			return;
+		}
+		const accordion = document.getElementById(authorAccordionId(name));
+		if (accordion instanceof HTMLDetailsElement) {
+			accordion.open = true;
+		}
+		document.getElementById(authorHeadingId(name))?.scrollIntoView({
+			behavior: "smooth",
+			block: "start",
+		});
+	}
+
+	function authorProfileKey(value) {
+		return normalizeSearch(value);
+	}
+
+	function uniqueBy(items, getKey) {
+		const byKey = new Map();
+		for (const item of items || []) {
+			const key = cleanParagraph(getKey(item));
+			if (!key || byKey.has(key)) {
+				continue;
+			}
+			byKey.set(key, item);
+		}
+		return [...byKey.values()];
+	}
+
+	function authorCollectionTarget(collection) {
+		return allCollections.find((candidate) => candidate.id === collection?.id) || null;
+	}
+
+	function authorCategoryTarget(category) {
+		return allCategories.find((candidate) => candidate.id === category?.id) || null;
+	}
+
+	function buildAuthorOverview(authorName, entries) {
+		const profile = authorProfileLookup.get(authorProfileKey(authorName)) || {};
+		const collections = uniqueBy(
+			(entries || []).flatMap((entry) => entryCollections(entry)),
+			(item) => item?.id || item?.title,
+		)
+			.sort((left, right) => String(left?.title || "").localeCompare(String(right?.title || "")))
+			.slice(0, 6);
+		const categories = uniqueBy(
+			(entries || []).flatMap((entry) => entryCategories(entry)),
+			(item) => item?.id || item?.title,
+		)
+			.sort((left, right) => String(left?.title || "").localeCompare(String(right?.title || "")))
+			.slice(0, 8);
+		const leaders = uniqueBy(
+			(entries || []).map((entry) => ({ name: entry?.leader })),
+			(item) => item?.name,
+		).filter((item) => item?.name);
+		const summary = String(profile?.blurb || "").trim();
+		return {
+			name: authorName,
+			blurb: summary,
+			links: Array.isArray(profile?.links) ? profile.links : [],
+			collections,
+			categories,
+			stats: [
+				{ label: "Mods", value: String(entries.length) },
+				{ label: "Collections", value: String(collections.length) },
+				{ label: "Leaders", value: String(leaders.length) },
+			],
+		};
 	}
 
 	function parseRouteState(pathname) {
@@ -199,6 +496,18 @@
 			return {
 				kind: "catalog",
 				authorSlug: normalized.slice(`${PEDIA_BASE_PATH}/author/`.length),
+			};
+		}
+		if (normalized.startsWith(`${PEDIA_BASE_PATH}/collection/`)) {
+			return {
+				kind: "collection",
+				collectionSlug: normalized.slice(`${PEDIA_BASE_PATH}/collection/`.length),
+			};
+		}
+		if (normalized.startsWith(`${PEDIA_BASE_PATH}/category/`)) {
+			return {
+				kind: "category",
+				categorySlug: normalized.slice(`${PEDIA_BASE_PATH}/category/`.length),
 			};
 		}
 		if (normalized.startsWith(`${PEDIA_BASE_PATH}/`)) {
@@ -224,6 +533,18 @@
 			}
 		}
 		return bySlug;
+	});
+	const authorProfileLookup = $derived.by(() => {
+		const byKey = new Map();
+		for (const profile of Array.isArray(PEDIA_AUTHOR_PROFILES) ? PEDIA_AUTHOR_PROFILES : []) {
+			const name = String(profile?.name || "").trim();
+			const key = authorProfileKey(name);
+			if (!key || byKey.has(key)) {
+				continue;
+			}
+			byKey.set(key, profile);
+		}
+		return byKey;
 	});
 	const filteredEntries = $derived.by(() =>
 		allEntries.filter((entry) => {
@@ -252,10 +573,90 @@
 				entries: [...entries].sort((left, right) => left.title.localeCompare(right.title)),
 			})),
 	);
+	const allCollections = $derived(groupPediaCollections(allEntries));
+	const allCategories = $derived(groupPediaCategories(allEntries));
+	const knownCollections = $derived.by(() => {
+		const byId = new Map();
+		for (const collection of [...PEDIA_COLLECTIONS, ...customCollections, ...allCollections]) {
+			const id = String(collection?.id || "").trim();
+			const title = String(collection?.title || "").trim();
+			if (!id || !title || byId.has(id)) {
+				continue;
+			}
+			byId.set(id, {
+				id,
+				title,
+				sourceTemplate: String(collection?.sourceTemplate || "").trim(),
+				imageURL: String(collection?.imageURL || "").trim(),
+				blurb: String(collection?.blurb || "").trim(),
+				links: Array.isArray(collection?.links)
+					? collection.links
+							.map((link) => ({
+								label: String(link?.label || "").trim(),
+								href: String(link?.href || "").trim(),
+							}))
+							.filter((link) => link.label && link.href)
+					: [],
+				colors: {
+					background: String(collection?.colors?.background || "").trim(),
+					accent: String(collection?.colors?.accent || "").trim(),
+				},
+			});
+		}
+		return [...byId.values()].sort((left, right) => left.title.localeCompare(right.title));
+	});
+	const collectionLookup = $derived.by(() => {
+		const bySlug = new Map();
+		for (const collection of allCollections) {
+			const slug = slugifyPediaValue(collection?.id || collection?.title);
+			if (slug && !bySlug.has(slug)) {
+				bySlug.set(slug, collection);
+			}
+		}
+		return bySlug;
+	});
+	const categoryLookup = $derived.by(() => {
+		const bySlug = new Map();
+		for (const category of allCategories) {
+			const slug = slugifyPediaValue(category?.id || category?.title);
+			if (slug && !bySlug.has(slug)) {
+				bySlug.set(slug, category);
+			}
+		}
+		return bySlug;
+	});
 	const selectedEntry = $derived(allEntries.find((entry) => entry.id === selectedEntryId) || null);
 	const convertedJsonText = $derived(convertedEntry ? JSON.stringify(convertedEntry, null, 2) : "");
 	const convertedWikiText = $derived(convertedEntry ? renderWikiMarkupFromEntry(convertedEntry) : "");
 	const routeState = $derived(parseRouteState(routePath));
+	const selectedCollection = $derived(routeState.kind === "collection" ? (collectionLookup.get(routeState.collectionSlug) ?? null) : null);
+	const selectedCategory = $derived(routeState.kind === "category" ? (categoryLookup.get(routeState.categorySlug) ?? null) : null);
+	const availableCollectionOptions = $derived.by(() => {
+		const selectedIds = new Set((collectionEditorDraft || []).map((collection) => collection?.id).filter(Boolean));
+		return knownCollections.filter((collection) => !selectedIds.has(collection.id));
+	});
+	const knownCategoryOptions = $derived.by(() => {
+		const byKey = new Map();
+		for (const entry of allEntries) {
+			for (const category of entry?.categories || []) {
+				const title = normalizeCategoryValue(category);
+				if (!title) {
+					continue;
+				}
+				const key = normalizeSearch(title);
+				if (!byKey.has(key)) {
+					byKey.set(key, title);
+				}
+			}
+		}
+		return [...byKey.values()].sort((left, right) => left.localeCompare(right));
+	});
+	const availableCategoryOptions = $derived.by(() => {
+		const selectedKeys = new Set((categoryEditorDraft || []).map((category) => normalizeSearch(category)).filter(Boolean));
+		return knownCategoryOptions.filter((category) => !selectedKeys.has(normalizeSearch(category)));
+	});
+	const newCollectionAccentDisplay = $derived(colorDisplay(newCollectionAccent, "#FAD587"));
+	const newCollectionBackgroundDisplay = $derived(colorDisplay(newCollectionBackground, "#7E2222"));
 
 	$effect(() => {
 		if (allEntries.length && !allEntries.some((entry) => entry.id === selectedEntryId)) {
@@ -264,6 +665,51 @@
 	});
 
 	$effect(() => {
+		const nextEntryId = selectedEntry?.id || "";
+		if (nextEntryId === collectionEditorEntryId) {
+			if (nextEntryId !== categoryEditorEntryId) {
+				categoryEditorEntryId = nextEntryId;
+				categoryEditorOpen = false;
+				categoryEditorDraft = (selectedEntry?.categories || []).map((category) => normalizeCategoryValue(category)).filter(Boolean);
+				categoryEditorInput = "";
+				categoryEditorStatus = "";
+			}
+			return;
+		}
+		collectionEditorEntryId = nextEntryId;
+		collectionEditorOpen = false;
+		collectionCreatorOpen = false;
+		collectionEditorDraft = selectedEntry?.collections ? [...selectedEntry.collections] : [];
+		collectionEditorSelection = "";
+		collectionEditorStatus = "";
+		newCollectionTitle = "";
+		newCollectionId = "";
+		newCollectionSourceTemplate = "";
+		newCollectionBackground = "";
+		newCollectionAccent = "";
+		newCollectionAliases = "";
+		categoryEditorEntryId = nextEntryId;
+		categoryEditorOpen = false;
+		categoryEditorDraft = (selectedEntry?.categories || []).map((category) => normalizeCategoryValue(category)).filter(Boolean);
+		categoryEditorInput = "";
+		categoryEditorStatus = "";
+	});
+
+	$effect(() => {
+		if (routeState.kind === "collection" && selectedCollection) {
+			activeView = "collection";
+			selectedEntryId = "";
+			authorFilterName = "";
+			return;
+		}
+
+		if (routeState.kind === "category" && selectedCategory) {
+			activeView = "category";
+			selectedEntryId = "";
+			authorFilterName = "";
+			return;
+		}
+
 		if (routeState.kind === "entry") {
 			const routeEntry = allEntries.find((entry) => slugifyPediaValue(entry?.slug || entry?.title) === routeState.entrySlug);
 			if (routeEntry) {
@@ -382,6 +828,198 @@
 			entryEditorDraft = `${JSON.stringify(nextEntry, null, 2)}\n`;
 		} catch (error) {
 			entryStatus = `${error?.message || "Unable to save entry."} This save flow only works while running the local Vite dev server.`;
+		}
+	}
+
+	function previewCollectionMemberships(nextCollections) {
+		if (!selectedEntry) {
+			return;
+		}
+		const nextEntry = normalizePediaEntry({
+			...selectedEntry,
+			collections: nextCollections,
+		});
+		importedEntries = sortModdedCivsEntries([...importedEntries.filter((entry) => entry.id !== nextEntry.id), nextEntry]);
+		collectionEditorDraft = [...nextEntry.collections];
+		collectionEditorStatus = `Previewing collection memberships for ${nextEntry.title}. Save to persist.`;
+	}
+
+	function addCollectionToDraft() {
+		const nextId = String(collectionEditorSelection || "").trim();
+		if (!nextId) {
+			return;
+		}
+		const nextCollection = knownCollections.find((collection) => collection.id === nextId);
+		if (!nextCollection) {
+			return;
+		}
+		previewCollectionMemberships([...collectionEditorDraft, nextCollection]);
+		collectionEditorSelection = "";
+	}
+
+	function removeCollectionFromDraft(collectionId) {
+		const nextCollections = collectionEditorDraft.filter((collection) => collection?.id !== collectionId);
+		previewCollectionMemberships(nextCollections);
+	}
+
+	async function saveCollectionMemberships() {
+		if (!selectedEntry) {
+			return;
+		}
+		try {
+			const nextEntry = normalizePediaEntry({
+				...selectedEntry,
+				collections: collectionEditorDraft,
+			});
+			collectionEditorStatus = "Saving collection memberships...";
+			await saveEntryToProject(nextEntry, renderWikiMarkupFromEntry(nextEntry), "");
+			collectionEditorStatus = `${nextEntry.title} collection memberships saved.`;
+		} catch (error) {
+			collectionEditorStatus = `${error?.message || "Unable to save collection memberships."} This save flow only works while running the local Vite dev server.`;
+		}
+	}
+
+	function toggleCollectionEditor() {
+		collectionEditorOpen = !collectionEditorOpen;
+		if (!collectionEditorOpen) {
+			collectionCreatorOpen = false;
+			collectionEditorSelection = "";
+			collectionEditorStatus = "";
+		}
+	}
+
+	function previewCategoryAssignments(nextCategories) {
+		if (!selectedEntry) {
+			return;
+		}
+		const nextEntry = normalizePediaEntry({
+			...selectedEntry,
+			categories: nextCategories,
+		});
+		importedEntries = sortModdedCivsEntries([...importedEntries.filter((entry) => entry.id !== nextEntry.id), nextEntry]);
+		categoryEditorDraft = [...nextEntry.categories];
+		categoryEditorStatus = `Previewing category assignments for ${nextEntry.title}. Save to persist.`;
+	}
+
+	function addCategoryToDraft() {
+		const nextCategory = normalizeCategoryValue(categoryEditorInput);
+		if (!nextCategory) {
+			return;
+		}
+		if (categoryEditorDraft.some((category) => normalizeSearch(category) === normalizeSearch(nextCategory))) {
+			categoryEditorStatus = `${nextCategory} is already attached to this entry.`;
+			categoryEditorInput = "";
+			return;
+		}
+		previewCategoryAssignments([...categoryEditorDraft, nextCategory]);
+		categoryEditorInput = "";
+	}
+
+	function removeCategoryFromDraft(categoryTitle) {
+		const nextCategories = categoryEditorDraft.filter((category) => normalizeSearch(category) !== normalizeSearch(categoryTitle));
+		previewCategoryAssignments(nextCategories);
+	}
+
+	async function saveCategoryAssignments() {
+		if (!selectedEntry) {
+			return;
+		}
+		try {
+			const nextEntry = normalizePediaEntry({
+				...selectedEntry,
+				categories: categoryEditorDraft,
+			});
+			categoryEditorStatus = "Saving categories...";
+			await saveEntryToProject(nextEntry, renderWikiMarkupFromEntry(nextEntry), "");
+			categoryEditorStatus = `${nextEntry.title} categories saved.`;
+		} catch (error) {
+			categoryEditorStatus = `${error?.message || "Unable to save categories."} This save flow only works while running the local Vite dev server.`;
+		}
+	}
+
+	function toggleCategoryEditor() {
+		categoryEditorOpen = !categoryEditorOpen;
+		if (!categoryEditorOpen) {
+			categoryEditorInput = "";
+			categoryEditorStatus = "";
+		}
+	}
+
+	function toggleCollectionCreator() {
+		collectionCreatorOpen = !collectionCreatorOpen;
+		if (!collectionCreatorOpen) {
+			newCollectionTitle = "";
+			newCollectionId = "";
+			newCollectionSourceTemplate = "";
+			newCollectionBackground = "";
+			newCollectionAccent = "";
+			newCollectionAliases = "";
+		}
+	}
+
+	async function createCollectionDefinition() {
+		const title = String(newCollectionTitle || "").trim();
+		const id = slugifyPediaValue(newCollectionId || title);
+		const background = String(newCollectionBackground || "").trim();
+		const accent = String(newCollectionAccent || "").trim();
+		const aliases = [
+			title,
+			...String(newCollectionAliases || "")
+				.split(/\n|,/)
+				.map((item) => String(item || "").trim())
+				.filter(Boolean),
+		].filter((value, index, array) => array.indexOf(value) === index);
+
+		if (!title) {
+			collectionEditorStatus = "Collection title is required.";
+			return;
+		}
+		if (!id) {
+			collectionEditorStatus = "Collection id is required.";
+			return;
+		}
+		if (!isValidHexColor(background) || !isValidHexColor(accent)) {
+			collectionEditorStatus = "Collection background and accent colors must be valid hex values.";
+			return;
+		}
+
+		const collection = {
+			id,
+			title,
+			sourceTemplate: String(newCollectionSourceTemplate || "").trim(),
+			aliases,
+			colors: {
+				background,
+				accent,
+			},
+		};
+
+		try {
+			collectionEditorStatus = "Saving new collection...";
+			const response = await fetch("/__local-api/modded-civs-pedia/collections/save", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ collection }),
+			});
+			const payload = await response.json().catch(() => ({}));
+			if (!response.ok || !payload?.ok) {
+				throw new Error(payload?.message || "Unable to save collection.");
+			}
+
+			customCollections = [...customCollections, collection];
+			previewCollectionMemberships([...collectionEditorDraft, collection]);
+			collectionEditorStatus = `${collection.title} created and added to this entry draft. Save memberships to persist it on this civ.`;
+			collectionCreatorOpen = false;
+			newCollectionTitle = "";
+			newCollectionId = "";
+			newCollectionSourceTemplate = "";
+			newCollectionBackground = "";
+			newCollectionAccent = "";
+			newCollectionAliases = "";
+		} catch (error) {
+			collectionEditorStatus = `${error?.message || "Unable to save collection."} This save flow only works while running the local Vite dev server.`;
 		}
 	}
 
@@ -630,6 +1268,15 @@
 		];
 	}
 
+	function infoboxRowTemplateRefs(entry, row) {
+		if (!row?.value) {
+			return entryTemplateRefs(entry);
+		}
+		const lower = String(row.value).toLowerCase();
+		const matches = entryTemplateRefs(entry).filter((ref) => lower.includes(String(ref?.label || "").toLowerCase()));
+		return matches.length ? matches : entryTemplateRefs(entry);
+	}
+
 	function supportMatrix(entry) {
 		const keys = [...new Set([...Object.keys(MOD_SUPPORT_LABELS), ...Object.keys(entry?.modSupport || {})])];
 		return keys.map((key) => ({
@@ -665,117 +1312,279 @@
 
 				<div class="pedia-toolbar-actions">
 					<input class="pedia-search" type="search" bind:value={searchQuery} placeholder="Search civs, leaders, uniques, authors..." />
-					<!-- {#if canEdit}
+					{#if canEdit}
 						<div class="pedia-view-switch" role="tablist" aria-label="Pedia views">
 							<button type="button" class="pedia-view-chip is-active" role="tab" aria-selected="true">Catalog</button>
 							<button type="button" class="pedia-view-chip" role="tab" aria-selected="false" onclick={showConverter}>Converter</button>
 						</div>
-					{/if} -->
+					{/if}
 				</div>
 			</div>
 
 			<section class="pedia-catalog-shell stack overflow-hidden" aria-label="Modded civ catalog">
-				<div class="pedia-catalog-groups stack overflow" role="list">
-					{#each groupedCatalogEntries as group (group.author)}
-						<section class="pedia-catalog-group stack half" aria-label={`Civs by ${group.author}`}>
+				{#if allCollections.length}
+					<details class="pedia-catalog-accordion">
+						<summary class="pedia-catalog-accordion-summary">
 							<div class="pedia-catalog-group-head">
-								<h3 class="section-title">{group.author}</h3>
-								<p class="card-copy text-lg">{group.entries.length} mod{group.entries.length === 1 ? "" : "s"}</p>
+								<div class="stack quarter">
+									<p class="eyebrow">Collections</p>
+									<h3 class="section-title">Browse Events and Packs</h3>
+								</div>
+								<p class="card-copy text-lg text-nowrap">{allCollections.length} collection{allCollections.length === 1 ? "" : "s"}</p>
 							</div>
+						</summary>
 
-							<div class="pedia-catalog-entry-list stack" role="list">
-								{#each group.entries as entry (entry.id)}
-									<div role="listitem">
-										<button type="button" class="pedia-catalog-row" style={catalogRowStyle(entry)} onclick={() => selectEntry(entry.id)}>
-											<div class="pedia-catalog-row-main">
-												<div class="pedia-catalog-icon-wrap">
-													<div class="pedia-catalog-icon">
-														{#if hasWorkingImage(entry.presentation?.iconImageUrl)}
-															<img
-																src={entry.presentation.iconImageUrl}
-																alt={`${entry.title} icon`}
-																loading="lazy"
-																referrerpolicy="no-referrer"
-																onerror={() => markImageFailed(entry.presentation.iconImageUrl)}
-															/>
-														{:else}
-															<span>{entryInitials(entry)}</span>
-														{/if}
-													</div>
-												</div>
-
-												<div class="pedia-catalog-identity fit-content stack quarter">
-													<div class="stack quarter">
-														<p class="eyebrow">Civilization</p>
-														<h3 class="pedia-catalog-civ-title">{entry.title}</h3>
-													</div>
-													<div class="pedia-catalog-meta inline half flex-wrap">
-														<span class="text-lg"><strong>Leader</strong> <span class="leader-name">{entry.leader || "Unknown"}</span></span>
-														{#if entry.capital}
-															<span><strong>Capital</strong> {entry.capital}</span>
-														{/if}
-														<!-- {#if entry.culture}
-															<span><strong>Culture</strong> {entry.culture}</span>
-														{/if} -->
-													</div>
-												</div>
-											</div>
-
-											<div class="pedia-catalog-row-details">
-												<article class="pedia-catalog-detail-card stack quarter">
-													<p class="eyebrow">Unique Ability</p>
-													<strong class="text-nowrap">{catalogComponent(entry, 0)}</strong>
-													{#if catalogUnique(entry, 0)?.body}
-														<p class="card-copy">{catalogUnique(entry, 0).body}</p>
-													{:else if catalogUnique(entry, 0)?.bullets?.length}
-														<ul class="pedia-catalog-bullet-list">
-															{#each catalogUnique(entry, 0).bullets as bullet (`${entry.id}-0-${bullet}`)}
-																<li>{bullet}</li>
-															{/each}
-														</ul>
-													{/if}
-												</article>
-												<article class="pedia-catalog-detail-card stack quarter">
-													<p class="eyebrow">Unique 1</p>
-													<strong class="text-nowrap">{catalogComponent(entry, 1)}</strong>
-													{#if catalogUnique(entry, 1)?.body}
-														<p class="card-copy">{catalogUnique(entry, 1).body}</p>
-													{:else if catalogUnique(entry, 1)?.bullets?.length}
-														<ul class="pedia-catalog-bullet-list">
-															{#each catalogUnique(entry, 1).bullets as bullet (`${entry.id}-1-${bullet}`)}
-																<li>{bullet}</li>
-															{/each}
-														</ul>
-													{/if}
-												</article>
-												<article class="pedia-catalog-detail-card stack quarter">
-													<p class="eyebrow">Unique 2</p>
-													<strong class="text-nowrap">{catalogComponent(entry, 2)}</strong>
-													{#if catalogUnique(entry, 2)?.body}
-														<p class="card-copy">{catalogUnique(entry, 2).body}</p>
-													{:else if catalogUnique(entry, 2)?.bullets?.length}
-														<ul class="pedia-catalog-bullet-list">
-															{#each catalogUnique(entry, 2).bullets as bullet (`${entry.id}-2-${bullet}`)}
-																<li>{bullet}</li>
-															{/each}
-														</ul>
-													{/if}
-												</article>
-												<article class="pedia-catalog-detail-card pedia-catalog-notes-card stack quarter">
-													<p class="eyebrow">summary</p>
-													<p class="card-copy">{entry.summary}</p>
-												</article>
-												{#if entry.notes}
-													<article class="pedia-catalog-detail-card pedia-catalog-notes-card stack quarter">
-														<p class="eyebrow">Notes</p>
-														<p class="card-copy">{entry.notes}</p>
-													</article>
-												{/if}
-											</div>
-										</button>
-									</div>
+						<section class="pedia-catalog-collections stack half" aria-label="Browse collections">
+							<div class="pedia-collection-grid pedia-collection-grid-catalog">
+								{#each allCollections as collection (collection.id)}
+									<button
+										type="button"
+										class="pedia-collection-card pedia-collection-card-catalog"
+										style={collectionCardStyle(collection)}
+										onclick={() => navigate?.(collectionPath(collection))}
+									>
+										<p class="eyebrow">Collection</p>
+										<strong class="card-title">{collection.title}</strong>
+										<!-- <p class="card-copy">{collection.entries.length} member{collection.entries.length === 1 ? "" : "s"}</p> -->
+									</button>
 								{/each}
 							</div>
+						</section>
+					</details>
+				{/if}
+
+				{#if allCategories.length}
+					<details class="pedia-catalog-accordion">
+						<summary class="pedia-catalog-accordion-summary">
+							<div class="pedia-catalog-group-head">
+								<div class="stack quarter">
+									<p class="eyebrow">Categories</p>
+									<h3 class="section-title">Browse Tags and Themes</h3>
+								</div>
+								<p class="card-copy text-lg text-nowrap">{allCategories.length} categor{allCategories.length === 1 ? "y" : "ies"}</p>
+							</div>
+						</summary>
+
+						<section class="pedia-catalog-categories stack half" aria-label="Browse categories">
+							<div class="pedia-category-cloud">
+								{#each allCategories as category (category.id)}
+									<button type="button" class="pedia-category-chip" onclick={() => navigate?.(categoryPath(category))}>
+										<span>{category.title}</span>
+										<strong>{category.entries.length}</strong>
+									</button>
+								{/each}
+							</div>
+						</section>
+					</details>
+				{/if}
+
+				{#if groupedCatalogEntries.length > 1}
+					<section class="pedia-catalog-authors stack half" aria-label="Browse authors">
+						<div class="pedia-catalog-group-head">
+							<div class="stack quarter">
+								<p class="eyebrow">Authors</p>
+								<h3 class="section-title">Scroll to Author</h3>
+							</div>
+							<p class="card-copy text-lg text-nowrap">{groupedCatalogEntries.length} author{groupedCatalogEntries.length === 1 ? "" : "s"}</p>
+						</div>
+
+						<div class="pedia-author-toc-grid">
+							{#each groupedCatalogEntries as group (group.author)}
+								<button type="button" class="pedia-author-toc-chip" style={creditCardStyle(group.author)} onclick={() => scrollToAuthorGroup(group.author)}>
+									<strong class="card-title">{group.author}</strong>
+								</button>
+							{/each}
+						</div>
+					</section>
+				{/if}
+
+				<div class="pedia-catalog-groups stack overflow" role="list">
+					{#each groupedCatalogEntries as group (group.author)}
+						{@const overview = buildAuthorOverview(group.author, group.entries)}
+						<section class="pedia-catalog-group stack" id={authorHeadingId(group.author)} aria-label={`Civs by ${group.author}`}>
+							<article class="pedia-author-overview stack" style={creditCardStyle(group.author)}>
+								<div class="inline between flex-wrap half align-start">
+									<div class="stack quarter">
+										<h3 class="section-title">{group.author}</h3>
+										<p class="card-copy">{overview.blurb}</p>
+									</div>
+								</div>
+
+								<!-- {#if overview.collections.length}
+									<div class="stack quarter">
+										<p class="eyebrow">Collections</p>
+										<div class="pedia-category-cloud">
+											{#each overview.collections as collection (collection.id)}
+												{@const collectionTarget = authorCollectionTarget(collection)}
+												{#if collectionTarget}
+													<button type="button" class="pedia-category-chip" onclick={() => navigate?.(collectionPath(collectionTarget))}>
+														<span>{collection.title}</span>
+														<strong>{collectionEntryCount(collectionTarget)}</strong>
+													</button>
+												{:else}
+													<span class="pedia-category-chip is-static">
+														<span>{collection.title}</span>
+													</span>
+												{/if}
+											{/each}
+										</div>
+									</div>
+								{/if}
+
+								{#if overview.categories.length}
+									<div class="stack quarter">
+										<p class="eyebrow">Themes</p>
+										<div class="pedia-category-cloud">
+											{#each overview.categories as category (category.id)}
+												{@const categoryTarget = authorCategoryTarget(category)}
+												{#if categoryTarget}
+													<button type="button" class="pedia-category-chip" onclick={() => navigate?.(categoryPath(categoryTarget))}>
+														<span>{category.title}</span>
+														<strong>{categoryTarget.entries.length}</strong>
+													</button>
+												{:else}
+													<span class="pedia-category-chip is-static">
+														<span>{category.title}</span>
+													</span>
+												{/if}
+											{/each}
+										</div>
+									</div>
+								{/if} -->
+
+								{#if overview.links.length}
+									<div class="pedia-link-row inline half flex-wrap">
+										{#each overview.links as link (`${group.author}-${link.href}`)}
+											<a class="pedia-button pedia-button-secondary" href={link.href} target="_blank" rel="noreferrer">{link.label}</a>
+										{/each}
+									</div>
+								{/if}
+
+								<details class="pedia-author-civs-accordion" id={authorAccordionId(group.author)}>
+									<summary class="pedia-author-civs-summary">
+										<div class="inline between flex-wrap half align-center">
+											<strong class="card-title">Browse {group.author}'s Civs</strong>
+											<span class="card-copy">{group.entries.length} mod{group.entries.length === 1 ? "" : "s"}</span>
+										</div>
+									</summary>
+
+									<div class="pedia-catalog-entry-list stack margin-block-start-half" role="list">
+										{#each group.entries as entry (entry.id)}
+											{@const collections = entryCollections(entry)}
+											<div role="listitem">
+												<button type="button" class="pedia-catalog-row" style={catalogRowStyle(entry)} onclick={() => selectEntry(entry.id)}>
+													{#if collections.length}
+														<div class="pedia-catalog-row-meta">
+															<div class="pedia-catalog-collection-pills">
+																{#each collections as collection (`${entry.id}-${collection.id}-row`)}
+																	<span class="pedia-catalog-collection-pill" style={entryCollectionPillStyle(collection)}>{collection.title}</span>
+																{/each}
+															</div>
+														</div>
+													{/if}
+													<div class="pedia-catalog-row-main">
+														<div class="pedia-catalog-icon-wrap">
+															<div class="pedia-catalog-icon">
+																{#if hasWorkingImage(entry.presentation?.iconImageUrl)}
+																	<img
+																		src={entry.presentation.iconImageUrl}
+																		alt={`${entry.title} icon`}
+																		loading="lazy"
+																		referrerpolicy="no-referrer"
+																		onerror={() => markImageFailed(entry.presentation.iconImageUrl)}
+																	/>
+																{:else}
+																	<span>{entryInitials(entry)}</span>
+																{/if}
+															</div>
+														</div>
+
+														<div class="pedia-catalog-identity fit-content stack quarter">
+															<div class="stack quarter">
+																<p class="eyebrow">Civilization</p>
+																<h3 class="pedia-catalog-civ-title">{entry.title}</h3>
+															</div>
+															<div class="pedia-catalog-meta inline half flex-wrap">
+																<span class="text-lg"><strong>Leader</strong> <span class="leader-name">{entry.leader || "Unknown"}</span></span>
+																{#if entry.capital}
+																	<span><strong>Capital</strong> {entry.capital}</span>
+																{/if}
+															</div>
+														</div>
+													</div>
+
+													<div class="pedia-catalog-row-details">
+														<article class="pedia-catalog-detail-card stack quarter">
+															<p class="eyebrow">Unique Ability</p>
+															<strong class="text-nowrap">{catalogComponent(entry, 0)}</strong>
+															<!-- {#if catalogUnique(entry, 0)?.body}
+																<PediaInlineText
+																	as="p"
+																	className="card-copy"
+																	text={catalogUnique(entry, 0).body}
+																	templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 0)?.templateRefs || [])}
+																/>
+															{:else if catalogUnique(entry, 0)?.bullets?.length}
+																<ul class="pedia-catalog-bullet-list">
+																	{#each catalogUnique(entry, 0).bullets as bullet (`${entry.id}-0-${bullet}`)}
+																		<li><PediaInlineText text={bullet} templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 0)?.templateRefs || [])} /></li>
+																	{/each}
+																</ul>
+															{/if} -->
+														</article>
+														<article class="pedia-catalog-detail-card stack quarter">
+															<p class="eyebrow">{catalogComponentTypeLabel(entry, 1)}</p>
+															<strong class="text-nowrap">{catalogComponent(entry, 1)}</strong>
+															<!-- {#if catalogUnique(entry, 1)?.body}
+																<PediaInlineText
+																	as="p"
+																	className="card-copy"
+																	text={catalogUnique(entry, 1).body}
+																	templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 1)?.templateRefs || [])}
+																/>
+															{:else if catalogUnique(entry, 1)?.bullets?.length}
+																<ul class="pedia-catalog-bullet-list">
+																	{#each catalogUnique(entry, 1).bullets as bullet (`${entry.id}-1-${bullet}`)}
+																		<li><PediaInlineText text={bullet} templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 1)?.templateRefs || [])} /></li>
+																	{/each}
+																</ul>
+															{/if} -->
+														</article>
+														<article class="pedia-catalog-detail-card stack quarter">
+															<p class="eyebrow">{catalogComponentTypeLabel(entry, 2)}</p>
+															<strong class="text-nowrap">{catalogComponent(entry, 2)}</strong>
+															<!-- {#if catalogUnique(entry, 2)?.body}
+																<PediaInlineText
+																	as="p"
+																	className="card-copy"
+																	text={catalogUnique(entry, 2).body}
+																	templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 2)?.templateRefs || [])}
+																/>
+															{:else if catalogUnique(entry, 2)?.bullets?.length}
+																<ul class="pedia-catalog-bullet-list">
+																	{#each catalogUnique(entry, 2).bullets as bullet (`${entry.id}-2-${bullet}`)}
+																		<li><PediaInlineText text={bullet} templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 2)?.templateRefs || [])} /></li>
+																	{/each}
+																</ul>
+															{/if} -->
+														</article>
+														<!-- <article class="pedia-catalog-detail-card pedia-catalog-notes-card stack quarter">
+															<p class="eyebrow">summary</p>
+															<PediaInlineText as="p" className="card-copy" text={entry.summary} templateRefs={entryTemplateRefs(entry)} />
+														</article>
+														{#if entry.notes}
+															<article class="pedia-catalog-detail-card pedia-catalog-notes-card stack quarter">
+																<p class="eyebrow">Notes</p>
+																<p class="card-copy">{entry.notes}</p>
+															</article>
+														{/if} -->
+													</div>
+												</button>
+											</div>
+										{/each}
+									</div>
+								</details>
+							</article>
 						</section>
 					{/each}
 				</div>
@@ -805,7 +1614,7 @@
 								<h3 class="section-title">Fandom Wiki Markup</h3>
 								<p class="section-copy">Paste a full fandom wiki page block here to generate both site JSON and regenerated wiki output.</p>
 							</div>
-							<div class="pedia-action-row">
+							<div class="inline">
 								<button type="button" class="pedia-button" onclick={convertWikiMarkup}>Convert Wiki Markup</button>
 							</div>
 						</div>
@@ -823,7 +1632,7 @@
 							<p class="eyebrow">Folder Import</p>
 							<h3 class="section-title">Scan Mod Folder</h3>
 							<p class="section-copy">Read civ mod files directly and generate the same pedia entry shape from the folder contents.</p>
-							<div class="pedia-action-row">
+							<div class="inline">
 								<button type="button" class="pedia-button pedia-button-secondary" onclick={triggerFolderImport} disabled={converterBusy}>Import Mod Folder</button>
 								<input bind:this={folderInputEl} class="pedia-hidden-input" type="file" webkitdirectory multiple onchange={handleFolderChange} />
 							</div>
@@ -841,10 +1650,10 @@
 							{#if convertedEntry}
 								<div class="pedia-preview-actions">
 									<span class="pedia-preview-kicker">{convertedEntrySource}</span>
-									<div class="pedia-action-row">
-										<button type="button" class="pedia-button" onclick={saveConvertedEntryToProject} disabled={converterBusy}>Save To Project</button>
-										<button type="button" class="pedia-button pedia-button-secondary" onclick={downloadConvertedJson}>Download JSON</button>
-										<button type="button" class="pedia-button pedia-button-secondary" onclick={downloadConvertedWiki}>Download Wiki Markup</button>
+									<div class="inline">
+										<button type="button" class="pedia-button" onclick={saveConvertedEntryToProject} disabled={converterBusy}>Upload</button>
+										<button type="button" class="pedia-button pedia-button-secondary" onclick={downloadConvertedJson}>Export JSON</button>
+										<button type="button" class="pedia-button pedia-button-secondary" onclick={downloadConvertedWiki}>Export Wiki Markup</button>
 									</div>
 								</div>
 							{/if}
@@ -876,6 +1685,275 @@
 					</div>
 				{/if}
 			</section>
+		{:else if activeView === "collection" && selectedCollection}
+			<div class="pedia-entry-toolbar">
+				<button type="button" class="pedia-button" onclick={showCatalog}>Back To Catalog</button>
+				<div class="pedia-link-row inline half flex-wrap">
+					<button type="button" class="pedia-button pedia-button-secondary" style={collectionCardStyle(selectedCollection)}>
+						{selectedCollection.title}
+					</button>
+				</div>
+			</div>
+
+			<section class="pedia-catalog-shell stack overflow-hidden" aria-label={`${selectedCollection.title} collection`}>
+				<div class="pedia-collection-hero stack half" style={collectionHeroStyle(selectedCollection)}>
+					<div class="inline between">
+						<p class="eyebrow">Collection</p>
+						<p class="section-copy">{selectedCollection.entries.length} member civ{selectedCollection.entries.length === 1 ? "" : "s"}</p>
+					</div>
+					<h2 class="section-title text-box-trim">{selectedCollection.title}</h2>
+					{#if selectedCollection.blurb}
+						<p class="section-copy text-bold">{selectedCollection.blurb}</p>
+					{/if}
+					{#if selectedCollection.links?.length}
+						<div class="pedia-link-row inline half flex-wrap">
+							{#each selectedCollection.links as link (`${selectedCollection.id}-${link.href}`)}
+								<a class="pedia-button pedia-button-secondary pedia-collection-link" style={collectionLinkStyle(selectedCollection)} href={link.href} target="_blank" rel="noreferrer">
+									{link.label}
+								</a>
+							{/each}
+						</div>
+					{/if}
+				</div>
+
+				<div class="pedia-catalog-entry-list stack" role="list">
+					{#each selectedCollection.entries as entry (entry.id)}
+						{@const collections = visibleEntryCollections(entry, selectedCollection.id)}
+						<div role="listitem">
+							<button type="button" class="pedia-catalog-row" style={catalogRowStyle(entry)} onclick={() => selectEntry(entry.id)}>
+								{#if collections.length}
+									<div class="pedia-catalog-row-meta">
+										<div class="pedia-catalog-collection-pills">
+											{#each collections as collection (`${entry.id}-${collection.id}-collection-row`)}
+												<span class="pedia-catalog-collection-pill" style={entryCollectionPillStyle(collection)}>{collection.title}</span>
+											{/each}
+										</div>
+									</div>
+								{/if}
+								<div class="pedia-catalog-row-main">
+									<div class="pedia-catalog-icon-wrap">
+										<div class="pedia-catalog-icon">
+											{#if hasWorkingImage(entry.presentation?.iconImageUrl)}
+												<img
+													src={entry.presentation.iconImageUrl}
+													alt={`${entry.title} icon`}
+													loading="lazy"
+													referrerpolicy="no-referrer"
+													onerror={() => markImageFailed(entry.presentation.iconImageUrl)}
+												/>
+											{:else}
+												<span>{entryInitials(entry)}</span>
+											{/if}
+										</div>
+									</div>
+
+									<div class="pedia-catalog-identity fit-content stack quarter">
+										<div class="stack quarter">
+											<p class="eyebrow">Civilization</p>
+											<h3 class="pedia-catalog-civ-title">{entry.title}</h3>
+										</div>
+										<div class="pedia-catalog-meta inline half flex-wrap">
+											<span class="text-lg"><strong>Leader</strong> <span class="leader-name">{entry.leader || "Unknown"}</span></span>
+											{#if entry.capital}
+												<span><strong>Capital</strong> {entry.capital}</span>
+											{/if}
+										</div>
+									</div>
+								</div>
+
+								<div class="pedia-catalog-row-details">
+									<article class="pedia-catalog-detail-card stack quarter">
+										<p class="eyebrow">Unique Ability</p>
+										<strong class="text-nowrap">{catalogComponent(entry, 0)}</strong>
+										<!-- {#if catalogUnique(entry, 0)?.body}
+											<PediaInlineText
+												as="p"
+												className="card-copy"
+												text={catalogUnique(entry, 0).body}
+												templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 0)?.templateRefs || [])}
+											/>
+										{:else if catalogUnique(entry, 0)?.bullets?.length}
+											<ul class="pedia-catalog-bullet-list">
+												{#each catalogUnique(entry, 0).bullets as bullet (`${entry.id}-collection-0-${bullet}`)}
+													<li><PediaInlineText text={bullet} templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 0)?.templateRefs || [])} /></li>
+												{/each}
+											</ul>
+										{/if} -->
+									</article>
+									<article class="pedia-catalog-detail-card stack quarter">
+										<p class="eyebrow">{catalogComponentTypeLabel(entry, 1)}</p>
+										<strong class="text-nowrap">{catalogComponent(entry, 1)}</strong>
+										<!-- {#if catalogUnique(entry, 1)?.body}
+											<PediaInlineText
+												as="p"
+												className="card-copy"
+												text={catalogUnique(entry, 1).body}
+												templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 1)?.templateRefs || [])}
+											/>
+										{:else if catalogUnique(entry, 1)?.bullets?.length}
+											<ul class="pedia-catalog-bullet-list">
+												{#each catalogUnique(entry, 1).bullets as bullet (`${entry.id}-collection-1-${bullet}`)}
+													<li><PediaInlineText text={bullet} templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 1)?.templateRefs || [])} /></li>
+												{/each}
+											</ul>
+										{/if} -->
+									</article>
+									<article class="pedia-catalog-detail-card stack quarter">
+										<p class="eyebrow">{catalogComponentTypeLabel(entry, 2)}</p>
+										<strong class="text-nowrap">{catalogComponent(entry, 2)}</strong>
+										<!-- {#if catalogUnique(entry, 2)?.body}
+											<PediaInlineText
+												as="p"
+												className="card-copy"
+												text={catalogUnique(entry, 2).body}
+												templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 2)?.templateRefs || [])}
+											/>
+										{:else if catalogUnique(entry, 2)?.bullets?.length}
+											<ul class="pedia-catalog-bullet-list">
+												{#each catalogUnique(entry, 2).bullets as bullet (`${entry.id}-collection-2-${bullet}`)}
+													<li><PediaInlineText text={bullet} templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 2)?.templateRefs || [])} /></li>
+												{/each}
+											</ul>
+										{/if} -->
+									</article>
+									<!-- <article class="pedia-catalog-detail-card pedia-catalog-notes-card stack quarter">
+										<p class="eyebrow">summary</p>
+										<PediaInlineText as="p" className="card-copy" text={entry.summary} templateRefs={entryTemplateRefs(entry)} />
+									</article> -->
+								</div>
+							</button>
+						</div>
+					{/each}
+				</div>
+			</section>
+		{:else if activeView === "category" && selectedCategory}
+			<div class="pedia-entry-toolbar">
+				<button type="button" class="pedia-button" onclick={showCatalog}>Back To Catalog</button>
+				<div class="pedia-link-row inline half flex-wrap">
+					<span class="pedia-category-chip is-static">
+						<span>{selectedCategory.title}</span>
+						<strong>{selectedCategory.entries.length}</strong>
+					</span>
+				</div>
+			</div>
+
+			<section class="pedia-catalog-shell stack overflow-hidden" aria-label={`${selectedCategory.title} category`}>
+				<div class="stack half">
+					<p class="eyebrow">Category</p>
+					<h2 class="section-title">{selectedCategory.title}</h2>
+					<p class="section-copy">{selectedCategory.entries.length} civ{selectedCategory.entries.length === 1 ? "" : "s"} tagged with this category.</p>
+				</div>
+
+				<div class="pedia-catalog-entry-list stack" role="list">
+					{#each selectedCategory.entries as entry (entry.id)}
+						{@const collections = entryCollections(entry)}
+						<div role="listitem">
+							<button type="button" class="pedia-catalog-row" style={catalogRowStyle(entry)} onclick={() => selectEntry(entry.id)}>
+								{#if collections.length}
+									<div class="pedia-catalog-row-meta">
+										<div class="pedia-catalog-collection-pills">
+											{#each collections as collection (`${entry.id}-${collection.id}-category-row`)}
+												<span class="pedia-catalog-collection-pill" style={entryCollectionPillStyle(collection)}>{collection.title}</span>
+											{/each}
+										</div>
+									</div>
+								{/if}
+								<div class="pedia-catalog-row-main">
+									<div class="pedia-catalog-icon-wrap">
+										<div class="pedia-catalog-icon">
+											{#if hasWorkingImage(entry.presentation?.iconImageUrl)}
+												<img
+													src={entry.presentation.iconImageUrl}
+													alt={`${entry.title} icon`}
+													loading="lazy"
+													referrerpolicy="no-referrer"
+													onerror={() => markImageFailed(entry.presentation.iconImageUrl)}
+												/>
+											{:else}
+												<span>{entryInitials(entry)}</span>
+											{/if}
+										</div>
+									</div>
+
+									<div class="pedia-catalog-identity fit-content stack quarter">
+										<div class="stack quarter">
+											<p class="eyebrow">Civilization</p>
+											<h3 class="pedia-catalog-civ-title">{entry.title}</h3>
+										</div>
+										<div class="pedia-catalog-meta inline half flex-wrap">
+											<span class="text-lg"><strong>Leader</strong> <span class="leader-name">{entry.leader || "Unknown"}</span></span>
+											{#if entry.capital}
+												<span><strong>Capital</strong> {entry.capital}</span>
+											{/if}
+										</div>
+									</div>
+								</div>
+
+								<div class="pedia-catalog-row-details">
+									<article class="pedia-catalog-detail-card stack quarter">
+										<p class="eyebrow">Unique Ability</p>
+										<strong class="text-nowrap">{catalogComponent(entry, 0)}</strong>
+										<!-- {#if catalogUnique(entry, 0)?.body}
+											<PediaInlineText
+												as="p"
+												className="card-copy"
+												text={catalogUnique(entry, 0).body}
+												templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 0)?.templateRefs || [])}
+											/>
+										{:else if catalogUnique(entry, 0)?.bullets?.length}
+											<ul class="pedia-catalog-bullet-list">
+												{#each catalogUnique(entry, 0).bullets as bullet (`${entry.id}-category-0-${bullet}`)}
+													<li><PediaInlineText text={bullet} templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 0)?.templateRefs || [])} /></li>
+												{/each}
+											</ul>
+										{/if} -->
+									</article>
+									<article class="pedia-catalog-detail-card stack quarter">
+										<p class="eyebrow">{catalogComponentTypeLabel(entry, 1)}</p>
+										<strong class="text-nowrap">{catalogComponent(entry, 1)}</strong>
+										<!-- {#if catalogUnique(entry, 1)?.body}
+											<PediaInlineText
+												as="p"
+												className="card-copy"
+												text={catalogUnique(entry, 1).body}
+												templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 1)?.templateRefs || [])}
+											/>
+										{:else if catalogUnique(entry, 1)?.bullets?.length}
+											<ul class="pedia-catalog-bullet-list">
+												{#each catalogUnique(entry, 1).bullets as bullet (`${entry.id}-category-1-${bullet}`)}
+													<li><PediaInlineText text={bullet} templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 1)?.templateRefs || [])} /></li>
+												{/each}
+											</ul>
+										{/if} -->
+									</article>
+									<article class="pedia-catalog-detail-card stack quarter">
+										<p class="eyebrow">{catalogComponentTypeLabel(entry, 2)}</p>
+										<strong class="text-nowrap">{catalogComponent(entry, 2)}</strong>
+										<!-- {#if catalogUnique(entry, 2)?.body}
+											<PediaInlineText
+												as="p"
+												className="card-copy"
+												text={catalogUnique(entry, 2).body}
+												templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 2)?.templateRefs || [])}
+											/>
+										{:else if catalogUnique(entry, 2)?.bullets?.length}
+											<ul class="pedia-catalog-bullet-list">
+												{#each catalogUnique(entry, 2).bullets as bullet (`${entry.id}-category-2-${bullet}`)}
+													<li><PediaInlineText text={bullet} templateRefs={entryTemplateRefs(entry, catalogUnique(entry, 2)?.templateRefs || [])} /></li>
+												{/each}
+											</ul>
+										{/if} -->
+									</article>
+									<!-- <article class="pedia-catalog-detail-card pedia-catalog-notes-card stack quarter">
+										<p class="eyebrow">Summary</p>
+										<PediaInlineText as="p" className="card-copy" text={entry.summary} templateRefs={entryTemplateRefs(entry)} />
+									</article> -->
+								</div>
+							</button>
+						</div>
+					{/each}
+				</div>
+			</section>
 		{:else if selectedEntry}
 			<div class="pedia-entry-toolbar">
 				<button type="button" class="pedia-button" onclick={showCatalog}>Back To Catalog</button>
@@ -890,7 +1968,7 @@
 
 			<article class="pedia-wiki">
 				<header class="pedia-wiki-header">
-					<div class="inline">
+					<div class="pedia-wiki-header-row inline">
 						<div class="civ-icon">
 							{#if hasWorkingImage(selectedEntry.presentation?.iconImageUrl)}
 								<img
@@ -910,7 +1988,7 @@
 						<div class="stack quarter">
 							<!-- <p class="eyebrow">Entry</p> -->
 							<h2 class="section-title">{selectedEntry.title}</h2>
-							<p class="section-copy">{entryDisplaySummary(selectedEntry)}</p>
+							<PediaInlineText as="p" className="section-copy" text={entryDisplaySummary(selectedEntry)} templateRefs={entryTemplateRefs(selectedEntry)} />
 						</div>
 					</div>
 				</header>
@@ -958,7 +2036,12 @@
 									{#if proseNeedsDisclosure(selectedEntry.overview.civilization.body)}
 										<details class="pedia-prose-disclosure">
 											<summary class="pedia-prose-summary">
-												<span class="card-copy pedia-prose-clamp">{sanitizePediaProse(selectedEntry.overview.civilization.body)}</span>
+												<PediaInlineText
+													as="span"
+													className="card-copy pedia-prose-clamp"
+													text={sanitizePediaProse(selectedEntry.overview.civilization.body)}
+													templateRefs={entryTemplateRefs(selectedEntry)}
+												/>
 												<span class="pedia-prose-toggle-row">
 													<span class="pedia-prose-toggle-more">More</span>
 													<span class="pedia-prose-toggle-less">Less</span>
@@ -968,7 +2051,7 @@
 											<div class="pedia-prose-expanded">
 												<div class="pedia-prose-paragraphs">
 													{#each proseParagraphs(selectedEntry.overview.civilization.body) as paragraph, index (`${selectedEntry.id}-overview-civ-${index}`)}
-														<p class="card-copy">{paragraph}</p>
+														<PediaInlineText as="p" className="card-copy" text={paragraph} templateRefs={entryTemplateRefs(selectedEntry)} />
 													{/each}
 												</div>
 											</div>
@@ -977,7 +2060,7 @@
 										<div class="pedia-prose-paragraphs">
 											{#if proseParagraphs(selectedEntry.overview.civilization.body).length}
 												{#each proseParagraphs(selectedEntry.overview.civilization.body) as paragraph, index (`${selectedEntry.id}-overview-civ-short-${index}`)}
-													<p class="card-copy">{paragraph}</p>
+													<PediaInlineText as="p" className="card-copy" text={paragraph} templateRefs={entryTemplateRefs(selectedEntry)} />
 												{/each}
 											{:else}
 												<p class="card-copy">No civilization overview yet.</p>
@@ -990,7 +2073,12 @@
 									{#if proseNeedsDisclosure(selectedEntry.overview.leader.body)}
 										<details class="pedia-prose-disclosure">
 											<summary class="pedia-prose-summary">
-												<span class="card-copy pedia-prose-clamp">{sanitizePediaProse(selectedEntry.overview.leader.body)}</span>
+												<PediaInlineText
+													as="span"
+													className="card-copy pedia-prose-clamp"
+													text={sanitizePediaProse(selectedEntry.overview.leader.body)}
+													templateRefs={entryTemplateRefs(selectedEntry)}
+												/>
 												<span class="pedia-prose-toggle-row">
 													<span class="pedia-prose-toggle-more">More</span>
 													<span class="pedia-prose-toggle-less">Less</span>
@@ -1000,7 +2088,7 @@
 											<div class="pedia-prose-expanded">
 												<div class="pedia-prose-paragraphs">
 													{#each proseParagraphs(selectedEntry.overview.leader.body) as paragraph, index (`${selectedEntry.id}-overview-leader-${index}`)}
-														<p class="card-copy">{paragraph}</p>
+														<PediaInlineText as="p" className="card-copy" text={paragraph} templateRefs={entryTemplateRefs(selectedEntry)} />
 													{/each}
 												</div>
 											</div>
@@ -1009,7 +2097,7 @@
 										<div class="pedia-prose-paragraphs">
 											{#if proseParagraphs(selectedEntry.overview.leader.body).length}
 												{#each proseParagraphs(selectedEntry.overview.leader.body) as paragraph, index (`${selectedEntry.id}-overview-leader-short-${index}`)}
-													<p class="card-copy">{paragraph}</p>
+													<PediaInlineText as="p" className="card-copy" text={paragraph} templateRefs={entryTemplateRefs(selectedEntry)} />
 												{/each}
 											{:else}
 												<p class="card-copy">No leader overview yet.</p>
@@ -1022,7 +2110,7 @@
 
 						<section class="pedia-wiki-section" id="dawn-of-man">
 							<h3 class="section-title">Dawn of Man</h3>
-							<div class="inline align-start">
+							<div class="pedia-dawn-layout inline align-start">
 								{#if hasWorkingImage(selectedEntry.presentation?.leaderSceneImageUrl)}
 									<figure class="pedia-figure-card">
 										<img
@@ -1040,7 +2128,12 @@
 									{#if proseNeedsDisclosure(selectedEntry.dawnOfMan.blessing)}
 										<details class="pedia-prose-disclosure">
 											<summary class="pedia-prose-summary">
-												<span class="card-copy pedia-prose-clamp">{sanitizePediaProse(selectedEntry.dawnOfMan.blessing)}</span>
+												<PediaInlineText
+													as="span"
+													className="card-copy pedia-prose-clamp"
+													text={sanitizePediaProse(selectedEntry.dawnOfMan.blessing)}
+													templateRefs={entryTemplateRefs(selectedEntry)}
+												/>
 												<span class="pedia-prose-toggle-row">
 													<span class="pedia-prose-toggle-more">More</span>
 													<span class="pedia-prose-toggle-less">Less</span>
@@ -1050,7 +2143,7 @@
 											<div class="pedia-prose-expanded">
 												<div class="pedia-prose-paragraphs">
 													{#each proseParagraphs(selectedEntry.dawnOfMan.blessing) as paragraph, index (`${selectedEntry.id}-dom-${index}`)}
-														<p class="card-copy">{paragraph}</p>
+														<PediaInlineText as="p" className="card-copy" text={paragraph} templateRefs={entryTemplateRefs(selectedEntry)} />
 													{/each}
 												</div>
 											</div>
@@ -1059,15 +2152,24 @@
 										<div class="pedia-prose-paragraphs">
 											{#if proseParagraphs(selectedEntry.dawnOfMan.blessing).length}
 												{#each proseParagraphs(selectedEntry.dawnOfMan.blessing) as paragraph, index (`${selectedEntry.id}-dom-short-${index}`)}
-													<p class="card-copy">{paragraph}</p>
+													<PediaInlineText as="p" className="card-copy" text={paragraph} templateRefs={entryTemplateRefs(selectedEntry)} />
 												{/each}
 											{:else}
 												<p class="card-copy">No blessing text yet.</p>
 											{/if}
 										</div>
 									{/if}
-									<p class="card-copy"><strong>Introduction:</strong> {sanitizePediaProse(selectedEntry.dawnOfMan.introduction) || "No introduction text yet."}</p>
-									<p class="card-copy"><strong>Defeat:</strong> {sanitizePediaProse(selectedEntry.dawnOfMan.defeat) || "No defeat text yet."}</p>
+									<p class="card-copy">
+										<strong>Introduction:</strong>
+										<PediaInlineText
+											text={sanitizePediaProse(selectedEntry.dawnOfMan.introduction) || "No introduction text yet."}
+											templateRefs={entryTemplateRefs(selectedEntry)}
+										/>
+									</p>
+									<p class="card-copy">
+										<strong>Defeat:</strong>
+										<PediaInlineText text={sanitizePediaProse(selectedEntry.dawnOfMan.defeat) || "No defeat text yet."} templateRefs={entryTemplateRefs(selectedEntry)} />
+									</p>
 								</div>
 							</div>
 						</section>
@@ -1102,12 +2204,17 @@
 												<p class="card-copy"><strong>Replaces:</strong> {unique.replaces}</p>
 											{/if} -->
 											{#if unique.body}
-												<p class="card-copy">{sanitizePediaProse(unique.body)}</p>
+												<PediaInlineText
+													as="p"
+													className="card-copy"
+													text={sanitizePediaProse(unique.body)}
+													templateRefs={entryTemplateRefs(selectedEntry, unique.templateRefs || [])}
+												/>
 											{/if}
 											{#if unique.bullets.length}
 												<ul class="pedia-list-copy">
 													{#each unique.bullets as bullet (`${unique.name}-${bullet}`)}
-														<li>{sanitizePediaProse(bullet)}</li>
+														<li><PediaInlineText text={sanitizePediaProse(bullet)} templateRefs={entryTemplateRefs(selectedEntry, unique.templateRefs || [])} /></li>
 													{/each}
 												</ul>
 											{/if}
@@ -1123,13 +2230,22 @@
 													</div>
 												</details>
 											{/if}
+											{#if unresolvedTemplateRefs(entryTemplateRefs(selectedEntry, unique.templateRefs || [])).length}
+												<div class="pedia-template-ref-row inline half flex-wrap">
+													{#each unresolvedTemplateRefs(entryTemplateRefs(selectedEntry, unique.templateRefs || [])) as reference (`${selectedEntry.id}-${unique.name}-${reference.href}`)}
+														<a class="pedia-template-ref" href={reference.href} target="_blank" rel="noreferrer">
+															{reference.label}
+														</a>
+													{/each}
+												</div>
+											{/if}
 										</div>
 									</article>
 								{/each}
 							</div>
 						</section>
 
-						<div class="inline align-start" style="gap: 2rem">
+						<div class="pedia-entry-support-grid inline align-start">
 							<section class="pedia-wiki-section" id="name-lists">
 								<h3 class="section-title">Lists</h3>
 								<div class="pedia-name-lists inline align-start">
@@ -1198,6 +2314,264 @@
 								{/each}
 							</div>
 						</section>
+
+						{#if entryCollections(selectedEntry).length || canEdit}
+							<section class="pedia-wiki-section" id="collections">
+								<h3 class="section-title">Part of Collection</h3>
+								{#if entryCollections(selectedEntry).length}
+									<div class="pedia-collection-grid">
+										{#each entryCollections(selectedEntry) as collection (`${selectedEntry.id}-${collection.id}`)}
+											<button type="button" class="pedia-collection-card" style={collectionCardStyle(collection)} onclick={() => navigate?.(collectionPath(collection))}>
+												<div class="inline between">
+													<p class="eyebrow">Collection</p>
+													<!-- <p class="card-copy">{collectionEntryCount(collection)} member{collectionEntryCount(collection) === 1 ? "" : "s"}</p> -->
+												</div>
+												<strong class="card-title text-xl">{collection.title}</strong>
+											</button>
+										{/each}
+									</div>
+								{:else}
+									<p class="card-copy">No collection memberships listed yet.</p>
+								{/if}
+
+								{#if canEdit}
+									<div class="pedia-link-row">
+										<button type="button" class="pedia-button pedia-button-secondary" onclick={toggleCollectionEditor}>
+											{collectionEditorOpen ? "Hide Editor" : "Edit Memberships"}
+										</button>
+									</div>
+
+									{#if collectionEditorOpen}
+										<div class="pedia-collection-editor stack half">
+											<p class="eyebrow">Editor</p>
+											<p class="card-copy">Manually add civ to existing or new collections.</p>
+
+											{#if collectionEditorDraft.length}
+												<div class="pedia-category-cloud">
+													{#each collectionEditorDraft as collection (`${selectedEntry.id}-draft-${collection.id}`)}
+														<button type="button" class="pedia-category-chip" onclick={() => removeCollectionFromDraft(collection.id)}>
+															<span>{collection.title}</span>
+															<strong>Remove</strong>
+														</button>
+													{/each}
+												</div>
+											{:else}
+												<p class="card-copy">No saved collection overrides yet.</p>
+											{/if}
+
+											<div class="pedia-action-row">
+												<select class="pedia-select" bind:value={collectionEditorSelection}>
+													<option value="">Select collection…</option>
+													{#each availableCollectionOptions as collection (collection.id)}
+														<option value={collection.id}>{collection.title}</option>
+													{/each}
+												</select>
+												<div class="width-full inline">
+													<button type="button" class="pedia-button pedia-button-secondary" onclick={addCollectionToDraft} disabled={!collectionEditorSelection}>
+														Add Collection
+													</button>
+													<button type="button" class="pedia-button" onclick={saveCollectionMemberships}>Save</button>
+													<button type="button" class="pedia-button pedia-button-secondary margin-inline-start-auto" onclick={toggleCollectionCreator}>
+														{collectionCreatorOpen ? "Cancel New Collection" : "Create New Collection"}
+													</button>
+												</div>
+											</div>
+
+											{#if collectionCreatorOpen}
+												<div class="pedia-collection-editor stack margin-block-start">
+													<div class="pedia-preview-grid">
+														<label class="stack quarter">
+															<span class="eyebrow">Title</span>
+															<input class="pedia-field" type="text" bind:value={newCollectionTitle} placeholder="Land of Snows" />
+														</label>
+														<label class="stack quarter">
+															<span class="eyebrow">Id</span>
+															<input class="pedia-field" type="text" bind:value={newCollectionId} placeholder="land-of-snows" />
+														</label>
+														<label class="stack quarter">
+															<span class="eyebrow">Accent</span>
+															<div class="pedia-color-field">
+																<div class="pedia-color-picker-row">
+																	<div class="pedia-color-swatch-control relative overflow-hidden">
+																		<input
+																			type="color"
+																			value={colorInputValue(newCollectionAccent, "#FAD587")}
+																			oninput={(event) => updateNewCollectionColor("accent", event.currentTarget.value)}
+																			onchange={(event) => updateNewCollectionColor("accent", event.currentTarget.value)}
+																			aria-label="Collection accent color"
+																		/>
+																		<span class="pedia-color-preview" style={`--preview:${newCollectionAccentDisplay.hex}`} aria-hidden="true"></span>
+																	</div>
+																	<input
+																		class="pedia-field pedia-color-hex-input uppercase"
+																		type="text"
+																		inputmode="text"
+																		spellcheck="false"
+																		bind:value={newCollectionAccent}
+																		placeholder="#FAD587"
+																		oninput={(event) => updateNewCollectionColor("accent", event.currentTarget.value)}
+																	/>
+																</div>
+																<div class="pedia-color-values">
+																	<span class="pedia-color-value">HEX {newCollectionAccentDisplay.hex}</span>
+																	<span class="pedia-color-value">RGB {newCollectionAccentDisplay.rgb}</span>
+																	<span class="pedia-color-value">HSL {newCollectionAccentDisplay.hsl}</span>
+																</div>
+															</div>
+														</label>
+														<label class="stack quarter">
+															<span class="eyebrow">Background</span>
+															<div class="pedia-color-field">
+																<div class="pedia-color-picker-row">
+																	<div class="pedia-color-swatch-control relative overflow-hidden">
+																		<input
+																			type="color"
+																			value={colorInputValue(newCollectionBackground, "#7E2222")}
+																			oninput={(event) => updateNewCollectionColor("background", event.currentTarget.value)}
+																			onchange={(event) => updateNewCollectionColor("background", event.currentTarget.value)}
+																			aria-label="Collection background color"
+																		/>
+																		<span class="pedia-color-preview" style={`--preview:${newCollectionBackgroundDisplay.hex}`} aria-hidden="true"></span>
+																	</div>
+																	<input
+																		class="pedia-field pedia-color-hex-input uppercase"
+																		type="text"
+																		inputmode="text"
+																		spellcheck="false"
+																		bind:value={newCollectionBackground}
+																		placeholder="#7E2222"
+																		oninput={(event) => updateNewCollectionColor("background", event.currentTarget.value)}
+																	/>
+																</div>
+																<div class="pedia-color-values">
+																	<span class="pedia-color-value">HEX {newCollectionBackgroundDisplay.hex}</span>
+																	<span class="pedia-color-value">RGB {newCollectionBackgroundDisplay.rgb}</span>
+																	<span class="pedia-color-value">HSL {newCollectionBackgroundDisplay.hsl}</span>
+																</div>
+															</div>
+														</label>
+													</div>
+
+													<label class="stack quarter">
+														<span class="eyebrow">Source Template <span class="normal">(need same name for linking future Fandom imports)</span></span>
+														<input class="pedia-field" type="text" bind:value={newCollectionSourceTemplate} placeholder="LandofSnowsNav" />
+													</label>
+
+													<label class="stack quarter">
+														<span class="eyebrow">Aliases</span>
+														<textarea
+															class="pedia-field pedia-textarea-compact"
+															bind:value={newCollectionAliases}
+															rows="4"
+															placeholder="One alias per line or comma separated"
+														></textarea>
+													</label>
+
+													<div class="inline start">
+														<button type="button" class="pedia-button pedia-button-secondary" onclick={toggleCollectionCreator}> Cancel </button>
+														<button type="button" class="pedia-button" onclick={createCollectionDefinition}>Save New Collection</button>
+													</div>
+												</div>
+											{/if}
+
+											{#if collectionEditorStatus}
+												<p class="pedia-status">{collectionEditorStatus}</p>
+											{/if}
+										</div>
+									{/if}
+								{/if}
+							</section>
+						{/if}
+
+						{#if entryCategories(selectedEntry).length || canEdit}
+							<section class="pedia-wiki-section" id="categories">
+								<h3 class="section-title">Categories</h3>
+								{#if entryCategories(selectedEntry).length}
+									<div class="pedia-category-cloud">
+										{#each entryCategories(selectedEntry) as category (`${selectedEntry.id}-${category.id}`)}
+											<button type="button" class="pedia-category-chip" onclick={() => navigate?.(categoryPath(category))}>
+												<span>{category.title}</span>
+											</button>
+										{/each}
+									</div>
+								{:else}
+									<p class="card-copy">No browsable categories listed yet.</p>
+								{/if}
+
+								{#if canEdit}
+									<!-- <div class="pedia-link-row">
+										<button type="button" class="pedia-button pedia-button-secondary" onclick={toggleCategoryEditor}>
+											{categoryEditorOpen ? "Hide Editor" : "Edit Categories"}
+										</button>
+									</div> -->
+
+									{#if categoryEditorOpen}
+										<div class="pedia-collection-editor stack half">
+											<p class="eyebrow">Editor</p>
+											<p class="card-copy">
+												Edit the raw category tags for this entry. Author tags, collection duplicates, and some generic tags may still stay hidden from the public category
+												browser.
+											</p>
+
+											{#if categoryEditorDraft.length}
+												<div class="pedia-category-cloud">
+													{#each categoryEditorDraft as category (`${selectedEntry.id}-category-draft-${category}`)}
+														<button type="button" class="pedia-category-chip" onclick={() => removeCategoryFromDraft(category)}>
+															<span>{category}</span>
+															<strong>Remove</strong>
+														</button>
+													{/each}
+												</div>
+											{:else}
+												<p class="card-copy">No categories saved on this entry yet.</p>
+											{/if}
+
+											<div class="pedia-category-editor-input-row">
+												<label class="stack quarter">
+													<span class="eyebrow">Add Category</span>
+													<input
+														class="pedia-field"
+														type="text"
+														list="pedia-category-options"
+														bind:value={categoryEditorInput}
+														placeholder="Plains Cultures"
+														onkeydown={(event) => {
+															if (event.key === "Enter") {
+																event.preventDefault();
+																addCategoryToDraft();
+															}
+														}}
+													/>
+												</label>
+												<div class="inline align-end half flex-wrap">
+													<button
+														type="button"
+														class="pedia-button pedia-button-secondary"
+														onclick={addCategoryToDraft}
+														disabled={!normalizeCategoryValue(categoryEditorInput)}
+													>
+														Add Category
+													</button>
+													<button type="button" class="pedia-button" onclick={saveCategoryAssignments}>Save</button>
+												</div>
+											</div>
+
+											{#if availableCategoryOptions.length}
+												<datalist id="pedia-category-options">
+													{#each availableCategoryOptions as category (category)}
+														<option value={category}></option>
+													{/each}
+												</datalist>
+											{/if}
+
+											{#if categoryEditorStatus}
+												<p class="pedia-status">{categoryEditorStatus}</p>
+											{/if}
+										</div>
+									{/if}
+								{/if}
+							</section>
+						{/if}
 
 						<section class="pedia-wiki-section" id="more-by-author">
 							<h3 class="section-title">More by Author</h3>
@@ -1302,7 +2676,7 @@
 							{#each infoboxRows(selectedEntry) as row (row.label)}
 								<div class="pedia-infobox-row">
 									<strong>{row.label}</strong>
-									<span>{row.value}</span>
+									<span><PediaInlineText text={row.value} templateRefs={infoboxRowTemplateRefs(selectedEntry, row)} /></span>
 								</div>
 							{/each}
 						</div>
@@ -1410,6 +2784,27 @@
 		gap: 0.75rem;
 	}
 
+	.pedia-wiki-header-row {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		gap: 1.5rem;
+		align-items: center;
+	}
+
+	.civ-icon {
+		display: grid;
+		place-items: center;
+		inline-size: clamp(6rem, 10vw, 8rem);
+		block-size: clamp(6rem, 10vw, 8rem);
+		overflow: hidden;
+	}
+
+	.civ-icon img {
+		inline-size: 100%;
+		block-size: 100%;
+		object-fit: contain;
+	}
+
 	.pedia-wiki-header h2 {
 		font-size: 2.5rem;
 	}
@@ -1452,9 +2847,10 @@
 
 	.pedia-action-row {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.6rem;
+		flex-direction: column;
 		align-items: center;
+		flex-wrap: wrap;
+		gap: 1rem;
 	}
 
 	.pedia-hidden-input {
@@ -1478,6 +2874,95 @@
 		padding: 1rem;
 		overflow: auto;
 		resize: vertical;
+	}
+
+	.pedia-field,
+	.pedia-select {
+		inline-size: 100%;
+		max-inline-size: 100%;
+		color: var(--ink);
+		font: inherit;
+		line-height: 1.4;
+		background: color-mix(in srgb, var(--input-bg) 94%, black 6%);
+		box-shadow: inset 0 1px 0 color-mix(in srgb, white 6%, transparent);
+		border: 1px solid color-mix(in srgb, var(--pedia-accent) 24%, var(--border-color));
+		border-radius: 0.95rem;
+		min-inline-size: min(100%, 18rem);
+		padding: 0.7rem 0.9rem;
+	}
+
+	.pedia-textarea-compact {
+		min-block-size: 6rem;
+		max-block-size: 10rem;
+		resize: vertical;
+	}
+
+	.pedia-color-field {
+		display: grid;
+		gap: 0.35rem;
+	}
+
+	.pedia-color-picker-row {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		min-inline-size: 0;
+	}
+
+	.pedia-color-swatch-control {
+		inline-size: 2rem;
+		block-size: 2rem;
+		min-inline-size: 2rem;
+		flex: 0 0 2rem;
+		border-radius: 0.45rem;
+
+		& input[type="color"] {
+			position: absolute;
+			inset: 0;
+			z-index: 2;
+			inline-size: 100%;
+			block-size: 100%;
+			opacity: 0;
+			background: transparent;
+			border: 0;
+			padding: 0;
+			margin: 0;
+			cursor: pointer;
+			-webkit-appearance: none;
+			appearance: none;
+		}
+	}
+
+	.pedia-color-preview {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		display: block;
+		background: var(--preview, #000);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, white 30%, transparent);
+		border: 1px solid var(--border-color);
+		border-radius: inherit;
+		pointer-events: none;
+	}
+
+	.pedia-color-hex-input {
+		min-inline-size: 0;
+		flex: 1;
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	}
+
+	.pedia-color-values {
+		display: grid;
+		gap: 0.12rem;
+		user-select: text;
+	}
+
+	.pedia-color-value {
+		color: var(--muted-ink);
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.74rem;
+		line-height: 1.2;
+		overflow-wrap: anywhere;
 	}
 
 	.pedia-preview-actions {
@@ -1508,16 +2993,119 @@
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
+	.pedia-collection-hero {
+		--collection-accent: var(--pedia-accent);
+		--collection-background: var(--pedia-panel-soft);
+		--collection-hero-image: none;
+		position: relative;
+		padding: 2rem 1.15rem;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--collection-accent) 26%, transparent) 0%, transparent 42%),
+			linear-gradient(145deg, color-mix(in srgb, var(--collection-background) 82%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--collection-background) 28%, #16110f) 100%);
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--collection-accent) 34%, var(--border-color)),
+			var(--pedia-shadow-soft);
+		border-radius: 1rem;
+		overflow: clip;
+	}
+
+	/*.pedia-collection-hero::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		background-image: var(--collection-hero-image);
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		filter: grayscale(0.5) saturate(0.8) brightness(0.2);
+		opacity: 0.7;
+		pointer-events: none;
+	}*/
+
+	.pedia-collection-hero > * {
+		position: relative;
+		z-index: 1;
+	}
+
+	.pedia-dawn-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 1.5rem;
+		align-items: start;
+	}
+
 	.pedia-catalog-shell {
 		block-size: 100%;
 		max-block-size: 100%;
+		gap: 2rem;
 		overflow: hidden;
+
+		& > * {
+			text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+		}
+	}
+
+	.pedia-catalog-collections {
+		padding-block-end: 0.25rem;
+	}
+
+	.pedia-catalog-categories {
+		padding-block-end: 0.25rem;
+	}
+
+	.pedia-catalog-accordion {
+		background: color-mix(in srgb, var(--pedia-panel) 84%, black 16%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
+		border-radius: 1rem;
+		padding: 0.25rem 1rem 1rem;
+	}
+
+	.pedia-catalog-accordion-summary {
+		cursor: pointer;
+		list-style: none;
+		background: none;
+		padding-block: 0.75rem 0.45rem;
+		padding-inline-start: 0;
+	}
+
+	.pedia-catalog-accordion-summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.pedia-catalog-accordion-summary::marker {
+		content: "";
+	}
+
+	.pedia-catalog-accordion-summary .pedia-catalog-group-head {
+		position: relative;
+		padding-inline-start: 1.55rem;
+	}
+
+	.pedia-catalog-accordion-summary .pedia-catalog-group-head::before {
+		content: "+";
+		position: absolute;
+		inset-inline-start: 0;
+		inset-block-start: 50%;
+		transform: translateY(-50%);
+		color: var(--pedia-accent-strong);
+		font-size: 1.35rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	.pedia-catalog-accordion[open] .pedia-catalog-group-head::before {
+		content: "−";
 	}
 
 	.pedia-catalog-groups {
-		gap: 1.25rem;
+		gap: 4rem;
 		overflow: auto;
 		padding-inline-end: 0.25rem;
+	}
+
+	.pedia-catalog-group {
+		scroll-padding-block-start: 4rem;
 	}
 
 	.pedia-catalog-group-head {
@@ -1528,19 +3116,140 @@
 	}
 
 	.pedia-catalog-group-head .section-title {
-		font-size: 2rem;
+		font-size: 1.5rem;
+	}
+
+	.pedia-author-toc-grid {
+		display: grid;
+		gap: 0.5rem;
+		grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+	}
+
+	.pedia-author-toc-chip {
+		min-inline-size: 0;
+		color: var(--ink);
+		text-align: start;
+		text-box: trim-both cap alphabetic;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 22%, transparent) 0%, transparent 42%),
+			linear-gradient(160deg, color-mix(in srgb, var(--pedia-panel) 88%, var(--control-bg)) 0%, color-mix(in srgb, var(--pedia-panel-soft) 95%, #140f0d 5%) 100%);
+		box-shadow: var(--pedia-shadow-soft);
+		border: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 24%, var(--border-color));
+		border-radius: 0.95rem;
+		padding: 1rem;
+		transition:
+			transform 150ms ease,
+			border-color 150ms ease,
+			box-shadow 150ms ease;
+
+		&:hover {
+			transform: translateY(-1px);
+			border-color: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 38%, var(--border-color));
+			box-shadow: 0 8px 18px color-mix(in srgb, black 78%, transparent);
+		}
+	}
+
+	.pedia-author-overview {
+		display: grid;
+		gap: 1rem;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 28%, transparent) 0%, transparent 42%),
+			linear-gradient(165deg, color-mix(in srgb, var(--pedia-panel) 80%, var(--control-bg)) 0%, color-mix(in srgb, var(--pedia-panel-soft) 95%, #16110f 5%) 100%);
+		box-shadow: var(--pedia-shadow-soft);
+		border: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 34%, var(--border-color));
+		border-radius: 1rem;
+		padding: 1.5rem 1.25rem 0.75rem;
+
+		& .section-title {
+			font-size: 2rem;
+		}
+	}
+
+	.pedia-author-civs-accordion {
+		display: grid;
+		gap: 1rem;
+		border-top: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 22%, var(--border-color));
+		padding-block-start: 1.5rem;
+		margin-block-start: 0.5rem;
+	}
+
+	.pedia-author-civs-summary {
+		cursor: pointer;
+		list-style: none;
+		background: none;
+		padding: 0;
+
+		& * {
+			text-box: trim-both cap alphabetic;
+		}
+	}
+
+	.pedia-author-civs-summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.pedia-author-civs-summary::marker {
+		content: "";
+	}
+
+	.pedia-author-civs-summary > div {
+		position: relative;
+		font-size: 1.25rem;
+		padding-inline-start: 1.45rem;
+	}
+
+	.pedia-author-civs-summary > div::before {
+		content: "+";
+		position: absolute;
+		inset-inline-start: 0;
+		inset-block-start: 50%;
+		transform: translateY(-50%);
+		color: var(--person-highlight, var(--pedia-accent-strong));
+		font-size: 1.2rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	.pedia-author-civs-accordion[open] .pedia-author-civs-summary > div::before {
+		content: "−";
+	}
+
+	.pedia-author-overview .pedia-link-row .pedia-button {
+		background: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 12%, var(--control-bg));
+		border-color: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 34%, var(--border-color));
+	}
+
+	.pedia-author-overview .pedia-link-row .pedia-button:hover,
+	.pedia-author-overview .pedia-link-row .pedia-button:focus-visible {
+		background: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 22%, var(--control-bg)) !important;
+		border-color: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 56%, var(--border-color)) !important;
+		box-shadow: 0 4px 10px color-mix(in srgb, black 76%, transparent);
+	}
+
+	.pedia-collection-link {
+		text-shadow: 2px 2px 2px rgb(0, 0, 0 / 0.7);
+		background: color-mix(in srgb, var(--collection-background, var(--pedia-accent)) 20%, var(--collection-accent)) !important;
+		border-color: color-mix(in srgb, var(--collection-accent, var(--pedia-accent)) 70%, var(--border-color)) !important;
+	}
+
+	.pedia-collection-link:hover,
+	.pedia-collection-link:focus-visible {
+		background: color-mix(in srgb, var(--collection-background, var(--pedia-accent)) 40%, var(--collection-accent)) !important;
+		border-color: color-mix(in srgb, var(--collection-accent, var(--pedia-accent)) 90%, var(--border-color)) !important;
+		box-shadow: 0x 1px 2px color-mix(in srgb, black 45%, transparent);
 	}
 
 	.pedia-catalog-row {
 		position: relative;
 		--catalog-accent: var(--pedia-accent);
 		--catalog-surface: var(--pedia-panel-soft);
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		align-items: stretch;
+		--catalog-backdrop-image: none;
+		display: grid;
+		grid-template-columns: minmax(20rem, 26rem) minmax(0, 1fr);
+		gap: 2rem;
+		align-items: flex-end;
 		inline-size: 100%;
-		padding: 1.1rem;
+		padding: 1.25rem;
 		color: var(--ink);
 		font: inherit;
 		text-align: left;
@@ -1548,7 +3257,7 @@
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 75%, transparent) 0%, transparent 30%),
 			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 65%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--catalog-surface) 20%, #16110f) 100%);
 		border: 2px solid color-mix(in srgb, var(--catalog-accent) 60%, var(--border-color));
-		border-radius: 1.4rem;
+		border-radius: 1rem;
 		overflow: clip;
 		cursor: pointer;
 		transition:
@@ -1558,6 +3267,21 @@
 			box-shadow 150ms ease;
 	}
 
+	.pedia-catalog-row::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		background-image: var(--catalog-backdrop-image);
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		filter: grayscale(0.3) saturate(0.75) brightness(0.38);
+		opacity: 0.38;
+		transform: scale(1.02);
+		pointer-events: none;
+	}
+
 	.pedia-catalog-row:hover {
 		border-color: color-mix(in srgb, var(--catalog-accent) 75%, var(--border-color));
 		background:
@@ -1565,12 +3289,17 @@
 			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 85%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--catalog-surface) 14%, #16110f) 100%);
 	}
 
+	.pedia-catalog-row > * {
+		position: relative;
+		z-index: 1;
+	}
+
 	.pedia-catalog-row-main {
+		min-inline-size: 0;
 		display: grid;
 		grid-template-columns: auto minmax(0, 1fr);
 		gap: 1rem;
 		align-items: center;
-		min-inline-size: 0;
 	}
 
 	.pedia-catalog-icon-wrap {
@@ -1581,8 +3310,8 @@
 	.pedia-catalog-icon {
 		display: grid;
 		place-items: center;
-		inline-size: 8rem;
-		block-size: 8rem;
+		inline-size: 7rem;
+		block-size: 7rem;
 		overflow: clip;
 		filter: drop-shadow(2px 2px 3px color-mix(in srgb, var(--catalog-accent) 30%, #000));
 	}
@@ -1600,6 +3329,7 @@
 	}
 
 	.pedia-catalog-civ-title {
+		max-inline-size: 20rem;
 		color: color-mix(in srgb, white 95%, var(--catalog-accent));
 		font-size: clamp(1.5rem, 2.2vw, 2.25rem);
 		line-height: 1.05;
@@ -1631,9 +3361,18 @@
 
 	.pedia-catalog-row-details {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-		gap: 0.9rem;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1rem;
 		align-items: stretch;
+		margin-block-end: 1rem;
+	}
+
+	.pedia-catalog-row-meta {
+		position: absolute;
+		top: 0.75rem;
+		right: 0.75rem;
+		display: flex;
+		justify-content: flex-end;
 	}
 
 	.pedia-catalog-identity * {
@@ -1641,39 +3380,43 @@
 	}
 
 	.pedia-catalog-detail-card {
-		padding: 0.95rem 1rem;
+		padding: 0.65rem 0.75rem;
 		background: linear-gradient(180deg, color-mix(in srgb, var(--catalog-surface) 10%, var(--pedia-panel)) 0%, color-mix(in srgb, var(--catalog-surface) 10%, #111) 100%);
 		box-shadow:
-			inset 0 0 0 2px color-mix(in srgb, var(--catalog-accent) 80%, transparent),
+			inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 80%, transparent),
 			1px 2px 2px color-mix(in srgb, #000 60%, transparent);
-		border-radius: 1rem;
+		border-radius: 0.75rem;
+	}
+
+	.pedia-catalog-collection-pills {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 0.35rem;
+	}
+
+	.pedia-catalog-collection-pill {
+		--collection-accent: var(--pedia-accent);
+		--collection-background: var(--pedia-panel-soft);
+		color: color-mix(in srgb, white 90%, var(--ink));
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		text-overflow: ellipsis;
+		text-transform: uppercase;
+		text-shadow: 1px 1px 2px color-mix(in srgb, var(--collection-accent) 20%, #000);
+		text-box: trim-both cap alphabetic;
+		white-space: nowrap;
+		background: linear-gradient(160deg, color-mix(in srgb, var(--collection-background) 80%, black 20%) 0%, color-mix(in srgb, var(--collection-accent) 20%, var(--collection-background)) 100%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--collection-accent) 85%, transparent);
+		border-radius: 999px;
+		padding: 0.5rem 0.65rem;
 	}
 
 	.pedia-catalog-detail-card strong {
 		color: color-mix(in srgb, white 95%, var(--ink));
-		font-size: 1.125rem;
+		font-size: 1rem;
 		line-height: 1.35;
-	}
-
-	.pedia-catalog-bullet-list {
-		display: grid;
-		gap: 0.3rem;
-		margin: 0;
-		padding-inline-start: 1rem;
-	}
-
-	.pedia-catalog-bullet-list li {
-		color: var(--muted-ink);
-		font-size: 0.92rem;
-		line-height: 1.45;
-	}
-
-	.pedia-catalog-notes-card {
-		min-inline-size: 0;
-	}
-
-	.pedia-catalog-notes-card .card-copy {
-		margin: 0;
 	}
 
 	.pedia-search {
@@ -1719,6 +3462,23 @@
 		transform: translateY(-2px);
 		border-color: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 45%, var(--border-color));
 		box-shadow: 0 6px 8px color-mix(in srgb, black 75%, transparent);
+	}
+
+	.pedia-template-ref-row {
+		margin-block-start: 0.9rem;
+	}
+
+	.pedia-template-ref {
+		color: var(--ink);
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-decoration: none;
+		text-transform: uppercase;
+		background: color-mix(in srgb, var(--pedia-accent) 12%, var(--control-bg));
+		border: 1px solid color-mix(in srgb, var(--pedia-accent) 26%, var(--border-color));
+		border-radius: 999px;
+		padding: 0.45rem 0.65rem;
 	}
 
 	.pedia-unique-head span {
@@ -1823,7 +3583,7 @@
 		display: none;
 	}
 
-	.pedia-prose-clamp {
+	.pedia-prose-summary :global(.pedia-prose-clamp) {
 		display: -webkit-box;
 		overflow: hidden;
 		-webkit-line-clamp: 6;
@@ -1858,7 +3618,7 @@
 		transition: transform 150ms ease;
 	}
 
-	.pedia-prose-disclosure[open] .pedia-prose-clamp {
+	.pedia-prose-disclosure[open] .pedia-prose-summary :global(.pedia-prose-clamp) {
 		display: none;
 	}
 
@@ -1874,7 +3634,7 @@
 		transform: rotate(180deg);
 	}
 
-	.pedia-prose-expanded .card-copy {
+	.pedia-prose-expanded :global(.card-copy) {
 		margin: 0;
 	}
 
@@ -1892,6 +3652,7 @@
 		font: inherit;
 		font-weight: 700;
 		text-decoration: none;
+		text-wrap: nowrap;
 		background: color-mix(in srgb, var(--pedia-accent) 18%, var(--control-bg));
 		border: 1px solid color-mix(in srgb, var(--pedia-accent) 40%, var(--border-color));
 		border-radius: 0.8rem;
@@ -2000,6 +3761,91 @@
 
 	.pedia-credit-card .card-copy {
 		font-size: 0.82rem;
+	}
+
+	.pedia-collection-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+		gap: 0.75rem;
+	}
+
+	.pedia-collection-grid-catalog {
+		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+	}
+
+	.pedia-collection-card {
+		--collection-accent: var(--pedia-accent);
+		--collection-background: var(--pedia-panel-soft);
+		display: grid;
+		gap: 0.4rem;
+		color: var(--ink);
+		font: inherit;
+		text-align: left;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--collection-accent) 30%, transparent) 0%, transparent 42%),
+			linear-gradient(150deg, color-mix(in srgb, var(--collection-background) 88%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--collection-background) 28%, #16110f) 100%);
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--collection-accent) 32%, var(--border-color)),
+			var(--pedia-shadow-soft);
+		border: 0;
+		border-radius: 1rem;
+		padding: 1rem;
+		cursor: pointer;
+
+		& .card-title {
+			font-size: 1.15rem;
+		}
+	}
+
+	.pedia-collection-card-catalog {
+		align-content: start;
+	}
+
+	.pedia-collection-editor {
+		padding: 1rem;
+		background: color-mix(in srgb, var(--pedia-panel-soft) 92%, black 8%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
+		border-radius: 1rem;
+	}
+
+	.pedia-category-cloud {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+	}
+
+	.pedia-category-editor-input-row {
+		display: grid;
+		gap: 0.8rem;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: end;
+	}
+
+	.pedia-category-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.55rem;
+		color: var(--ink);
+		font: inherit;
+		font-size: 0.84rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		background: color-mix(in srgb, var(--pedia-panel-soft) 88%, var(--control-bg));
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 18%, var(--border-color));
+		border: 0;
+		border-radius: 999px;
+		padding: 0.65rem 0.9rem;
+		cursor: pointer;
+	}
+
+	.pedia-category-chip strong {
+		color: var(--pedia-accent-strong);
+		font-size: 0.76rem;
+		letter-spacing: 0.08em;
+	}
+
+	.pedia-category-chip.is-static {
+		cursor: default;
 	}
 
 	.pedia-author-works {
@@ -2115,6 +3961,10 @@
 		margin: 0;
 	}
 
+	.pedia-entry-support-grid {
+		gap: 2rem;
+	}
+
 	.pedia-copy-grid {
 		display: grid;
 		gap: 1rem;
@@ -2122,7 +3972,7 @@
 	}
 
 	.pedia-figure-card {
-		min-inline-size: 40rem;
+		min-inline-size: 0;
 		margin: 0;
 	}
 
@@ -2219,7 +4069,8 @@
 		.pedia-converter-grid,
 		.pedia-copy-grid,
 		.pedia-wiki-layout,
-		.pedia-unique-row {
+		.pedia-unique-row,
+		.pedia-dawn-layout {
 			grid-template-columns: 1fr;
 		}
 
@@ -2235,15 +4086,34 @@
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 
-		.pedia-catalog-notes-card {
-			grid-column: 1 / -1;
+		.pedia-toolbar {
+			grid-template-columns: 1fr;
+			align-items: start;
+		}
+
+		.pedia-toolbar-actions {
+			inline-size: 100%;
+			justify-content: stretch;
+		}
+
+		.pedia-search {
+			flex: 1 1 auto;
 		}
 	}
 
 	@media (max-width: 720px) {
+		.pedia-hero,
+		.pedia-toolbar,
+		.pedia-catalog-shell,
+		.pedia-wiki,
+		.pedia-converter-shell {
+			padding: 1rem;
+		}
+
 		.pedia-entry-toolbar,
 		.pedia-toolbar-actions {
 			flex-direction: column;
+			align-items: stretch;
 		}
 
 		.pedia-view-switch {
@@ -2265,6 +4135,20 @@
 			align-items: start;
 		}
 
+		.pedia-wiki-header-row {
+			grid-template-columns: 1fr;
+			justify-items: start;
+		}
+
+		.pedia-wiki-header h2 {
+			font-size: 2rem;
+		}
+
+		.civ-icon {
+			inline-size: 5.5rem;
+			block-size: 5.5rem;
+		}
+
 		.pedia-catalog-row {
 			padding: 0.95rem;
 			gap: 0.85rem;
@@ -2280,8 +4164,112 @@
 			block-size: 4.8rem;
 		}
 
+		.pedia-catalog-civ-title {
+			font-size: 1.7rem;
+		}
+
+		.leader-name {
+			font-size: 1rem;
+		}
+
 		.pedia-catalog-row-details {
 			grid-template-columns: 1fr;
+		}
+
+		.pedia-catalog-detail-card .text-nowrap {
+			white-space: normal;
+		}
+
+		.pedia-credit-grid,
+		.pedia-name-lists,
+		.pedia-support-table,
+		.pedia-collection-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.pedia-figure-card img {
+			max-block-size: 22rem;
+		}
+
+		.pedia-author-work {
+			grid-template-columns: 1fr;
+			justify-items: start;
+			padding: 0.95rem;
+		}
+
+		.pedia-author-work-icon {
+			inline-size: 4rem;
+			block-size: 4rem;
+		}
+
+		.pedia-author-work-meta span {
+			inline-size: 100%;
+		}
+
+		.pedia-infobox-row {
+			grid-template-columns: 1fr;
+			align-items: start;
+		}
+
+		.pedia-infobox-row span {
+			text-align: start;
+		}
+
+		.pedia-markup-input,
+		.pedia-preview-panel textarea,
+		.pedia-json-editor {
+			min-block-size: 12rem;
+			max-block-size: 22rem;
+			padding: 0.85rem;
+		}
+
+		.pedia-category-editor-input-row {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 560px) {
+		.pedia-page {
+			gap: 0.75rem;
+		}
+
+		.pedia-wiki-main {
+			gap: 2.25rem;
+		}
+
+		.pedia-catalog-icon {
+			inline-size: 4.25rem;
+			block-size: 4.25rem;
+		}
+
+		.pedia-catalog-civ-title {
+			font-size: 1.45rem;
+		}
+
+		.pedia-catalog-detail-card,
+		.pedia-credit-card,
+		.pedia-editor-panel,
+		.pedia-converter-panel,
+		.pedia-converter-side-card,
+		.pedia-preview-panel,
+		.pedia-issues {
+			padding: 0.85rem;
+		}
+
+		.pedia-unique-row {
+			gap: 1rem;
+		}
+
+		.pedia-template-ref-row {
+			gap: 0.45rem;
+		}
+
+		.pedia-unique-figure {
+			max-inline-size: 12rem;
+		}
+
+		.pedia-name-list {
+			padding-inline-start: 1.4rem;
 		}
 	}
 </style>

@@ -109,6 +109,10 @@
 	text-transform: lowercase;
 }
 
+.normal {
+	text-transform: none;
+}
+
 .text-center {
 	text-align: center !important;
 }
@@ -163,6 +167,10 @@
 
 .width-full {
 	width: 100%;
+}
+
+.width-reading {
+	max-width: 80ch;
 }
 
 /* Height utilities */

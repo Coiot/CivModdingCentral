@@ -2,8 +2,10 @@ import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const MODDED_CIVS_PEDIA_DIR = resolve(__dirname, "src/lib/data/modded-civs-pedia");
+const PEDIA_COLLECTIONS_FILE = resolve(__dirname, "src/lib/data/pediaCollections.js");
 
 function jsonResponse(res, statusCode, payload) {
 	res.statusCode = statusCode;
@@ -35,6 +37,42 @@ function samePediaEntry(left, right) {
 	const leftLeader = cleanValue(left?.leader);
 	const rightLeader = cleanValue(right?.leader);
 	return Boolean(leftTitle && rightTitle && leftLeader && rightLeader && leftTitle === rightTitle && leftLeader === rightLeader);
+}
+
+function normalizeCollectionId(value) {
+	return cleanValue(value)
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "");
+}
+
+function normalizeHexColor(value) {
+	const normalized = cleanValue(value);
+	return /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(normalized) ? normalized : "";
+}
+
+function normalizeCollectionRecord(collection) {
+	const title = cleanValue(collection?.title);
+	return {
+		id: normalizeCollectionId(collection?.id || title),
+		title,
+		sourceTemplate: cleanValue(collection?.sourceTemplate),
+		aliases: [...new Set((Array.isArray(collection?.aliases) ? collection.aliases : []).map((alias) => cleanValue(alias)).filter(Boolean))],
+		colors: {
+			background: normalizeHexColor(collection?.colors?.background),
+			accent: normalizeHexColor(collection?.colors?.accent),
+		},
+	};
+}
+
+async function loadPediaCollections() {
+	const moduleUrl = `${pathToFileURL(PEDIA_COLLECTIONS_FILE).href}?t=${Date.now()}`;
+	const module = await import(moduleUrl);
+	return Array.isArray(module?.PEDIA_COLLECTIONS) ? module.PEDIA_COLLECTIONS : [];
+}
+
+function serializePediaCollections(collections) {
+	return `export const PEDIA_COLLECTIONS = ${JSON.stringify(collections, null, 2)};\n`;
 }
 
 function localPediaSavePlugin() {
@@ -126,6 +164,44 @@ function localPediaSavePlugin() {
 					return jsonResponse(res, 500, {
 						ok: false,
 						message: error?.message || "Unable to delete pedia files.",
+					});
+				}
+			});
+
+			server.middlewares.use("/__local-api/modded-civs-pedia/collections/save", async (req, res) => {
+				if (req.method !== "POST") {
+					return jsonResponse(res, 405, { ok: false, message: "Method not allowed." });
+				}
+
+				try {
+					const payload = await readJsonBody(req);
+					const collection = normalizeCollectionRecord(payload?.collection);
+
+					if (!collection.id || !collection.title) {
+						return jsonResponse(res, 400, { ok: false, message: "Collection title is required." });
+					}
+
+					if (!collection.colors.background || !collection.colors.accent) {
+						return jsonResponse(res, 400, { ok: false, message: "Collection background and accent colors must be valid hex values." });
+					}
+
+					const existingCollections = (await loadPediaCollections()).map((item) => normalizeCollectionRecord(item));
+					if (existingCollections.some((item) => item.id === collection.id)) {
+						return jsonResponse(res, 409, { ok: false, message: `Collection "${collection.title}" already exists.` });
+					}
+
+					const nextCollections = [...existingCollections, collection].sort((left, right) => left.title.localeCompare(right.title));
+					await writeFile(PEDIA_COLLECTIONS_FILE, serializePediaCollections(nextCollections), "utf8");
+
+					return jsonResponse(res, 200, {
+						ok: true,
+						collection,
+						filePath: PEDIA_COLLECTIONS_FILE,
+					});
+				} catch (error) {
+					return jsonResponse(res, 500, {
+						ok: false,
+						message: error?.message || "Unable to save pedia collections.",
 					});
 				}
 			});

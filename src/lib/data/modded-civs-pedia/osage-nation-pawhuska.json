@@ -1,0 +1,265 @@
+{
+  "id": "civ-osage-nation-pawhuska",
+  "slug": "osage-nation-pawhuska",
+  "kind": "civilization",
+  "title": "Osage Nation",
+  "leader": "Pawhuska",
+  "authors": [
+    "Coiot"
+  ],
+  "summary": "The Osage are a custom civilization mod by Coiot, with contributions from Arilasqueto, DarthKyofu, Dawkinzz, ExplosiveWatermelon, Gragg9, JFD, Senshi, Skiesovercast, Timrtabor and TopHatPaladin.",
+  "source": {
+    "type": "wiki",
+    "wikiPageTitle": "Osage Nation",
+    "wikiUrl": "",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2641477817",
+    "version": "v 2",
+    "lastUpdated": "October 2021",
+    "modFolderName": ""
+  },
+  "identity": {
+    "empireName": "Osage",
+    "adjectives": "Osage",
+    "capital": "Ni-o-sho-de",
+    "bias": "Hills",
+    "religion": [
+      "Protestantism"
+    ],
+    "government": "",
+    "culture": "",
+    "mapLabelsLanguage": "",
+    "requiredContent": [
+      "Brave New World"
+    ]
+  },
+  "presentation": {
+    "mapImage": "Osage_Map.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Osage_Map.png",
+    "mapImageCaption": "Map by DarthKyofu",
+    "iconImage": "Osage_Icon.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Osage_Icon.png",
+    "leaderSceneImage": "OsageLS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/OsageLS.png",
+    "leaderSceneArtCredit": "Leaderscreen by Coiot",
+    "colors": {
+      "background": "#123e58",
+      "icon": "#f39b41"
+    }
+  },
+  "overview": {
+    "civilization": {
+      "title": "Osage",
+      "url": "",
+      "body": "The Osage were a dominant Indian tribe in what is today the center of America. They have been described as both the most treacherous and war like of all tribes, as well as the most peace-loving and hospitable. While they may have loved peace the tribe was frequently at war with other tribes. The men were known for shaving their bodies with the exception of a small patch of hair on the top of their heads. They considered anyone who didn’t do this, including the bearded French and Americans, to be quite uncivilized. They were also the tallest race of indians with an average height of over 6 feet, with many reaching over 7 feet. A Red Man named Chief Manka Chonka stood at a towering height of 7 feet 5 inches tall and weighing 430 pounds. Because of this they referred to white settlers as “the short people”. While the Osage had their own religion which shaped their lifestyle, they were one of the quickest tribes to convert to Christianity. Their culture on the other hand, still exists to this day.\nThe Osage nation now resides in Northern Oklahoma, with their capital in Pawhuska. Fortunately the Osage were some of the most competent and stubborn negotiators, and so retained land rights and sovereignty. These land rights proved critical as oil was found in the new Osage land, leading to the nation becoming one of the richest and most prosperous tribes in modern day."
+    },
+    "leader": {
+      "title": "Pawhuska",
+      "body": "Chief Pawhuska, or ‘White-Hair’, lived from 1763 to 1809. He became chief of his band in 1791. While the Osage never had centralized leadership, Pawhuska was considered the most prominent chief of the Osage. The name ‘White Hair’ originates from a battle against the against the Americans in Ohio. During the battle Pawhuska defeated the American commander and attempted to cut off his scalp. Instead the powdered wig of the commander was torn off and he escaped. Pawhuska was impressed with how the wig protected it’s wearer and wore it for the rest of his reign. Pawhuska’s major achievements included successful wars against surrounding Indians and Americans, improving trade and relations with the French, and guiding the Osage through dissension at a time where American’s strategy was to turn native tribes against themselves. Today the Osage capital is Pawhuska, Oklahoma, named after their most respected chief.",
+      "url": "https://en.wikipedia.org/wiki/White_Hair"
+    }
+  },
+  "dawnOfMan": {
+    "blessing": "The world is changing, Chief Pawhuska. Every day a new enemy appears, eager to separate your people from their homes. They try to sow dissent and raid your farms and villages. They know the Osage are a strong people who will fight to protect themselves. You know better than anyone how to adapt. From the Ozark Mountains, to the Great Plains the Osage know how to thrive in any condition.\nYour people look to you Pawhuska. Now more than ever they need a strong leader to guide through this era of change. Your fierce loyalty and determination on and off the battlefield brought you to this position. Will you be able to hold the Osage together in the face of these new threats? Can you build a civilization that will stand the test of time?",
+    "introduction": ": \"Welcome to the middle waters. You may call me Chief Pawhuska.\"\nAlternate Introduction: \"Welcome to the Osage Tribe. We will forgive your uncivilized nature for now.\"",
+    "defeat": ": \"Even in defeat the Osage spirit will live on.\""
+  },
+  "templateRefs": [
+    {
+      "label": "Capital",
+      "template": "Capital",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Capital",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png"
+    },
+    {
+      "label": "Food",
+      "template": "Food Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+      "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png"
+    }
+  ],
+  "uniques": [
+    {
+      "slot": "unique ability",
+      "name": "Strength of the Spider",
+      "replaces": "",
+      "art": "Pawhuska.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Pawhuska.png",
+      "artCredit": "Art by Coiot",
+      "body": "During a Golden Age, Units do not require Strategic Resources to train, Units trained this way cause nearby Enemy Units to receive a stacking Combat Penalty. Upon the dawn of a Golden Age, a new source of your most recently discovered Strategic Resource is revealed near your newest city.",
+      "civilopedia": "",
+      "bullets": [],
+      "templateRefs": [
+        {
+          "label": "Capital",
+          "template": "Capital",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Capital",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png"
+        }
+      ]
+    },
+    {
+      "slot": "unique unit",
+      "name": "O-Don Guard",
+      "replaces": "Pikeman",
+      "art": "War_Band_small.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/War_Band_small.png",
+      "artCredit": "Art by Coiot",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Begins with Experience equal to unused Strategic Resources.",
+        "+13% Strength Combat Bonus outside Friendly Territory upon upgrading"
+      ],
+      "templateRefs": [
+        {
+          "label": "Capital",
+          "template": "Capital",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Capital",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png"
+        }
+      ]
+    },
+    {
+      "slot": "unique building",
+      "name": "Minerals Council",
+      "replaces": "Stock Exchange",
+      "art": "osageub.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/osageub.png",
+      "artCredit": "Art by Coiot",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Receive a burst of Golden Age Points for each Strategic Resource worked by the empire upon construction",
+        "+2 Culture and +2 Production per each worked strategic resource in city borders during Golden Age Golden Ages"
+      ],
+      "templateRefs": []
+    }
+  ],
+  "collections": [],
+  "nameLists": [
+    {
+      "title": "City List",
+      "items": [
+        "Ni-o-sho-de",
+        "Mo-he-ag-gra",
+        "Pa-hiu-cka",
+        "Engru-scah-op-pa",
+        "Chetopah",
+        "Mixa-ckau-tse",
+        "Pah-Che-Ka",
+        "Nion-Chou",
+        "Pa Sole",
+        "Pasuga",
+        "Ho-tsa-Tun-ka",
+        "No-Tse-Wa-Spe",
+        "Wah-Zha-Zhi",
+        "Manka-Chonka",
+        "Gra-mo'n",
+        "Xtha-ci ga-xa",
+        "Ba-xu Da-pa O-ko-dae",
+        "Ba-xu Zhi-ga",
+        "Ni-hni-bo-shta",
+        "Sho-do",
+        "Da-pa U-pshe",
+        "Wa-gthi-shka",
+        "To-wo Thi-xthi-ge",
+        "Do-ckiu-e-ga-xa",
+        "Ga-da-dse Ga-xa",
+        "Ni Ton-ga",
+        "We-tsa U-zhi",
+        "Zho-xe-ga U-gthi",
+        "E-hiu-gthe",
+        "Aſ-thi-gi-xe",
+        "Wi-tza",
+        "</div>",
+        "|-"
+      ]
+    },
+    {
+      "title": "Spy List",
+      "items": [
+        "Ko pa ka she",
+        "Hun ka ah gre",
+        "Mihoni",
+        "Me hun ka me",
+        "Kahikie atch",
+        "Na he me ka",
+        "Me tsa ho pa",
+        "Me tsa he-Me na",
+        "Mo sa ne",
+        "Pa pu son tsa"
+      ]
+    }
+  ],
+  "music": {
+    "peace": {
+      "title": "",
+      "credit": ""
+    },
+    "war": {
+      "title": "",
+      "credit": ""
+    }
+  },
+  "modSupport": {},
+  "credits": [
+    {
+      "name": "Arilasqueto",
+      "role": "Art Advisor"
+    },
+    {
+      "name": "Coiot",
+      "role": "Icons, Leader Screen, Design, Code, Research"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Alpha, Map"
+    },
+    {
+      "name": "Dawkinzz",
+      "role": "DOM Voiceover"
+    },
+    {
+      "name": "ExplosiveWatermelon",
+      "role": "Unit Model, Design, Code"
+    },
+    {
+      "name": "Gragg9",
+      "role": "Research, City List, Troubleshooting"
+    },
+    {
+      "name": "JFD",
+      "role": "Morale Support"
+    },
+    {
+      "name": "Senshi",
+      "role": "Design"
+    },
+    {
+      "name": "SkiesOverCast",
+      "role": "Code"
+    },
+    {
+      "name": "Timrtabor",
+      "role": "Research"
+    },
+    {
+      "name": "TopHatPaladin",
+      "role": "Code"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Civilizations with Male leaders",
+    "Plains Cultures",
+    "Civilizations with two unique units (Civ5)",
+    "United States"
+  ],
+  "navTemplate": "",
+  "issues": [],
+  "meta": {
+    "formatVersion": 1,
+    "createdAt": "2026-03-22T03:14:48.743Z",
+    "unresolvedTemplates": []
+  }
+}

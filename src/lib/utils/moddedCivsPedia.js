@@ -1,9 +1,53 @@
 import { MODDED_CIVS_PEDIA_FORMAT_VERSION } from "../data/moddedCivsPedia.js";
+import { getPediaInlineIconByTemplate, resolvePediaInlineIconRef } from "../data/pediaInlineIcons.js";
+import { PEDIA_COLLECTIONS } from "../data/pediaCollections.js";
 
 const FANDOM_TEMPLATE_NAMES = {
 	infobox: ["Infobox civs"],
 	modSupport: ["Template:Mod Support Infobox", "Mod Support Infobox"],
 };
+
+const FANDOM_TEMPLATE_BASE_URL = "https://civilization-v-customisation.fandom.com/wiki/Template:";
+
+const KNOWN_COLLECTION_TEMPLATES = {
+	DarkDaysNav: {
+		id: "dark-days",
+		title: "Dark Days Collection",
+		sourceTemplate: "DarkDaysNav",
+		colors: {
+			background: "#470202",
+			accent: "#f26707",
+		},
+		members: [
+			"Romania (Nicolae Ceausescu)",
+			"Las Californias (Junipero Serra)",
+			"Panama (Manuel Noriega)",
+			"Utetera (Tippu Tip)",
+			"Shining Path (Chairman Gonzalo)",
+			"Peru (Alberto Fujimori)",
+			"South Africa (PW Botha)",
+			"Bolivia (Melgarejo)",
+			"Norway (Vidkun Quisling)",
+			"Bornu (Rabih az-Zubayr)",
+			"Austria (Engelbert Dollfuss)",
+			"Abkhazia (Vladislav Ardzinba)",
+			"Manchukuo (Puyi)",
+			"Romania (Ion Antonescu)",
+			"Equatorial Guinea (Francisco Macias Nguema)",
+			"El Limon (Leonor)",
+			"Argentina (Jorge Rafael Videla)",
+			"France (Catherine de Medici)",
+			"East India Company (Robert Clive)",
+			"German East Africa (Paul von Lettow-Vorbeck)",
+			"New Spain (Hernan Cortes)",
+			"New Castile (Francisco Pizzaro)",
+			"Kampuchea (Pol Pot)",
+			"Ukraine (Stepan Bandera)",
+		],
+	},
+};
+
+const IGNORED_PEDIA_CATEGORY_KEYS = new Set(["all civilizations"]);
 
 const VANILLA_RELIGION_TYPES = new Set([
 	"RELIGION_BUDDHISM",
@@ -78,7 +122,9 @@ const DEFAULT_ENTRY = {
 		introduction: "",
 		defeat: "",
 	},
+	templateRefs: [],
 	uniques: [],
+	collections: [],
 	nameLists: [],
 	music: {
 		peace: {
@@ -95,6 +141,11 @@ const DEFAULT_ENTRY = {
 	categories: [],
 	navTemplate: "",
 	issues: [],
+	meta: {
+		formatVersion: MODDED_CIVS_PEDIA_FORMAT_VERSION,
+		createdAt: "",
+		unresolvedTemplates: [],
+	},
 };
 
 export function slugifyPediaValue(value) {
@@ -159,16 +210,391 @@ function cleanText(value) {
 		.trim();
 }
 
+function normalizeDiacritics(value) {
+	return cleanText(value)
+		.normalize("NFKD")
+		.replace(/[\u0300-\u036f]/g, "");
+}
+
+function collectionTitleKey(value) {
+	return normalizeDiacritics(stripWikiMarkup(value))
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, " ")
+		.trim();
+}
+
+function categoryTitleKey(value) {
+	return normalizeDiacritics(cleanText(value))
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, " ")
+		.trim();
+}
+
+function buildFandomTemplateUrl(templateName, wikiUrl = "") {
+	const normalizedName = cleanText(templateName);
+	if (!normalizedName) {
+		return "";
+	}
+	const base = fandomBaseUrl(wikiUrl);
+	return `${base}/wiki/Template:${encodeURIComponent(normalizedName.replace(/^Template:/i, ""))}`;
+}
+
+function extractTemplateInvocations(source) {
+	const templateNames = new Set();
+	for (const match of String(source || "").matchAll(/\{\{\s*([^|}\n]+?)(?=[|}])/g)) {
+		const templateName = cleanText(match[1].replace(/^Template:/i, ""));
+		if (templateName) {
+			templateNames.add(templateName);
+		}
+	}
+	return [...templateNames];
+}
+
+function normalizeCollectionEntry(collection, fallbackTemplateName = "") {
+	const source = collection || {};
+	const title = cleanText(source.title);
+	const sourceTemplate = cleanText(source.sourceTemplate || fallbackTemplateName);
+	return {
+		id: cleanText(source.id) || slugifyPediaValue(title || sourceTemplate),
+		title,
+		sourceTemplate,
+		aliases: ensureArray(source.aliases)
+			.map((alias) => cleanText(alias))
+			.filter(Boolean),
+		colors: {
+			background: cleanText(source?.colors?.background),
+			accent: cleanText(source?.colors?.accent),
+		},
+		imageURL: cleanText(source?.imageURL),
+		blurb: cleanText(source?.blurb),
+		links: ensureArray(source?.links)
+			.map((link) => ({
+				label: cleanText(link?.label),
+				href: cleanText(link?.href),
+			}))
+			.filter((link) => link.label && link.href),
+		members: ensureArray(source.members)
+			.map((member) => cleanText(member))
+			.filter(Boolean),
+	};
+}
+
+function resolveCollectionTemplates(templateNames) {
+	const collections = [];
+	for (const templateName of ensureArray(templateNames)) {
+		const known = KNOWN_COLLECTION_TEMPLATES[cleanText(templateName)];
+		if (!known) {
+			continue;
+		}
+		collections.push(normalizeCollectionEntry(known, templateName));
+	}
+	return collections;
+}
+
+function parseCollectionTemplateSource(source) {
+	const collections = [];
+	const tableBlocks = [...String(source || "").matchAll(/\{\|[\s\S]*?\|\}/g)];
+	for (const match of tableBlocks) {
+		const block = cleanText(match[0]);
+		const titleMatch = block.match(/!\s*colspan="?\d+"?[\s\S]*?\|\s*([^{}\n|]+?)\s*(?:\{\{edit\|([^}]+)\}\})?\s*$/im);
+		const membersMatch = block.match(/<center>\s*([\s\S]*?)\s*<\/center>/i);
+		if (!titleMatch || !membersMatch) {
+			continue;
+		}
+		const title = stripWikiMarkup(titleMatch[1]);
+		const sourceTemplate = cleanText(titleMatch[2]).replace(/^template:/i, "");
+		const background = cleanText(block.match(/background:\s*([^;|"]+)/i)?.[1] || "");
+		const accent = cleanText(block.match(/(?:border|color):\s*([^;|"]+)/i)?.[1] || "");
+		const members = [...membersMatch[1].matchAll(/\[\[([^|\]]+)(?:\|[^\]]+)?]]/g)].map((memberMatch) => stripWikiMarkup(memberMatch[1])).filter(Boolean);
+		if (!title || !members.length) {
+			continue;
+		}
+		collections.push(
+			normalizeCollectionEntry({
+				id: slugifyPediaValue(title),
+				title,
+				sourceTemplate,
+				colors: {
+					background,
+					accent,
+				},
+				members,
+			}),
+		);
+	}
+	return collections;
+}
+
+function mergeCollectionEntries(collections) {
+	const byId = new Map();
+	for (const collection of ensureArray(collections)) {
+		const normalized = normalizeCollectionEntry(collection);
+		if (!normalized.id) {
+			continue;
+		}
+		const existing = byId.get(normalized.id);
+		if (!existing) {
+			byId.set(normalized.id, normalized);
+			continue;
+		}
+		byId.set(normalized.id, {
+			...existing,
+			title: existing.title || normalized.title,
+			sourceTemplate: existing.sourceTemplate || normalized.sourceTemplate,
+			imageURL: existing.imageURL || normalized.imageURL,
+			blurb: existing.blurb || normalized.blurb,
+			links: [...existing.links, ...normalized.links].filter((link, index, array) => array.findIndex((candidate) => candidate.label === link.label && candidate.href === link.href) === index),
+			colors: {
+				background: existing.colors.background || normalized.colors.background,
+				accent: existing.colors.accent || normalized.colors.accent,
+			},
+			aliases: [...new Set([...(existing.aliases || []), ...(normalized.aliases || [])])],
+			members: [...new Set([...existing.members, ...normalized.members])],
+		});
+	}
+	return [...byId.values()];
+}
+
+function entryPageTitle(entry) {
+	const title = cleanText(entry?.title);
+	const leader = cleanText(entry?.leader);
+	return leader ? `${title} (${leader})` : title;
+}
+
+function memberMatchesEntry(member, entry) {
+	const memberText = stripWikiMarkup(member);
+	const memberKey = collectionTitleKey(memberText);
+	const entryKey = collectionTitleKey(entryPageTitle(entry));
+	if (memberKey && entryKey && memberKey === entryKey) {
+		return true;
+	}
+
+	const memberLeaderMatch = memberText.match(/^(.*)\(([^)]+)\)\s*$/);
+	if (!memberLeaderMatch) {
+		return false;
+	}
+
+	const memberTitleKey = collectionTitleKey(memberLeaderMatch[1]);
+	const memberLeaderKey = collectionTitleKey(memberLeaderMatch[2]);
+	const entryTitleKey = collectionTitleKey(entry?.title);
+	const entryLeaderKey = collectionTitleKey(entry?.leader);
+
+	return Boolean(
+		memberLeaderKey &&
+		entryLeaderKey &&
+		memberLeaderKey === entryLeaderKey &&
+		entryTitleKey &&
+		(memberTitleKey === entryTitleKey || entryTitleKey.includes(memberTitleKey) || memberTitleKey.includes(entryTitleKey)),
+	);
+}
+
+function collectionMembershipForEntry(collections, entry) {
+	return mergeCollectionEntries(collections)
+		.filter((collection) => collection.members.some((member) => memberMatchesEntry(member, entry)))
+		.map((collection) => ({
+			id: collection.id,
+			title: collection.title,
+			sourceTemplate: collection.sourceTemplate,
+			blurb: collection.blurb,
+			links: collection.links,
+			colors: collection.colors,
+		}));
+}
+
+function textContainsCollection(text, collection) {
+	const haystack = collectionTitleKey(text);
+	if (!haystack) {
+		return false;
+	}
+	const candidates = [collection.title, ...(collection.aliases || [])].map((candidate) => collectionTitleKey(candidate)).filter(Boolean);
+	return candidates.some((candidate) => haystack.includes(candidate));
+}
+
+function inferCollectionsFromText(entry) {
+	const textSources = [cleanText(entry?.summary), ...(entry?.categories || []), cleanText(entry?.source?.wikiPageTitle)].filter(Boolean).join("\n");
+
+	return PEDIA_COLLECTIONS.filter((collection) => textContainsCollection(textSources, collection)).map((collection) => normalizeCollectionEntry(collection));
+}
+
+export function inferCollectionsForEntry(entry) {
+	const explicitCollections = ensureArray(entry?.collections).map((collection) => normalizeCollectionEntry(collection));
+	const templateCollections = resolveCollectionTemplates(cleanText(entry?.navTemplate));
+	const memberCollections = collectionMembershipForEntry(templateCollections, entry);
+	const textCollections = inferCollectionsFromText(entry);
+	return mergeCollectionEntries([...textCollections, ...memberCollections, ...explicitCollections]).map((collection) => ({
+		id: collection.id,
+		title: collection.title,
+		sourceTemplate: collection.sourceTemplate,
+		imageURL: collection.imageURL,
+		blurb: collection.blurb,
+		links: collection.links,
+		colors: collection.colors,
+	}));
+}
+
+export function groupPediaCollections(entries) {
+	const grouped = new Map();
+	for (const entry of ensureArray(entries)) {
+		for (const collection of inferCollectionsForEntry(entry)) {
+			if (!grouped.has(collection.id)) {
+				grouped.set(collection.id, {
+					...collection,
+					entries: [],
+				});
+			}
+			grouped.get(collection.id).entries.push(entry);
+		}
+	}
+	return [...grouped.values()]
+		.map((collection) => ({
+			...collection,
+			entries: [...collection.entries].sort((left, right) => String(left?.title || "").localeCompare(String(right?.title || ""))),
+		}))
+		.sort((left, right) => String(left?.title || "").localeCompare(String(right?.title || "")));
+}
+
+function categoryMatchesCollection(category) {
+	return PEDIA_COLLECTIONS.some((collection) => textContainsCollection(category, collection));
+}
+
+function categoryMatchesAuthor(category, entry) {
+	const categoryKey = categoryTitleKey(category);
+	if (!categoryKey) {
+		return false;
+	}
+	const authorNames = [...ensureArray(entry?.authors), ...deriveAuthorsFromCredits(entry?.credits)].map((author) => categoryTitleKey(author)).filter(Boolean);
+	return authorNames.includes(categoryKey);
+}
+
+export function inferBrowsableCategoriesForEntry(entry) {
+	const byKey = new Map();
+	for (const category of ensureArray(entry?.categories)) {
+		const title = cleanText(category);
+		const key = categoryTitleKey(title);
+		if (!title || !key) {
+			continue;
+		}
+		if (IGNORED_PEDIA_CATEGORY_KEYS.has(key)) {
+			continue;
+		}
+		if (categoryMatchesAuthor(title, entry)) {
+			continue;
+		}
+		if (categoryMatchesCollection(title)) {
+			continue;
+		}
+		if (!byKey.has(key)) {
+			byKey.set(key, {
+				id: slugifyPediaValue(title),
+				title,
+			});
+		}
+	}
+	return [...byKey.values()].sort((left, right) => String(left?.title || "").localeCompare(String(right?.title || "")));
+}
+
+export function groupPediaCategories(entries) {
+	const grouped = new Map();
+	for (const entry of ensureArray(entries)) {
+		for (const category of inferBrowsableCategoriesForEntry(entry)) {
+			if (!grouped.has(category.id)) {
+				grouped.set(category.id, {
+					...category,
+					entries: [],
+				});
+			}
+			grouped.get(category.id).entries.push(entry);
+		}
+	}
+	return [...grouped.values()]
+		.map((category) => ({
+			...category,
+			entries: [...category.entries].sort((left, right) => String(left?.title || "").localeCompare(String(right?.title || ""))),
+		}))
+		.sort((left, right) => String(left?.title || "").localeCompare(String(right?.title || "")));
+}
+
+function normalizeInlineTemplateName(value) {
+	return cleanText(value).replace(/^Template:/i, "");
+}
+
+function inlineTemplateLabel(templateName) {
+	const normalizedName = normalizeInlineTemplateName(templateName);
+	const icon = getPediaInlineIconByTemplate(normalizedName);
+	if (icon?.label) {
+		return icon.label;
+	}
+	if (/ Icon$/i.test(normalizedName)) {
+		return cleanText(normalizedName.replace(/ Icon$/i, ""));
+	}
+	return "";
+}
+
+function collapseTemplateWordDupes(value) {
+	let next = String(value || "");
+	for (const label of [
+		...new Set([
+			"Citizens",
+			"City-State",
+			"Culture",
+			"Diplomats",
+			"Faith",
+			"Food",
+			"Golden Age",
+			"Gold",
+			"Great People",
+			"Great Work",
+			"Movement",
+			"Production",
+			"Science",
+			"Strength",
+			"Trade Routes",
+		]),
+	].sort((left, right) => right.length - left.length)) {
+		const escaped = escapeRegex(label);
+		next = next.replace(new RegExp(`\\b${escaped}\\s+${escaped}\\b`, "gi"), label);
+	}
+	return next.replace(/[ \t]{2,}/g, " ");
+}
+
+function normalizeInlineWikiTemplates(value, wikiUrl = "") {
+	const refs = [];
+	const text = String(value || "").replace(/\{\{\s*([^}|]+?)(?:\|[^}]*)?\}\}/g, (match, templateName) => {
+		const normalizedName = normalizeInlineTemplateName(templateName);
+		if (normalizedName === "!") {
+			return "|";
+		}
+		if (normalizedName.toLowerCase() === "edit") {
+			return " ";
+		}
+		const label = inlineTemplateLabel(normalizedName);
+		if (!label) {
+			return " ";
+		}
+		const icon = getPediaInlineIconByTemplate(normalizedName);
+		const href = icon?.href || buildFandomTemplateUrl(normalizedName, wikiUrl);
+		if (href && !refs.some((ref) => ref.href === href)) {
+			refs.push({
+				label: icon?.label || label,
+				template: icon?.template || normalizedName,
+				href,
+				imageUrl: icon?.imageUrl || "",
+			});
+		}
+		return ` {{${normalizedName}}} `;
+	});
+
+	return {
+		text: collapseTemplateWordDupes(text),
+		refs,
+	};
+}
+
 function stripWikiMarkup(value) {
+	const normalizedTemplates = normalizeInlineWikiTemplates(value);
 	return cleanText(
-		String(value || "")
+		String(normalizedTemplates.text || "")
 			.replace(/<br\s*\/?>/gi, "\n")
-			.replace(/\{\{([^}|]+?) Icon\}\}/g, " $1 ")
-			.replace(/\{\{Citizen}}/g, " Citizens ")
-			.replace(/\{\{Golden Age}}/g, " Golden Age ")
-			.replace(/\{\{Diplomat}}/g, "Diplomat ")
-			.replace(/\{\{!}}/g, "|")
-			.replace(/\{\{[^}]+}}/g, " ")
 			.replace(/\[\[File:[^\]]+]]/gi, "")
 			.replace(/\[\[([^|\]]+)\|([^\]]+)]]/g, "$2")
 			.replace(/\[\[([^\]]+)]]/g, "$1")
@@ -183,6 +609,31 @@ function stripWikiMarkup(value) {
 			.replace(/\s+\n/g, "\n")
 			.replace(/\n{3,}/g, "\n\n"),
 	);
+}
+
+function createTemplateRefsForText(value, wikiUrl = "") {
+	return normalizeInlineWikiTemplates(value, wikiUrl).refs;
+}
+
+function normalizeTemplateRefs(refs) {
+	const byKey = new Map();
+	for (const ref of ensureArray(refs)
+		.map((item) =>
+			resolvePediaInlineIconRef({
+				label: cleanText(item?.label),
+				template: cleanText(item?.template),
+				href: cleanText(item?.href),
+				imageUrl: cleanText(item?.imageUrl),
+			}),
+		)
+		.filter((item) => item.label && item.href)) {
+		const key = cleanText(ref.template) || cleanText(ref.href);
+		if (!key || byKey.has(key)) {
+			continue;
+		}
+		byKey.set(key, ref);
+	}
+	return [...byKey.values()];
 }
 
 function stripLeadingInfoboxTemplate(source) {
@@ -454,6 +905,17 @@ function parseSupportFlags(templateParams) {
 	return flags;
 }
 
+function knownTemplateName(templateName) {
+	const normalizedName = normalizeInlineTemplateName(templateName);
+	return (
+		FANDOM_TEMPLATE_NAMES.infobox.some((name) => normalizeInlineTemplateName(name) === normalizedName) ||
+		FANDOM_TEMPLATE_NAMES.modSupport.some((name) => normalizeInlineTemplateName(name) === normalizedName) ||
+		Boolean(KNOWN_COLLECTION_TEMPLATES[normalizedName]) ||
+		Boolean(inlineTemplateLabel(normalizedName)) ||
+		normalizedName.toLowerCase() === "edit"
+	);
+}
+
 function parseAuthorSummary(source) {
 	const cleanedSource = stripLeadingInfoboxTemplate(source);
 	const summaryMatch = cleanedSource.match(/^([\s\S]*?)\n\n/);
@@ -661,6 +1123,7 @@ async function parseUniqueAttributes(section, wikiUrl = "") {
 			.replace(/^\|[^\n]*\|/gm, "")
 			.replace(/^\|/gm, "")
 			.replace(/<br\s*\/?>/gi, "\n");
+		const templateRefs = normalizeTemplateRefs(createTemplateRefsForText(withoutCellMarkup, wikiUrl));
 		const content = stripWikiMarkup(withoutCellMarkup);
 		const lines = content
 			.split("\n")
@@ -683,6 +1146,7 @@ async function parseUniqueAttributes(section, wikiUrl = "") {
 			artCredit,
 			body: textBody,
 			bullets,
+			templateRefs,
 		});
 		index += 1;
 		match = rowPattern.exec(uniqueTable);
@@ -709,6 +1173,8 @@ export async function createPediaEntryFromWikiMarkup(markup, options = {}) {
 	const dawnOfMan = parseDawnOfMan(source, options.wikiUrl || "");
 	const authorSummary = parseAuthorSummary(source);
 	const workshopTable = parseWorkshopTable(creditsSection);
+	const invokedTemplateNames = extractTemplateInvocations(source);
+	const templateCollections = mergeCollectionEntries([...parseCollectionTemplateSource(source), ...resolveCollectionTemplates(invokedTemplateNames)]);
 
 	const standaloneIcon = parseStandaloneIconImage(source, options.wikiUrl || "", [civInfoParams.image, dawnOfMan.image]);
 
@@ -774,8 +1240,13 @@ export async function createPediaEntryFromWikiMarkup(markup, options = {}) {
 		entry.credits = summaryCredits(authorSummary);
 	}
 	entry.authors = authorSummary.authors?.length ? authorSummary.authors : deriveAuthorsFromCredits(entry.credits);
+	entry.collections = collectionMembershipForEntry(templateCollections, entry);
 	entry.categories = parseCategories(source);
 	entry.navTemplate = cleanText(source.match(/\{\{([^{}]+Nav)}}/i)?.[1] || "");
+	entry.meta = {
+		...entry.meta,
+		unresolvedTemplates: invokedTemplateNames.filter((templateName) => !knownTemplateName(templateName)),
+	};
 
 	if (!entry.presentation.iconImage && entry.uniques[0]?.art) {
 		entry.presentation.iconImage = entry.uniques[0].art;
@@ -793,6 +1264,9 @@ export async function createPediaEntryFromWikiMarkup(markup, options = {}) {
 	}
 	if (!entry.nameLists.length) {
 		issues.push("No collapsible name lists were found in the wiki markup.");
+	}
+	if (entry.meta.unresolvedTemplates.length) {
+		issues.push(`Unresolved templates: ${entry.meta.unresolvedTemplates.join(", ")}`);
 	}
 
 	return withIssues(entry, issues);
@@ -1296,6 +1770,7 @@ function buildUniqueFromOverride(unitOrBuildingRow, replacementName, slot, textB
 		body: findTextForTag(textByTag, unitOrBuildingRow.Help) || "",
 		civilopedia: resolveCivilopediaText(unitOrBuildingRow, textByTag),
 		bullets: [],
+		templateRefs: [],
 	};
 }
 
@@ -1477,6 +1952,7 @@ function buildUniqueFromClassOverride(row, typeRow, slot, textByTag) {
 		body: bullets.length ? "" : helpText || strategyText,
 		civilopedia: resolveCivilopediaText(typeRow, textByTag),
 		bullets,
+		templateRefs: [],
 	};
 }
 
@@ -1500,6 +1976,7 @@ function buildUniqueFromImprovementRow(improvementRow, buildRow, textByTag) {
 		body: bullets.length ? strategyText || helpText : helpText || strategyText,
 		civilopedia: resolveCivilopediaText(improvementRow, textByTag),
 		bullets,
+		templateRefs: [],
 	};
 }
 
@@ -1813,10 +2290,12 @@ export async function createPediaEntryFromModFolderFiles(fileList) {
 			name: findTextForTag(textByTag, traitRow.ShortDescription) || formatIdentifier(traitRow.Type),
 			replaces: "",
 			art: "",
+			artUrl: "",
 			artCredit: "",
 			body: findTextForTag(textByTag, traitRow.Description),
 			civilopedia: resolveCivilopediaText(traitRow, textByTag),
 			bullets: [],
+			templateRefs: [],
 		});
 	}
 
@@ -2051,6 +2530,7 @@ export function normalizePediaEntry(entryInput) {
 		introduction: sanitizePediaProse(source?.dawnOfMan?.introduction),
 		defeat: sanitizePediaProse(source?.dawnOfMan?.defeat),
 	};
+	entry.templateRefs = normalizeTemplateRefs(source?.templateRefs);
 	entry.uniques = ensureArray(source.uniques).map((unique) => ({
 		slot: cleanText(unique?.slot),
 		name: cleanText(unique?.name),
@@ -2063,7 +2543,9 @@ export function normalizePediaEntry(entryInput) {
 		bullets: ensureArray(unique?.bullets)
 			.map((bullet) => sanitizePediaProse(bullet))
 			.filter(Boolean),
+		templateRefs: normalizeTemplateRefs(unique?.templateRefs),
 	}));
+	entry.collections = mergeCollectionEntries(ensureArray(source.collections));
 	entry.nameLists = ensureArray(source.nameLists).map((list) => ({
 		title: cleanText(list?.title),
 		items: ensureArray(list?.items)
@@ -2089,9 +2571,18 @@ export function normalizePediaEntry(entryInput) {
 	entry.issues = ensureArray(source.issues)
 		.map((item) => cleanText(item))
 		.filter(Boolean);
+	if (!entry.templateRefs.length) {
+		entry.templateRefs = normalizeTemplateRefs(entry.uniques.flatMap((unique) => unique?.templateRefs || []));
+	}
+	if (!entry.collections.length) {
+		entry.collections = inferCollectionsForEntry(source);
+	}
 	entry.meta = {
 		formatVersion: MODDED_CIVS_PEDIA_FORMAT_VERSION,
 		createdAt: source?.meta?.createdAt || new Date().toISOString(),
+		unresolvedTemplates: ensureArray(source?.meta?.unresolvedTemplates)
+			.map((templateName) => cleanText(templateName))
+			.filter(Boolean),
 	};
 	return entry;
 }

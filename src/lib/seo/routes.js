@@ -8,6 +8,7 @@ const MODDED_CIVS_PEDIA_PATH = "/modded-civs-pedia";
 const SAME_AS_URLS = ["https://discord.gg/yf8jUXf", "https://old.reddit.com/r/civmoddingcentral/"];
 
 import { BUILTIN_MODDED_CIVS } from "../data/moddedCivsPedia.js";
+import { groupPediaCategories, groupPediaCollections, normalizePediaEntry } from "../utils/moddedCivsPedia.js";
 
 const ROUTE_SEO = {
 	"/": {
@@ -134,16 +135,51 @@ function primaryAuthor(entry) {
 	return (entry?.credits || []).find((credit) => /\bauthor\b/i.test(credit?.role || ""))?.name || entry?.credits?.[0]?.name || "Unknown Author";
 }
 
+const BUILTIN_PEDIA_ENTRIES = BUILTIN_MODDED_CIVS.map((entry) => normalizePediaEntry(entry));
+const BUILTIN_PEDIA_COLLECTIONS = groupPediaCollections(BUILTIN_PEDIA_ENTRIES);
+const BUILTIN_PEDIA_CATEGORIES = groupPediaCategories(BUILTIN_PEDIA_ENTRIES);
+
 function findPediaEntryByPath(pathname) {
 	const normalizedPath = normalizeSeoPath(pathname);
 	if (!normalizedPath.startsWith(`${MODDED_CIVS_PEDIA_PATH}/`)) {
+		return null;
+	}
+	if (
+		normalizedPath.startsWith(`${MODDED_CIVS_PEDIA_PATH}/author/`) ||
+		normalizedPath.startsWith(`${MODDED_CIVS_PEDIA_PATH}/collection/`) ||
+		normalizedPath.startsWith(`${MODDED_CIVS_PEDIA_PATH}/category/`)
+	) {
 		return null;
 	}
 	const slug = normalizedPath.slice(MODDED_CIVS_PEDIA_PATH.length + 1);
 	if (!slug) {
 		return null;
 	}
-	return BUILTIN_MODDED_CIVS.find((entry) => slugifySeoValue(entry?.slug || entry?.title) === slug) || null;
+	return BUILTIN_PEDIA_ENTRIES.find((entry) => slugifySeoValue(entry?.slug || entry?.title) === slug) || null;
+}
+
+function findPediaCollectionByPath(pathname) {
+	const normalizedPath = normalizeSeoPath(pathname);
+	if (!normalizedPath.startsWith(`${MODDED_CIVS_PEDIA_PATH}/collection/`)) {
+		return null;
+	}
+	const slug = normalizedPath.slice(`${MODDED_CIVS_PEDIA_PATH}/collection/`.length);
+	if (!slug) {
+		return null;
+	}
+	return BUILTIN_PEDIA_COLLECTIONS.find((collection) => slugifySeoValue(collection?.id || collection?.title) === slug) || null;
+}
+
+function findPediaCategoryByPath(pathname) {
+	const normalizedPath = normalizeSeoPath(pathname);
+	if (!normalizedPath.startsWith(`${MODDED_CIVS_PEDIA_PATH}/category/`)) {
+		return null;
+	}
+	const slug = normalizedPath.slice(`${MODDED_CIVS_PEDIA_PATH}/category/`.length);
+	if (!slug) {
+		return null;
+	}
+	return BUILTIN_PEDIA_CATEGORIES.find((category) => slugifySeoValue(category?.id || category?.title) === slug) || null;
 }
 
 function getPediaEntrySeo(pathname) {
@@ -172,6 +208,54 @@ function getPediaEntrySeo(pathname) {
 	};
 }
 
+function getPediaCollectionSeo(pathname) {
+	const collection = findPediaCollectionByPath(pathname);
+	if (!collection) {
+		return null;
+	}
+
+	const normalizedPath = normalizeSeoPath(pathname);
+	const description = `${collection.entries.length} member civ${collection.entries.length === 1 ? "" : "s"} in the ${collection.title} collection from the Modded Civs Pedia on Civ Modding Central.`;
+
+	return {
+		title: `${collection.title} | Modded Civs Pedia | Civ Modding Central`,
+		description,
+		keywords: [collection.title, "Civilization V custom civilization collection", "Civ 5 modded civs pedia"].filter(Boolean).join(", "),
+		pageType: "CollectionPage",
+		pathname: normalizedPath,
+		canonical: `${SITE_URL}${normalizedPath}`,
+		image: collection.entries[0]?.presentation?.mapImageUrl || collection.entries[0]?.presentation?.iconImageUrl || SITE_IMAGE,
+		robots: DEFAULT_ROBOTS,
+		collection,
+		parentPath: MODDED_CIVS_PEDIA_PATH,
+		parentName: ROUTE_SEO[MODDED_CIVS_PEDIA_PATH].title.replace(/\s+\|\s+Civ Modding Central$/, ""),
+	};
+}
+
+function getPediaCategorySeo(pathname) {
+	const category = findPediaCategoryByPath(pathname);
+	if (!category) {
+		return null;
+	}
+
+	const normalizedPath = normalizeSeoPath(pathname);
+	const description = `${category.entries.length} civ${category.entries.length === 1 ? "" : "s"} tagged with ${category.title} in the Modded Civs Pedia on Civ Modding Central.`;
+
+	return {
+		title: `${category.title} | Modded Civs Pedia | Civ Modding Central`,
+		description,
+		keywords: [category.title, "Civilization V custom civilization category", "Civ 5 modded civs pedia"].filter(Boolean).join(", "),
+		pageType: "CollectionPage",
+		pathname: normalizedPath,
+		canonical: `${SITE_URL}${normalizedPath}`,
+		image: category.entries[0]?.presentation?.mapImageUrl || category.entries[0]?.presentation?.iconImageUrl || SITE_IMAGE,
+		robots: DEFAULT_ROBOTS,
+		category,
+		parentPath: MODDED_CIVS_PEDIA_PATH,
+		parentName: ROUTE_SEO[MODDED_CIVS_PEDIA_PATH].title.replace(/\s+\|\s+Civ Modding Central$/, ""),
+	};
+}
+
 export function normalizeSeoPath(value) {
 	const raw = String(value || "").trim();
 	if (!raw || raw === "/") {
@@ -188,6 +272,14 @@ export function normalizeSeoPath(value) {
 
 export function getRouteSeo(pathname) {
 	const normalizedPath = normalizeSeoPath(pathname);
+	const pediaCollectionSeo = getPediaCollectionSeo(normalizedPath);
+	if (pediaCollectionSeo) {
+		return pediaCollectionSeo;
+	}
+	const pediaCategorySeo = getPediaCategorySeo(normalizedPath);
+	if (pediaCategorySeo) {
+		return pediaCategorySeo;
+	}
 	const pediaSeo = getPediaEntrySeo(normalizedPath);
 	if (pediaSeo) {
 		return pediaSeo;
