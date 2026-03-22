@@ -1,0 +1,208 @@
+{
+  "id": "civ-malacca-sultanate-mansur-shah",
+  "slug": "malacca-sultanate-mansur-shah",
+  "kind": "civilization",
+  "title": "Malacca Sultanate",
+  "leader": "Mansur Shah",
+  "authors": [
+    "Orangechrisy"
+  ],
+  "summary": "Malacca led by Mansur Shah is a custom civilization mod by Orangechrisy, with contributions from TopHatPaladin.",
+  "source": {
+    "type": "wiki",
+    "wikiPageTitle": "Malacca Sultanate",
+    "wikiUrl": "",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1900479792",
+    "version": "v 1",
+    "lastUpdated": "31 July 2020",
+    "modFolderName": ""
+  },
+  "identity": {
+    "empireName": "Sultanate of Malacca",
+    "adjectives": "Malaccan",
+    "capital": "Kuching",
+    "bias": "Coast",
+    "religion": [
+      "Islam"
+    ],
+    "government": "",
+    "culture": "East Indies",
+    "mapLabelsLanguage": "Malay",
+    "requiredContent": []
+  },
+  "presentation": {
+    "mapImage": "ORG_Malacca_Map.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ORG_Malacca_Map.png",
+    "mapImageCaption": "",
+    "iconImage": "Orangechrisy Malacca.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Orangechrisy%20Malacca.png",
+    "leaderSceneImage": "MalaccaLeaderBackground.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MalaccaLeaderBackground.png",
+    "leaderSceneArtCredit": "238x238px",
+    "colors": {
+      "background": "#0C0C68",
+      "icon": "#C0A93C"
+    }
+  },
+  "overview": {
+    "civilization": {
+      "title": "Malacca",
+      "url": "https://en.wikipedia.org/wiki/Malacca_Sultanate",
+      "body": "The Malaccan Sultanate was founded in 1400 by Parameswara, a King of Singapore who decided to establish a kingdom in a village he had fled to. Quickly, he initiated development of the village and laid the foundation of a trade port and soon Malacca became known as a center of trade in the eastern world. Trade blossomed with merchants from places such as Arabia, India, and Persia, and, most notably, China coming over to establish bases in the growing town. The strong trade also led envoys to go to and from China, strengthening the relationship between the two and giving Malacca diplomatic protection. During the reign of the third ruler, Raja Tengah, a muslim ulama came to spread the teachings of Islam to the kingdom, leading to Raja Tengah to convert, adopt the name Muhammad Shah, and introduced Islam into his administration. Muhammad Shah also created the Undang-Undang Laut Melaka, or the Maritime Laws of Malacca, to regulate the increasingly important internation trade center. Malacca's strong economy allowed it to create strong military and navy to defend itself and deter attackers. Such as in 1446 when Ayutthaya launched an attack in which a chief named Tun Perak led the Malaccans to victory, he then soon followed that with a victory at sea in 1456 and served as a Bendahara, a rank similar to prime minister, to four sultans from 1456 to 1498, with his death signifying what is widely held as the beginning of the Sultanate's decline. Malacca reached its golden age under the rule of Mansur Shah who ruled from 1459 to 1477. Mansur Shah greatly expanded the borders of the Sultanate to encompass Southern Thailand and Eastern Sumatra. The Malaccan military became the strongest in the region, able to defeat the enemies of the Sultanate as well as pressure other kingdoms, such as the declining Majapahit kingdom, to give up land. Mansur Shah was also able to establish many tributaries and dependencies from nearby kingdoms.\nThe prosperity and golden age of Malacca as an internation center of trade and commerce continued until 1511 when the Portugese assaulted and captued the city and the Sultan was forced to flee. This marked the end of the Sultanate of Malacca. However, the last sultan did maintain control of Johor and founded a new Sultanate there. The Emporer of China, upon hearing of the capture of Malacca, began a decades long campaign against and persecution of the Portugese. The Portugese capture of the city also began the cities decline from being a major trading port. The Portugese had fundamentally disrupted the Asian trade network and the previously centralized port that was able to maintain safety for commercial traffic was replaced with a more scattered trade network of rivalling ports in the region. The Portugese had failed their ambition of dominating the Asian trade with their ending of the Malaccan Sultanate."
+    },
+    "leader": {
+      "title": "Mansur Shah",
+      "body": "Mansur Shah, born 1442, became Sultan in 1459 while the Sultanate was experiencing prosperity. Mansur Shah had a much more expansionist policy than his predecessors and expanded the Sultanate greatly to cover the surrounding lands. He also continued to improve relations with the Chinese and was able to force tributary or dependency status on many nearby kingdoms. His conquests and diplomacy set the Sultanate to be the largest and most dominating power in the region by far. Mansur Shah's economic policies helped to increase the trade going through the strait even more and provided more safety and economic advantages to traders going through. He also orchestrated a number of diplomatic marriages to strengthen relationships with trade partners as well as to conquered states. Mansur Shah himself was married to a Chinese princess which further boosted relations with the Chinese and set the two nations as closer to allies or equal partners rather than the normal tributary status imposed by the Chinese on other nations. In 1477 Mansur Shah died and passed the throne to his son who continued to maintain the Malaccan prosperity and golden age.",
+      "url": "https://en.wikipedia.org/wiki/Mansur_Shah_of_Malacca"
+    }
+  },
+  "dawnOfMan": {
+    "blessing": "Salam, Mansure Shah, great sultan of the Malaccan people. You rose to power in the small yet prosperous Sultanate of Malacca and you steered it into a golden era. Your expansionist policy led you to wrest control of the nearby lands, granting access to new riches and a stronger control over the region. With the prosperity of your Sultanate, you were able to grow diplomatic ties to the great kingdom of China and your grandeur even allowed you to take the hand of the Emperor's daughter in marriage. You continued to exert your influence and wealth, becoming by far the dominant power of the region. Your control over the vital Strait of Malacca gave your nation the undeniable position to extend its reach to those around it. Your Malaccan ports rose to fame as trade floruished under your laws.\nOh Great and Excellent Sultan Mansur Shah, can you bring incredible wealth and prosperity to your people? Can you once again expand your Sultanate to new heights? Can you take control of trade and usher in a new golden age for your people? Can you build a civilization that will stand the test of time?",
+    "introduction": "Selamat Datang! I hope you can enjoy your time here in Malacca. Would you like to see one of the golden palaces here? Or perhaps you would like to take a walk along the world class ports.",
+    "defeat": "My Sultanate, gone, but not forgotten. You will be unable to control the Malaccan trade like you wished. Your ambitions will be fruitless as long as the Malaccan people live."
+  },
+  "uniques": [
+    {
+      "slot": "unique ability",
+      "name": "Undang-Undang Laut Melaka",
+      "replaces": "",
+      "art": "MansurShahIcon.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MansurShahIcon.png",
+      "artCredit": "158x158px",
+      "body": "Trade Cargo ships sent by this Civilization receive +1 Gold gold for land resources; +2 Gold gold for sea resources. Each Trade Route Sea Trade Route provides +10% Production naval unit production for that city and generate Great Person Great Admiral points.",
+      "civilopedia": "",
+      "bullets": []
+    },
+    {
+      "slot": "unique unit",
+      "name": "Jong",
+      "replaces": "Caravel",
+      "art": "MalaccaJongIcon.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MalaccaJongIcon.png",
+      "artCredit": "155x155px",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Is stronger and cheaper than the Caravel which it replaces and provides +2 Gold gold for sea tiles it is on, doubling if on a Trade Route trade route or in ally territory."
+      ]
+    },
+    {
+      "slot": "unique unit",
+      "name": "Laksamana",
+      "replaces": "Great Admiral",
+      "art": "ORGLaksamanIcon.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ORGLaksamanIcon.png",
+      "artCredit": "170x170px",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Can be expended on a coastal tile owned by Malacca to create a random Luxury Sea Resource or it can be expended within a city to boost the Gold gold earned by the city by 20%."
+      ]
+    }
+  ],
+  "nameLists": [
+    {
+      "title": "City List",
+      "items": [
+        "Malacca",
+        "Bintan",
+        "Pahang",
+        "Kelang",
+        "Singapura",
+        "Siak",
+        "Rokan",
+        "Terangganu",
+        "Pekan",
+        "Perak",
+        "Kedah",
+        "Pattani",
+        "Kampar",
+        "Ledang",
+        "Jasin",
+        "Segamat",
+        "Pagoh",
+        "Muar",
+        "Linggi",
+        "Alor Gajah",
+        "Batu Pahat",
+        "Johor Bahru",
+        "Riau",
+        "Siantan",
+        "Kelantan",
+        "Seri Menant",
+        "Chukai",
+        "Merlimau",
+        "Batam",
+        "Indragiri",
+        "Aru",
+        "</div>",
+        "|-"
+      ]
+    },
+    {
+      "title": "Spy List",
+      "items": [
+        "Intan",
+        "Mat",
+        "Kembang",
+        "Tuah",
+        "Perang",
+        "Rai",
+        "Siti",
+        "Wira",
+        "Tun",
+        "Ayu"
+      ]
+    }
+  ],
+  "music": {
+    "peace": {
+      "title": "",
+      "credit": ""
+    },
+    "war": {
+      "title": "",
+      "credit": ""
+    }
+  },
+  "modSupport": {
+    "civivtraits": true,
+    "claimscoloniescrimes": false,
+    "culdiv": true,
+    "ethnicunits": true,
+    "eandd": false,
+    "exce": false,
+    "histreligions": false,
+    "maplabels": true,
+    "mercenaries": true,
+    "piety": true,
+    "sovereignty": true,
+    "uci": true,
+    "wftw": false,
+    "ynaemp": true
+  },
+  "credits": [
+    {
+      "name": "Orangechrisy",
+      "role": "Art"
+    },
+    {
+      "name": "TopHatPaladin",
+      "role": "Coding"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Orangechrisy",
+    "Malaysia",
+    "East Indies Cultures",
+    "Civilizations with Male leaders",
+    "Civilizations with two unique units (Civ5)"
+  ],
+  "navTemplate": "OrangechrisyNav",
+  "issues": [],
+  "meta": {
+    "formatVersion": 1,
+    "createdAt": "2026-03-22T04:30:41.803Z"
+  }
+}

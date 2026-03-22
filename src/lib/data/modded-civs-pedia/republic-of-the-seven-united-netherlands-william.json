@@ -1,0 +1,169 @@
+{
+	"id": "civ-republic-of-the-seven-united-netherlands-william",
+	"slug": "republic-of-the-seven-united-netherlands-william",
+	"kind": "civilization",
+	"title": "Republic of the Seven United Netherlands",
+	"leader": "William",
+	"authors": ["Orangechrisy"],
+	"summary": "",
+	"source": {
+		"type": "wiki",
+		"wikiPageTitle": "Republic of the Seven United Netherlands",
+		"wikiUrl": "",
+		"workshopUrl": "",
+		"version": "",
+		"lastUpdated": "",
+		"modFolderName": ""
+	},
+	"identity": {
+		"empireName": "Dutch Empire",
+		"adjectives": "Dutch",
+		"capital": "Amsterdam",
+		"bias": "Grassland",
+		"religion": ["Protestantism", "Calvinism (HR)"],
+		"government": "Monarchy",
+		"culture": "Western",
+		"mapLabelsLanguage": "Germanic",
+		"requiredContent": ["Brave New World"]
+	},
+	"presentation": {
+		"mapImage": "Netherlandsmap.jpg",
+		"mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Netherlandsmap.jpg",
+		"mapImageCaption": "Map by Firaxis",
+		"iconImage": "Netherlands.png",
+		"iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Netherlands.png",
+		"leaderSceneImage": "silentbill.jpg",
+		"leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/silentbill.jpg",
+		"leaderSceneArtCredit": "Art by Firaxis",
+		"colors": {
+			"background": "#ff9000",
+			"icon": "#FFFFFF"
+		}
+	},
+	"overview": {
+		"civilization": {
+			"title": "The Netherlands",
+			"url": "https://en.wikipedia.org/wiki/Netherlands",
+			"body": "The Kingdom of the Netherlands, often referred to simply as \"Holland,\" has, under the influence of many ambitious empires, grown from a minor province of northern Europe into one of the world's premier trade centers. Beginning with the conquests of the Romans, the later rise of the Franks, and eventually the Holy Roman Empire, the Netherlands became a frequent target of expanding European kingdoms. However, none would leave a greater mark than the Spanish Habsburgs, whose persecution of Dutch Protestants under King Philip contributed directly to the outbreak of the Eighty Years' War. Pitting the Dutch citizenry against their Spanish masters in a near-century long conflict for independence, once free of Spanish rule, the people of the Netherlands worked tirelessly to establish their own national identity. As the new republic grew to become a leading economic power, many great cultural and scientific figures rose from the newly formed nation."
+		},
+		"leader": {
+			"title": "William",
+			"body": "Widely considered both founder and liberator of the Netherlands, William, Prince of Orange, also known as \"William the Silent,\" led a successful rebellion in the mid-16th century against the Spanish Habsburg Dynasty who held dominion over the Dutch Low Countries. Once the loyal servant of King Philip II of Spain, William eventually became the most prominent leader of the rebellion, as his growing distaste for the continued Spanish persecution of Dutch Protestants came to a head. Rallying his fellow noblemen to the cause, William became an outlaw in the eyes of the Spanish monarch and led the Dutch forces in a number of successful battles against the king before falling to an assassin's bullet in 1584.",
+			"url": "https://en.wikipedia.org/wiki/William_the_Silent"
+		}
+	},
+	"dawnOfMan": {
+		"blessing": "Hail stalwart Prince William of Orange, liberator of the Netherlands and hero to the Dutch people. It was your courageous effort in the 1568 rebellion against Spanish dominion that led the Dutch to freedom, and ultimately resulted in the Eighty Years' War. Your undertaking allowed for the creation of one of Europe's first modern republics, the Seven United Provinces. You gave your life to the rebellion, falling at the hands of an assassin in 1584, but your death would only serve to embolden the people's charge, and your legacy as \"Father of the Fatherland\" will stand as a symbol of Dutch independence for all time.\nBrave prince, the people again yearn for the wise stewardship your wisdom afforded them. Can you once again secure the sovereignty of your kingdom and lead your people to greatness? Can you build a civilization that stands the test of time?\nIntroduction (Audio): I am William of Orange, stadtholder of The Netherlands. Did you need anything? I still have a lot to do. (\"Ik ben Willem van Oranje, Stadhouder over de Nederlanden. Behoeft gij iets? Mij staat nog veel te doen.\")\nIntroduction (Text): I am William of Orange, of The Netherlands. Did you need anything? I am quite busy.\nDefeat (Audio): My God, be merciful to my soul. My God, feel pity for this... my poor people! (\"Mijn god, wees mijn ziel genadig! Mijn god heb mededogen met dit... Mijn arme volk!\")\nDefeat (Text): My God, have pity on my soul; my God, have pity on these, my poor people!",
+		"introduction": "",
+		"defeat": ""
+	},
+	"uniques": [
+		{
+			"slot": "unique ability",
+			"name": "Dutch East India Company",
+			"replaces": "",
+			"art": "William-0.png",
+			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/William-0.png",
+			"artCredit": "Art by Firaxis",
+			"body": "Retains 50% of the Happiness Happiness benefits from a Luxury resource if your last copy is traded away.",
+			"civilopedia": "",
+			"bullets": []
+		},
+		{
+			"slot": "unique unit",
+			"name": "Sea Beggar",
+			"replaces": "Privateer",
+			"art": "Seabeggar.png",
+			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Seabeggar.png",
+			"artCredit": "Art by Firaxis",
+			"body": "",
+			"civilopedia": "",
+			"bullets": ["Starts with the Supply Promotion", "Starts with the Coastal Raider I and II Promotion"]
+		},
+		{
+			"slot": "unique unit",
+			"name": "Polder",
+			"replaces": "",
+			"art": "Polder.png",
+			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Polder.png",
+			"artCredit": "Art by Firaxis",
+			"body": "",
+			"civilopedia": "",
+			"bullets": ["Unlocked at Guilds", "Must be built on marsh or flood plains", "+3 Food Food", "+1 Production Production and +2 Gold Gold after Economics"]
+		}
+	],
+	"nameLists": [
+		{
+			"title": "City List",
+			"items": [
+				"Amsterdam",
+				"Rotterdam",
+				"Utrecht",
+				"Groningen",
+				"Breda",
+				"Nijmegen",
+				"Den Haag",
+				"Haarlem",
+				"Arnhem",
+				"Zutphen",
+				"Maastricht",
+				"Tilburg",
+				"Eindhoven",
+				"Dordrecht",
+				"Leiden",
+				"'s-Hertogenbosch",
+				"Almere",
+				"Alkmaar",
+				"Brielle",
+				"Vlissingen",
+				"Apeldoorn",
+				"Enschede",
+				"Amersfoort",
+				"Zwolle",
+				"Venlo",
+				"Uden",
+				"Grave",
+				"Delft",
+				"Gouda",
+				"Nieuwstadt",
+				"Weesp",
+				"Coevorden",
+				"Kerkrade",
+				"</div>",
+				"|-"
+			]
+		},
+		{
+			"title": "Spy List",
+			"items": ["Joost", "Hendrika", "Marten", "Anke", "Guus", "Mr. X", "Dr Grijs", "Willem", "Thijs", "Neef"]
+		}
+	],
+	"music": {
+		"peace": {
+			"title": "In Naam van Oranje",
+			"credit": "Michael Curran and Geoff Knorr."
+		},
+		"war": {
+			"title": "In Naam van Oranje",
+			"credit": "Michael Curran and Geoff Knorr."
+		}
+	},
+	"modSupport": {},
+	"credits": [],
+	"categories": [
+		"All Civilizations",
+		"Vanilla Civilizations",
+		"Gods and Kings",
+		"Western Cultures",
+		"Civilizations with Unique Improvements",
+		"Civ Battle Royale Mk III",
+		"Netherlands",
+		"Civilizations with Male leaders"
+	],
+	"navTemplate": "Vanillanav",
+	"issues": [],
+	"meta": {
+		"formatVersion": 1,
+		"createdAt": "2026-03-22T04:33:01.018Z"
+	}
+}

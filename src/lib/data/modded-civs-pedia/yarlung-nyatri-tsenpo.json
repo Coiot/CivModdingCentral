@@ -73,7 +73,7 @@
 		{
 			"slot": "unique unit",
 			"name": "Pawo",
-			"replaces": "Great Musician replacement",
+			"replaces": "Great Musician",
 			"art": "",
 			"artUrl": "",
 			"artCredit": "",
@@ -88,7 +88,7 @@
 		{
 			"slot": "unique improvement",
 			"name": "Sky Burial Ground",
-			"replaces": "Builds a Sky Burial Ground.",
+			"replaces": "",
 			"art": "",
 			"artUrl": "",
 			"artCredit": "",

@@ -1,0 +1,215 @@
+{
+  "id": "civ-county-of-holland-floris-v",
+  "slug": "county-of-holland-floris-v",
+  "kind": "civilization",
+  "title": "County of Holland",
+  "leader": "Floris V",
+  "authors": [
+    "Orangechrisy"
+  ],
+  "summary": "Holland led by Floris V is a custom civilization mod by Orangechrisy, with contributions from DarthKyofu and Francesca. It is part of the Dutch Civilization Pack, and includes changes to William's Netherlands.",
+  "source": {
+    "type": "wiki",
+    "wikiPageTitle": "County of Holland",
+    "wikiUrl": "",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3480631724",
+    "version": "v 1",
+    "lastUpdated": "May 2025",
+    "modFolderName": ""
+  },
+  "identity": {
+    "empireName": "County of Holland",
+    "adjectives": "Hollander",
+    "capital": "The Hague",
+    "bias": "River",
+    "religion": [
+      "Catholicism"
+    ],
+    "government": "Monarchy\nRepublic",
+    "culture": "Western",
+    "mapLabelsLanguage": "Germanic",
+    "requiredContent": [
+      "Brave New World"
+    ]
+  },
+  "presentation": {
+    "mapImage": "HollandMap.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/HollandMap.png",
+    "mapImageCaption": "Map by Francesca",
+    "iconImage": "HollandIcon.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/HollandIcon.png",
+    "leaderSceneImage": "HollandDiplo.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/HollandDiplo.png",
+    "leaderSceneArtCredit": "Art by DarthKyofu",
+    "colors": {
+      "background": "#f3aa07",
+      "icon": "#84061a"
+    }
+  },
+  "overview": {
+    "civilization": {
+      "title": "Holland",
+      "url": "https://en.wikipedia.org/wiki/County_of_Holland",
+      "body": "In the late 800s, after the split of the Frankish Empire, the County of Holland was founded in Lotharingia under Count Gerolf of Holland. The house slowly expanded in the coming centuries through Dirk II of Holland and Dirk III of Holland, who grew diplomatically through marriages with nearby counts as well as getting rewarded for their defense against the Vikings who would raid the coast. In the late 1000s the county was left in the hands of Dirk V, still a minor. The Holy Roman Emperor Henry IV gave nearly all of the lands of Holland to William, the Bishop of Utrecht. Luckily, Dirk V's regent Robert the Frisian became count of Flanders after defeating a coalition of forces and was able to help Dirk V reclaim the county of Holland. The two continued beat their advesaries and managed to conquer the lands around IJesselmonde for Holland.\nDuring the 12th and 13th centuries Holland expanded south to conquer Zeeland. Along with this a war that lasted around 150 years began against the West Frisians in Northern Holland. Floris V, Count of Holland and Zeeland, was able to finally end the war and subjegate the region, after which the county of Holland became known as the county of Holland and West Friesland. These borders would be roughly the full extent of the county for the next century and a half. Throughout the 10th, 11th, 12th, and 13th centuries many reclamation efforts were made to expand the land and pushack the sea through the use of dikes, dams, and other water control systems. The 11th century saw the beginning of the Great Reclamation which saw large amounts of land reclamation and expanded Holland's influence at the cost of Utrecht. Land reclamations efforts continued after that and continue to this day with newer and better methods.\nThrough the late 1300s and most of the 1400s there was a series of wars known as the Hook and Cod Wars that were fought over the title of Count of Holland. In the end Philip, Duke of Burgundy, held control of the county after conquering the area at the invitation of many noblemen. Under the Burgundians Holland experienced a growth in trade and population and Amsterdam became the primary trading port of the region. Not too soon later the land became part of Spain, although they had their own government to run things in the region.\nAs the Protestant reformation spread across the continent, it took hold in the Netherlands. The rulers of Spain were devout Catholics at the time and intended to put this reformation down. However, this led to a massive revolt against the Spanish in the 1560s and the beginning of the Eighty Year's War which ended in Dutch independence. Holland served as a\tmaritime and administrative center for the newly independent Republic of the Seven United Provinces. Holland, being the capital province of the new Dutch State became the face of the Netherlands, being the cultural, political, and economic center of the state. The Count of Holland formerly came to an end when the Batavian Republic was formed in 1795 after the French invaded. Later, in 1840, Holland was split into North and South Holland under the United Kingdom of the Netherlands which is how it remains today."
+    },
+    "leader": {
+      "title": "Floris V",
+      "body": "Floris V was born in 1254 and came to power 2 years later under a regent after his father was killed, this regency lasted until Floris was 12. Much of the 1270s was marred by uprisings of nobles, but by 1279 Floris V had managed to quell them. In 1282 Floris began his second campaign against the Frisians in the north of Holland, defeating them and managing to finally retrieve the body of his father. In 1287 Floris V recieved Zeeland as a loan from the Holy Roman Emperor, however the nobles sided with the count of Flanders who invaded in 1290. In 1292, Floris V fought back and successfully retook Zeeland.\nIn 1296, Floris V switched allegiance from England to France following a trade dispute with the former, resulting in an English trade embargo and the successful kidnapping of Floris by the English and some Dutch nobles. During an attempt to move Floris to a more secure location, an angry group of peasants stopped the kdnappers, causing them to panic and end up killing Floris before fleeing. After his death the nobility began to insult Floris V by refering to him as \"God of the Peasants\", but this title instead helped Floris V become a symbolic hero for the peasants of Holland, even helping in the fight for independence against Spain in the Eighty Years' War.",
+      "url": "https://en.wikipedia.org/wiki/Floris_V,_Count_of_Holland"
+    }
+  },
+  "dawnOfMan": {
+    "blessing": "Oh great Count Floris V, God of the Peasants, you led Holland through a period of growth and prosperity. You expanded your state, both against those around you, and against the sea. Your life was quickly marred with misfortune when at the age of two your father was slain. However, this did little to stop you as you ascended to the throne at the young age of twelve to effectively lead Holland, modernizing the administration, increasing trade, and fighting your enemies.\nSadly, the nobles of the land did not approve of your commitment to your people and tried to rebel quite a few times. Soon after your death many nobles mocked you by refering to you as \"God of the Peasants\", a name that would turn from a jeer to the name of a hero for Holland. Your legacy would live on through songs, plays, books, and ideas. Despite your tragic end, you would become a saint for the Hollander people, later becoming a symbol in the struggle for independence against Spain in the 16th and 17th centuries.\nFloris, can you once again take your place on the throne of Holland? Can you bring Holland into another era of prosperity? Can you call forth the will of the people and retake your position as God? Can you build an civilization that will stand the test of time?",
+    "introduction": "\"Welkom to Holland! I've just come back from overlooking some dijk construction in the peat bogs just north of here. I was just about to travel to Amsterdam to negotiate some trade deals, care to join me?\"",
+    "defeat": "\"You won't get far with this! My people will rise against you and take their revenge from your tyrannical ways! This isn't the last you'll hear my name!\""
+  },
+  "uniques": [
+    {
+      "slot": "unique ability",
+      "name": "God Of The Peasants",
+      "replaces": "",
+      "art": "HollandFlorisV.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/HollandFlorisV.png",
+      "artCredit": "Art by DarthKyofu",
+      "body": "Gain +10% Food Food in Cities connected to the Capital. Cities settled along rivers or on/adjacent to marshes produce Buildings 10% faster.",
+      "civilopedia": "",
+      "bullets": []
+    },
+    {
+      "slot": "unique unit",
+      "name": "Order of the Shell",
+      "replaces": "Knight",
+      "art": "HollandLandweer.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/HollandLandweer.png",
+      "artCredit": "Art by DarthKyofu and Orangechrisy",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "When trained, gain XP from tiles worked by the city it was trained in.",
+        "Starts with the Amphibious promotion."
+      ]
+    },
+    {
+      "slot": "unique unit",
+      "name": "Polder",
+      "replaces": "",
+      "art": "Polder.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Polder.png",
+      "artCredit": "Art by Firaxis",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Unlocked at Guilds.",
+        "+3 Food Food from Flood Plains and Marshes.",
+        "+1 Production Production and +2 Gold Gold after researching Economics."
+      ]
+    }
+  ],
+  "nameLists": [
+    {
+      "title": "City List",
+      "items": [
+        "The Hague",
+        "Leiden",
+        "Dordrecht",
+        "Alkmaar",
+        "Delft",
+        "Haarlem",
+        "Amsterdam",
+        "Middelburg",
+        "Medemblik",
+        "Zierikzee",
+        "Muiden",
+        "Schiedam",
+        "Gouda",
+        "Hulst",
+        "Vlaardingen",
+        "Rottardam",
+        "Naarden",
+        "Sluis",
+        "Alphen",
+        "Gorinchem",
+        "Vlissingen",
+        "Hoorn",
+        "Veere",
+        "Enkhuizen",
+        "Weesp",
+        "Kawijk",
+        "Monnickendam",
+        "Edam",
+        "Goes",
+        "Zaandam",
+        "Schagen",
+        "</div>",
+        "|-"
+      ]
+    },
+    {
+      "title": "Spy List",
+      "items": [
+        "Zoete",
+        "Alef",
+        "Verildis",
+        "Dirk",
+        "Kiliaen",
+        "Reyneir",
+        "Halene",
+        "Perseyn",
+        "Zweder",
+        "Fijken"
+      ]
+    }
+  ],
+  "music": {
+    "peace": {
+      "title": "Floris V",
+      "credit": "Marc Winter"
+    },
+    "war": {
+      "title": "Winter Woede",
+      "credit": "Heidevolk"
+    }
+  },
+  "modSupport": {
+    "aa": false,
+    "civivtraits": true,
+    "claimscoloniescrimes": false,
+    "culdiv": true,
+    "ethnicunits": true,
+    "eandd": false,
+    "maplabels": true,
+    "piety": true,
+    "uci": false,
+    "ynaemp": true,
+    "histreligions": false,
+    "mercenaries": false,
+    "enlightenmentera": false
+  },
+  "credits": [
+    {
+      "name": "Orangechrisy",
+      "role": "Author"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art (Leaderscene, Leader Icon, Civilization Icon, Unit Icon, Unit Flag)"
+    },
+    {
+      "name": "Francesca",
+      "role": "Art (Map)"
+    }
+  ],
+  "categories": [
+    "Orangechrisy",
+    "All Civilizations",
+    "Netherlands",
+    "Civilizations with Male leaders",
+    "Western Cultures"
+  ],
+  "navTemplate": "OrangechrisyNav",
+  "issues": [],
+  "meta": {
+    "formatVersion": 1,
+    "createdAt": "2026-03-22T04:29:58.244Z"
+  }
+}

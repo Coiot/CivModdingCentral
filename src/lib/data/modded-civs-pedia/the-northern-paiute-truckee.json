@@ -1,0 +1,214 @@
+{
+  "id": "civ-the-northern-paiute-truckee",
+  "slug": "the-northern-paiute-truckee",
+  "kind": "civilization",
+  "title": "The Northern Paiute",
+  "leader": "Truckee",
+  "authors": [
+    "Orangechrisy",
+    "NopeCopter"
+  ],
+  "summary": "The Northern Paiute led by Truckee are a custom civilization mod by Orangechrisy and NopeCopter, with contributions from RawSasquatch.",
+  "source": {
+    "type": "wiki",
+    "wikiPageTitle": "The Northern Paiute",
+    "wikiUrl": "",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3634487993",
+    "version": "v 1",
+    "lastUpdated": "January 2025",
+    "modFolderName": ""
+  },
+  "identity": {
+    "empireName": "The Northern Paiute",
+    "adjectives": "Numu",
+    "capital": "Kuyuidökadö",
+    "bias": "None",
+    "religion": [
+      "Catholicism"
+    ],
+    "government": "Tribal",
+    "culture": "Great Plains",
+    "mapLabelsLanguage": "",
+    "requiredContent": [
+      "Brave New World"
+    ]
+  },
+  "presentation": {
+    "mapImage": "NorthernPaiuteMap.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/NorthernPaiuteMap.png",
+    "mapImageCaption": "Map by Orangechrisy",
+    "iconImage": "Northern_Paiute.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Northern_Paiute.png",
+    "leaderSceneImage": "TruckeeLS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TruckeeLS.png",
+    "leaderSceneArtCredit": "Art by RawSasquatch",
+    "colors": {
+      "background": "#11222c",
+      "icon": "#ed4e41"
+    }
+  },
+  "overview": {
+    "civilization": {
+      "title": "The Northern Paiute",
+      "url": "https://en.wikipedia.org/wiki/Northern_Paiute_people",
+      "body": "The Northern Paiute are a Native American tribe that has lived in the areas around the Sierra Nevada mountains and northern Nevada since around 2500 BCE. Historically, they lived a nomadic lifestyle making use of any and all resources available in the region. Northern Paiute society is traditionally organized into bands, each with their own territory usually centered around a river or lake, although families were free to move between bands. The Northern Paiute are related to the Northern Shoshone and the Bannocks, practicing similar cultures despite speaking different languages. The Northern Paiute were generally friendly with the Shoshone, while the Washoe and Klamath were historical enemies."
+    },
+    "leader": {
+      "title": "Truckee",
+      "body": "Chief Truckee, otherwise known as Old Winnemucca, was a medicine chief and influential prophet among the Northern Paiute. He was born into a Shoshone family, but married into the Kuyui Dükadü band of the Northern Paiute. The origin of his nickname is debated, but the most popular story is that he was given it by a party of American settlers he was guiding through the Sierra Nevada Mountains, who misinterpreted the Paiute word of “alright” - “Tro-kay” - as his name. Indeed, Truckee was known to be quite amicable to the Americans, helping to guide several parties through the Sierra Nevadas and even providing support to the USA during the Mexican-American War (for which he was granted the title of Captain). He was known to trust the Americans so much that he even had his own granddaughter Sarah educated by them - Sarah Winnemucca would go on to become a prolific writer, and is the source of most of the information on Chief Truckee today.\nMuch of this amicable attitude was tied to a vision Truckee had experienced, whereby he was told that the white settlers that were soon to come were friends, and that the Northern Paiute needed to remain on good terms with them to survive great changes coming their way. Unfortunately, while Truckee's efforts did help to keep the peace somewhat, he was unable to entirely quell the rising tensions that eventually led to the US-Paiute Wars and forced him and his people onto reservations. Truckee's efforts were, of course, controversial - many disagreed with his peaceful and conciliatory attitude - but he was still a respected individual whose name was adopted by several of his descendants. Indeed, Truckee's kind attitude was hardly something that only applied to the Americans, and he was known to adopt orphaned Native American children and give them a new home. Truckee passed away in 1860 as a result of an infection stemming from a tarantula bite, and in fitting with his role as a peacekeeper and bridge-builder between the Northern Paiutes and Americans, he was buried according to both traditions - with a Bible given to him by Fremont in his hand, and with six horses alongside him to carry him to the afterlife.",
+      "url": "https://en.wikipedia.org/wiki/Truckee_(chief)"
+    }
+  },
+  "dawnOfMan": {
+    "blessing": "Greetings, Old Winnemucca, Captain Truckee, chief of the Northern Paiute! Though you were not born into the tribe you led, you surely earned your place as chief, guiding your people through a tumultuous and uncertain period as strange settlers from the east spread across the lands. It was your diplomatic skill and belief in the value of peace with the USA that kept your people safe for many years, and the U.S. Americans certainly appreciated you as well, as you guided through the mountains and even fought alongside them. While you could not keep the peace forever, your efforts still saw to it that casualties were kept to a minimum during your tenure and your people's long-term survival and memory was secured. Your descendants, many of whom took on your name out of respect, continued your legacy, ensuring that the Northern Paiute would live on and their struggles would be remembered.\nCaptain Truckee, strangers come to the borders of your lands once more, and your people once again turn to you for guidance on how to face this new challenge. Can you secure peace and prosperity for your people in the face of adversity? Can you build a civilization that will stand the test of time?",
+    "introduction": "Ah, welcome, friend! I had a vision of your arrival. Let's get along, yes?",
+    "defeat": "I wished only for peace, yet you have slaughtered my people… why did it have to come to this?"
+  },
+  "uniques": [
+    {
+      "slot": "unique ability",
+      "name": "Paviotso Confederacy",
+      "replaces": "",
+      "art": "TruckeeIcon.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TruckeeIcon.png",
+      "artCredit": "Art by Orangechrisy",
+      "body": "When in a war with a friend, gain Faith faith when killing enemy units and passively research Science technology that your friend has.",
+      "civilopedia": "",
+      "bullets": []
+    },
+    {
+      "slot": "unique unit",
+      "name": "Snake Dog-Soldier",
+      "replaces": "Knight",
+      "art": "NorthernPaiuteUU.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/NorthernPaiuteUU.png",
+      "artCredit": "Art by Orangechrisy",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Gain one when a foreign city converts to your religion.",
+        "Costs no maintence, but is more expensive to produce.",
+        "Gains bonus strength in friendly territory."
+      ]
+    },
+    {
+      "slot": "unique unit",
+      "name": "Round Dance",
+      "replaces": "",
+      "art": "NorthernPaiuteUI.gif",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/NorthernPaiuteUI.gif",
+      "artCredit": "Art by Orangechrisy",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Can not be built adjacent to another Round Dance.",
+        "Gain +1 Faith faith, Culture culture, and Gold gold for each neighboring food resource."
+      ]
+    }
+  ],
+  "nameLists": [
+    {
+      "title": "City List",
+      "items": [
+        "Kuyuidökadö",
+        "Yamosöpö Tuviwarai",
+        "Wadadökadö",
+        "Pakwidökadö",
+        "Kamodökadö",
+        "Atsakudökwa Tuviwarai",
+        "Hunipuitöka",
+        "Tövusidökadö",
+        "Kidütökadö",
+        "Ona Dükadü",
+        "A'waggu Dükadü",
+        "Aga'idökadö",
+        "Sawawaktödö",
+        "Goyatöka",
+        "Tasiget Tuviwarai",
+        "Qui Na Taue Pha Numa",
+        "Tsösö'ödö Tuviwarai",
+        "Moadökadö",
+        "We Dükadü",
+        "Kutsavidökadö",
+        "Tagötöka",
+        "Küpadökadö",
+        "Toedökadö",
+        "Makuhadökadö",
+        "Pogai Dükadü",
+        "Dühütayohikadü",
+        "Koa'aga'itöka",
+        "Paavituviwarai",
+        "</div>",
+        "|-"
+      ]
+    },
+    {
+      "title": "Spy List",
+      "items": [
+        "Thocmentony",
+        "Wobitsawahkah",
+        "Tuboitonie",
+        "Numaga",
+        "Paulina",
+        "Egan",
+        "Puna",
+        "Waweveh",
+        "Ochoco",
+        "Penointi"
+      ]
+    }
+  ],
+  "music": {
+    "peace": {
+      "title": "",
+      "credit": ""
+    },
+    "war": {
+      "title": "",
+      "credit": ""
+    }
+  },
+  "modSupport": {
+    "aa": false,
+    "civivtraits": true,
+    "claimscoloniescrimes": false,
+    "culdiv": true,
+    "ethnicunits": false,
+    "eandd": false,
+    "maplabels": false,
+    "piety": true,
+    "uci": false,
+    "ynaemp": true,
+    "histreligions": false,
+    "mercenaries": false,
+    "enlightenmentera": false
+  },
+  "credits": [
+    {
+      "name": "Orangechrisy",
+      "role": "Design, code, non-pedia text, non-leader art"
+    },
+    {
+      "name": "NopeCopter",
+      "role": "Design, pedias"
+    },
+    {
+      "name": "RawSasquatch",
+      "role": "Leaderscreen and leader icon"
+    }
+  ],
+  "categories": [
+    "Orangechrisy",
+    "NopeCopter",
+    "All Civilizations",
+    "United States",
+    "Civilizations with Male leaders",
+    "Plains Cultures"
+  ],
+  "navTemplate": "OrangechrisyNav",
+  "issues": [],
+  "meta": {
+    "formatVersion": 1,
+    "createdAt": "2026-03-22T04:34:22.665Z"
+  }
+}

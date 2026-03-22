@@ -656,10 +656,10 @@
 
 				<div class="pedia-toolbar-actions">
 					<input class="pedia-search" type="search" bind:value={searchQuery} placeholder="Search civs, leaders, uniques, authors..." />
-					<!-- <div class="pedia-view-switch" role="tablist" aria-label="Pedia views">
+					<div class="pedia-view-switch" role="tablist" aria-label="Pedia views">
 						<button type="button" class="pedia-view-chip is-active" role="tab" aria-selected="true">Catalog</button>
 						<button type="button" class="pedia-view-chip" role="tab" aria-selected="false" onclick={showConverter}>Converter</button>
-					</div> -->
+					</div>
 				</div>
 			</div>
 
@@ -1314,7 +1314,7 @@
 		--pedia-accent: oklch(0.82 0.078 244);
 		--pedia-accent-strong: oklch(0.9 0.04 244);
 		--pedia-border: color-mix(in srgb, var(--border-color) 78%, var(--pedia-accent) 22%);
-		--pedia-panel: color-mix(in srgb, var(--surface-color) 90%, oklch(0.3 0.04 240) 10%);
+		--pedia-panel: color-mix(in srgb, var(--surface-color) 95%, oklch(0.3 0.04 240) 5%);
 		--pedia-panel-soft: color-mix(in srgb, var(--surface-color) 95%, oklch(0.34 0.04 240) 5%);
 		--pedia-shadow: 0 14px 32px color-mix(in srgb, black 78%, transparent);
 		--pedia-shadow-soft: 0 4px 6px color-mix(in srgb, black 84%, transparent);
@@ -1535,7 +1535,7 @@
 		text-align: left;
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 75%, transparent) 0%, transparent 30%),
-			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 60%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--catalog-surface) 20%, #16110f) 100%);
+			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 65%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--catalog-surface) 20%, #16110f) 100%);
 		border: 2px solid color-mix(in srgb, var(--catalog-accent) 60%, var(--border-color));
 		border-radius: 1.4rem;
 		overflow: clip;
@@ -1551,7 +1551,7 @@
 		border-color: color-mix(in srgb, var(--catalog-accent) 75%, var(--border-color));
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 75%, transparent) 0%, transparent 30%),
-			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 80%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--catalog-surface) 14%, #16110f) 100%);
+			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 85%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--catalog-surface) 14%, #16110f) 100%);
 	}
 
 	.pedia-catalog-row-main {
@@ -1573,7 +1573,7 @@
 		inline-size: 8rem;
 		block-size: 8rem;
 		overflow: clip;
-		filter: drop-shadow(2px 2px 4px color-mix(in srgb, var(--catalog-accent) 40%, #000));
+		filter: drop-shadow(2px 2px 3px color-mix(in srgb, var(--catalog-accent) 30%, #000));
 	}
 
 	.pedia-catalog-icon img {
@@ -1691,10 +1691,10 @@
 		text-align: start;
 		text-decoration: none;
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 18%, transparent) 0%, transparent 44%),
-			linear-gradient(165deg, color-mix(in srgb, var(--pedia-panel-soft) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--pedia-panel-soft) 93%, #16110f 7%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 30%, transparent) 0%, transparent 45%),
+			linear-gradient(165deg, color-mix(in srgb, var(--pedia-panel) 80%, var(--control-bg)) 0%, color-mix(in srgb, var(--pedia-panel-soft) 95%, #16110f 5%) 100%);
 		box-shadow: var(--pedia-shadow-soft);
-		border: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 14%, var(--border-color));
+		border: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 40%, var(--border-color));
 		border-radius: 1rem;
 		padding: 2rem 1.5rem;
 		transition:
@@ -2007,8 +2007,8 @@
 		font: inherit;
 		text-align: left;
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 20%, transparent) 0%, transparent 35%),
-			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 35%, var(--pedia-panel)) 0%, color-mix(in srgb, var(--catalog-surface) 10%, #121212) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 40%, transparent) 0%, transparent 35%),
+			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 65%, var(--pedia-panel)) 0%, color-mix(in srgb, var(--catalog-surface) 20%, #121212) 100%);
 		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 35%, var(--border-color));
 		border: 0;
 		border-radius: 1rem;
@@ -2053,7 +2053,7 @@
 		inline-size: 100%;
 		block-size: 100%;
 		object-fit: contain;
-		filter: drop-shadow(1px 1px 4px color-mix(in srgb, var(--catalog-accent) 40%, #000));
+		filter: drop-shadow(1px 1px 4px color-mix(in srgb, var(--catalog-accent) 20%, #000));
 	}
 
 	.pedia-author-work-icon span {
@@ -2064,10 +2064,12 @@
 
 	.pedia-author-work-copy .card-title {
 		font-size: 1.25rem;
+		text-shadow: 1px 1px 2px color-mix(in srgb, var(--catalog-accent) 40%, #000);
 	}
 
 	.pedia-author-work-copy .card-copy {
 		margin: 0;
+		text-shadow: 1px 1px 2px color-mix(in srgb, var(--catalog-accent) 40%, #000);
 	}
 
 	.pedia-author-work-meta {
@@ -2087,11 +2089,12 @@
 	}
 
 	.pedia-author-work-pill {
-		color: color-mix(in srgb, white 75%, var(--catalog-accent));
+		color: color-mix(in srgb, white 85%, var(--catalog-accent));
 		font-size: 0.75rem;
 		font-weight: 700;
 		letter-spacing: 0.12em;
 		text-transform: uppercase;
+		text-shadow: 1px 1px 1px color-mix(in srgb, var(--catalog-accent) 20%, #000);
 	}
 
 	.pedia-name-list {

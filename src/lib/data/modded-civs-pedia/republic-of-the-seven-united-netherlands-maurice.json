@@ -1,0 +1,218 @@
+{
+  "id": "civ-republic-of-the-seven-united-netherlands-maurice",
+  "slug": "republic-of-the-seven-united-netherlands-maurice",
+  "kind": "civilization",
+  "title": "Republic of the Seven United Netherlands",
+  "leader": "Maurice",
+  "authors": [
+    "Orangechrisy"
+  ],
+  "summary": "The Netherlands led by Maurice are a custom civilization by Orangechrisy, with contributions from DarthKyofu and RawSasquatch. It is part of the Dutch Civilization Pack.",
+  "source": {
+    "type": "wiki",
+    "wikiPageTitle": "Republic of the Seven United Netherlands",
+    "wikiUrl": "",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3480631724",
+    "version": "v 1",
+    "lastUpdated": "May 2025",
+    "modFolderName": ""
+  },
+  "identity": {
+    "empireName": "The Dutch Republic",
+    "adjectives": "Dutch",
+    "capital": "Antwerp",
+    "bias": "Coast",
+    "religion": [
+      "Protestantism",
+      "Lutheranism (HR)"
+    ],
+    "government": "Republic\nMonarchy",
+    "culture": "Western",
+    "mapLabelsLanguage": "Germanic",
+    "requiredContent": [
+      "Brave New World"
+    ]
+  },
+  "presentation": {
+    "mapImage": "DutchRepublicMap.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/DutchRepublicMap.png",
+    "mapImageCaption": "Map by Orangechrisy",
+    "iconImage": "MauriceOrange.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MauriceOrange.png",
+    "leaderSceneImage": "Maurice.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Maurice.png",
+    "leaderSceneArtCredit": "Art by RawSasquatch",
+    "colors": {
+      "background": "#db750b",
+      "icon": "#082245"
+    }
+  },
+  "overview": {
+    "civilization": {
+      "title": "The Netherlands",
+      "url": "https://en.wikipedia.org/wiki/Netherlands",
+      "body": "The Kingdom of the Netherlands, often referred to simply as \"Holland,\" has, under the influence of many ambitious empires, grown from a minor province of northern Europe into one of the world's premier trade centers. Beginning with the conquests of the Romans, the later rise of the Franks, and eventually the Holy Roman Empire, the Netherlands became a frequent target of expanding European kingdoms. However, none would leave a greater mark than the Spanish Habsburgs, whose persecution of Dutch Protestants under King Philip contributed directly to the outbreak of the Eighty Years' War. Pitting the Dutch citizenry against their Spanish masters in a near-century long conflict for independence, once free of Spanish rule, the people of the Netherlands worked tirelessly to establish their own national identity. As the new republic grew to become a leading economic power, many great cultural and scientific figures rose from the newly formed nation."
+    },
+    "leader": {
+      "title": "Maurice",
+      "body": "Born admist the beginning of the Dutch Revolt, only two months after the Council of Troubles summoned his father, William of Orange, Maurice's early years were marred by war. At only 16, William was murdered and soon Maurice became the stadtholder of Holland and Zeeland, making him the effective leader of the revolt. Five years later he had also became stadtholder of Guelders, Overijssel, and Utrecht. Within that time Maurice studied military history and tactics, intent on reorganizing the Dutch States Army into a force that could win their independence. In 1590 he would create the Ten Glory Years period, characterized by a number of successful sieges that would secure the borders of the Dutch Republic and even push the Spanish deep into Belgium. Maurice's siege strategy and training efforts helped to form the basis of the Military Revolution of the 16th and 17th century, decreasing infantry unit sizes to allow for more direct training and specific battle orders, as well as bringing in volley fire and drilling into the mainstream of European warfare.",
+      "url": "https://en.wikipedia.org/wiki/Maurice,_Prince_of_Orange"
+    }
+  },
+  "dawnOfMan": {
+    "blessing": "Maurice, your guidance brought a golden age to the people of the Netherlands that placed it as one of the greatest powers of the 17th and 18th century. You revolutionized warfare across the continent, creating new military doctrines that brought forth the modern world. Born to the legendary leader of the Dutch Revolt, your father William of Orange was killed when you were just 16, leaving you to become the head of the newly created state. As Stadtholder of Holland and Zeeland, you would lead the troubled nation through half of the Eighty Years' War, both as Stadtholder and as the captain-general of the army. You brought forth a military revolution and turned the mercenary army of the revolt into one of the first modern professional armies.\nWhile you were revolutionizing warfare, you were also leading the republic into a golden age which would last for nearly one hundred years. During this time the Dutch Republic saw unprecedented economic, cultural, and military growth, turning it into a true global power. While the Dutch East India Company was becoming the largest company in history, painters like Rembrandt and Vermeer were putting Dutch art at the forefront of the cultural world.\nMaurice, your leadership is needed once more. The Netherlands is ready to rise to the top of the world again. Can you bring about a new military revolution to the world? Can you create another miracle golden age for the Dutch people? Can you build a civilization that will stand the test of time?",
+    "introduction": ": Greetings! Welcome to this young republic! Have you come to see the wonderful art? Or perhaps you have some matters to deal with at the stock exchange?",
+    "defeat": ": The republic may be defeated, but our people will live on! The flames of our culture will never be destroyed!"
+  },
+  "uniques": [
+    {
+      "slot": "unique ability",
+      "name": "The Dutch Miracle",
+      "replaces": "",
+      "art": "MauriceLeaderIcon.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MauriceLeaderIcon.png",
+      "artCredit": "Art by Orangechrisy",
+      "body": "Promoting units grants Great Person Great Artist points depending on the level of promotion. Customs Houses add Great Work Great Work of Art slots to the nearest city.",
+      "civilopedia": "",
+      "bullets": []
+    },
+    {
+      "slot": "unique unit",
+      "name": "Schutterij",
+      "replaces": "Musketman",
+      "art": "Schutterij.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Schutterij.png",
+      "artCredit": "Art by Orangechrisy",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "+15% Strength Combat Stregngth when in or adjacent to a city",
+        "When trained, gain XP based on the Gold Gold output of the city it was trained in."
+      ]
+    },
+    {
+      "slot": "unique building",
+      "name": "Wisselbank",
+      "replaces": "Bank",
+      "art": "Wisselbank.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Wisselbank.png",
+      "artCredit": "Art by Orangechrisy",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Has an extra Merchant Specialist slot.",
+        "+20% Gold Gold instead of 25%",
+        "+5% Gold Gold for each filled Great Work of Art slot in the city, up to 50%.",
+        "+1 Gold Gold per incoming trade route (+1 for the foreign owner of the trade route)."
+      ]
+    }
+  ],
+  "nameLists": [
+    {
+      "title": "City List",
+      "items": [
+        "The Hague",
+        "Amsterdam",
+        "Rotterdam",
+        "Groningen",
+        "Antwerp",
+        "Breda",
+        "Delft",
+        "Utrecht",
+        "Haarlem",
+        "Enkhuizen",
+        "Leiden",
+        "Dordrecht",
+        "Nijmegen",
+        "Alkmaar",
+        "Gouda",
+        "'s-Hertogenbosch",
+        "Zutphen",
+        "Brielle",
+        "Arnhem",
+        "Middelburg",
+        "Leeuwarden",
+        "Deventer",
+        "Amersfoot",
+        "Bergen op Zoom",
+        "Stavoren",
+        "Harlingen",
+        "Almelo",
+        "Hoorn",
+        "Apeldoorn",
+        "Emmen",
+        "Helder",
+        "Dokkum",
+        "Zwolle",
+        "</div>",
+        "|-"
+      ]
+    },
+    {
+      "title": "Spy List",
+      "items": [
+        "Margaretha",
+        "Simon",
+        "Anna",
+        "Willem",
+        "Ernst",
+        "Cornelis",
+        "Maria",
+        "Reyneir",
+        "Jan",
+        "Elbrich"
+      ]
+    }
+  ],
+  "music": {
+    "peace": {
+      "title": "Merck Toch Hoe Sterck",
+      "credit": "Christelijk Kamper Mannenkoor"
+    },
+    "war": {
+      "title": "",
+      "credit": ""
+    }
+  },
+  "modSupport": {
+    "aa": false,
+    "civivtraits": true,
+    "claimscoloniescrimes": false,
+    "culdiv": true,
+    "ethnicunits": true,
+    "eandd": false,
+    "maplabels": true,
+    "piety": true,
+    "uci": false,
+    "ynaemp": true,
+    "histreligions": true,
+    "mercenaries": false,
+    "enlightenmentera": false
+  },
+  "credits": [
+    {
+      "name": "OrangeChrisy",
+      "role": "Author"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art (Civilization Icon, Unit Flag)"
+    },
+    {
+      "name": "RawSasquatch",
+      "role": "Art (Leaderscene)"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Western Cultures",
+    "Netherlands",
+    "Civilizations with Male leaders"
+  ],
+  "navTemplate": "Template:OrangechrisyNav",
+  "issues": [],
+  "meta": {
+    "formatVersion": 1,
+    "createdAt": "2026-03-22T04:32:11.423Z"
+  }
+}
