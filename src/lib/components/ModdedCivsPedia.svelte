@@ -1626,13 +1626,15 @@
 	}
 
 	.pedia-catalog-identity * {
-		text-shadow: 2px 2px 4px color-mix(in srgb, var(--catalog-accent) 80%, #000);
+		text-shadow: 2px 2px 3px color-mix(in srgb, var(--catalog-accent) 40%, #000);
 	}
 
 	.pedia-catalog-detail-card {
 		padding: 0.95rem 1rem;
 		background: linear-gradient(180deg, color-mix(in srgb, var(--catalog-surface) 10%, var(--pedia-panel)) 0%, color-mix(in srgb, var(--catalog-surface) 10%, #111) 100%);
-		box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--catalog-accent) 80%, transparent);
+		box-shadow:
+			inset 0 0 0 2px color-mix(in srgb, var(--catalog-accent) 80%, transparent),
+			1px 2px 2px color-mix(in srgb, #000 60%, transparent);
 		border-radius: 1rem;
 	}
 
