@@ -12,7 +12,7 @@
 
 	const PEDIA_BASE_PATH = "/modded-civs-pedia";
 
-	let { routePath = PEDIA_BASE_PATH, navigate = null } = $props();
+	let { routePath = PEDIA_BASE_PATH, navigate = null, canEdit = false } = $props();
 
 	const TOC_SECTIONS = [
 		{ id: "overview", label: "Overview" },
@@ -277,6 +277,12 @@
 		activeView = "catalog";
 		selectedEntryId = "";
 		authorFilterName = routeState.authorSlug ? (authorLookup.get(routeState.authorSlug) ?? "") : "";
+	});
+
+	$effect(() => {
+		if (!canEdit && activeView === "converter") {
+			activeView = "catalog";
+		}
 	});
 
 	function openEntry(entry, options = {}) {
@@ -557,6 +563,9 @@
 	}
 
 	function showConverter() {
+		if (!canEdit) {
+			return;
+		}
 		stopEditingEntry();
 		activeView = "converter";
 		selectedEntryId = "";
@@ -656,10 +665,12 @@
 
 				<div class="pedia-toolbar-actions">
 					<input class="pedia-search" type="search" bind:value={searchQuery} placeholder="Search civs, leaders, uniques, authors..." />
-					<div class="pedia-view-switch" role="tablist" aria-label="Pedia views">
-						<button type="button" class="pedia-view-chip is-active" role="tab" aria-selected="true">Catalog</button>
-						<button type="button" class="pedia-view-chip" role="tab" aria-selected="false" onclick={showConverter}>Converter</button>
-					</div>
+					{#if canEdit}
+						<div class="pedia-view-switch" role="tablist" aria-label="Pedia views">
+							<button type="button" class="pedia-view-chip is-active" role="tab" aria-selected="true">Catalog</button>
+							<button type="button" class="pedia-view-chip" role="tab" aria-selected="false" onclick={showConverter}>Converter</button>
+						</div>
+					{/if}
 				</div>
 			</div>
 

@@ -58,7 +58,8 @@
 		refreshToken: "",
 	});
 
-	const canEdit = $derived(Boolean(authUser) && authAccessAllowed);
+	const isLocalEditorHost = $derived(typeof window !== "undefined" && ["localhost", "127.0.0.1", "::1"].includes((window.location.hostname || "").toLowerCase()));
+	const canEdit = $derived(isLocalEditorHost || (Boolean(authUser) && authAccessAllowed));
 
 	function normalizePathname(value) {
 		return normalizeSeoPath(value);
@@ -841,7 +842,7 @@
 				{:else if currentPath === "/modinfo-builder"}
 					<ModInfoBuilder />
 				{:else if isModdedCivsPediaRoute(currentPath)}
-					<ModdedCivsPedia routePath={currentPath} navigate={navigateTo} />
+					<ModdedCivsPedia routePath={currentPath} navigate={navigateTo} {canEdit} />
 				{:else if currentPath === "/civ5mod-ziper"}
 					<Civ5ModZiper />
 				{:else if currentPath === "/pattern-library"}
