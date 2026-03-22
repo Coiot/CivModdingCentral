@@ -368,19 +368,28 @@ function parseStandaloneIconImage(source, wikiUrl = "", excludedFiles = []) {
 }
 
 function parseCollapsibleLists(section) {
-	const pattern = /\|\s*class="mw-collapsible[\s\S]*?\|\s*'''([^']+)'''[\s\S]*?<div class="mw-collapsible-content">([\s\S]*?)<\/div>/g;
 	const lists = [];
-	let match = pattern.exec(section);
-	while (match) {
-		const items = match[2]
+	const headers = [...section.matchAll(/\|\s*class="mw-collapsible[\s\S]*?\|\s*'''([^']+)'''/g)];
+	for (let index = 0; index < headers.length; index += 1) {
+		const header = headers[index];
+		const rowStart = header.index ?? 0;
+		const nextRowStart = headers[index + 1]?.index ?? -1;
+		const tableEnd = section.indexOf("\n|}", rowStart);
+		const rowEndCandidates = [nextRowStart, tableEnd].filter((value) => value !== -1).sort((left, right) => left - right);
+		const rowEnd = rowEndCandidates[0] ?? section.length;
+		const rowBlock = section.slice(rowStart, rowEnd);
+		const contentMatch = rowBlock.match(/<div class="mw-collapsible-content">\s*([\s\S]*?)(?=\s*<\/div>\s*$|\s*\|-\s*\n\|\s*class="mw-collapsible|\s*$)/i);
+		if (!contentMatch) {
+			continue;
+		}
+		const items = contentMatch[1]
 			.split("\n")
 			.map((line) => cleanText(line.replace(/^[:*#]\s*/, "")))
 			.filter(Boolean);
 		lists.push({
-			title: cleanText(match[1]),
+			title: cleanText(header[1]),
 			items,
 		});
-		match = pattern.exec(section);
 	}
 	return lists;
 }
@@ -706,7 +715,7 @@ export async function createPediaEntryFromWikiMarkup(markup, options = {}) {
 	entry.title = stripWikiMarkup(civInfoParams.title || overviewBlocks[0]?.title || options.title || "");
 	entry.leader = stripWikiMarkup(civInfoParams.leader || overviewBlocks[1]?.title || options.leader || "");
 	entry.id = buildEntryId(entry.title, entry.leader);
-	entry.slug = slugifyPediaValue(entry.title || entry.id);
+	entry.slug = slugifyPediaValue(`${entry.title}-${entry.leader}`) || slugifyPediaValue(entry.title || entry.id);
 	entry.summary = authorSummary.summary;
 	entry.source = {
 		...entry.source,
@@ -1471,6 +1480,47 @@ function buildUniqueFromClassOverride(row, typeRow, slot, textByTag) {
 	};
 }
 
+function buildUniqueFromImprovementRow(improvementRow, buildRow, textByTag) {
+	if (!improvementRow?.Type) {
+		return null;
+	}
+
+	const helpText = findTextForTag(textByTag, improvementRow.Help);
+	const strategyText = findTextForTag(textByTag, improvementRow.Strategy);
+	const bullets = buildUniqueBullets(helpText);
+	const replacementName = inferReplacementNameFromText(strategyText, "");
+
+	return {
+		slot: "unique improvement",
+		name: findTextForTag(textByTag, improvementRow.Description) || formatSqlIdentifier(improvementRow.Type),
+		replaces: replacementName || findTextForTag(textByTag, buildRow?.Description) || "",
+		art: "",
+		artUrl: "",
+		artCredit: "",
+		body: bullets.length ? strategyText || helpText : helpText || strategyText,
+		civilopedia: resolveCivilopediaText(improvementRow, textByTag),
+		bullets,
+	};
+}
+
+function isCivSpecificImprovement(improvementRow, civType) {
+	if (!improvementRow || !civType) {
+		return false;
+	}
+
+	const civilizationTypes = collectRowColumnValues(improvementRow, "CivilizationType");
+	if (!civilizationTypes.includes(civType)) {
+		return false;
+	}
+
+	const specificCivRequired = collectRowColumnValues(improvementRow, "SpecificCivRequired");
+	if (!specificCivRequired.length) {
+		return true;
+	}
+
+	return specificCivRequired.some((value) => /^(1|true|yes)$/i.test(String(value || "")));
+}
+
 function inferSupportFlags(modinfo, tableRows) {
 	const flags = {};
 	const referenceTitles = (modinfo.references || []).map((reference) => cleanText(reference.title).toLowerCase());
@@ -1610,6 +1660,8 @@ export async function createPediaEntryFromModFolderFiles(fileList) {
 	const traits = mapRowsByKey(tableRows.get("Traits") || [], "Type");
 	const units = mapRowsByKey(tableRows.get("Units") || [], "Type");
 	const buildings = mapRowsByKey(tableRows.get("Buildings") || [], "Type");
+	const improvements = mapRowsByKey(tableRows.get("Improvements") || [], "Type");
+	const builds = tableRows.get("Builds") || [];
 	const unitOverrides = tableRows.get("Civilization_UnitClassOverrides") || [];
 	const buildingOverrides = tableRows.get("Civilization_BuildingClassOverrides") || [];
 	const cityNames = tableRows.get("Civilization_CityNames") || [];
@@ -1784,6 +1836,17 @@ export async function createPediaEntryFromModFolderFiles(fileList) {
 		}
 	}
 
+	for (const improvementRow of improvements.values()) {
+		if (!isCivSpecificImprovement(improvementRow, civRow.Type)) {
+			continue;
+		}
+		const buildRow = builds.find((row) => row.ImprovementType === improvementRow.Type) || null;
+		const unique = buildUniqueFromImprovementRow(improvementRow, buildRow, textByTag);
+		if (unique) {
+			entry.uniques.push(unique);
+		}
+	}
+
 	if (cityList.length) {
 		entry.nameLists.push({
 			title: "City List",
@@ -1938,7 +2001,7 @@ export function normalizePediaEntry(entryInput) {
 	const source = entryInput || {};
 
 	entry.id = cleanText(source.id) || buildEntryId(source.title, source.leader);
-	entry.slug = cleanText(source.slug) || slugifyPediaValue(source.title || entry.id);
+	entry.slug = cleanText(source.slug) || slugifyPediaValue(`${source.title || ""}-${source.leader || ""}`) || slugifyPediaValue(source.title || entry.id);
 	entry.kind = cleanText(source.kind) || "civilization";
 	entry.title = cleanText(source.title);
 	entry.leader = cleanText(source.leader);

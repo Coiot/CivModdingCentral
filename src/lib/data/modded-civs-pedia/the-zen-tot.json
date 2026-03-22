@@ -1,0 +1,242 @@
+{
+  "id": "civ-the-zen-tot",
+  "slug": "the-zen-tot",
+  "kind": "civilization",
+  "title": "The Zenú",
+  "leader": "Totó",
+  "authors": [
+    "Tradboy"
+  ],
+  "summary": "The Zenú led by Totó are a custom civilization mod by Tradboy, with contributions from DarthKyofu and Rhoze.",
+  "source": {
+    "type": "wiki",
+    "wikiPageTitle": "The Zenú",
+    "wikiUrl": "",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3570349167",
+    "version": "v 1",
+    "lastUpdated": "September 2025",
+    "modFolderName": ""
+  },
+  "identity": {
+    "empireName": "Zenú Empire",
+    "adjectives": "Zenu",
+    "capital": "Betancí",
+    "bias": "River",
+    "religion": [
+      "Catholicism",
+      "Chiminigagua (HR)"
+    ],
+    "government": "Monarchy",
+    "culture": "Andean",
+    "mapLabelsLanguage": "",
+    "requiredContent": [
+      "Brave New World"
+    ]
+  },
+  "presentation": {
+    "mapImage": "ZenuMap.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ZenuMap.png",
+    "mapImageCaption": "Map by Tradboy and DarthKyofu",
+    "iconImage": "Zenu.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Zenu.png",
+    "leaderSceneImage": "ZenuDiplo.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ZenuDiplo.png",
+    "leaderSceneArtCredit": "Art by Tradboy and DarthKyofu",
+    "colors": {
+      "background": "#ca902d",
+      "icon": "#1a324e"
+    }
+  },
+  "overview": {
+    "civilization": {
+      "title": "The Zenú",
+      "url": "https://en.wikipedia.org/wiki/Zen%C3%BA",
+      "body": "The Zenú are an indigenous people of northern Colombia,living in the caribbean highlands, the Zenú civilazation thrived from about 200 BCE to about 1600 CE, due their massive waterworks, poltical organization and mastery in arts, the Zenú are considered one of the most advance civilization of precolonial Colombia."
+    },
+    "leader": {
+      "title": "Totó",
+      "body": "Totó was the religious leader and cacica of the Finzenú, which was seen as the more religious division of the Great Zenú, from the sparse accounts we have of Zenu rulership, is known that her reign happened at the same time as the cacique Yapel of Panzenú, around 1535.Totó religious importance seem to have been great deal, considered so sacred by all Zenú, that she was not to touch the soil, some account tell of her followers laying on the floor facing down so she could use them as step.",
+      "url": "https://www.instagram.com/p/DNqRB7MOyjB/"
+    }
+  },
+  "dawnOfMan": {
+    "blessing": "Greetings, Cacica Totó, you lead the Finzenú as its most sacred authority, alongside the Lords of Panzenú and Zenúfana, you formed the Great Zenú. There, your people dug the earth and manipulated the rivers to engineer one of the most ancient and sophisticated irrigation systems in South America, living alongside it till this day. Even after losing their language, the Zenú still remember the lords and ladies of the Great Zenú.\nThe roaring canals call to you, great Cacica. Will you be able to step once again upon the shoulders of your followers and bend the rivers toward a new dawn for the Great Zenú? Can you build a civilization that will stand the test of time?",
+    "introduction": "Welcome to the Temple of Betancí, the waters have carry you to me, Totó, sacred leader of the Finzenú, come forward, as i'm not allowed to touch the ground with my feet.",
+    "defeat": "You've done the impossible, you have make me kneel in the ground, you've defiled the waters of the Great Zenú, may they never yield to your command."
+  },
+  "uniques": [
+    {
+      "slot": "unique ability",
+      "name": "Momposino Filigree",
+      "replaces": "",
+      "art": "ZenuLI.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ZenuLI.png",
+      "artCredit": "Art by DarthKyofu",
+      "body": "Specialists consume half the normal amount of Food Food. +1 Faith Faith and Gold Gold from Specialists in cities settled on rivers.",
+      "civilopedia": "",
+      "bullets": []
+    },
+    {
+      "slot": "unique unit",
+      "name": "Interfluvial Lord",
+      "replaces": "Great Engineer",
+      "art": "ZenUU.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ZenUU.png",
+      "artCredit": "Art by Tradboy and DarthKyofu",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Can be expended to create random Specialist slot in the city.",
+        "Creating a Specialist or Hurrying Production grants a burst of Food Food to the city."
+      ]
+    },
+    {
+      "slot": "unique building",
+      "name": "Hydraulic System",
+      "replaces": "Aqueduct",
+      "art": "ZenUB.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ZenUB.png",
+      "artCredit": "Art by Tradboy and DarthKyofu",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Less base Food Food carried over when a citizen born, but +5% Food Food carried over for each filled Specialist slot in the city, capped at 50%.",
+        "+1 Engineer Specialist Slot."
+      ]
+    }
+  ],
+  "nameLists": [
+    {
+      "title": "City List",
+      "items": [
+        "Betancí",
+        "Lorica",
+        "Pinchorroy",
+        "Sahagún",
+        "Ayapel",
+        "San Jacinto",
+        "Cincelejo",
+        "Sotavento",
+        "Abibe",
+        "Sampues",
+        "Nori",
+        "Guaca",
+        "Mexión",
+        "Faraquiel",
+        "Momil",
+        "Chiquit",
+        "La Mojana",
+        "Nechi",
+        "Achi",
+        "Marralu",
+        "Palotal",
+        "Puyengue",
+        "Sinú",
+        "Turbaco",
+        "</div>",
+        "|-"
+      ]
+    },
+    {
+      "title": "Spy List",
+      "items": [
+        "Yiimorii",
+        "Raffi",
+        "Entepica",
+        "Tapica",
+        "Erandique",
+        "Ilanguipuca",
+        "Icelaca",
+        "Itanipuca",
+        "Comizahual",
+        "Cacalote",
+        "Cusuco",
+        "Tacuacín",
+        "</div>",
+        "|-"
+      ]
+    },
+    {
+      "title": "Interfluvial Lord List",
+      "items": [
+        "Chenú",
+        "Ayapel",
+        "Baraji",
+        "Abibe",
+        "Cachime",
+        "Cafié",
+        "Juy",
+        "Cereté",
+        "Mariguá",
+        "Jaraguay",
+        "Napi",
+        "Chuchurubí",
+        "Uratá",
+        "Maracai",
+        "Manexca",
+        "Momil",
+        "Nay",
+        "Naín",
+        "Onomá",
+        "Orica",
+        "Yulé",
+        "Nepá",
+        "Zimará",
+        "Sajú",
+        "Noní"
+      ]
+    }
+  ],
+  "music": {
+    "peace": {
+      "title": "Raices del Gran Zenu",
+      "credit": "Funvizenu"
+    },
+    "war": {
+      "title": "El Ocaso del Gran Zenu",
+      "credit": "Jonathan Corzo"
+    }
+  },
+  "modSupport": {
+    "aa": false,
+    "civivtraits": false,
+    "claimscoloniescrimes": false,
+    "culdiv": true,
+    "ethnicunits": false,
+    "eandd": false,
+    "maplabels": false,
+    "piety": true,
+    "uci": false,
+    "ynaemp": true,
+    "histreligions": true,
+    "mercenaries": false,
+    "enlightenmentera": false
+  },
+  "credits": [
+    {
+      "name": "Tradboy",
+      "role": "Author"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art Revision"
+    },
+    {
+      "name": "Rhoze",
+      "role": "Code (Lua)"
+    }
+  ],
+  "categories": [
+    "Tradboy",
+    "All Civilizations",
+    "Civilizations with Female leaders",
+    "Andean Cultures",
+    "Colombia"
+  ],
+  "navTemplate": "TradboyNav",
+  "issues": [],
+  "meta": {
+    "formatVersion": 1,
+    "createdAt": "2026-03-22T03:20:02.358Z"
+  }
+}

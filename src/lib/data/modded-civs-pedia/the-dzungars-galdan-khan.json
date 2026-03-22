@@ -1,0 +1,188 @@
+{
+	"id": "civ-the-dzungars-galdan-khan",
+	"slug": "the-dzungars-galdan-khan",
+	"kind": "civilization",
+	"title": "The Dzungars",
+	"leader": "Galdan Khan",
+	"authors": ["Coiot"],
+	"summary": "The Dzungars under Galdan Khan is a custom civilization by Coiot, with contributions from DarthKyofu, TopHatPaladin, and Arilasqueto.",
+	"source": {
+		"type": "wiki",
+		"wikiPageTitle": "The Dzungars",
+		"wikiUrl": "",
+		"workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2826646650",
+		"version": "v 1",
+		"lastUpdated": "27 June 2022",
+		"modFolderName": ""
+	},
+	"identity": {
+		"empireName": "",
+		"adjectives": "",
+		"capital": "Ili",
+		"bias": "Grassland",
+		"religion": ["Buddhism", "Mahayana (HR)"],
+		"government": "",
+		"culture": "Steppe",
+		"mapLabelsLanguage": "",
+		"requiredContent": ["Brave New World"]
+	},
+	"presentation": {
+		"mapImage": "DzungarMap.PNG",
+		"mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/DzungarMap.PNG",
+		"mapImageCaption": "Map by DarthKyofu",
+		"iconImage": "Dzungars.png",
+		"iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Dzungars.png",
+		"leaderSceneImage": "DzungarLS.PNG",
+		"leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/DzungarLS.PNG",
+		"leaderSceneArtCredit": "Art by Coiot",
+		"colors": {
+			"background": "#e3c6b4",
+			"icon": "#114581"
+		}
+	},
+	"overview": {
+		"civilization": {
+			"title": "The Dzungar Khanate",
+			"url": "https://en.wikipedia.org/wiki/Oneida_people",
+			"body": "The Dzungar Khanate, also written as the Zunghar Khanate, was an Inner Asian khanate of Oirat Mongol origin. At its greatest extent, it covered an area from southern Siberia in the north to present-day Kyrgyzstan in the south, and from the Great Wall of China in the east to present-day Kazakhstan in the west. The core of the Dzungar Khanate is today part of northern Xinjiang, also called Dzungaria.\nAbout 1620 the western Mongols, known as the Oirats, united in Dzungaria. In 1678, Galdan received from the Dalai Lama the title of Boshogtu Khan, making the Dzungars the leading tribe within the Oirats. The Dzungar rulers used the title of Khong Tayiji, which translates into English as \"crown prince\". Between 1680 and 1688, the Dzungars conquered the Tarim Basin, which is now southern Xinjiang, and defeated the Khalkha Mongols to the east. In 1696, Galdan was defeated by the Qing dynasty and lost Outer Mongolia. In 1717 the Dzungars conquered Tibet, but were driven out a year later by the Qing. In 1755, Qing China took advantage of a Dzungar civil war to conquer Dzungaria and destroyed the Dzungars as a people. The destruction of the Dzungars led to the Qing conquest of Mongolia, Tibet, and the creation of Xinjiang as a political administrative unit."
+		},
+		"leader": {
+			"title": "Galdan Khan",
+			"body": "Erdeniin Galdan, known as Galdan Boshugtu Khan was a Dzungar-Oirat khan of the Dzungar Khanate. As fourth son of Erdeni Batur, founder of the Dzungar Khanate, Galdan was a descendant of Esen Taishi, the powerful Oirat Khan of the Northern Yuan dynasty who united all Mongols in the 15th century. Galdan's mother Yum Aga was a daughter of Güshi Khan, the first Khoshut-Oirat King of Tibet.\nIn 1680, the Black Kyrgyz raided Moghulistan and occupied Yarkant. The inhabitants of Yarkant appealed to Galdan Khan for help. The Dzungars conquered Kashgar and Yarkant and Galdan had its ruler chosen by its inhabitants. Then he invaded the north of Tengeri Mountain in modern Kazakhstan the next year; he defeated Tauke Khan's Kazakhs but failed to take Sayram. He conquered Turfan and Hami the next year. In 1683 Galdan's armies under Rabtan reached Tashkent and the Syr Darya and crushed two armies of the Kazakhs. After that Galdan subjugated the Black Khirgizs and ravaged the Fergana Valley. From 1685 Galdan's forces aggressively pushed the Kazakhs. While his general Rabtan took Taraz, and his main force forced the Kazakhs to migrate westwards.\nUnfortunately for Galdan, the Kangxi Emperor of Qing China was unusually vigorous and warlike. While he was fighting in Eastern Mongolia, his nephew Tsewang Rabtan seized the Dzungarian throne in 1689. After a series of successful battles in the Khangai Mountains, at Lake Olgoi and Ulahui River, he approached the Great Wall of China. The Qing deceived him to arrive near Beijing saying that they needed a treaty, but ambushed him at the battle of Ulan Butung.\nIn 1696 Galdan was on the upper Kherlen River east of modern Ulaanbaatar. Kangxi's plan was to personally lead an army northwest to Galdan while sending a second army north from the Ordos Desert to block his escape. Kangxi reached the Kherlen, found Galdan gone, but was forced to turn back due to lack of supplies. On 12 June 1696, the same day Kangxi turned back, Galdan blundered into the western army and was disastrously defeated at Terelj's Zuunmod near the upper Tuul River east of Ulan Bator. Galdan's wife, Queen Anu, was killed during the battle and the Manchus captured 20,000 cattle and 40,000 sheep. Galdan fled with his remaining 40 or 50 men. He gathered a few thousand followers who later deserted due to hunger. Failing in his objectives of usurping the Khaan's throne of Mongolia and the dreams of achieving greatness and with nowhere to go but facing imminent threat of being captured by the Manchus or Tsewang Rabtan, he killed himself by taking poison on 4 April 1697 in the Altai Mountains near Khovd with only 300 of his followers staying with him. He was succeeded by Tsewang Rabtan who had revolted against him.",
+			"url": "https://en.wikipedia.org/wiki/Galdan_Boshugtu_Khan"
+		}
+	},
+	"dawnOfMan": {
+		"blessing": "\"Fearful may your foes be, mighty Galdan Khan. Of noble birth, descendent of Esen Taishi, and honored student of His Holiness the Great Fifth Dalai Lama, after two decades of studying scriptures and philosophy, your legacy called for something more. Upon returning to Dzungaria, you sought nothing more than uniting all the Oirats under your guidance, and then swiftly turning your attention to the fractured Khalkha. The Qing court, fearing your power to rival their newfound dominance, sowed division against you. In defiance of the Dalai Lama, and allying with the Tsardom of Russia, you began to reunite all the Mongols by force, but your campaign drove the Khalkha closer to the Manchu’s arms. Caught off guard by false treaty negotiations, your forces were outmaneuvered and your ambitions came to an end.\nOh Galdan Khan, the memory of your ancestor Chinggis Khan rises from your veins once more. Will you return back from the mountains to lead the warriors on the steppes? Can you reunite all the wayward Mongolian tribes under a single banner? Can you build a civilization to stand the test of time?\"",
+		"introduction": "\"Welcome stranger, I am Galdan Khan. Make yourself comfortable in our pastures.\"",
+		"defeat": "\"I may be defeated, but another wishing to unite our legacy will come.\""
+	},
+	"uniques": [
+		{
+			"slot": "unique ability",
+			"name": "Last Nomad Empire",
+			"replaces": "",
+			"art": "DzungarLead.png",
+			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/DzungarLead.png",
+			"artCredit": "Art by Coiot",
+			"body": "Units can short paradrop when starting their turn on a hill or adjacent to a mountain within friendly territory. Receive mounted units trained by City-State City-States that you've pledged to protect or are allied with.",
+			"civilopedia": "",
+			"bullets": []
+		},
+		{
+			"slot": "unique unit",
+			"name": "Ulan Zalata",
+			"replaces": "Lancer",
+			"art": "DzungarUU1.png",
+			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/DzungarUU1.png",
+			"artCredit": "Art by Coiot",
+			"body": "",
+			"civilopedia": "",
+			"bullets": ["Spawns with the Heavy Charge promotion.", "+1 Moves Movement when starting the turn on a hill or adjacent to a mountain.", "Can upgrade into Cavalry."]
+		},
+		{
+			"slot": "unique unit",
+			"name": "Zanbur Cavalry",
+			"replaces": "Cavalry",
+			"art": "DzungarUU2.png",
+			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/DzungarUU2.png",
+			"artCredit": "Art by Coiot",
+			"body": "",
+			"civilopedia": "",
+			"bullets": ["Receives a ranged attack and defence bonus on hills.", "Gains extra Moves Movement for each City-State City-State that you can demand tribute from."]
+		}
+	],
+	"nameLists": [
+		{
+			"title": "City List",
+			"items": [
+				"Ili",
+				"Tarbagatai",
+				"Uliastai",
+				"Irtysh",
+				"Ürümqi",
+				"Yulduz",
+				"Manas",
+				"Hami",
+				"Kobdo",
+				"Kur-Karausu",
+				"Ölgii",
+				"Altai",
+				"Kyakhta",
+				"Choibalsan",
+				"Öndörkhaan",
+				"Mörön",
+				"Kulun",
+				"Tara",
+				"Uriankhai",
+				"Khatgal",
+				"Tokmak",
+				"Kucha",
+				"Lhasa",
+				"Turpan",
+				"Yarkand",
+				"Kashgar",
+				"Khalban",
+				"Nakchu",
+				"Burang",
+				"Chamdo",
+				"</div>",
+				"|-"
+			]
+		},
+		{
+			"title": "Spy List",
+			"items": ["Khara Khula", "Amursana", "Aru", "Erdeni Batur", "Sengge", "Lama Dorji", "Dawachi", "Tsewang Rabtan", "septen", "Zaya Pandita"]
+		}
+	],
+	"music": {
+		"peace": {
+			"title": "",
+			"credit": ""
+		},
+		"war": {
+			"title": "",
+			"credit": ""
+		}
+	},
+	"modSupport": {
+		"civivtraits": true,
+		"cbp": false,
+		"claimscoloniescrimes": true,
+		"culdiv": true,
+		"enlightenmentera": true,
+		"ethnicunits": true,
+		"eandd": false,
+		"histreligions": true,
+		"maplabels": true,
+		"mercenaries": true,
+		"piety": true,
+		"uci": true,
+		"ynaemp": true
+	},
+	"credits": [
+		{
+			"name": "Coiot",
+			"role": "Art, Design, Code"
+		},
+		{
+			"name": "DarthKyofu",
+			"role": "Art Advisor, Map"
+		},
+		{
+			"name": "TopHatPaladin",
+			"role": "Code Advisor"
+		},
+		{
+			"name": "Arilasqueto",
+			"role": "Icon Cleanup"
+		}
+	],
+	"categories": ["Steppe Cultures", "Mongolia", "All Civilizations", "Civilizations with Male leaders", "Crossroads of the World", "Coiot", "China"],
+	"navTemplate": "CrossroadsOfTheWorldNav",
+	"issues": [],
+	"meta": {
+		"formatVersion": 1,
+		"createdAt": "2026-03-22T03:13:38.130Z"
+	}
+}

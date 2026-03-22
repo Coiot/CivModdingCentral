@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const MODDED_CIVS_PEDIA_DIR = resolve(__dirname, "src/lib/data/modded-civs-pedia");
@@ -17,6 +17,24 @@ async function readJsonBody(req) {
 		chunks.push(chunk);
 	}
 	return JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}");
+}
+
+function cleanValue(value) {
+	return String(value || "").trim();
+}
+
+function samePediaEntry(left, right) {
+	const leftId = cleanValue(left?.id);
+	const rightId = cleanValue(right?.id);
+	if (leftId && rightId) {
+		return leftId === rightId;
+	}
+
+	const leftTitle = cleanValue(left?.title);
+	const rightTitle = cleanValue(right?.title);
+	const leftLeader = cleanValue(left?.leader);
+	const rightLeader = cleanValue(right?.leader);
+	return Boolean(leftTitle && rightTitle && leftLeader && rightLeader && leftTitle === rightTitle && leftLeader === rightLeader);
 }
 
 function localPediaSavePlugin() {
@@ -44,6 +62,23 @@ function localPediaSavePlugin() {
 					await mkdir(MODDED_CIVS_PEDIA_DIR, { recursive: true });
 
 					const jsonFilePath = resolve(MODDED_CIVS_PEDIA_DIR, `${slug}.json`);
+					let existingEntry = null;
+
+					try {
+						existingEntry = JSON.parse(await readFile(jsonFilePath, "utf8"));
+					} catch (error) {
+						if (error?.code !== "ENOENT") {
+							throw error;
+						}
+					}
+
+					if (existingEntry && !samePediaEntry(existingEntry, entry)) {
+						const existingLabel = [cleanValue(existingEntry?.title), cleanValue(existingEntry?.leader)].filter(Boolean).join(" led by ");
+						return jsonResponse(res, 409, {
+							ok: false,
+							message: `Slug "${slug}" is already used by ${existingLabel || "another pedia entry"}. Change the slug before saving.`,
+						});
+					}
 
 					await writeFile(jsonFilePath, `${JSON.stringify(entry, null, 2)}\n`, "utf8");
 

@@ -1,0 +1,239 @@
+{
+  "id": "civ-the-khoshuts-g-shi-khan",
+  "slug": "the-khoshuts",
+  "kind": "civilization",
+  "title": "The Khoshuts",
+  "leader": "Güshi Khan",
+  "authors": [
+    "ExplosiveWatermelon",
+    "Coiot"
+  ],
+  "summary": "The Khoshuts led by Güshi Khan is a custom civilization by ExplosiveWatermelon and Coiot.",
+  "source": {
+    "type": "wiki",
+    "wikiPageTitle": "The Khoshuts",
+    "wikiUrl": "",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3035324119",
+    "version": "v 1",
+    "lastUpdated": "13 September 2023",
+    "modFolderName": ""
+  },
+  "identity": {
+    "empireName": "",
+    "adjectives": "",
+    "capital": "Dam",
+    "bias": "",
+    "religion": [
+      "Buddhism"
+    ],
+    "government": "Monarchy\nTheocracy",
+    "culture": "Steppe",
+    "mapLabelsLanguage": "",
+    "requiredContent": []
+  },
+  "presentation": {
+    "mapImage": "khoshutMap_Small.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/khoshutMap_Small.png",
+    "mapImageCaption": "Map by ExplosiveWatermelon",
+    "iconImage": "Khoshuts.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Khoshuts.png",
+    "leaderSceneImage": "Khoshut LS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Khoshut%20LS.png",
+    "leaderSceneArtCredit": "200x200px",
+    "colors": {
+      "background": "#ffce49",
+      "icon": "#3d0d1d"
+    }
+  },
+  "overview": {
+    "civilization": {
+      "title": "The Khoshuts",
+      "url": "https://en.wikipedia.org/wiki/Khoshut_Khanate",
+      "body": "The Khoshut Khanate was a Mongol Oirat khanate based on the Tibetan Plateau from 1642 to 1717."
+    },
+    "leader": {
+      "title": "Güshi Khan",
+      "body": "Güshi Khan was a Khoshut prince and founder of the Khoshut Khanate.",
+      "url": "https://en.wikipedia.org/wiki/G%C3%BCshi_Khan"
+    }
+  },
+  "dawnOfMan": {
+    "blessing": "Oh great nomiyin Güshi Khan, your legacy begins with strife in the Ili, where you rose to prominence through unwavering determination in battle against Turkistanis. Despite overcoming adversity, competition at home over power struggles to unite the Oirats under one banner lead you to accept a most gracious invitation to defeat Choghtu Khong Tayiji in the name of the 5th Dalai Lama. Victorious in battle along the landscapes of Kokonor, the invitation came again to further Gelukpa ambition to rid religious rivals next in Kham and then in Tsang. With an aura of invincibility, you wiped away all opposition, and in return were granted the title of Khan despite not being a Borjigid prince. With unparalleled prestige to your name, the Khoshuts enjoyed supreme position amongst all Mongols, and held the upmost support of all that prayed to the Dalai Lama. Through strategic alliances and shrewd diplomacy, you extended your rule, securing vital trade routes, and fostering cultural exchange. Your leadership marked an era of prosperity and cooperation, leaving an indelible mark on Tibetan history.\nOh Güshi Khan, your legacy to unite the Oirats under own faith and people is called for once again. Will you return back to the steppes to bring stability toy uor people? Can you reunite all the wayward Mongolian tribes under a single faith? Can you build a civilization to stand the test of time?",
+    "introduction": "Halt! I am Güshi Khan, the Chögyal of Tibet. I ask, what brings you here?",
+    "defeat": "No... the Dharma is never wrong. The spirit of the faithful ones will live on."
+  },
+  "uniques": [
+    {
+      "slot": "unique ability",
+      "name": "Holder of the Faith",
+      "replaces": "",
+      "art": "gushi_Icon.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/gushi_Icon.png",
+      "artCredit": "Art by Coiot",
+      "body": "Increased Unit Production in the Empire for each Holy Site and Holy Sites provide adjacent units a Combat Bonus. If you take over a Holy City and have not founded a Religion, you replace the Founder.",
+      "civilopedia": "",
+      "bullets": []
+    },
+    {
+      "slot": "unique unit",
+      "name": "Yaso",
+      "replaces": "Lancer",
+      "art": "yaso_Icon.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/yaso_Icon.png",
+      "artCredit": "Art by Coiot",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "At the start of your turn, adjacent Mounted Units have their City Attack penalty inverted.",
+        "Cities captured near a Yaso convert to your religion."
+      ]
+    },
+    {
+      "slot": "unique unit",
+      "name": "Nomiyin",
+      "replaces": "Great Prophet",
+      "art": "nomiyin_Icon.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/nomiyin_Icon.png",
+      "artCredit": "Art by Coiot",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Less Religion Spread charges, but spawns in double quantity.",
+        "Can be expended to Culture Bomb on Holy Sites."
+      ]
+    }
+  ],
+  "nameLists": [
+    {
+      "title": "City List",
+      "items": [
+        "Dam",
+        "Lhasa",
+        "Shigatse",
+        "Gyangtse",
+        "Chamdo",
+        "Nakchu",
+        "Dege",
+        "Tawang",
+        "Lhari",
+        "Gyamda",
+        "Nedong",
+        "Dulan",
+        "Gonjo",
+        "Batang",
+        "Jyekundo",
+        "Dartsedo",
+        "Gyalthang",
+        "Naksho Biru",
+        "Zhokha",
+        "Tsegang",
+        "Jomo",
+        "Yigrong",
+        "Lho",
+        "Shopamdo",
+        "Drachen",
+        "Sok",
+        "Riwoche",
+        "Dzogang",
+        "Markham",
+        "Rima",
+        "Tsakhalho",
+        "Mengung",
+        "Balung",
+        "Satham",
+        "Chone",
+        "Labrang",
+        "Rongwo",
+        "Kumbum",
+        "Ragya",
+        "Barkham",
+        "Jakhyung",
+        "Mewa",
+        "Muge",
+        "Kanze",
+        "Shubam",
+        "Dzongkha",
+        "Kyirong",
+        "Nyanang",
+        "Saga",
+        "Ngamring",
+        "Dirang",
+        "Shelkar",
+        "Purang",
+        "Gyanema",
+        "Dawa",
+        "Tsaparang",
+        "Gartok",
+        "Rongshar",
+        "Rutok",
+        "Phari",
+        "Reting",
+        "Sakya",
+        "Senge",
+        "Dromo",
+        "Litang"
+      ]
+    },
+    {
+      "title": "Spy List",
+      "items": [
+        "Sechen Daiching",
+        "Dalantai",
+        "Bayan Abugai",
+        "Elduchi",
+        "Dalai Batur",
+        "Hurimashi",
+        "Sanggaerzha Yiledeng",
+        "Gunbu Chahun",
+        "Tashi Batur",
+        "Amin Dara"
+      ]
+    }
+  ],
+  "music": {
+    "peace": {
+      "title": "Mongols Theme",
+      "credit": "Tilman Sillescu for the soundtrack of Age of Empires IV"
+    },
+    "war": {
+      "title": "Under the Eternal Blue Sky",
+      "credit": "Tilman Sillescu for the soundtrack of Age of Empires IV"
+    }
+  },
+  "modSupport": {
+    "civivtraits": false,
+    "cbp": false,
+    "claimscoloniescrimes": false,
+    "culdiv": true,
+    "ethnicunits": false,
+    "eandd": false,
+    "maplabels": false,
+    "piety": false,
+    "uci": false,
+    "ynaemp": true
+  },
+  "credits": [
+    {
+      "name": "Coiot",
+      "role": "Lead Author, Design, Code, Art"
+    },
+    {
+      "name": "Explosive Watermelon",
+      "role": "Lead Author, Design, Code, Art"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Explosive Watermelon",
+    "Civilizations with Male leaders",
+    "Mongolia",
+    "Steppe Cultures",
+    "Civilizations with two unique units (Civ5)"
+  ],
+  "navTemplate": "ExplosiveWatermelonNav",
+  "issues": [],
+  "meta": {
+    "formatVersion": 1,
+    "createdAt": "2026-03-22T02:57:42.211Z"
+  }
+}

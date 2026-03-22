@@ -159,9 +159,8 @@
 		return sanitizePediaProse(entry?.summary) || entryDisplaySummary(entry);
 	}
 
-	function authorEntries(entry) {
-		const author = primaryAuthor(entry);
-		return allEntries.filter((candidate) => entryAuthors(candidate).includes(author)).sort((left, right) => left.title.localeCompare(right.title));
+	function authorEntriesForName(authorName) {
+		return allEntries.filter((candidate) => entryAuthors(candidate).includes(authorName)).sort((left, right) => left.title.localeCompare(right.title));
 	}
 
 	function proseNeedsDisclosure(value) {
@@ -235,7 +234,8 @@
 	);
 	const catalogGroups = $derived.by(() =>
 		filteredEntries.reduce((groups, entry) => {
-			for (const author of entryAuthors(entry)) {
+			const authors = activeAuthorFilterKey ? entryAuthors(entry).filter((author) => authorFilterKey(author) === activeAuthorFilterKey) : entryAuthors(entry);
+			for (const author of authors) {
 				if (!groups.has(author)) {
 					groups.set(author, []);
 				}
@@ -1189,53 +1189,65 @@
 						</section>
 
 						<section class="pedia-wiki-section" id="more-by-author">
-							<h3 class="section-title">More by {primaryAuthor(selectedEntry)}</h3>
-							<div class="pedia-author-works stack half" role="list">
-								{#each authorEntries(selectedEntry) as entry (entry.id)}
-									<div role="listitem">
-										<button
-											type="button"
-											class="pedia-author-work"
-											class:is-current={entry.id === selectedEntry.id}
-											style={catalogRowStyle(entry)}
-											onclick={() => selectEntry(entry.id)}
-										>
-											<div class="pedia-author-work-icon">
-												{#if hasWorkingImage(entry.presentation?.iconImageUrl)}
-													<img
-														src={entry.presentation.iconImageUrl}
-														alt={`${entry.title} icon`}
-														loading="lazy"
-														referrerpolicy="no-referrer"
-														onerror={() => markImageFailed(entry.presentation.iconImageUrl)}
-													/>
-												{:else}
-													<span>{entryInitials(entry)}</span>
-												{/if}
-											</div>
-											<div class="pedia-author-work-copy stack quarter">
-												<div class="inline between flex-wrap half align-start">
-													<div class="stack quarter">
-														<div class="inline align-baseline flex-wrap half">
-															<strong class="card-title text-box-trim">{entry.title}</strong>
-															{#if entry.id === selectedEntry.id}
-																<span class="pedia-author-work-pill text-box-trim">Current Entry</span>
+							<h3 class="section-title">More by Author</h3>
+							<div class="stack half">
+								{#each entryAuthors(selectedEntry) as authorName (`${selectedEntry.id}-${authorName}`)}
+									<section class="pedia-author-section stack half">
+										<div class="inline between flex-wrap half align-baseline">
+											<h4 class="card-title">{authorName}</h4>
+											<!-- <button type="button" class="pedia-button pedia-button-secondary" onclick={() => filterCatalogByAuthor(authorName)}>
+												View {authorName} in Catalog
+											</button> -->
+										</div>
+										<div class="pedia-author-works stack half" role="list">
+											{#each authorEntriesForName(authorName) as entry (`${authorName}-${entry.id}`)}
+												<div role="listitem">
+													<button
+														type="button"
+														class="pedia-author-work"
+														class:is-current={entry.id === selectedEntry.id}
+														style={catalogRowStyle(entry)}
+														onclick={() => selectEntry(entry.id)}
+													>
+														<div class="pedia-author-work-icon">
+															{#if hasWorkingImage(entry.presentation?.iconImageUrl)}
+																<img
+																	src={entry.presentation.iconImageUrl}
+																	alt={`${entry.title} icon`}
+																	loading="lazy"
+																	referrerpolicy="no-referrer"
+																	onerror={() => markImageFailed(entry.presentation.iconImageUrl)}
+																/>
+															{:else}
+																<span>{entryInitials(entry)}</span>
 															{/if}
 														</div>
-														<p class="card-copy">{entry.leader || "Unknown leader"}</p>
-													</div>
+														<div class="pedia-author-work-copy stack quarter">
+															<div class="inline between flex-wrap half align-start">
+																<div class="stack quarter">
+																	<div class="inline align-baseline flex-wrap half">
+																		<strong class="card-title text-box-trim">{entry.title}</strong>
+																		{#if entry.id === selectedEntry.id}
+																			<span class="pedia-author-work-pill text-box-trim">Current Entry</span>
+																		{/if}
+																	</div>
+																	<p class="card-copy">{entry.leader || "Unknown leader"}</p>
+																</div>
+															</div>
+															<div class="pedia-author-work-meta inline half flex-wrap">
+																<span>{catalogComponent(entry, 0)}</span>
+																<span>{catalogComponent(entry, 1)}</span>
+																<span>{catalogComponent(entry, 2)}</span>
+																{#if entry.capital}
+																	<span>Capital: {entry.capital}</span>
+																{/if}
+															</div>
+														</div>
+													</button>
 												</div>
-												<div class="pedia-author-work-meta inline half flex-wrap">
-													<span>{catalogComponent(entry, 0)}</span>
-													<span>{catalogComponent(entry, 1)}</span>
-													<span>{catalogComponent(entry, 2)}</span>
-													{#if entry.capital}
-														<span>Capital: {entry.capital}</span>
-													{/if}
-												</div>
-											</div>
-										</button>
-									</div>
+											{/each}
+										</div>
+									</section>
 								{/each}
 							</div>
 						</section>
