@@ -1640,6 +1640,32 @@
 			.filter(Boolean);
 	}
 
+	function youtubeEmbedUrl(value) {
+		const source = String(value || "").trim();
+		if (!source) {
+			return "";
+		}
+		try {
+			const url = new URL(source);
+			if (url.hostname.includes("youtu.be")) {
+				const id = url.pathname.replace(/^\/+/, "");
+				return id ? `https://www.youtube-nocookie.com/embed/${id}` : "";
+			}
+			if (url.hostname.includes("youtube.com")) {
+				if (url.pathname.startsWith("/embed/")) {
+					return `https://www.youtube-nocookie.com${url.pathname}`;
+				}
+				const id = url.searchParams.get("v");
+				return id ? `https://www.youtube-nocookie.com/embed/${id}` : "";
+			}
+		} catch {}
+		return "";
+	}
+
+	function entryMusicEmbedUrl(entry, variant) {
+		return youtubeEmbedUrl(entry?.music?.[variant]?.url);
+	}
+
 	function infoboxRowTemplateRefs(entry, row) {
 		if (!row?.value) {
 			return entryTemplateRefs(entry);
@@ -2666,14 +2692,25 @@
 							<div class="pedia-unique-list margin-block-start">
 								{#each selectedEntry.uniques as unique (`${selectedEntry.id}-${unique.name}-${unique.slot}`)}
 									<article class="pedia-unique-row">
-										<div class="pedia-unique-figure">
-											{#if hasWorkingImage(unique.artUrl)}
-												<img src={unique.artUrl} alt={`${unique.name} artwork`} loading="lazy" referrerpolicy="no-referrer" onerror={() => markImageFailed(unique.artUrl)} />
-											{:else}
-												<div class="pedia-media-placeholder text-center">
-													<strong>{unique.slot}</strong>
-													<span>{unique.art || "Art pending"}</span>
-												</div>
+										<div class="pedia-unique-figure-stack stack half">
+											<div class="pedia-unique-figure">
+												{#if hasWorkingImage(unique.artUrl)}
+													<img
+														src={unique.artUrl}
+														alt={`${unique.name} artwork`}
+														loading="lazy"
+														referrerpolicy="no-referrer"
+														onerror={() => markImageFailed(unique.artUrl)}
+													/>
+												{:else}
+													<div class="pedia-media-placeholder text-center">
+														<strong>{unique.slot}</strong>
+														<span>{unique.art || "Art pending"}</span>
+													</div>
+												{/if}
+											</div>
+											{#if unique.artCredit}
+												<p class="card-copy pedia-unique-art-credit">{unique.artCredit}</p>
 											{/if}
 										</div>
 
@@ -2795,11 +2832,41 @@
 										<strong class="card-title">Peace Theme</strong>
 										<p class="card-copy">{selectedEntry.music.peace.title || "Unknown"}</p>
 										<p class="card-copy">{selectedEntry.music.peace.credit || "Credit pending"}</p>
+										{#if entryMusicEmbedUrl(selectedEntry, "peace")}
+											<div class="pedia-music-embed">
+												<iframe
+													src={entryMusicEmbedUrl(selectedEntry, "peace")}
+													title={`${selectedEntry.music.peace.title || selectedEntry.title} peace theme`}
+													loading="lazy"
+													referrerpolicy="strict-origin-when-cross-origin"
+													allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+													allowfullscreen
+												></iframe>
+											</div>
+										{/if}
+										{#if selectedEntry.music.peace.url}
+											<a class="pedia-button pedia-button-secondary fit-content" href={selectedEntry.music.peace.url} target="_blank" rel="noreferrer">Watch Video</a>
+										{/if}
 									</article>
 									<article class="pedia-copy-card">
 										<strong class="card-title">War Theme</strong>
 										<p class="card-copy">{selectedEntry.music.war.title || "Unknown"}</p>
 										<p class="card-copy">{selectedEntry.music.war.credit || "Credit pending"}</p>
+										{#if entryMusicEmbedUrl(selectedEntry, "war")}
+											<div class="pedia-music-embed">
+												<iframe
+													src={entryMusicEmbedUrl(selectedEntry, "war")}
+													title={`${selectedEntry.music.war.title || selectedEntry.title} war theme`}
+													loading="lazy"
+													referrerpolicy="strict-origin-when-cross-origin"
+													allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+													allowfullscreen
+												></iframe>
+											</div>
+										{/if}
+										{#if selectedEntry.music.war.url}
+											<a class="pedia-button pedia-button-secondary fit-content" href={selectedEntry.music.war.url} target="_blank" rel="noreferrer">Watch Video</a>
+										{/if}
 									</article>
 								</div>
 							</section>
@@ -4508,6 +4575,19 @@
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
+	.pedia-music-embed {
+		overflow: hidden;
+		border-radius: 0.9rem;
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 16%, var(--border-color));
+	}
+
+	.pedia-music-embed iframe {
+		display: block;
+		inline-size: 100%;
+		aspect-ratio: 16 / 9;
+		border: 0;
+	}
+
 	.pedia-figure-card {
 		min-inline-size: 0;
 		margin: 0;
@@ -4547,6 +4627,11 @@
 
 	.pedia-unique-figure {
 		aspect-ratio: 1;
+	}
+
+	.pedia-unique-art-credit {
+		margin-block: 0;
+		text-align: center;
 	}
 
 	.pedia-unique-figure img,

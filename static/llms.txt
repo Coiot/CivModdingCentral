@@ -43,6 +43,7 @@ Civ Modding Central provides guided planning, template generators, a pattern lib
 - NopeCopter: https://civmoddingcentral.dev/modded-civs-pedia/author/nopecopter
 - Orangechrisy: https://civmoddingcentral.dev/modded-civs-pedia/author/orangechrisy
 - Rhoze: https://civmoddingcentral.dev/modded-civs-pedia/author/rhoze
+- TopHatPaladin: https://civmoddingcentral.dev/modded-civs-pedia/author/tophatpaladin
 - Tradboy: https://civmoddingcentral.dev/modded-civs-pedia/author/tradboy
 
 ### Entry pages
@@ -55,6 +56,7 @@ Civ Modding Central provides guided planning, template generators, a pattern lib
 - Republic of the Seven United Netherlands (Maurice): https://civmoddingcentral.dev/modded-civs-pedia/republic-of-the-seven-united-netherlands-maurice
 - Republic of the Seven United Netherlands (William): https://civmoddingcentral.dev/modded-civs-pedia/republic-of-the-seven-united-netherlands-william
 - The Tairona (Guacanaoma): https://civmoddingcentral.dev/modded-civs-pedia/tairona-guacanaoma
+- The Anangu (Tjilpi): https://civmoddingcentral.dev/modded-civs-pedia/the-anangu-tjilpi
 - The Dzungars (Galdan Khan): https://civmoddingcentral.dev/modded-civs-pedia/the-dzungars-galdan-khan
 - The Khoshuts (Güshi Khan): https://civmoddingcentral.dev/modded-civs-pedia/the-khoshuts
 - The Lenca (Lempira): https://civmoddingcentral.dev/modded-civs-pedia/the-lenca-lempira

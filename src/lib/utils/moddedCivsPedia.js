@@ -130,10 +130,12 @@ const DEFAULT_ENTRY = {
 		peace: {
 			title: "",
 			credit: "",
+			url: "",
 		},
 		war: {
 			title: "",
 			credit: "",
+			url: "",
 		},
 	},
 	modSupport: {},
@@ -868,13 +870,14 @@ function parseCollapsibleLists(section) {
 }
 
 function parseMusic(section) {
+	const urls = [...section.matchAll(/\|\s*\[(https?:\/\/[^\s\]]+)[^\]]*Link[^\]]*]/gi)].map((match) => cleanText(match[1]));
 	const titles = [...section.matchAll(/\|\s*"?(?:'''|''')?([^'\n|]+?)(?:'''|''')?"?\s+by\s+([^\n|]+)/gi)].map((match) => ({
 		title: stripWikiMarkup(match[1]),
 		credit: stripWikiMarkup(match[2]),
 	}));
 	return {
-		peace: titles[0] || { title: "", credit: "" },
-		war: titles[1] || { title: "", credit: "" },
+		peace: { ...(titles[0] || { title: "", credit: "" }), url: urls[0] || "" },
+		war: { ...(titles[1] || { title: "", credit: "" }), url: urls[1] || "" },
 	};
 }
 
@@ -2474,7 +2477,7 @@ ${listBlocks}
 ! scope="col"|Peace Theme
 ! scope="col"|War Theme
 |-
-|'''${entry.music.peace.title}''' by ${entry.music.peace.credit}
+${entry.music.peace.url || entry.music.war.url ? `|[${entry.music.peace.url || "#"} Link]\n|[${entry.music.war.url || "#"} Link]\n|-\n` : ""}|'''${entry.music.peace.title}''' by ${entry.music.peace.credit}
 |'''${entry.music.war.title}''' by ${entry.music.war.credit}
 |}
 
@@ -2580,8 +2583,16 @@ export function normalizePediaEntry(entryInput) {
 			.filter(Boolean),
 	}));
 	entry.music = {
-		peace: { ...entry.music.peace, ...(source?.music?.peace || {}) },
-		war: { ...entry.music.war, ...(source?.music?.war || {}) },
+		peace: {
+			...entry.music.peace,
+			...(source?.music?.peace || {}),
+			url: cleanText(source?.music?.peace?.url),
+		},
+		war: {
+			...entry.music.war,
+			...(source?.music?.war || {}),
+			url: cleanText(source?.music?.war?.url),
+		},
 	};
 	entry.modSupport = { ...(source.modSupport || {}) };
 	entry.credits = ensureArray(source.credits).map((credit) => ({

@@ -165,11 +165,13 @@
   "music": {
     "peace": {
       "title": "Pitjantjatjara",
-      "credit": "Frank Yamma"
+      "credit": "Frank Yamma",
+      "url": "https://www.youtube.com/watch?v=BmPAS_Jy5tw"
     },
     "war": {
       "title": "Moondah (Beyond)",
-      "credit": "Ayers Rock"
+      "credit": "Ayers Rock",
+      "url": "https://www.youtube.com/watch?v=IFOc2xKaGYg"
     }
   },
   "modSupport": {},
@@ -224,7 +226,7 @@
   ],
   "meta": {
     "formatVersion": 1,
-    "createdAt": "2026-03-23T03:52:13.294Z",
+    "createdAt": "2026-03-23T03:54:19.820Z",
     "unresolvedTemplates": [
       "Decision",
       "THPNav",

@@ -91,6 +91,12 @@
     <priority>0.68</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/author/tophatpaladin</loc>
+    <lastmod>2019-09-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.68</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/author/tradboy</loc>
     <lastmod>2026-03-01</lastmod>
     <changefreq>weekly</changefreq>
@@ -99,6 +105,12 @@
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/andean-cultures</loc>
     <lastmod>2025-12-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/australia</loc>
+    <lastmod>2019-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -187,6 +199,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/natural-wonder-civilizations</loc>
+    <lastmod>2019-09-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/netherlands</loc>
     <lastmod>2025-05-01</lastmod>
     <changefreq>weekly</changefreq>
@@ -195,6 +213,12 @@
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/plains-cultures</loc>
     <lastmod>2025-05-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/sahul-cultures</loc>
+    <lastmod>2019-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -303,6 +327,12 @@
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/tairona-guacanaoma</loc>
     <lastmod>2025-12-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/the-anangu-tjilpi</loc>
+    <lastmod>2019-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.72</priority>
   </url>
