@@ -8,7 +8,7 @@ const BUILTIN_PEDIA_MODULES = import.meta.glob("./modded-civs-pedia/*.json", {
 export const BUILTIN_MODDED_CIVS = Object.values(BUILTIN_PEDIA_MODULES);
 
 export const MOD_SUPPORT_LABELS = {
-	aa: "Ancient Antiquity",
+	aa: "Additional Achievements",
 	civivtraits: "Civ IV Traits",
 	claimscoloniescrimes: "Claims, Colonies, and Crimes",
 	culdiv: "Cultural Diversity",

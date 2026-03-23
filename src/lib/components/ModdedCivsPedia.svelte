@@ -3582,15 +3582,18 @@
 	}
 
 	.pedia-author-toc-grid {
-		display: grid;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: start;
 		gap: 0.5rem;
-		grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
 	}
 
 	.pedia-author-toc-chip {
-		min-inline-size: 0;
+		flex: 0 1 auto;
+		max-inline-size: 100%;
 		color: var(--ink);
 		text-align: start;
+		white-space: nowrap;
 		text-box: trim-both cap alphabetic;
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 25%, transparent) 0%, transparent 40%),

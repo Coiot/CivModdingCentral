@@ -25,10 +25,55 @@ function normalizeLookupKey(value) {
 		.trim();
 }
 
+function compactWords(value) {
+	return cleanValue(value)
+		.replace(/^Template:/i, "")
+		.replace(/\bicon\b/gi, "")
+		.replace(/[^a-z0-9]+/gi, " ")
+		.trim()
+		.split(/\s+/)
+		.filter(Boolean);
+}
+
+function titleCaseWords(words) {
+	return words.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join("");
+}
+
+function sentenceCaseWordRun(words) {
+	const joined = titleCaseWords(words);
+	return joined ? joined.charAt(0).toUpperCase() + joined.slice(1).toLowerCase() : "";
+}
+
+function uniqueValues(values) {
+	return Array.from(new Set(values.map((value) => cleanValue(value)).filter(Boolean)));
+}
+
+function candidateFileNames(definition) {
+	const explicitFileNames = [definition.fileName, ...(Array.isArray(definition.fileNames) ? definition.fileNames : [])];
+	const generatedFileNames = [];
+	for (const source of [definition.label, ...(definition.templates || [])]) {
+		const words = compactWords(source);
+		if (!words.length) {
+			continue;
+		}
+		const titleCase = titleCaseWords(words);
+		const sentenceCase = sentenceCaseWordRun(words);
+		generatedFileNames.push(`${titleCase}.png`, `${titleCase}Icon.png`, `${sentenceCase}.png`, `${sentenceCase}Icon.png`);
+	}
+	return uniqueValues([...explicitFileNames, ...generatedFileNames]);
+}
+
+function buildImageUrls(definition) {
+	return uniqueValues([definition.imageUrl, ...(Array.isArray(definition.imageUrls) ? definition.imageUrls : []), ...candidateFileNames(definition).map((fileName) => fileRedirectUrl(fileName))]);
+}
+
 const PEDIA_INLINE_ICON_DEFINITIONS = [
 	{ templates: ["Citizen", "Citizen Icon"], label: "Citizens", fileName: "Citizen.png" },
+	{ templates: ["Border Growth", "Border Growth Icon"], label: "Border Growth", fileName: "Bordergrowth.png" },
+	{ templates: ["City Icon"], label: "City", fileName: "City.png" },
 	{ templates: ["City-State Icon", "City State Icon"], label: "City-State", fileName: "Citystate.png" },
 	{ templates: ["Culture Icon"], label: "Culture", fileName: "CultureIcon.png" },
+	{ templates: ["Defense Icon", "Defence Icon"], label: "Defense", fileNames: ["Defense.png", "Defence.png"] },
 	{ templates: ["Diplomat", "Diplomat Icon"], label: "Diplomats", fileName: "Diplomat.png" },
 	{ templates: ["Faith Icon"], label: "Faith", fileName: "FaithIcon.png" },
 	{
@@ -40,22 +85,34 @@ const PEDIA_INLINE_ICON_DEFINITIONS = [
 	{ templates: ["Golden Age", "Golden Age Icon", "Golden Age Points"], label: "Golden Age", fileName: "Goldenage.png" },
 	{ templates: ["Gold Icon"], label: "Gold", fileName: "Gold.png" },
 	{ templates: ["Great Admiral Icon"], label: "Great Admiral", fileName: "Greatadmiral.png" },
+	{ templates: ["Great Artist Icon"], label: "Great Artist", fileName: "Greatartist.png" },
+	{ templates: ["Great Engineer Icon"], label: "Great Engineer", fileName: "Greatengineer.png" },
 	{ templates: ["Great General Icon"], label: "Great General", fileName: "Greatgeneral.png" },
+	{ templates: ["Great Merchant Icon"], label: "Great Merchant", fileName: "Greatmerchant.png" },
+	{ templates: ["Great Musician Icon"], label: "Great Musician", fileName: "Greatmusician.png" },
 	{ templates: ["Great Person Icon", "Great People Icon"], label: "Great People", fileName: "Greatperson.png" },
+	{ templates: ["Great Scientist Icon"], label: "Great Scientist", fileName: "Greatscientist.png" },
 	{
 		templates: ["Great Work Icon"],
 		label: "Great Work",
 		fileName: "Greatwork.png",
 		imageUrl: "https://static.wikia.nocookie.net/civilization-v-customisation/images/6/67/Greatwork.png",
 	},
+	{ templates: ["Great Writer Icon"], label: "Great Writer", fileName: "Greatwriter.png" },
 	{ templates: ["Happiness Icon", "Happiness"], label: "Happiness", fileName: "Happiness.png" },
 	{ templates: ["Influence Icon", "Influence"], label: "Influence", fileName: "Influence.png" },
 	{ templates: ["International Trade", "International Trade Icon"], label: "International Trade", fileName: "Internationaltrade.png" },
 	{ templates: ["Capital", "Capital Icon"], label: "Capital", fileName: "Capital.png" },
 	{ templates: ["Connected", "Connected Icon"], label: "Connected", fileName: "Connected.png" },
 	{ templates: ["Moves Icon", "Move Icon", "Movement Icon"], label: "Movement", fileName: "Moves.png" },
+	{ templates: ["Occupied Icon"], label: "Occupied", fileName: "Occupied.png" },
+	{ templates: ["Population Icon"], label: "Population", fileName: "Population.png" },
 	{ templates: ["Production Icon"], label: "Production", fileName: "Production.png" },
+	{ templates: ["Puppet Icon"], label: "Puppet", fileName: "Puppet.png" },
 	{ templates: ["Range Strength Icon", "Ranged Strength Icon"], label: "Ranged Strength", fileName: "Rangestrength.png" },
+	{ templates: ["Religion Icon"], label: "Religion", fileName: "Religion.png" },
+	{ templates: ["Religious Pressure Icon"], label: "Religious Pressure", fileName: "Religiouspressure.png" },
+	{ templates: ["Resistance Icon"], label: "Resistance", fileName: "Resistance.png" },
 	{ templates: ["Science Icon", "Research Icon"], label: "Science", fileName: "Science.png" },
 	{ templates: ["Spy", "Spy Icon"], label: "Spy", fileName: "Spy.png" },
 	{ templates: ["Strength Icon", "Combat Strength Icon"], label: "Strength", fileName: "Strength.png" },
@@ -64,13 +121,19 @@ const PEDIA_INLINE_ICON_DEFINITIONS = [
 ];
 
 export const PEDIA_INLINE_ICONS = PEDIA_INLINE_ICON_DEFINITIONS.flatMap((definition) =>
-	definition.templates.map((template) => ({
-		template,
-		label: definition.label,
-		fileName: definition.fileName,
-		href: templateUrl(template),
-		imageUrl: cleanValue(definition.imageUrl) || fileRedirectUrl(definition.fileName),
-	})),
+	definition.templates.map((template) => {
+		const fileNames = candidateFileNames(definition);
+		const imageUrls = buildImageUrls(definition);
+		return {
+			template,
+			label: definition.label,
+			fileName: fileNames[0] || "",
+			fileNames,
+			href: templateUrl(template),
+			imageUrl: imageUrls[0] || "",
+			imageUrls,
+		};
+	}),
 );
 
 const ICONS_BY_TEMPLATE = new Map(PEDIA_INLINE_ICONS.map((icon) => [normalizeLookupKey(icon.template), icon]));
@@ -92,6 +155,7 @@ export function resolvePediaInlineIconRef(ref) {
 			template: byTemplate.template,
 			href: byTemplate.href,
 			imageUrl: byTemplate.imageUrl,
+			imageUrls: byTemplate.imageUrls,
 		};
 	}
 
@@ -102,6 +166,7 @@ export function resolvePediaInlineIconRef(ref) {
 			template: byLabel.template,
 			href: byLabel.href,
 			imageUrl: byLabel.imageUrl,
+			imageUrls: byLabel.imageUrls,
 		};
 	}
 
@@ -112,6 +177,7 @@ export function resolvePediaInlineIconRef(ref) {
 		template,
 		href: cleanValue(ref?.href) || templateUrl(template),
 		imageUrl: cleanValue(ref?.imageUrl),
+		imageUrls: uniqueValues([ref?.imageUrl, ...(Array.isArray(ref?.imageUrls) ? ref.imageUrls : [])]),
 	};
 }
 

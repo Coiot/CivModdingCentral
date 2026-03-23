@@ -12,17 +12,21 @@
 			{#if segment.icon?.imageUrl}
 				<img
 					class="pedia-inline-icon"
-					src={segment.icon.imageUrl}
+					src={segment.icon.imageUrls?.[0] || segment.icon.imageUrl}
 					alt={segment.text}
 					title={segment.icon.template || segment.icon.label || segment.text}
 					loading="lazy"
 					referrerpolicy="no-referrer"
 					onerror={(event) => {
-						event.currentTarget.hidden = true;
-						const fallback = event.currentTarget.nextElementSibling;
-						if (fallback) {
-							fallback.hidden = false;
+						const imageUrls = segment.icon?.imageUrls || [];
+						const currentIndex = Number(event.currentTarget.dataset.imageIndex || "0");
+						const nextIndex = currentIndex + 1;
+						if (imageUrls[nextIndex]) {
+							event.currentTarget.dataset.imageIndex = String(nextIndex);
+							event.currentTarget.src = imageUrls[nextIndex];
+							return;
 						}
+						event.currentTarget.hidden = true;
 					}}
 				/>
 			{/if}

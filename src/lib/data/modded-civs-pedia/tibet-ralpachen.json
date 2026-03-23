@@ -2,12 +2,12 @@
   "id": "civ-tibet-ralpachen",
   "slug": "tibet-ralpachen",
   "kind": "civilization",
-  "title": "Tibet",
+  "title": "Great Tibet",
   "leader": "Ralpachen",
   "authors": [
     "Coiot"
   ],
-  "summary": "Tibet led by Ralpachen is a custom civilization by Coiot, with contributions from DarthKyofu, EmeraldRange, and JFD. It was released as part of the Land of Snows event.",
+  "summary": "The Tibet Empire led by Ralpachen is a custom civilization by Coiot, with contributions from DarthKyofu, EmeraldRange, and JFD. It was released as part of the Land of Snows event.",
   "source": {
     "type": "wiki",
     "wikiPageTitle": "Tibet",
@@ -18,7 +18,7 @@
     "modFolderName": ""
   },
   "identity": {
-    "empireName": "Ganden Phodrang",
+    "empireName": "Tibetan Empire",
     "adjectives": "Tibetan",
     "capital": "Lhasa",
     "bias": "Hills",
@@ -26,7 +26,7 @@
       "Buddhism",
       "Vajrayana (HR)"
     ],
-    "government": "Theocracy",
+    "government": "Monarchy",
     "culture": "Himalayan",
     "mapLabelsLanguage": "",
     "requiredContent": [
@@ -64,6 +64,7 @@
     "introduction": ": I am Ralpachen, King of Dharma. May our meeting be auspicious.",
     "defeat": ": Though my empire falls, the teachings of the Buddha endure. May you find wisdom in victory."
   },
+  "templateRefs": [],
   "uniques": [
     {
       "slot": "unique ability",
@@ -72,9 +73,10 @@
       "art": "RalpachenIcon.png",
       "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/RalpachenIcon.png",
       "artCredit": "Art by Coiot",
-      "body": "Trade Routes passing through your land grant Gold per City Connection. Roads on or next to Holy Sites yield +1 Gold Gold, Production Production, and Faith Faith. Cities may Tithe to convert Gold / Production to Faith Faith and spawn extra purchased units.",
+      "body": "Trade Routes passing through your land grant Gold per City Connection. Roads on or next to Holy Sites yield +1 Gold, Production, and Faith. Cities may Tithe to convert Gold / Production to Faith and spawn extra purchased units.",
       "civilopedia": "",
-      "bullets": []
+      "bullets": [],
+      "templateRefs": []
     },
     {
       "slot": "unique unit",
@@ -88,7 +90,8 @@
       "bullets": [
         "Generate Faith instead of Gold when conducting trade missions with City-States, with bonuses based on your trade network.",
         "Can construct Holy Sites instead of Customs Houses, providing both defensive benefits and yields."
-      ]
+      ],
+      "templateRefs": []
     },
     {
       "slot": "unique unit",
@@ -102,7 +105,24 @@
       "bullets": [
         "Faster and stronger when starting their turn on a Hill or adjacent to a Mountain.",
         "When garrisoned or adjacent to a City, the City provides the bonuses of Tithe regardless of what the City is producing."
-      ]
+      ],
+      "templateRefs": []
+    }
+  ],
+  "collections": [
+    {
+      "id": "land-of-snows",
+      "title": "Land of Snows",
+      "sourceTemplate": "LandofSnowsNav",
+      "aliases": [],
+      "colors": {
+        "background": "#7e2222",
+        "accent": "#fad587"
+      },
+      "imageURL": "",
+      "blurb": "",
+      "links": [],
+      "members": []
     }
   ],
   "nameLists": [
@@ -237,6 +257,7 @@
   "issues": [],
   "meta": {
     "formatVersion": 1,
-    "createdAt": "2026-03-22T03:13:16.008Z"
+    "createdAt": "2026-03-22T03:13:16.008Z",
+    "unresolvedTemplates": []
   }
 }
