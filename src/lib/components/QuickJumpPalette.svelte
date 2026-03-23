@@ -204,6 +204,22 @@
 		return parts.filter(Boolean).map((part) => String(part));
 	}
 
+	function ensureUniqueItemIds(items) {
+		const seen = new Map();
+		return (items || []).map((item) => {
+			const baseId = String(item?.id || "").trim() || "quick-jump-item";
+			const nextCount = (seen.get(baseId) || 0) + 1;
+			seen.set(baseId, nextCount);
+			if (nextCount === 1) {
+				return item;
+			}
+			return {
+				...item,
+				id: `${baseId}--${nextCount}`,
+			};
+		});
+	}
+
 	function uniqueNonEmpty(values) {
 		return [...new Set((values || []).map((value) => String(value || "").trim()).filter(Boolean))];
 	}
@@ -265,84 +281,90 @@
 	}
 
 	function buildPediaEntryItems(entries, collectionDefinitions) {
-		return entries.map((entry) => {
-			const authors = pediaEntryAuthors(entry);
-			const collections = pediaCollectionsForEntry(entry, collectionDefinitions);
-			const uniqueNames = uniqueNonEmpty((entry?.uniques || []).map((unique) => unique?.name)).slice(0, 3);
-			const title = entry?.leader ? `${entry.title} (${entry.leader})` : entry?.title || "Pedia Entry";
-			const summary = compactText(entry?.summary || entry?.overview?.civilization?.body || "Browse this custom civilization entry.", 180);
-			return withSearchIndex({
-				id: `pedia-entry-${pediaSlug(entry?.id || entry?.slug || entry?.title)}`,
-				type: "Pedia Entry",
-				title,
-				subtitle: compactText([authors[0], entry?.identity?.culture, collections[0]?.title].filter(Boolean).join(" · ") || entry?.leader || "Custom civilization", 120),
-				href: pediaEntryHref(entry),
-				keywords: [
-					entry?.title,
-					entry?.leader,
-					entry?.summary,
-					entry?.identity?.culture,
-					entry?.identity?.government,
-					...(entry?.identity?.religion || []),
-					...authors,
-					...collections.map((collection) => collection.title),
-					...(entry?.categories || []),
-					...uniqueNames,
-				],
-				priority: 8,
-				resultGroup: "navigate",
-				preview: {
-					copy: summary,
-					meta: buildPreviewMeta(authors[0], entry?.identity?.culture, `${entry?.uniques?.length || 0} uniques`),
-					details: [...uniqueNames, ...collections.slice(0, 2).map((collection) => `Collection: ${collection.title}`)].slice(0, 4),
-				},
-			});
-		});
-	}
-
-	function buildPediaCollectionItems(collections) {
-		return collections.map((collection) =>
-			withSearchIndex({
-				id: `pedia-collection-${pediaSlug(collection?.id || collection?.title)}`,
-				type: "Pedia Collection",
-				title: collection?.title || "Collection",
-				subtitle: `${collection?.entries?.length || 0} member civ${collection?.entries?.length === 1 ? "" : "s"}`,
-				href: pediaCollectionHref(collection),
-				keywords: [collection?.title, ...(collection?.aliases || []), ...uniqueNonEmpty((collection?.entries || []).flatMap((entry) => [entry?.title, entry?.leader]))],
-				priority: 7,
-				resultGroup: "navigate",
-				preview: {
-					copy: compactText(collection?.blurb || `${collection?.entries?.length || 0} civs grouped under this collection.`, 180),
-					meta: buildPreviewMeta("Collection", `${collection?.entries?.length || 0} civs`),
-					details: (collection?.entries || [])
-						.slice(0, 3)
-						.map((entry) => (entry?.leader ? `${entry.title} (${entry.leader})` : entry.title))
-						.filter(Boolean),
-				},
+		return ensureUniqueItemIds(
+			entries.map((entry) => {
+				const authors = pediaEntryAuthors(entry);
+				const collections = pediaCollectionsForEntry(entry, collectionDefinitions);
+				const uniqueNames = uniqueNonEmpty((entry?.uniques || []).map((unique) => unique?.name)).slice(0, 3);
+				const title = entry?.leader ? `${entry.title} (${entry.leader})` : entry?.title || "Pedia Entry";
+				const summary = compactText(entry?.summary || entry?.overview?.civilization?.body || "Browse this custom civilization entry.", 180);
+				return withSearchIndex({
+					id: `pedia-entry-${pediaSlug(entry?.id || entry?.slug || entry?.title)}`,
+					type: "Pedia Entry",
+					title,
+					subtitle: compactText([authors[0], entry?.identity?.culture, collections[0]?.title].filter(Boolean).join(" · ") || entry?.leader || "Custom civilization", 120),
+					href: pediaEntryHref(entry),
+					keywords: [
+						entry?.title,
+						entry?.leader,
+						entry?.summary,
+						entry?.identity?.culture,
+						entry?.identity?.government,
+						...(entry?.identity?.religion || []),
+						...authors,
+						...collections.map((collection) => collection.title),
+						...(entry?.categories || []),
+						...uniqueNames,
+					],
+					priority: 8,
+					resultGroup: "navigate",
+					preview: {
+						copy: summary,
+						meta: buildPreviewMeta(authors[0], entry?.identity?.culture, `${entry?.uniques?.length || 0} uniques`),
+						details: [...uniqueNames, ...collections.slice(0, 2).map((collection) => `Collection: ${collection.title}`)].slice(0, 4),
+					},
+				});
 			}),
 		);
 	}
 
+	function buildPediaCollectionItems(collections) {
+		return ensureUniqueItemIds(
+			collections.map((collection) =>
+				withSearchIndex({
+					id: `pedia-collection-${pediaSlug(collection?.id || collection?.title)}`,
+					type: "Pedia Collection",
+					title: collection?.title || "Collection",
+					subtitle: `${collection?.entries?.length || 0} member civ${collection?.entries?.length === 1 ? "" : "s"}`,
+					href: pediaCollectionHref(collection),
+					keywords: [collection?.title, ...(collection?.aliases || []), ...uniqueNonEmpty((collection?.entries || []).flatMap((entry) => [entry?.title, entry?.leader]))],
+					priority: 7,
+					resultGroup: "navigate",
+					preview: {
+						copy: compactText(collection?.blurb || `${collection?.entries?.length || 0} civs grouped under this collection.`, 180),
+						meta: buildPreviewMeta("Collection", `${collection?.entries?.length || 0} civs`),
+						details: (collection?.entries || [])
+							.slice(0, 3)
+							.map((entry) => (entry?.leader ? `${entry.title} (${entry.leader})` : entry.title))
+							.filter(Boolean),
+					},
+				}),
+			),
+		);
+	}
+
 	function buildPediaCategoryItems(categories) {
-		return categories.map((category) =>
-			withSearchIndex({
-				id: `pedia-category-${pediaSlug(category?.id || category?.title)}`,
-				type: "Pedia Category",
-				title: category?.title || "Category",
-				subtitle: `${category?.entries?.length || 0} tagged civ${category?.entries?.length === 1 ? "" : "s"}`,
-				href: pediaCategoryHref(category),
-				keywords: [category?.title, ...uniqueNonEmpty((category?.entries || []).flatMap((entry) => [entry?.title, entry?.leader]))],
-				priority: 6,
-				resultGroup: "navigate",
-				preview: {
-					copy: `${category?.entries?.length || 0} civ${category?.entries?.length === 1 ? "" : "s"} tagged with ${category?.title || "this category"}.`,
-					meta: buildPreviewMeta("Category", `${category?.entries?.length || 0} civs`),
-					details: (category?.entries || [])
-						.slice(0, 3)
-						.map((entry) => (entry?.leader ? `${entry.title} (${entry.leader})` : entry.title))
-						.filter(Boolean),
-				},
-			}),
+		return ensureUniqueItemIds(
+			categories.map((category) =>
+				withSearchIndex({
+					id: `pedia-category-${pediaSlug(category?.id || category?.title)}`,
+					type: "Pedia Category",
+					title: category?.title || "Category",
+					subtitle: `${category?.entries?.length || 0} tagged civ${category?.entries?.length === 1 ? "" : "s"}`,
+					href: pediaCategoryHref(category),
+					keywords: [category?.title, ...uniqueNonEmpty((category?.entries || []).flatMap((entry) => [entry?.title, entry?.leader]))],
+					priority: 6,
+					resultGroup: "navigate",
+					preview: {
+						copy: `${category?.entries?.length || 0} civ${category?.entries?.length === 1 ? "" : "s"} tagged with ${category?.title || "this category"}.`,
+						meta: buildPreviewMeta("Category", `${category?.entries?.length || 0} civs`),
+						details: (category?.entries || [])
+							.slice(0, 3)
+							.map((entry) => (entry?.leader ? `${entry.title} (${entry.leader})` : entry.title))
+							.filter(Boolean),
+					},
+				}),
+			),
 		);
 	}
 
@@ -366,29 +388,34 @@
 			}
 		}
 
-		return [...byAuthor.values()]
-			.sort((left, right) => left.name.localeCompare(right.name))
-			.map((author) =>
-				withSearchIndex({
-					id: `pedia-author-${pediaSlug(author.name)}`,
-					type: "Pedia Author",
-					title: author.name,
-					subtitle: `${author.entries.length} modded civ${author.entries.length === 1 ? "" : "s"}`,
-					href: pediaAuthorHref(author.name),
-					keywords: [author.name, author.blurb, ...uniqueNonEmpty(author.entries.flatMap((entry) => [entry?.title, entry?.leader, ...(entry?.categories || [])]))],
-					priority: 10,
-					resultGroup: "navigate",
-					preview: {
-						copy: compactText(author.blurb || `Browse ${author.entries.length} civ${author.entries.length === 1 ? "" : "s"} by ${author.name}.`, 180),
-						meta: buildPreviewMeta("Author", `${author.entries.length} civs`),
-						details: author.entries
-							.slice(0, 3)
-							.map((entry) => (entry?.leader ? `${entry.title} (${entry.leader})` : entry.title))
-							.filter(Boolean),
-					},
-				}),
-			);
+		return ensureUniqueItemIds(
+			[...byAuthor.values()]
+				.sort((left, right) => left.name.localeCompare(right.name))
+				.map((author) =>
+					withSearchIndex({
+						id: `pedia-author-${pediaSlug(author.name)}`,
+						type: "Pedia Author",
+						title: author.name,
+						subtitle: `${author.entries.length} modded civ${author.entries.length === 1 ? "" : "s"}`,
+						href: pediaAuthorHref(author.name),
+						keywords: [author.name, author.blurb, ...uniqueNonEmpty(author.entries.flatMap((entry) => [entry?.title, entry?.leader, ...(entry?.categories || [])]))],
+						priority: 10,
+						resultGroup: "navigate",
+						preview: {
+							copy: compactText(author.blurb || `Browse ${author.entries.length} civ${author.entries.length === 1 ? "" : "s"} by ${author.name}.`, 180),
+							meta: buildPreviewMeta("Author", `${author.entries.length} civs`),
+							details: author.entries
+								.slice(0, 3)
+								.map((entry) => (entry?.leader ? `${entry.title} (${entry.leader})` : entry.title))
+								.filter(Boolean),
+						},
+					}),
+				),
+		);
 	}
+
+	const PEDIA_BASE_ENTRIES = (BUILTIN_MODDED_CIVS || []).map((entry) => normalizePediaEntry(entry));
+	const PEDIA_BASE_AUTHOR_ITEMS = buildPediaAuthorItems(PEDIA_BASE_ENTRIES, PEDIA_AUTHOR_PROFILES || []);
 
 	const PAGE_ITEMS = [
 		{
@@ -798,8 +825,8 @@
 	let indexLoading = $state(false);
 	let indexReady = $state(false);
 	let indexError = $state("");
-	let coreJumpItems = $state(PAGE_ITEMS);
-	let extendedJumpItems = $state(PAGE_ITEMS);
+	let coreJumpItems = $state([...PAGE_ITEMS, ...PEDIA_BASE_AUTHOR_ITEMS]);
+	let extendedJumpItems = $state([...PAGE_ITEMS, ...PEDIA_BASE_AUTHOR_ITEMS]);
 
 	function isTypingTarget(target) {
 		return Boolean(target?.closest?.("input, textarea, select, [contenteditable='true']"));
@@ -948,9 +975,19 @@
 			return rankedItems.slice(0, DEFAULT_RESULTS).map((entry) => entry.item);
 		}
 
-		const leadingAuthors = rankedItems.filter((entry) => isMatchingPediaAuthor(entry.item, normalizedQuery)).slice(0, 3);
-		const remainingItems = rankedItems.filter((entry) => !isMatchingPediaAuthor(entry.item, normalizedQuery));
-		return [...leadingAuthors, ...remainingItems].slice(0, MAX_RESULTS).map((entry) => entry.item);
+		const leadingAuthorItems = activeItems
+			.filter((item) => isMatchingPediaAuthor(item, normalizedQuery))
+			.sort(
+				(left, right) =>
+					Number(right.titleIndex === normalizedQuery) - Number(left.titleIndex === normalizedQuery) ||
+					Number(right.titleIndex.startsWith(normalizedQuery)) - Number(left.titleIndex.startsWith(normalizedQuery)) ||
+					(right.priority || 0) - (left.priority || 0) ||
+					left.title.localeCompare(right.title),
+			)
+			.slice(0, 3);
+		const leadingAuthorIds = new Set(leadingAuthorItems.map((item) => item.id));
+		const remainingItems = rankedItems.filter((entry) => !leadingAuthorIds.has(entry.item.id));
+		return [...leadingAuthorItems, ...remainingItems.map((entry) => entry.item)].slice(0, MAX_RESULTS);
 	});
 
 	const resolvedActiveIndex = $derived(results.length ? Math.min(activeIndex, results.length - 1) : 0);
@@ -985,16 +1022,14 @@
 			const schemaColumnItems = buildSchemaColumnItems(schemaModule.default);
 			const schemaRowItems = buildSchemaRowItems(schemaModule.default);
 			const techTreeItems = buildTechTreeItems(schemaModule.default, civTextModule.default || {});
-			const pediaEntries = (BUILTIN_MODDED_CIVS || []).map((entry) => normalizePediaEntry(entry));
 			const pediaCollectionDefinitions = PEDIA_COLLECTIONS || [];
-			const pediaEntryItems = buildPediaEntryItems(pediaEntries, pediaCollectionDefinitions);
-			const pediaCollectionItems = buildPediaCollectionItems(groupPediaCollections(pediaEntries));
-			const pediaCategoryItems = buildPediaCategoryItems(groupPediaCategories(pediaEntries));
-			const pediaAuthorItems = buildPediaAuthorItems(pediaEntries, PEDIA_AUTHOR_PROFILES || []);
+			const pediaEntryItems = buildPediaEntryItems(PEDIA_BASE_ENTRIES, pediaCollectionDefinitions);
+			const pediaCollectionItems = buildPediaCollectionItems(groupPediaCollections(PEDIA_BASE_ENTRIES));
+			const pediaCategoryItems = buildPediaCategoryItems(groupPediaCategories(PEDIA_BASE_ENTRIES));
 
-			coreJumpItems = [...PAGE_ITEMS, ...generatorItems, ...patternItems, ...techTreeItems, ...luaMethodItems, ...luaEventItems, ...schemaTableItems];
+			coreJumpItems = [...PAGE_ITEMS, ...PEDIA_BASE_AUTHOR_ITEMS, ...generatorItems, ...patternItems, ...techTreeItems, ...luaMethodItems, ...luaEventItems, ...schemaTableItems];
 			extendedJumpItems = [...coreJumpItems, ...schemaColumnItems, ...schemaRowItems];
-			extendedJumpItems = [...extendedJumpItems, ...pediaEntryItems, ...pediaCollectionItems, ...pediaCategoryItems, ...pediaAuthorItems];
+			extendedJumpItems = [...extendedJumpItems, ...pediaEntryItems, ...pediaCollectionItems, ...pediaCategoryItems];
 			indexReady = true;
 		} catch (error) {
 			indexError = error?.message || "Unable to load the full quick-jump index.";
