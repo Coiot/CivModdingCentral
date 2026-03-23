@@ -309,6 +309,19 @@
 		return vars.join(";");
 	}
 
+	function infoboxStyle(entry) {
+		const background = entry?.presentation?.colors?.background;
+		const accent = entry?.presentation?.colors?.icon;
+		const vars = [];
+		if (isValidHexColor(background)) {
+			vars.push(`--infobox-surface:${background}`);
+		}
+		if (isValidHexColor(accent)) {
+			vars.push(`--infobox-accent:${accent}`);
+		}
+		return vars.join(";");
+	}
+
 	function creditCardStyle(name) {
 		return personHighlightStyle(name);
 	}
@@ -1602,6 +1615,11 @@
 		return entry?.identity?.religion?.join(", ") || "Unknown";
 	}
 
+	function entryReligionValues(entry) {
+		const values = Array.isArray(entry?.identity?.religion) ? entry.identity.religion.map((item) => String(item || "").trim()).filter(Boolean) : [];
+		return values.length ? values : ["Unknown"];
+	}
+
 	function infoboxRows(entry) {
 		return [
 			{ label: "Leader", value: entry?.leader || "Unknown" },
@@ -1609,10 +1627,17 @@
 			{ label: "Empire", value: entry?.identity?.empireName || "Unknown" },
 			{ label: "Adjective", value: entry?.identity?.adjectives || "Unknown" },
 			{ label: "Bias", value: entry?.identity?.bias || "Unknown" },
-			{ label: "Religion", value: entryReligionLabel(entry) },
+			{ label: "Religion", value: entryReligionLabel(entry), values: entryReligionValues(entry) },
 			{ label: "Government", value: entry?.identity?.government || "Unknown" },
 			{ label: "Culture", value: entry?.identity?.culture || "Unknown" },
 		];
+	}
+
+	function uniqueFootnoteLines(value) {
+		return String(value || "")
+			.split("\n")
+			.map((line) => line.trim())
+			.filter(Boolean);
 	}
 
 	function infoboxRowTemplateRefs(entry, row) {
@@ -1863,7 +1888,7 @@
 													<div class="pedia-catalog-row-details">
 														<article class="pedia-catalog-detail-card stack quarter">
 															<p class="eyebrow">Unique Ability</p>
-															<strong class="text-nowrap">{catalogComponent(entry, 0)}</strong>
+															<strong class="nowrap">{catalogComponent(entry, 0)}</strong>
 															<!-- {#if catalogUnique(entry, 0)?.body}
 																<PediaInlineText
 																	as="p"
@@ -1881,7 +1906,7 @@
 														</article>
 														<article class="pedia-catalog-detail-card stack quarter">
 															<p class="eyebrow">{catalogComponentTypeLabel(entry, 1)}</p>
-															<strong class="text-nowrap">{catalogComponent(entry, 1)}</strong>
+															<strong class="nowrap">{catalogComponent(entry, 1)}</strong>
 															<!-- {#if catalogUnique(entry, 1)?.body}
 																<PediaInlineText
 																	as="p"
@@ -1899,7 +1924,7 @@
 														</article>
 														<article class="pedia-catalog-detail-card stack quarter">
 															<p class="eyebrow">{catalogComponentTypeLabel(entry, 2)}</p>
-															<strong class="text-nowrap">{catalogComponent(entry, 2)}</strong>
+															<strong class="nowrap">{catalogComponent(entry, 2)}</strong>
 															<!-- {#if catalogUnique(entry, 2)?.body}
 																<PediaInlineText
 																	as="p"
@@ -2226,7 +2251,7 @@
 								<div class="pedia-catalog-row-details">
 									<article class="pedia-catalog-detail-card stack quarter">
 										<p class="eyebrow">Unique Ability</p>
-										<strong class="text-nowrap">{catalogComponent(entry, 0)}</strong>
+										<strong class="nowrap">{catalogComponent(entry, 0)}</strong>
 										<!-- {#if catalogUnique(entry, 0)?.body}
 											<PediaInlineText
 												as="p"
@@ -2244,7 +2269,7 @@
 									</article>
 									<article class="pedia-catalog-detail-card stack quarter">
 										<p class="eyebrow">{catalogComponentTypeLabel(entry, 1)}</p>
-										<strong class="text-nowrap">{catalogComponent(entry, 1)}</strong>
+										<strong class="nowrap">{catalogComponent(entry, 1)}</strong>
 										<!-- {#if catalogUnique(entry, 1)?.body}
 											<PediaInlineText
 												as="p"
@@ -2262,7 +2287,7 @@
 									</article>
 									<article class="pedia-catalog-detail-card stack quarter">
 										<p class="eyebrow">{catalogComponentTypeLabel(entry, 2)}</p>
-										<strong class="text-nowrap">{catalogComponent(entry, 2)}</strong>
+										<strong class="nowrap">{catalogComponent(entry, 2)}</strong>
 										<!-- {#if catalogUnique(entry, 2)?.body}
 											<PediaInlineText
 												as="p"
@@ -2354,7 +2379,7 @@
 								<div class="pedia-catalog-row-details">
 									<article class="pedia-catalog-detail-card stack quarter">
 										<p class="eyebrow">Unique Ability</p>
-										<strong class="text-nowrap">{catalogComponent(entry, 0)}</strong>
+										<strong class="nowrap">{catalogComponent(entry, 0)}</strong>
 										<!-- {#if catalogUnique(entry, 0)?.body}
 											<PediaInlineText
 												as="p"
@@ -2372,7 +2397,7 @@
 									</article>
 									<article class="pedia-catalog-detail-card stack quarter">
 										<p class="eyebrow">{catalogComponentTypeLabel(entry, 1)}</p>
-										<strong class="text-nowrap">{catalogComponent(entry, 1)}</strong>
+										<strong class="nowrap">{catalogComponent(entry, 1)}</strong>
 										<!-- {#if catalogUnique(entry, 1)?.body}
 											<PediaInlineText
 												as="p"
@@ -2390,7 +2415,7 @@
 									</article>
 									<article class="pedia-catalog-detail-card stack quarter">
 										<p class="eyebrow">{catalogComponentTypeLabel(entry, 2)}</p>
-										<strong class="text-nowrap">{catalogComponent(entry, 2)}</strong>
+										<strong class="nowrap">{catalogComponent(entry, 2)}</strong>
 										<!-- {#if catalogUnique(entry, 2)?.body}
 											<PediaInlineText
 												as="p"
@@ -2688,6 +2713,37 @@
 													<div class="pedia-unique-pedia-body">
 														{#each proseParagraphs(unique.civilopedia) as paragraph, index (`${selectedEntry.id}-${unique.name}-pedia-${index}`)}
 															<p class="card-copy">{paragraph}</p>
+														{/each}
+													</div>
+												</details>
+											{/if}
+											{#if unique.footnotes?.length}
+												<details class="pedia-unique-pedia">
+													<summary class="pedia-unique-pedia-summary">
+														<span>Notes{unique.footnotes.length > 1 ? ` (${unique.footnotes.length})` : ""}</span>
+													</summary>
+													<div class="pedia-unique-pedia-body">
+														{#each unique.footnotes as footnote, noteIndex (`${selectedEntry.id}-${unique.name}-footnote-${noteIndex}`)}
+															{@const noteLines = uniqueFootnoteLines(footnote)}
+															{@const noteBullets = noteLines.filter((line) => /^[-*]/.test(line)).map((line) => line.replace(/^[-*]+\s*/, ""))}
+															{@const noteParagraphs = noteLines.filter((line) => !/^[-*]/.test(line))}
+															<div class="stack quarter">
+																{#each noteParagraphs as paragraph (`${selectedEntry.id}-${unique.name}-footnote-paragraph-${paragraph}`)}
+																	<PediaInlineText
+																		as="p"
+																		className="card-copy"
+																		text={paragraph}
+																		templateRefs={entryTemplateRefs(selectedEntry, unique.templateRefs || [])}
+																	/>
+																{/each}
+																{#if noteBullets.length}
+																	<ul class="pedia-list-copy">
+																		{#each noteBullets as bullet (`${selectedEntry.id}-${unique.name}-footnote-bullet-${bullet}`)}
+																			<li><PediaInlineText text={bullet} templateRefs={entryTemplateRefs(selectedEntry, unique.templateRefs || [])} /></li>
+																		{/each}
+																	</ul>
+																{/if}
+															</div>
 														{/each}
 													</div>
 												</details>
@@ -3100,7 +3156,7 @@
 						</section>
 					</div>
 
-					<aside class="pedia-infobox" aria-label={`${selectedEntry.title} infobox`}>
+					<aside class="pedia-infobox" style={infoboxStyle(selectedEntry)} aria-label={`${selectedEntry.title} infobox`}>
 						<div class="pedia-infobox-media overflow-hidden">
 							{#if hasWorkingImage(selectedEntry.presentation?.mapImageUrl)}
 								<img
@@ -3138,7 +3194,15 @@
 							{#each infoboxRows(selectedEntry) as row (row.label)}
 								<div class="pedia-infobox-row">
 									<strong>{row.label}</strong>
-									<span><PediaInlineText text={row.value} templateRefs={infoboxRowTemplateRefs(selectedEntry, row)} /></span>
+									{#if row.values?.length > 1}
+										<div class="pedia-infobox-values">
+											{#each row.values as value (`${row.label}-${value}`)}
+												<span><PediaInlineText text={value} templateRefs={infoboxRowTemplateRefs(selectedEntry, { ...row, value })} /></span>
+											{/each}
+										</div>
+									{:else}
+										<span><PediaInlineText text={row.value} templateRefs={infoboxRowTemplateRefs(selectedEntry, row)} /></span>
+									{/if}
 								</div>
 							{/each}
 						</div>
@@ -4495,15 +4559,26 @@
 	}
 
 	.pedia-infobox {
+		--infobox-accent: var(--pedia-accent);
+		--infobox-surface: var(--pedia-panel-soft);
 		position: sticky;
 		inset-block-start: 1rem;
-		background: color-mix(in srgb, var(--pedia-panel) 84%, black 16%);
-		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 16%, var(--border-color));
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--infobox-accent) 30%, transparent) 0%, transparent 42%),
+			linear-gradient(165deg, color-mix(in srgb, var(--infobox-surface) 40%, var(--pedia-panel)) 0%, color-mix(in srgb, var(--pedia-panel) 85%, black 15%) 100%);
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--infobox-accent) 24%, var(--border-color)),
+			0 4px 6px color-mix(in srgb, black 50%, transparent);
+		border-radius: 1rem;
 		padding: 1rem;
 	}
 
 	.pedia-infobox-media {
 		min-block-size: 13rem;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--infobox-accent) 22%, transparent) 0%, transparent 40%),
+			linear-gradient(180deg, color-mix(in srgb, var(--infobox-surface) 22%, var(--pedia-panel)) 0%, color-mix(in srgb, var(--pedia-panel) 88%, black 12%) 100%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--infobox-accent) 22%, var(--border-color));
 	}
 
 	.pedia-infobox-caption {
@@ -4516,7 +4591,11 @@
 		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: center;
 		padding-block: 0.55rem;
-		border-block-end: 1px solid color-mix(in srgb, var(--pedia-accent) 12%, var(--border-color));
+		border-block-end: 1px solid color-mix(in srgb, var(--infobox-accent) 20%, var(--border-color));
+
+		&:has(.pedia-infobox-values) {
+			align-items: flex-start;
+		}
 	}
 
 	.pedia-infobox-row:last-child,
@@ -4527,7 +4606,7 @@
 
 	.pedia-infobox-row strong,
 	.pedia-support-row strong {
-		color: var(--pedia-accent-strong);
+		color: color-mix(in srgb, var(--ink) 80%, var(--infobox-accent) 20%);
 		font-size: 0.8rem;
 		letter-spacing: 0.12em;
 		text-transform: uppercase;
@@ -4536,6 +4615,16 @@
 	.pedia-infobox-row span {
 		color: var(--muted-ink);
 		text-align: end;
+	}
+
+	.pedia-infobox-values {
+		display: grid;
+		gap: 0.2rem;
+		justify-items: end;
+	}
+
+	.pedia-infobox-values span {
+		display: block;
 	}
 
 	@media (max-width: 1100px) {
@@ -4647,10 +4736,6 @@
 
 		.pedia-catalog-row-details {
 			grid-template-columns: 1fr;
-		}
-
-		.pedia-catalog-detail-card .text-nowrap {
-			white-space: normal;
 		}
 
 		.pedia-credit-grid,

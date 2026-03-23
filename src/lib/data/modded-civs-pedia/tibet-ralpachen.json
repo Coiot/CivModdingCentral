@@ -104,7 +104,7 @@
       "art": "RalpachenIcon.png",
       "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/RalpachenIcon.png",
       "artCredit": "Art by Coiot",
-      "body": "Trade Routes passing through your land grant {{Gold Icon}} Gold per {{Connected Icon}} City Connection. Roads on or next to Holy Sites yield +1 {{Gold Icon}} Gold, {{Production Icon}} Production, and {{Faith Icon}} Faith. Cities may Tithe to convert Gold / Production to {{Faith Icon}} Faith and spawn extra purchased units.",
+      "body": "Trade Routes passing through your land grant {{Gold Icon}} Gold per City Connection. Roads on or next to Holy Sites yield +1 {{Gold Icon}} Gold, {{Production Icon}} Production, and {{Faith Icon}} Faith. Cities may Tithe to convert Gold / Production to {{Faith Icon}} Faith and spawn extra purchased units.",
       "civilopedia": "",
       "bullets": [],
       "templateRefs": [

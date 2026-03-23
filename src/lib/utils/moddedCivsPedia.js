@@ -632,6 +632,21 @@ function normalizeTemplateRefs(refs) {
 	return [...byKey.values()];
 }
 
+function extractInlineRefContents(value) {
+	const refs = [];
+	const text = String(value || "").replace(/<ref(?:\s[^>]*)?>([\s\S]*?)<\/ref>/gi, (match, content) => {
+		const note = cleanText(content);
+		if (note) {
+			refs.push(note);
+		}
+		return " ";
+	});
+	return {
+		text,
+		refs,
+	};
+}
+
 function stripLeadingInfoboxTemplate(source) {
 	const raw = String(source || "");
 	const block = extractTemplateBlock(raw, FANDOM_TEMPLATE_NAMES.infobox);
@@ -831,8 +846,19 @@ function parseCollapsibleLists(section) {
 		}
 		const items = contentMatch[1]
 			.split("\n")
-			.map((line) => cleanText(line.replace(/^[:*#]\s*/, "")))
-			.filter(Boolean);
+			.map((line) => cleanText(line.replace(/^[:*#]\s*/, "").replace(/<\/?div[^>]*>/gi, "")))
+			.filter((line) => {
+				if (!line) {
+					return false;
+				}
+				if (/^\|[-}]/.test(line)) {
+					return false;
+				}
+				if (/^class\s*=/.test(line)) {
+					return false;
+				}
+				return true;
+			});
 		lists.push({
 			title: cleanText(header[1]),
 			items,
@@ -1119,7 +1145,9 @@ async function parseUniqueAttributes(section, wikiUrl = "") {
 			.replace(/^\|[^\n]*\|/gm, "")
 			.replace(/^\|/gm, "")
 			.replace(/<br\s*\/?>/gi, "\n");
-		const content = stripWikiMarkup(withoutCellMarkup);
+		const refExtraction = extractInlineRefContents(withoutCellMarkup);
+		const content = stripWikiMarkup(refExtraction.text);
+		const footnotes = refExtraction.refs.map((ref) => stripWikiMarkup(ref)).filter(Boolean);
 		const lines = content
 			.split("\n")
 			.map((line) => cleanText(line))
@@ -1141,6 +1169,7 @@ async function parseUniqueAttributes(section, wikiUrl = "") {
 			artCredit,
 			body: textBody,
 			bullets,
+			footnotes,
 			templateRefs: [],
 		});
 		index += 1;
@@ -2537,6 +2566,9 @@ export function normalizePediaEntry(entryInput) {
 		civilopedia: sanitizePediaProse(unique?.civilopedia),
 		bullets: ensureArray(unique?.bullets)
 			.map((bullet) => sanitizePediaProse(bullet))
+			.filter(Boolean),
+		footnotes: ensureArray(unique?.footnotes)
+			.map((footnote) => sanitizePediaProse(footnote))
 			.filter(Boolean),
 		templateRefs: normalizeTemplateRefs(unique?.templateRefs),
 	}));
