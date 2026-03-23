@@ -2830,8 +2830,6 @@
 								<div class="pedia-copy-grid">
 									<article class="pedia-copy-card">
 										<strong class="card-title">Peace Theme</strong>
-										<p class="card-copy">{selectedEntry.music.peace.title || "Unknown"}</p>
-										<p class="card-copy">{selectedEntry.music.peace.credit || "Credit pending"}</p>
 										{#if entryMusicEmbedUrl(selectedEntry, "peace")}
 											<div class="pedia-music-embed">
 												<iframe
@@ -2844,9 +2842,8 @@
 												></iframe>
 											</div>
 										{/if}
-										{#if selectedEntry.music.peace.url}
-											<a class="pedia-button pedia-button-secondary fit-content" href={selectedEntry.music.peace.url} target="_blank" rel="noreferrer">Watch Video</a>
-										{/if}
+										<p class="card-copy">{selectedEntry.music.peace.title || "Unknown"}</p>
+										<p class="card-copy">{selectedEntry.music.peace.credit || "Credit pending"}</p>
 									</article>
 									<article class="pedia-copy-card">
 										<strong class="card-title">War Theme</strong>
