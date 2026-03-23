@@ -38,8 +38,6 @@ export const PEDIA_COLLECTIONS = [
 		title: "CBR Mk2 10th Anniversary",
 		sourceTemplate: "CBR10Nav",
 		blurb: "10 years ago, the first part of the Civilization Battle Royale Mk. 2 was posted, kickstarting one of the most legendary stories in Civ history. To celebrate this momentous occasion, members of the CBR community have banded together to create a collection of brand-new civs for you to enjoy!",
-		imageURL:
-			"https://images.steamusercontent.com/ugc/15980633034552405437/5732AB69151628686F8EAAE35EE1F9A7235D1EE0/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false",
 		links: [
 			{
 				label: "Steam Workshop",

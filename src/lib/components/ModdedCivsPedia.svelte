@@ -16,11 +16,20 @@
 		sanitizePediaProse,
 		slugifyPediaValue,
 	} from "../utils/moddedCivsPedia.js";
+	import {
+		deletePediaCollectionFromCloud,
+		hasPediaCloudConfig,
+		loadPediaCollectionsFromCloud,
+		loadPediaEntriesFromCloud,
+		markPediaEntryDeletedInCloud,
+		savePediaCollectionToCloud,
+		savePediaEntryToCloud,
+	} from "../utils/pediaCloud.js";
 	import { personHighlightStyle } from "../utils/personHighlights.js";
 
 	const PEDIA_BASE_PATH = "/modded-civs-pedia";
 
-	let { routePath = PEDIA_BASE_PATH, navigate = null, canEdit = false } = $props();
+	let { routePath = PEDIA_BASE_PATH, navigate = null, canEdit = false, authUser = null, authAccessToken = "", authEnabled = false } = $props();
 
 	const TOC_SECTIONS = [
 		{ id: "overview", label: "Overview" },
@@ -39,6 +48,9 @@
 	let authorFilterName = $state("");
 	let selectedEntryId = $state("");
 	let activeView = $state("catalog");
+	let cloudEntries = $state([]);
+	let cloudCollections = $state([]);
+	let cloudDeletedEntryIds = $state([]);
 	let importedEntries = $state([]);
 	let wikiMarkupInput = $state("");
 	let convertedEntry = $state(null);
@@ -50,16 +62,28 @@
 	let entryEditorDraft = $state("");
 	let collectionEditorOpen = $state(false);
 	let collectionCreatorOpen = $state(false);
+	let collectionMetadataEditorOpen = $state(false);
 	let collectionEditorDraft = $state([]);
 	let collectionEditorEntryId = $state("");
 	let collectionEditorSelection = $state("");
 	let collectionEditorStatus = $state("");
+	let collectionMetadataStatus = $state("");
+	let collectionMetadataTitle = $state("");
+	let collectionMetadataId = $state("");
+	let collectionMetadataSourceTemplate = $state("");
+	let collectionMetadataBlurb = $state("");
+	let collectionMetadataImageURL = $state("");
+	let collectionMetadataBackground = $state("");
+	let collectionMetadataAccent = $state("");
+	let collectionMetadataAliases = $state("");
+	let collectionMetadataLinks = $state("");
 	let categoryEditorOpen = $state(false);
 	let categoryEditorDraft = $state([]);
 	let categoryEditorEntryId = $state("");
 	let categoryEditorInput = $state("");
 	let categoryEditorStatus = $state("");
 	let customCollections = $state([]);
+	let pediaCloudLoadKey = $state("");
 	let newCollectionTitle = $state("");
 	let newCollectionId = $state("");
 	let newCollectionSourceTemplate = $state("");
@@ -69,7 +93,9 @@
 	let entryStatus = $state("");
 	let deletedEntryIds = $state([]);
 	let folderInputEl = $state();
+	let jsonInputEl = $state();
 	let failedImageUrls = $state([]);
+	const cloudPediaConfigured = $derived(Boolean(authEnabled) && hasPediaCloudConfig());
 
 	function normalizeSearch(value) {
 		return String(value || "")
@@ -110,7 +136,8 @@
 			const normalized = normalizePediaEntry(entry);
 			byId.set(normalized.id, normalized);
 		}
-		return sortModdedCivsEntries([...byId.values()]).filter((entry) => !deletedEntryIds.includes(entry.id));
+		const hiddenEntryIds = new Set([...deletedEntryIds, ...cloudDeletedEntryIds]);
+		return sortModdedCivsEntries([...byId.values()]).filter((entry) => !hiddenEntryIds.has(entry.id));
 	}
 
 	function isAuthorCredit(credit) {
@@ -249,6 +276,15 @@
 		newCollectionBackground = next;
 	}
 
+	function updateCollectionMetadataColor(field, value) {
+		const next = sanitizeHexColor(value);
+		if (field === "accent") {
+			collectionMetadataAccent = next;
+			return;
+		}
+		collectionMetadataBackground = next;
+	}
+
 	function cssUrlValue(url) {
 		const value = String(url || "").trim();
 		if (!value) {
@@ -310,6 +346,29 @@
 			vars.push(`--collection-hero-image:${cssUrlValue(imageUrl)}`);
 		}
 		return vars.filter(Boolean).join(";");
+	}
+
+	function serializeCollectionLinks(collection) {
+		return (Array.isArray(collection?.links) ? collection.links : [])
+			.map((link) => {
+				const label = String(link?.label || "").trim();
+				const href = String(link?.href || "").trim();
+				return label && href ? `${label} | ${href}` : "";
+			})
+			.filter(Boolean)
+			.join("\n");
+	}
+
+	function hydrateCollectionMetadataDraft(collection) {
+		collectionMetadataTitle = String(collection?.title || "").trim();
+		collectionMetadataId = String(collection?.id || "").trim();
+		collectionMetadataSourceTemplate = String(collection?.sourceTemplate || "").trim();
+		collectionMetadataBlurb = String(collection?.blurb || "").trim();
+		collectionMetadataImageURL = String(collection?.imageURL || "").trim();
+		collectionMetadataBackground = String(collection?.colors?.background || "").trim();
+		collectionMetadataAccent = String(collection?.colors?.accent || "").trim();
+		collectionMetadataAliases = [...new Set([String(collection?.title || "").trim(), ...(collection?.aliases || []).map((alias) => String(alias || "").trim())].filter(Boolean))].join("\n");
+		collectionMetadataLinks = serializeCollectionLinks(collection);
 	}
 
 	function entryCollectionPillStyle(collection) {
@@ -519,7 +578,7 @@
 		return { kind: "catalog", authorSlug: "" };
 	}
 
-	const allEntries = $derived.by(() => mergeEntries(importedEntries));
+	const allEntries = $derived.by(() => mergeEntries([...cloudEntries, ...importedEntries]));
 	const normalizedQuery = $derived(normalizeSearch(searchQuery));
 	const activeAuthorFilterKey = $derived(authorFilterKey(authorFilterName));
 	const authorLookup = $derived.by(() => {
@@ -577,7 +636,7 @@
 	const allCategories = $derived(groupPediaCategories(allEntries));
 	const knownCollections = $derived.by(() => {
 		const byId = new Map();
-		for (const collection of [...PEDIA_COLLECTIONS, ...customCollections, ...allCollections]) {
+		for (const collection of [...PEDIA_COLLECTIONS, ...cloudCollections, ...customCollections, ...allCollections]) {
 			const id = String(collection?.id || "").trim();
 			const title = String(collection?.title || "").trim();
 			if (!id || !title || byId.has(id)) {
@@ -605,6 +664,16 @@
 		}
 		return [...byId.values()].sort((left, right) => left.title.localeCompare(right.title));
 	});
+	const knownCollectionLookup = $derived.by(() => {
+		const bySlug = new Map();
+		for (const collection of knownCollections) {
+			const slug = slugifyPediaValue(collection?.id || collection?.title);
+			if (slug && !bySlug.has(slug)) {
+				bySlug.set(slug, collection);
+			}
+		}
+		return bySlug;
+	});
 	const collectionLookup = $derived.by(() => {
 		const bySlug = new Map();
 		for (const collection of allCollections) {
@@ -629,7 +698,27 @@
 	const convertedJsonText = $derived(convertedEntry ? JSON.stringify(convertedEntry, null, 2) : "");
 	const convertedWikiText = $derived(convertedEntry ? renderWikiMarkupFromEntry(convertedEntry) : "");
 	const routeState = $derived(parseRouteState(routePath));
-	const selectedCollection = $derived(routeState.kind === "collection" ? (collectionLookup.get(routeState.collectionSlug) ?? null) : null);
+	const selectedCollection = $derived.by(() => {
+		if (routeState.kind !== "collection") {
+			return null;
+		}
+		const grouped = collectionLookup.get(routeState.collectionSlug) ?? null;
+		const known = knownCollectionLookup.get(routeState.collectionSlug) ?? null;
+		if (!grouped && !known) {
+			return null;
+		}
+		return {
+			...(grouped || {}),
+			...(known || {}),
+			entries: grouped?.entries || [],
+			links: known?.links || grouped?.links || [],
+			aliases: known?.aliases || grouped?.aliases || [],
+			colors: {
+				background: known?.colors?.background || grouped?.colors?.background || "",
+				accent: known?.colors?.accent || grouped?.colors?.accent || "",
+			},
+		};
+	});
 	const selectedCategory = $derived(routeState.kind === "category" ? (categoryLookup.get(routeState.categorySlug) ?? null) : null);
 	const availableCollectionOptions = $derived.by(() => {
 		const selectedIds = new Set((collectionEditorDraft || []).map((collection) => collection?.id).filter(Boolean));
@@ -657,6 +746,9 @@
 	});
 	const newCollectionAccentDisplay = $derived(colorDisplay(newCollectionAccent, "#FAD587"));
 	const newCollectionBackgroundDisplay = $derived(colorDisplay(newCollectionBackground, "#7E2222"));
+	const collectionMetadataAccentDisplay = $derived(colorDisplay(collectionMetadataAccent, "#FAD587"));
+	const collectionMetadataBackgroundDisplay = $derived(colorDisplay(collectionMetadataBackground, "#7E2222"));
+	const pediaCloudWriteReady = $derived(Boolean(cloudPediaConfigured && authAccessToken && authUser?.email && canEdit));
 
 	$effect(() => {
 		if (allEntries.length && !allEntries.some((entry) => entry.id === selectedEntryId)) {
@@ -693,6 +785,30 @@
 		categoryEditorDraft = (selectedEntry?.categories || []).map((category) => normalizeCategoryValue(category)).filter(Boolean);
 		categoryEditorInput = "";
 		categoryEditorStatus = "";
+	});
+
+	$effect(() => {
+		if (routeState.kind !== "collection" || !selectedCollection) {
+			collectionMetadataEditorOpen = false;
+			collectionMetadataStatus = "";
+			return;
+		}
+		hydrateCollectionMetadataDraft(selectedCollection);
+	});
+
+	$effect(() => {
+		if (!cloudPediaConfigured) {
+			pediaCloudLoadKey = "";
+			return;
+		}
+
+		const nextLoadKey = `${authAccessToken || "anon"}:${Boolean(authUser?.email)}`;
+		if (pediaCloudLoadKey === nextLoadKey) {
+			return;
+		}
+
+		pediaCloudLoadKey = nextLoadKey;
+		void loadCloudPediaState({ silent: true });
 	});
 
 	$effect(() => {
@@ -761,7 +877,27 @@
 		return slugifyPediaValue(entry?.slug || entry?.title);
 	}
 
-	async function saveEntryToProject(entry, wikiMarkup, successMessage) {
+	async function loadCloudPediaState({ silent = false } = {}) {
+		if (!cloudPediaConfigured) {
+			return;
+		}
+
+		try {
+			const [entryResult, collections] = await Promise.all([loadPediaEntriesFromCloud(authAccessToken), loadPediaCollectionsFromCloud(authAccessToken)]);
+			cloudEntries = sortModdedCivsEntries(entryResult.entries || []);
+			cloudDeletedEntryIds = [...new Set(entryResult.deletedEntryIds || [])];
+			cloudCollections = [...(collections || [])].sort((left, right) => String(left?.title || "").localeCompare(String(right?.title || "")));
+			if (!silent && entryStatus) {
+				entryStatus = "Cloud pedia content refreshed.";
+			}
+		} catch (error) {
+			if (!silent) {
+				entryStatus = error?.message || "Unable to load pedia data from Supabase.";
+			}
+		}
+	}
+
+	async function saveEntryToLocalProject(entry, wikiMarkup) {
 		const response = await fetch("/__local-api/modded-civs-pedia/save", {
 			method: "POST",
 			headers: {
@@ -779,8 +915,27 @@
 			throw new Error(payload?.message || "Unable to save pedia files.");
 		}
 
-		importedEntries = sortModdedCivsEntries([...importedEntries.filter((candidate) => candidate.id !== entry.id), entry]);
-		deletedEntryIds = deletedEntryIds.filter((id) => id !== entry.id);
+		return payload;
+	}
+
+	async function saveEntryToProject(entry, wikiMarkup, successMessage) {
+		const nextEntry = normalizePediaEntry(entry);
+
+		if (pediaCloudWriteReady) {
+			const savedEntry = await savePediaEntryToCloud(authAccessToken, nextEntry, wikiMarkup);
+			cloudEntries = sortModdedCivsEntries([...cloudEntries.filter((candidate) => candidate.id !== nextEntry.id && candidate.id !== savedEntry.id), savedEntry]);
+			cloudDeletedEntryIds = cloudDeletedEntryIds.filter((id) => id !== savedEntry.id);
+			importedEntries = sortModdedCivsEntries([...importedEntries.filter((candidate) => candidate.id !== nextEntry.id && candidate.id !== savedEntry.id), savedEntry]);
+			deletedEntryIds = deletedEntryIds.filter((id) => id !== savedEntry.id);
+			if (successMessage) {
+				entryStatus = successMessage;
+			}
+			return { ok: true, entry: savedEntry };
+		}
+
+		const payload = await saveEntryToLocalProject(nextEntry, wikiMarkup);
+		importedEntries = sortModdedCivsEntries([...importedEntries.filter((candidate) => candidate.id !== nextEntry.id), nextEntry]);
+		deletedEntryIds = deletedEntryIds.filter((id) => id !== nextEntry.id);
 		if (successMessage) {
 			entryStatus = successMessage;
 		}
@@ -827,7 +982,7 @@
 			openEntry(nextEntry, { replace: true });
 			entryEditorDraft = `${JSON.stringify(nextEntry, null, 2)}\n`;
 		} catch (error) {
-			entryStatus = `${error?.message || "Unable to save entry."} This save flow only works while running the local Vite dev server.`;
+			entryStatus = error?.message || "Unable to save entry.";
 		}
 	}
 
@@ -875,7 +1030,7 @@
 			await saveEntryToProject(nextEntry, renderWikiMarkupFromEntry(nextEntry), "");
 			collectionEditorStatus = `${nextEntry.title} collection memberships saved.`;
 		} catch (error) {
-			collectionEditorStatus = `${error?.message || "Unable to save collection memberships."} This save flow only works while running the local Vite dev server.`;
+			collectionEditorStatus = error?.message || "Unable to save collection memberships.";
 		}
 	}
 
@@ -933,7 +1088,7 @@
 			await saveEntryToProject(nextEntry, renderWikiMarkupFromEntry(nextEntry), "");
 			categoryEditorStatus = `${nextEntry.title} categories saved.`;
 		} catch (error) {
-			categoryEditorStatus = `${error?.message || "Unable to save categories."} This save flow only works while running the local Vite dev server.`;
+			categoryEditorStatus = error?.message || "Unable to save categories.";
 		}
 	}
 
@@ -954,6 +1109,167 @@
 			newCollectionBackground = "";
 			newCollectionAccent = "";
 			newCollectionAliases = "";
+		}
+	}
+
+	function toggleCollectionMetadataEditor() {
+		collectionMetadataEditorOpen = !collectionMetadataEditorOpen;
+		if (!collectionMetadataEditorOpen) {
+			collectionMetadataStatus = "";
+			if (selectedCollection) {
+				hydrateCollectionMetadataDraft(selectedCollection);
+			}
+		}
+	}
+
+	async function saveCollectionToLocalProject(collection, options = {}) {
+		const response = await fetch("/__local-api/modded-civs-pedia/collections/save", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				collection,
+				updateExisting: Boolean(options.updateExisting),
+				previousId: String(options.previousId || "").trim(),
+			}),
+		});
+		const payload = await response.json().catch(() => ({}));
+		if (!response.ok || !payload?.ok) {
+			throw new Error(payload?.message || "Unable to save collection.");
+		}
+		return payload;
+	}
+
+	async function deleteCollectionFromLocalProject(collectionId) {
+		const response = await fetch("/__local-api/modded-civs-pedia/collections/delete", {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				id: collectionId,
+			}),
+		});
+		const payload = await response.json().catch(() => ({}));
+		if (!response.ok || !payload?.ok) {
+			throw new Error(payload?.message || "Unable to delete collection.");
+		}
+		return payload;
+	}
+
+	async function saveCollectionMetadata() {
+		const title = String(collectionMetadataTitle || "").trim();
+		const id = slugifyPediaValue(collectionMetadataId || title);
+		const background = String(collectionMetadataBackground || "").trim();
+		const accent = String(collectionMetadataAccent || "").trim();
+		const aliases = [
+			title,
+			...String(collectionMetadataAliases || "")
+				.split(/\n|,/)
+				.map((item) => String(item || "").trim())
+				.filter(Boolean),
+		].filter((value, index, array) => array.indexOf(value) === index);
+		const links = String(collectionMetadataLinks || "")
+			.split("\n")
+			.map((line) => String(line || "").trim())
+			.filter(Boolean)
+			.map((line) => {
+				const [label, href] = line.split("|").map((part) => String(part || "").trim());
+				return {
+					label,
+					href,
+				};
+			})
+			.filter((link) => link.label && link.href);
+
+		if (!selectedCollection) {
+			collectionMetadataStatus = "No collection is selected.";
+			return;
+		}
+		if (!title) {
+			collectionMetadataStatus = "Collection title is required.";
+			return;
+		}
+		if (!id) {
+			collectionMetadataStatus = "Collection id is required.";
+			return;
+		}
+		if (!isValidHexColor(background) || !isValidHexColor(accent)) {
+			collectionMetadataStatus = "Collection background and accent colors must be valid hex values.";
+			return;
+		}
+
+		const collection = {
+			id,
+			title,
+			sourceTemplate: String(collectionMetadataSourceTemplate || "").trim(),
+			blurb: String(collectionMetadataBlurb || "").trim(),
+			imageURL: String(collectionMetadataImageURL || "").trim(),
+			links,
+			aliases,
+			colors: {
+				background,
+				accent,
+			},
+		};
+
+		try {
+			collectionMetadataStatus = "Saving collection...";
+			const savedCollection = pediaCloudWriteReady
+				? await savePediaCollectionToCloud(authAccessToken, collection, { previousId: selectedCollection.id })
+				: (await saveCollectionToLocalProject(collection, { updateExisting: true, previousId: selectedCollection.id })) && collection;
+			customCollections = [...customCollections.filter((item) => item?.id !== selectedCollection.id && item?.id !== collection.id), savedCollection];
+			if (pediaCloudWriteReady) {
+				cloudCollections = [...cloudCollections.filter((item) => item?.id !== selectedCollection.id && item?.id !== savedCollection.id), savedCollection].sort((left, right) =>
+					String(left?.title || "").localeCompare(String(right?.title || "")),
+				);
+			}
+			collectionMetadataStatus = `${savedCollection.title} saved.`;
+			if (collection.id !== selectedCollection.id) {
+				navigate?.(collectionPath(savedCollection), { replace: true });
+			}
+		} catch (error) {
+			collectionMetadataStatus = error?.message || "Unable to save collection.";
+		}
+	}
+
+	async function deleteSelectedCollection() {
+		if (!selectedCollection) {
+			return;
+		}
+
+		const affectedEntries = [...selectedCollection.entries];
+		const memberCountLabel = affectedEntries.length === 1 ? "1 entry" : `${affectedEntries.length} entries`;
+		if (typeof window !== "undefined" && !window.confirm(`Delete ${selectedCollection.title} and remove it from ${memberCountLabel}?`)) {
+			return;
+		}
+
+		collectionMetadataStatus = "Removing collection from entries...";
+
+		try {
+			for (const entry of affectedEntries) {
+				const nextCollections = entryCollections(entry).filter((collection) => collection?.id !== selectedCollection.id);
+				const nextEntry = normalizePediaEntry({
+					...entry,
+					collections: nextCollections,
+				});
+				await saveEntryToProject(nextEntry, renderWikiMarkupFromEntry(nextEntry), "");
+			}
+
+			if (pediaCloudWriteReady) {
+				await deletePediaCollectionFromCloud(authAccessToken, selectedCollection.id);
+				cloudCollections = cloudCollections.filter((collection) => collection?.id !== selectedCollection.id);
+			} else {
+				await deleteCollectionFromLocalProject(selectedCollection.id);
+			}
+
+			customCollections = customCollections.filter((collection) => collection?.id !== selectedCollection.id);
+			collectionMetadataEditorOpen = false;
+			collectionMetadataStatus = `${selectedCollection.title} deleted.`;
+			showCatalog();
+		} catch (error) {
+			collectionMetadataStatus = error?.message || "Unable to delete collection.";
 		}
 	}
 
@@ -996,21 +1312,15 @@
 
 		try {
 			collectionEditorStatus = "Saving new collection...";
-			const response = await fetch("/__local-api/modded-civs-pedia/collections/save", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ collection }),
-			});
-			const payload = await response.json().catch(() => ({}));
-			if (!response.ok || !payload?.ok) {
-				throw new Error(payload?.message || "Unable to save collection.");
+			const savedCollection = pediaCloudWriteReady ? await savePediaCollectionToCloud(authAccessToken, collection) : (await saveCollectionToLocalProject(collection)) && collection;
+			customCollections = [...customCollections.filter((item) => item?.id !== savedCollection.id), savedCollection];
+			if (pediaCloudWriteReady) {
+				cloudCollections = [...cloudCollections.filter((item) => item?.id !== savedCollection.id), savedCollection].sort((left, right) =>
+					String(left?.title || "").localeCompare(String(right?.title || "")),
+				);
 			}
-
-			customCollections = [...customCollections, collection];
-			previewCollectionMemberships([...collectionEditorDraft, collection]);
-			collectionEditorStatus = `${collection.title} created and added to this entry draft. Save memberships to persist it on this civ.`;
+			previewCollectionMemberships([...collectionEditorDraft, savedCollection]);
+			collectionEditorStatus = `${savedCollection.title} created and added to this entry draft. Save memberships to persist it on this civ.`;
 			collectionCreatorOpen = false;
 			newCollectionTitle = "";
 			newCollectionId = "";
@@ -1019,7 +1329,7 @@
 			newCollectionAccent = "";
 			newCollectionAliases = "";
 		} catch (error) {
-			collectionEditorStatus = `${error?.message || "Unable to save collection."} This save flow only works while running the local Vite dev server.`;
+			collectionEditorStatus = error?.message || "Unable to save collection.";
 		}
 	}
 
@@ -1034,28 +1344,34 @@
 		entryStatus = "Deleting entry...";
 
 		try {
-			const response = await fetch("/__local-api/modded-civs-pedia/delete", {
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					slug: slugForEntry(selectedEntry),
-				}),
-			});
+			if (pediaCloudWriteReady) {
+				const payload = await markPediaEntryDeletedInCloud(authAccessToken, selectedEntry);
+				cloudDeletedEntryIds = [...new Set([...cloudDeletedEntryIds, payload.id])];
+				cloudEntries = cloudEntries.filter((entry) => entry.id !== payload.id);
+			} else {
+				const response = await fetch("/__local-api/modded-civs-pedia/delete", {
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						slug: slugForEntry(selectedEntry),
+					}),
+				});
 
-			const payload = await response.json().catch(() => ({}));
-			if (!response.ok || !payload?.ok) {
-				throw new Error(payload?.message || "Unable to delete pedia files.");
+				const payload = await response.json().catch(() => ({}));
+				if (!response.ok || !payload?.ok) {
+					throw new Error(payload?.message || "Unable to delete pedia files.");
+				}
 			}
 
 			deletedEntryIds = [...new Set([...deletedEntryIds, selectedEntry.id])];
 			importedEntries = importedEntries.filter((entry) => entry.id !== selectedEntry.id);
 			stopEditingEntry();
 			showCatalog();
-			entryStatus = `${selectedEntry.title} deleted from project data.`;
+			entryStatus = pediaCloudWriteReady ? `${selectedEntry.title} deleted from shared pedia data.` : `${selectedEntry.title} deleted from project data.`;
 		} catch (error) {
-			entryStatus = `${error?.message || "Unable to delete entry."} This delete flow only works while running the local Vite dev server.`;
+			entryStatus = error?.message || "Unable to delete entry.";
 		}
 	}
 
@@ -1091,6 +1407,35 @@
 		folderInputEl?.click();
 	}
 
+	async function handleJsonImportChange(event) {
+		const file = event.currentTarget?.files?.[0];
+		if (!file) {
+			return;
+		}
+
+		converterBusy = true;
+		converterStatus = "Reading pedia JSON...";
+		try {
+			const rawText = await file.text();
+			const payload = JSON.parse(rawText || "{}");
+			const nextEntry = normalizePediaEntry(payload);
+			if (!nextEntry?.id || !nextEntry?.title) {
+				throw new Error("The imported JSON is missing required pedia entry fields.");
+			}
+			setConvertedEntry(nextEntry, "JSON import");
+			converterStatus = `Loaded ${nextEntry.title} from JSON.`;
+		} catch (error) {
+			converterStatus = error?.message || "Unable to read that JSON file.";
+		} finally {
+			event.currentTarget.value = "";
+			converterBusy = false;
+		}
+	}
+
+	function triggerJsonImport() {
+		jsonInputEl?.click();
+	}
+
 	async function saveConvertedEntryToProject() {
 		if (!convertedEntry) {
 			return;
@@ -1102,9 +1447,11 @@
 		try {
 			await saveEntryToProject(convertedEntry, convertedWikiText, "");
 			openEntry(convertedEntry, { replace: true });
-			converterStatus = `${convertedEntry.title} saved to project data and added to the local pedia catalog.`;
+			converterStatus = pediaCloudWriteReady
+				? `${convertedEntry.title} saved to shared pedia data and added to the live catalog.`
+				: `${convertedEntry.title} saved to project data and added to the local pedia catalog.`;
 		} catch (error) {
-			converterStatus = `${error?.message || "Unable to save pedia files."} This save flow only works while running the local Vite dev server.`;
+			converterStatus = error?.message || "Unable to save pedia files.";
 			return;
 		} finally {
 			converterBusy = false;
@@ -1299,7 +1646,7 @@
 	<section class="pedia-main">
 		{#if activeView === "catalog"}
 			<div class="pedia-toolbar">
-				<div class="stack quarter">
+				<div class="stack half">
 					<p class="eyebrow">Catalog</p>
 					<h2 class="section-title">Modded Civ Entries</h2>
 					<p class="section-copy">{filteredEntries.length} visible of {allEntries.length} total entries.</p>
@@ -1591,7 +1938,7 @@
 			</section>
 		{:else if activeView === "converter"}
 			<div class="pedia-toolbar">
-				<div class="stack quarter">
+				<div class="stack half">
 					<p class="eyebrow">Converter</p>
 					<h2 class="section-title">Build Pedia Entries</h2>
 					<p class="section-copy">Convert fandom markup or scan a mod folder, then save the entry into the database.</p>
@@ -1609,12 +1956,12 @@
 				<div class="pedia-converter-grid">
 					<section class="pedia-converter-panel pedia-converter-panel-source stack">
 						<div class="pedia-section-head">
-							<div class="stack quarter">
+							<div class="stack half">
 								<p class="eyebrow">Source</p>
 								<h3 class="section-title">Fandom Wiki Markup</h3>
 								<p class="section-copy">Paste a full fandom wiki page block here to generate both site JSON and regenerated wiki output.</p>
 							</div>
-							<div class="inline">
+							<div class="inline margin-block-start-half">
 								<button type="button" class="pedia-button" onclick={convertWikiMarkup}>Convert Wiki Markup</button>
 							</div>
 						</div>
@@ -1628,13 +1975,15 @@
 					</section>
 
 					<section class="pedia-converter-panel pedia-converter-panel-side stack">
-						<div class="pedia-converter-side-card stack half">
-							<p class="eyebrow">Folder Import</p>
-							<h3 class="section-title">Scan Mod Folder</h3>
-							<p class="section-copy">Read civ mod files directly and generate the same pedia entry shape from the folder contents.</p>
+						<div class="pedia-converter-side-card stack">
+							<p class="eyebrow">File Import</p>
+							<h3 class="section-title">Scan Mod Folder or Import JSON</h3>
+							<p class="section-copy">Upload a mod folder or JSON file to auto-fill a pedia entry.</p>
 							<div class="inline">
 								<button type="button" class="pedia-button pedia-button-secondary" onclick={triggerFolderImport} disabled={converterBusy}>Import Mod Folder</button>
+								<button type="button" class="pedia-button pedia-button-secondary" onclick={triggerJsonImport} disabled={converterBusy}>Import JSON</button>
 								<input bind:this={folderInputEl} class="pedia-hidden-input" type="file" webkitdirectory multiple onchange={handleFolderChange} />
+								<input bind:this={jsonInputEl} class="pedia-hidden-input" type="file" accept="application/json,.json" onchange={handleJsonImportChange} />
 							</div>
 						</div>
 
@@ -1692,8 +2041,121 @@
 					<button type="button" class="pedia-button pedia-button-secondary" style={collectionCardStyle(selectedCollection)}>
 						{selectedCollection.title}
 					</button>
+					{#if canEdit}
+						<button type="button" class="pedia-button pedia-button-secondary" onclick={toggleCollectionMetadataEditor}>
+							{collectionMetadataEditorOpen ? "Hide Collection Editor" : "Edit Collection"}
+						</button>
+					{/if}
 				</div>
 			</div>
+
+			{#if canEdit && collectionMetadataEditorOpen}
+				<section class="pedia-editor-panel stack half">
+					<div class="inline between flex-wrap half align-start">
+						<div class="stack quarter">
+							<p class="eyebrow">Collection Editor</p>
+							<h3 class="card-title">Edit Collection Metadata</h3>
+							<p class="card-copy">Update the collection title, colors, hero content, aliases, and external links.</p>
+						</div>
+					</div>
+
+					<div class="pedia-preview-grid">
+						<label class="stack quarter">
+							<span class="eyebrow">Title</span>
+							<input class="pedia-field" type="text" bind:value={collectionMetadataTitle} placeholder="Land of Snows" />
+						</label>
+						<label class="stack quarter">
+							<span class="eyebrow">Id / Slug</span>
+							<input class="pedia-field" type="text" bind:value={collectionMetadataId} placeholder="land-of-snows" />
+						</label>
+						<label class="stack quarter">
+							<span class="eyebrow">Source Template</span>
+							<input class="pedia-field" type="text" bind:value={collectionMetadataSourceTemplate} placeholder="LandofSnowsNav" />
+						</label>
+						<label class="stack quarter">
+							<span class="eyebrow">Hero Image URL</span>
+							<input class="pedia-field" type="url" bind:value={collectionMetadataImageURL} placeholder="https://..." />
+						</label>
+						<label class="stack quarter">
+							<span class="eyebrow">Accent</span>
+							<div class="pedia-color-field">
+								<div class="pedia-color-picker-row">
+									<div class="pedia-color-swatch-control relative overflow-hidden">
+										<input
+											type="color"
+											value={colorInputValue(collectionMetadataAccentDisplay.hex)}
+											oninput={(event) => updateCollectionMetadataColor("accent", event.currentTarget.value)}
+										/>
+										<span class="pedia-color-preview" style={`--preview:${collectionMetadataAccentDisplay.hex}`} aria-hidden="true"></span>
+									</div>
+									<input
+										class="pedia-field pedia-color-hex-input"
+										type="text"
+										bind:value={collectionMetadataAccent}
+										placeholder="#FAD587"
+										oninput={(event) => (collectionMetadataAccent = sanitizeHexColor(event.currentTarget.value))}
+									/>
+								</div>
+								<div class="pedia-color-values">
+									<span class="pedia-color-value">HEX {collectionMetadataAccentDisplay.hex}</span>
+									<span class="pedia-color-value">RGB {collectionMetadataAccentDisplay.rgb}</span>
+									<span class="pedia-color-value">HSL {collectionMetadataAccentDisplay.hsl}</span>
+								</div>
+							</div>
+						</label>
+						<label class="stack quarter">
+							<span class="eyebrow">Background</span>
+							<div class="pedia-color-field">
+								<div class="pedia-color-picker-row">
+									<div class="pedia-color-swatch-control relative overflow-hidden">
+										<input
+											type="color"
+											value={colorInputValue(collectionMetadataBackgroundDisplay.hex)}
+											oninput={(event) => updateCollectionMetadataColor("background", event.currentTarget.value)}
+										/>
+										<span class="pedia-color-preview" style={`--preview:${collectionMetadataBackgroundDisplay.hex}`} aria-hidden="true"></span>
+									</div>
+									<input
+										class="pedia-field pedia-color-hex-input"
+										type="text"
+										bind:value={collectionMetadataBackground}
+										placeholder="#7E2222"
+										oninput={(event) => (collectionMetadataBackground = sanitizeHexColor(event.currentTarget.value))}
+									/>
+								</div>
+								<div class="pedia-color-values">
+									<span class="pedia-color-value">HEX {collectionMetadataBackgroundDisplay.hex}</span>
+									<span class="pedia-color-value">RGB {collectionMetadataBackgroundDisplay.rgb}</span>
+									<span class="pedia-color-value">HSL {collectionMetadataBackgroundDisplay.hsl}</span>
+								</div>
+							</div>
+						</label>
+					</div>
+
+					<label class="stack quarter">
+						<span class="eyebrow">Blurb</span>
+						<textarea class="pedia-field pedia-textarea-compact" rows="4" bind:value={collectionMetadataBlurb} placeholder="Short overview of the event or pack."></textarea>
+					</label>
+					<label class="stack quarter">
+						<span class="eyebrow">Aliases</span>
+						<textarea class="pedia-field pedia-textarea-compact" rows="4" bind:value={collectionMetadataAliases} placeholder="One alias per line"></textarea>
+					</label>
+					<label class="stack quarter">
+						<span class="eyebrow">Links</span>
+						<textarea class="pedia-field pedia-textarea-compact" rows="4" bind:value={collectionMetadataLinks} placeholder="Steam Workshop | https://steamcommunity.com/..."></textarea>
+					</label>
+
+					<div class="inline half flex-wrap margin-block-start-half">
+						<button type="button" class="pedia-button pedia-button-secondary" onclick={toggleCollectionMetadataEditor}>Close</button>
+						<button type="button" class="pedia-button" onclick={saveCollectionMetadata}>Save Collection</button>
+						<button type="button" class="pedia-button pedia-button-danger margin-inline-start-auto" onclick={deleteSelectedCollection}>Delete Collection</button>
+					</div>
+
+					{#if collectionMetadataStatus}
+						<p class="pedia-status">{collectionMetadataStatus}</p>
+					{/if}
+				</section>
+			{/if}
 
 			<section class="pedia-catalog-shell stack overflow-hidden" aria-label={`${selectedCollection.title} collection`}>
 				<div class="pedia-collection-hero stack half" style={collectionHeroStyle(selectedCollection)}>
@@ -2696,11 +3158,11 @@
 
 <style>
 	.pedia-page {
-		--pedia-accent: oklch(0.82 0.078 244);
-		--pedia-accent-strong: oklch(0.9 0.04 244);
-		--pedia-border: color-mix(in srgb, var(--border-color) 78%, var(--pedia-accent) 22%);
-		--pedia-panel: color-mix(in srgb, var(--surface-color) 95%, oklch(0.3 0.04 240) 5%);
-		--pedia-panel-soft: color-mix(in srgb, var(--surface-color) 95%, oklch(0.34 0.04 240) 5%);
+		--pedia-accent: var(--surface-pedia-highlight);
+		--pedia-accent-strong: var(--surface-pedia-highlight-strong);
+		--pedia-border: var(--surface-pedia-border);
+		--pedia-panel: var(--surface-pedia-panel);
+		--pedia-panel-soft: var(--surface-pedia-panel-soft);
 		--pedia-shadow: 0 14px 32px color-mix(in srgb, black 78%, transparent);
 		--pedia-shadow-soft: 0 4px 6px color-mix(in srgb, black 84%, transparent);
 		display: grid;
@@ -2711,7 +3173,7 @@
 		display: grid;
 		gap: 1rem;
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--pedia-accent) 24%, transparent) 0%, transparent 42%),
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--pedia-accent) 10%, transparent) 0%, transparent 35%),
 			linear-gradient(135deg, color-mix(in srgb, var(--pedia-panel) 96%, black 4%) 0%, color-mix(in srgb, var(--pedia-panel) 92%, var(--pedia-accent) 8%) 100%);
 		box-shadow: var(--pedia-shadow);
 		border: 1px solid var(--pedia-border);
@@ -2998,7 +3460,7 @@
 		--collection-background: var(--pedia-panel-soft);
 		--collection-hero-image: none;
 		position: relative;
-		padding: 2rem 1.15rem;
+		padding: 1rem 1.15rem 1.25rem;
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--collection-accent) 26%, transparent) 0%, transparent 42%),
 			linear-gradient(145deg, color-mix(in srgb, var(--collection-background) 82%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--collection-background) 28%, #16110f) 100%);
@@ -3131,8 +3593,12 @@
 		text-align: start;
 		text-box: trim-both cap alphabetic;
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 22%, transparent) 0%, transparent 42%),
-			linear-gradient(160deg, color-mix(in srgb, var(--pedia-panel) 88%, var(--control-bg)) 0%, color-mix(in srgb, var(--pedia-panel-soft) 95%, #140f0d 5%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 25%, transparent) 0%, transparent 40%),
+			linear-gradient(
+				160deg,
+				color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 10%, var(--pedia-panel) 70%) 0%,
+				color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 5%, var(--pedia-panel-soft) 95%) 100%
+			);
 		box-shadow: var(--pedia-shadow-soft);
 		border: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 24%, var(--border-color));
 		border-radius: 0.95rem;
@@ -3153,8 +3619,12 @@
 		display: grid;
 		gap: 1rem;
 		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 28%, transparent) 0%, transparent 42%),
-			linear-gradient(165deg, color-mix(in srgb, var(--pedia-panel) 80%, var(--control-bg)) 0%, color-mix(in srgb, var(--pedia-panel-soft) 95%, #16110f 5%) 100%);
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 25%, transparent) 0%, transparent 50%),
+			linear-gradient(
+				160deg,
+				color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 10%, var(--pedia-panel) 70%) 0%,
+				color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 5%, var(--pedia-panel-soft) 95%) 100%
+			);
 		box-shadow: var(--pedia-shadow-soft);
 		border: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 34%, var(--border-color));
 		border-radius: 1rem;

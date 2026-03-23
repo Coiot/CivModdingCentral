@@ -57,6 +57,19 @@ function normalizeCollectionRecord(collection) {
 		id: normalizeCollectionId(collection?.id || title),
 		title,
 		sourceTemplate: cleanValue(collection?.sourceTemplate),
+		blurb: cleanValue(collection?.blurb),
+		imageURL: cleanValue(collection?.imageURL),
+		links: [
+			...new Map(
+				(Array.isArray(collection?.links) ? collection.links : [])
+					.map((link) => ({
+						label: cleanValue(link?.label),
+						href: cleanValue(link?.href),
+					}))
+					.filter((link) => link.label && link.href)
+					.map((link) => [`${link.label}|${link.href}`, link]),
+			).values(),
+		],
 		aliases: [...new Set((Array.isArray(collection?.aliases) ? collection.aliases : []).map((alias) => cleanValue(alias)).filter(Boolean))],
 		colors: {
 			background: normalizeHexColor(collection?.colors?.background),
@@ -176,6 +189,8 @@ function localPediaSavePlugin() {
 				try {
 					const payload = await readJsonBody(req);
 					const collection = normalizeCollectionRecord(payload?.collection);
+					const updateExisting = Boolean(payload?.updateExisting);
+					const previousId = normalizeCollectionId(payload?.previousId);
 
 					if (!collection.id || !collection.title) {
 						return jsonResponse(res, 400, { ok: false, message: "Collection title is required." });
@@ -186,11 +201,16 @@ function localPediaSavePlugin() {
 					}
 
 					const existingCollections = (await loadPediaCollections()).map((item) => normalizeCollectionRecord(item));
-					if (existingCollections.some((item) => item.id === collection.id)) {
+					if (!updateExisting && existingCollections.some((item) => item.id === collection.id)) {
+						return jsonResponse(res, 409, { ok: false, message: `Collection "${collection.title}" already exists.` });
+					}
+					if (updateExisting && existingCollections.some((item) => item.id === collection.id && item.id !== previousId)) {
 						return jsonResponse(res, 409, { ok: false, message: `Collection "${collection.title}" already exists.` });
 					}
 
-					const nextCollections = [...existingCollections, collection].sort((left, right) => left.title.localeCompare(right.title));
+					const nextCollections = [...existingCollections.filter((item) => item.id !== previousId && item.id !== collection.id), collection].sort((left, right) =>
+						left.title.localeCompare(right.title),
+					);
 					await writeFile(PEDIA_COLLECTIONS_FILE, serializePediaCollections(nextCollections), "utf8");
 
 					return jsonResponse(res, 200, {
@@ -202,6 +222,36 @@ function localPediaSavePlugin() {
 					return jsonResponse(res, 500, {
 						ok: false,
 						message: error?.message || "Unable to save pedia collections.",
+					});
+				}
+			});
+
+			server.middlewares.use("/__local-api/modded-civs-pedia/collections/delete", async (req, res) => {
+				if (req.method !== "DELETE") {
+					return jsonResponse(res, 405, { ok: false, message: "Method not allowed." });
+				}
+
+				try {
+					const payload = await readJsonBody(req);
+					const collectionId = normalizeCollectionId(payload?.id);
+
+					if (!collectionId) {
+						return jsonResponse(res, 400, { ok: false, message: "Collection id is required." });
+					}
+
+					const existingCollections = (await loadPediaCollections()).map((item) => normalizeCollectionRecord(item));
+					const nextCollections = existingCollections.filter((item) => item.id !== collectionId);
+					await writeFile(PEDIA_COLLECTIONS_FILE, serializePediaCollections(nextCollections), "utf8");
+
+					return jsonResponse(res, 200, {
+						ok: true,
+						id: collectionId,
+						filePath: PEDIA_COLLECTIONS_FILE,
+					});
+				} catch (error) {
+					return jsonResponse(res, 500, {
+						ok: false,
+						message: error?.message || "Unable to delete pedia collection.",
 					});
 				}
 			});

@@ -15,7 +15,8 @@
 		const href = String(resource?.href || "");
 
 		if (href.includes("/guided-planner")) return "is-planner";
-		if (href.includes("/schema-browser") || href.includes("/modded-civs-pedia")) return "is-schema";
+		if (href.includes("/modded-civs-pedia")) return "is-pedia";
+		if (href.includes("/schema-browser")) return "is-schema";
 		if (href.includes("/lua-api-explorer")) return "is-lua";
 		if (href.includes("/pattern-library")) return "is-pattern";
 		if (href.includes("/template-generators")) return "is-generator";
@@ -181,6 +182,13 @@
 		--surface-highlight: var(--surface-schema-highlight);
 		--surface-highlight-strong: var(--surface-schema-highlight-strong);
 		--surface-panel: var(--surface-schema-panel);
+	}
+
+	.is-pedia {
+		--surface-border: var(--surface-pedia-border);
+		--surface-highlight: var(--surface-pedia-highlight);
+		--surface-highlight-strong: var(--surface-pedia-highlight-strong);
+		--surface-panel: var(--surface-pedia-panel);
 	}
 
 	.is-tool {

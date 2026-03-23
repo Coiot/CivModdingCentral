@@ -1,0 +1,285 @@
+{
+  "id": "civ-the-ponca-white-eagle",
+  "slug": "the-ponca-white-eagle",
+  "kind": "civilization",
+  "title": "The Ponca",
+  "leader": "White Eagle",
+  "authors": [
+    "NopeCopter",
+    "Rhoze"
+  ],
+  "summary": "The Ponca led by White Eagle are a custom civilization by NopeCopter and Rhoze, with contributions from Arilasqueto, DarthKyofu, Orangechrisy, and Zharques.",
+  "source": {
+    "type": "wiki",
+    "wikiPageTitle": "The Ponca",
+    "wikiUrl": "",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3352826305",
+    "version": "v 1",
+    "lastUpdated": "October 2024",
+    "modFolderName": ""
+  },
+  "identity": {
+    "empireName": "Ponca Tribe",
+    "adjectives": "Ponca",
+    "capital": "Nanza",
+    "bias": "Plains",
+    "religion": [
+      "Catholicism"
+    ],
+    "government": "",
+    "culture": "Great Plains",
+    "mapLabelsLanguage": "",
+    "requiredContent": [
+      "Brave New World"
+    ]
+  },
+  "presentation": {
+    "mapImage": "PoncaMap.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PoncaMap.png",
+    "mapImageCaption": "Map by Orangechrisy",
+    "iconImage": "Ponca.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ponca.png",
+    "leaderSceneImage": "WhiteEagle.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/WhiteEagle.png",
+    "leaderSceneArtCredit": "Art by Arilasqueto",
+    "colors": {
+      "background": "#e4d3a0",
+      "icon": "#844505"
+    }
+  },
+  "overview": {
+    "civilization": {
+      "title": "The Ponca",
+      "url": "https://en.wikipedia.org/wiki/Ponca",
+      "body": "The Ponca people are an Native American nation. By the end of the 18th century, the Ponca people had established themselves at the mouth of the Niobrara River near its confluence with the Missouri River, remaining there until 1877 when the United States forcibly removed the Ponca people from the Ponca Reservation in the Dakota Territory to the Indian Territory. This event, known as the Ponca Trail of Tears, resulted in the deaths of hundreds of Ponca civilians and the splintering of the nation. In 1879, two years after the removal, a small portion of the Ponca elected to return to Nebraska in 1879. This group, led by Standing Bear, ultimately gave rise to the present-day Ponca Tribe of Nebraska. Two years later, the majority of the Ponca were given the opportunity to return to Nebraska but elected against doing so, having established themselves on a new reservation in the Indian Territory. This group, led by White Eagle, ultimately gave rise to the Ponca Tribe of Oklahoma."
+    },
+    "leader": {
+      "title": "White Eagle",
+      "body": "White Eagle was the hereditary chief of the Ponca from 1870 until 1904, from the unlawful Ponca Trail of Tears in 1877 through his successful struggle for justice for his people by using media to turn public opinion against America's Indian removal policy, and pressured American presidents such as Rutherford B. Hayes.",
+      "url": "https://en.wikipedia.org/wiki/Chief_White_Eagle"
+    }
+  },
+  "dawnOfMan": {
+    "blessing": "Many blessings to you, Chief White Eagle, protector of the Ponca tribe! Coming to power in a tumultuous time for your people, it was during your tenure as chief that the United States government came to force the Ponca off of their homeland, in violation of a treaty made barely ten years prior. Though you did all you could to resist, your people were forced to travel from the Niobrara River all the way to the Indian Territory in what would become known as the Ponca Trail of Tears, with death and devastation wearing them down. But you did not give up - with the help of your vice-chief Standing Bear, you took to the Supreme Court in a landmark case that saw Native Americans recognized as people under the law and won the right for the Ponca to return to their ancestral lands, although you yourself chose to stay in Indian Territory. You went on to fight hard against the Dawes Act that would take away your new reservation, and when the act passed despite your best efforts, you took the steps to ensure that your surrendered land would at least be leased to those who would guarantee your people money and employment.\nChief White Eagle, great conquerors are once again eyeing up your homeland, seeking to take it for themselves. Can you defend the sovereignty of your tribe? Can you take your would-be conquerors to task and ensure that your lands will still be there for your children? Can you build a civilization that can stand the test of time?",
+    "introduction": ": I welcome you, stranger, to the lands of the Ponca. I hope that you do not wish to bring trouble.",
+    "defeat": ": We may be defeated, but when your people ask why we have died, it shall be answered that we died to maintain our rights, that we died rather than leave our land, and that we only did what was right."
+  },
+  "templateRefs": [
+    {
+      "label": "Science",
+      "template": "Science Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Science_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Science.png"
+    },
+    {
+      "label": "Movement",
+      "template": "Moves Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Moves_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png"
+    },
+    {
+      "label": "Faith",
+      "template": "Faith Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Faith.png"
+    }
+  ],
+  "uniques": [
+    {
+      "slot": "unique ability",
+      "name": "Blood the Same Color As Yours",
+      "replaces": "",
+      "art": "PoncaLI.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PoncaLI.png",
+      "artCredit": "Art by Arilasqueto",
+      "body": "During a peace treaty, you may settle one city within the other civilization's territory. When a city grows, every worked Farm contributes a small amount of {{Science Icon}} Science.",
+      "civilopedia": "",
+      "bullets": [],
+      "templateRefs": [
+        {
+          "label": "Science",
+          "template": "Science Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Science_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Science.png"
+        }
+      ]
+    },
+    {
+      "slot": "unique unit",
+      "name": "Washa'be",
+      "replaces": "Crossbowman",
+      "art": "PoncaUU.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PoncaUU.png",
+      "artCredit": "Art by DarthKyofu",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Has the Cover promotion.",
+        "After engaging in combat four times, gains +1 {{Moves Icon}} Movement and weakens adjacent enemies."
+      ],
+      "templateRefs": [
+        {
+          "label": "Movement",
+          "template": "Moves Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Moves_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png"
+        }
+      ]
+    },
+    {
+      "slot": "unique building",
+      "name": "Maithi",
+      "replaces": "Walls",
+      "art": "PoncaUB.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PoncaUB.png",
+      "artCredit": "Art by Arilasqueto",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Built up to twice as fast based on the number of nearby foreign cities",
+        "Creates Farms on valid adjacent tiles on completion.",
+        "Provides {{Faith Icon}} Faith when nearby enemy units die or when this city completes a Trade Route."
+      ],
+      "templateRefs": [
+        {
+          "label": "Faith",
+          "template": "Faith Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Faith.png"
+        }
+      ]
+    }
+  ],
+  "collections": [],
+  "nameLists": [
+    {
+      "title": "City List",
+      "items": [
+        "Nanza",
+        "Wáin-Xude",
+        "Húbdon",
+        "Xáda De",
+        "Maxúde Wa'aeda",
+        "Mígasude",
+        "Kúhe Wade",
+        "Tenúga-sabe Wae'edon",
+        "Nixué",
+        "Xáda Uzinga",
+        "Zábe Tie",
+        "Uhé Atan",
+        "Mikae Huxpa'adaetne Dandi",
+        "Gaxdíbe Wade",
+        "Zanwídandan",
+        "Tíwan Ni",
+        "Pipestone Quarry",
+        "Páhe Snabe",
+        "Nískide Tonwangdan",
+        "Ni-Púke",
+        "Omadi",
+        "Burgess Creek",
+        "Dead Tree",
+        "Farming Ground",
+        "Big Bend",
+        "Wirth Site",
+        "Xe Aze",
+        "Nee be the Ska",
+        "Elkhorn River",
+        "White Eagle",
+        "Niobrara",
+        "Wayne",
+        "Páhe Sabe",
+        "Páhe-Wadahuni",
+        "Páhe Ze-egan",
+        "Taháwati Wadu",
+        "Padonka Fort",
+        "Ponca City",
+        "</div>",
+        "|-"
+      ]
+    },
+    {
+      "title": "Spy List",
+      "items": [
+        "Mariano",
+        "Antonio",
+        "Rafael",
+        "Francisco",
+        "José",
+        "Manuel",
+        "Vicente",
+        "Pedro",
+        "Diego",
+        "Carmen"
+      ]
+    }
+  ],
+  "music": {
+    "peace": {
+      "title": "War Dance (Ponca)",
+      "credit": "Music of the Native American Indians."
+    },
+    "war": {
+      "title": "",
+      "credit": ""
+    }
+  },
+  "modSupport": {
+    "aa": false,
+    "civivtraits": false,
+    "culdiv": true,
+    "piety": false,
+    "uci": false,
+    "ynaemp": false,
+    "enlightenmentera": true,
+    "histreligions": false,
+    "ethnicunits": false,
+    "eandd": false,
+    "maplabels": false
+  },
+  "credits": [
+    {
+      "name": "NopeCopter",
+      "role": "Concept, Code, Text"
+    },
+    {
+      "name": "Rhoze",
+      "role": "Design"
+    },
+    {
+      "name": "Arilasqueto",
+      "role": "Art (Leaderscene, Leader Icon, Civ Icon, Building Icon)"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art (Unit Icon)"
+    },
+    {
+      "name": "Orangechrisy",
+      "role": "Art (Map)"
+    },
+    {
+      "name": "Zharques",
+      "role": "Text"
+    }
+  ],
+  "categories": [
+    "Rhoze",
+    "NopeCopter",
+    "All Civilizations",
+    "United States",
+    "Civilizations with Male leaders"
+  ],
+  "navTemplate": "Template:NCnav",
+  "issues": [
+    "Unresolved templates: NCnav, RhozeNav, DEFAULTSORT:Ponca (White Eagle)"
+  ],
+  "meta": {
+    "formatVersion": 1,
+    "createdAt": "2026-03-23T00:21:13.201Z",
+    "unresolvedTemplates": [
+      "NCnav",
+      "RhozeNav",
+      "DEFAULTSORT:Ponca (White Eagle)"
+    ]
+  }
+}

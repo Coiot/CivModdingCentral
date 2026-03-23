@@ -5,9 +5,10 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "vite build",
+		"build": "node scripts/build-seo-discovery-files.mjs && vite build",
 		"preview": "vite preview",
 		"test": "node --test tests/**/*.test.js",
+		"build:seo-discovery": "node scripts/build-seo-discovery-files.mjs",
 		"build:text-index": "node scripts/build-civ-text-index.mjs",
 		"build:tech-tree-data": "node scripts/build-tech-tree-base-data.mjs",
 		"build:religion-support-data": "node scripts/build-religion-support-data.mjs",
@@ -15,6 +16,8 @@
 		"build:cache": "node scripts/build-community-map-cache.cjs",
 		"build:cache:all": "node scripts/build-all-community-map-caches.cjs",
 		"sync:editor-access": "node scripts/sync-editor-allowlist-sheet2.cjs",
+		"sync:pedia": "node scripts/sync-pedia-to-supabase.mjs",
+		"pull:pedia": "node scripts/pull-pedia-from-supabase.mjs",
 		"maps:update": "node scripts/update-maps.mjs",
 		"dds:server": "node scripts/dds-converter-server.mjs"
 	},

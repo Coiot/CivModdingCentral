@@ -568,7 +568,8 @@
 		const href = String(resource?.href || "");
 		const kind = String(resource?.kind || "").toLowerCase();
 
-		if (href.includes("/schema-browser") || href.includes("/modded-civs-pedia")) return "Schema";
+		if (href.includes("/modded-civs-pedia")) return "Pedia";
+		if (href.includes("/schema-browser")) return "Schema";
 		if (href.includes("/lua-api-explorer")) return "Lua API";
 		if (href.includes("/pattern-library")) return "Pattern";
 		if (href.includes("/template-generators")) return "Generator";
@@ -585,7 +586,8 @@
 	function resourceAccentClass(resource) {
 		const href = String(resource?.href || "");
 
-		if (href.includes("/schema-browser") || href.includes("/modded-civs-pedia")) return "is-schema";
+		if (href.includes("/modded-civs-pedia")) return "is-pedia";
+		if (href.includes("/schema-browser")) return "is-schema";
 		if (href.includes("/lua-api-explorer")) return "is-lua";
 		if (href.includes("/pattern-library")) return "is-pattern";
 		if (href.includes("/template-generators")) return "is-generator";
@@ -3444,6 +3446,14 @@
 		--surface-highlight: var(--surface-schema-highlight);
 		--surface-highlight-strong: var(--surface-schema-highlight-strong);
 		--surface-panel: var(--surface-schema-panel);
+	}
+
+	.resource-card.is-pedia,
+	.surface-card.is-pedia {
+		--surface-border: var(--surface-pedia-border);
+		--surface-highlight: var(--surface-pedia-highlight);
+		--surface-highlight-strong: var(--surface-pedia-highlight-strong);
+		--surface-panel: var(--surface-pedia-panel);
 	}
 
 	.resource-card.is-tool,

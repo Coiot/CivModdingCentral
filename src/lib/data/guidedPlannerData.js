@@ -175,10 +175,9 @@ export const siteResourceGroups = [
 				id: "modded-civs-pedia",
 				label: "Modded Civs Pedia",
 				href: "/modded-civs-pedia",
-				status: "Coming Soon",
+				status: "Live",
 				description: "Reference database for modded civilizations and gameplay mods.",
 				kind: "Reference",
-				disabled: true,
 			},
 			{
 				id: "map-viewer",

@@ -1,45 +1,73 @@
 # Civ Modding Central
 
-> Civilization V modding workspace with guided planning, generators, references, art tools, packaging helpers, and publishing support.
+> Civilization V modding workspace with guided planning, generators, references, art tools, packaging helpers, publishing support, and a growing Modded Civs Pedia.
 
-Civ Modding Central provides guided planning, template generators, a pattern library, schema and Lua references, art helpers, packaging tools, community resources, and the standalone CMC Workshop Uploader for Windows, macOS, and Linux.
+Civ Modding Central provides guided planning, template generators, a pattern library, schema and Lua references, art helpers, packaging tools, community resources, the standalone CMC Workshop Uploader, and a Modded Civs Pedia for custom civ entries, collections, categories, and creators.
 
 ## Main pages
 
 - Home: https://civmoddingcentral.dev/
-- Guided Planner: https://civmoddingcentral.dev/guided-planner
-- Template Generators: https://civmoddingcentral.dev/template-generators
-- Pattern Library: https://civmoddingcentral.dev/pattern-library
-- Schema Browser: https://civmoddingcentral.dev/schema-browser
-- Lua API Explorer: https://civmoddingcentral.dev/lua-api-explorer
-- Civ Icon Maker: https://civmoddingcentral.dev/civ-icon-maker
-- CMC Workshop Uploader: https://civmoddingcentral.dev/workshop-uploader
-- DDS Converter: https://civmoddingcentral.dev/dds-converter
-- .modinfo Builder: https://civmoddingcentral.dev/modinfo-builder
-- .civ5mod Ziper: https://civmoddingcentral.dev/civ5mod-ziper
-- Map Viewer: https://civmoddingcentral.dev/map-viewer
-- Community Links: https://civmoddingcentral.dev/community-links
+- modded civs pedia: https://civmoddingcentral.dev/modded-civs-pedia
+- map viewer: https://civmoddingcentral.dev/map-viewer
+- guided planner: https://civmoddingcentral.dev/guided-planner
+- template generators: https://civmoddingcentral.dev/template-generators
+- pattern library: https://civmoddingcentral.dev/pattern-library
+- schema browser: https://civmoddingcentral.dev/schema-browser
+- lua api explorer: https://civmoddingcentral.dev/lua-api-explorer
+- religion support: https://civmoddingcentral.dev/religion-support
+- tech tree viewer: https://civmoddingcentral.dev/tech-tree-viewer
+- civ icon maker: https://civmoddingcentral.dev/civ-icon-maker
+- dds converter: https://civmoddingcentral.dev/dds-converter
+- modinfo builder: https://civmoddingcentral.dev/modinfo-builder
+- civ5mod ziper: https://civmoddingcentral.dev/civ5mod-ziper
+- workshop uploader: https://civmoddingcentral.dev/workshop-uploader
+- community links: https://civmoddingcentral.dev/community-links
 
-## What the site offers
+## Modded Civs Pedia
 
-- Guided civ-mod planning from concept through release
-- Template generators for common Civ V content scaffolds
-- Pattern recipes for repeatable data and Lua implementation work
-- Searchable schema tables, columns, row data, and Lua/GameEvents references
-- Civ icon and DDS tooling for UI and art pipelines
-- Desktop upload and update guidance for the standalone cross-platform CMC Workshop Uploader app
-- DDS conversion for Civ V UI, icon, unit, and terrain textures
-- `.modinfo` file generation and editing, including MD5 handling
-- `.civ5mod` browser-side packaging for Civilization V mods
-- Interactive Civilization V map viewing and community map exploration
-- Curated links to Civ V modding communities and references
+- Hub: https://civmoddingcentral.dev/modded-civs-pedia
 
-## Audience
+### Collections
 
-- Civilization V modders
-- First-time civ creators who need guided workflows and reference links
-- Civ V scenario and map creators
-- Workshop maintainers publishing and updating Steam items
-- Modders working across Windows, macOS, and Linux
-- Artists preparing DDS or icon assets for Civ V
-- Players browsing community maps and modding resources
+- CBR Mk2 10th Anniversary: https://civmoddingcentral.dev/modded-civs-pedia/collection/cbr-mk2-10th-anniversary-collection
+- Crossroads of the World: https://civmoddingcentral.dev/modded-civs-pedia/collection/crossroads-of-the-world
+- Dark Days: https://civmoddingcentral.dev/modded-civs-pedia/collection/dark-days
+- Dutch Civilization Pack: https://civmoddingcentral.dev/modded-civs-pedia/collection/dutch-civilization-pack
+- Land of Snows: https://civmoddingcentral.dev/modded-civs-pedia/collection/land-of-snows
+- Vanilla Civilizations: https://civmoddingcentral.dev/modded-civs-pedia/collection/vanilla-civilizations
+
+### Authors
+
+- Coiot: https://civmoddingcentral.dev/modded-civs-pedia/author/coiot
+- ExplosiveWatermelon: https://civmoddingcentral.dev/modded-civs-pedia/author/explosivewatermelon
+- NopeCopter: https://civmoddingcentral.dev/modded-civs-pedia/author/nopecopter
+- Orangechrisy: https://civmoddingcentral.dev/modded-civs-pedia/author/orangechrisy
+- Rhoze: https://civmoddingcentral.dev/modded-civs-pedia/author/rhoze
+- Tradboy: https://civmoddingcentral.dev/modded-civs-pedia/author/tradboy
+
+### Entry pages
+
+- Angel Mounds (Selu): https://civmoddingcentral.dev/modded-civs-pedia/angel-mounds-selu
+- County of Holland (Floris V): https://civmoddingcentral.dev/modded-civs-pedia/county-of-holland-floris-v
+- Malacca Sultanate (Mansur Shah): https://civmoddingcentral.dev/modded-civs-pedia/malacca-sultanate-mansur-shah
+- Osage Nation (Pawhuska): https://civmoddingcentral.dev/modded-civs-pedia/osage-nation-pawhuska
+- Palenque El Limón (Leonor): https://civmoddingcentral.dev/modded-civs-pedia/palenque-el-lim-n
+- Republic of the Seven United Netherlands (Maurice): https://civmoddingcentral.dev/modded-civs-pedia/republic-of-the-seven-united-netherlands-maurice
+- Republic of the Seven United Netherlands (William): https://civmoddingcentral.dev/modded-civs-pedia/republic-of-the-seven-united-netherlands-william
+- The Tairona (Guacanaoma): https://civmoddingcentral.dev/modded-civs-pedia/tairona-guacanaoma
+- The Dzungars (Galdan Khan): https://civmoddingcentral.dev/modded-civs-pedia/the-dzungars-galdan-khan
+- The Khoshuts (Güshi Khan): https://civmoddingcentral.dev/modded-civs-pedia/the-khoshuts
+- The Lenca (Lempira): https://civmoddingcentral.dev/modded-civs-pedia/the-lenca
+- The Northern Paiute (Truckee): https://civmoddingcentral.dev/modded-civs-pedia/the-northern-paiute-truckee
+- The Pomo (Essie Parrish): https://civmoddingcentral.dev/modded-civs-pedia/the-pomo
+- The Ponca (White Eagle): https://civmoddingcentral.dev/modded-civs-pedia/the-ponca-white-eagle
+- The Zenú (Totó): https://civmoddingcentral.dev/modded-civs-pedia/the-zen-tot
+- Tibet (Thupten Gyatso): https://civmoddingcentral.dev/modded-civs-pedia/tibet
+- Tibet (Ralpachen): https://civmoddingcentral.dev/modded-civs-pedia/tibet-ralpachen
+- Yarlung (Nyatri Tsenpo): https://civmoddingcentral.dev/modded-civs-pedia/yarlung-nyatri-tsenpo
+
+## Discovery
+
+- Sitemap: https://civmoddingcentral.dev/sitemap.xml
+- Robots: https://civmoddingcentral.dev/robots.txt
+- AI index: https://civmoddingcentral.dev/ai.txt

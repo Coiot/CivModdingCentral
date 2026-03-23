@@ -80,8 +80,6 @@
 					href: "/modded-civs-pedia",
 					label: "Modded Civs Pedia",
 					description: "Reference pedia for custom civilizations and gameplay mods",
-					disabled: true,
-					statusLabel: "Coming Soon",
 				},
 				{
 					href: "/tech-tree-viewer",
@@ -189,8 +187,9 @@
 			case "/pattern-library":
 				return "is-pattern";
 			case "/schema-browser":
-			case "/modded-civs-pedia":
 				return "is-schema";
+			case "/modded-civs-pedia":
+				return "is-pedia";
 			case "/lua-api-explorer":
 				return "is-lua";
 			case "/workshop-uploader":
@@ -1015,6 +1014,13 @@
 			--nav-entry-highlight: var(--surface-schema-highlight);
 			--nav-entry-highlight-strong: var(--surface-schema-highlight-strong);
 			--nav-entry-panel: var(--surface-schema-panel);
+		}
+
+		&.is-pedia {
+			--nav-entry-border: var(--surface-pedia-border);
+			--nav-entry-highlight: var(--surface-pedia-highlight);
+			--nav-entry-highlight-strong: var(--surface-pedia-highlight-strong);
+			--nav-entry-panel: var(--surface-pedia-panel);
 		}
 
 		&.is-lua {

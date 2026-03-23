@@ -842,7 +842,7 @@
 				{:else if currentPath === "/modinfo-builder"}
 					<ModInfoBuilder />
 				{:else if isModdedCivsPediaRoute(currentPath)}
-					<ModdedCivsPedia routePath={currentPath} navigate={navigateTo} {canEdit} />
+					<ModdedCivsPedia routePath={currentPath} navigate={navigateTo} {canEdit} {authUser} authAccessToken={authSession.accessToken} authEnabled={AUTH_ENABLED} />
 				{:else if currentPath === "/civ5mod-ziper"}
 					<Civ5ModZiper />
 				{:else if currentPath === "/pattern-library"}
