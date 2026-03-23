@@ -3561,7 +3561,7 @@
 	}
 
 	.pedia-catalog-groups {
-		gap: 4rem;
+		gap: 2rem;
 		overflow: auto;
 		padding-inline-end: 0.25rem;
 	}

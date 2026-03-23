@@ -28,9 +28,9 @@ function normalizeLookupKey(value) {
 const PEDIA_INLINE_ICON_DEFINITIONS = [
 	{ templates: ["Citizen", "Citizen Icon"], label: "Citizens", fileName: "Citizen.png" },
 	{ templates: ["City-State Icon", "City State Icon"], label: "City-State", fileName: "Citystate.png" },
-	{ templates: ["Culture Icon"], label: "Culture", fileName: "Culture.png" },
+	{ templates: ["Culture Icon"], label: "Culture", fileName: "CultureIcon.png" },
 	{ templates: ["Diplomat", "Diplomat Icon"], label: "Diplomats", fileName: "Diplomat.png" },
-	{ templates: ["Faith Icon"], label: "Faith", fileName: "Faith.png" },
+	{ templates: ["Faith Icon"], label: "Faith", fileName: "FaithIcon.png" },
 	{
 		templates: ["Food Icon"],
 		label: "Food",
