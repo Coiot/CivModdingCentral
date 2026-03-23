@@ -611,10 +611,6 @@ function stripWikiMarkup(value) {
 	);
 }
 
-function createTemplateRefsForText(value, wikiUrl = "") {
-	return normalizeInlineWikiTemplates(value, wikiUrl).refs;
-}
-
 function normalizeTemplateRefs(refs) {
 	const byKey = new Map();
 	for (const ref of ensureArray(refs)
@@ -1123,7 +1119,6 @@ async function parseUniqueAttributes(section, wikiUrl = "") {
 			.replace(/^\|[^\n]*\|/gm, "")
 			.replace(/^\|/gm, "")
 			.replace(/<br\s*\/?>/gi, "\n");
-		const templateRefs = normalizeTemplateRefs(createTemplateRefsForText(withoutCellMarkup, wikiUrl));
 		const content = stripWikiMarkup(withoutCellMarkup);
 		const lines = content
 			.split("\n")
@@ -1146,7 +1141,7 @@ async function parseUniqueAttributes(section, wikiUrl = "") {
 			artCredit,
 			body: textBody,
 			bullets,
-			templateRefs,
+			templateRefs: [],
 		});
 		index += 1;
 		match = rowPattern.exec(uniqueTable);

@@ -1,0 +1,333 @@
+{
+  "id": "civ-the-lenca-lempira",
+  "slug": "the-lenca-lempira",
+  "kind": "civilization",
+  "title": "The Lenca",
+  "leader": "Lempira",
+  "authors": [
+    "Tradboy"
+  ],
+  "summary": "The Lenca led by Lempira are a custom civilization mod by Tradboy, with contributions from DarthKyofu and NopeCopter.",
+  "source": {
+    "type": "wiki",
+    "wikiPageTitle": "The Lenca",
+    "wikiUrl": "",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3598796431",
+    "version": "v 1",
+    "lastUpdated": "November 2025",
+    "modFolderName": ""
+  },
+  "identity": {
+    "empireName": "Lenca Empire",
+    "adjectives": "Lenca",
+    "capital": "Cerquín",
+    "bias": "Hills",
+    "religion": [
+      "Catholicism",
+      "Tzolk'in (HR)"
+    ],
+    "government": "Monarchy",
+    "culture": "Mesoamerican",
+    "mapLabelsLanguage": "",
+    "requiredContent": [
+      "Brave New World"
+    ]
+  },
+  "presentation": {
+    "mapImage": "LencaMap.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LencaMap.png",
+    "mapImageCaption": "Map by Tradboy and DarthKyofu",
+    "iconImage": "Lenca.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Lenca.png",
+    "leaderSceneImage": "Lempira.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Lempira.png",
+    "leaderSceneArtCredit": "Art by Tradboy and DarthKyofu",
+    "colors": {
+      "background": "#cfcac1",
+      "icon": "#0064b2"
+    }
+  },
+  "overview": {
+    "civilization": {
+      "title": "The Lenca",
+      "url": "https://en.wikipedia.org/wiki/Lenca",
+      "body": "The Lenca are an indigenous people of El Salvador and Honduras, calling themselves Lenca Wiran, which roughly translate to “Jaguar People”, besides been divided in different Lenca tribes, the two main group of Lenca are the Potón and Kotik, each referring to the Lenca of El Salvador and Honduras respectively."
+    },
+    "leader": {
+      "title": "Lempira",
+      "body": "Not much is known about Lempira's reign before the Spanish Colonization, he is first commissioned by the Senior chief of Cerquín,Entenpica to mobilize their people against other Lenca chiefdoms. In 1537, Lempira started a military campaing against other Lenca polities; with the arrival of the Spanish in that same year, Lempira and his former rivals reorganized their conflict toward the oncoming Spaniard legions.\nAt the high of his short lived uprising, Lempira was able to lead around 300,000 warriors from different Lenca villages, polities and chiefdoms into the campaign against the Spanish. Through his uprising, Lempira and other Lenc rebels used hill forts and mountains as their based of operation, giving them a big advantage against their enemies. But even with all of these efforts, Lempira's death would come that same year, the cause and circumstances of his death are contested between two narratives;the first one been the Antonio de Herrera y Tordesilla’s account, where Lempira is betrayed and killed by Spaniard with an arquebusier during a peace treaty and the Rodrigo Ruiz account, where he claims to be perpuator of Lempira’s death through an ambush.",
+      "url": "https://en.wikipedia.org/wiki/Lempira_(Lenca_ruler)"
+    }
+  },
+  "dawnOfMan": {
+    "blessing": "Blessings to you Lempira, Lord of the Hills of Cerquín and military leader of the Lenca, the ferocious Jaguar people of El Salvador and Honduras. Your people lived alongside the Maya and Pipiles, thriving among them as great builders of pyramids and fierce warriors. Under your command, you unified the Lencas, creating a military force to push back against the Spanish, with poisonous spears on hand and deep knowledge of the mountain ranges.\nGreat hero of Central America, will you sharpen your arrows and poison the tips of your spears to prove to the world stage that the Jaguar people will not be forgotten. Can you build a civilization that will stand the test of time?",
+    "introduction": "You've entered the territory of the Jaguar People, I, Lempira, recognize you're bravery for stepping towards us,beware not to cross me.",
+    "defeat": "You’ve bested the people of the Jaguar, but you will never be as fierce as my people are, so keep in mind that you will never be the Jaguar, just the lucky hand stand stumble to it's heart!"
+  },
+  "templateRefs": [
+    {
+      "label": "Production",
+      "template": "Production Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ProductionIcon.png"
+      ]
+    },
+    {
+      "label": "Strength",
+      "template": "Strength Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/StrengthIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatStrength.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatStrengthIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Combatstrength.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatstrengthIcon.png"
+      ]
+    },
+    {
+      "label": "Food",
+      "template": "Food Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+      "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+      "imageUrls": [
+        "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Food.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FoodIcon.png"
+      ]
+    },
+    {
+      "label": "Faith",
+      "template": "Faith Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Faith.png"
+      ]
+    },
+    {
+      "label": "Culture",
+      "template": "Culture Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Culture.png"
+      ]
+    }
+  ],
+  "uniques": [
+    {
+      "slot": "unique ability",
+      "name": "Lord of Hills and Mountains",
+      "replaces": "",
+      "art": "LencaLI.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LencaLI.png",
+      "artCredit": "Art by DarthKyofu",
+      "body": "Enemy units take damage when beginning their turn adjacent to owned mountains. Mines adjacent to mountains may spawn the White Clay bonus resource when built, allowing the construction of Stone Works in cities.",
+      "civilopedia": "",
+      "bullets": [],
+      "templateRefs": []
+    },
+    {
+      "slot": "unique unit",
+      "name": "Poisoned Tip Spearman",
+      "replaces": "Pikeman",
+      "art": "LencaUU.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LencaUU.png",
+      "artCredit": "Art by Tradboy and DarthKyofu",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "-20 {{Production Icon}} Production Cost.",
+        "-2 {{Strength Icon}} Combat Strength.",
+        "Deals attrition damage to injured enemy units that start their turn adjacent to it.",
+        "Heals 35 HP from killing units."
+      ],
+      "templateRefs": [
+        {
+          "label": "Production",
+          "template": "Production Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ProductionIcon.png"
+          ]
+        },
+        {
+          "label": "Strength",
+          "template": "Strength Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/StrengthIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatStrength.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatStrengthIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Combatstrength.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatstrengthIcon.png"
+          ]
+        }
+      ]
+    },
+    {
+      "slot": "unique building",
+      "name": "Altar of Life",
+      "replaces": "Shrine",
+      "art": "LencaUB.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LencaUB.png",
+      "artCredit": "Art by Tradboy and DarthKyofu",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "+1 {{Food Icon}} Food and +1 {{Faith Icon}} Faith on Bonus Resources",
+        "+2 {{Culture Icon}} Culture on White Clay."
+      ],
+      "templateRefs": [
+        {
+          "label": "Food",
+          "template": "Food Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+          "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+          "imageUrls": [
+            "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Food.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FoodIcon.png"
+          ]
+        },
+        {
+          "label": "Faith",
+          "template": "Faith Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Faith.png"
+          ]
+        },
+        {
+          "label": "Culture",
+          "template": "Culture Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Culture.png"
+          ]
+        }
+      ]
+    }
+  ],
+  "collections": [],
+  "nameLists": [
+    {
+      "title": "City List",
+      "items": [
+        "Cerquín",
+        "Congolón",
+        "Mayapaquin",
+        "Contao",
+        "Quelepa",
+        "Yarumela",
+        "Tenampúa",
+        "Los Naranjos",
+        "El Chircal",
+        "Tazumal",
+        "Trapíche",
+        "Cerén",
+        "Care",
+        "Potón",
+        "Tecuzincalpan",
+        "Acajutla",
+        "Xiro-yo",
+        "Echironga",
+        "Gualan",
+        "Lepaera",
+        "Talgua",
+        "Jucuarán",
+        "Pomola",
+        "</div>",
+        "|-"
+      ]
+    },
+    {
+      "title": "Spy List",
+      "items": [
+        "Managuara",
+        "Raffi",
+        "Entepica",
+        "Tapica",
+        "Erandique",
+        "Ilanguipuca",
+        "Icelaca",
+        "Itanipuca",
+        "Comizahual",
+        "Cacalote",
+        "Cusuco",
+        "Tacuacín"
+      ]
+    }
+  ],
+  "music": {
+    "peace": {
+      "title": "Solo le pido a Dios",
+      "credit": "Altiplano Lenca"
+    },
+    "war": {
+      "title": "Lamento Lenca",
+      "credit": "Job Sis"
+    }
+  },
+  "modSupport": {
+    "aa": false,
+    "civivtraits": false,
+    "claimscoloniescrimes": false,
+    "culdiv": true,
+    "ethnicunits": false,
+    "eandd": false,
+    "maplabels": false,
+    "piety": true,
+    "uci": false,
+    "ynaemp": true,
+    "histreligions": true,
+    "mercenaries": false,
+    "enlightenmentera": false
+  },
+  "credits": [
+    {
+      "name": "Tradboy",
+      "role": "Author"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art Revision"
+    },
+    {
+      "name": "NopeCopter",
+      "role": "Code (Lua)"
+    }
+  ],
+  "categories": [
+    "Tradboy",
+    "All Civilizations",
+    "Mesoamerican Cultures"
+  ],
+  "navTemplate": "TradboyNav",
+  "issues": [
+    "Unresolved templates: WhiteClayIcon, TradboyNav"
+  ],
+  "meta": {
+    "formatVersion": 1,
+    "createdAt": "2026-03-23T01:41:53.169Z",
+    "unresolvedTemplates": [
+      "WhiteClayIcon",
+      "TradboyNav"
+    ]
+  }
+}

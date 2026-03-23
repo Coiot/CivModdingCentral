@@ -103,7 +103,7 @@ const PEDIA_INLINE_ICON_DEFINITIONS = [
 	{ templates: ["Influence Icon", "Influence"], label: "Influence", fileName: "Influence.png" },
 	{ templates: ["International Trade", "International Trade Icon"], label: "International Trade", fileName: "Internationaltrade.png" },
 	{ templates: ["Capital", "Capital Icon"], label: "Capital", fileName: "Capital.png" },
-	{ templates: ["Connected", "Connected Icon"], label: "Connected", fileName: "Connected.png" },
+	{ templates: ["Connection", "Connection Icon"], label: "Connection", fileName: "Connection.png" },
 	{ templates: ["Moves Icon", "Move Icon", "Movement Icon"], label: "Movement", fileName: "Moves.png" },
 	{ templates: ["Occupied Icon"], label: "Occupied", fileName: "Occupied.png" },
 	{ templates: ["Population Icon"], label: "Population", fileName: "Population.png" },
@@ -117,6 +117,7 @@ const PEDIA_INLINE_ICON_DEFINITIONS = [
 	{ templates: ["Spy", "Spy Icon"], label: "Spy", fileName: "Spy.png" },
 	{ templates: ["Strength Icon", "Combat Strength Icon"], label: "Strength", fileName: "Strength.png" },
 	{ templates: ["Tourism Icon"], label: "Tourism", fileName: "Tourism.png" },
+	{ templates: ["Happiness Icon"], label: "Happiness", fileName: "Happy.png" },
 	{ templates: ["Trade Route Icon", "Trade Routes Icon"], label: "Trade Routes", fileName: "Traderoute.png" },
 ];
 

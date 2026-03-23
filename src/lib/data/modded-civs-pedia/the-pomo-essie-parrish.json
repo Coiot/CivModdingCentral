@@ -1,0 +1,552 @@
+{
+  "id": "civ-the-pomo-essie-parrish",
+  "slug": "the-pomo-essie-parrish",
+  "kind": "civilization",
+  "title": "The Pomo",
+  "leader": "Essie Parrish",
+  "authors": [
+    "Coiot",
+    "Orangechrisy"
+  ],
+  "summary": "The Pomo led by Essie Parrish are a custom civilization mod by Coiot and Orangechrisy, with contributions from DarthKyofu.",
+  "source": {
+    "type": "wiki",
+    "wikiPageTitle": "The Pomo",
+    "wikiUrl": "",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3486046956",
+    "version": "v 1",
+    "lastUpdated": "May 2025",
+    "modFolderName": ""
+  },
+  "identity": {
+    "empireName": "The Pomo",
+    "adjectives": "Pomo",
+    "capital": "Co'kadjal",
+    "bias": "None",
+    "religion": [
+      "Protestantism",
+      "Bole Maru (California Religions)",
+      "Kuksu (California Religions)"
+    ],
+    "government": "Tribal Confederacy",
+    "culture": "Great Plains",
+    "mapLabelsLanguage": "First Americans",
+    "requiredContent": [
+      "Brave New World"
+    ]
+  },
+  "presentation": {
+    "mapImage": "PomoMap.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PomoMap.png",
+    "mapImageCaption": "Map by Orangechrisy",
+    "iconImage": "Pomo.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Pomo.png",
+    "leaderSceneImage": "PomoDiplo.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PomoDiplo.png",
+    "leaderSceneArtCredit": "Art by DarthKyofu",
+    "colors": {
+      "background": "#d6683f",
+      "icon": "#000000"
+    }
+  },
+  "overview": {
+    "civilization": {
+      "title": "The Pomo",
+      "url": "https://en.wikipedia.org/wiki/Pomo",
+      "body": "The Pomo have been living Northern California for thousands of years, estimates suggesting they moved into the area around 4000-7000 BCE. Though another theory suggests a Pomo group pushed out the existing people in the region between 500 BCE and 1300 CE, when the lands became more settled and developed. Trade grew and would reach across California, with materials from the Channel Islands in Southern California being found in the region, and the thousands of charmstones at Tolay Lake including some that came from as far away as Mexico. At some point the shamanistic Kuksu religion developed and spread across the region. Kuksu is most noted among the Pomo and their neighboring Patwin, and utilized elaborate dances, regalia, and subterranean dance rooms. Kuksu spread from the Pomo and Patwin across much of Northern and Central California."
+    },
+    "leader": {
+      "title": "Essie Parrish",
+      "body": "Essie Pinola Parrish was a Kashaya Pomo Dreamer, basket weaver, teacher, and activist. Born in 1902, Parrish was raised by her grandmother Rosie Jarvis who was also a great tribal historian. At an early age she was recognized as a shaman, and was soon considered a prophet and Dreamer. In 1943, the previous religious leader of the Kashaya Pomo died and Parrish became the official leader, she would also go on to teach the last Pomo Dreamer, Mabel McKay how to lead. She would lead religious dances and the community as a Dreamer, helping to teach the younger generation in the Kashaya Pomo language and push people away from losing their Indian blood. She also raised 16 children with her husband Sidney Parrish. Throughout the mid 1900s she also engaged in activism, advocating in testimonies to the government for her community. She also would work with ethnographers and linguists to preserve the Kashaya Pomo language and traditions, helping to create over 20 films one of which one the 1866 Western Heritage Award. Essie Parrish has been remembered in a few books such as The Roots of Our Culture/Stories of Essie Parrish, and in Mabel McKay: Weaving the Dream.",
+      "url": "https://en.wikipedia.org/wiki/Essie_Pinola_Parrish"
+    }
+  },
+  "dawnOfMan": {
+    "blessing": "Essie Parrish, you led your people through both the physical and spiritual turmoil of the 20th century. Your people had suffered greatly under the heel of the American Empire, so in 1943, when you became the spiritual leader of the Pomo, the path forward was harsh. But you rejected the potential destruction of your people and instead pushed back, bringing your community together and ensuring a lasting cultural legacy. Your leadership, basketry, and ethnographic films helped to give the Pomo safety and protection, and your teachings allowed future generations to continue the traditions.\nEssie, your people come to you once more. They need a Dreamer to guide them safely forward through another treacherous time. Will you be able to ensure the legacy of the Pomo once again? Can you secure your culture and your people from the threats around them? Can you build a civilization that will stand the test of time?",
+    "introduction": "Camay, I knew you were coming. Now come this way, I have a basket saved for you. Then we discuss other matters",
+    "defeat": "I've done what I could to preserve our culture, so we will not be gone forever. Our ghosts will return as your plague is cleansed from these lands. The Dream never lies."
+  },
+  "templateRefs": [
+    {
+      "label": "Great People",
+      "template": "Great Person Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Great_Person_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatperson.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatperson.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPeople.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPeopleIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatpeople.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatpeopleIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPerson.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPersonIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatpersonIcon.png"
+      ]
+    },
+    {
+      "label": "Movement",
+      "template": "Moves Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Moves_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Movement.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MovementIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MovesIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Move.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MoveIcon.png"
+      ]
+    },
+    {
+      "label": "Trade Routes",
+      "template": "Trade Route Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Trade_Route_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRoutes.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRoutesIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoutes.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TraderoutesIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRoute.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRouteIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TraderouteIcon.png"
+      ]
+    },
+    {
+      "label": "Food",
+      "template": "Food Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+      "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+      "imageUrls": [
+        "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Food.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FoodIcon.png"
+      ]
+    },
+    {
+      "label": "Faith",
+      "template": "Faith Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Faith.png"
+      ]
+    },
+    {
+      "label": "Culture",
+      "template": "Culture Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Culture.png"
+      ]
+    },
+    {
+      "label": "Gold",
+      "template": "Gold Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Gold_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GoldIcon.png"
+      ]
+    },
+    {
+      "label": "Citizens",
+      "template": "Citizen",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Citizen",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citizen.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citizen.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citizens.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CitizensIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CitizenIcon.png"
+      ]
+    },
+    {
+      "label": "Great Work",
+      "template": "Great Work Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Great_Work_Icon",
+      "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/6/67/Greatwork.png",
+      "imageUrls": [
+        "https://static.wikia.nocookie.net/civilization-v-customisation/images/6/67/Greatwork.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatwork.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatWork.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatWorkIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatworkIcon.png"
+      ]
+    }
+  ],
+  "uniques": [
+    {
+      "slot": "unique ability",
+      "name": "Spirits of the Four Directions",
+      "replaces": "",
+      "art": "PomoEP.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PomoEP.png",
+      "artCredit": "Art by DarthKyofu",
+      "body": "Gain a different bonus depending on the direction of the last converted city.",
+      "civilopedia": "",
+      "bullets": [
+        "South: Units heal +10 HP when healing.",
+        "East: +20% {{Great Person Icon}} Great People generation.",
+        "North: At the start of the turn, Religious units give nearby units +1 {{Moves Icon}} Movement.",
+        "West: {{Trade Route Icon}} Trade Routes in Cities give +5% {{Food Icon}} Growth to that city."
+      ],
+      "templateRefs": [
+        {
+          "label": "Great People",
+          "template": "Great Person Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Great_Person_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatperson.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatperson.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPeople.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPeopleIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatpeople.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatpeopleIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPerson.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPersonIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatpersonIcon.png"
+          ]
+        },
+        {
+          "label": "Movement",
+          "template": "Moves Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Moves_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Movement.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MovementIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MovesIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Move.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MoveIcon.png"
+          ]
+        },
+        {
+          "label": "Trade Routes",
+          "template": "Trade Route Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Trade_Route_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRoutes.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRoutesIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoutes.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TraderoutesIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRoute.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRouteIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TraderouteIcon.png"
+          ]
+        },
+        {
+          "label": "Food",
+          "template": "Food Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+          "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+          "imageUrls": [
+            "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Food.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FoodIcon.png"
+          ]
+        }
+      ]
+    },
+    {
+      "slot": "unique unit",
+      "name": "Basket Weaver",
+      "replaces": "Great Artist",
+      "art": "PomoUP.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PomoUP.png",
+      "artCredit": "Art by DarthKyofu and Orangechrisy",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Creates the Basket unique Great Work, providing a different bonus to the capital depending on the direction of the city the Great Work is in.",
+        "South: +4 {{Faith Icon}} Faith",
+        "East: +4 {{Culture Icon}} Culture",
+        "North: +4 {{Food Icon}} Food",
+        "West: +4 {{Gold Icon}} Gold"
+      ],
+      "templateRefs": [
+        {
+          "label": "Faith",
+          "template": "Faith Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Faith.png"
+          ]
+        },
+        {
+          "label": "Culture",
+          "template": "Culture Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Culture.png"
+          ]
+        },
+        {
+          "label": "Food",
+          "template": "Food Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+          "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+          "imageUrls": [
+            "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Food.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FoodIcon.png"
+          ]
+        },
+        {
+          "label": "Gold",
+          "template": "Gold Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Gold_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GoldIcon.png"
+          ]
+        }
+      ]
+    },
+    {
+      "slot": "unique building",
+      "name": "Roundhouse",
+      "replaces": "Temple",
+      "art": "PomoUB.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PomoUB.png",
+      "artCredit": "Art by Orangechrisy",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "+1 {{Faith Icon}} Faith for every 4 {{Citizen}} Citizens in the city.",
+        "Has a {{Great Work Icon}} Great Work of Art slot,",
+        "+10% Religious Pressure from this City per {{Great Work Icon}} Great Work in it."
+      ],
+      "templateRefs": [
+        {
+          "label": "Faith",
+          "template": "Faith Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Faith.png"
+          ]
+        },
+        {
+          "label": "Citizens",
+          "template": "Citizen",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Citizen",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citizen.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citizen.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citizens.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CitizensIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CitizenIcon.png"
+          ]
+        },
+        {
+          "label": "Great Work",
+          "template": "Great Work Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Great_Work_Icon",
+          "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/6/67/Greatwork.png",
+          "imageUrls": [
+            "https://static.wikia.nocookie.net/civilization-v-customisation/images/6/67/Greatwork.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatwork.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatWork.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatWorkIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatworkIcon.png"
+          ]
+        }
+      ]
+    }
+  ],
+  "collections": [],
+  "nameLists": [
+    {
+      "title": "City List",
+      "items": [
+        "Co'kadjal",
+        "Kaci'badon",
+        "Catca'mkau",
+        "Behe'pal",
+        "Po'tol",
+        "Ta'tem",
+        "E'lem",
+        "Maka'hmo",
+        "Bida'miwina",
+        "Kadi'u",
+        "Ka'tuuli",
+        "Shanel",
+        "Kula'napo",
+        "Kabe'napo",
+        "Koi",
+        "Ka'hwalau",
+        "Bati'kletcawi",
+        "Kowi'cal",
+        "Baka'mtati",
+        "Le'ma",
+        "Maiyi'",
+        "Kabemato'lil",
+        "Xa'dalam",
+        "Dana'ga",
+        "Ko'dalau",
+        "Co'samak",
+        "Yo'butui",
+        "Cane'l",
+        "No'napoti",
+        "Tsaka'mo",
+        "Se'dam",
+        "Tcatam",
+        "Ka'tili",
+        "Mama'mamau",
+        "La'tcupda",
+        "Yo'kaia",
+        "Kabe'l",
+        "Hma'ragimowina",
+        "Xuna'dai",
+        "Ka'towi",
+        "Kabete'yo",
+        "Mete'ni",
+        "Mutca'wi",
+        "Tcee'tido",
+        "Tcee'tido",
+        "Cane'kai",
+        "Caba'kana",
+        "Pda'hau",
+        "Cie'go",
+        "Hu'kdja",
+        "</div>",
+        "|-"
+      ]
+    },
+    {
+      "title": "Spy List",
+      "items": [
+        "Shuk",
+        "Xasis",
+        "Modun",
+        "Katana",
+        "Elwah Tupi",
+        "Hu'lyo",
+        "Susie Shoemake",
+        "Maria Meyers",
+        "Charles Bowen",
+        "Kalpela",
+        "</div>",
+        "|-"
+      ]
+    },
+    {
+      "title": "Basket Weaver List",
+      "items": [
+        "Essie Parrish",
+        "Susan Billy",
+        "Mabel McKay",
+        "Julia F. Parker",
+        "Elsie Allen",
+        "William Benson",
+        "Mary Knight Benson",
+        "Luwana Quitiquit",
+        "Laura Somersal",
+        "Annie Burke Lake",
+        "Mary Arnold",
+        "Gunsissie",
+        "Susie Santiago Billy",
+        "Nellie Burke",
+        "Clint McKay",
+        "Corine Pearce",
+        "Lorraine Lockhart",
+        "Myrtle McCoy",
+        "Belle Viriol",
+        "Mary Smith",
+        "Agnes Santana",
+        "Laura Wilbell",
+        "Mow-sha Edwards",
+        "Rhoda Knight",
+        "Ethel Burke",
+        "Gladys Lockhart",
+        "Myrtle McKay Chavez",
+        "Mollie Jackson",
+        "Alice Elliott",
+        "Suzanne Holder",
+        "Lydia Faught",
+        "Annie Boone",
+        "Nora Cooper",
+        "Wala-Wala",
+        "Salome Alcantra",
+        "Maude Scott",
+        "Annie Burke",
+        "Mrs. Kyman",
+        "Evelyn Lake",
+        "Sarah Knight"
+      ]
+    }
+  ],
+  "music": {
+    "peace": {
+      "title": "Pomo Fast 2 Step",
+      "credit": "Marc Winter"
+    },
+    "war": {
+      "title": "",
+      "credit": ""
+    }
+  },
+  "modSupport": {
+    "aa": false,
+    "civivtraits": true,
+    "claimscoloniescrimes": false,
+    "culdiv": true,
+    "ethnicunits": true,
+    "eandd": false,
+    "maplabels": true,
+    "piety": true,
+    "uci": true,
+    "ynaemp": true,
+    "histreligions": true,
+    "mercenaries": true,
+    "enlightenmentera": false
+  },
+  "credits": [
+    {
+      "name": "Coiot",
+      "role": "Author"
+    },
+    {
+      "name": "Orangechrisy",
+      "role": "Author"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art (Leaderscene, Leader Icon)"
+    }
+  ],
+  "categories": [
+    "Orangechrisy",
+    "All Civilizations",
+    "Civilizations with Female leaders",
+    "Plains Cultures",
+    "United States"
+  ],
+  "navTemplate": "OrangechrisyNav",
+  "issues": [
+    "Unresolved templates: OrangechrisyNav, CoiotNav"
+  ],
+  "meta": {
+    "formatVersion": 1,
+    "createdAt": "2026-03-23T01:50:41.757Z",
+    "unresolvedTemplates": [
+      "OrangechrisyNav",
+      "CoiotNav"
+    ]
+  }
+}

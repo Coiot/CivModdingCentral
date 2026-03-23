@@ -1,0 +1,478 @@
+{
+  "id": "civ-tibet-thupten-gyatso",
+  "slug": "tibet-thupten-gyatso",
+  "kind": "civilization",
+  "title": "Tibet",
+  "leader": "Thupten Gyatso",
+  "authors": [
+    "Coiot"
+  ],
+  "summary": "Tibet led by Thupten Gyatso, is a custom civilization by Coiot, with contributions from DarthKyofu, EmeraldRange, and JFD. It was released as part of the CBR Mk2 10th Anniversary and Land of Snows events.",
+  "source": {
+    "type": "wiki",
+    "wikiPageTitle": "Tibet",
+    "wikiUrl": "",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3557149627",
+    "version": "v 1",
+    "lastUpdated": "28 August 2025",
+    "modFolderName": ""
+  },
+  "identity": {
+    "empireName": "Ganden Phodrang",
+    "adjectives": "Tibetan",
+    "capital": "Lhasa",
+    "bias": "Hills",
+    "religion": [
+      "Buddhism",
+      "Vajrayana (HR)"
+    ],
+    "government": "Theocracy",
+    "culture": "Himalayan",
+    "mapLabelsLanguage": "",
+    "requiredContent": [
+      "Brave New World"
+    ]
+  },
+  "presentation": {
+    "mapImage": "Map Tibet Thupten Gyatso.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Map%20Tibet%20Thupten%20Gyatso.png",
+    "mapImageCaption": "Map by Coiot and DarthKyofu",
+    "iconImage": "ThuptenTibet.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ThuptenTibet.png",
+    "leaderSceneImage": "Tibet Thupten Gyatso Diplo.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Tibet%20Thupten%20Gyatso%20Diplo.png",
+    "leaderSceneArtCredit": "Art by Coiot",
+    "colors": {
+      "background": "#f1d4c9",
+      "icon": "#a22901"
+    }
+  },
+  "overview": {
+    "civilization": {
+      "title": "Tibet",
+      "url": "https://en.wikipedia.org/wiki/Tibet",
+      "body": "Of the many cultures of the world who experience the tumult of political stability Tibet has itself a tumultuous history. Tibet emerged as a unified empire some 1300 years ago, however this soon divided the land into territories poised to be influenced by outside powers; much of that from China. Following the collapse of the Qing dynasty Chinese garrisons were disarmed and exiled from Tibet, causing the government to declare its independence. Then a military strike caused Tibet to become incorporated into the People's Republic of China and later abolishing Tibet's government. This merely summarizes the struggle between a small nation trying to unify itself and a superpower hyphenating its domination."
+    },
+    "leader": {
+      "title": "Thupten Gyatso",
+      "body": "Thupten Gyatso, born in 1876 in Thakpo Langdun, was recognized as the 13th Dalai Lama at a young age. His early years were marked by spiritual training and preparation for leadership in a time of great uncertainty for Tibet. Enthroned in 1879, he would become a pivotal figure in the modernization and preservation of Tibetan sovereignty, guiding his people through periods of foreign intervention and internal reform. His wisdom, compassion, and vision for a strong, independent Tibet would shape the nation's destiny for decades to come.",
+      "url": "https://en.wikipedia.org/wiki/13th_Dalai_Lama"
+    }
+  },
+  "dawnOfMan": {
+    "blessing": "Welcome, Thupten Gyatso, the 13th Dalai Lama—enlightened leader, reformer, and steadfast guardian of the Land of Snows. Through wisdom, courage, and boundless compassion, you guided your people through the storms of foreign encroachment and internal strife, preserving the sacred traditions and sovereignty of Tibet. Under your vision, monasteries flourished and education was reformed. You modernized the nation's defenses, fostered unity among the Tibetan people, and stood as a symbol of hope in the face of adversity.\nNow, as the winds of change once again sweep across the plateau, your legacy calls out for a leader who can unite faith and progress, strength and compassion. Will you rise to embody the virtues of the Dharma Kings, and lead Tibet to peace, prosperity, and enduring greatness? Can you build a civilization to stand the test of time?",
+    "introduction": ": Welcome to the Land of Snows. May our meeting be guided by wisdom and compassion.",
+    "defeat": ": Though I fall, may peace and understanding one day return to this land."
+  },
+  "templateRefs": [
+    {
+      "label": "Diplomats",
+      "template": "Diplomat",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Diplomat",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Diplomat.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Diplomat.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Diplomats.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/DiplomatsIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/DiplomatIcon.png"
+      ]
+    },
+    {
+      "label": "Science",
+      "template": "Science Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Science_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Science.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Science.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ScienceIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Research.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ResearchIcon.png"
+      ]
+    },
+    {
+      "label": "City-State",
+      "template": "City State Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:City_State_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citystate.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citystate.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CityState.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CityStateIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CitystateIcon.png"
+      ]
+    },
+    {
+      "label": "Great People",
+      "template": "Great Person Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Great_Person_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatperson.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatperson.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPeople.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPeopleIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatpeople.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatpeopleIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPerson.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPersonIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatpersonIcon.png"
+      ]
+    },
+    {
+      "label": "Strength",
+      "template": "Strength Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/StrengthIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatStrength.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatStrengthIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Combatstrength.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatstrengthIcon.png"
+      ]
+    },
+    {
+      "label": "Food",
+      "template": "Food Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+      "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+      "imageUrls": [
+        "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Food.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FoodIcon.png"
+      ]
+    },
+    {
+      "label": "Production",
+      "template": "Production Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ProductionIcon.png"
+      ]
+    }
+  ],
+  "uniques": [
+    {
+      "slot": "unique ability",
+      "name": "Zephyr of the Wind Horse",
+      "replaces": "",
+      "art": "Thupten GyatsoIcon.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Thupten%20GyatsoIcon.png",
+      "artCredit": "Art by Coiot",
+      "body": "Diplomats within another Civilization provide a percentage of the target's {{Science Icon}} Science for each tech gap. Allied {{City-State Icon}} City-States periodically grant {{Great Person Icon}} Great People based on their type.",
+      "civilopedia": "",
+      "bullets": [],
+      "templateRefs": [
+        {
+          "label": "Diplomats",
+          "template": "Diplomat",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Diplomat",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Diplomat.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Diplomat.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Diplomats.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/DiplomatsIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/DiplomatIcon.png"
+          ]
+        },
+        {
+          "label": "Science",
+          "template": "Science Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Science_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Science.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Science.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ScienceIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Research.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ResearchIcon.png"
+          ]
+        },
+        {
+          "label": "City-State",
+          "template": "City State Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:City_State_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citystate.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citystate.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CityState.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CityStateIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CitystateIcon.png"
+          ]
+        },
+        {
+          "label": "Great People",
+          "template": "Great Person Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Great_Person_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatperson.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatperson.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPeople.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPeopleIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatpeople.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatpeopleIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPerson.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatPersonIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GreatpersonIcon.png"
+          ]
+        }
+      ]
+    },
+    {
+      "slot": "unique unit",
+      "name": "Kusung",
+      "replaces": "Great War Infantry",
+      "art": "KusungIcon.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/KusungIcon.png",
+      "artCredit": "Art by Coiot",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "Gains {{Strength Icon}} Strength for each active Research Agreement and Embassy.",
+        "Upgrading one starts a short We Love the King Day in your Cities.",
+        "Obsoletes at Penicillin."
+      ],
+      "templateRefs": [
+        {
+          "label": "Strength",
+          "template": "Strength Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/StrengthIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatStrength.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatStrengthIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Combatstrength.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatstrengthIcon.png"
+          ]
+        }
+      ]
+    },
+    {
+      "slot": "unique unit",
+      "name": "Mentsikhang",
+      "replaces": "Research Lab",
+      "art": "MentsikhangIcon.png",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MentsikhangIcon.png",
+      "artCredit": "Art by Coiot",
+      "body": "",
+      "civilopedia": "",
+      "bullets": [
+        "+4 {{Food Icon}} Food and {{Production Icon}} Production per Friendly {{City-State Icon}} City-State or Declaration of Friendship, doubled with an Observatory.",
+        "Heals friendly Units in your borders for each active Research Agreement."
+      ],
+      "templateRefs": [
+        {
+          "label": "Food",
+          "template": "Food Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+          "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+          "imageUrls": [
+            "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Food.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FoodIcon.png"
+          ]
+        },
+        {
+          "label": "Production",
+          "template": "Production Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ProductionIcon.png"
+          ]
+        },
+        {
+          "label": "City-State",
+          "template": "City State Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:City_State_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citystate.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citystate.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CityState.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CityStateIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CitystateIcon.png"
+          ]
+        }
+      ]
+    }
+  ],
+  "collections": [
+    {
+      "id": "land-of-snows",
+      "title": "Land of Snows",
+      "sourceTemplate": "LandofSnowsNav",
+      "aliases": [],
+      "colors": {
+        "background": "#7e2222",
+        "accent": "#fad587"
+      },
+      "imageURL": "",
+      "blurb": "",
+      "links": [],
+      "members": []
+    },
+    {
+      "id": "cbr-mk2-10th-anniversary-collection",
+      "title": "CBR Mk2 10th Anniversary",
+      "sourceTemplate": "CBR10Nav",
+      "aliases": [],
+      "colors": {
+        "background": "#c7a85d",
+        "accent": "#5f2c12"
+      },
+      "imageURL": "",
+      "blurb": "10 years ago, the first part of the Civilization Battle Royale Mk. 2 was posted, kickstarting one of the most legendary stories in Civ history. To celebrate this momentous occasion, members of the CBR community have banded together to create a collection of brand-new civs for you to enjoy!",
+      "links": [
+        {
+          "label": "Steam Workshop",
+          "href": "https://steamcommunity.com/sharedfiles/filedetails/?id=3546641706"
+        }
+      ],
+      "members": []
+    }
+  ],
+  "nameLists": [
+    {
+      "title": "City List",
+      "items": [
+        "Lhasa",
+        "Shigatse",
+        "Nedong",
+        "Gyantse",
+        "Chamdo",
+        "Taklung",
+        "Tsona",
+        "Nakchu",
+        "Jyekundo",
+        "Dege",
+        "Batang",
+        "Saga",
+        "Purang",
+        "Gyanema",
+        "Gartok",
+        "Lhatse",
+        "Phari",
+        "Naktsang",
+        "Namru",
+        "Dirang",
+        "Senge",
+        "Sok",
+        "Drachen",
+        "Sertsa",
+        "Shelkar",
+        "Ngamring",
+        "Kyirong",
+        "Kuti",
+        "Rongshar",
+        "Dzongkha",
+        "Drongpa",
+        "Gyanema",
+        "Dawa",
+        "Tsaparang",
+        "Rutok",
+        "Lhari",
+        "Tar",
+        "Shopamdo",
+        "Pome",
+        "Jomo",
+        "Zhokha",
+        "Riwoche",
+        "Dzogang",
+        "Dechen",
+        "Gonjo",
+        "Dartsedo",
+        "Markham",
+        "Sanan",
+        "Litang",
+        "Cho",
+        "Rima",
+        "Danma",
+        "Sangacho",
+        "Dzito",
+        "Lho",
+        "Gyamda",
+        "|-"
+      ]
+    },
+    {
+      "title": "Spy List",
+      "items": [
+        "Tsarong Dasang Damdul",
+        "Agvan Dorzhiev",
+        "Thupten Chökyi Nyima",
+        "Thupten Kunphela",
+        "Paljor Dorje Shatra",
+        "Tsawa Tritrul",
+        "Yajima Yasujiro",
+        "Lungshar Dorje Tsegyal",
+        "Trimon Norbu Wangyal",
+        "Lhalung Gyeltsen Tarchin"
+      ]
+    }
+  ],
+  "music": {
+    "peace": {
+      "title": "Tibetan Chant for Inner Calm",
+      "credit": "InnerVibe Audio"
+    },
+    "war": {
+      "title": "",
+      "credit": ""
+    }
+  },
+  "modSupport": {
+    "aa": false,
+    "civivtraits": false,
+    "culdiv": true,
+    "piety": true,
+    "uci": false,
+    "ynaemp": true,
+    "enlightenmentera": false,
+    "histreligions": true,
+    "ethnicunits": false,
+    "eandd": false,
+    "maplabels": false
+  },
+  "credits": [
+    {
+      "name": "Coiot",
+      "role": "Author"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art (Civilization Icon, Map)"
+    },
+    {
+      "name": "EmeraldRange",
+      "role": "3D"
+    },
+    {
+      "name": "JFD",
+      "role": "Code Advice"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Himalayan Cultures",
+    "Coiot",
+    "Tibet",
+    "Land of Snows"
+  ],
+  "navTemplate": "CBR10Nav",
+  "issues": [
+    "Unresolved templates: CBR10Nav, LandofSnowsNav, CoiotNav"
+  ],
+  "meta": {
+    "formatVersion": 1,
+    "createdAt": "2026-03-23T01:51:17.615Z",
+    "unresolvedTemplates": [
+      "CBR10Nav",
+      "LandofSnowsNav",
+      "CoiotNav"
+    ]
+  }
+}

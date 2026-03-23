@@ -7,7 +7,7 @@
   "authors": [
     "Coiot"
   ],
-  "summary": "The Tibet Empire led by Ralpachen is a custom civilization by Coiot, with contributions from DarthKyofu, EmeraldRange, and JFD. It was released as part of the Land of Snows event.",
+  "summary": "Tibet led by Ralpachen is a custom civilization by Coiot, with contributions from DarthKyofu, EmeraldRange, and JFD. It was released as part of the Land of Snows event.",
   "source": {
     "type": "wiki",
     "wikiPageTitle": "Tibet",
@@ -64,7 +64,38 @@
     "introduction": ": I am Ralpachen, King of Dharma. May our meeting be auspicious.",
     "defeat": ": Though my empire falls, the teachings of the Buddha endure. May you find wisdom in victory."
   },
-  "templateRefs": [],
+  "templateRefs": [
+    {
+      "label": "Gold",
+      "template": "Gold Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Gold_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GoldIcon.png"
+      ]
+    },
+    {
+      "label": "Production",
+      "template": "Production Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ProductionIcon.png"
+      ]
+    },
+    {
+      "label": "Faith",
+      "template": "Faith Icon",
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Faith.png"
+      ]
+    }
+  ],
   "uniques": [
     {
       "slot": "unique ability",
@@ -73,10 +104,41 @@
       "art": "RalpachenIcon.png",
       "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/RalpachenIcon.png",
       "artCredit": "Art by Coiot",
-      "body": "Trade Routes passing through your land grant Gold per City Connection. Roads on or next to Holy Sites yield +1 Gold, Production, and Faith. Cities may Tithe to convert Gold / Production to Faith and spawn extra purchased units.",
+      "body": "Trade Routes passing through your land grant {{Gold Icon}} Gold per {{Connected Icon}} City Connection. Roads on or next to Holy Sites yield +1 {{Gold Icon}} Gold, {{Production Icon}} Production, and {{Faith Icon}} Faith. Cities may Tithe to convert Gold / Production to {{Faith Icon}} Faith and spawn extra purchased units.",
       "civilopedia": "",
       "bullets": [],
-      "templateRefs": []
+      "templateRefs": [
+        {
+          "label": "Gold",
+          "template": "Gold Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Gold_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GoldIcon.png"
+          ]
+        },
+        {
+          "label": "Production",
+          "template": "Production Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ProductionIcon.png"
+          ]
+        },
+        {
+          "label": "Faith",
+          "template": "Faith Icon",
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Faith.png"
+          ]
+        }
+      ]
     },
     {
       "slot": "unique unit",
@@ -88,7 +150,7 @@
       "body": "",
       "civilopedia": "",
       "bullets": [
-        "Generate Faith instead of Gold when conducting trade missions with City-States, with bonuses based on your trade network.",
+        "Generate {{Faith Icon}} Faith instead of {{Gold Icon}} Gold when conducting trade missions with {{City-State Icon}} City-States, with bonuses based on your trade network.",
         "Can construct Holy Sites instead of Customs Houses, providing both defensive benefits and yields."
       ],
       "templateRefs": []
@@ -254,10 +316,15 @@
     "Civilizations with Male leaders"
   ],
   "navTemplate": "LandofSnowsNav",
-  "issues": [],
+  "issues": [
+    "Unresolved templates: LandofSnowsNav, CoiotNav"
+  ],
   "meta": {
     "formatVersion": 1,
-    "createdAt": "2026-03-22T03:13:16.008Z",
-    "unresolvedTemplates": []
+    "createdAt": "2026-03-23T01:58:02.470Z",
+    "unresolvedTemplates": [
+      "LandofSnowsNav",
+      "CoiotNav"
+    ]
   }
 }

@@ -68,13 +68,11 @@
       "label": "Capital",
       "template": "Capital",
       "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Capital",
-      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png"
-    },
-    {
-      "label": "Food",
-      "template": "Food Icon",
-      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
-      "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png"
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CapitalIcon.png"
+      ]
     }
   ],
   "uniques": [
@@ -85,7 +83,7 @@
       "art": "Pawhuska.png",
       "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Pawhuska.png",
       "artCredit": "Art by Coiot",
-      "body": "During a Golden Age, Units do not require Strategic Resources to train, Units trained this way cause nearby Enemy Units to receive a stacking Combat Penalty. Upon the dawn of a Golden Age, a new source of your most recently discovered Strategic Resource is revealed near your newest city.",
+      "body": "During a {{Golden Age}} Golden Age, Units do not require Strategic Resources to train, Units trained this way cause nearby Enemy Units to receive a stacking Combat Penalty. Upon the dawn of a {{Golden Age}} Golden Age, a new source of your most recently discovered Strategic Resource is revealed near your newest city.",
       "civilopedia": "",
       "bullets": [],
       "templateRefs": [
@@ -93,7 +91,11 @@
           "label": "Capital",
           "template": "Capital",
           "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Capital",
-          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png"
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CapitalIcon.png"
+          ]
         }
       ]
     },
@@ -108,14 +110,18 @@
       "civilopedia": "",
       "bullets": [
         "Begins with Experience equal to unused Strategic Resources.",
-        "+13% Strength Combat Bonus outside Friendly Territory upon upgrading"
+        "+13% {{Strength Icon}} Combat Bonus outside Friendly Territory upon upgrading"
       ],
       "templateRefs": [
         {
           "label": "Capital",
           "template": "Capital",
           "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Capital",
-          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png"
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CapitalIcon.png"
+          ]
         }
       ]
     },
@@ -129,8 +135,8 @@
       "body": "",
       "civilopedia": "",
       "bullets": [
-        "Receive a burst of Golden Age Points for each Strategic Resource worked by the empire upon construction",
-        "+2 Culture and +2 Production per each worked strategic resource in city borders during Golden Age Golden Ages"
+        "Receive a burst of {{Golden Age}} Golden Age Points for each Strategic Resource worked by the empire upon construction",
+        "+2 {{Culture Icon}} Culture and +2 {{Production Icon}} Production per each worked strategic resource in city borders during {{Golden Age}} Golden Ages"
       ],
       "templateRefs": []
     }

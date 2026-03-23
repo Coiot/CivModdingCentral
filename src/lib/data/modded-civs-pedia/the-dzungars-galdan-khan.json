@@ -64,6 +64,7 @@
     "introduction": "\"Welcome stranger, I am Galdan Khan. Make yourself comfortable in our pastures.\"",
     "defeat": "\"I may be defeated, but another wishing to unite our legacy will come.\""
   },
+  "templateRefs": [],
   "uniques": [
     {
       "slot": "unique ability",
@@ -72,7 +73,7 @@
       "art": "DzungarLead.png",
       "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/DzungarLead.png",
       "artCredit": "Art by Coiot",
-      "body": "Units can short paradrop when starting their turn on a hill or adjacent to a mountain within friendly territory. Receive mounted units trained by City-State City-States that you've pledged to protect or are allied with.",
+      "body": "Units can short paradrop when starting their turn on a hill or adjacent to a mountain within friendly territory. Receive mounted units trained by {{City-State Icon}} City-States that you've pledged to protect or are allied with.",
       "civilopedia": "",
       "bullets": [],
       "templateRefs": []
@@ -88,7 +89,7 @@
       "civilopedia": "",
       "bullets": [
         "Spawns with the Heavy Charge promotion.",
-        "+1 Moves Movement when starting the turn on a hill or adjacent to a mountain.",
+        "+1 {{Moves Icon}} Movement when starting the turn on a hill or adjacent to a mountain.",
         "Can upgrade into Cavalry."
       ],
       "templateRefs": []
@@ -104,7 +105,7 @@
       "civilopedia": "",
       "bullets": [
         "Receives a ranged attack and defence bonus on hills.",
-        "Gains extra Moves Movement for each City-State that you can demand tribute from."
+        "Gains extra {{Moves Icon}} Movement for each {{City-State Icon}} City-State that you can demand tribute from."
       ],
       "templateRefs": []
     }
@@ -119,6 +120,9 @@
         "background": "#3a2315",
         "accent": "#cc8e34"
       },
+      "imageURL": "",
+      "blurb": "",
+      "links": [],
       "members": []
     }
   ],

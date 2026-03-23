@@ -57,13 +57,13 @@ Civ Modding Central provides guided planning, template generators, a pattern lib
 - The Tairona (Guacanaoma): https://civmoddingcentral.dev/modded-civs-pedia/tairona-guacanaoma
 - The Dzungars (Galdan Khan): https://civmoddingcentral.dev/modded-civs-pedia/the-dzungars-galdan-khan
 - The Khoshuts (Güshi Khan): https://civmoddingcentral.dev/modded-civs-pedia/the-khoshuts
-- The Lenca (Lempira): https://civmoddingcentral.dev/modded-civs-pedia/the-lenca
+- The Lenca (Lempira): https://civmoddingcentral.dev/modded-civs-pedia/the-lenca-lempira
 - The Northern Paiute (Truckee): https://civmoddingcentral.dev/modded-civs-pedia/the-northern-paiute-truckee
-- The Pomo (Essie Parrish): https://civmoddingcentral.dev/modded-civs-pedia/the-pomo
+- The Pomo (Essie Parrish): https://civmoddingcentral.dev/modded-civs-pedia/the-pomo-essie-parrish
 - The Ponca (White Eagle): https://civmoddingcentral.dev/modded-civs-pedia/the-ponca-white-eagle
 - The Zenú (Totó): https://civmoddingcentral.dev/modded-civs-pedia/the-zen-tot
-- Tibet (Thupten Gyatso): https://civmoddingcentral.dev/modded-civs-pedia/tibet
-- Tibet (Ralpachen): https://civmoddingcentral.dev/modded-civs-pedia/tibet-ralpachen
+- Great Tibet (Ralpachen): https://civmoddingcentral.dev/modded-civs-pedia/tibet-ralpachen
+- Tibet (Thupten Gyatso): https://civmoddingcentral.dev/modded-civs-pedia/tibet-thupten-gyatso
 - Yarlung (Nyatri Tsenpo): https://civmoddingcentral.dev/modded-civs-pedia/yarlung-nyatri-tsenpo
 
 ## Discovery
