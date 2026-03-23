@@ -25,17 +25,17 @@
 
 :root {
 	--surface-generator-border: color-mix(in srgb, var(--border-color) 72%, oklch(0.5386 0.1965 295.52) 28%);
-	--surface-generator-highlight: oklch(0.82 0.1116 304.27);
-	--surface-generator-highlight-strong: oklch(0.9472 0.0331 308.97);
+	--surface-generator-highlight: oklch(0.85 0.15 304.27);
+	--surface-generator-highlight-strong: oklch(0.9 0.1 308.97);
 	--surface-generator-panel: color-mix(in srgb, var(--surface-color) 88%, oklch(0.2548 0.0764 304) 12%);
 	--surface-lua-border: color-mix(in srgb, var(--border-color) 72%, oklch(0.4805 0.0843 160.75) 28%);
-	--surface-lua-highlight: oklch(0.8325 0.1584 155.3);
-	--surface-lua-highlight-strong: oklch(0.9531 0.0478 157.4);
+	--surface-lua-highlight: oklch(0.8325 0.2 155.3);
+	--surface-lua-highlight-strong: oklch(0.9531 0.1 157.4);
 	--surface-lua-panel: color-mix(in srgb, var(--surface-color) 90%, oklch(0.2502 0.0452 160.71) 10%);
-	--surface-pattern-border: color-mix(in srgb, var(--border-color) 68%, oklch(0.6545 0.1238 84) 32%);
-	--surface-pattern-highlight: oklch(0.8752 0.1297 91.62);
-	--surface-pattern-highlight-strong: oklch(0.9565 0.0696 95.03);
-	--surface-pattern-panel: color-mix(in srgb, var(--surface-color) 78%, oklch(0.294 0.0466 70.6) 22%);
+	--surface-pattern-border: color-mix(in srgb, var(--border-color) 68%, oklch(0.65 0.15 85) 32%);
+	--surface-pattern-highlight: oklch(0.875 0.2 90);
+	--surface-pattern-highlight-strong: oklch(0.95 0.15 95);
+	--surface-pattern-panel: color-mix(in srgb, var(--surface-color) 78%, oklch(0.3 0.05 70) 22%);
 	--surface-pedia-border: color-mix(in srgb, var(--border-color) 78%, oklch(0.75 0.25 230) 22%);
 	--surface-pedia-highlight: oklch(0.75 0.2 230);
 	--surface-pedia-highlight-strong: oklch(0.8 0.15 230);
@@ -46,24 +46,24 @@
 	--surface-schema-highlight-strong: oklch(0.9 0.1 270);
 	--surface-schema-panel: color-mix(in srgb, var(--surface-color) 90%, oklch(0.3 0.07 260) 10%);
 	--surface-support-border: color-mix(in srgb, var(--border-color) 70%, oklch(0.8066 0.1573 129.38) 25%);
-	--surface-support-highlight: oklch(0.9 0.0845 127.28);
-	--surface-support-highlight-strong: oklch(0.925 0.0447 125.84);
+	--surface-support-highlight: oklch(0.9 0.15 127.28);
+	--surface-support-highlight-strong: oklch(0.925 0.1 125.84);
 	--surface-support-panel: color-mix(in srgb, var(--surface-color) 88%, oklch(0.4068 0.164 129.07) 10%);
 	--surface-planner-border: color-mix(in srgb, var(--border-color) 60%, oklch(0.8333 0.0538 87.88) 40%);
-	--surface-planner-highlight: oklch(0.9297 0.0416 88.8);
-	--surface-planner-highlight-strong: oklch(0.9808 0.0199 84.59);
+	--surface-planner-highlight: oklch(0.9297 0.05 88.8);
+	--surface-planner-highlight-strong: oklch(0.9808 0.025 84.59);
 	--surface-planner-panel: color-mix(in srgb, var(--surface-color) 90%, oklch(0.2777 0.0253 79.5) 10%);
 	--surface-publish-border: color-mix(in srgb, var(--border-color) 70%, oklch(0.5776 0.1399 51.88) 30%);
-	--surface-publish-highlight: oklch(0.8337 0.1256 67.19);
-	--surface-publish-highlight-strong: oklch(0.9393 0.0495 75.02);
+	--surface-publish-highlight: oklch(0.8337 0.2 67.19);
+	--surface-publish-highlight-strong: oklch(0.9393 0.1 75.02);
 	--surface-publish-panel: color-mix(in srgb, var(--surface-color) 84%, oklch(0.2643 0.0562 51.51) 16%);
 	--surface-ui-border: color-mix(in srgb, var(--border-color) 72%, oklch(0.5799 0.1445 345.43) 28%);
-	--surface-ui-highlight: oklch(0.8405 0.1126 343.82);
-	--surface-ui-highlight-strong: oklch(0.9392 0.0396 342.79);
+	--surface-ui-highlight: oklch(0.8405 0.15 343.82);
+	--surface-ui-highlight-strong: oklch(0.9392 0.1 342.79);
 	--surface-ui-panel: color-mix(in srgb, var(--surface-color) 86%, oklch(0.2446 0.059 348.44) 14%);
 	--surface-tool-border: color-mix(in srgb, var(--border-color) 72%, oklch(0.5306 0.1105 59.08) 28%);
-	--surface-tool-highlight: color-mix(in srgb, var(--accent) 82%, oklch(0.8481 0.1173 69.15) 18%);
-	--surface-tool-highlight-strong: color-mix(in srgb, white 84%, var(--accent) 16%);
+	--surface-tool-highlight: color-mix(in srgb, var(--accent) 90%, oklch(0.8481 0.1173 69.15) 18%);
+	--surface-tool-highlight-strong: color-mix(in srgb, white 84%, var(--accent) 30%);
 	--surface-tool-panel: color-mix(in srgb, var(--surface-color) 82%, oklch(0.2373 0.0454 53.59) 18%);
 }
 

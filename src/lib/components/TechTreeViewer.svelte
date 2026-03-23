@@ -8,6 +8,33 @@
 		effects: 5,
 		previewItems: 10,
 	};
+	const CVC_WIKI_FILE_REDIRECT_BASE = "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file";
+	const CIV_WIKI_FILE_REDIRECT_BASE = "https://civilization.fandom.com/wiki/Special:Redirect/file";
+	const EE_IMAGE_ALIASES = {
+		"Armour Plating": ["Armorplating"],
+		"Armor Plating": ["Armorplating"],
+		Architecture: ["Architecture ee"],
+		"Cloth Mill": ["Clothmill"],
+		"Crystal Palace": ["Crystalpalace"],
+		"Fasil Ghebbi": ["Fasilghebbi"],
+		"Field Gun": ["Fieldgun"],
+		"First Rate": ["Firstrate"],
+		Gallery: ["Museum"],
+		"Line Infantry": ["Lineinfantry"],
+		Menagerie: ["Zoo"],
+		"Natural History": ["Archaeology"],
+		Surveyor: ["Adventurer"],
+		"Ship of the Line": ["Shipoftheline"],
+		Skirmisher: ["Skirmisher ee"],
+		"Summer Palace": ["Summerpalace"],
+		"Smithsonian Institute": ["Smithsonianinstitute"],
+		"Smithsonian Institution": ["Smithsonianinstitute"],
+		"Topkapi Palace": ["Topkapipalace"],
+		Versailles: ["Versalles"],
+		"Wat Phra Kaew": ["Watphrakaew"],
+		"Weigh House": ["Weighhouse"],
+		"Torre Del Oro": ["Torredeloro"],
+	};
 	const schemaHref = (table, tab = "rows") => `/schema-browser?table=${encodeURIComponent(table)}&tab=${encodeURIComponent(tab)}`;
 	const luaHref = (entryId, dataset = "gameEvents") => `/lua-api-explorer?${new URLSearchParams({ dataset, entry: entryId }).toString()}`;
 	const searchableCategoryFields = ["label", "detail", "rawType"];
@@ -115,6 +142,83 @@
 
 	function clearEraFilter() {
 		selectedEras = [];
+	}
+
+	function wikiFileRedirectUrl(fileName, baseUrl = CIV_WIKI_FILE_REDIRECT_BASE) {
+		const normalized = String(fileName || "").trim();
+		return normalized ? `${baseUrl}/${encodeURIComponent(normalized)}` : "";
+	}
+
+	function condensedWikiName(value) {
+		return String(value || "")
+			.trim()
+			.replace(/[^A-Za-z0-9]+/g, "");
+	}
+
+	function wikiImageCandidates(baseUrl, ...parts) {
+		const seen = [];
+		const urls = [];
+		for (const part of parts) {
+			const normalized = String(part || "").trim();
+			if (!normalized) {
+				continue;
+			}
+			const compact = condensedWikiName(normalized);
+			for (const fileName of [
+				`${normalized} (Civ5).png`,
+				`${normalized}.png`,
+				`${normalized} (Civ5).jpg`,
+				`${normalized}.jpg`,
+				compact ? `${compact}.png` : "",
+				compact ? `${compact}.jpg` : "",
+			]) {
+				if (seen.includes(fileName)) {
+					continue;
+				}
+				seen.push(fileName);
+				urls.push(wikiFileRedirectUrl(fileName, baseUrl));
+			}
+		}
+		return urls;
+	}
+
+	function formatTypeForImage(rawType) {
+		return formatIdentifier(rawType, ["TECH_", "UNIT_", "BUILDING_", "PROJECT_", "PROCESS_", "BUILD_", "IMPROVEMENT_", "ROUTE_", "PROMOTION_", "RESOURCE_", "CIVILIZATION_", "DOMAIN_"]);
+	}
+
+	function techImageCandidates(tech, overlayOnly = false) {
+		const candidates = overlayOnly
+			? [
+					...wikiImageCandidates(CVC_WIKI_FILE_REDIRECT_BASE, tech?.title, ...(EE_IMAGE_ALIASES[tech?.title] || []), formatTypeForImage(tech?.type)),
+					...wikiImageCandidates(CIV_WIKI_FILE_REDIRECT_BASE, tech?.title, formatTypeForImage(tech?.type)),
+				]
+			: wikiImageCandidates(CIV_WIKI_FILE_REDIRECT_BASE, tech?.title, formatTypeForImage(tech?.type));
+		return candidates.filter(Boolean);
+	}
+
+	function previewImageCandidates({ title, rawType, overlayOnly = false }) {
+		if (rawType && String(rawType).startsWith("BUILD_")) {
+			return [];
+		}
+		const aliasParts = EE_IMAGE_ALIASES[String(title || "").trim()] || [];
+		const candidates = overlayOnly
+			? [
+					...wikiImageCandidates(CVC_WIKI_FILE_REDIRECT_BASE, title, ...aliasParts, formatTypeForImage(rawType)),
+					...wikiImageCandidates(CIV_WIKI_FILE_REDIRECT_BASE, title, formatTypeForImage(rawType)),
+				]
+			: wikiImageCandidates(CIV_WIKI_FILE_REDIRECT_BASE, title, formatTypeForImage(rawType));
+		return candidates.filter(Boolean);
+	}
+
+	function advanceImageFallback(event, candidates = []) {
+		const image = event.currentTarget;
+		const nextIndex = Number(image.dataset.fallbackIndex || "0") + 1;
+		if (nextIndex < candidates.length) {
+			image.dataset.fallbackIndex = String(nextIndex);
+			image.src = candidates[nextIndex];
+			return;
+		}
+		image.hidden = true;
 	}
 
 	function toggleEraFilter(eraType) {
@@ -229,11 +333,19 @@
 			const unlockGroups = buildUnlockGroups(row);
 			const supportGroups = buildSupportGroups(row);
 			const notableEffects = collectNotableEffects(row);
+			const overlayOnly = !hasBaseTypeRow("Technologies", row.Type);
 			return {
 				id: row.ID,
 				type: row.Type,
 				row,
 				title: resolveDisplayName(row, "Type"),
+				imageCandidates: techImageCandidates(
+					{
+						title: resolveDisplayName(row, "Type"),
+						type: row.Type,
+					},
+					overlayOnly,
+				),
 				description: resolveText(row.Description),
 				help: resolveText(row.Help),
 				quote: resolveText(row.Quote),
@@ -879,6 +991,7 @@
 		}
 
 		const displayName = resolveDisplayName(row, "Type");
+		const overlayOnly = row.Type ? !hasBaseTypeRow(tableName, row.Type) : false;
 		const stats = [];
 		let description = "";
 
@@ -983,6 +1096,11 @@
 			rawType: row.Type || "",
 			stats: stats.filter(Boolean),
 			description,
+			imageCandidates: previewImageCandidates({
+				title: displayName || formatIdentifier(row.Type || "Unknown"),
+				rawType: row.Type || "",
+				overlayOnly,
+			}),
 		};
 	}
 
@@ -1146,7 +1264,20 @@
 							<article class:near-top={tech.rowIndex <= 2} class="tech-card" id={tech.type} style={`grid-column:${tech.columnIndex}; grid-row:${tech.rowIndex};`}>
 								<header class="tech-head">
 									<div class="tech-title">
-										<h3>{tech.title}</h3>
+										<div class="tech-title-row">
+											{#if tech.imageCandidates.length}
+												<img
+													class="tech-media"
+													src={tech.imageCandidates[0]}
+													alt=""
+													loading="lazy"
+													decoding="async"
+													referrerpolicy="no-referrer"
+													onerror={(event) => advanceImageFallback(event, tech.imageCandidates)}
+												/>
+											{/if}
+											<h3>{tech.title}</h3>
+										</div>
 										<!-- <div class="tech-meta"><span>{numberFormatter.format(tech.cost)}</span><span>G {tech.gridX},{tech.gridY}</span></div> -->
 									</div>
 									{#if tech.schemaAvailable}
@@ -1183,18 +1314,43 @@
 										{#each tech.unlockPreview as group (group.id)}
 											<div class="dense-group">
 												<strong>{group.label} {group.items.length}</strong>
-												<span
-													>{#each group.previewItems as item, index (`${group.id}-${item.rawType}-${index}`)}
+												<div class="dense-item-list">
+													{#each group.previewItems as item, index (`${group.id}-${item.rawType}-${index}`)}
 														{#if item.schemaAvailable}
 															<a
 																href={schemaRowHref(item.schemaTableName, item.schemaType)}
 																target="_blank"
 																rel="noopener noreferrer"
 																class:has-preview={Boolean(item.preview)}
+																class="dense-item-row"
 															>
-																{item.label}
+																{#if item.preview?.imageCandidates?.length}
+																	<img
+																		class="dense-item-icon"
+																		src={item.preview.imageCandidates[0]}
+																		alt=""
+																		loading="lazy"
+																		decoding="async"
+																		referrerpolicy="no-referrer"
+																		onerror={(event) => advanceImageFallback(event, item.preview.imageCandidates)}
+																	/>
+																{/if}
+																<span class="dense-item-copy">
+																	<span class="dense-item-label">{item.label}</span>
+																</span>
 																{#if item.preview}
 																	<span class="dense-preview" role="tooltip">
+																		{#if item.preview.imageCandidates?.length}
+																			<img
+																				class="dense-preview-media"
+																				src={item.preview.imageCandidates[0]}
+																				alt=""
+																				loading="lazy"
+																				decoding="async"
+																				referrerpolicy="no-referrer"
+																				onerror={(event) => advanceImageFallback(event, item.preview.imageCandidates)}
+																			/>
+																		{/if}
 																		<strong>{item.preview.title}</strong>
 																		{#if item.preview.rawType}
 																			<code>{item.preview.rawType}</code>
@@ -1213,10 +1369,34 @@
 																{/if}
 															</a>
 														{:else}
-															<span class:has-preview={Boolean(item.preview)} class="dense-item">
-																{item.label}*
+															<span class:has-preview={Boolean(item.preview)} class="dense-item dense-item-row">
+																{#if item.preview?.imageCandidates?.length}
+																	<img
+																		class="dense-item-icon"
+																		src={item.preview.imageCandidates[0]}
+																		alt=""
+																		loading="lazy"
+																		decoding="async"
+																		referrerpolicy="no-referrer"
+																		onerror={(event) => advanceImageFallback(event, item.preview.imageCandidates)}
+																	/>
+																{/if}
+																<span class="dense-item-copy">
+																	<span class="dense-item-label">{item.label}*</span>
+																</span>
 																{#if item.preview}
 																	<span class="dense-preview" role="tooltip">
+																		{#if item.preview.imageCandidates?.length}
+																			<img
+																				class="dense-preview-media"
+																				src={item.preview.imageCandidates[0]}
+																				alt=""
+																				loading="lazy"
+																				decoding="async"
+																				referrerpolicy="no-referrer"
+																				onerror={(event) => advanceImageFallback(event, item.preview.imageCandidates)}
+																			/>
+																		{/if}
 																		<strong>{item.preview.title}</strong>
 																		{#if item.preview.rawType}
 																			<code>{item.preview.rawType}</code>
@@ -1235,9 +1415,11 @@
 																{/if}
 															</span>
 														{/if}
-														{index < group.previewItems.length - 1 ? ", " : ""}{/each}{#if group.remainingCount}
-														+{group.remainingCount}{/if}</span
-												>
+													{/each}
+												</div>
+												{#if group.remainingCount}
+													<span class="dense-group-more">+{group.remainingCount} more</span>
+												{/if}
 											</div>
 										{/each}
 									</div>
@@ -1248,7 +1430,7 @@
 										{#each tech.supportPreview as group (group.id)}
 											<div class="dense-group support">
 												<strong>{group.label} {group.items.length}</strong>
-												<span>
+												<div class="dense-item-list">
 													{#each group.previewItems as item, index (`${group.id}-${item.rawType}-${index}`)}
 														{#if item.schemaAvailable}
 															<a
@@ -1256,10 +1438,38 @@
 																target="_blank"
 																rel="noopener noreferrer"
 																class:has-preview={Boolean(item.preview)}
+																class="dense-item-row"
 															>
-																{item.label}
+																{#if item.preview?.imageCandidates?.length}
+																	<img
+																		class="dense-item-icon"
+																		src={item.preview.imageCandidates[0]}
+																		alt=""
+																		loading="lazy"
+																		decoding="async"
+																		referrerpolicy="no-referrer"
+																		onerror={(event) => advanceImageFallback(event, item.preview.imageCandidates)}
+																	/>
+																{/if}
+																<span class="dense-item-copy">
+																	<span class="dense-item-label">{item.label}</span>
+																	{#if item.detail}
+																		<span class="dense-item-detail">{item.detail}</span>
+																	{/if}
+																</span>
 																{#if item.preview}
 																	<span class="dense-preview" role="tooltip">
+																		{#if item.preview.imageCandidates?.length}
+																			<img
+																				class="dense-preview-media"
+																				src={item.preview.imageCandidates[0]}
+																				alt=""
+																				loading="lazy"
+																				decoding="async"
+																				referrerpolicy="no-referrer"
+																				onerror={(event) => advanceImageFallback(event, item.preview.imageCandidates)}
+																			/>
+																		{/if}
 																		<strong>{item.preview.title}</strong>
 																		{#if item.preview.rawType}
 																			<code>{item.preview.rawType}</code>
@@ -1278,10 +1488,37 @@
 																{/if}
 															</a>
 														{:else}
-															<span class:has-preview={Boolean(item.preview)} class="dense-item">
-																{item.label}
+															<span class:has-preview={Boolean(item.preview)} class="dense-item dense-item-row">
+																{#if item.preview?.imageCandidates?.length}
+																	<img
+																		class="dense-item-icon"
+																		src={item.preview.imageCandidates[0]}
+																		alt=""
+																		loading="lazy"
+																		decoding="async"
+																		referrerpolicy="no-referrer"
+																		onerror={(event) => advanceImageFallback(event, item.preview.imageCandidates)}
+																	/>
+																{/if}
+																<span class="dense-item-copy">
+																	<span class="dense-item-label">{item.label}</span>
+																	{#if item.detail}
+																		<span class="dense-item-detail">{item.detail}</span>
+																	{/if}
+																</span>
 																{#if item.preview}
 																	<span class="dense-preview" role="tooltip">
+																		{#if item.preview.imageCandidates?.length}
+																			<img
+																				class="dense-preview-media"
+																				src={item.preview.imageCandidates[0]}
+																				alt=""
+																				loading="lazy"
+																				decoding="async"
+																				referrerpolicy="no-referrer"
+																				onerror={(event) => advanceImageFallback(event, item.preview.imageCandidates)}
+																			/>
+																		{/if}
 																		<strong>{item.preview.title}</strong>
 																		{#if item.preview.rawType}
 																			<code>{item.preview.rawType}</code>
@@ -1300,14 +1537,11 @@
 																{/if}
 															</span>
 														{/if}
-														{#if item.detail}
-															{item.detail}
-														{/if}
-														{index < group.previewItems.length - 1 ? ", " : ""}{/each}
-													{#if group.remainingCount}
-														+{group.remainingCount}
-													{/if}
-												</span>
+													{/each}
+												</div>
+												{#if group.remainingCount}
+													<span class="dense-group-more">+{group.remainingCount} more</span>
+												{/if}
 											</div>
 										{/each}
 									</div>
@@ -1583,6 +1817,20 @@
 		min-inline-size: 0;
 	}
 
+	.tech-title-row {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		min-inline-size: 0;
+	}
+
+	.tech-media {
+		inline-size: 4rem;
+		block-size: 4rem;
+		flex: 0 0 auto;
+		object-fit: cover;
+	}
+
 	.tech-title h3 {
 		font-size: 1.25rem;
 		line-height: 1.05;
@@ -1623,8 +1871,8 @@
 	.dense-line strong,
 	.dense-group strong,
 	.detail-row strong {
-		font-size: 0.8rem;
-		letter-spacing: 0.08em;
+		font-size: 0.85rem;
+		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--ink);
 	}
@@ -1632,8 +1880,7 @@
 	.dense-line span,
 	.dense-group span,
 	.detail-row span {
-		font-size: 0.8rem;
-		line-height: 1.24;
+		font-size: 1rem;
 	}
 
 	.group-preview-grid {
@@ -1643,6 +1890,8 @@
 	}
 
 	.dense-group {
+		min-inline-size: 0;
+		block-size: fit-content;
 		display: flex;
 		flex-direction: column;
 		gap: 0.25rem;
@@ -1652,7 +1901,6 @@
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--surface-highlight, var(--surface-highlight)) 10%, transparent) 0%, transparent 34%),
 			linear-gradient(165deg, color-mix(in srgb, var(--surface-panel, var(--control-bg)) 88%, var(--control-bg)) 0%, color-mix(in srgb, var(--control-bg) 88%, #16110f 12%) 100%);
 		border: 1px solid color-mix(in srgb, var(--surface-highlight, var(--surface-border, var(--surface-highlight))) 44%, var(--surface-border, var(--home-muted-border)));
-		min-inline-size: 0;
 	}
 
 	.dense-group.support {
@@ -1662,11 +1910,47 @@
 	.dense-group a,
 	.dense-item {
 		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
 		color: var(--ink);
 		font-size: 1rem !important;
 		font-weight: 500;
 		text-decoration: none;
+		inline-size: 100%;
+		min-inline-size: 0;
+	}
+
+	.dense-item-list {
+		display: grid;
+		gap: 0.5rem;
+	}
+
+	.dense-item-copy {
+		display: grid;
+		gap: 0.1rem;
+		min-inline-size: 0;
+	}
+
+	.dense-item-label {
 		overflow-wrap: anywhere;
+	}
+
+	.dense-item-detail {
+		color: var(--muted-ink);
+		font-size: 1rem;
+	}
+
+	.dense-group-more {
+		color: var(--muted-ink);
+		font-size: 1.25rem;
+	}
+
+	.dense-item-icon {
+		inline-size: 2rem;
+		block-size: 2rem;
+		flex: 0 0 auto;
+		object-fit: cover;
 	}
 
 	.dense-group a:hover {
@@ -1717,6 +2001,12 @@
 		letter-spacing: 0;
 		text-transform: none;
 		line-height: 1.05;
+	}
+
+	.dense-preview-media {
+		inline-size: 8rem;
+		block-size: 8rem;
+		object-fit: cover;
 	}
 
 	.dense-preview code {
@@ -1827,6 +2117,10 @@
 		.tech-card {
 			grid-column: auto !important;
 			grid-row: auto !important;
+		}
+
+		.tech-title-row {
+			align-items: flex-start;
 		}
 
 		.group-preview-grid {
