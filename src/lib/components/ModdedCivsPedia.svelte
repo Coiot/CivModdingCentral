@@ -94,6 +94,7 @@
 	let deletedEntryIds = $state([]);
 	let folderInputEl = $state();
 	let jsonInputEl = $state();
+	let activeMusicPreviewKey = $state("");
 	let failedImageUrls = $state([]);
 	const cloudPediaConfigured = $derived(Boolean(authEnabled) && hasPediaCloudConfig());
 
@@ -1677,8 +1678,37 @@
 		return "";
 	}
 
+	function youtubeVideoId(value) {
+		const source = String(value || "").trim();
+		if (!source) {
+			return "";
+		}
+		try {
+			const url = new URL(source);
+			if (url.hostname.includes("youtu.be")) {
+				return url.pathname.replace(/^\/+/, "");
+			}
+			if (url.hostname.includes("youtube.com")) {
+				if (url.pathname.startsWith("/embed/")) {
+					return url.pathname.split("/").filter(Boolean).at(-1) || "";
+				}
+				return url.searchParams.get("v") || "";
+			}
+		} catch {}
+		return "";
+	}
+
 	function entryMusicEmbedUrl(entry, variant) {
 		return youtubeEmbedUrl(entry?.music?.[variant]?.url);
+	}
+
+	function entryMusicThumbnailUrl(entry, variant) {
+		const videoId = youtubeVideoId(entry?.music?.[variant]?.url);
+		return videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : "";
+	}
+
+	function musicPreviewKey(entry, variant) {
+		return `${entry?.id || "entry"}:${variant}`;
 	}
 
 	function infoboxRowTemplateRefs(entry, row) {
@@ -2850,7 +2880,7 @@
 								<div class="pedia-copy-grid">
 									<article class="pedia-copy-card">
 										<strong class="card-title">Peace Theme</strong>
-										{#if entryMusicEmbedUrl(selectedEntry, "peace")}
+										{#if entryMusicEmbedUrl(selectedEntry, "peace") && activeMusicPreviewKey === musicPreviewKey(selectedEntry, "peace")}
 											<div class="pedia-music-embed">
 												<iframe
 													src={entryMusicEmbedUrl(selectedEntry, "peace")}
@@ -2861,15 +2891,21 @@
 													allowfullscreen
 												></iframe>
 											</div>
+										{:else if entryMusicThumbnailUrl(selectedEntry, "peace")}
+											<button type="button" class="pedia-music-preview" onclick={() => (activeMusicPreviewKey = musicPreviewKey(selectedEntry, "peace"))}>
+												<img src={entryMusicThumbnailUrl(selectedEntry, "peace")} alt={`${selectedEntry.music.peace.title || selectedEntry.title} preview`} loading="lazy" />
+												<span class="pedia-music-preview-copy">
+													<strong>Play Preview</strong>
+													<span>Load peace theme video</span>
+												</span>
+											</button>
 										{/if}
 										<p class="card-copy">{selectedEntry.music.peace.title || "Unknown"}</p>
 										<p class="card-copy">{selectedEntry.music.peace.credit || "Credit pending"}</p>
 									</article>
 									<article class="pedia-copy-card">
 										<strong class="card-title">War Theme</strong>
-										<p class="card-copy">{selectedEntry.music.war.title || "Unknown"}</p>
-										<p class="card-copy">{selectedEntry.music.war.credit || "Credit pending"}</p>
-										{#if entryMusicEmbedUrl(selectedEntry, "war")}
+										{#if entryMusicEmbedUrl(selectedEntry, "war") && activeMusicPreviewKey === musicPreviewKey(selectedEntry, "war")}
 											<div class="pedia-music-embed">
 												<iframe
 													src={entryMusicEmbedUrl(selectedEntry, "war")}
@@ -2880,10 +2916,17 @@
 													allowfullscreen
 												></iframe>
 											</div>
+										{:else if entryMusicThumbnailUrl(selectedEntry, "war")}
+											<button type="button" class="pedia-music-preview" onclick={() => (activeMusicPreviewKey = musicPreviewKey(selectedEntry, "war"))}>
+												<img src={entryMusicThumbnailUrl(selectedEntry, "war")} alt={`${selectedEntry.music.war.title || selectedEntry.title} preview`} loading="lazy" />
+												<span class="pedia-music-preview-copy">
+													<strong>Play Preview</strong>
+													<span>Load war theme video</span>
+												</span>
+											</button>
 										{/if}
-										{#if selectedEntry.music.war.url}
-											<a class="pedia-button pedia-button-secondary fit-content" href={selectedEntry.music.war.url} target="_blank" rel="noreferrer">Watch Video</a>
-										{/if}
+										<p class="card-copy">{selectedEntry.music.war.title || "Unknown"}</p>
+										<p class="card-copy">{selectedEntry.music.war.credit || "Credit pending"}</p>
 									</article>
 								</div>
 							</section>
@@ -4621,6 +4664,47 @@
 		inline-size: 100%;
 		aspect-ratio: 16 / 9;
 		border: 0;
+	}
+
+	.pedia-music-preview {
+		position: relative;
+		display: grid;
+		padding: 0;
+		overflow: hidden;
+		border: 0;
+		border-radius: 0.9rem;
+		cursor: pointer;
+		background: color-mix(in srgb, var(--pedia-panel-soft) 90%, black 10%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 18%, var(--border-color));
+	}
+
+	.pedia-music-preview img {
+		display: block;
+		inline-size: 100%;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+		opacity: 0.82;
+	}
+
+	.pedia-music-preview-copy {
+		position: absolute;
+		inset: auto 0 0;
+		display: grid;
+		gap: 0.2rem;
+		padding: 0.9rem;
+		color: var(--ink);
+		text-align: left;
+		background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, black 78%, transparent) 38%, color-mix(in srgb, black 88%, transparent) 100%);
+	}
+
+	.pedia-music-preview-copy strong {
+		font-size: 0.8rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	.pedia-music-preview-copy span {
+		font-size: 0.88rem;
 	}
 
 	.pedia-figure-card {

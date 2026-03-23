@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "node scripts/build-seo-discovery-files.mjs && vite build",
+		"build": "node scripts/build-seo-discovery-files.mjs && vite build && node scripts/build-static-pedia-pages.mjs",
 		"preview": "vite preview",
 		"test": "node --test tests/**/*.test.js",
 		"build:seo-discovery": "node scripts/build-seo-discovery-files.mjs",
