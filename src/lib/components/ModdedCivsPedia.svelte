@@ -488,6 +488,21 @@
 		return `author-civs-${slugifyPediaValue(name)}`;
 	}
 
+	function handleRouteAnchorClick(event, href, options = {}) {
+		if (!navigate || !href) {
+			return;
+		}
+		if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+			return;
+		}
+		const target = event.currentTarget;
+		if (target instanceof HTMLAnchorElement && (target.target === "_blank" || target.hasAttribute("download"))) {
+			return;
+		}
+		event.preventDefault();
+		navigate(href, options);
+	}
+
 	function scrollToAuthorGroup(name) {
 		if (typeof document === "undefined") {
 			return;
@@ -1735,16 +1750,16 @@
 						<section class="pedia-catalog-collections stack half" aria-label="Browse collections">
 							<div class="pedia-collection-grid pedia-collection-grid-catalog">
 								{#each allCollections as collection (collection.id)}
-									<button
-										type="button"
+									<a
 										class="pedia-collection-card pedia-collection-card-catalog"
+										href={collectionPath(collection)}
 										style={collectionCardStyle(collection)}
-										onclick={() => navigate?.(collectionPath(collection))}
+										onclick={(event) => handleRouteAnchorClick(event, collectionPath(collection))}
 									>
 										<p class="eyebrow">Collection</p>
 										<strong class="card-title">{collection.title}</strong>
 										<!-- <p class="card-copy">{collection.entries.length} member{collection.entries.length === 1 ? "" : "s"}</p> -->
-									</button>
+									</a>
 								{/each}
 							</div>
 						</section>
@@ -1766,10 +1781,10 @@
 						<section class="pedia-catalog-categories stack half" aria-label="Browse categories">
 							<div class="pedia-category-cloud">
 								{#each allCategories as category (category.id)}
-									<button type="button" class="pedia-category-chip" onclick={() => navigate?.(categoryPath(category))}>
+									<a class="pedia-category-chip" href={categoryPath(category)} onclick={(event) => handleRouteAnchorClick(event, categoryPath(category))}>
 										<span>{category.title}</span>
 										<strong>{category.entries.length}</strong>
-									</button>
+									</a>
 								{/each}
 							</div>
 						</section>
@@ -1870,7 +1885,12 @@
 										{#each group.entries as entry (entry.id)}
 											{@const collections = entryCollections(entry)}
 											<div role="listitem">
-												<button type="button" class="pedia-catalog-row" style={catalogRowStyle(entry)} onclick={() => selectEntry(entry.id)}>
+												<a
+													class="pedia-catalog-row"
+													href={entryPath(entry)}
+													style={catalogRowStyle(entry)}
+													onclick={(event) => handleRouteAnchorClick(event, entryPath(entry))}
+												>
 													{#if collections.length}
 														<div class="pedia-catalog-row-meta">
 															<div class="pedia-catalog-collection-pills">
@@ -1977,7 +1997,7 @@
 															</article>
 														{/if} -->
 													</div>
-												</button>
+												</a>
 											</div>
 										{/each}
 									</div>
@@ -2233,7 +2253,7 @@
 					{#each selectedCollection.entries as entry (entry.id)}
 						{@const collections = visibleEntryCollections(entry, selectedCollection.id)}
 						<div role="listitem">
-							<button type="button" class="pedia-catalog-row" style={catalogRowStyle(entry)} onclick={() => selectEntry(entry.id)}>
+							<a class="pedia-catalog-row" href={entryPath(entry)} style={catalogRowStyle(entry)} onclick={(event) => handleRouteAnchorClick(event, entryPath(entry))}>
 								{#if collections.length}
 									<div class="pedia-catalog-row-meta">
 										<div class="pedia-catalog-collection-pills">
@@ -2334,7 +2354,7 @@
 										<PediaInlineText as="p" className="card-copy" text={entry.summary} templateRefs={entryTemplateRefs(entry)} />
 									</article> -->
 								</div>
-							</button>
+							</a>
 						</div>
 					{/each}
 				</div>
@@ -2361,7 +2381,7 @@
 					{#each selectedCategory.entries as entry (entry.id)}
 						{@const collections = entryCollections(entry)}
 						<div role="listitem">
-							<button type="button" class="pedia-catalog-row" style={catalogRowStyle(entry)} onclick={() => selectEntry(entry.id)}>
+							<a class="pedia-catalog-row" href={entryPath(entry)} style={catalogRowStyle(entry)} onclick={(event) => handleRouteAnchorClick(event, entryPath(entry))}>
 								{#if collections.length}
 									<div class="pedia-catalog-row-meta">
 										<div class="pedia-catalog-collection-pills">
@@ -2462,7 +2482,7 @@
 										<PediaInlineText as="p" className="card-copy" text={entry.summary} templateRefs={entryTemplateRefs(entry)} />
 									</article> -->
 								</div>
-							</button>
+							</a>
 						</div>
 					{/each}
 				</div>
@@ -2903,13 +2923,18 @@
 								{#if entryCollections(selectedEntry).length}
 									<div class="pedia-collection-grid">
 										{#each entryCollections(selectedEntry) as collection (`${selectedEntry.id}-${collection.id}`)}
-											<button type="button" class="pedia-collection-card" style={collectionCardStyle(collection)} onclick={() => navigate?.(collectionPath(collection))}>
+											<a
+												class="pedia-collection-card"
+												href={collectionPath(collection)}
+												style={collectionCardStyle(collection)}
+												onclick={(event) => handleRouteAnchorClick(event, collectionPath(collection))}
+											>
 												<div class="inline between">
 													<p class="eyebrow">Collection</p>
 													<!-- <p class="card-copy">{collectionEntryCount(collection)} member{collectionEntryCount(collection) === 1 ? "" : "s"}</p> -->
 												</div>
 												<strong class="card-title text-xl">{collection.title}</strong>
-											</button>
+											</a>
 										{/each}
 									</div>
 								{:else}
@@ -3071,9 +3096,9 @@
 								{#if entryCategories(selectedEntry).length}
 									<div class="pedia-category-cloud">
 										{#each entryCategories(selectedEntry) as category (`${selectedEntry.id}-${category.id}`)}
-											<button type="button" class="pedia-category-chip" onclick={() => navigate?.(categoryPath(category))}>
+											<a class="pedia-category-chip" href={categoryPath(category)} onclick={(event) => handleRouteAnchorClick(event, categoryPath(category))}>
 												<span>{category.title}</span>
-											</button>
+											</a>
 										{/each}
 									</div>
 								{:else}
@@ -3169,12 +3194,12 @@
 										<div class="pedia-author-works stack half" role="list">
 											{#each authorEntriesForName(authorName) as entry (`${authorName}-${entry.id}`)}
 												<div role="listitem">
-													<button
-														type="button"
+													<a
 														class="pedia-author-work"
 														class:is-current={entry.id === selectedEntry.id}
+														href={entryPath(entry)}
 														style={catalogRowStyle(entry)}
-														onclick={() => selectEntry(entry.id)}
+														onclick={(event) => handleRouteAnchorClick(event, entryPath(entry))}
 													>
 														<div class="pedia-author-work-icon">
 															{#if hasWorkingImage(entry.presentation?.iconImageUrl)}
@@ -3210,7 +3235,7 @@
 																{/if}
 															</div>
 														</div>
-													</button>
+													</a>
 												</div>
 											{/each}
 										</div>
@@ -3393,6 +3418,7 @@
 		inline-size: 100%;
 		block-size: 100%;
 		object-fit: contain;
+		filter: drop-shadow(2px 2px 4px rgb(0 0 0 / 0.5));
 	}
 
 	.pedia-wiki-header h2 {
@@ -3854,6 +3880,7 @@
 		color: var(--ink);
 		font: inherit;
 		text-align: left;
+		text-decoration: none;
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 75%, transparent) 0%, transparent 30%),
 			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 65%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--catalog-surface) 20%, #16110f) 100%);
@@ -4260,13 +4287,21 @@
 		padding: 0.7rem 1rem;
 	}
 
+	.pedia-button:hover,
+	.pedia-button:focus-visible {
+		background: color-mix(in srgb, var(--pedia-accent) 24%, var(--control-bg));
+		border-color: color-mix(in srgb, var(--pedia-accent) 58%, var(--border-color));
+		box-shadow: 0 2px 2px color-mix(in srgb, black 70%, transparent);
+		transform: translateY(-1px);
+	}
+
 	.pedia-button.pedia-button-secondary {
 		background: color-mix(in srgb, var(--pedia-panel) 94%, black 6%);
 	}
 
 	.pedia-button.pedia-button-danger {
-		background: color-mix(in srgb, oklch(0.56 0.16 24) 22%, var(--control-bg));
-		border-color: color-mix(in srgb, oklch(0.66 0.18 24) 40%, var(--border-color));
+		background: color-mix(in srgb, oklch(0.5 0.25 30) 20%, var(--control-bg));
+		border-color: color-mix(in srgb, oklch(0.8 0.2 30) 60%, var(--border-color));
 	}
 
 	.pedia-entry-toolbar {
@@ -4382,6 +4417,7 @@
 		color: var(--ink);
 		font: inherit;
 		text-align: left;
+		text-decoration: none;
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--collection-accent) 30%, transparent) 0%, transparent 42%),
 			linear-gradient(150deg, color-mix(in srgb, var(--collection-background) 88%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--collection-background) 28%, #16110f) 100%);
@@ -4431,6 +4467,7 @@
 		font-size: 0.84rem;
 		font-weight: 700;
 		letter-spacing: 0.04em;
+		text-decoration: none;
 		background: color-mix(in srgb, var(--pedia-panel-soft) 88%, var(--control-bg));
 		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 18%, var(--border-color));
 		border: 0;
@@ -4464,6 +4501,7 @@
 		color: var(--ink);
 		font: inherit;
 		text-align: left;
+		text-decoration: none;
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 40%, transparent) 0%, transparent 35%),
 			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 65%, var(--pedia-panel)) 0%, color-mix(in srgb, var(--catalog-surface) 20%, #121212) 100%);
@@ -4637,6 +4675,7 @@
 		block-size: 100%;
 		object-fit: contain;
 		border-radius: 1.5rem;
+		filter: drop-shadow(2px 2px 4px rgb(0 0 0 / 0.5));
 		overflow: clip;
 	}
 
