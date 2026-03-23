@@ -2521,8 +2521,10 @@
 			<div class="pedia-entry-toolbar">
 				<button type="button" class="pedia-button" onclick={showCatalog}>Back To Catalog</button>
 				<div class="pedia-link-row inline half flex-wrap">
-					<button type="button" class="pedia-button pedia-button-secondary" onclick={() => startEditingEntry(selectedEntry)}>Edit Entry</button>
-					<button type="button" class="pedia-button pedia-button-danger" onclick={deleteSelectedEntry}>Delete Entry</button>
+					{#if canEdit}
+						<button type="button" class="pedia-button pedia-button-secondary" onclick={() => startEditingEntry(selectedEntry)}>Edit Entry</button>
+						<button type="button" class="pedia-button pedia-button-danger" onclick={deleteSelectedEntry}>Delete Entry</button>
+					{/if}
 					{#each sourceLinks(selectedEntry) as link (link.href)}
 						<a class="pedia-button pedia-button-secondary" href={link.href} target="_blank" rel="noreferrer">{link.label}</a>
 					{/each}

@@ -1793,10 +1793,11 @@
 		--surface-highlight-strong: var(--surface-schema-highlight-strong);
 		--surface-panel: var(--surface-schema-panel);
 
+		block-size: fit-content;
 		min-inline-size: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 1rem;
 		border: 1px solid color-mix(in oklch, var(--surface-border) 80%, var(--panel-border));
 		border-radius: 0.85rem;
 		background:
@@ -2046,7 +2047,7 @@
 
 	.tech-details {
 		border-top: 1px dashed color-mix(in oklch, var(--panel-border) 86%, transparent);
-		padding-top: 0.35rem;
+		padding-top: 1rem;
 	}
 
 	.tech-details summary {
