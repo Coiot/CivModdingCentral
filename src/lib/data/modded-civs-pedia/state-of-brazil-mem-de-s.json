@@ -1,0 +1,283 @@
+{
+  "id": "civ-state-of-brazil-mem-de-s",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T01:09:31.645Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "state-of-brazil-mem-de-s",
+  "music": {
+    "war": {
+      "title": "Tercis 1. Difusa est Gratia",
+      "credit": "Emerico Lobo de Mesquita"
+    },
+    "peace": {
+      "title": "Missa para Quarta-feira de Cinzas",
+      "credit": "Emerico Lobo de Mesquita"
+    }
+  },
+  "title": "Brazil",
+  "issues": [],
+  "leader": "Mem de Sá",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Brazil_(Mem_de_S%C3%A1)",
+    "lastUpdated": "7 September 2022",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2859764923",
+    "modFolderName": "",
+    "wikiPageTitle": "State of Brazil"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Text"
+    },
+    {
+      "name": "Francesca",
+      "role": "Art, Design References"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art Updates (Civ Icon, UU Icon), Design Input"
+    },
+    {
+      "name": "Zharques",
+      "role": "Pedias, DOM Text"
+    },
+    {
+      "name": "Deliverator",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Emerico Lobo de Mesquita",
+      "role": "Music"
+    }
+  ],
+  "summary": "Brazil led by Mem de Sá is a custom civilization by TopHatPaladin, with contributions from Francesca, DarthKyofu, and Zharques. It was released as part of the Brazil 200th Anniversary event.",
+  "uniques": [
+    {
+      "art": "IconPNG_MemDeSa.png",
+      "body": "Gain a boost of {{Food Icon}} Food when improving a Luxury Resource, increasing for each type of Luxury Resource worked by the nearest city. {{Gold Icon}} Gold generation contributes to border expansion.",
+      "name": "The Sugar Age",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_MemDeSa.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TarcisioCM",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+          "label": "Food",
+          "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+          "template": "Food Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Gold_Icon",
+          "label": "Gold",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+          "template": "Gold Icon"
+        }
+      ]
+    },
+    {
+      "art": "IconPNG_Bandeirante.png",
+      "body": "If Enlightenment Era is active, replaces the Explorer.",
+      "name": "Bandeirante",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Bandeirante.png",
+      "bullets": [
+        "Ignores terrain cost",
+        "Once per level, may Conduct a Bandeira on an unowned Luxury Resource, claiming its tile and spawning a Worker"
+      ],
+      "replaces": "Standalone",
+      "artCredit": "Art by Vox Populi team",
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "Brazilwoodcamp.png",
+      "body": "",
+      "name": "Brazilwood Camp",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Brazilwoodcamp.png",
+      "bullets": [
+        "Unlocked at Machinery",
+        "Must be built on Jungle",
+        "+2 {{Gold Icon}} Gold",
+        "+2 {{Culture Icon}} Culture after researching Acoustics",
+        "Claims adjacent tiles when completed"
+      ],
+      "replaces": "",
+      "artCredit": "Art by Firaxis",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Gold_Icon",
+          "label": "Gold",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+          "template": "Gold Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+          "label": "Culture",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+          "template": "Culture Icon"
+        }
+      ]
+    }
+  ],
+  "identity": {
+    "bias": "Jungle",
+    "capital": "São Salvador da Bahia de Todos os Santos",
+    "culture": "Colonial (Latin)",
+    "religion": [
+      "Catholicism"
+    ],
+    "adjectives": "Brazilian",
+    "empireName": "Brazilian Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Mem_de_Sá",
+      "body": "Mem de Sá was the third governor general of Brazil. Under his administration, the French were expelled from Guanabara, the city of São Sebastião do Rio de Janeiro was founded and the first missions were formed with the aim of catechizing the indigenous peoples.",
+      "title": "Mem de Sá"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Colonial_Brazil",
+      "body": "Paulo Coelho, Brazil's greatest novelist, wrote of the history of his people, \"They were seeking out the treasure of their destiny, without actually wanting to live out their destiny.\" Among former colonies, Brazil is unique in the Americas because, beyond gaining its independence through a relatively peaceful path, it did not fragment into separate countries as did British and Spanish possessions. Brazil was a Portuguese colony from the time of the arrival of Pedro Cabral, who claimed it for his sovereign in 1500 AD, until the royal family in exile from their occupied homeland elevated it to the status of kingdom in 1815. Full independence was achieved in 1822 when the Empire of Brazil was created with a constitutional monarchy and parliamentary government. With the overthrow of Pedro II, the second and last emperor, in 1889 AD it became a republic. Although the republic would suffer through dictatorships and military juntas over the next century, true democracy returned in the 1980s when the first elected civilian government assumed power after a negotiated transition. Under a succession of able leaders, Brazil achieved political and economic stability, became a vital and influential member of the international community, and has at last achieved \"the treasure of [its] destiny.\"",
+      "title": "Brazil"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Have I been relieved of my governorship so soon? Truly an unfortunate turn for my career...\"",
+    "blessing": "\"A new adventure awaits, Mem de Sá, governor general of Brazil. It was under your watch that Brazil’s fledgling colonial status was cemented, as you encouraged the sugar and agricultural industries in the new colony. To build a colony into a civilization is no easy task, but it was you who allowed the first steps to be taken. It was you who expelled the French from their colony of France Antarcique in the surrounding area, making the territory your own. With your nephew you founded Rio de Janeiro, a city which would eventually become famous around the globe.\nGlorious governor general, the time has come once again to lay the foundations of a civilization. But this time you must watch it grow, shaping it at all stages rather than just at the start as you once did. This challenge will not be easy and will require all the intelligence and skill of a capable commander and administrator such as yourself. Can you grow your civilization from its small routes to a truly celebrated power in its own right? Will you build a civilization that can stand the test of time?\"",
+    "introduction": "\"Welcome to Brazil! The lush lands you see before you will soon be an endless tapestry of plantations, bringing splendid wealth to the Crown.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "São Salvador da Bahia de Todos os Santos",
+        "São Sebastião do Rio de Janeiro",
+        "Vila Rica",
+        "Olinda",
+        "Recife",
+        "São João del-Rey",
+        "Cidade Mariana",
+        "Vila de Nossa Senhora dos Remédios de Paraty",
+        "Porto Seguro",
+        "São Luiz",
+        "Fortaleza de Nossa Senhora da Assunção",
+        "Arraial do Tejuco",
+        "Congonhas do Campo",
+        "São Vicente",
+        "Maceió",
+        "Santa Maria de Belem do Grão Pará",
+        "Fortaleza de São José da Barra do Rio Negro",
+        "Nossa Senhora da Conceição das Campinas de Mato Grosso",
+        "São Paulo de Piratininga",
+        "Sagrado Coração de Jesus das Laranjeiras",
+        "Nossa Senhora da Ponte de Sorocaba",
+        "São Cristóvão",
+        "Vila Real do Senhor Bom Jesus de Cuiabá",
+        "Nossa Senhora do Desterro",
+        "Todos os Santos",
+        "São Miguel das Missões",
+        "Penedo do Rio São Francisco",
+        "Mucugê do Paraguaçu",
+        "São José de Ribamar do Aquiraz",
+        "São João Batista de Cananéia",
+        "Nossa Senhora do Rosário de Paranaguá",
+        "Oeiras",
+        "Vila Boa de Goyaz",
+        "Colônia do Santíssimo Sacramento"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Sebastian",
+        "Estácio",
+        "Pedro",
+        "Manuel",
+        "Tomé",
+        "José",
+        "Duarte",
+        "Catarina",
+        "Joana",
+        "Ana"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Colonial Cultures",
+    "Civilizations with Male leaders",
+    "Brazil",
+    "Brazil 200th Anniversary"
+  ],
+  "modSupport": {},
+  "collections": [
+    {
+      "id": "brazil-200th-anniversary",
+      "blurb": "",
+      "links": [],
+      "title": "Brazil 200th Anniversary",
+      "colors": {
+        "accent": "#f9c74f",
+        "background": "#1b5e20"
+      },
+      "aliases": [],
+      "members": [],
+      "imageURL": "",
+      "sourceTemplate": ""
+    }
+  ],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#2a542d",
+      "background": "#96de0a"
+    },
+    "mapImage": "MapPNG_MemBrazil.png",
+    "iconImage": "Brazil_(Mem_de_Sá).png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_MemBrazil.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Brazil_(Mem_de_S%C3%A1).png",
+    "mapImageCaption": "Map by Francesca",
+    "leaderSceneImage": "LS_PNG_MemDeSa.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_MemDeSa.png",
+    "leaderSceneArtCredit": "Art by Francesca"
+  },
+  "templateRefs": [
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+      "label": "Food",
+      "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+      "template": "Food Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Gold_Icon",
+      "label": "Gold",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+      "template": "Gold Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+      "label": "Culture",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+      "template": "Culture Icon"
+    }
+  ]
+}

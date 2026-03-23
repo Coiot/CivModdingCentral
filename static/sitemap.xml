@@ -67,8 +67,20 @@
     <priority>0.68</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/author/emeraldrange</loc>
+    <lastmod>2022-07-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.68</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/author/explosivewatermelon</loc>
     <lastmod>2023-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.68</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/author/lasqueto</loc>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.68</priority>
   </url>
@@ -92,7 +104,7 @@
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/author/tophatpaladin</loc>
-    <lastmod>2019-09-26</lastmod>
+    <lastmod>2026-03-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.68</priority>
   </url>
@@ -103,14 +115,62 @@
     <priority>0.68</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/aztec-triple-alliance-tlacaelel</loc>
+    <lastmod>2021-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/10th-anniversary-civs</loc>
+    <lastmod>2022-02-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/30th-anniversary-civs</loc>
+    <lastmod>2021-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/andean-cultures</loc>
     <lastmod>2025-12-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/arilasqueto</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/australia</loc>
     <lastmod>2019-09-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/aztecs</loc>
+    <lastmod>2021-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/bolivia</loc>
+    <lastmod>2020-12-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/brazil</loc>
+    <lastmod>2022-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/canada</loc>
+    <lastmod>2026-03-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -128,7 +188,7 @@
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/civilizations-with-female-leaders</loc>
-    <lastmod>2026-03-01</lastmod>
+    <lastmod>2026-03-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -157,8 +217,20 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/colonial-cultures</loc>
+    <lastmod>2022-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/east-indies-cultures</loc>
-    <lastmod>2020-07-31</lastmod>
+    <lastmod>2024-10-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/egypt</loc>
+    <lastmod>2022-02-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -169,8 +241,26 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/france</loc>
+    <lastmod>2021-04-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/gods-and-kings</loc>
     <lastmod>2026-03-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/great-people-civilizations</loc>
+    <lastmod>2020-05-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/guam</loc>
+    <lastmod>2019-10-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -181,14 +271,44 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/horrible-histories</loc>
+    <lastmod>2019-07-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/islamic-cultures</loc>
+    <lastmod>2019-01-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/malaysia</loc>
     <lastmod>2020-07-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/mandala-cultures</loc>
+    <lastmod>2020-05-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/mesoamerican-cultures</loc>
     <lastmod>2025-11-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/mesopotamic-cultures</loc>
+    <lastmod>2022-02-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/mexico</loc>
+    <lastmod>2021-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -211,8 +331,26 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/oceanic-cultures</loc>
+    <lastmod>2019-10-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/plains-cultures</loc>
     <lastmod>2025-05-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/polar-cultures</loc>
+    <lastmod>2019-01-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/russia</loc>
+    <lastmod>2022-07-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -223,8 +361,20 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/siam</loc>
+    <lastmod>2020-05-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/steppe-cultures</loc>
     <lastmod>2023-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/thailand</loc>
+    <lastmod>2020-05-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -248,9 +398,27 @@
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/woodlands-cultures</loc>
-    <lastmod>2026-03-01</lastmod>
+    <lastmod>2026-03-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/zimbabwe</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/collection/30th-anniversary-collection</loc>
+    <lastmod>2021-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.76</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/collection/brazil-200th-anniversary</loc>
+    <lastmod>2022-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.76</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/collection/cbr-mk2-10th-anniversary-collection</loc>
@@ -260,7 +428,7 @@
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/collection/crossroads-of-the-world</loc>
-    <lastmod>2022-06-27</lastmod>
+    <lastmod>2022-07-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.76</priority>
   </url>
@@ -283,6 +451,12 @@
     <priority>0.76</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/collection/monsoon-season</loc>
+    <lastmod>2020-05-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.76</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/collection/vanilla-civilizations</loc>
     <lastmod>2026-03-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -295,8 +469,50 @@
     <priority>0.72</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/egypt-senusret-iii</loc>
+    <lastmod>2022-02-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/fatimid-caliphate-al-mahdi-billah</loc>
+    <lastmod>2019-01-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/fatimid-caliphate-al-mu-izz</loc>
+    <lastmod>2019-01-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/kalmyk-khanate-ayuka-khan</loc>
+    <lastmod>2022-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/kingdom-of-ayutthaya-narai</loc>
+    <lastmod>2020-05-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/kingdom-of-france-louis-xi</loc>
+    <lastmod>2019-07-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/malacca-sultanate-mansur-shah</loc>
     <lastmod>2020-07-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/merovingian-franks-clovis-i</loc>
+    <lastmod>2021-04-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.72</priority>
   </url>
@@ -313,6 +529,12 @@
     <priority>0.72</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/republic-of-bolivia-victor-paz-estenssoro</loc>
+    <lastmod>2020-12-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/republic-of-the-seven-united-netherlands-maurice</loc>
     <lastmod>2025-05-01</lastmod>
     <changefreq>monthly</changefreq>
@@ -325,14 +547,50 @@
     <priority>0.72</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/state-of-brazil-mem-de-s</loc>
+    <lastmod>2022-09-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/sultanate-of-brunei-bolkiah</loc>
+    <lastmod>2024-10-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/tairona-guacanaoma</loc>
     <lastmod>2025-12-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.72</priority>
   </url>
   <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/the-aleut-agugux</loc>
+    <lastmod>2019-01-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/the-anangu-tjilpi</loc>
     <lastmod>2019-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/the-chamorro-mat-pang</loc>
+    <lastmod>2019-10-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/the-cheyenne-woqini</loc>
+    <lastmod>2020-02-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/the-chipewyan-thanadelthur</loc>
+    <lastmod>2026-03-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.72</priority>
   </url>
@@ -369,6 +627,12 @@
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/the-ponca-white-eagle</loc>
     <lastmod>2024-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.72</priority>
+  </url>
+  <url>
+    <loc>https://civmoddingcentral.dev/modded-civs-pedia/the-rozvi-changamire-dombo</loc>
+    <lastmod>2025-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.72</priority>
   </url>

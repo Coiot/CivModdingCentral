@@ -1,0 +1,218 @@
+{
+  "id": "civ-kingdom-of-france-louis-xi",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T04:08:22.709Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "kingdom-of-france-louis-xi",
+  "music": {
+    "war": {
+      "title": "Missa pro defunctis",
+      "credit": "Antoine Brumel"
+    },
+    "peace": {
+      "title": "Missa L'homme armé super voces musicales",
+      "credit": "Josquin des Prez"
+    }
+  },
+  "title": "France",
+  "issues": [],
+  "leader": "Louis XI",
+  "source": {
+    "type": "wiki",
+    "version": "v 2",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/France_(Louis_XI)",
+    "lastUpdated": "15 July 2019",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1627857795",
+    "modFolderName": "",
+    "wikiPageTitle": "Kingdom of France"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "JFD, whoward69",
+      "role": "Utilities"
+    },
+    {
+      "name": "Joaquin des Prez",
+      "role": "Peace Theme (composer)"
+    },
+    {
+      "name": "Peter Phillips",
+      "role": "Peace Theme (performer)"
+    },
+    {
+      "name": "Antoine Brumel",
+      "role": "War Theme (composer)"
+    },
+    {
+      "name": "Dario Tabbia",
+      "role": "War Theme (performer)"
+    }
+  ],
+  "summary": "France led by Louis XI is a custom civilization by TopHatPaladin.",
+  "uniques": [
+    {
+      "art": "IconPNG_LouisXI.png",
+      "body": "When spying on a City, gain {{Production Icon}} Production in your Capital whenever that city trains a unit; if you own said City, the unit also begins with +15 XP. Gain a Spy in the Medieval Era.",
+      "name": "The Universal Spider",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_LouisXI.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Ecorcheur.png",
+      "body": "",
+      "name": "Écorcheur",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Ecorcheur.png",
+      "bullets": [
+        "+20% Combat Strength when within 3 tiles of a friendly Spy",
+        "Yields a burst of {{Gold Icon}} Gold when capturing a city you're spying on"
+      ],
+      "replaces": "Pikeman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_TennisCourt.png",
+      "body": "If Enlightenment Era is active, replaces the Tavern.",
+      "name": "Tennis Court",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_TennisCourt.png",
+      "bullets": [
+        "Gives newly trained units 3 XP for each civilian trained in its city (max. 5, for 15 XP)"
+      ],
+      "replaces": "Zoo",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Paris",
+    "culture": "Western",
+    "religion": [
+      "Catholicism"
+    ],
+    "adjectives": "France",
+    "empireName": "Kingdom of France",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Louis XI – known as \"the Prudent,\" \"the Cunning,\" and \"the Universal Spider\" – was born in the summer of 1423. During his youth, France suffered several losses in the Hundred Years War, leading Louis to scorn his father as a weak ruler. This contempt would lead Louis to join the Praguerie, a rebellion that took place against Charles VII in 1440. Although the rebellion failed, Louis was forgiven; he continued to scheme against people in the royal court, though, and Charles eventually opted to send Louis away from Paris in 1446. Louis was placed in charge of the Dauphiné, a province in the southeast of France; he continued to disobey his father, though, refusing to answer summons and marrying Charlotte of Savoy without royal consent.",
+      "title": "Louis XI"
+    },
+    "civilization": {
+      "url": "",
+      "body": "The Valois dynasty, to which Louis XI was born, first took power in France in 1328. After Charles IV died without a male heir, the French crown devolved upon his cousin, Philip of Valois. This proved to be a contentious succession: Charles' nephew was King Edward III of England, who was a closer relative, but because Edward inherited his claim from Charles' sister, Salic law deemed him ineligible. This dispute between Philip and Edward led to the initial eruption of the Hundred Years War in 1337.",
+      "title": "The Valois Era"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"It seems my enemies are more competent than I realized. Well, if I ruled well, then I am content.\"",
+    "blessing": "\"Hail, Louis XI, the Cunning, the Universal Spider! A master of intrigues, you began scheming against your rivals from a young age, leading the Praguerie rebellion against your father when you were only sixteen. Your diplomatic skills also allowed you to juggle various foreign affairs, meddling in Italy and negotiating with the English during the Wars of the Roses. When diplomacy failed, you could also take to the battlefield, as you did against the upstart Burgundians. Shrewdest of all, however, was your internal administration; you kept the power of the nobles tightly constrained, with frequent visits and a strict financial policy, allowing power to consolidate upon you personally.\nLouis, you may not have been loved during your lifetime, but your people have come to miss the prudent and steady hand with which you led France. Can you forge a state that fears no threat, from either outside or within? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"You stand in the chambers of Louis of Valois. If you have any information worth sharing, I would be happy to take it off your hands.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Paris",
+        "Reims",
+        "Tours",
+        "Grenoble",
+        "Lyon",
+        "Bourges",
+        "Orleans",
+        "Amiens",
+        "Blois",
+        "Picquigny",
+        "Péronne",
+        "Rouen",
+        "Vienne",
+        "Valence",
+        "Amboise",
+        "Angers",
+        "Gap",
+        "Loches",
+        "Foix",
+        "Bordeaux",
+        "Aix-en-Provence",
+        "Le Mans",
+        "Langeais",
+        "Marseille",
+        "Montélimar",
+        "Romans-sur-Isère",
+        "Toulouse",
+        "Clermont",
+        "Lille",
+        "La Riche"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Marguerite",
+        "Charlotte",
+        "Anne",
+        "Jeanne Hachette",
+        "Marie",
+        "Charles",
+        "Francois",
+        "Jacques",
+        "Philippe",
+        "René"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Western Cultures",
+    "Civilizations with Male leaders",
+    "France",
+    "Horrible Histories"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#cbc25a",
+      "background": "#20315c"
+    },
+    "mapImage": "MapBigPNG_LouisXI.png",
+    "iconImage": "IconPNG_THPFrance.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapBigPNG_LouisXI.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_THPFrance.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_LouisXI.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_LouisXI.png",
+    "leaderSceneArtCredit": "Leaderscreen by TopHatPaladin"
+  },
+  "templateRefs": []
+}

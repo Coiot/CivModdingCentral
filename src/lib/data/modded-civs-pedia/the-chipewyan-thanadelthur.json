@@ -1,0 +1,266 @@
+{
+  "id": "civ-the-chipewyan-thanadelthur",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T01:22:00.071Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "the-chipewyan-thanadelthur",
+  "music": {
+    "war": {
+      "title": "Spirit of Yamogha",
+      "credit": "Stephen Kakfwi"
+    },
+    "peace": {
+      "title": "A Stick Gambling Song",
+      "credit": "Stephen Kakfwi"
+    }
+  },
+  "title": "The Chipewyan",
+  "issues": [],
+  "leader": "Thanadelthur",
+  "source": {
+    "type": "wiki",
+    "version": "v 2",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Chipewyan_(Thanadelthur)",
+    "lastUpdated": "7 March 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3407780198",
+    "modFolderName": "",
+    "wikiPageTitle": "The Chipewyan"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Lasqueto",
+      "role": "Artwork (Civilization Icon)"
+    },
+    {
+      "name": "Unknown",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Stephen Kakfwi",
+      "role": "Music"
+    }
+  ],
+  "summary": "The Chipewyan led by Thanadelthur are a custom civilization by TopHatPaladin, with contributions from Lasqueto.",
+  "uniques": [
+    {
+      "art": "IconPNG_Thanadelthur.png",
+      "body": "When beginning a {{Trade Route Icon}} Trade Route to a {{City-State Icon}} City-State, gain a burst of 5 {{Influence Icon}} Influence per Strategic Resource for which you have available copies. Strategic Resources provide the same {{Happiness Icon}} Happiness bonus as Luxury Resources.",
+      "name": "Middlemen of the Canadian Shield",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Thanadelthur.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Trade_Route_Icon",
+          "label": "Trade Routes",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+          "template": "Trade Route Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:City_State_Icon",
+          "label": "City-State",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citystate.png",
+          "template": "City State Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Influence_Icon",
+          "label": "Influence",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Influence.png",
+          "template": "Influence Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Happiness_Icon",
+          "label": "Happiness",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Happiness.png",
+          "template": "Happiness Icon"
+        }
+      ]
+    },
+    {
+      "art": "IconPNG_InkonzeHelin.png",
+      "body": "",
+      "name": "Inkonze Helin",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_InkonzeHelin.png",
+      "bullets": [
+        "When expended, creates a source of a random Strategic Resource on an adjacent resourceless tile, if possible"
+      ],
+      "replaces": "Great Merchant",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_FurTrail.png",
+      "body": "",
+      "name": "Fur Trail",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_FurTrail.png",
+      "bullets": [
+        "+25% bonus to yields gained by trading with civs whose capital is on a different landmass than yours"
+      ],
+      "replaces": "Caravansary",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Gáni Koé",
+    "culture": "Woodlands",
+    "religion": [
+      "Protestantism",
+      "Sgaanaang (HR)"
+    ],
+    "adjectives": "Chipewyan",
+    "empireName": "Chipewyan Empire",
+    "government": "Tribal Confederacy\nRepublic",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": "First Americans"
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Thanadelthur",
+      "body": "Thanadelthur was a Dene negotiator and interpreter, traditionally (but not universally) believed to be Chipewyan. The circumstances of her birth are not definitively known, but it is believed she was born in present-day northern Manitoba around 1697. Her lifetime was a period of conflict between the Chipewyan and Cree; at this time, the Cree had access to firearms but the Chipewyan did not, placing the Chipewyan in a disadvantaged position.",
+      "title": "Thanadelthur"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Chipewyan",
+      "body": "Before European contact, the Chipewyan traditionally lived a nomadic lifestyle, pursuing migratory herds of caribou for food, fur, and other goods. Hunting groups, consisting of small numbers of families, would occasionally unite into larger regional bands as conditions demanded, but for the most part the pre-contact Chipewyan were very decentralized.",
+      "title": "The Chipewyan"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"I have many friends, and they will not forget the wrongs you have done me today.\"",
+    "blessing": "\"Greetings, Thanadelthur, savvy negotiator of the Canadian north! Your short life was a pivotal one for shaping the future of your homeland. When you were born, the Chipewyan suffered under numerous Cree raids, as you had few means to deal with the Cree's access to European muskets. However, after escaping Cree captivity as a teenager, you managed to flee to the lands of the Hudson's Bay Company and begin a fruitful collaboration with Company governor James Knight. With Knight's backing, you successfully brokered a peace between the Chipewyan and the Cree, and fostered direct trade between the Europeans and the Chipewyan, providing your people with access to riches and guns. Because of this achievement, the records of the Hudson's Bay Company approvingly describe you as the \"Ambassadress of Peace.\" A fever ultimately took your life when you were just twenty years old, but your few years of diplomacy managed to dramatically improve the circumstances of the Chipewyan.\nThanadelthur, while your life was cut short before you could fully flourish, you have obtained another opportunity to lead your people. Can you ensure that the Chipewyan outmaneuver and surpass all of those who would see them destroyed? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"You are new in this region, are you not? My name is Thanadelthur. If your business here requires a translator, I am happy to collaborate.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Gáni Koé",
+        "Tazen Tué",
+        "Thebacha",
+        "Tthel Tué",
+        "Bëghánich'ërë",
+        "K'aitël Koé",
+        "La Loche",
+        "Titëlase Tué",
+        "Denı́nu Kué",
+        "Lutsël K'e",
+        "'Ëjëre Dësché",
+        "Dahlu T'ua",
+        "Janvier",
+        "Deschaghe",
+        "Turnor Lake",
+        "Tthidli Kué",
+        "T'es He Úli Tué",
+        "Cold Lake",
+        "La Plonge",
+        "Wapachewunak",
+        "St. George's Hill",
+        "Gregoire Lake",
+        "Michel Village",
+        "Uranium City",
+        "Tthebacha Náre",
+        "Tthebatthie",
+        "Sakitawak",
+        "York Factory"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Matonabbee",
+        "Keskarrah",
+        "Idotliazee",
+        "Chawchinahaw",
+        "Conneequese",
+        "Chevez",
+        "Eugène-Alphonse",
+        "Matooskie",
+        "Melaw",
+        "Eriel"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Woodlands Cultures",
+    "Civilizations with Female leaders",
+    "Canada"
+  ],
+  "modSupport": {
+    "aa": true,
+    "uci": true,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "ynaemp": false,
+    "maplabels": true,
+    "civivtraits": true,
+    "ethnicunits": true,
+    "histreligions": true,
+    "enlightenmentera": false
+  },
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#05b71e",
+      "background": "#001e40"
+    },
+    "mapImage": "MapPNG_Chipewyan.png",
+    "iconImage": "IconPNG_Chipewyan.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Chipewyan.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Chipewyan.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Thanadelthur.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Thanadelthur.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": [
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Trade_Route_Icon",
+      "label": "Trade Routes",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+      "template": "Trade Route Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:City_State_Icon",
+      "label": "City-State",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citystate.png",
+      "template": "City State Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Influence_Icon",
+      "label": "Influence",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Influence.png",
+      "template": "Influence Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Happiness_Icon",
+      "label": "Happiness",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Happiness.png",
+      "template": "Happiness Icon"
+    }
+  ]
+}

@@ -1,0 +1,238 @@
+{
+  "id": "civ-the-aleut-agugux",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T00:48:25.783Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": [
+      "THPNav"
+    ]
+  },
+  "slug": "the-aleut-agugux",
+  "music": {
+    "war": {
+      "title": "Re-Kindle the Fire",
+      "credit": "Mary Youngblood"
+    },
+    "peace": {
+      "title": "Aleut Wind",
+      "credit": "Mary Youngblood"
+    }
+  },
+  "title": "The Aleut",
+  "issues": [
+    "Unresolved templates: THPNav"
+  ],
+  "leader": "Agugux",
+  "source": {
+    "type": "wiki",
+    "version": "",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Aleut_(Agugux)",
+    "lastUpdated": "26 January 2019",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1479258144",
+    "modFolderName": "",
+    "wikiPageTitle": "The Aleut"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Deliverator",
+      "role": "UU Model"
+    },
+    {
+      "name": "Mary Youngblood",
+      "role": "Music"
+    },
+    {
+      "name": "All the lads",
+      "role": "Feedback and support"
+    }
+  ],
+  "summary": "The Aleut led by Agugux is a custom civilization by TopHatPaladin, with contributions from Deliverator.",
+  "uniques": [
+    {
+      "art": "IconPNG_Agugux.png",
+      "body": "When settling a city, instantly claim and improve neutral, workable Sea Resources. Embarked units yield {{Food Icon}} Food when beginning their turns on Sea Resources.",
+      "name": "Protection of the Tcimkix",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Agugux.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+          "label": "Food",
+          "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+          "template": "Food Icon"
+        }
+      ]
+    },
+    {
+      "art": "IconPNG_Iqyax.png",
+      "body": "",
+      "name": "Iqyax",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Iqyax.png",
+      "bullets": [
+        "Can travel through Ocean and Ice",
+        "Heals stacked units"
+      ],
+      "replaces": "Trireme",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Barabara.png",
+      "body": "",
+      "name": "Barabara",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Barabara.png",
+      "bullets": [
+        "+1 {{Food Icon}} Food for each Camp worked by the city",
+        "+1 {{Production Icon}} Production for each sea tile adjacent to the city"
+      ],
+      "replaces": "Granary",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+          "label": "Food",
+          "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+          "template": "Food Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+          "label": "Production",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+          "template": "Production Icon"
+        }
+      ]
+    }
+  ],
+  "identity": {
+    "bias": "Coastal",
+    "capital": "Anangula",
+    "culture": "Polar",
+    "religion": [
+      "Orthodoxy",
+      "Angakkunngurniq (HR)"
+    ],
+    "adjectives": "Aleut",
+    "empireName": "Aleutian Empire",
+    "government": "Republic",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "The names of historical Aleut leaders have been lost to history; Agugux is the name of the Aleuts' principal god. Agugux is the creator god in Aleut folklore. He is associated with the sun, and with the east, as the place from which the sun rises. Generally, Agugux is depicted as an incorporeal spirit rather than being anthropomorphized.",
+      "title": "Agugux"
+    },
+    "civilization": {
+      "url": "",
+      "body": "The Aleut are a population that lives in the Aleutian Islands and the Alaska Peninsula in southwestern Alaska. They are first archaeologically attested around 6400 BC, when the Anangula site - on Anangula Island, just off of Umnak Island - began to be inhabited. Anangula is believed to have been along the southern fringe of the Bering land bridge.",
+      "title": "The Aleut"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"...It seems my days as a ruler are over. I'm going out to sea now, and hopefully we never have to see each other again.\"",
+    "blessing": "\"Greetings, Agugux, progenitor of the Aleut! For thousands of years, your people have lived on the Aleutian islands in the Bering Sea, boldly forging an existence in some of the harshest lands on Earth. Not only did your people survive in these lands, they thrived, becoming master hunters on the seas: Aleut kayaks, nets, and harpoons are the envy of your neighbors. Trouble would not befall the Aleut until the arrival of the Russians in the eighteenth century; they desired the furs that your people hunted, and despite the Aleuts' best efforts, they could not protect themselves from subjugation. Today, the Aleut live under the governance of the United States, although little more than 10,000 remain.\nO Agugux, your people call to you to restore the Aleut to their height. Can you resist the incursions of those who seek to exploit your skills? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Welcome to the land of the Aleut. I'm impressed that you managed to make it out here.\nIntroduction: Greetings. I am the champion of this village, and I have come to speak on behalf of the Aleut people. What brings you out here?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Anangula",
+        "Adamagan",
+        "Chaluka",
+        "Ounalashka",
+        "Sanak",
+        "Amaknak",
+        "Idaliuk",
+        "Adgaagux",
+        "Qagun Tayagungin",
+        "Nikolskoye",
+        "Attu",
+        "Adaax",
+        "Udaamagax",
+        "Sanpuulax",
+        "Angaaxchalux",
+        "Isanax",
+        "Ivanof Bay",
+        "Niilsanam Alguudaa",
+        "Atka",
+        "Ikatan",
+        "Belkofski",
+        "Ugnaasaqax",
+        "Pauloff Harbor",
+        "Medny"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Sugangix",
+        "Lagaadax",
+        "Sagimax",
+        "Kuunux",
+        "Nugin",
+        "Kimaluga",
+        "Tixlax",
+        "Saguyax",
+        "Algagix",
+        "Chuchagacha"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Polar Cultures",
+    "United States"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "THPNav",
+  "presentation": {
+    "colors": {
+      "icon": "#fef0a4",
+      "background": "#71bfb2"
+    },
+    "mapImage": "MapPNG_Aleut.png",
+    "iconImage": "IconPNG_Aleut_NoBG.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Aleut.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Aleut_NoBG.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Agugux.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Agugux.png",
+    "leaderSceneArtCredit": "Leaderscreen by TopHatPaladin"
+  },
+  "templateRefs": [
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+      "label": "Food",
+      "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+      "template": "Food Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+      "label": "Production",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+      "template": "Production Icon"
+    }
+  ]
+}

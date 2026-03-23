@@ -1,0 +1,246 @@
+{
+  "id": "civ-the-cheyenne-woqini",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T01:19:17.516Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "the-cheyenne-woqini",
+  "music": {
+    "war": {
+      "title": "Intertribal Song",
+      "credit": "Young Bird"
+    },
+    "peace": {
+      "title": "Out of Horse",
+      "credit": "Ryuichi Sakamoto"
+    }
+  },
+  "title": "The Cheyenne",
+  "issues": [],
+  "leader": "Woqini",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Cheyenne_(Woqini)",
+    "lastUpdated": "17 February 2020",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2091350980",
+    "modFolderName": "",
+    "wikiPageTitle": "The Cheyenne"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Wolfdog",
+      "role": "Unit Model"
+    },
+    {
+      "name": "JFD",
+      "role": "Utilities"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Salvaging the map file when it got corrupted"
+    },
+    {
+      "name": "Ryuichi Sakamoto",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Young Bird",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Cheyenne led by Woqini is a custom civilization by TopHatPaladin.",
+  "uniques": [
+    {
+      "art": "IconPNG_HookNose.png",
+      "body": "Foreign Trade Routes grant starting XP to units trained in their home cities. Promoting Units outside friendly territory expands the borders of the nearest friendly city.",
+      "name": "Bundle of Sacred Arrows",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_HookNose.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_DogSoldier.png",
+      "body": "",
+      "name": "Dog Soldier",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_DogSoldier.png",
+      "bullets": [
+        "+25% {{Strength Icon}} Combat Strength against Gun Units",
+        "Gains Experience from pillaging tile improvements",
+        "May not pillage roads, but may use enemy roads"
+      ],
+      "replaces": "Lancer",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
+          "label": "Strength",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+          "template": "Strength Icon"
+        }
+      ]
+    },
+    {
+      "art": "IconPNG_SunDance.png",
+      "body": "",
+      "name": "Sun Dance",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_SunDance.png",
+      "bullets": [
+        "+50% range to land {{Trade Route Icon}} Trade Routes in its city",
+        "Units trained in a city with a Sun Dance heal every turn in enemy territory"
+      ],
+      "replaces": "Stable",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Trade_Route_Icon",
+          "label": "Trade Routes",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+          "template": "Trade Route Icon"
+        }
+      ]
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Bear Butte",
+    "culture": "Great Plains",
+    "religion": [
+      "Protestantism",
+      "Wakan Tanka (HR)"
+    ],
+    "adjectives": "Cheyenne",
+    "empireName": "Cheyenne Empire",
+    "government": "Tribal",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Hook_Nose",
+      "body": "Woqini was a Cheyenne military leader and one of the foremost opponents to American expansionism in the Great Plains. Although he never held the title of chief, he was often a de facto leader of the Cheyenne in battle, and was offered (but refused) official titles on several occasions. Woqini was born to the Northern Suhtai band, and was initially named Moséskanetsénoonáhe, but he took the warrior name Woqini after reaching adulthood.",
+      "title": "Woqini"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Cheyenne",
+      "body": "The Cheyenne are a people of North America's Great Plains who speak an Algonquian language. They are best known for their distinct governing structures: the military societies and the Council of the Forty-Four. The Council of the Forty-Four was responsible for day-to-day leadership of the Cheyenne, as well as maintaining diplomacy both among Cheyenne subgroups and with foreign groups. The military societies were a set of six bands within Cheyenne society; the headmen of these groups were responsible for military leadership and discipline, as well as leading hunts and some types of ceremonies.",
+      "title": "The Cheyenne"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"This is impossible! My preparations were immaculate! How could this have happened?\"",
+    "blessing": "\"Salutations, Woqini, Roman Nose, steadfast protector of the Cheyenne! In your day, you were one of the Cheyenne's most distinguished warriors, several times refusing chieftaincies in order to make the most of your skill on the battlefield. Between your capable tactical mind and your meticulous maintenance of divine protection, you were nigh untouchable for much of your career - and although you would ultimately be slain in battle, this was a rare exception to a long string of victories. Your diligence and your strident resistance to American encroachment have made you one of the Cheyenne people's most enduring heroes, and one of the Americans' most capable rivals.\nWoqini, the time has come for the Cheyenne to come together and reclaim all of the power that they once held. Can you mount your horse once more and prove victorious over all opposition? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Greetings, stranger! Some call me Roman Nose, but know that I am the untouchable warrior, Woqini of the Cheyenne.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Bear Butte",
+        "Toh'nihvoos",
+        "Omisis",
+        "Suhtai",
+        "Hévhaitanio",
+        "Tsétsehéstahese",
+        "Oévemano",
+        "Hisiometaneo",
+        "Oktoguna",
+        "Masikota",
+        "Hónowa",
+        "Wotápio",
+        "Anskówinis",
+        "Voxpometaneo",
+        "Totoemano",
+        "Mo'ohtávehetane",
+        "Ononeo'o",
+        "Moiseo",
+        "Ná'kuimana",
+        "Mo'ohtávo'honáéva",
+        "Meneo'hé'e",
+        "Páeo'hé'e",
+        "Meave'ho'eno",
+        "Vóhkoohámahoéve'ho'éno",
+        "Vóhpoométanéno",
+        "Mótsesóoneo'hé'e",
+        "Red Fork",
+        "Mud Springs",
+        "Rush Creek",
+        "Washita River",
+        "Sand Creek",
+        "Summit Springs"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Moketavato",
+        "Homyike",
+        "Vóóhéhéve",
+        "Ohkomhakit",
+        "Ho'néhevotoomáhe",
+        "Tomoséveséhe",
+        "Ehyophsta",
+        "Mochi",
+        "Monahsetah",
+        "Misstanstur"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Plains Cultures",
+    "Civilizations with Male leaders",
+    "United States"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#dec692",
+      "background": "#3a669c"
+    },
+    "mapImage": "MapPNG_Cheyenne.png",
+    "iconImage": "IconPNG_Cheyenne.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Cheyenne.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Cheyenne.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_HookNose.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_HookNose.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": [
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
+      "label": "Strength",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+      "template": "Strength Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Trade_Route_Icon",
+      "label": "Trade Routes",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+      "template": "Trade Route Icon"
+    }
+  ]
+}

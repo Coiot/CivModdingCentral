@@ -1,0 +1,311 @@
+{
+  "id": "civ-republic-of-bolivia-victor-paz-estenssoro",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T01:06:47.517Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": [
+      "THPNav"
+    ]
+  },
+  "slug": "republic-of-bolivia-victor-paz-estenssoro",
+  "music": {
+    "war": {
+      "title": "La Pastora",
+      "credit": "Los Jairas"
+    },
+    "peace": {
+      "title": "Duele (Instrumental Version)",
+      "credit": "Los Kjarkas"
+    }
+  },
+  "title": "Bolivia",
+  "issues": [
+    "Unresolved templates: THPNav"
+  ],
+  "leader": "Victor Paz Estenssoro",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Bolivia_(Victor_Paz)",
+    "lastUpdated": "24 December 2020",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2332553968",
+    "modFolderName": "",
+    "wikiPageTitle": "Republic of Bolivia"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Leugi",
+      "role": "UB Icon, Design Insights"
+    },
+    {
+      "name": "GPuzzle, Hoop Thrower",
+      "role": "Design Insights"
+    },
+    {
+      "name": "bernie14",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Los Kjarkas",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Los Jairas",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "Bolivia led by Victor Paz Estenssoro is a custom civilization by TopHatPaladin, with contributions from Leugi and bernie14.",
+  "uniques": [
+    {
+      "art": "IconPNG_VictorPaz.png",
+      "body": "Great Merchants may write Political Treatises. Mines provide additional yields, and building mines on resources provides bursts of {{Great Person Icon}} Great Person points; you may switch these yields upon writing a Political Treatise. The Treatise Bonuses are as follows:",
+      "name": "Revolución Nacional",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_VictorPaz.png",
+      "bullets": [
+        "Left: +1 {{Food Icon}} Food and {{Culture Icon}} Culture from Mines. Gain {{Great Person Icon}} Great Writer points from completing Mines on resources.",
+        "Right: +1 {{Gold Icon}} Gold and {{Production Icon}} Production from Mines. Gain {{Great Person Icon}} Great Merchant points from completing Mines on Resources."
+      ],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Great_Person_Icon",
+          "label": "Great People",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatperson.png",
+          "template": "Great Person Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+          "label": "Food",
+          "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+          "template": "Food Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+          "label": "Culture",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+          "template": "Culture Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Gold_Icon",
+          "label": "Gold",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+          "template": "Gold Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+          "label": "Production",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+          "template": "Production Icon"
+        }
+      ]
+    },
+    {
+      "art": "IconPNG_MiliciaPopular.png",
+      "body": "",
+      "name": "Milicia Popular",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_MiliciaPopular.png",
+      "bullets": [
+        "12.5% cheaper to build (280 vs. 320 {{Production Icon}} )",
+        "May build Mines",
+        "Provides {{Great Person Icon}} Great Person points when promoted, based on current Treatise bonusPromotion Bonuses:",
+        "Left: {{Great Person Icon}} Great Writer points",
+        "Right: {{Great Person Icon}} Great Merchant points",
+        "If a non-Bolivian player acquires a Milicia Popular, defaults to Great Merchant points"
+      ],
+      "replaces": "Great War Infantry",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+          "label": "Production",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+          "template": "Production Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Great_Person_Icon",
+          "label": "Great People",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatperson.png",
+          "template": "Great Person Icon"
+        }
+      ]
+    },
+    {
+      "art": "Icon_RadioMinera.png",
+      "body": "",
+      "name": "Radio Minera",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_RadioMinera.png",
+      "bullets": [
+        "Contains a Merchant specialist slot",
+        "Provides +5% {{Culture Icon}} Culture for every Political Treatise ever written"
+      ],
+      "replaces": "Broadcast Tower",
+      "artCredit": "Art by Leugi",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+          "label": "Culture",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+          "template": "Culture Icon"
+        }
+      ]
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "La Paz",
+    "culture": "Colonial",
+    "religion": [
+      "Catholicism"
+    ],
+    "adjectives": "Bolivian",
+    "empireName": "Bolivian Empire",
+    "government": "Republic",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/V%C3%ADctor_Paz_Estenssoro",
+      "body": "Victor Paz Estenssoro was the 45th President of Bolivia, serving a total of four terms on three non-consecutive occasions. He was renowned as an effective leader, though one whose political alignment shifted significantly over his life. In the 1950s, he was a leftist reformer who nationalized the mines; in the 1980s, a neoliberal centrist who privatized them again.",
+      "title": "Victor Paz Estenssoro"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Bolivia",
+      "body": "Bolivia, officially the Plurinational State of Bolivia, is a landlocked country located in western-central South America. The capital is Sucre while the seat of government is located in La Paz. The largest city and principal economic and financial center is Santa Cruz de la Sierra, located on the Llanos Orientales (tropical lowlands) a mostly flat region in the east of Bolivia.",
+      "title": "Bolivia"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"I shudder to imagine what this country will become without me.\"",
+    "blessing": "\"Salutations, Victor Paz Estenssoro, one of the most tenacious and versatile politicians in Bolivian history! Throughout your four terms as President of Bolivia, you held a wide range of political positions as the country needed. In your early career, you were a staunch left-wing reformist; you nationalized the mines, passed universal suffrage, and redistributed farmland throughout the nation. You would then go on to disarm the militias and restore power to the military, though this would lead to your overthrow. When you returned to power in the 1980s, you had become a centrist, and addressed the economic crisis by re-privatizing the mines and correcting prices. Sober and careful, yet still with a strong sense of vision, you have become one of Bolivia's most memorable presidents in history.\nPresident Paz, the Bolivian people call for you to return to your place at the country's helm. Can you use your famed adaptability to take on every challenge the world might throw at you? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Welcome to Bolivia. I am her president, Victor Paz Estenssoro. I hope our nations can maintain agreeable relations.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "La Paz",
+        "Sucre",
+        "Oruro",
+        "Santa Cruz",
+        "Tarija",
+        "Potosí",
+        "Cochabamba",
+        "El Alto",
+        "Trinidad",
+        "Yacuíba",
+        "Sacaba",
+        "Quillacollo",
+        "Riberalta",
+        "Montero",
+        "Guayaramerín",
+        "Viacha",
+        "Villazón",
+        "Camiri",
+        "Tiquipaya",
+        "Tupiza",
+        "Bermejo",
+        "Cobija",
+        "Llallagua",
+        "Villamontes",
+        "San Ignacio de Velasco",
+        "Warnes",
+        "Yapacaní",
+        "San Borja",
+        "Huanuni",
+        "Punata",
+        "Vinto",
+        "Ascención de Guarayos",
+        "Mineros"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Hugo",
+        "Hernán",
+        "Gualberto",
+        "René",
+        "Gonzalo",
+        "Juan",
+        "Teresa",
+        "María",
+        "Elena",
+        "Yolanda"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Colonial Cultures",
+    "Civilizations with Male leaders",
+    "Bolivia"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "Template:THPNav",
+  "presentation": {
+    "colors": {
+      "icon": "#873224",
+      "background": "#c8b82d"
+    },
+    "mapImage": "MapPNG_Bolivia.png",
+    "iconImage": "IconPNG_Bolivia.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Bolivia.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Bolivia.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_VictorPaz.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_VictorPaz.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": [
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Great_Person_Icon",
+      "label": "Great People",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatperson.png",
+      "template": "Great Person Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Food_Icon",
+      "label": "Food",
+      "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c6/Food.png",
+      "template": "Food Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+      "label": "Culture",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+      "template": "Culture Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Gold_Icon",
+      "label": "Gold",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+      "template": "Gold Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+      "label": "Production",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+      "template": "Production Icon"
+    }
+  ]
+}

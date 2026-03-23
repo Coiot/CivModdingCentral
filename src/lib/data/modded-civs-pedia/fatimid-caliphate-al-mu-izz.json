@@ -1,0 +1,216 @@
+{
+  "id": "civ-fatimid-caliphate-al-mu-izz",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T04:06:02.254Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "fatimid-caliphate-al-mu-izz",
+  "music": {
+    "war": {
+      "title": "Spirit of Damascus",
+      "credit": "Jesper Kyd"
+    },
+    "peace": {
+      "title": "Evasion",
+      "credit": "Mohamed Rouane"
+    }
+  },
+  "title": "Fatimid Caliphate",
+  "issues": [],
+  "leader": "al-Mu'izz",
+  "source": {
+    "type": "wiki",
+    "version": "v 3",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Fatimids_(al-Mu%27izz)",
+    "lastUpdated": "17 January 2019",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1479270044",
+    "modFolderName": "",
+    "wikiPageTitle": "Fatimid Caliphate"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Gatoutak",
+      "role": "Map"
+    },
+    {
+      "name": "JTitan",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Mohamed Rouane",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Jesper Kyd",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Fatimid Caliphate led by al-Mu'izz is a custom civilization by TopHatPaladin, with contributions from Gatoutak and JTitan.",
+  "uniques": [
+    {
+      "art": "IconPNG_Muizz.png",
+      "body": "Expending Missionaries and Inquisitors yields {{Science Icon}} Science. Gain a burst of {{Great Person Icon}} Great Scientist points when making a purchase with {{Faith Icon}} Faith.",
+      "name": "House of Knowledge",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Muizz.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Ahdath.png",
+      "body": "",
+      "name": "Ahdath",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Ahdath.png",
+      "bullets": [
+        "Generates {{Faith Icon}} Faith from kills",
+        "+3 {{Strength Icon}} Combat Strength when at war with civs of different religions"
+      ],
+      "replaces": "Crossbowman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Mazar.png",
+      "body": "",
+      "name": "Mazar",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Mazar.png",
+      "bullets": [
+        "Contains a Scientist specialist slot",
+        "Grants +2 {{Faith Icon}} Faith for each Academy worked by its city"
+      ],
+      "replaces": "Temple",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Desert",
+    "capital": "Cairo",
+    "culture": "Islamic",
+    "religion": [
+      "Islam",
+      "Shia (HR)"
+    ],
+    "adjectives": "Fatimid",
+    "empireName": "Fatimid Caliphate",
+    "government": "Caliphate",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Abu Tamim Maad al-Mu'izz li-Dinillah, usually abbreviated to al-Mu'izz, was the fourth caliph of the Fatimid Caliphate. He came to power in 953 AD, not long after his father had crushed the Kharijite rebellion of Abu Yazid; this gave al-Mu'izz the freedom to focus on expanding the borders of the caliphate. He ordered campaigns against several regions, including the Berbers of Morocco and the Umayyads in Iberia, but his main focus was always Egypt. In 969, al-Mu'izz and his general Jawhar overran the Ikhshidid rulers of Egypt without much trouble, and celebrated their victory by founding a new capital. This city, called \"al-Qahiratu\" or \"The Victorious\", survives to this day as Cairo.",
+      "title": "'''al-Mu'izz'''"
+    },
+    "civilization": {
+      "url": "",
+      "body": "The Fatimid Caliphate (909–1171) was the only Shi'a caliphate in Islamic history. They claimed descent from the prophet Muhammad's wife Fatimah, from whom they derived their name.\nThe Fatimid Caliphate originated in the region of Ifriqiya, in North Africa. After discovering that the Berber subjects of the Aghlabid emirate were restless, al-Mahdi Billah and his da'i Abu Abdallah Shi'i began proselytizing to them around 900; this mission was a resounding success, and in 909, al-Mahdi Billah conquered the Aghlabid capital of Raqqada. Upon this conquest, he declared himself Caliph, and his forces soon overran the rest of the Maghreb.",
+      "title": "The Fatimids"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"All great empires must come to an end. Even so, it saddens me that I must see the end of mine.\"",
+    "blessing": "\"Salutations, al-Mu'izz, wise and victorious caliph! Under your reign, the Fatimids reached a greater territorial extent than ever before, conquering Egypt and beginning to impose their will into the Levant. You established a new capital of Cairo, a center of learning that would be one of the world's premier cities for centuries to come. You oversaw the growth of literature, study, and architecture in the Fatimid world, and your tolerance towards other religions allowed the Jewish and Coptic peoples to live comfortably under Muslim rule.\nO caliph, your people call for you to restore the wisdom and unity that prevailed during your reign. Can you recreate the military and cultural flourishing that you oversaw once before? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"I am al-Mu'izz, caliph and imam, and it is my pleasure to welcome you to Cairo.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Cairo",
+        "Fustat",
+        "Mahdia",
+        "Al-Mansuriyya",
+        "Raqqada",
+        "Bilbeis",
+        "Damascus",
+        "Barqa",
+        "Tahert",
+        "Tunis",
+        "Acre",
+        "Damietta",
+        "Qayrawan",
+        "Tripoli",
+        "Balarme",
+        "Ashir",
+        "Sétif",
+        "Mila",
+        "Sousse",
+        "Tyre",
+        "Fayyum",
+        "Miliana",
+        "Béja",
+        "Médéa",
+        "Surt",
+        "Adjabiyya",
+        "Baghai",
+        "Tebessa",
+        "Medjana",
+        "Tinnis",
+        "Zamalek",
+        "Salamiyah"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "al-Aziz",
+        "Jawhar",
+        "Yaqub",
+        "Ibn Hani",
+        "al-Hakim",
+        "al-Musabbihi",
+        "Ibn Ammar",
+        "Barjawan",
+        "al-Azizah",
+        "Sitt al-Mulk"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Islamic Cultures",
+    "Civilizations with Male leaders"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#603334",
+      "background": "#efe5c0"
+    },
+    "mapImage": "Fatimids_Gatoutak.png",
+    "iconImage": "IconPNG_FatimidMuizz.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Fatimids_Gatoutak.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_FatimidMuizz.png",
+    "mapImageCaption": "Map by Gatoutak",
+    "leaderSceneImage": "LS_PNG_Muizz.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Muizz.png",
+    "leaderSceneArtCredit": "Leaderscreen by TopHatPaladin"
+  },
+  "templateRefs": []
+}

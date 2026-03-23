@@ -1,0 +1,264 @@
+{
+  "id": "civ-aztec-triple-alliance-tlacaelel",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T01:03:04.873Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": [
+      "30thAnniversaryCollectionNav"
+    ]
+  },
+  "slug": "aztec-triple-alliance-tlacaelel",
+  "music": {
+    "war": {
+      "title": "Cora Mitote Song from Santa Teresa",
+      "credit": "Michael Curran"
+    },
+    "peace": {
+      "title": "Cora Mitote Song from Santa Teresa",
+      "credit": "Michael Curran"
+    }
+  },
+  "title": "The Aztec",
+  "issues": [
+    "Unresolved templates: 30thAnniversaryCollectionNav"
+  ],
+  "leader": "Tlacaelel",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Aztec_(Tlacaelel)",
+    "lastUpdated": "27 September 2021",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2613288400",
+    "modFolderName": "",
+    "wikiPageTitle": "Aztec Triple Alliance"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Urdnot",
+      "role": "Map"
+    },
+    {
+      "name": "Zharques",
+      "role": "Text (Pedias, Spy List, DOM)"
+    },
+    {
+      "name": "Alga",
+      "role": "Design Input, Eagle Warrior Icon"
+    },
+    {
+      "name": "Francesca",
+      "role": "Original Leaderscene"
+    }
+  ],
+  "summary": "The Aztec Empire led by Tlacaelel is a custom civilization by TopHatPaladin, with contributions from Urdnot, Zharques, Alga, and Francesca. The mod also changes the Unique Ability of Montezuma's Aztecs.",
+  "uniques": [
+    {
+      "art": "IconPNG_Tlacaelel.png",
+      "body": "Gains {{Culture Icon}} Culture for the empire for each enemy unit killed.",
+      "name": "Flower Wars",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Tlacaelel.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+          "label": "Culture",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+          "template": "Culture Icon"
+        }
+      ]
+    },
+    {
+      "art": "IconAgla_EagleWarrior.png",
+      "body": "",
+      "name": "Eagle Warrior",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconAgla_EagleWarrior.png",
+      "bullets": [
+        "+20% {{Strength Icon}} Combat Strength when beginning its turn within two tiles of an enemy unit that has under half of its health remaining"
+      ],
+      "replaces": "Pikeman",
+      "artCredit": "Art by Alga",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
+          "label": "Strength",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+          "template": "Strength Icon"
+        }
+      ]
+    },
+    {
+      "art": "IconPNG_Teocalli.png",
+      "body": "",
+      "name": "Teocalli",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Teocalli.png",
+      "bullets": [
+        "Units trained in its city get +3 XP for every Social Policy branch opened, doubling if that branch is completed"
+      ],
+      "replaces": "Temple",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "None",
+    "capital": "Tenochtitlan",
+    "culture": "Mesoamerican",
+    "religion": [
+      "Catholicism",
+      "Tlateomatiliztli (HR)"
+    ],
+    "adjectives": "Aztec",
+    "empireName": "Aztec Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Tlacaelel",
+      "body": "Tlacaelel was the creator of the the Aztec Triple Alliance and the Aztec Empire. He was the son of Emperor Huitzilihuitl and Queen Cacamacihuatl, nephew of Emperor Itzcoatl, father of poet Macuilxochitzin, and brother of Emperors Chimalpopoca and Moctezuma I. Tlacaelel was born in 1397.\nTlacaelel recast or strengthened the concept of the Aztecs as a chosen people, elevated the tribal god and hero Huitzilopochtli to top of the pantheon of gods, and increased militarism. In tandem with this, Tlacaelel is said to have increased the level and prevalence of human sacrifice.",
+      "title": "Tlacaelel"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Aztec_Empire",
+      "body": "The Aztecs were a Native American civilization that occupied central Mexico for roughly one hundred years in the 15th and 16th centuries. The Aztecs ruled a mighty empire and possessed a rich culture, producing some of the most impressive pre-Colombian architecture in North America. Today the Aztecs are best remembered for the bloodiness of their religious practices and rapidity with which they collapsed in the face of external assault.\nAt the height of its power, the Aztec Empire dominated an area of nearly 200,000 square miles (slightly under a third the size of modern Mexico), with some five to six million subjects. Somewhat like the Mongols, the Aztecs left the subject tribes to their own devices as long as the requisite tribute was paid. The Aztecs were great traders, and Aztec merchants happily did business with allies and enemies alike. Lacking a monetary system, trade was based upon the barter system.",
+      "title": "Aztecs"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"And now it ends. I look forward to meeting Huitzilopochtli for myself.\"",
+    "blessing": "\"Blessings of Huitzilopochtli be upon you, Tlacaelel, Cihuacoatl of Tenochtitlan and architect of the Triple Alliance. son of Emperor Huitzilihuitl and Queen Cacamacihuatl, nephew of Emperor Itzcoatl, and brother to Montezuma I, you served in the Aztec military until you were promoted to the position of Cihuacoatl, which you held for the reign of four successive emperors. You were the one to cast the Aztecs as the chosen people, you elevated Huitzilopochtli to the highest echelon of the gods, and you increased militarism and human sacrifice in the empire, beginning the concept of flower wars. These flower wars helped expand the power of the Aztec Empire. It was, however, your most important achievement, the formation of the Triple Alliance along with your brother Montezuma that allowed you to accomplish this.\nDeft Tlacaelel, your reformative spirit and deft political navigation is needed once more. You have now been called to rule in your own right, a prospect which will require all your skill and political dexterity to accomplish. You must once again face the prospect of forging an empire, of hardening the Aztec people for war. Will you reform the Aztec Triple Alliance once more? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"I don't recognize your face. Are you a foreign diplomat, or are you here to end your days on my altar?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Tenochtitlan",
+        "Teotihuacan",
+        "Tlatelolco",
+        "Texcoco",
+        "Tlaxcala",
+        "Calixtlahuaca",
+        "Xochicalco",
+        "Tlacopan",
+        "Atzcapotzalco",
+        "Tzintzuntzan",
+        "Malinalco",
+        "Tula",
+        "Tamuin",
+        "Teayo",
+        "Cempoala",
+        "Chalco",
+        "Tlalmanalco",
+        "Ixtapaluca",
+        "Huexotla",
+        "Tepexpan",
+        "Tepetlaoxtoc",
+        "Chiconautla",
+        "Zitlaltepec",
+        "Coyotepec",
+        "Tequixquiac",
+        "Jilotzingo",
+        "Tlapanaloya",
+        "Tultitan",
+        "Ecatepec",
+        "Coatepec",
+        "Chalchiuites",
+        "Chiauhita",
+        "Chapultepec",
+        "Itzapalapa",
+        "Ayotzinco",
+        "Iztapam"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Tenoch",
+        "Axayacatl",
+        "Quetzalxochitl",
+        "Coaxoch",
+        "Cuauhtototzin",
+        "Chalchiuhnenetzin",
+        "Acamapichtli",
+        "Tezozomoc",
+        "Moquihuix",
+        "Atotoztli"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Aztecs",
+    "Mesoamerican Cultures",
+    "Civilizations with Male leaders",
+    "30th Anniversary Civs",
+    "Mexico"
+  ],
+  "modSupport": {},
+  "collections": [
+    {
+      "id": "30th-anniversary-collection",
+      "blurb": "",
+      "links": [],
+      "title": "30th Anniversary",
+      "colors": {
+        "accent": "#d7b4ff",
+        "background": "#4a355e"
+      },
+      "aliases": [],
+      "members": [],
+      "imageURL": "",
+      "sourceTemplate": ""
+    }
+  ],
+  "navTemplate": "30thAnniversaryCollectionNav",
+  "presentation": {
+    "colors": {
+      "icon": "#6e343d",
+      "background": "#79c1af"
+    },
+    "mapImage": "MapPNG_Aztec.png",
+    "iconImage": "Aztecs (Tlacaelel).png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Aztec.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Aztecs%20(Tlacaelel).png",
+    "mapImageCaption": "Map by Urdnot",
+    "leaderSceneImage": "LS_PNG_Tlacaelel.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Tlacaelel.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin and TarcisioCM"
+  },
+  "templateRefs": [
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+      "label": "Culture",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+      "template": "Culture Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
+      "label": "Strength",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+      "template": "Strength Icon"
+    }
+  ]
+}

@@ -1,0 +1,233 @@
+{
+  "id": "civ-merovingian-franks-clovis-i",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T04:12:53.497Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "merovingian-franks-clovis-i",
+  "music": {
+    "war": {
+      "title": "Charge of the Knights",
+      "credit": "Andreas Waldetoft"
+    },
+    "peace": {
+      "title": "The Banquet",
+      "credit": "Philip Wareborn"
+    }
+  },
+  "title": "The Franks",
+  "issues": [],
+  "leader": "Clovis I",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Franks_(Clovis_I)",
+    "lastUpdated": "24 April 2021",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2466879069",
+    "modFolderName": "",
+    "wikiPageTitle": "Merovingian Franks"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "DuskJockey",
+      "role": "Map"
+    },
+    {
+      "name": "DMS",
+      "role": "Civ Icon"
+    },
+    {
+      "name": "Zharques",
+      "role": "DOM Text"
+    },
+    {
+      "name": "danrell",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Philip Wareborn",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Andreas Waldetoft",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Merovingian Franks led by Clovis I is a custom civilization by TopHatPaladin, with contributions from DuskJockey, DMS, and Zharques.",
+  "uniques": [
+    {
+      "art": "IconPNG_Clovis.png",
+      "body": "Units have increased {{Strength Icon}} Combat Strength for each garrisoned unit of its type in your empire. May purchase Missionaries with {{Gold Icon}} Gold.",
+      "name": "Lex Salica",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Clovis.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Antrustion.png",
+      "body": "",
+      "name": "Antrustion",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Antrustion.png",
+      "bullets": [
+        "+14% {{Strength Icon}} Combat Strength (16 vs. 14)",
+        "Yields {{Gold Icon}} Gold if garrisoned in a conquered city",
+        "Yields {{Faith Icon}} Faith if garrisoned in a founded city"
+      ],
+      "replaces": "Swordsman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Reliquary.png",
+      "body": "",
+      "name": "Reliquary",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Reliquary.png",
+      "bullets": [
+        "When making a {{Gold Icon}} Gold or {{Faith Icon}} Faith purchase in its city, gain a burst of {{Production Icon}} Production toward the current unit or building in progress. The amount of production is based on the number of cities following your {{Religion Icon}} Religion.",
+        "''(With JFD's Great Relics installed:)'' Contains a slot for a Great Relic"
+      ],
+      "replaces": "Temple",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Tournai",
+    "culture": "Western",
+    "religion": [
+      "Catholicism",
+      "Irminism (GHR)"
+    ],
+    "adjectives": "Merovingian",
+    "empireName": "Frankish Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Clovis_I",
+      "body": "Clovis I, also known as Clovis the Great, was the third king of the Salian Franks and the first king of the united Frankish realm. He was famed for his military conquests, his codification of the laws, and his adoption of Christianity.",
+      "title": "Clovis I"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Merovingian_dynasty",
+      "body": "The Merovingian dynasty was the family that ruled over the Franks from the fifth through eighth centuries. The dynasty is named after its founding king, Merovech, who came to power around 450 AD. The 7th-century Chronicle of Fredegar also asserts that Merovech was fathered by a quinotaur – a mythical half-bull, half-fish creature – but otherwise, the Merovingians made no claim to divine descent.",
+      "title": "Merovingian Franks"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Kill me if you must, but I have made my peace with God. In the kingdom of Heaven, I will be immortal.\"",
+    "blessing": "\"Blessings be upon you Clovis I, the first king of the united Franks, founder of the Merovingian dynasty, codifier of laws and New Constantine. As the king of the Salian Franks, you inherited a small petty kingdom at the age of 15. But you did not believe this was adequate. You began to expand your realm through battle and diplomacy, satisfying those who may stand against you by integrating tribes and pleasing the clergy. After defeating the Roman rump of Sossions, you conquered much of the former Gaul, repelled the Alemanni, and, shortly before your death, defeated the Visigoths. Also a pious man, after an interest in Arian Christianity, you converted to Catholicism through your wife’s influence, though not without resistance after the death of a son. On your death, you divided your kingdom amongst your sons and were interred at Paris.\nOh strong Clovis, your kingdom once again has called your name, for she once again needs the mighty hand you provided. Your domain is in discord, bought about by the squabbling of sons for land conquered by their fathers. Can you restore harmony amongst your quarrelling kingdom? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Well met! I am Chlodowig, but men pronounce it \"Clovis.\" I am the man who united the Franks, and the man who will lead them to still greater glories. And you?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Tournai",
+        "Reims",
+        "Paris",
+        "Soissons",
+        "Orleans",
+        "Metz",
+        "Rouen",
+        "Saint-Denis",
+        "Tours",
+        "Mainz",
+        "Marseille",
+        "Verdun",
+        "Vitry-en-Artois",
+        "Poitiers",
+        "Nantes",
+        "Troyes",
+        "Cologne",
+        "Amiens",
+        "Maastricht",
+        "Trier",
+        "Tongeren",
+        "Arles",
+        "Vouille",
+        "Tolbiac",
+        "Noyon",
+        "Arras",
+        "Dormelles",
+        "Saint-Quentin",
+        "Autun",
+        "Chartres",
+        "Nivelles",
+        "Meersburg",
+        "Douai",
+        "Blois",
+        "Mascon",
+        "Meaux",
+        "Beauvais",
+        "Landen",
+        "Veseruntia"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Childeric",
+        "Merovech",
+        "Chlodomer",
+        "Chlothar",
+        "Theuderic",
+        "Radegund",
+        "Brunhilda",
+        "Audofleda",
+        "Basina",
+        "Clotilde"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Western Cultures",
+    "Civilizations with Male leaders",
+    "France"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#34466b",
+      "background": "#dab955"
+    },
+    "mapImage": "MapPNG_Merovingian.png",
+    "iconImage": "IconPNG_Merovingian.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Merovingian.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Merovingian.png",
+    "mapImageCaption": "Map by DuskJockey",
+    "leaderSceneImage": "LS_PNG_Clovis.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Clovis.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

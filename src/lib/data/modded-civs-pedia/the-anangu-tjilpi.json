@@ -1,180 +1,45 @@
 {
   "id": "civ-the-anangu-tjilpi",
-  "slug": "the-anangu-tjilpi",
   "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T03:54:19.820Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": [
+      "Decision",
+      "THPNav",
+      "DEFAULTSORT:Anangu (Tjilpi)"
+    ]
+  },
+  "slug": "the-anangu-tjilpi",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=IFOc2xKaGYg",
+      "title": "Moondah (Beyond)",
+      "credit": "Ayers Rock"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=BmPAS_Jy5tw",
+      "title": "Pitjantjatjara",
+      "credit": "Frank Yamma"
+    }
+  },
   "title": "The Anangu",
+  "issues": [
+    "Unresolved templates: Decision, THPNav, DEFAULTSORT:Anangu (Tjilpi)"
+  ],
   "leader": "Tjilpi",
+  "source": {
+    "type": "wiki",
+    "version": "v 3",
+    "wikiUrl": "",
+    "lastUpdated": "26 September 2019",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1627879142",
+    "modFolderName": "",
+    "wikiPageTitle": "The Anangu"
+  },
   "authors": [
     "TopHatPaladin"
   ],
-  "summary": "The Anangu led by Tjilpi is a custom civilization by TopHatPaladin, with contributions from Senshi, DarthKyofu, TPangolin, Urdnot_Scott, and JTitan.",
-  "source": {
-    "type": "wiki",
-    "wikiPageTitle": "The Anangu",
-    "wikiUrl": "",
-    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1627879142",
-    "version": "v 3",
-    "lastUpdated": "26 September 2019",
-    "modFolderName": ""
-  },
-  "identity": {
-    "empireName": "",
-    "adjectives": "",
-    "capital": "Mutitjulu",
-    "bias": "",
-    "religion": [
-      "Tjukurpa"
-    ],
-    "government": "Tribal",
-    "culture": "Aboriginal",
-    "mapLabelsLanguage": "",
-    "requiredContent": [
-      "Brave New World"
-    ]
-  },
-  "presentation": {
-    "mapImage": "AnanguMapFull.png",
-    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/AnanguMapFull.png",
-    "mapImageCaption": "Map by Senshi",
-    "iconImage": "IconPNG_Anangu.png",
-    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Anangu.png",
-    "leaderSceneImage": "LS_Tjilpi.png",
-    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_Tjilpi.png",
-    "leaderSceneArtCredit": "Art by TopHatPaladin and DarthKyofu",
-    "colors": {
-      "background": "#7a2c17",
-      "icon": "#dd931c"
-    }
-  },
-  "overview": {
-    "civilization": {
-      "title": "Anangu",
-      "url": "https://en.wikipedia.org/wiki/Anangu",
-      "body": "\"Anangu\" is an umbrella term that describes several Australian Aboriginal groups who speak Western Desert languages; the term is most prominently used by the Pitjantjatjara and the Yankunytjatjara. The Western Desert languages have been described as covering more of Australia's area than any other indigenous language.\nUluru and Kata Tjuta are sacred sites in the Anangu belief system, with eleven songlines passing through or near them. In 1979, the indigenous Central Land Council began a legal battle to lay claim to the Uluru-Kata Tjuta National Park; in 1985, the resulting settlement plan was implemented, which granted the Anangu a majority of the park's Board of Management but still allowed tourists to visit the park."
-    },
-    "leader": {
-      "title": "Tjilpi",
-      "body": "Although the names of historical Anangu leaders have been lost to time, it is plausible that many of them would be known as 'tjilpi.' A term meaning \"old man\" or \"uncle,\" tjilpi is an honorific title that is used to this day.\nSome recent examples of people given the title 'tjilpi' include Bob Randall (1934 - 2015), a musician and community leader who founded several organizations in Darwin, and Kunmanara Kankapankatja (1930 - 2012), an artist who fought to conserve sacred sites and natural resources in Anangu land.",
-      "url": ""
-    }
-  },
-  "dawnOfMan": {
-    "blessing": "\"Greetings, Tjilpi, great elder of the Anangu people! The Anangu - an umbrella group that includes the Pitjantjatjara and Yankunytjatjara - have lived in the Western Desert of Australia for thousands of years. Your people were the first to venerate Uluru and the Kata Tjuta mountains, and the first to recognize the songlines that connect those sites to the rest of the continent around them. When the British arrived on Australia, your populace's way of life was significantly disrupted, as settlers and ranchers intruded upon much of your land. However, your people have begun to bounce back in recent decades, as the aboriginal Land Councils have granted your people legal rights of their ancestral lands.\nGreat Tjilpi, your people may be on the upswing, but they long for the great days of old. Can you restore the glory of the Anangu, and lead your people to spread all across - or even beyond - the deserts of Australia? Can you build a civilization that will stand the test of time?\"",
-    "introduction": ": \"I don't believe I've seen you here before. Today, your travels have brought you to the land of the Anangu.\"",
-    "defeat": ": \"You have defiled the sacred paths we all must walk... I can at least take comfort in the knowledge that I will not witness the gods' revenge.\""
-  },
-  "templateRefs": [],
-  "uniques": [
-    {
-      "slot": "unique ability",
-      "name": "Tjukurpa",
-      "replaces": "",
-      "art": "Icon_Tjilpi.png",
-      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Tjilpi.png",
-      "artCredit": "Art by DarthKyofu",
-      "body": "Upon adopting a Pantheon, Desert tiles provide {{Golden Age}} Golden Age points when worked. Upon the dawn of a {{Golden Age}} Golden Age, select a cumulative Dreaming Bonus.",
-      "civilopedia": "",
-      "bullets": [],
-      "footnotes": [
-        "Dreaming Bonuses:\n*Iwala: No Road maintenance on Desert. City Connections yield +3 {{Faith Icon}} Faith.\n*Kalaya: Natural Wonders yield +2 {{Science Icon}} Science, increasing to +3 with Astronomy.\n*Miilmiilpa: Natural Wonders yield +2 {{Faith Icon}} Faith and +2 {{Happiness Icon}} Happiness.\n*Miru: Archery Units provide +1 {{Production Icon}} Production while on Desert tiles.\n*Ngangkari: Shrines and Temples yield +1 {{Food Icon}} Food.\n*Ngintaka: Natural Wonders provide +1 {{Food Icon}} Food to all adjacent tiles.\n*Tjala: Cities founded on Desert provide +1 {{Food Icon}} Food to all adjacent tiles.\n*Tjukuritja: Natural Wonders and Landmarks yield +2 {{Faith Icon}} Faith and +2 {{Culture Icon}} Culture.\n*Wanampi: Oasis tiles yield +1 {{Faith Icon}} Faith, +1 {{Food Icon}} Food, and +1 {{Culture Icon}} Culture.\n*Watiku: Land Units start with XP equal to half the {{Faith Icon}} Faith produced by their city."
-      ],
-      "templateRefs": []
-    },
-    {
-      "slot": "unique unit",
-      "name": "Warmala",
-      "replaces": "Scout",
-      "art": "Icon_Warmala.png",
-      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Warmala.png",
-      "artCredit": "Art by Urdnot_Scott",
-      "body": "",
-      "civilopedia": "",
-      "bullets": [
-        "Ranged unit with 4 Ranged Combat Strength",
-        "Spawns a Settler when discovering an unclaimed Natural Wonder",
-        "Double movement on Desert"
-      ],
-      "footnotes": [],
-      "templateRefs": []
-    },
-    {
-      "slot": "unique building",
-      "name": "Nyintiringkupai",
-      "replaces": "Shrine",
-      "art": "Icon_Nyintiringkupai.png",
-      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Nyintiringkupai.png",
-      "artCredit": "Art by TPangolin",
-      "body": "",
-      "civilopedia": "",
-      "bullets": [
-        "+1 {{Faith Icon}} Faith and {{Culture Icon}} Culture for every two Natural Wonders owned, empire-wide",
-        "Newly trained units in its city begin with Survivalism I",
-        "(With JFDLC) Newly trained units in its city are immune to Desert Attrition"
-      ],
-      "footnotes": [],
-      "templateRefs": []
-    }
-  ],
-  "collections": [],
-  "nameLists": [
-    {
-      "title": "City List",
-      "items": [
-        "Mutitjulu",
-        "Pukatja",
-        "Warakurna",
-        "Amata",
-        "Milyirrtjarra",
-        "Walungurru",
-        "Kaltukatjara",
-        "Indulkana",
-        "Papunya",
-        "Kaltjiti",
-        "Mimili",
-        "Aputula",
-        "Utju",
-        "Kiwirrkurra",
-        "Titjikala",
-        "Wingellina",
-        "Papulankutja",
-        "Pipalyatjara",
-        "Kalka",
-        "Yalata",
-        "Yilka",
-        "Maralinga",
-        "Karilywara",
-        "Mamungkukumpurangkuntjunya"
-      ]
-    },
-    {
-      "title": "Spy List",
-      "items": [
-        "Wikilyiri",
-        "Kunmanara",
-        "Nyiru",
-        "Ilyatjari",
-        "Ngupulya",
-        "Tjungkara",
-        "Tjalara",
-        "Anmanari",
-        "Tjunmutja",
-        "Nganyinytja"
-      ]
-    }
-  ],
-  "music": {
-    "peace": {
-      "title": "Pitjantjatjara",
-      "credit": "Frank Yamma",
-      "url": "https://www.youtube.com/watch?v=BmPAS_Jy5tw"
-    },
-    "war": {
-      "title": "Moondah (Beyond)",
-      "credit": "Ayers Rock",
-      "url": "https://www.youtube.com/watch?v=IFOc2xKaGYg"
-    }
-  },
-  "modSupport": {},
   "credits": [
     {
       "name": "TopHatPaladin",
@@ -213,6 +78,136 @@
       "role": "War Theme"
     }
   ],
+  "summary": "The Anangu led by Tjilpi is a custom civilization by TopHatPaladin, with contributions from Senshi, DarthKyofu, TPangolin, Urdnot_Scott, and JTitan.",
+  "uniques": [
+    {
+      "art": "Icon_Tjilpi.png",
+      "body": "Upon adopting a Pantheon, Desert tiles provide {{Golden Age}} Golden Age points when worked. Upon the dawn of a {{Golden Age}} Golden Age, select a cumulative Dreaming Bonus.",
+      "name": "Tjukurpa",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Tjilpi.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by DarthKyofu",
+      "footnotes": [
+        "Dreaming Bonuses:\n*Iwala: No Road maintenance on Desert. City Connections yield +3 {{Faith Icon}} Faith.\n*Kalaya: Natural Wonders yield +2 {{Science Icon}} Science, increasing to +3 with Astronomy.\n*Miilmiilpa: Natural Wonders yield +2 {{Faith Icon}} Faith and +2 {{Happiness Icon}} Happiness.\n*Miru: Archery Units provide +1 {{Production Icon}} Production while on Desert tiles.\n*Ngangkari: Shrines and Temples yield +1 {{Food Icon}} Food.\n*Ngintaka: Natural Wonders provide +1 {{Food Icon}} Food to all adjacent tiles.\n*Tjala: Cities founded on Desert provide +1 {{Food Icon}} Food to all adjacent tiles.\n*Tjukuritja: Natural Wonders and Landmarks yield +2 {{Faith Icon}} Faith and +2 {{Culture Icon}} Culture.\n*Wanampi: Oasis tiles yield +1 {{Faith Icon}} Faith, +1 {{Food Icon}} Food, and +1 {{Culture Icon}} Culture.\n*Watiku: Land Units start with XP equal to half the {{Faith Icon}} Faith produced by their city."
+      ],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "Icon_Warmala.png",
+      "body": "",
+      "name": "Warmala",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Warmala.png",
+      "bullets": [
+        "Ranged unit with 4 Ranged Combat Strength",
+        "Spawns a Settler when discovering an unclaimed Natural Wonder",
+        "Double movement on Desert"
+      ],
+      "replaces": "Scout",
+      "artCredit": "Art by Urdnot_Scott",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "Icon_Nyintiringkupai.png",
+      "body": "",
+      "name": "Nyintiringkupai",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Nyintiringkupai.png",
+      "bullets": [
+        "+1 {{Faith Icon}} Faith and {{Culture Icon}} Culture for every two Natural Wonders owned, empire-wide",
+        "Newly trained units in its city begin with Survivalism I",
+        "(With JFDLC) Newly trained units in its city are immune to Desert Attrition"
+      ],
+      "replaces": "Shrine",
+      "artCredit": "Art by TPangolin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Mutitjulu",
+    "culture": "Aboriginal",
+    "religion": [
+      "Tjukurpa"
+    ],
+    "adjectives": "",
+    "empireName": "",
+    "government": "Tribal",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Although the names of historical Anangu leaders have been lost to time, it is plausible that many of them would be known as 'tjilpi.' A term meaning \"old man\" or \"uncle,\" tjilpi is an honorific title that is used to this day.\nSome recent examples of people given the title 'tjilpi' include Bob Randall (1934 - 2015), a musician and community leader who founded several organizations in Darwin, and Kunmanara Kankapankatja (1930 - 2012), an artist who fought to conserve sacred sites and natural resources in Anangu land.",
+      "title": "Tjilpi"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Anangu",
+      "body": "\"Anangu\" is an umbrella term that describes several Australian Aboriginal groups who speak Western Desert languages; the term is most prominently used by the Pitjantjatjara and the Yankunytjatjara. The Western Desert languages have been described as covering more of Australia's area than any other indigenous language.\nUluru and Kata Tjuta are sacred sites in the Anangu belief system, with eleven songlines passing through or near them. In 1979, the indigenous Central Land Council began a legal battle to lay claim to the Uluru-Kata Tjuta National Park; in 1985, the resulting settlement plan was implemented, which granted the Anangu a majority of the park's Board of Management but still allowed tourists to visit the park.",
+      "title": "Anangu"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": ": \"You have defiled the sacred paths we all must walk... I can at least take comfort in the knowledge that I will not witness the gods' revenge.\"",
+    "blessing": "\"Greetings, Tjilpi, great elder of the Anangu people! The Anangu - an umbrella group that includes the Pitjantjatjara and Yankunytjatjara - have lived in the Western Desert of Australia for thousands of years. Your people were the first to venerate Uluru and the Kata Tjuta mountains, and the first to recognize the songlines that connect those sites to the rest of the continent around them. When the British arrived on Australia, your populace's way of life was significantly disrupted, as settlers and ranchers intruded upon much of your land. However, your people have begun to bounce back in recent decades, as the aboriginal Land Councils have granted your people legal rights of their ancestral lands.\nGreat Tjilpi, your people may be on the upswing, but they long for the great days of old. Can you restore the glory of the Anangu, and lead your people to spread all across - or even beyond - the deserts of Australia? Can you build a civilization that will stand the test of time?\"",
+    "introduction": ": \"I don't believe I've seen you here before. Today, your travels have brought you to the land of the Anangu.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Mutitjulu",
+        "Pukatja",
+        "Warakurna",
+        "Amata",
+        "Milyirrtjarra",
+        "Walungurru",
+        "Kaltukatjara",
+        "Indulkana",
+        "Papunya",
+        "Kaltjiti",
+        "Mimili",
+        "Aputula",
+        "Utju",
+        "Kiwirrkurra",
+        "Titjikala",
+        "Wingellina",
+        "Papulankutja",
+        "Pipalyatjara",
+        "Kalka",
+        "Yalata",
+        "Yilka",
+        "Maralinga",
+        "Karilywara",
+        "Mamungkukumpurangkuntjunya"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Wikilyiri",
+        "Kunmanara",
+        "Nyiru",
+        "Ilyatjari",
+        "Ngupulya",
+        "Tjungkara",
+        "Tjalara",
+        "Anmanari",
+        "Tjunmutja",
+        "Nganyinytja"
+      ],
+      "title": "Spy List"
+    }
+  ],
   "categories": [
     "All Civilizations",
     "TopHatPaladin",
@@ -220,17 +215,22 @@
     "Australia",
     "Natural Wonder Civilizations"
   ],
+  "modSupport": {},
+  "collections": [],
   "navTemplate": "Template:THPNav",
-  "issues": [
-    "Unresolved templates: Decision, THPNav, DEFAULTSORT:Anangu (Tjilpi)"
-  ],
-  "meta": {
-    "formatVersion": 1,
-    "createdAt": "2026-03-23T03:54:19.820Z",
-    "unresolvedTemplates": [
-      "Decision",
-      "THPNav",
-      "DEFAULTSORT:Anangu (Tjilpi)"
-    ]
-  }
+  "presentation": {
+    "colors": {
+      "icon": "#dd931c",
+      "background": "#7a2c17"
+    },
+    "mapImage": "AnanguMapFull.png",
+    "iconImage": "IconPNG_Anangu.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/AnanguMapFull.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Anangu.png",
+    "mapImageCaption": "Map by Senshi",
+    "leaderSceneImage": "LS_Tjilpi.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_Tjilpi.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin and DarthKyofu"
+  },
+  "templateRefs": []
 }

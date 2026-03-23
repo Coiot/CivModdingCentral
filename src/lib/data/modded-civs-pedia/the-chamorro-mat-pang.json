@@ -1,0 +1,250 @@
+{
+  "id": "civ-the-chamorro-mat-pang",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T01:14:15.171Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "the-chamorro-mat-pang",
+  "music": {
+    "war": {
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "title": "Nana Yan Tatta",
+      "credit": "Frank Pangelinan"
+    }
+  },
+  "title": "The Chamorro",
+  "issues": [],
+  "leader": "Matå'pang",
+  "source": {
+    "type": "wiki",
+    "version": "v 3",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Chamorro_(Mat%C3%A5%27pang)",
+    "lastUpdated": "16 October 2019",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1698890904",
+    "modFolderName": "",
+    "wikiPageTitle": "The Chamorro"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Frank Pangelinan",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Brian Tyler",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Chamorro led by Matå'pang is a custom civilization by TopHatPaladin.",
+  "uniques": [
+    {
+      "art": "IconPNG_Matapang.png",
+      "body": "Cities enter We Love The King Day when they finish training trade units. {{Trade Route Icon}} Sea Trade Routes grant {{Production Icon}} Production based on the destination city's Population.",
+      "name": "Chenchule' System",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Matapang.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Trade_Route_Icon",
+          "label": "Trade Routes",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+          "template": "Trade Route Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+          "label": "Production",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+          "template": "Production Icon"
+        }
+      ]
+    },
+    {
+      "art": "IconPNG_Sakman.png",
+      "body": "",
+      "name": "Sakman",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Sakman.png",
+      "bullets": [
+        "+1 {{Moves Icon}} Movement",
+        "Heals 10 HP when beginning its turn on a friendly or neutral Sea Resource"
+      ],
+      "replaces": "Trireme",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Moves_Icon",
+          "label": "Movement",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png",
+          "template": "Moves Icon"
+        }
+      ]
+    },
+    {
+      "art": "IconPNG_AchoAtupat.png",
+      "body": "",
+      "name": "Åcho' Atupat",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_AchoAtupat.png",
+      "bullets": [
+        "+14% {{Strength Icon}} Ranged Combat Strength (8 vs. 7)",
+        "When promoted, begins a We Love The King Day in the nearest owned city"
+      ],
+      "replaces": "Archer",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
+          "label": "Strength",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+          "template": "Strength Icon"
+        }
+      ]
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Tomhom",
+    "culture": "Oceanic",
+    "religion": [
+      "Catholicism",
+      "Itang (HR)"
+    ],
+    "adjectives": "Chamorro",
+    "empireName": "Chamorro Empire",
+    "government": "Republic",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Mata%27pang",
+      "body": "On seventeenth-century Guam, Matå'pang was the maga'låhi - chief - of Tomhom, a village on the modern Tumon Bay. His name was derived from a Chamorro word meaning \"to cleanse.\" Matå'pang is best remembered for his resistance to the Spanish conquest of Guam. In his early life, he converted to Christianity, but later renounced it after seeing its destructive effects on Chamorro culture. The Spaniards, meanwhile, wanted to try and draw Matå'pang back to the church. This tension came to a head in 1672, when the priest Diego de San Vitores secretly baptized Matå'pang's infant daughter; in addition to the baptism, San Vitores had broken the taboo against entering a maga'låhi's house, and Matå'pang responded by murdering San Vitores.",
+      "title": "'''Matå'pang'''"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Chamorro_people",
+      "body": "The Chamorro are the indigenous people of Guam and the Mariana Islands, first arriving around 2000 BC. Traditional Chamorro society is divided into three castes: the mana'chang is the lowest class, the matua is the highest, and the achaot is in the middle. Social mobility existed among the higher two classes, but not for the mana'chang.",
+      "title": "The Chamorro"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"I may not have been able to resist you, but my people will fight you to the last.\"",
+    "blessing": "\"Håfa adai! Matå'pang, maga'låhi of Tomhom, during your life you were one of the staunchest defenders of the traditional Chamorro ways. You championed the resistance against the Christianization of your people, and when your infant daughter was baptized without your knowledge, you killed the priest who did so. Your efforts would ultimately prove unsuccessful - the Spanish outnumbered and outgunned you, and you died in defense of your cause - but history still remembers you for valiantly fighting until the end. Despite the Spaniards' attempts to sully your name, you are known for courage in the face of cultural suppression.\nMatå'pang, your people seek self-determination once more, and they see your leadership as the ideal path to that goal. Can you throw off the chains of those who seek to constrain your glory? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Håfa adai! I am pleased to see a visitor in the homeland of the Chamorro. Let me prepare you a gift.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Tomhom",
+        "Hagåtña",
+        "Dedidu",
+        "Yigu",
+        "Tamuneng",
+        "Humåtak",
+        "Mangilao",
+        "Barigåda",
+        "Mong Mong-Totu-Maiti",
+        "Chalan Pågu-Otdot",
+        "Yoña",
+        "Sånta Rita",
+        "Hagat",
+        "Tutuhan",
+        "Talo fo' fo'",
+        "Sinahånña",
+        "Inalåhan",
+        "Assan",
+        "Malesso'",
+        "Piti",
+        "Malojloj",
+        "Asagas"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Gadao",
+        "Hurao",
+        "Kepuha",
+        "Puntan",
+        "Fu'una",
+        "Father Dueñas",
+        "Taga",
+        "Agualin",
+        "Mataquana",
+        "Hank Johnson"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Oceanic Cultures",
+    "Civilizations with Male leaders",
+    "Civilizations with two unique units (Civ5)",
+    "United States",
+    "Guam"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#4a764f",
+      "background": "#85bdda"
+    },
+    "mapImage": "MapPNG_Chamorro.png",
+    "iconImage": "IconPNG_Chamorro.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Chamorro.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Chamorro.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Matapang.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Matapang.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": [
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Trade_Route_Icon",
+      "label": "Trade Routes",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+      "template": "Trade Route Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+      "label": "Production",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+      "template": "Production Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Moves_Icon",
+      "label": "Movement",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png",
+      "template": "Moves Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
+      "label": "Strength",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+      "template": "Strength Icon"
+    }
+  ]
+}

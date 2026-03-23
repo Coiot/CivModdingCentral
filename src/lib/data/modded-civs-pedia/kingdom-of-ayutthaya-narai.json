@@ -1,0 +1,297 @@
+{
+  "id": "civ-kingdom-of-ayutthaya-narai",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T01:00:29.480Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": [
+      "MonsoonSEAson"
+    ]
+  },
+  "slug": "kingdom-of-ayutthaya-narai",
+  "music": {
+    "war": {
+      "title": "Ayutthaya",
+      "credit": "Neal Acree, Cris Velasco, and Sam Cardon"
+    },
+    "peace": {
+      "title": "Giawkhao",
+      "credit": "the Thailand Fine Arts Department"
+    }
+  },
+  "title": "Ayutthaya",
+  "issues": [
+    "Unresolved templates: MonsoonSEAson"
+  ],
+  "leader": "Narai",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Ayutthaya_(Narai)",
+    "lastUpdated": "13 May 2020",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2094765988",
+    "modFolderName": "",
+    "wikiPageTitle": "Kingdom of Ayutthaya"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Text, Unit Flag"
+    },
+    {
+      "name": "Sukritact",
+      "role": "Leaderscreen, Map, Icons (Leader & UB)"
+    },
+    {
+      "name": "Darth_Kyofu",
+      "role": "Icons (Civ & UU)"
+    },
+    {
+      "name": "JFD",
+      "role": "Utilities, Design"
+    },
+    {
+      "name": "Poom",
+      "role": "City List, Research"
+    },
+    {
+      "name": "EmeraldRange",
+      "role": "Research"
+    },
+    {
+      "name": "Thailand Fine Arts Department",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Neal Acree, Cris Velasco, Sam Cardon",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "Ayutthaya led by Narai is a custom civilization by TopHatPaladin, with contributions from Darth_Kyofu, Sukritact, JFD, and Poom.",
+  "uniques": [
+    {
+      "art": "IconPNG_Narai.png",
+      "body": "When trading with other Major Civilizations, your home cities gain any Unique Buildings present in the destination. {{Citizen}} Specialists yield {{Culture Icon}} Culture in the home cities of your Trade Routes.",
+      "name": "Embassy of Kosa Pan",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Narai.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by Sukritact",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Citizen",
+          "label": "Citizens",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citizen.png",
+          "template": "Citizen"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+          "label": "Culture",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+          "template": "Culture Icon"
+        }
+      ]
+    },
+    {
+      "art": "IconPNG_Rattathut.png",
+      "body": "",
+      "name": "Rattathut",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Rattathut.png",
+      "bullets": [
+        "Generates bonus Influence from Trade Missions, scaling based on distance from the {{Capital}} Capital",
+        "May be expended in the territory of another Major Civilization to conduct a Diplomatic Mission, providing a burst of Influence with every City-State allied to that civ."
+      ],
+      "replaces": "Great Merchant",
+      "artCredit": "Art by Darth_Kyofu",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Capital",
+          "label": "Capital",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png",
+          "template": "Capital"
+        }
+      ]
+    },
+    {
+      "art": "IconPNG_FloatingMarket.png",
+      "body": "",
+      "name": "Floating Market",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_FloatingMarket.png",
+      "bullets": [
+        "Costs no maintenance",
+        "Contains a Merchant specialist slot",
+        "Whenever a {{Great Person Icon}} Great Person is born in a city with a Floating Market, gain 5 Influence with all met City-States"
+      ],
+      "replaces": "Garden",
+      "artCredit": "Art by Sukritact",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Great_Person_Icon",
+          "label": "Great People",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatperson.png",
+          "template": "Great Person Icon"
+        }
+      ]
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Ayutthaya",
+    "culture": "Mandala",
+    "religion": [
+      "Buddhism",
+      "Theravada (HR)"
+    ],
+    "adjectives": "Ayutthaya",
+    "empireName": "Ayutthaya Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Narai",
+      "body": "Narai, known as Narai the Great (r. 1656 - 1688), was the twenty-seventh king of Ayutthaya, and presided over Ayutthaya during one of its most prosperous periods. He was the second son of King Prasat Thong; although Prasat Thong would go on to be succeeded by Narai's elder brother Chai, Narai collaborated in Chai's overthrow, and took the throne himself just a few months after Prasat Thong's death.",
+      "title": "Narai"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Ayutthaya_Kingdom",
+      "body": "The Ayutthaya Kingdom, based in modern-day Thailand, was a state that at its height would be one of the most successful states in Southeast Asia. Its origin is traditionally held in 1350, when the king Uthong founded the city of Ayutthaya in the lower Chao Phraya valley. In its early years, Ayutthaya expanded to project power over a web of tributary city-states; however, it truly rose to prominence after conquering northern kingdoms such as Sukhothai and Phitsanulok in the fifteenth century. Rivals of Ayutthaya during this period included Malacca and Angkor.",
+      "title": "Ayutthaya"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Were my efforts so misguided? I just hope that I did not make my people suffer.\"",
+    "blessing": "Salutations, Somdet Phra Narai Maharat, king of Ayutthaya! Your reign was a time of domestic prosperity and vibrant diplomacy. During your rule, you exchanged many embassies with the French, promoting a rich cultural exchange; you built a European-inspired palace in Lopburi, as well as several European-inspired forts, and you had the armies at Bangkok trained in Western ways of fighting. You also presided over great internal stability, which allowed writers to flourish in your kingdom; your only significant military endeavor was an offensive one which you waged against Burma. Ultimately, however, your diplomatic prowess would be undermined by your opponents - distrustful of the Europeans, they overthrew your desired successor and removed the French from your kingdom.\nO Narai, despite the schemes of your rivals, your people have nevertheless honored you as \"the Great.\" Can you retake the throne and demonstrate how you earned your title? Can you build diplomatic ties that stretch all across the globe? Can you build a civilization that will stand the test of time?",
+    "introduction": "\"Welcome to the illustrious court of Ayutthaya! Come sit - I'd love to learn who you are and where it is that you're from.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Ayutthaya",
+        "Lopburi",
+        "Phitsanulok",
+        "Sukhothai",
+        "Suphanburi",
+        "Pha Bang",
+        "Marit",
+        "Kanchanaburi",
+        "Nakhon Ratchasima",
+        "Sawankhalok",
+        "Cha Kangrao",
+        "Phetchabun",
+        "Thawai",
+        "Nakhon Sri Thammarat",
+        "Si Satchanalai",
+        "Nonthaburi",
+        "Phetchaburi",
+        "Sing Buri",
+        "Chanthaburi",
+        "Surat Thani",
+        "Nakhon Chaisri",
+        "Buriram",
+        "Udon Thani",
+        "Chumporn",
+        "Songkhla",
+        "Khon Kaen",
+        "Nakhon Phantom",
+        "Chaiyapoom"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Constantine Phaulkon",
+        "Prasat Thong",
+        "Phetracha",
+        "Chai",
+        "Kosa Lek",
+        "Sirithida",
+        "Kusavadi",
+        "Sisuphan",
+        "Suriyong",
+        "Sudawadi"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Mandala Cultures",
+    "Civilizations with Male leaders",
+    "Siam",
+    "Monsoon Season",
+    "Great People Civilizations",
+    "Thailand"
+  ],
+  "modSupport": {},
+  "collections": [
+    {
+      "id": "monsoon-season",
+      "blurb": "",
+      "links": [],
+      "title": "Monsoon Season",
+      "colors": {
+        "accent": "#6ec6ca",
+        "background": "#355c7d"
+      },
+      "aliases": [],
+      "members": [],
+      "imageURL": "",
+      "sourceTemplate": ""
+    }
+  ],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#dfb496",
+      "background": "#882a23"
+    },
+    "mapImage": "MapPNG_Ayutthaya.png",
+    "iconImage": "IconPNG_Ayutthaya.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Ayutthaya.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Ayutthaya.png",
+    "mapImageCaption": "Map by Sukritact",
+    "leaderSceneImage": "LS_PNG_Narai.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Narai.png",
+    "leaderSceneArtCredit": "Art by Sukritact"
+  },
+  "templateRefs": [
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Citizen",
+      "label": "Citizens",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Citizen.png",
+      "template": "Citizen"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+      "label": "Culture",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+      "template": "Culture Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Capital",
+      "label": "Capital",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Capital.png",
+      "template": "Capital"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Great_Person_Icon",
+      "label": "Great People",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Greatperson.png",
+      "template": "Great Person Icon"
+    }
+  ]
+}

@@ -1,0 +1,276 @@
+{
+  "id": "civ-kalmyk-khanate-ayuka-khan",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T04:15:21.816Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": [
+      "CrossroadsOfTheWorldNav",
+      "EmeraldNav",
+      "DEFAULTSORT:Kalmyks (Ayuka Khan)"
+    ]
+  },
+  "slug": "kalmyk-khanate-ayuka-khan",
+  "music": {
+    "war": {
+      "title": "[https://www.youtube.com/watch?v=Rpix2vIz44E Horse-head fiddle performed",
+      "credit": "Baator Gavrilovitch Bukhaev]'''\""
+    },
+    "peace": {
+      "title": "[https://www.youtube.com/watch?v=RQE46tGziyk Edjin duun",
+      "credit": "Okna Tsahan Zam]'''\";"
+    }
+  },
+  "title": "Kalmyk Khanate",
+  "issues": [
+    "Unresolved templates: CrossroadsOfTheWorldNav, EmeraldNav, DEFAULTSORT:Kalmyks (Ayuka Khan)"
+  ],
+  "leader": "Ayuka Khan",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "20 July 2022",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2838133116",
+    "modFolderName": "",
+    "wikiPageTitle": "Kalmyk Khanate"
+  },
+  "authors": [],
+  "credits": [
+    {
+      "name": "EmeraldRange",
+      "role": "Art, Design, Code, Lua, Texts, UU Texture"
+    },
+    {
+      "name": "Coiot",
+      "role": "UU Icon, UB Icon"
+    },
+    {
+      "name": "TopHatPaladin",
+      "role": "Lua"
+    },
+    {
+      "name": "Zharques",
+      "role": "Texts"
+    },
+    {
+      "name": "JakeWalrusWhale",
+      "role": "TSL"
+    },
+    {
+      "name": "Firaxis",
+      "role": "UU model"
+    },
+    {
+      "name": "Ayta",
+      "role": "Culture Consultation"
+    },
+    {
+      "name": "Agla",
+      "role": "Leaderscene Help"
+    },
+    {
+      "name": "Leugi",
+      "role": "Leaderscene Help"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Leaderscene Help"
+    }
+  ],
+  "summary": "The Kalmyks led by Ayuka Khan is a custom civilisation mod by EmeraldRange, with contributions from Coiot, TophatPaladin, Zharques and others.",
+  "uniques": [
+    {
+      "art": "KalmykLeaderIcon.png",
+      "body": "Great Generals gain +1 {{Moves Icon}} Movement and provide +33% {{Strength Icon}} Combat Strength against cities following a different {{Religion Icon}} Religion. Spawn a cavalry unit when first converting a city more than 10 tiles (standard size) away from its Holy City.",
+      "name": "Epic of Jangar",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/KalmykLeaderIcon.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by EmeraldRange",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "KalmykUb.png",
+      "body": "",
+      "name": "Sume",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/KalmykUb.png",
+      "bullets": [
+        "Provides +1 {{Faith Icon}} Faith on all Scientist specialists and +1 {{Culture Icon}} Culture from Engineer specialists.",
+        "Provides {{Science Icon}} Science and {{Culture Icon}} Culture based on how far this city is from the holy city of its majority {{Religion Icon}} religion."
+      ],
+      "replaces": "Temple",
+      "artCredit": "Art by Coiot",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "KalymkUU.png",
+      "body": "",
+      "name": "Xazg",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/KalymkUU.png",
+      "bullets": [
+        "+20% {{Strength Icon}} Strength against damaged enemies.",
+        "+5% {{Strength Icon}} Strength per enemy unit adjacent when garrisoned in a city.",
+        "When moving into a city more than 10 tiles (standard size) from your current capital, gain a permenant +1 {{Moves Icon}} movement bonus."
+      ],
+      "replaces": "Cavalry",
+      "artCredit": "Art by Coiot",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Plains",
+    "capital": "Saratov",
+    "culture": "Steppe",
+    "religion": [
+      "Buddhism",
+      "Vajrayana (HR)"
+    ],
+    "adjectives": "",
+    "empireName": "",
+    "government": "",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "",
+      "title": ""
+    },
+    "civilization": {
+      "url": "",
+      "body": "",
+      "title": ""
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Honorable fight that was. I lay my sword before you.\"\nAttacked: \"A battle! When you have been destroyed, know this: I shall grant you mercy\"",
+    "blessing": "Let the tales speak of your deeds, oh great Ayuka Khan of the proud Kalmyk people. Under your rule, the Kalmyks reached their zenith, living in prosperity from trade with Russia, China and Tibet. Under your reign, the Kalmyks were free to roam the pastures and grow in influence in Saint Petersburg. But you were not a mere puppet of the Tsars, conducting mutual raids with the Russians in your capacity as a European Buddhist Khanate. After your death, however, factionalism drove your people to division, and centuries of Russian control have forced your people to and from the far reaches of North Asia.\nPowerful Ayuka Khan, you have the opportunity to once again bring your Khanate to drink under the light of prosperity. Stand in proud independence, take your great golden sword and slice through would-be subjugators. Will you lead your people to a new age of glory? Can you build a civilization that can stand the test of time?",
+    "introduction": "\"Greetings traveller from afar, I am Ayuka Khan of the Kalmyks. Within these lands you will pay me homage.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Saratov",
+        "Elista",
+        "Lagan",
+        "Astrakhan",
+        "Samara",
+        "Bashanta",
+        "Tsaritsyn",
+        "Guryev",
+        "Yashkul'",
+        "Karakorum",
+        "Toickoe",
+        "Omsk",
+        "Sadovoe",
+        "Malye Derbety",
+        "Rostov-on-Don",
+        "Priiutnoe",
+        "Belgrade",
+        "Tomsky",
+        "Balqash",
+        "Arym",
+        "Krasnojarsk",
+        "Manych",
+        "Norillag",
+        "Yashalta",
+        "Iki Burul",
+        "Oblinoe",
+        "Solovetsky",
+        "Shatta",
+        "Utta",
+        "Ulan-Erge",
+        "Kevudy",
+        "Beloozernyy",
+        "Barun",
+        "Ozernyy",
+        "Chess City"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Vazki",
+        "Sanal",
+        "Angarak",
+        "Batu",
+        "Kirsan",
+        "Dzhirgan",
+        "Sar",
+        "Elistina",
+        "Aguya",
+        "Tzatana"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Civilizations with Male leaders",
+    "EmeraldRange",
+    "Crossroads of the World",
+    "Russia",
+    "Mongolia"
+  ],
+  "modSupport": {
+    "uci": true,
+    "exce": true,
+    "wftw": false,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "ynaemp": true,
+    "maplabels": true,
+    "civivtraits": true,
+    "ethnicunits": true,
+    "mercenaries": true,
+    "sovereignty": true,
+    "histreligions": true,
+    "claimscoloniescrimes": true
+  },
+  "collections": [
+    {
+      "id": "crossroads-of-the-world",
+      "blurb": "",
+      "links": [],
+      "title": "Crossroads of the World",
+      "colors": {
+        "accent": "#cc8e34",
+        "background": "#3a2315"
+      },
+      "aliases": [],
+      "members": [],
+      "imageURL": "",
+      "sourceTemplate": "CrossroadsOfTheWorldNav"
+    }
+  ],
+  "navTemplate": "CrossroadsOfTheWorldNav",
+  "presentation": {
+    "colors": {
+      "icon": "#235d8e",
+      "background": "#e9cd5c"
+    },
+    "mapImage": "KalmykiaCartography.png",
+    "iconImage": "KalmykIcon.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/KalmykiaCartography.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/KalmykIcon.png",
+    "mapImageCaption": "Map by EmeraldRange",
+    "leaderSceneImage": "KalmykLS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/KalmykLS.png",
+    "leaderSceneArtCredit": "Leaderscreen by EmeraldRange"
+  },
+  "templateRefs": []
+}

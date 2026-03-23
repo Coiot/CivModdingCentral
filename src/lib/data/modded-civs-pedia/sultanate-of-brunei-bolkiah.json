@@ -1,0 +1,227 @@
+{
+  "id": "civ-sultanate-of-brunei-bolkiah",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T01:12:26.819Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "sultanate-of-brunei-bolkiah",
+  "music": {
+    "war": {
+      "title": "Kayum Oya Kayum",
+      "credit": "Seri Berunai"
+    },
+    "peace": {
+      "title": "Samalindang",
+      "credit": "Seri Berunai"
+    }
+  },
+  "title": "Brunei",
+  "issues": [],
+  "leader": "Bolkiah",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Brunei_(Bolkiah)",
+    "lastUpdated": "22 October 2024",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3353331401",
+    "modFolderName": "",
+    "wikiPageTitle": "Sultanate of Brunei"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Unknown",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Seri Berunai",
+      "role": "Music"
+    }
+  ],
+  "summary": "Brunei led by Bolkiah is a custom civilization by TopHatPaladin.",
+  "uniques": [
+    {
+      "art": "IconPNG_Bolkiah.png",
+      "body": "Missionaries may be expended to heal adjacent naval units. Trade Routes to City-States yield {{Faith Icon}} Faith.",
+      "name": "The Singing Captain",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Bolkiah.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+          "label": "Faith",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+          "template": "Faith Icon"
+        }
+      ]
+    },
+    {
+      "art": "IconPNG_Pangayaw.png",
+      "body": "If Enlightenment Era is active, replaces the Galleon.",
+      "name": "Pangayaw",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Pangayaw.png",
+      "bullets": [
+        "Yields {{Faith Icon}} Faith from kills",
+        "Heals 20 HP when an embarked foreign unit is killed on or adjacent to its tile"
+      ],
+      "replaces": "Privateer",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+          "label": "Faith",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+          "template": "Faith Icon"
+        }
+      ]
+    },
+    {
+      "art": "IconPNG_Lapau.png",
+      "body": "",
+      "name": "Lapau",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Lapau.png",
+      "bullets": [
+        "Provides Great Admiral points for every trade route from its city to another city with the same religion, doubled if the destination city has a different owner."
+      ],
+      "replaces": "Temple",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Along Ocean",
+    "capital": "Kota Batu",
+    "culture": "East Indies",
+    "religion": [
+      "Islam",
+      "Sunni (HR)"
+    ],
+    "adjectives": "Bruneian",
+    "empireName": "Bruneian Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Bolkiah",
+      "body": "Bolkiah ibn Sulaiman was the sixth sultan of Brunei. His reign stretched almost forty years, from 1485 to 1524. Bolkiah expanded Brunei's sphere of influence dramatically, leading his reign to be termed the \"Golden Age of Brunei.\" He was an adventurous ruler who traveled his realm frequently. Bolkiah was nicknamed \"Nakhoda Ragam\", Malay for \"the singing captain\", in Bornean and Malay traditions.",
+      "title": "Bolkiah"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Bruneian_Sultanate_(1368–1888)",
+      "body": "The Bruneian Empire was a precursor to the modern state of Brunei. Originating as a Majapahit vassal state in northwestern Borneo, it became fully independent around 1400 and expanded its influence over Borneo, Sulu, and parts of the Philippines. However, growing European involvement in maritime Southeast Asia weakened Brunei during the seventeenth century and beyond. In 1888, Brunei became a British protectorate.",
+      "title": "Brunei"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"My beautiful empire, destroyed... how can this be...?\"",
+    "blessing": "\"Hail, Sultan Bolkiah, Nakhoda Ragam! Your reign is known to this day as a golden age in Brunei's history. You were instrumental in preserving and expanding the sultanate's sphere of influence, preserving your hold over Borneo and Sulu and establishing your dominion over parts of Luzon. You also showcased the glories of Brunei to visitors from the far corners of the world, when you granted lavish gifts and a personal audience to Europeans from the Magellan expedition. Because of accomplishments like these, your influence has been felt in the Pacific for centuries beyond your death. Your mausoleum is one of Brunei's great attractions, and the outpost you founded on Luzon has grown into the metropolis of Manila.\nO Bolkiah, Brunei is reduced but not defeated. Your people yearn for the glory you earned for Brunei through your religious fervor, your diplomatic savvy, and your peerless fleet. Can you once more construct a sultanate whose influence is the envy of the world? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"You stand before the Sultan of Brunei! I hope you appreciate what an honor it is to be granted an audience with me personally.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Kota Batu",
+        "Kampong Ayer",
+        "Pulau Cermin",
+        "Kinarut",
+        "Saragua",
+        "Lupak Luas",
+        "Saba",
+        "Bukit Panggal",
+        "Tanjong Kindana",
+        "Panchor Papan",
+        "Labuhan Kapal",
+        "Bukit Salilah",
+        "Selurong",
+        "Jerudong",
+        "Tutong",
+        "Sengkurong",
+        "Kinabatangan",
+        "Piragong",
+        "Seria",
+        "Lawas",
+        "Miri",
+        "Papar",
+        "Tuaran",
+        "Marudu",
+        "Kudat",
+        "Bintulu",
+        "Sibu",
+        "Santubong",
+        "Lihad Datu",
+        "Tawau",
+        "Maimbung",
+        "Samboangan",
+        "Balayan",
+        "Kumintang"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Muhammad",
+        "Ahmad",
+        "Sharif Ali",
+        "Dewa",
+        "Saiful Rijal",
+        "Abdul Kahar",
+        "Muhyiddin",
+        "Laila",
+        "Puteri",
+        "Ratna"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "East Indies Cultures",
+    "Civilizations with Male leaders"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#e8d897",
+      "background": "#be4b63"
+    },
+    "mapImage": "MapPNG_Brunei.png",
+    "iconImage": "IconPNG_Brunei.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Brunei.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Brunei.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Bolkiah.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Bolkiah.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": [
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+      "label": "Faith",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+      "template": "Faith Icon"
+    }
+  ]
+}

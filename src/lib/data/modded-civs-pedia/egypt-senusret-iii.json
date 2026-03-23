@@ -1,0 +1,250 @@
+{
+  "id": "civ-egypt-senusret-iii",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T01:24:42.463Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": [
+      "10thAnniversaryCollectionNav"
+    ]
+  },
+  "slug": "egypt-senusret-iii",
+  "music": {
+    "war": {
+      "title": "Dead Kings and Living Gods",
+      "credit": "Sarah Schachner"
+    },
+    "peace": {
+      "title": "Nomads of the White Desert",
+      "credit": "Sarah Schachner"
+    }
+  },
+  "title": "Egypt",
+  "issues": [
+    "Unresolved templates: 10thAnniversaryCollectionNav"
+  ],
+  "leader": "Senusret III",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Egypt_(Senusret_III)",
+    "lastUpdated": "7 February 2022",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2234887193",
+    "modFolderName": "",
+    "wikiPageTitle": "Egypt"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "danrell",
+      "role": "Unit Model"
+    },
+    {
+      "name": "KyteM",
+      "role": "Utilities"
+    },
+    {
+      "name": "Sarah Schachner",
+      "role": "Music"
+    }
+  ],
+  "summary": "Egypt led by Senusret III is a custom civilization by TopHatPaladin, with contributions from danrell. It was released as part of the Civ V 10th Anniversary event.",
+  "uniques": [
+    {
+      "art": "IconPNG_Senusret.png",
+      "body": "Workers can build Citadels on River tiles, but are expended by doing so. {{Great Work Icon}} Great Works of Writing reduce the cost of Ranged Units in their cities.",
+      "name": "Instructions of Amenemhat",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Senusret.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Great_Work_Icon",
+          "label": "Great Work",
+          "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/6/67/Greatwork.png",
+          "template": "Great Work Icon"
+        }
+      ]
+    },
+    {
+      "art": "IconPNG_Smsw.png",
+      "body": "",
+      "name": "Smsw",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Smsw.png",
+      "bullets": [
+        "+25% strength against Scouts and Mounted units",
+        "Has +1 Range when beginning its turn on a Fort or Citadel"
+      ],
+      "replaces": "Composite Bowman",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_ScribalSchool.png",
+      "body": "",
+      "name": "Scribal School",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_ScribalSchool.png",
+      "bullets": [
+        "No maintenance cost",
+        "Contains a slot for a Great Work of Writing",
+        "If its city is built along a river, contains a Writer specialist slot"
+      ],
+      "replaces": "Library",
+      "artCredit": "Art by TopHatPaladin",
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Thebes",
+    "culture": "Mesopotamic",
+    "religion": [
+      "Islam",
+      "Pesedjet (HR)"
+    ],
+    "adjectives": "Egyptian",
+    "empireName": "Egyptian Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Senusret_III",
+      "body": "Senusret III was a pharaoh of Twelfth Dynasty who ruled Egypt at the height of the Middle Kingdom. He was the son of his predecessor, Senusret II; there is little evidence that the two shared a co-regency before Senusret III ascended in his own right in 1878 BC. During his own reign, Senusret III was a vigorous campaigner who sought to expand Egypt's influence in both Nubia and the Near East. He is most famous for his series of Nubian campaigns, during which he built a number of large forts near the First and Second Cataracts of the Nile, including Buhen, Semna, and Uronarti. He also cleared a canal through the First Cataract, making it easier to travel from Nubia to the Egyptian heartland. Senusret's campaign in the Levant was also the first known Egyptian military excursion in that region, and it saw him do battle with people called the Sekmem and Retjenu. Senusret III's military success brought about a period of prosperity that reduced the power of the nomarchs and allowed for increased artistic development.",
+      "title": "Senusret III"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Middle_Kingdom_of_Egypt",
+      "body": "The Middle Kingdom was the second of the three \"Golden Ages\" of pharaonic Egypt; it was distinguished by the centralization and expansion of the Egyptian realm, as well as a high artistic standard and the composition of much classic Egyptian literature.",
+      "title": "Middle Kingdom of Egypt"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Kill me if you must, but know that I will be even more magnificent in death than I am in life.\"",
+    "blessing": "\"Senusret III, even during your lifetime you have been honored as not just a king but a god. This is because of the great victories you have brought upon Egypt, helping to push your kingdom to farther frontiers than any of your predecessors had reached. With the numerous forts you constructed, you were able to strongly impose your will upon Nubia, and with your canal through the First Cataract you made it easy to reinforce your conquests. You also became the first pharaoh in history to wage a military campaign in the Levant, forcing the Sekmem and Retjenu to acknowledge your strength. Even the Greeks would go on to recognize your glory, with the legend of Sesostris emerging around your deeds.\nGreat Senusret, your people long for the glories you once brought upon your kingdom. Can you repress your neighbors and prove the superiority of Egypt? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"I am Khakaure Senusret, king and god of Egypt. Have you come to pay homage?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Thebes",
+        "Itjtawy",
+        "Elephantine",
+        "Heliopolis",
+        "Koptos",
+        "Hermonthis",
+        "Buhen",
+        "Memphis",
+        "Aswan",
+        "El-Lisht",
+        "Semna",
+        "Abydos",
+        "Hermopolis",
+        "El-Tod",
+        "Uronarti",
+        "Heracleopolis",
+        "Avaris",
+        "Dahshur",
+        "Mirgissa",
+        "Edfu",
+        "Crocodilopolis",
+        "Medamud",
+        "Thinis",
+        "El-Lahun",
+        "Kumma",
+        "Per-Wadjet",
+        "Qus",
+        "Akhmim",
+        "Busiris",
+        "Hierakonpolis",
+        "Asyut",
+        "Harawa"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Amenemhat",
+        "Intefiqer",
+        "Sobekemhat",
+        "Khnumhotep",
+        "Ameny",
+        "Sinuhe",
+        "Keminub",
+        "Nofret",
+        "Neferthenut",
+        "Sithathoriunet"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Mesopotamic Cultures",
+    "Civilizations with Male leaders",
+    "10th Anniversary Civs",
+    "Egypt"
+  ],
+  "modSupport": {},
+  "collections": [
+    {
+      "id": "cbr-mk2-10th-anniversary-collection",
+      "blurb": "10 years ago, the first part of the Civilization Battle Royale Mk. 2 was posted, kickstarting one of the most legendary stories in Civ history. To celebrate this momentous occasion, members of the CBR community have banded together to create a collection of brand-new civs for you to enjoy!",
+      "links": [
+        {
+          "href": "https://steamcommunity.com/sharedfiles/filedetails/?id=3546641706",
+          "label": "Steam Workshop"
+        }
+      ],
+      "title": "CBR Mk2 10th Anniversary",
+      "colors": {
+        "accent": "#5f2c12",
+        "background": "#c7a85d"
+      },
+      "aliases": [],
+      "members": [],
+      "imageURL": "",
+      "sourceTemplate": "CBR10Nav"
+    }
+  ],
+  "navTemplate": "10thAnniversaryCollectionNav",
+  "presentation": {
+    "colors": {
+      "icon": "#3b448a",
+      "background": "#e4c478"
+    },
+    "mapImage": "MapPNG_Senusret.png",
+    "iconImage": "IconPNG_Egypt.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Senusret.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Egypt.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Senusret.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Senusret.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": [
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Great_Work_Icon",
+      "label": "Great Work",
+      "imageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/6/67/Greatwork.png",
+      "template": "Great Work Icon"
+    }
+  ]
+}

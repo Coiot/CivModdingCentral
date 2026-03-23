@@ -2,19 +2,25 @@ import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createClient } from "@supabase/supabase-js";
+import { loadEnv } from "vite";
 
 const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
+const loadedEnv = loadEnv(process.env.NODE_ENV || "development", ROOT, "");
+const runtimeEnv = {
+	...loadedEnv,
+	...process.env,
+};
 const PEDIA_ENTRIES_DIR = resolve(ROOT, "src/lib/data/modded-civs-pedia");
 const PEDIA_COLLECTIONS_FILE = resolve(ROOT, "src/lib/data/pediaCollections.js");
-const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "";
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || "";
-const SUPABASE_PEDIA_ENTRIES_TABLE = process.env.SUPABASE_PEDIA_ENTRIES_TABLE || process.env.VITE_SUPABASE_PEDIA_ENTRIES_TABLE || "cmc_pedia_entries";
-const SUPABASE_PEDIA_COLLECTIONS_TABLE = process.env.SUPABASE_PEDIA_COLLECTIONS_TABLE || process.env.VITE_SUPABASE_PEDIA_COLLECTIONS_TABLE || "cmc_pedia_collections";
+const SUPABASE_URL = runtimeEnv.SUPABASE_URL || runtimeEnv.VITE_SUPABASE_URL || "";
+const SUPABASE_KEY = runtimeEnv.SUPABASE_SERVICE_ROLE_KEY || runtimeEnv.SUPABASE_ANON_KEY || runtimeEnv.VITE_SUPABASE_ANON_KEY || "";
+const SUPABASE_PEDIA_ENTRIES_TABLE = runtimeEnv.SUPABASE_PEDIA_ENTRIES_TABLE || runtimeEnv.VITE_SUPABASE_PEDIA_ENTRIES_TABLE || "cmc_pedia_entries";
+const SUPABASE_PEDIA_COLLECTIONS_TABLE = runtimeEnv.SUPABASE_PEDIA_COLLECTIONS_TABLE || runtimeEnv.VITE_SUPABASE_PEDIA_COLLECTIONS_TABLE || "cmc_pedia_collections";
 
 const args = new Set(process.argv.slice(2));
 const shouldPrune = args.has("--prune");
 const shouldSyncCollections = !args.has("--skip-collections");
-const shouldWriteWiki = !args.has("--skip-wiki");
+const shouldWriteWiki = args.has("--with-wiki");
 
 function cleanText(value) {
 	return String(value || "").trim();
@@ -61,10 +67,7 @@ async function loadLocalCollections() {
 }
 
 async function fetchCloudEntries(client) {
-	const { data, error } = await client
-		.from(SUPABASE_PEDIA_ENTRIES_TABLE)
-		.select("id, slug, title, entry_state, wiki_markup, is_deleted")
-		.order("updated_at", { ascending: false });
+	const { data, error } = await client.from(SUPABASE_PEDIA_ENTRIES_TABLE).select("id, slug, title, entry_state, wiki_markup, is_deleted").order("updated_at", { ascending: false });
 
 	if (error) {
 		throw error;
@@ -74,10 +77,7 @@ async function fetchCloudEntries(client) {
 }
 
 async function fetchCloudCollections(client) {
-	const { data, error } = await client
-		.from(SUPABASE_PEDIA_COLLECTIONS_TABLE)
-		.select("id, title, collection_state")
-		.order("title", { ascending: true });
+	const { data, error } = await client.from(SUPABASE_PEDIA_COLLECTIONS_TABLE).select("id, title, collection_state").order("title", { ascending: true });
 
 	if (error) {
 		throw error;
@@ -161,12 +161,12 @@ async function writeCollections(collections) {
 
 async function main() {
 	if (args.has("--help")) {
-		console.log(`Usage: node scripts/pull-pedia-from-supabase.mjs [--prune] [--skip-collections] [--skip-wiki]
+		console.log(`Usage: node scripts/pull-pedia-from-supabase.mjs [--prune] [--skip-collections] [--with-wiki]
 
 Pulls cloud pedia entries from Supabase into src/lib/data/modded-civs-pedia.
 - --prune removes local entry files that are not present in Supabase
 - --skip-collections leaves src/lib/data/pediaCollections.js untouched
-- --skip-wiki skips writing .wiki.txt sidecar files`);
+- --with-wiki also writes .wiki.txt sidecar files`);
 		return;
 	}
 

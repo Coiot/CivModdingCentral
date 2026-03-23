@@ -1,0 +1,289 @@
+{
+  "id": "civ-the-rozvi-changamire-dombo",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T00:35:00.190Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": [
+      "ArilasquetoNav",
+      "NCnav",
+      "DEFAULTSORT:Rozvi (Changamire Dombo)"
+    ]
+  },
+  "slug": "the-rozvi-changamire-dombo",
+  "music": {
+    "war": {
+      "title": "\"Kalanga, Hosana Dance\"",
+      "credit": "the Mogwana Traditional Group"
+    },
+    "peace": {
+      "title": "Nhemamusasa: Instrumental Excerpt I",
+      "credit": "Nonesuch Explorer Series"
+    }
+  },
+  "title": "The Rozvi",
+  "issues": [
+    "Unresolved templates: ArilasquetoNav, NCnav, DEFAULTSORT:Rozvi (Changamire Dombo)"
+  ],
+  "leader": "Changamire Dombo",
+  "source": {
+    "type": "wiki",
+    "version": "v 2",
+    "wikiUrl": "",
+    "lastUpdated": "January 2025",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3125057964",
+    "modFolderName": "",
+    "wikiPageTitle": "The Rozvi"
+  },
+  "authors": [
+    "Lasqueto",
+    "NopeCopter"
+  ],
+  "credits": [
+    {
+      "name": "Nopecopter",
+      "role": "Design, Core, Research, Text"
+    },
+    {
+      "name": "Lasqueto",
+      "role": "Concept, Art"
+    },
+    {
+      "name": "TopHatPaladin",
+      "role": "Code"
+    },
+    {
+      "name": "Emerald, Rhoze, Fran",
+      "role": "Design"
+    }
+  ],
+  "summary": "The Rozvi led by Changamire Dombo are a custom civilization by Lasqueto and Nopecopter, with contributions from Emerald Range, TopHatPaladin, Rhoze, and Fran.",
+  "uniques": [
+    {
+      "art": "Ari Nope Rozvi ChangamireDombo Leader Icon.png",
+      "body": "May spend a burst of {{Culture Icon}} to reduce the {{Strength Icon}} Strength of all enemy units adjacent to your own by 20% for one turn. Units gain {{Strength Icon}} Combat Strength for every Cattle source in the city they're in.",
+      "name": "Chisadza Mhomwe",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ari%20Nope%20Rozvi%20ChangamireDombo%20Leader%20Icon.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by Lasqueto",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+          "label": "Culture",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Culture.png",
+          "template": "Culture Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
+          "label": "Strength",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+          "template": "Strength Icon"
+        }
+      ]
+    },
+    {
+      "art": "Ari Nope Rozvi ChangamireDombo Missoca.png",
+      "body": "",
+      "name": "Missoca",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ari%20Nope%20Rozvi%20ChangamireDombo%20Missoca.png",
+      "bullets": [
+        "Can pillage tiles for no movement cost",
+        "+1 {{Moves Icon}} Movement if not adjacent to another Missoca",
+        "+5 HP per turn if adjacent to at least one Missoca"
+      ],
+      "replaces": "Pikeman",
+      "artCredit": "Art by Lasqueto",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Moves_Icon",
+          "label": "Movement",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png",
+          "template": "Moves Icon"
+        }
+      ]
+    },
+    {
+      "art": "Ari Nope Rozvi ChangamireDombo Musika.png",
+      "body": "",
+      "name": "Musika",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ari%20Nope%20Rozvi%20ChangamireDombo%20Musika.png",
+      "bullets": [
+        "Trade Routes from this city grant a source of Cattle to the destination city upon ending",
+        "Generates {{Culture Icon}} if built in a captured city"
+      ],
+      "replaces": "Market",
+      "artCredit": "Art by Lasqueto",
+      "civilopedia": "",
+      "templateRefs": [
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Trade_Route_Icon",
+          "label": "Trade Routes",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+          "template": "Trade Route Icon"
+        },
+        {
+          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+          "label": "Culture",
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Culture.png",
+          "template": "Culture Icon"
+        }
+      ]
+    }
+  ],
+  "identity": {
+    "bias": "Avoid Tundra\nAvoid Jungle",
+    "capital": "Danangombe",
+    "culture": "",
+    "religion": [
+      "Protestantism",
+      "Mwari Cult (HR)"
+    ],
+    "adjectives": "Rozvi",
+    "empireName": "Rozvi Empire",
+    "government": "",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://www.britannica.com/topic/Changamire-dynasty",
+      "body": "Changamire Dombo I is a figure whose identity unfortunately remains shrouded in mystery, to the point where even his name is somewhat clouded in confusion - the Portuguese knew him as Changamire, and oral tradition refers to him as Dombo. Even his identity as the first ruler of the Rozvi is debated, but he was certainly the one who brought the Rozvi into power. Changamire Dombo apparently first rose to power as a notable “cattle baron” - one who would lend out his cattle to others, gaining favors and influence in return. As the economy of the region at the time depended heavily on cattle, this practice and his large cattle herd gave him sizable power and wealth, which in turn allowed him to seize control of the Kingdom of Butua and rule it as his own.\nChangamire Dombo's economic prowess was easily matched by his military prowess, however, and before long he would come to blows with the Portuguese in a series of wars over control of the Mutapa Kingdom and other various minor states in the region. Dombo's military success in these wars was almost unprecedented here - he defeated the Portuguese as well as Mutapa several times in a row, destroying forts and slaughtering all their inhabitants. Before long, he had gained a reputation not only as a master tactician but also as a skilled wizard, which coupled with his brutality and intimidation tactics (including flaying two priests and carrying them in front of his army) to give him the overwhelming psychological edge over his opponents. By 1695, Dombo controlled all of the gold-producing territories in the region. By 1712, he had forced the Portuguese out of Mutapa entirely.\nChangamire Dombo likely only ruled for a few short years after his triumph before he passed away, but his empire lived on. Before long, the Portuguese and Rozvi would see their relationship improve, and lucrative trade would connect the two. What Changamire Dombo would have thought of this is unknown, but given that the Portuguese never did attempt to challenge the Rozvi again, he likely would have been satisfied.",
+      "title": "Changamire Dombo"
+    },
+    "civilization": {
+      "url": "",
+      "body": "The Rozvi Empire was a Shona state which dominated modern-day Zimbabwe and the surrounding areas from the late 17th century into the mid-19th century. Born out of the Kingdom of Butua, itself a successor state of the Kingdom of Zimbabwe, the Rozvi were likely originally a group of cattle herders who leveraged their wealth to gain influence over Butua and establish their own state under one Changamire Dombo. However, the Rozvi soon turned their ambitions towards a greater target. The once-powerful Kingdom of Mutapa had fallen into infighting and succession crises, in large part due to the meddling of the Portuguese who now held de-facto control over the region and its rich gold reserves. The Rozvi began to play into these succession disputes as well, sponsoring their own candidates for the throne, and before long the Rozvi and Portuguese would end up at war.\nWhat followed was a series of crushing defeats for the Portuguese, as the Rozvi systematically conquered and destroyed the various forts and trading posts that had been established around Zimbabwe alongside the various Portuguese vassals. Mutapa was reduced to a tiny rump state, and Portuguese influence was beaten back to a few small trading forts in Mozambique. The Portuguese were unable to strike back, either - their troops had become terrified of the Rozvi, and Oman soon came to dominate the eastern coast of Africa anyways. Instead, the Portuguese and Rozvi entered a partnership based on trade and mutual protection - with the Rozvi holding the dominant position.\nScholars continue to debate just how organized and centralized the Rozvi Empire truly was. On one end of the spectrum, some believe that the Rozvi were more of a loose confederation held together by the economic dominance of the Mambo (king). Others consider the Rozvi to have been a proper empire, with the Mambo's military and political systems being the primary forces at play. Regardless of the reality of the situation, the Rozvi were certainly an economic force, holding large stores of gold in their lands (though their economy was most likely based on cattle and other agriculture) and remaining a valuable trade partner for the Portuguese.\nEventually, however, Rozvi power began to wane as various factors piled up against them. A series of droughts, coupled with shifting Portuguese economic priorities, left the empire strained, but the end of the Rozvi came in the form of a series of invasions from the south. The most devastating of these invasions came from the Swazi queen Nyamazanana, but the Rozvi managed to limp on until the Ndebele king Mzilikazi finally dealt the killing blow in 1866 (albeit with surprisingly fierce resistance from the Rozvi). The Ndebele, in turn, would rule Zimbabwe until the British conquered the region for themselves during the Scramble for Africa.",
+      "title": "Rozvi"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": ": \"But... how? What manner of magic did you employ?\"",
+    "blessing": "Hail to you, Changamire Dombo, great emperor of the Rozvi! The very name of your people struck fear into the hearts of those across the plains of southern Africa, and you were the one who instilled that fear. From your days as a cattle baron, you grew powerful enough to dominate the kingdom of Butua, and when that wasn't enough, you took control of the once-mighty kingdom of Mutapa by wresting it from the claws of the mighty Portuguese Empire! Your clever economic tactics ensured that they could never replicate their duplicitous tactics to tear your own empire apart, and your military genius ensured that none could best you in battle, either. Though your empire would last a mere 200 years, wracked by drought and unending invasions, it was only by tactics you yourself employed that the Rozvi could finally be bested by the Ndebele.\nGreat Changamire, your enemies seem to have forgotten the terror you drilled deep into their souls. It is time for you to remind them why they cowered. Your legions stand at the ready, and there is much to be gained. Can you best the endless hordes in combat? Can you construct an empire so prosperous that no calamity could wither it away? Can you build a civilization that will stand the test of time?",
+    "introduction": ": \"I am Changamire Dombo, king of the Rozvi. I trust you have heard rumors of my strength, and I assure you, they are all true. You would be wise not to test them.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Danangombe",
+        "Khami",
+        "Manyanga",
+        "Bulawayo",
+        "Bindura",
+        "Masekesa",
+        "Mahungwe",
+        "Dambarare",
+        "Murewa",
+        "Naletale",
+        "Maremuca",
+        "Pfura",
+        "Nyanga",
+        "Manyika",
+        "Bikita",
+        "Mberengwa",
+        "Chiwundura",
+        "Tumbare",
+        "Guruuswa",
+        "Mabweadziva",
+        "raPfupajena",
+        "Macardon",
+        "Shashi",
+        "Mapela",
+        "Zinjanja",
+        "Zimbabwe",
+        "Dembarare",
+        "Masikwesi",
+        "Zumbo",
+        "</div>",
+        "|-"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Chirisa",
+        "Chikuyo",
+        "Kambgun",
+        "Tohwechipi",
+        "Baswi",
+        "Dhafa",
+        "Chirisamuru",
+        "Negamo",
+        "Zhahare",
+        "Tumbare",
+        "</div>",
+        "|-"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "NopeCopter",
+    "Arilasqueto",
+    "Civilizations with Male leaders",
+    "Zimbabwe"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": true,
+    "eandd": false,
+    "piety": false,
+    "culdiv": false,
+    "ynaemp": false,
+    "maplabels": false,
+    "civivtraits": false,
+    "ethnicunits": false,
+    "histreligions": true,
+    "enlightenmentera": false
+  },
+  "collections": [],
+  "navTemplate": "Template:ArilasquetoNav",
+  "presentation": {
+    "colors": {
+      "icon": "#E4E2CA",
+      "background": "#441524"
+    },
+    "mapImage": "Ari Nope Rozvi ChangamireDombo Map.png",
+    "iconImage": "Cattle.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ari%20Nope%20Rozvi%20ChangamireDombo%20Map.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Cattle.png",
+    "mapImageCaption": "Map by Lasqueto",
+    "leaderSceneImage": "Ari_Nope_Rozvi_ChangamireDombo_Diplo.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ari_Nope_Rozvi_ChangamireDombo_Diplo.png",
+    "leaderSceneArtCredit": "Art by Lasqueto"
+  },
+  "templateRefs": [
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
+      "label": "Culture",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Culture.png",
+      "template": "Culture Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
+      "label": "Strength",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+      "template": "Strength Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Moves_Icon",
+      "label": "Movement",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png",
+      "template": "Moves Icon"
+    },
+    {
+      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Trade_Route_Icon",
+      "label": "Trade Routes",
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+      "template": "Trade Route Icon"
+    }
+  ]
+}

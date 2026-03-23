@@ -1,0 +1,210 @@
+{
+  "id": "civ-fatimid-caliphate-al-mahdi-billah",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T04:03:02.001Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "fatimid-caliphate-al-mahdi-billah",
+  "music": {
+    "war": {
+      "title": "Bouleria Nomade",
+      "credit": "Mohamed Rouane"
+    },
+    "peace": {
+      "title": "Agha",
+      "credit": "Mohamed Rouane"
+    }
+  },
+  "title": "Fatimid Caliphate",
+  "issues": [],
+  "leader": "al-Mahdi Billah",
+  "source": {
+    "type": "wiki",
+    "version": "v 3",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Fatimids_(al-Mahdi_Billah)",
+    "lastUpdated": "17 January 2019",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1479270044",
+    "modFolderName": "",
+    "wikiPageTitle": "Fatimid Caliphate"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Francesca",
+      "role": "Civ Icon"
+    },
+    {
+      "name": "danrell",
+      "role": "Kutama Model"
+    },
+    {
+      "name": "Mohamed Rouane",
+      "role": "Music"
+    }
+  ],
+  "summary": "The Fatimids led by al-Mahdi Billah is a custom civilization by TopHatPaladin, with contributions from Francesca and danrell.",
+  "uniques": [
+    {
+      "art": "IconPNG_Billah.png",
+      "body": "Enemy units killed adjacent to a {{Great Person Icon}} Great Person may be converted to your side. All {{Great Person Icon}} Great People have +2 Movement.",
+      "name": "Mission of the Da'i",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Billah.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Kutama.png",
+      "body": "",
+      "name": "Kutama",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Kutama.png",
+      "bullets": [
+        "Not slowed by rough terrain",
+        "+15% {{Strength Icon}} Combat Strength when stacked with a {{Great Person Icon}} Great Person"
+      ],
+      "replaces": "Knight",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Shini.png",
+      "body": "",
+      "name": "Shini",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Shini.png",
+      "bullets": [
+        "Has more Ranged Combat Strength (22) than the Galleass",
+        "Must set up before firing",
+        "Begins with the Great Generals I promotion"
+      ],
+      "replaces": "Galleass",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Desert",
+    "capital": "Mahdia",
+    "culture": "Islamic",
+    "religion": [
+      "Islam",
+      "Shia (HR)"
+    ],
+    "adjectives": "Fatimid",
+    "empireName": "Fatimid Caliphate",
+    "government": "Caliphate",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Abd_Allah_al-Mahdi_Billah",
+      "body": "Abdullah al-Mahdi Billah was born in 873 AD, in the region of Khuzestan (today, southwestern Iran). He was the son of Radi Abdullah, the then-current Isma'ili Imam, forcing him to live in secret for his childhood; this state of affairs was only exacerbated after 881, when the death of Radi Abdullah forced al-Mahdi Billah to assume the imamate at a young age.",
+      "title": "al-Mahdi Billah"
+    },
+    "civilization": {
+      "url": "",
+      "body": "The Fatimid Caliphate (909–1171) was the only Shi'a caliphate in Islamic history. They claimed descent from the prophet Muhammad's wife Fatimah, from whom they derived their name. The Fatimid Caliphate originated in the region of Ifriqiya, in North Africa. After discovering that the Berber subjects of the Aghlabid emirate were restless, al-Mahdi Billah and his da'i Abu Abdallah Shi'i began proselytizing to them around 900; this mission was a resounding success, and in 909, al-Mahdi Billah conquered the Aghlabid capital of Raqqada. Upon this conquest, he declared himself Caliph, and his forces soon overran the rest of the Maghreb.",
+      "title": "The Fatimids"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"So be it. If I must die in defense of my faith, then I will.\"",
+    "blessing": "\"Salutations, al-Mahdi Billah, Isma'ili Imam and founder of the Fatimid Caliphate! Although in your childhood you were forced to conceal your faith from Sunni rule, you would go on to become the ruler of the world's only Shi'a caliphate. Through skilled proselytizing, your da'is would secure the loyalty of the Kutama Berbers, allowing you to overthrow the Aghlabid Emirate and become the dominant power in North Africa. From there, your influence would only grow: by the end of your reign, you would come to own most of Africa's Mediterranean coast, and your navy would lead you to be courted by foreign powers for alliance.\nal-Mahdi Billah, your people yearn for the return of your inspiring leadership and military prowess. Can you conquer your rivals and earn the trust of their populations? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Hail, traveler! You stand in the presence of Abdullah al-Mahdi Billah, imam and caliph. Have you come to pay homage?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Mahdia",
+        "Cairo",
+        "Al-Mansuriyya",
+        "Raqqada",
+        "Fustat",
+        "Bilbeis",
+        "Barqa",
+        "Tahert",
+        "Tunis",
+        "Damietta",
+        "Qayrawan",
+        "Balarme",
+        "Ashir",
+        "Sétif",
+        "Mila",
+        "Surt",
+        "Adjabiyya",
+        "Sousse",
+        "Ushmuniyya",
+        "Miliana",
+        "Béja",
+        "Médéa",
+        "Baghai",
+        "Tebessa",
+        "Medjana",
+        "Tinnis",
+        "Zamalek",
+        "Salamiyah"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Abu Abdallah al-Shi'i",
+        "Ghazwiyya",
+        "Husain",
+        "Abul Qasim",
+        "al-Qa'im",
+        "Isma'il",
+        "Radi Abdullah",
+        "al-Mansur",
+        "Abu Tahir",
+        "Abu al-Hasan"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Islamic Cultures",
+    "Civilizations with Male leaders",
+    "Civilizations with two unique units (Civ5)"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#8c2a16",
+      "background": "#9ebf8e"
+    },
+    "mapImage": "MapBigPNG_EarlyFatimid.png",
+    "iconImage": "IconPNG_FatimidBillah.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapBigPNG_EarlyFatimid.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_FatimidBillah.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Billah.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Billah.png",
+    "leaderSceneArtCredit": "Leaderscreen by TopHatPaladin"
+  },
+  "templateRefs": []
+}

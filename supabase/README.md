@@ -90,16 +90,17 @@ Run:
 
 This will:
 - write active Supabase pedia entries into `src/lib/data/modded-civs-pedia/*.json`
-- write matching `.wiki.txt` files when cloud wiki markup exists
 - merge cloud collection metadata into `src/lib/data/pediaCollections.js`
+
+By default this does not write `.wiki.txt` sidecar files.
 
 Optional flags:
 - `npm run pull:pedia -- --prune`
   Removes local entry files that do not exist in Supabase.
 - `npm run pull:pedia -- --skip-collections`
   Only pulls entry files.
-- `npm run pull:pedia -- --skip-wiki`
-  Skips writing `.wiki.txt` sidecar files.
+- `npm run pull:pedia -- --with-wiki`
+  Also writes `.wiki.txt` sidecar files when cloud wiki markup exists.
 
 Default behavior is non-destructive:
 - soft-deleted cloud entries are skipped
