@@ -3,6 +3,7 @@
 	import luaData from "../data/civ-lua-api.json";
 	import { plannerDeliverables, plannerTracks, siteResourceGroups, tutorialTracks } from "../data/guidedPlannerData.js";
 	import { CURATED_EVENT_NAMES, CURATED_METHOD_NAMES } from "../data/luaQuickStarts.js";
+	import { BUILTIN_MODDED_CIVS } from "../data/moddedCivsPedia.js";
 	import { CURRENT_VERSION, workshopUploaderDownloadCards } from "../data/workshopUploaderReleaseData.js";
 
 	const curatedEntries = [
@@ -268,6 +269,8 @@
 		"pattern-holy-city-reward-resolver",
 	];
 	const selectedCuratedEntries = $state(pickCuratedEntries());
+	const homepagePediaPool = BUILTIN_MODDED_CIVS.filter((entry) => entry?.slug && entry?.title && entry?.leader);
+	const selectedPediaEntries = $state(pickHomepagePediaEntries());
 	const workshopPlatformIcons = {
 		macos: "M447.1 332.7C446.9 296 463.5 268.3 497.1 247.9C478.3 221 449.9 206.2 412.4 203.3C376.9 200.5 338.1 224 323.9 224C308.9 224 274.5 204.3 247.5 204.3C191.7 205.2 132.4 248.8 132.4 337.5C132.4 363.7 137.2 390.8 146.8 418.7C159.6 455.4 205.8 545.4 254 543.9C279.2 543.3 297 526 329.8 526C361.6 526 378.1 543.9 406.2 543.9C454.8 543.2 496.6 461.4 508.8 424.6C443.6 393.9 447.1 334.6 447.1 332.7zM390.5 168.5C417.8 136.1 415.3 106.6 414.5 96C390.4 97.4 362.5 112.4 346.6 130.9C329.1 150.7 318.8 175.2 321 202.8C347.1 204.8 370.9 191.4 390.5 168.5z",
 		linux: "M316.9 187.3C317.9 187.8 318.7 189 319.9 189C321 189 322.7 188.6 322.8 187.5C323 186.1 320.9 185.2 319.6 184.6C317.9 183.9 315.7 183.6 314.1 184.5C313.7 184.7 313.3 185.2 313.5 185.6C313.8 186.9 315.8 186.7 316.9 187.3zM295 189C296.2 189 297 187.8 298 187.3C299.1 186.7 301.1 186.9 301.5 185.7C301.7 185.3 301.3 184.8 300.9 184.6C299.3 183.7 297.1 184 295.4 184.7C294.1 185.3 292 186.2 292.2 187.6C292.3 188.6 294 189.1 295 189zM516 467.8C512.4 463.8 510.7 456.2 508.8 448.1C507 440 504.9 431.3 498.3 425.7C497 424.6 495.7 423.6 494.3 422.8C493 422 491.6 421.3 490.2 420.8C499.4 393.5 495.8 366.3 486.5 341.7C475.1 311.6 455.2 285.3 440 267.3C422.9 245.8 406.3 225.4 406.6 195.3C407.1 149.4 411.7 64.1 330.8 64C228.4 63.8 254 167.4 252.9 199.2C251.2 222.6 246.5 241 230.4 263.9C211.5 286.4 184.9 322.7 172.3 360.6C166.3 378.5 163.5 396.7 166.1 413.9C159.6 419.7 154.7 428.6 149.5 434.1C145.3 438.4 139.2 440 132.5 442.4C125.8 444.8 118.5 448.4 114 456.9C111.9 460.8 111.2 465 111.2 469.3C111.2 473.2 111.8 477.2 112.4 481.1C113.6 489.2 114.9 496.8 113.2 501.9C108 516.3 107.3 526.3 111 533.6C114.8 540.9 122.4 544.1 131.1 545.9C148.4 549.5 171.9 548.6 190.4 558.4C210.2 568.8 230.3 572.5 246.3 568.8C257.9 566.2 267.4 559.2 272.2 548.6C284.7 548.5 298.5 543.2 320.5 542C335.4 540.8 354.1 547.3 375.6 546.1C376.2 548.4 377 550.7 378.1 552.8L378.1 552.9C386.4 569.6 401.9 577.2 418.4 575.9C435 574.6 452.5 564.9 466.7 548C480.3 531.6 502.7 524.8 517.6 515.8C525 511.3 531 505.7 531.5 497.5C531.9 489.3 527.1 480.2 516 467.8zM319.8 151.3C329.6 129.1 354 129.5 363.8 150.9C370.3 165.1 367.4 181.8 359.5 191.3C357.9 190.5 353.6 188.7 346.9 186.4C348 185.2 350 183.7 350.8 181.8C355.6 170 350.6 154.8 341.7 154.5C334.4 154 327.8 165.3 329.9 177.5C325.8 175.5 320.5 174 316.9 173.1C315.9 166.2 316.6 158.5 319.8 151.3zM279.1 139.8C289.2 139.8 299.9 154 298.2 173.3C294.7 174.3 291.1 175.8 288 177.9C289.2 169 284.7 157.8 278.4 158.3C270 159 268.6 179.5 276.6 186.4C277.6 187.2 278.5 186.2 270.7 191.9C255.1 177.3 260.2 139.8 279.1 139.8zM265.5 200.5C271.7 195.9 279.1 190.5 279.6 190C284.3 185.6 293.1 175.8 307.5 175.8C314.6 175.8 323.1 178.1 333.4 184.7C339.7 188.8 344.7 189.1 356 194C364.4 197.5 369.7 203.7 366.5 212.2C363.9 219.3 355.5 226.6 343.8 230.3C332.7 233.9 324 246.3 305.6 245.2C301.7 245 298.6 244.2 296 243.1C288 239.6 283.8 232.7 276 228.1C267.4 223.3 262.8 217.7 261.3 212.8C259.9 207.9 261.3 203.8 265.5 200.5zM268.8 534.5C266.1 569.6 224.9 568.9 193.5 552.5C163.6 536.7 124.9 546 117 530.6C114.6 525.9 114.6 517.9 119.6 504.2L119.6 504C122 496.4 120.2 488 119 480.1C117.8 472.3 117.2 465.1 119.9 460.1C123.4 453.4 128.4 451 134.7 448.8C145 445.1 146.5 445.4 154.3 438.9C159.8 433.2 163.8 426 168.6 420.9C173.7 415.4 178.6 412.8 186.3 414C194.4 415.2 201.4 420.8 208.2 430L227.8 465.6C237.3 485.5 270.9 514 268.8 534.5zM267.4 508.6C263.3 502 257.8 495 253 489C260.1 489 267.2 486.8 269.7 480.1C272 473.9 269.7 465.2 262.3 455.2C248.8 437 224 422.7 224 422.7C210.5 414.3 202.9 404 199.4 392.8C195.9 381.6 196.4 369.5 199.1 357.6C204.3 334.7 217.7 312.4 226.3 298.4C228.6 296.7 227.1 301.6 217.6 319.2C209.1 335.3 193.2 372.5 215 401.6C215.6 380.9 220.5 359.8 228.8 340.1C240.8 312.7 266.1 265.2 268.1 227.4C269.2 228.2 272.7 230.6 274.3 231.5C278.9 234.2 282.4 238.2 286.9 241.8C299.3 251.8 315.4 251 329.3 243C335.5 239.5 340.5 235.5 345.2 234C355.1 230.9 363 225.4 367.5 219C375.2 249.4 393.2 293.3 404.7 314.7C410.8 326.1 423 350.2 428.3 379.3C431.6 379.2 435.3 379.7 439.2 380.7C453 345 427.5 306.5 415.9 295.8C411.2 291.2 411 289.2 413.3 289.3C425.9 300.5 442.5 323 448.5 348.3C451.3 359.9 451.8 372 448.9 384C465.3 390.8 484.8 401.9 479.6 418.8C477.4 418.7 476.4 418.8 475.4 418.8C478.6 408.7 471.5 401.2 452.6 392.7C433 384.1 416.6 384.1 414.3 405.2C402.2 409.4 396 419.9 392.9 432.5C390.1 443.7 389.3 457.2 388.5 472.4C388 480.1 384.9 490.4 381.7 501.4C349.6 524.3 305 534.3 267.4 508.6zM524.8 497.1C523.9 513.9 483.6 517 461.6 543.6C448.4 559.3 432.2 568 418 569.1C403.8 570.2 391.5 564.3 384.3 549.8C379.6 538.7 381.9 526.7 385.4 513.5C389.1 499.3 394.6 484.7 395.3 472.9C396.1 457.7 397 444.4 399.5 434.2C402.1 423.9 406.1 417 413.2 413.1C413.5 412.9 413.9 412.8 414.2 412.6C415 425.8 421.5 439.2 433 442.1C445.6 445.4 463.7 434.6 471.4 425.8C480.4 425.5 487.1 424.9 494 430.9C503.9 439.4 501.1 461.2 511.1 472.5C521.7 484.1 525.1 492 524.8 497.1zM269.4 212.7C271.4 214.6 274.1 217.2 277.4 219.8C284 225 293.2 230.4 304.7 230.4C316.3 230.4 327.2 224.5 336.5 219.6C341.4 217 347.4 212.6 351.3 209.2C355.2 205.8 357.2 202.9 354.4 202.6C351.6 202.3 351.8 205.2 348.4 207.7C344 210.9 338.7 215.1 334.5 217.5C327.1 221.7 315 227.7 304.6 227.7C294.2 227.7 285.9 222.9 279.7 218C276.6 215.5 274 213 272 211.1C270.5 209.7 270.1 206.5 267.7 206.2C266.3 206.1 265.9 209.9 269.4 212.7z",
@@ -340,6 +343,15 @@
 		selectedCuratedEntries.splice(0, selectedCuratedEntries.length, ...pickCuratedEntries());
 	}
 
+	function pickHomepagePediaEntries() {
+		const count = 3;
+		return shuffleEntries(homepagePediaPool).slice(0, count);
+	}
+
+	function refreshHomepagePediaEntries() {
+		selectedPediaEntries.splice(0, selectedPediaEntries.length, ...pickHomepagePediaEntries());
+	}
+
 	function buildLuaCuratedEntries() {
 		const methodEntries = CURATED_METHOD_NAMES.map((methodName) => {
 			const entry = luaData.methods.find((item) => item.methodName === methodName);
@@ -402,6 +414,24 @@
 			default:
 				return "is-tool";
 		}
+	}
+
+	function pediaSpotlightHref(entry) {
+		return `/modded-civs-pedia/civilizations/${entry.slug}`;
+	}
+
+	function pediaSpotlightStyle(entry) {
+		const background = String(entry?.presentation?.colors?.background || "").trim() || "#3b2d20";
+		const accent = String(entry?.presentation?.colors?.icon || "").trim() || "#d5b36b";
+		return `--spotlight-background:${background};--spotlight-accent:${accent};`;
+	}
+
+	function pediaSpotlightUniqueArt(entry) {
+		return (Array.isArray(entry?.uniques) ? entry.uniques : []).filter((unique) => unique?.artUrl).slice(0, 3);
+	}
+
+	function pediaSpotlightAuthor(entry) {
+		return Array.isArray(entry?.authors) && entry.authors.length ? entry.authors[0] : "Unknown";
 	}
 </script>
 
@@ -471,6 +501,71 @@
 		<div class="curated-toolbar">
 			<p class="curated-toolbar-copy">Rotate the set and explore a new slice of the resource library.</p>
 			<button type="button" class="section-refresh" onclick={refreshCuratedEntries}>Show another set</button>
+		</div>
+	</section>
+
+	<section class="home-section home-pedia-spotlight">
+		<div class="section-heading">
+			<div class="stack half">
+				<p class="eyebrow">Modded Civs Pedia Spotlight</p>
+				<h2 class="section-title text-box-trim">Explore published civ mods you can use as reference while learning</h2>
+				<p class="section-copy">If you are new to Civ V modding, look through our pedia as a good way to study how finished civs are themed and built.</p>
+			</div>
+		</div>
+
+		<div class="pedia-spotlight-grid">
+			{#each selectedPediaEntries as entry (entry.id)}
+				<a class="pedia-spotlight-card" href={pediaSpotlightHref(entry)} style={pediaSpotlightStyle(entry)}>
+					<div class="pedia-spotlight-main">
+						<div class="pedia-spotlight-icon">
+							{#if entry.presentation?.iconImageUrl}
+								<img src={entry.presentation.iconImageUrl} alt={`${entry.title} icon`} loading="lazy" referrerpolicy="no-referrer" />
+							{:else}
+								<span>{entry.title.slice(0, 2).toUpperCase()}</span>
+							{/if}
+						</div>
+
+						<div class="pedia-spotlight-copy stack half">
+							<div class="stack quarter">
+								<p class="eyebrow">Civilization</p>
+								<strong class="card-title">{entry.title}</strong>
+							</div>
+							<div class="pedia-spotlight-meta">
+								<span><strong>Leader</strong> {entry.leader || "Unknown"}</span>
+								{#if entry.identity?.capital}
+									<span><strong>Capital</strong> {entry.identity.capital}</span>
+								{/if}
+								<!-- <span><strong>Author</strong> {pediaSpotlightAuthor(entry)}</span> -->
+							</div>
+							<!-- <p class="card-copy">{entry.summary}</p> -->
+						</div>
+					</div>
+
+					<div class="pedia-spotlight-art-grid">
+						{#if entry.presentation?.mapImageUrl}
+							<figure class="pedia-spotlight-map">
+								<img src={entry.presentation.mapImageUrl} alt={`${entry.title} map`} loading="lazy" referrerpolicy="no-referrer" />
+							</figure>
+						{/if}
+
+						{#if pediaSpotlightUniqueArt(entry).length}
+							<div class="pedia-spotlight-uniques">
+								{#each pediaSpotlightUniqueArt(entry) as unique (`${entry.id}-${unique.name}`)}
+									<figure class="pedia-spotlight-unique">
+										<img src={unique.artUrl} alt={`${unique.name} art`} loading="lazy" referrerpolicy="no-referrer" />
+										<!-- <figcaption>{unique.name}</figcaption> -->
+									</figure>
+								{/each}
+							</div>
+						{/if}
+					</div>
+				</a>
+			{/each}
+		</div>
+
+		<div class="curated-toolbar">
+			<p class="curated-toolbar-copy">Rotate the spotlight and browse another set of pedia entries.</p>
+			<button type="button" class="section-refresh" onclick={refreshHomepagePediaEntries}>Show another set</button>
 		</div>
 	</section>
 
@@ -767,8 +862,171 @@
 			radial-gradient(circle at 20% 90%, color-mix(in srgb, #7de0ae 8%, transparent) 0%, transparent 30%), color-mix(in srgb, var(--home-panel) 94%, #0f1315 6%);
 	}
 
+	.home-pedia-spotlight {
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, #d1a755 10%, transparent) 0%, transparent 36%),
+			linear-gradient(160deg, color-mix(in srgb, #17202c 30%, var(--home-panel)) 0%, color-mix(in srgb, var(--home-panel) 92%, #0f1013 8%) 100%);
+	}
+
 	.curated-grid {
 		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
+	.pedia-spotlight-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1rem;
+	}
+
+	.pedia-spotlight-card {
+		display: grid;
+		flex-direction: column;
+		gap: 1rem;
+		color: var(--ink);
+		text-decoration: none;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--spotlight-accent) 26%, transparent) 0%, transparent 34%),
+			linear-gradient(155deg, color-mix(in srgb, var(--spotlight-background) 58%, var(--home-panel)) 0%, color-mix(in srgb, var(--home-panel) 88%, #121212 12%) 100%);
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--spotlight-accent) 22%, var(--border-color)),
+			var(--home-shadow);
+		border: 1px solid color-mix(in srgb, var(--spotlight-accent) 50%, var(--home-border));
+		border-radius: 1rem;
+		padding: 1rem;
+		overflow: hidden;
+		transition:
+			transform 150ms ease,
+			box-shadow 150ms ease,
+			border-color 150ms ease;
+	}
+
+	.pedia-spotlight-card:hover,
+	.pedia-spotlight-card:focus-visible {
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--spotlight-accent) 38%, var(--border-color)),
+			0 6px 8px color-mix(in srgb, black 65%, transparent);
+		border-color: color-mix(in srgb, var(--spotlight-accent) 80%, var(--home-border));
+		transform: translateY(-1px);
+	}
+
+	.pedia-spotlight-main {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: start;
+		gap: 0.8rem;
+		text-shadow: 1px 1px 2px color-mix(in srgb, var(--spotlight-accent) 50%, #000);
+
+		& strong {
+			color: color-mix(in srgb, var(--spotlight-accent) 5%, white);
+			font-size: 1.1rem;
+			font-weight: 700;
+		}
+	}
+
+	.pedia-spotlight-icon {
+		inline-size: 7rem;
+		block-size: 7rem;
+	}
+
+	.pedia-spotlight-icon img {
+		inline-size: 100%;
+		block-size: 100%;
+		display: block;
+		filter: drop-shadow(2px 2px 2px color-mix(in srgb, var(--spotlight-accent) 15%, #000));
+		object-fit: contain;
+	}
+
+	.pedia-spotlight-icon span {
+		color: color-mix(in srgb, var(--spotlight-accent) 72%, white);
+		font-family: "Rockwell", "Palatino Linotype", serif;
+		font-size: 1.05rem;
+		font-weight: 700;
+	}
+
+	.pedia-spotlight-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem;
+	}
+
+	.pedia-spotlight-meta span {
+		color: color-mix(in srgb, white 90%, var(--ink));
+		font-size: 0.8rem;
+		text-shadow: 1px 1px 2px color-mix(in srgb, var(--spotlight-accent) 40%, #000);
+		background: color-mix(in srgb, var(--spotlight-accent) 50%, rgba(255, 255, 255, 0.1));
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--spotlight-accent) 25%, transparent);
+		border: 1px solid color-mix(in srgb, var(--spotlight-accent) 50%, transparent);
+		border-radius: 0.5rem;
+		padding-block: 0.25rem;
+		padding-inline: 0.5rem;
+	}
+
+	.pedia-spotlight-meta strong {
+		text-transform: uppercase;
+		font-size: 0.65rem;
+		letter-spacing: 0.1em;
+		margin-inline-end: 0.2rem;
+	}
+
+	.pedia-spotlight-art-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(6rem, 0.9fr);
+		gap: 1rem;
+	}
+
+	.pedia-spotlight-map {
+		margin: 0;
+		background: color-mix(in srgb, var(--spotlight-background) 20%, rgba(255, 255, 255, 0.02));
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--spotlight-accent) 14%, var(--border-color));
+		border-radius: 1rem;
+		overflow: hidden;
+	}
+
+	.pedia-spotlight-unique {
+		margin: 0;
+		/*background: color-mix(in srgb, var(--spotlight-background) 30%, rgba(255, 255, 255, 0.02));
+		border-radius: 1rem;*/
+		overflow: hidden;
+
+		& img {
+			filter: drop-shadow(1px 1px 2px color-mix(in srgb, var(--spotlight-accent) 15%, #000));
+		}
+	}
+
+	.pedia-spotlight-map {
+		min-block-size: 10rem;
+	}
+
+	.pedia-spotlight-map img {
+		inline-size: 100%;
+		block-size: 100%;
+		display: block;
+		object-fit: cover;
+	}
+
+	.pedia-spotlight-uniques {
+		display: grid;
+		grid-template-columns: repeat(1, minmax(0, 1fr));
+		justify-items: center;
+		gap: 0.5rem;
+	}
+
+	.pedia-spotlight-unique img {
+		inline-size: 6rem;
+		block-size: 6rem;
+		aspect-ratio: 1;
+		display: block;
+		object-fit: contain;
+	}
+
+	.pedia-spotlight-unique figcaption {
+		color: color-mix(in srgb, white 92%, var(--ink));
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-align: center;
+		background: color-mix(in srgb, black 22%, transparent);
+		padding-block: 0.45rem;
+		padding-inline: 0.45rem;
 	}
 
 	.curated-card-head {
@@ -1162,11 +1420,16 @@
 		}
 
 		.hero-aside,
-		.curated-grid {
+		.curated-grid,
+		.pedia-spotlight-grid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 
 		.workshop-feature-shell {
+			grid-template-columns: 1fr;
+		}
+
+		.pedia-spotlight-art-grid {
 			grid-template-columns: 1fr;
 		}
 
@@ -1179,12 +1442,23 @@
 		.hero-actions,
 		.hero-microcopy,
 		.hero-aside,
-		.curated-grid {
+		.curated-grid,
+		.pedia-spotlight-grid,
+		.pedia-spotlight-uniques {
 			grid-template-columns: 1fr;
 		}
 
 		.curated-toolbar {
 			align-items: start;
+		}
+
+		.pedia-spotlight-main {
+			grid-template-columns: 1fr;
+		}
+
+		.pedia-spotlight-icon {
+			inline-size: 4.5rem;
+			block-size: 4.5rem;
 		}
 	}
 </style>

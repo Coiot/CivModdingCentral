@@ -1898,7 +1898,7 @@
 	<header class="hero pedia-hero">
 		<div class="stack half">
 			<p class="eyebrow">Civ Mod Pedia</p>
-			<h1>Browse modded civilizations</h1>
+			<h1>Browse Community Mods</h1>
 			<p>Search a curated list of civs, gameplay mods, and convert your mod folders to add more civs to the catalog.</p>
 		</div>
 	</header>
@@ -5075,6 +5075,7 @@
 	.pedia-infobox {
 		position: sticky;
 		inset-block-start: 1rem;
+		max-block-size: calc(100dvh - 2rem);
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--infobox-accent) 30%, transparent) 0%, transparent 42%),
 			linear-gradient(165deg, color-mix(in srgb, var(--infobox-surface) 40%, var(--pedia-panel)) 0%, color-mix(in srgb, var(--pedia-panel) 85%, black 15%) 100%);
@@ -5083,6 +5084,7 @@
 			0 4px 6px color-mix(in srgb, black 50%, transparent);
 		border-radius: 1rem;
 		padding: 1rem;
+		overflow: auto;
 		--infobox-accent: var(--pedia-accent);
 		--infobox-surface: var(--pedia-panel-soft);
 	}

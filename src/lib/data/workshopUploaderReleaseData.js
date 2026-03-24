@@ -1,5 +1,5 @@
 export const RELEASES_REPO_URL = "https://github.com/Coiot/cmc-workshop-uploader";
-export const CURRENT_VERSION = "1.1.0";
+export const CURRENT_VERSION = "1.1.6";
 export const RELEASE_TAG = `v${CURRENT_VERSION}`;
 export const RELEASE_PAGE_URL = `${RELEASES_REPO_URL}/releases/tag/${RELEASE_TAG}`;
 
