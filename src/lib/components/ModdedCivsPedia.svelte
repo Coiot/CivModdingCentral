@@ -1788,6 +1788,13 @@
 			.toUpperCase();
 	}
 
+	function infoboxColorSwatch(value) {
+		const match = String(value || "")
+			.trim()
+			.match(/(#[0-9A-F]{3,8})$/i);
+		return match ? match[1].toUpperCase() : "";
+	}
+
 	function infoboxRows(entry) {
 		const backgroundColor = entryPresentationColor(entry, "background");
 		const iconColor = entryPresentationColor(entry, "icon");
@@ -3540,11 +3547,21 @@
 									{#if row.values?.length > 1}
 										<div class="pedia-infobox-values">
 											{#each row.values as value (`${row.label}-${value}`)}
-												<span class="negative-margin"><PediaInlineText text={value} templateRefs={infoboxRowTemplateRefs(selectedEntry, { ...row, value })} /></span>
+												<span class="negative-margin pedia-infobox-value">
+													<PediaInlineText text={value} templateRefs={infoboxRowTemplateRefs(selectedEntry, { ...row, value })} />
+													{#if infoboxColorSwatch(value)}
+														<span class="pedia-color-swatch-dot" style={`--swatch:${infoboxColorSwatch(value)}`} aria-hidden="true"></span>
+													{/if}
+												</span>
 											{/each}
 										</div>
 									{:else}
-										<span><PediaInlineText text={row.value} templateRefs={infoboxRowTemplateRefs(selectedEntry, row)} /></span>
+										<span class="pedia-infobox-value">
+											<PediaInlineText text={row.value} templateRefs={infoboxRowTemplateRefs(selectedEntry, row)} />
+											{#if infoboxColorSwatch(row.value)}
+												<span class="pedia-color-swatch-dot" style={`--swatch:${infoboxColorSwatch(row.value)}`} aria-hidden="true"></span>
+											{/if}
+										</span>
 									{/if}
 								</div>
 							{/each}
@@ -4004,8 +4021,30 @@
 		text-align: end;
 	}
 
+	.pedia-infobox-value {
+		display: inline-flex;
+		justify-content: flex-end;
+		align-items: center;
+		gap: 0.45rem;
+	}
+
 	.pedia-infobox-values span {
-		display: block;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.pedia-color-swatch-dot {
+		inline-size: 1rem;
+		block-size: 1rem;
+		display: inline-block;
+		flex: 0 0 auto;
+		background: var(--swatch, transparent);
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, white 35%, transparent),
+			0 0 0 1px color-mix(in srgb, black 55%, transparent);
+		border-radius: 999px;
+		margin-block-end: 0.1rem;
 	}
 
 	.negative-margin {
