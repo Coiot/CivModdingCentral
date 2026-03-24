@@ -31,6 +31,8 @@
 	import { comparePediaEntriesByTitle } from "../utils/pediaSorting.js";
 
 	const PEDIA_BASE_PATH = "/modded-civs-pedia";
+	const CATALOG_MAP_VIEW_URL = "https://www.google.com/maps/d/u/0/viewer?mid=1bfxc1WS-cwFqfKmfeNcNir6z5Hs&ll=-3.81666561775622e-14%2C108.23139769111205&z=1&client=safari";
+	const CATALOG_MAP_EMBED_URL = "https://www.google.com/maps/d/embed?mid=1bfxc1WS-cwFqfKmfeNcNir6z5Hs&ll=-3.81666561775622e-14%2C108.23139769111205&z=1";
 
 	let { routePath = PEDIA_BASE_PATH, navigate = null, canEdit = false, authUser = null, authAccessToken = "", authEnabled = false } = $props();
 
@@ -1780,7 +1782,17 @@
 		return values.length ? values : ["Unknown"];
 	}
 
+	function entryPresentationColor(entry, key) {
+		return String(entry?.presentation?.colors?.[key] || "")
+			.trim()
+			.toUpperCase();
+	}
+
 	function infoboxRows(entry) {
+		const backgroundColor = entryPresentationColor(entry, "background");
+		const iconColor = entryPresentationColor(entry, "icon");
+		const colorValues = [...(backgroundColor ? [`Icon: ${iconColor}`] : []), ...(backgroundColor ? [`Background: ${backgroundColor}`] : [])];
+
 		return [
 			{ label: "Leader", value: entry?.leader || "Unknown" },
 			{ label: "Capital", value: entry?.identity?.capital || "Unknown" },
@@ -1790,6 +1802,7 @@
 			{ label: "Religion", value: entryReligionLabel(entry), values: entryReligionValues(entry) },
 			{ label: "Government", value: entry?.identity?.government || "Unknown" },
 			{ label: "Culture", value: entry?.identity?.culture || "Unknown" },
+			...(colorValues.length ? [{ label: "Colors", value: colorValues.join(", "), values: colorValues }] : []),
 		];
 	}
 
@@ -2219,6 +2232,19 @@
 						</section>
 					{/each}
 				</div>
+
+				<section class="pedia-catalog-map stack" aria-label="Civilization map">
+					<div class="pedia-catalog-group-head">
+						<div class="stack quarter">
+							<p class="eyebrow">Modded Civ Distribution</p>
+							<h3 class="section-title">Lacsiraxariscal's TSL Map</h3>
+						</div>
+						<a class="pedia-button pedia-button-secondary" href={CATALOG_MAP_VIEW_URL} target="_blank" rel="noreferrer">Open Full Map</a>
+					</div>
+					<div class="pedia-catalog-map-frame">
+						<iframe title="Lacsiraxariscal's TSL Map" src={CATALOG_MAP_EMBED_URL} loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+					</div>
+				</section>
 			</section>
 		{:else if activeView === "converter"}
 			<div class="pedia-toolbar">
@@ -3514,7 +3540,7 @@
 									{#if row.values?.length > 1}
 										<div class="pedia-infobox-values">
 											{#each row.values as value (`${row.label}-${value}`)}
-												<span><PediaInlineText text={value} templateRefs={infoboxRowTemplateRefs(selectedEntry, { ...row, value })} /></span>
+												<span class="negative-margin"><PediaInlineText text={value} templateRefs={infoboxRowTemplateRefs(selectedEntry, { ...row, value })} /></span>
 											{/each}
 										</div>
 									{:else}
@@ -3781,6 +3807,30 @@
 		gap: 0.75rem;
 	}
 
+	.pedia-catalog-map {
+		display: grid;
+		gap: 1rem;
+		background: color-mix(in srgb, var(--pedia-panel) 84%, black 16%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
+		border-radius: 1rem;
+		padding: 1rem;
+	}
+
+	.pedia-catalog-map-frame {
+		min-block-size: 32rem;
+		background: color-mix(in srgb, var(--pedia-panel-soft) 92%, black 8%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
+		border-radius: 0.9rem;
+		overflow: hidden;
+	}
+
+	.pedia-catalog-map-frame iframe {
+		inline-size: 100%;
+		block-size: 100%;
+		display: block;
+		border: 0;
+	}
+
 	.pedia-author-work-copy .card-copy {
 		margin: 0;
 		text-shadow: 1px 1px 2px color-mix(in srgb, var(--catalog-accent) 40%, #000);
@@ -3956,6 +4006,10 @@
 
 	.pedia-infobox-values span {
 		display: block;
+	}
+
+	.negative-margin {
+		margin-block-start: -0.25rem;
 	}
 
 	.pedia-media-placeholder span {
@@ -5121,6 +5175,10 @@
 		.pedia-catalog-group-head {
 			flex-direction: column;
 			align-items: start;
+		}
+
+		.pedia-catalog-map-frame {
+			min-block-size: 24rem;
 		}
 
 		.pedia-wiki-header-row {

@@ -14,6 +14,7 @@ const PERSON_HIGHLIGHTS = {
 	pouakai: "#e74b3c",
 	lasqueto: "#6cc036",
 	pouākai: "#e74b3c",
+	lacsiraxariscal: "#b79701",
 };
 
 export function normalizePersonHighlightName(value) {

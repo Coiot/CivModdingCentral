@@ -1,48 +1,48 @@
 [
-	{
-		"name": "Coiot",
-		"blurb": "the website guy, the CBR guy, the Tibet guy",
-		"links": [
-			{
-				"label": "Steam Workshop",
-				"href": "https://steamcommunity.com/id/volpe/myworkshopfiles/?appid=8930"
-			},
-			{
-				"label": "Github",
-				"href": "https://github.com/CivBR"
-			},
-			{
-				"label": "Civ Battle Royale",
-				"href": "https://civbattleroyale.tv"
-			},
-			{
-				"label": "Ko-fi Donations",
-				"href": "https://ko-fi.com/coiot"
-			},
-			{
-				"label": "Youtube",
-				"href": "https://www.youtube.com/channel/UCyKT0We3nrm7Mm0d4AtxnkQ"
-			}
-		]
-	},
-	{
-		"name": "JFD",
-		"blurb": "",
-		"links": []
-	},
-	{
-		"name": "Orangechrisy",
-		"blurb": "",
-		"links": []
-	},
-	{
-		"name": "ExplosiveWatermelon",
-		"blurb": "",
-		"links": []
-	},
-	{
-		"name": "DarthKyofu",
-		"blurb": "",
-		"links": []
-	}
+  {
+    "name": "Coiot",
+    "blurb": "the website guy, the CBR guy, the Tibet guy",
+    "links": [
+      {
+        "label": "Steam Workshop",
+        "href": "https://steamcommunity.com/id/volpe/myworkshopfiles/?appid=8930"
+      },
+      {
+        "label": "Github",
+        "href": "https://github.com/CivBR"
+      },
+      {
+        "label": "Civ Battle Royale",
+        "href": "https://civbattleroyale.tv"
+      },
+      {
+        "label": "Ko-Fi Donations",
+        "href": "https://ko-fi.com/coiot"
+      },
+      {
+        "label": "Youtube",
+        "href": "https://www.youtube.com/channel/UCyKT0We3nrm7Mm0d4AtxnkQ"
+      }
+    ]
+  },
+  {
+    "name": "DarthKyofu",
+    "blurb": "",
+    "links": []
+  },
+  {
+    "name": "ExplosiveWatermelon",
+    "blurb": "",
+    "links": []
+  },
+  {
+    "name": "JFD",
+    "blurb": "",
+    "links": []
+  },
+  {
+    "name": "Orangechrisy",
+    "blurb": "",
+    "links": []
+  }
 ]

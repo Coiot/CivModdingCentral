@@ -52,7 +52,7 @@
 	let shouldFocusRouteHeading = $state(false);
 	let shouldResetScroll = $state(false);
 	const currentYear = new Date().getFullYear();
-	const footerTesters = ["TopHatPaladin", "NopeCopter", "JFD", "Orangechrisy", "DarthKyofu", "Rhoze", "ExplosiveWatermelon", "ThyReformer", "EmeraldRange", "Pouākai"];
+	const footerTesters = ["TopHatPaladin", "NopeCopter", "JFD", "Orangechrisy", "DarthKyofu", "Rhoze", "ExplosiveWatermelon", "Lacsiraxariscal", "EmeraldRange", "Pouākai"];
 	let authSession = $state({
 		accessToken: "",
 		refreshToken: "",
