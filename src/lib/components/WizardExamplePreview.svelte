@@ -2264,7 +2264,7 @@
 										<input type="checkbox" bind:checked={artIncludeLandmarkArt} />
 										<span class="wizard-toggle-copy">
 											<span class="wizard-toggle-label">Include landmark or feature art</span>
-											<span class="wizard-toggle-help">Turn this on only if the civ needs improvement or feature-side art rows beyond the typical bundle.</span>
+											<span class="wizard-toggle-help">Turn this on only if the civ needs improvement or feature art rows beyond the typical bundle.</span>
 										</span>
 									</label>
 								</div>

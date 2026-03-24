@@ -121,7 +121,7 @@ async function buildArchive({ archiveName, entries }) {
 	ensureDirectory(FS, workspacePath);
 
 	try {
-		emitStatus("Preparing browser-side 7z runtime...");
+		emitStatus("Preparing browser 7z runtime...");
 		const entriesByPath = await readArchiveEntries(entries);
 		if (entriesByPath.size === 0) {
 			throw new Error("No valid files found to pack.");

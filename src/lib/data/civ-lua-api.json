@@ -6122,7 +6122,7 @@
 			"seeAlso": [
 				{
 					"entryId": "plot-getowner-60",
-					"note": "Plot-side ownership helper when you start from map coordinates instead of a City object."
+					"note": "Plot ownership helper when you start from map coordinates instead of a City object."
 				}
 			]
 		},
@@ -7066,7 +7066,7 @@
 			"seeAlso": [
 				{
 					"entryId": "game-event-cityconvertsreligion-29",
-					"note": "Hook-side companion when the majority change itself should trigger the follow-up effect."
+					"note": "Hook companion when the majority change itself should trigger the follow-up effect."
 				},
 				{
 					"label": "Religion / Belief Condition Check",
@@ -24023,7 +24023,7 @@
 			"notes": [
 				"Use this before exposing custom production shortcuts or auto-queue logic that assumes the player can legally build a unit.",
 				"This is a player-wide validation, so it is a good fit for civ-wide rules, policy locks, and resource gate logic.",
-				"If you need city-specific availability checks, pair it with city-side production logic instead of relying on this call alone."
+				"If you need city-specific availability checks, pair it with city production logic instead of relying on this call alone."
 			],
 			"example": {
 				"summary": "Guard a UI action before trying to queue a unit for the active player.",
@@ -24047,7 +24047,7 @@
 			"seeAlso": [
 				{
 					"entryId": "game-event-playercantrain-70",
-					"note": "Event-side veto hook for adding extra train rules."
+					"note": "Event veto hook for adding extra train rules."
 				},
 				{
 					"note": "Inspect the unit rows and prereqs behind the queried type."
@@ -47412,7 +47412,7 @@
 				},
 				{
 					"label": "Map Viewer",
-					"note": "Useful for checking map-side terrain and resource context when direct placement logic is not behaving as expected."
+					"note": "Useful for checking map terrain and resource context when direct placement logic is not behaving as expected."
 				}
 			]
 		},
@@ -52322,7 +52322,7 @@
 			"notes": [
 				"Use this as a validation before issuing scripted relocation behavior that depends on airport-style movement.",
 				"The plot object and x or y coordinates together give you both the destination context and the map position the game will validate.",
-				"This is best used as a yes or no gate before you attempt any UI or mission-side follow-up."
+				"This is best used as a yes or no gate before you attempt any UI or mission follow-up."
 			],
 			"example": {
 				"summary": "Check whether the selected unit can airlift to its current plot coordinates.",
@@ -61145,7 +61145,7 @@
 				},
 				{
 					"label": "Build Finished Trigger",
-					"note": "Recipe companion for deduping the hook and routing the finished build into a safe reward or plot-side effect."
+					"note": "Recipe companion for deduping the hook and routing the finished build into a safe reward or plot effect."
 				},
 				{
 					"label": "Map Viewer",
@@ -61202,7 +61202,7 @@
 				},
 				{
 					"entryId": "team-candeclarewar-3",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -61579,7 +61579,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-canraze-37",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -61789,7 +61789,7 @@
 			"seeAlso": [
 				{
 					"entryId": "unit-canstartmission-63",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -61822,7 +61822,7 @@
 				},
 				{
 					"entryId": "game-makecircumnavigated-215",
-					"note": "Method-side trigger for the same world-state milestone."
+					"note": "Method trigger for the same world-state milestone."
 				}
 			]
 		},
@@ -62025,7 +62025,7 @@
 			"seeAlso": [
 				{
 					"entryId": "city-canbuyanyplot-8",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -62078,7 +62078,7 @@
 			"seeAlso": [
 				{
 					"entryId": "city-canbuyplot-9",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -62201,7 +62201,7 @@
 			"seeAlso": [
 				{
 					"entryId": "city-cancreate-15",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -62251,7 +62251,7 @@
 			"seeAlso": [
 				{
 					"entryId": "city-canmaintain-18",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -62301,7 +62301,7 @@
 			"seeAlso": [
 				{
 					"entryId": "city-canprepare-20",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -62351,7 +62351,7 @@
 			"seeAlso": [
 				{
 					"entryId": "city-cantrain-24",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -62444,7 +62444,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-acquirecity-1",
-					"note": "Method-side city transfer path related to conquest and post-capture ownership changes."
+					"note": "Method city transfer path related to conquest and post-capture ownership changes."
 				},
 				{
 					"entryId": "city-isoccupied-309",
@@ -62576,7 +62576,7 @@
 			"seeAlso": [
 				{
 					"entryId": "city-adoptreligionfully-2",
-					"note": "Method-side full conversion path for the same city religion state change."
+					"note": "Method full conversion path for the same city religion state change."
 				},
 				{
 					"entryId": "city-convertpercentfollowers-60",
@@ -62588,7 +62588,7 @@
 				},
 				{
 					"label": "Religion Support",
-					"note": "Useful when the conversion logic needs quick access to religion names, text keys, and support-side metadata."
+					"note": "Useful when the conversion logic needs quick access to religion names, text keys, and support metadata."
 				}
 			]
 		},
@@ -62662,7 +62662,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-initcity-613",
-					"note": "Method-side city creation path before the post-create hook runs."
+					"note": "Method city creation path before the post-create hook runs."
 				},
 				{
 					"entryId": "city-getgameturnfounded-144",
@@ -62826,7 +62826,7 @@
 			"seeAlso": [
 				{
 					"entryId": "city-cantrain-24",
-					"note": "City-side validation before the completed unit reaches this hook."
+					"note": "City validation before the completed unit reaches this hook."
 				},
 				{
 					"entryId": "game-event-playercantrain-70",
@@ -62867,7 +62867,7 @@
 			"seeAlso": [
 				{
 					"entryId": "team-declarewar-30",
-					"note": "Method-side API touching the same operation."
+					"note": "Method API touching the same operation."
 				}
 			]
 		},
@@ -63033,7 +63033,7 @@
 			"seeAlso": [
 				{
 					"entryId": "game-getfounderbenefitsreligion-77",
-					"note": "Method-side accessor for the same resolved value."
+					"note": "Method accessor for the same resolved value."
 				}
 			]
 		},
@@ -63281,7 +63281,7 @@
 				},
 				{
 					"entryId": "team-sethastech-136",
-					"note": "Method-side tech grant path tied to the same hut reward result."
+					"note": "Method tech grant path tied to the same hut reward result."
 				}
 			]
 		},
@@ -63411,7 +63411,7 @@
 			"seeAlso": [
 				{
 					"entryId": "team-makepeace-133",
-					"note": "Method-side API touching the same operation."
+					"note": "Method API touching the same operation."
 				}
 			]
 		},
@@ -63589,7 +63589,7 @@
 				},
 				{
 					"entryId": "player-changeminorcivfriendshipwithmajor-64",
-					"note": "Method-side relationship mutation for the same friendship track."
+					"note": "Method relationship mutation for the same friendship track."
 				}
 			]
 		},
@@ -63720,7 +63720,7 @@
 			"seeAlso": [
 				{
 					"entryId": "plot-nukeexplosion-162",
-					"note": "Method-side plot blast resolution for the same detonation."
+					"note": "Method plot blast resolution for the same detonation."
 				},
 				{
 					"entryId": "unit-cannukeat-49",
@@ -63786,11 +63786,11 @@
 			"seeAlso": [
 				{
 					"entryId": "player-cancreatepantheon-23",
-					"note": "Method-side pantheon eligibility check before founding resolves."
+					"note": "Method pantheon eligibility check before founding resolves."
 				},
 				{
 					"entryId": "game-foundpantheon-39",
-					"note": "Method-side creation path for the same pantheon milestone."
+					"note": "Method creation path for the same pantheon milestone."
 				}
 			]
 		},
@@ -63905,11 +63905,11 @@
 			"seeAlso": [
 				{
 					"entryId": "player-canadoptpolicy-18",
-					"note": "Method-side precondition check before the policy is taken."
+					"note": "Method precondition check before the policy is taken."
 				},
 				{
 					"entryId": "player-doadoptpolicy-91",
-					"note": "Method-side adoption path for the same policy acquisition."
+					"note": "Method adoption path for the same policy acquisition."
 				}
 			]
 		},
@@ -63951,7 +63951,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-canunlockpolicybranch-43",
-					"note": "Method-side unlock gate for the same policy branch."
+					"note": "Method unlock gate for the same policy branch."
 				},
 				{
 					"entryId": "game-event-playercanadoptpolicybranch-61",
@@ -63997,7 +63997,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-canadoptpolicy-18",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -64099,7 +64099,7 @@
 				},
 				{
 					"entryId": "player-canconstruct-21",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -64141,7 +64141,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-cancreate-22",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -64183,7 +64183,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-caneverresearch-24",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -64281,7 +64281,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-canmaintain-27",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -64323,7 +64323,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-canprepare-36",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -64365,7 +64365,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-canresearch-39",
-					"note": "Method-side validation for the same rule path."
+					"note": "Method validation for the same rule path."
 				}
 			]
 		},
@@ -64422,7 +64422,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-cantrain-42",
-					"note": "Method-side validation for the same production question."
+					"note": "Method validation for the same production question."
 				},
 				{
 					"label": "Requirements Gate Pattern",
@@ -64471,7 +64471,7 @@
 			"seeAlso": [
 				{
 					"entryId": "player-initcity-613",
-					"note": "Method-side city founding path before this hook fires."
+					"note": "Method city founding path before this hook fires."
 				},
 				{
 					"entryId": "city-getgameturnfounded-144",
@@ -64601,7 +64601,7 @@
 			"seeAlso": [
 				{
 					"entryId": "unit-canrebaseat-56",
-					"note": "Target-side validation before the rebase move resolves."
+					"note": "Target validation before the rebase move resolves."
 				},
 				{
 					"entryId": "game-event-canrebaseto-13",
@@ -64667,7 +64667,7 @@
 			"seeAlso": [
 				{
 					"entryId": "game-enhancereligion-38",
-					"note": "Method-side enhancement path for the same religion lifecycle step."
+					"note": "Method enhancement path for the same religion lifecycle step."
 				},
 				{
 					"entryId": "game-getbeliefsinreligion-58",
@@ -64776,7 +64776,7 @@
 			"seeAlso": [
 				{
 					"entryId": "game-foundreligion-40",
-					"note": "Method-side founding path for the same religion lifecycle transition."
+					"note": "Method founding path for the same religion lifecycle transition."
 				},
 				{
 					"entryId": "player-getreligioncreatedbyplayer-490",
@@ -64788,7 +64788,7 @@
 				},
 				{
 					"label": "Religion Support",
-					"note": "Use the support reference when a religion lifecycle hook needs quick religion-name, text-key, or support-side lookup help."
+					"note": "Use the support reference when a religion lifecycle hook needs quick religion-name, text-key, or support lookup help."
 				}
 			]
 		},
@@ -64890,7 +64890,7 @@
 			"seeAlso": [
 				{
 					"entryId": "city-setpopulation-358",
-					"note": "Method-side mutator for the same state change."
+					"note": "Method mutator for the same state change."
 				}
 			]
 		},
@@ -64927,7 +64927,7 @@
 			"seeAlso": [
 				{
 					"entryId": "team-meet-134",
-					"note": "Method-side API touching the same operation."
+					"note": "Method API touching the same operation."
 				}
 			]
 		},
@@ -65031,11 +65031,11 @@
 			"seeAlso": [
 				{
 					"entryId": "team-ishastech-110",
-					"note": "Method-side check for the same tech state after the hook fires."
+					"note": "Method check for the same tech state after the hook fires."
 				},
 				{
 					"entryId": "team-sethastech-136",
-					"note": "Method-side mutator for the same state change."
+					"note": "Method mutator for the same state change."
 				}
 			]
 		},
@@ -65089,7 +65089,7 @@
 				},
 				{
 					"entryId": "team-sethastech-136",
-					"note": "Method-side mutation for the same tech ownership path."
+					"note": "Method mutation for the same tech ownership path."
 				}
 			]
 		},
@@ -65142,7 +65142,7 @@
 			"seeAlso": [
 				{
 					"entryId": "game-dofromuidiploevent-30",
-					"note": "Method-side dispatcher for the same UI diplomacy action."
+					"note": "Method dispatcher for the same UI diplomacy action."
 				},
 				{
 					"entryId": "game-event-candeclarewar-2",
@@ -65183,7 +65183,7 @@
 			"seeAlso": [
 				{
 					"entryId": "unit-executespecialexploremove-88",
-					"note": "Method-side special-explore order that consumes the target produced around this hook."
+					"note": "Method special-explore order that consumes the target produced around this hook."
 				},
 				{
 					"entryId": "game-event-playerpreaiunitupdate-73",
@@ -65388,11 +65388,11 @@
 			"seeAlso": [
 				{
 					"entryId": "unit-canpromote-53",
-					"note": "Method-side precondition check before the promotion is applied."
+					"note": "Method precondition check before the promotion is applied."
 				},
 				{
 					"entryId": "unit-promote-335",
-					"note": "Method-side promotion call related to the same upgrade in unit state."
+					"note": "Method promotion call related to the same upgrade in unit state."
 				}
 			]
 		},
@@ -65445,7 +65445,7 @@
 			"seeAlso": [
 				{
 					"entryId": "unit-setxy-363",
-					"note": "Method-side mutator for the same state change."
+					"note": "Method mutator for the same state change."
 				}
 			]
 		},
@@ -65498,7 +65498,7 @@
 			"seeAlso": [
 				{
 					"entryId": "unit-canupgraderightnow-67",
-					"note": "Method-side precondition check before the upgrade resolves."
+					"note": "Method precondition check before the upgrade resolves."
 				},
 				{
 					"entryId": "unit-getupgradeunittype-234",

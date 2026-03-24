@@ -307,12 +307,12 @@ def build_method_to_event_note(method_name: str) -> str:
 
 def build_event_to_method_note(action_name: str) -> str:
     if action_name.startswith("Can"):
-        return "Method-side validation for the same rule path."
+        return "Method validation for the same rule path."
     if action_name.startswith("Get"):
-        return "Method-side accessor for the same resolved value."
+        return "Method accessor for the same resolved value."
     if action_name.startswith("Set"):
-        return "Method-side mutator for the same state change."
-    return "Method-side API touching the same operation."
+        return "Method mutator for the same state change."
+    return "Method API touching the same operation."
 
 
 def resolve_counterpart_method(

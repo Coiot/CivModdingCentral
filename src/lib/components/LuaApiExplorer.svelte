@@ -1460,7 +1460,7 @@
 											<h3>Schema touchpoints</h3>
 											<span>{selectedSchemaTouchpoints.length}</span>
 										</div>
-										<p class="lua-card-copy">These tables are the strongest schema-side matches for the current signature, with parameter context and any notes when available.</p>
+										<p class="lua-card-copy">These tables are the strongest schema matches for the current signature, with parameter context and any notes when available.</p>
 										<div class="lua-schema-grid">
 											{#each selectedSchemaTouchpoints as touchpoint (touchpoint.table)}
 												<a class="lua-schema-card lua-schema-card--link" href={touchpoint.href}>

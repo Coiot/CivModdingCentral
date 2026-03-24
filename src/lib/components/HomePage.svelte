@@ -36,7 +36,7 @@
 			surface: "schema",
 			kicker: "Schema Table",
 			title: "Buildings",
-			copy: "One of the most important tables for civ bonuses, dummy-building effects, uniques, and city-side rewards.",
+			copy: "One of the most important tables for civ bonuses, dummy-building effects, uniques, and city rewards.",
 			href: "/schema-browser?table=Buildings",
 		},
 		{
@@ -1017,16 +1017,6 @@
 		aspect-ratio: 1;
 		display: block;
 		object-fit: contain;
-	}
-
-	.pedia-spotlight-unique figcaption {
-		color: color-mix(in srgb, white 92%, var(--ink));
-		font-size: 0.75rem;
-		font-weight: 700;
-		text-align: center;
-		background: color-mix(in srgb, black 22%, transparent);
-		padding-block: 0.45rem;
-		padding-inline: 0.45rem;
 	}
 
 	.curated-card-head {
