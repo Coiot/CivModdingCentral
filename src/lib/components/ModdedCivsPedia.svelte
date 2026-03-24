@@ -4237,19 +4237,22 @@
 		block-size: 7rem;
 		display: grid;
 		place-items: center;
-		filter: drop-shadow(2px 2px 3px color-mix(in srgb, var(--catalog-accent) 30%, #000));
 		overflow: clip;
+		filter: drop-shadow(2px 2px 3px color-mix(in srgb, var(--catalog-accent) 30%, #000));
 	}
 
 	.pedia-catalog-icon img {
 		inline-size: 100%;
 		block-size: 100%;
+		display: block;
+		/*filter: drop-shadow(2px 2px 3px color-mix(in srgb, var(--catalog-accent) 30%, #000));*/
 		object-fit: contain;
 	}
 
 	.civ-icon img {
 		inline-size: 100%;
 		block-size: 100%;
+		display: block;
 		filter: drop-shadow(2px 2px 4px rgb(0 0 0 / 0.5));
 		object-fit: contain;
 	}
@@ -4257,6 +4260,7 @@
 	.pedia-author-work-icon img {
 		inline-size: 100%;
 		block-size: 100%;
+		display: block;
 		filter: drop-shadow(1px 1px 4px color-mix(in srgb, var(--catalog-accent) 20%, #000));
 		object-fit: contain;
 	}
@@ -4280,6 +4284,7 @@
 	.pedia-infobox-media img {
 		inline-size: 100%;
 		block-size: 100%;
+		display: block;
 		filter: drop-shadow(2px 2px 4px rgb(0 0 0 / 0.5));
 		border-radius: 1.5rem;
 		object-fit: contain;
@@ -4558,10 +4563,6 @@
 		gap: 1.25rem;
 	}
 
-	.pedia-wiki-main {
-		gap: 3rem;
-	}
-
 	.pedia-wiki-main,
 	.pedia-wiki-section,
 	.pedia-infobox,
@@ -4574,6 +4575,10 @@
 		& .section-title {
 			font-size: 1.75rem;
 		}
+	}
+
+	.pedia-wiki-main {
+		gap: 3rem;
 	}
 
 	.pedia-copy-grid {
