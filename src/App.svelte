@@ -352,6 +352,47 @@
 		authMessage = "";
 	}
 
+	async function updateAuthUsername(nextUsername) {
+		if (!AUTH_ENABLED || !authSession.accessToken) {
+			authMessage = "Sign in to update your username.";
+			return;
+		}
+
+		const username = String(nextUsername || "").trim();
+		if (!username) {
+			authMessage = "Enter a username before saving.";
+			return;
+		}
+
+		authMessage = "";
+
+		try {
+			const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+				method: "PUT",
+				headers: {
+					apikey: SUPABASE_ANON_KEY,
+					Authorization: `Bearer ${authSession.accessToken}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					data: {
+						username,
+					},
+				}),
+			});
+
+			const payload = await response.json().catch(() => ({}));
+			if (!response.ok) {
+				throw new Error(payload?.error_description || payload?.msg || payload?.error || "Unable to update username.");
+			}
+
+			authUser = payload?.id || payload?.user?.id ? normalizeAuthUser(payload) : await fetchAuthUser(authSession.accessToken);
+			authMessage = `Username updated to ${authUser.username || username}.`;
+		} catch (error) {
+			authMessage = error?.message || "Unable to update username.";
+		}
+	}
+
 	async function restoreAuth() {
 		if (!AUTH_ENABLED) {
 			return;
@@ -689,9 +730,16 @@
 			throw error;
 		}
 
+		return normalizeAuthUser(payload);
+	}
+
+	function normalizeAuthUser(payload) {
+		const user = payload?.user && typeof payload.user === "object" ? payload.user : payload;
+		const userMetadata = user?.user_metadata && typeof user.user_metadata === "object" ? user.user_metadata : {};
 		return {
-			id: payload.id,
-			email: payload.email || "unknown",
+			id: user?.id,
+			email: user?.email || "unknown",
+			username: String(userMetadata?.username || userMetadata?.name || "").trim(),
 		};
 	}
 
@@ -821,6 +869,7 @@
 		{authAccessChecked}
 		authEnabled={AUTH_ENABLED}
 		{onAuthEmailInput}
+		onUpdateUsername={updateAuthUsername}
 		onQuickJump={jumpToHref}
 		onSendMagicLink={sendMagicLink}
 		onLogout={logout}

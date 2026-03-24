@@ -268,6 +268,7 @@
 	.wizard-page {
 		display: grid;
 		gap: 1.25rem;
+		min-inline-size: 0;
 		--wizard-accent-border: color-mix(in srgb, var(--border-color, rgba(255, 255, 255, 0.14)) 72%, #6d4bb1 28%);
 		--wizard-accent-highlight: #caa6ff;
 		--wizard-accent-highlight-strong: #f0e2ff;
@@ -307,16 +308,19 @@
 	.wizard-panel {
 		display: grid;
 		gap: 1.25rem;
+		min-inline-size: 0;
 	}
 
 	.wizard-selection-shell {
 		display: grid;
 		gap: 1rem;
+		min-inline-size: 0;
 	}
 
 	.wizard-selector {
 		display: grid;
 		gap: 0.95rem;
+		min-inline-size: 0;
 		background: color-mix(in oklch, var(--panel-bg) 92%, transparent);
 		border: 1px solid color-mix(in oklch, var(--panel-border) 46%, transparent);
 		border-radius: 1rem;
@@ -376,6 +380,7 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 		gap: 1rem;
+		min-inline-size: 0;
 	}
 
 	.wizard-quick-head {
@@ -428,6 +433,7 @@
 	.wizard-card-intro {
 		display: grid;
 		gap: 1rem;
+		min-inline-size: 0;
 		background: linear-gradient(180deg, color-mix(in srgb, var(--wizard-accent-panel) 54%, var(--panel-bg) 46%) 0%, color-mix(in srgb, var(--panel-bg) 94%, transparent) 100%);
 		box-shadow:
 			inset 0 1px 0 color-mix(in srgb, var(--wizard-accent-highlight) 12%, transparent),
@@ -450,6 +456,7 @@
 		max-inline-size: 56rem;
 		display: grid;
 		gap: 0.5rem;
+		min-inline-size: 0;
 	}
 
 	.wizard-card-kicker {
@@ -484,6 +491,7 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 		gap: 0.85rem;
+		min-inline-size: 0;
 	}
 
 	.wizard-brief-card {
@@ -537,6 +545,7 @@
 	.wizard-block {
 		display: grid;
 		gap: 0.75rem;
+		min-inline-size: 0;
 		padding-block: 0.95rem;
 		padding-inline: 0;
 	}
@@ -605,6 +614,7 @@
 
 	.wizard-quick-card--button {
 		min-block-size: 100%;
+		min-inline-size: 0;
 		width: 100%;
 		grid-template-rows: auto minmax(0, 1fr) auto;
 		align-items: start;
@@ -665,21 +675,34 @@
 	}
 
 	@media (width <= 720px) {
+		.wizard-page {
+			gap: 1rem;
+		}
+
+		.wizard-hero {
+			padding-block: 1rem;
+			padding-inline: 1rem;
+		}
+
 		.wizard-panel {
 			padding: 0;
+			gap: 1rem;
 		}
 
 		.wizard-selector,
 		.wizard-quick-starts {
-			padding: 1rem;
+			padding: 0.9rem;
+			border-radius: 0.9rem;
 		}
 
 		.wizard-card-intro {
-			padding: 1rem;
+			padding: 0.9rem;
+			gap: 0.85rem;
 		}
 
 		.wizard-quick-grid {
 			grid-template-columns: 1fr;
+			gap: 0.75rem;
 		}
 
 		.wizard-quick-head,
@@ -688,8 +711,43 @@
 			flex-direction: column;
 		}
 
+		.wizard-quick-head {
+			min-block-size: 0;
+			gap: 0.55rem;
+		}
+
+		.wizard-card h3,
+		.wizard-quick-card h3 {
+			font-size: 1.1rem;
+		}
+
 		.wizard-card-stats {
 			justify-content: start;
+		}
+
+		.wizard-brief-grid {
+			grid-template-columns: 1fr;
+			gap: 0.75rem;
+		}
+
+		.wizard-brief-card,
+		.wizard-block--example {
+			padding: 0.85rem;
+			border-radius: 0.85rem;
+		}
+
+		.wizard-quick-card {
+			gap: 0.6rem;
+			padding: 0.85rem;
+		}
+
+		.wizard-quick-head span,
+		.wizard-card-stat {
+			white-space: normal;
+		}
+
+		.wizard-block--touchpoints {
+			padding-block-start: 0.75rem;
 		}
 	}
 </style>

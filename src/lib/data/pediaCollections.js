@@ -239,15 +239,7 @@ export const PEDIA_COLLECTIONS = [
     "imageURL": "",
     "links": [],
     "aliases": [
-      "Land of Snows",
-      "Land of Snows event",
-      "Land of Snows events",
-      "Land of Snows Collection",
-      "Part of Land of Snows",
-      "Part of the Land of Snows event",
-      "Part of the Land of Snows events",
-      "released as part of the Land of Snows event",
-      "released as part of the Land of Snows events"
+      "Land of Snows"
     ],
     "colors": {
       "background": "#7e2222",

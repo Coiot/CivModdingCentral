@@ -8,6 +8,7 @@
 		effects: 5,
 		previewItems: 10,
 	};
+	const MOBILE_ERA_FLOW_MEDIA = "(max-width: 760px)";
 	const CVC_WIKI_FILE_REDIRECT_BASE = "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file";
 	const CIV_WIKI_FILE_REDIRECT_BASE = "https://civilization.fandom.com/wiki/Special:Redirect/file";
 	const EE_IMAGE_ALIASES = {
@@ -301,6 +302,13 @@
 			return;
 		}
 
+		const mobileEraFlowQuery = window.matchMedia(MOBILE_ERA_FLOW_MEDIA);
+		const syncEraFlowForViewport = () => {
+			if (mobileEraFlowQuery.matches) {
+				eraFlow = "vertical";
+			}
+		};
+
 		const handleHashNavigation = async () => {
 			const hash = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : window.location.hash;
 			if (!hash) {
@@ -312,9 +320,14 @@
 			target?.scrollIntoView({ block: "start", behavior: "smooth" });
 		};
 
+		syncEraFlowForViewport();
 		void ensureTechTreeBaseDataLoaded().then(() => handleHashNavigation());
 		window.addEventListener("hashchange", handleHashNavigation);
-		return () => window.removeEventListener("hashchange", handleHashNavigation);
+		mobileEraFlowQuery.addEventListener("change", syncEraFlowForViewport);
+		return () => {
+			window.removeEventListener("hashchange", handleHashNavigation);
+			mobileEraFlowQuery.removeEventListener("change", syncEraFlowForViewport);
+		};
 	});
 
 	function buildTechGraph() {

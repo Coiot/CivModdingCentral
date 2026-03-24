@@ -1616,8 +1616,7 @@
 
 	.panel-content {
 		display: grid;
-		gap: 0.8rem;
-		padding: 1rem;
+		gap: 1rem;
 	}
 
 	.block {

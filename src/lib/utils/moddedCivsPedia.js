@@ -147,6 +147,7 @@ const DEFAULT_ENTRY = {
 	meta: {
 		formatVersion: MODDED_CIVS_PEDIA_FORMAT_VERSION,
 		createdAt: "",
+		updatedAt: "",
 		unresolvedTemplates: [],
 	},
 };
@@ -2625,8 +2626,10 @@ export function normalizePediaEntry(entryInput) {
 		entry.collections = inferCollectionsForEntry(source);
 	}
 	entry.meta = {
+		...(source?.meta || {}),
 		formatVersion: MODDED_CIVS_PEDIA_FORMAT_VERSION,
-		createdAt: source?.meta?.createdAt || new Date().toISOString(),
+		createdAt: cleanText(source?.meta?.createdAt),
+		updatedAt: cleanText(source?.meta?.updatedAt),
 		unresolvedTemplates: ensureArray(source?.meta?.unresolvedTemplates)
 			.map((templateName) => cleanText(templateName))
 			.filter(Boolean),

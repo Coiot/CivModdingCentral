@@ -169,6 +169,20 @@ function imageForEntry(entry) {
 	return entry?.presentation?.mapImageUrl || entry?.presentation?.iconImageUrl || SITE_IMAGE;
 }
 
+function entryPreviewFacts(entry) {
+	return uniqueNonEmpty([
+		entry?.leader ? `Leader: ${entry.leader}` : "",
+		entry?.identity?.capital ? `Capital: ${entry.identity.capital}` : "",
+		entryAuthors(entry).length ? `Author: ${entryAuthors(entry).join(", ")}` : "",
+	]);
+}
+
+function entryPreviewDescription(entry) {
+	const base = compactText(entry?.summary || entry?.overview?.civilization?.body || `Browse the ${entry?.title || "custom civilization"} entry in the Modded Civs Pedia on Civ Modding Central.`);
+	const facts = entryPreviewFacts(entry).slice(0, 3);
+	return truncateDescription(facts.length ? `${base} ${facts.join(". ")}.` : base);
+}
+
 function imageForCollection(collection) {
 	return collection?.imageURL || collection?.entries?.[0]?.presentation?.mapImageUrl || collection?.entries?.[0]?.presentation?.iconImageUrl || SITE_IMAGE;
 }
@@ -191,7 +205,7 @@ function entryAuthors(entry) {
 }
 
 function entryPath(entry) {
-	return `${MODDED_CIVS_PEDIA_PATH}/${slugifySeoValue(entry?.slug || entry?.title)}`;
+	return `${MODDED_CIVS_PEDIA_PATH}/civilizations/${slugifySeoValue(entry?.slug || entry?.title)}`;
 }
 
 function collectionPath(collection) {
@@ -263,7 +277,9 @@ function findPediaEntryByPath(pathname) {
 	) {
 		return null;
 	}
-	const slug = normalizedPath.slice(MODDED_CIVS_PEDIA_PATH.length + 1);
+	const slug = normalizedPath.startsWith(`${MODDED_CIVS_PEDIA_PATH}/civilizations/`)
+		? normalizedPath.slice(`${MODDED_CIVS_PEDIA_PATH}/civilizations/`.length)
+		: normalizedPath.slice(MODDED_CIVS_PEDIA_PATH.length + 1);
 	if (!slug) {
 		return null;
 	}
@@ -313,10 +329,8 @@ function getPediaEntrySeo(pathname) {
 	}
 
 	const normalizedPath = normalizeSeoPath(pathname);
-	const titleBase = entry?.leader ? `${entry.title} (${entry.leader})` : entry.title;
-	const description = truncateDescription(
-		entry?.summary || entry?.overview?.civilization?.body || `Browse the ${entry?.title || "custom civilization"} entry in the Modded Civs Pedia on Civ Modding Central.`,
-	);
+	const titleBase = entry?.leader ? `${entry.title} led by (${entry.leader})` : entry.title;
+	const description = entryPreviewDescription(entry);
 	const keywords = uniqueNonEmpty([
 		entry?.title,
 		entry?.leader,
@@ -327,6 +341,13 @@ function getPediaEntrySeo(pathname) {
 		"Civ 5 modded civs pedia",
 	]).join(", ");
 	const dateModified = parseLastUpdatedDate(entry?.source?.lastUpdated);
+	const articleTags = uniqueNonEmpty([
+		entry?.identity?.culture,
+		entry?.identity?.capital,
+		...entryAuthors(entry),
+		...(entry?.identity?.religion || []),
+		...(entry?.collections || []).map((collection) => collection?.title),
+	]).slice(0, 8);
 
 	return {
 		title: `${titleBase} | Modded Civs Pedia | Civ Modding Central`,
@@ -337,10 +358,17 @@ function getPediaEntrySeo(pathname) {
 		pathname: normalizedPath,
 		canonical: `${SITE_URL}${normalizedPath}`,
 		image: imageForEntry(entry),
-		imageAlt: `${titleBase} modded civilization entry`,
+		imageAlt: `${titleBase} custom civilization map and entry artwork`,
 		robots: DEFAULT_ROBOTS,
 		dateModified,
 		authorName: entryAuthors(entry).join(", "),
+		articleAuthor: entryAuthors(entry).join(", "),
+		articleSection: "Custom Civilizations",
+		articleTags,
+		twitterLabel1: "Leader",
+		twitterData1: entry?.leader || "",
+		twitterLabel2: entry?.identity?.capital || "",
+		twitterData2: entry?.identity?.capital || "",
 		entry,
 		parentPath: MODDED_CIVS_PEDIA_PATH,
 		parentName: ROUTE_SEO[MODDED_CIVS_PEDIA_PATH].title.replace(/\s+\|\s+Civ Modding Central$/, ""),
@@ -694,11 +722,18 @@ export function applyDocumentSeo(pathname) {
 	updateMetaTag("meta-og-description", seo.description);
 	updateMetaTag("meta-og-image", seo.image);
 	updateMetaTag("meta-og-image-alt", seo.imageAlt || "");
+	updateMetaTag("meta-article-author", seo.articleAuthor || "");
+	updateMetaTag("meta-article-section", seo.articleSection || "");
+	updateMetaTag("meta-article-tag", Array.isArray(seo.articleTags) ? seo.articleTags.join(", ") : "");
 	updateMetaTag("meta-article-modified-time", seo.dateModified || "");
 	updateMetaTag("meta-twitter-title", seo.title);
 	updateMetaTag("meta-twitter-description", seo.description);
 	updateMetaTag("meta-twitter-image", seo.image);
 	updateMetaTag("meta-twitter-image-alt", seo.imageAlt || "");
+	updateMetaTag("meta-twitter-label1", seo.twitterLabel1 || "");
+	updateMetaTag("meta-twitter-data1", seo.twitterData1 || "");
+	updateMetaTag("meta-twitter-label2", seo.twitterLabel2 || "");
+	updateMetaTag("meta-twitter-data2", seo.twitterData2 || "");
 
 	const canonical = document.getElementById("canonical-url");
 	if (canonical) {

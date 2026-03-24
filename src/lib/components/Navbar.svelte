@@ -12,6 +12,7 @@
 		authAccessLoading = false,
 		authAccessChecked = false,
 		onAuthEmailInput = () => {},
+		onUpdateUsername = async () => {},
 		onSendMagicLink = () => {},
 		onLogout = () => {},
 		onQuickJump = () => {},
@@ -160,6 +161,8 @@
 	let helpOpen = $state(false);
 	let navMenuOpen = $state(false);
 	let openNavGroupId = $state(null);
+	let usernameInput = $state("");
+	let usernameSaving = $state(false);
 	let userWrapEl = $state();
 	let helpWrapEl = $state();
 	let navWrapEl = $state();
@@ -167,6 +170,13 @@
 	$effect(() => {
 		currentPath;
 		closeNavMenus();
+	});
+
+	$effect(() => {
+		authUser?.username;
+		if (!usernameSaving) {
+			usernameInput = String(authUser?.username || "");
+		}
 	});
 
 	function isActivePath(pathname) {
@@ -305,6 +315,19 @@
 			closeNavMenus();
 		}
 	}
+
+	async function handleUsernameSave() {
+		if (!authUser) {
+			return;
+		}
+
+		usernameSaving = true;
+		try {
+			await onUpdateUsername(String(usernameInput || "").trim());
+		} finally {
+			usernameSaving = false;
+		}
+	}
 </script>
 
 <svelte:window onkeydown={handleWindowKeyDown} onclick={handleWindowClick} />
@@ -432,6 +455,10 @@
 						{#if authUser}
 							<p class="user-heading">Signed in</p>
 							<p class="user-meta">{authUser.email}</p>
+							<label>
+								Username
+								<input type="text" placeholder="Your author name" value={usernameInput} oninput={(event) => (usernameInput = event.currentTarget.value)} />
+							</label>
 							<p class={`user-access ${authAccessLoading ? "is-loading" : authAccessAllowed ? "is-enabled" : authAccessChecked ? "is-denied" : ""}`}>
 								{#if authAccessLoading}
 									Checking editor access...
@@ -444,6 +471,9 @@
 								{/if}
 							</p>
 							<div class="user-actions inline half flex-wrap">
+								<button type="button" onclick={handleUsernameSave} disabled={usernameSaving || String(usernameInput || "").trim() === String(authUser?.username || "").trim()}>
+									{usernameSaving ? "Saving..." : "Save Username"}
+								</button>
 								<button type="button" onclick={onLogout}>Sign Out</button>
 							</div>
 						{:else}

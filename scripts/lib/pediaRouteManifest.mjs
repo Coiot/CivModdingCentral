@@ -128,7 +128,7 @@ export async function buildPediaRouteManifest() {
 
 	const entryRoutes = entries.map((entry) => ({
 		kind: "entry",
-		path: `/modded-civs-pedia/${slugify(entry?.slug || entry?.title)}`,
+		path: `/modded-civs-pedia/civilizations/${slugify(entry?.slug || entry?.title)}`,
 		lastmod: parseLastUpdatedDate(entry?.source?.lastUpdated) || today,
 		entry,
 	}));

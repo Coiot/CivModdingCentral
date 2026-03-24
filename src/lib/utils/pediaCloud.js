@@ -186,6 +186,7 @@ export async function loadPediaAuthorProfilesFromCloud(accessToken = "") {
 export async function savePediaEntryToCloud(accessToken, entry, wikiMarkup = "") {
 	const client = await getPediaCloudClient(accessToken);
 	const normalizedEntry = normalizePediaEntry(entry);
+	const timestamp = new Date().toISOString();
 	const payload = {
 		id: cleanText(normalizedEntry.id),
 		slug: cleanText(normalizedEntry.slug) || slugifyPediaValue(normalizedEntry.title || normalizedEntry.id),
@@ -195,7 +196,8 @@ export async function savePediaEntryToCloud(accessToken, entry, wikiMarkup = "")
 			...normalizedEntry,
 			meta: {
 				...(normalizedEntry.meta || {}),
-				updatedAt: new Date().toISOString(),
+				createdAt: cleanText(normalizedEntry?.meta?.createdAt) || timestamp,
+				updatedAt: timestamp,
 			},
 		}),
 		wiki_markup: String(wikiMarkup || ""),
@@ -218,6 +220,7 @@ export async function savePediaEntryToCloud(accessToken, entry, wikiMarkup = "")
 export async function markPediaEntryDeletedInCloud(accessToken, entry) {
 	const client = await getPediaCloudClient(accessToken);
 	const normalizedEntry = normalizePediaEntry(entry);
+	const timestamp = new Date().toISOString();
 	const payload = {
 		id: cleanText(normalizedEntry.id),
 		slug: cleanText(normalizedEntry.slug) || slugifyPediaValue(normalizedEntry.title || normalizedEntry.id),
@@ -227,7 +230,8 @@ export async function markPediaEntryDeletedInCloud(accessToken, entry) {
 			...normalizedEntry,
 			meta: {
 				...(normalizedEntry.meta || {}),
-				updatedAt: new Date().toISOString(),
+				createdAt: cleanText(normalizedEntry?.meta?.createdAt) || timestamp,
+				updatedAt: timestamp,
 			},
 		}),
 		is_deleted: true,

@@ -67,7 +67,10 @@ async function loadLocalCollections() {
 }
 
 async function fetchCloudEntries(client) {
-	const { data, error } = await client.from(SUPABASE_PEDIA_ENTRIES_TABLE).select("id, slug, title, entry_state, wiki_markup, is_deleted").order("updated_at", { ascending: false });
+	const { data, error } = await client
+		.from(SUPABASE_PEDIA_ENTRIES_TABLE)
+		.select("id, slug, title, entry_state, wiki_markup, is_deleted, created_at, updated_at")
+		.order("updated_at", { ascending: false });
 
 	if (error) {
 		throw error;
@@ -97,7 +100,15 @@ async function writeEntries(rows) {
 	const writtenSlugs = new Set();
 
 	for (const row of rows) {
-		const entry = row?.entry_state && typeof row.entry_state === "object" ? row.entry_state : {};
+		const entryState = row?.entry_state && typeof row.entry_state === "object" ? row.entry_state : {};
+		const entry = {
+			...entryState,
+			meta: {
+				...(entryState?.meta || {}),
+				createdAt: cleanText(entryState?.meta?.createdAt) || cleanText(row?.created_at),
+				updatedAt: cleanText(entryState?.meta?.updatedAt) || cleanText(row?.updated_at),
+			},
+		};
 		const slug = cleanText(row?.slug) || cleanText(entry?.slug) || slugify(entry?.title || row?.id);
 		if (!slug) {
 			continue;

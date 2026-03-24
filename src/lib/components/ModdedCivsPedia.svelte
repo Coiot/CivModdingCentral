@@ -94,6 +94,8 @@
 	let authorProfileBlurb = $state("");
 	let authorProfileLinks = $state("");
 	let authorProfileStatus = $state("");
+	let authorProfileSavedAt = $state(0);
+	let authorProfileBaseline = $state("");
 	let customCollections = $state([]);
 	let pediaCloudLoadKey = $state("");
 	let newCollectionTitle = $state("");
@@ -103,12 +105,23 @@
 	let newCollectionAccent = $state("");
 	let newCollectionAliases = $state("");
 	let entryStatus = $state("");
+	let entrySavedAt = $state(0);
+	let entryEditorBaseline = $state("");
 	let deletedEntryIds = $state([]);
 	let folderInputEl = $state();
 	let jsonInputEl = $state();
 	let activeMusicPreviewKey = $state("");
 	let failedImageUrls = $state([]);
+	let catalogMapLoaded = $state(false);
+	let collectionEditorSavedAt = $state(0);
+	let collectionEditorBaseline = $state("");
+	let collectionMetadataSavedAt = $state(0);
+	let collectionMetadataBaseline = $state("");
+	let categoryEditorSavedAt = $state(0);
+	let categoryEditorBaseline = $state("");
+	let statusClock = $state(Date.now());
 	const cloudPediaConfigured = $derived(Boolean(authEnabled) && hasPediaCloudConfig());
+	const authUsernameKey = $derived(authorProfileKey(String(authUser?.username || "").trim()));
 
 	function normalizeSearch(value) {
 		return String(value || "")
@@ -143,10 +156,26 @@
 		);
 	}
 
-	function mergeEntries(entries) {
+	function mergeEntries({ builtinEntries = [], cloudEntries = [], importedEntries = [] } = {}) {
 		const byId = new Map();
-		for (const entry of [...BUILTIN_MODDED_CIVS, ...(entries || [])]) {
+		const isLocalEditorHost = typeof window !== "undefined" && ["localhost", "127.0.0.1", "::1"].includes(String(window.location.hostname || "").toLowerCase());
+		const mergedSources = isLocalEditorHost
+			? [...(cloudEntries || []).filter(Boolean), ...(builtinEntries || []).filter(Boolean), ...(importedEntries || []).filter(Boolean)]
+			: [...(builtinEntries || []).filter(Boolean), ...(cloudEntries || []).filter(Boolean), ...(importedEntries || []).filter(Boolean)];
+		for (const entry of mergedSources) {
 			const normalized = normalizePediaEntry(entry);
+			const existing = byId.get(normalized.id);
+			if (existing) {
+				normalized.meta = {
+					...existing.meta,
+					...normalized.meta,
+					createdAt: String(normalized?.meta?.createdAt || existing?.meta?.createdAt || "").trim(),
+					updatedAt: String(normalized?.meta?.updatedAt || existing?.meta?.updatedAt || "").trim(),
+					createdByName: String(normalized?.meta?.createdByName || existing?.meta?.createdByName || "").trim(),
+					updatedByName: String(normalized?.meta?.updatedByName || existing?.meta?.updatedByName || "").trim(),
+					unresolvedTemplates: normalized?.meta?.unresolvedTemplates?.length > 0 ? normalized.meta.unresolvedTemplates : existing?.meta?.unresolvedTemplates || [],
+				};
+			}
 			byId.set(normalized.id, normalized);
 		}
 		const hiddenEntryIds = new Set([...deletedEntryIds, ...cloudDeletedEntryIds]);
@@ -221,6 +250,297 @@
 		return String(value || "")
 			.replace(/\s+/g, " ")
 			.trim();
+	}
+
+	function normalizeMultilineText(value) {
+		return String(value || "").replace(/\r\n?/g, "\n");
+	}
+
+	function serializeValue(value) {
+		return JSON.stringify(value);
+	}
+
+	function serializeAuthorProfileDraft(name, blurb, linksText) {
+		return serializeValue({
+			name: String(name || "").trim(),
+			blurb: normalizeMultilineText(blurb).trim(),
+			links: normalizeMultilineText(linksText).trim(),
+		});
+	}
+
+	function serializeCollectionDraft(collections) {
+		return serializeValue((collections || []).map((collection) => String(collection?.id || "").trim()));
+	}
+
+	function serializeCategoryDraft(categories) {
+		return serializeValue((categories || []).map((category) => normalizeCategoryValue(category)));
+	}
+
+	function serializeCollectionMetadataDraftValue(source = {}) {
+		return serializeValue({
+			title: String(source.title || "").trim(),
+			id: String(source.id || "").trim(),
+			sourceTemplate: String(source.sourceTemplate || "").trim(),
+			blurb: normalizeMultilineText(source.blurb).trim(),
+			imageURL: String(source.imageURL || "").trim(),
+			background: String(source.background || "").trim(),
+			accent: String(source.accent || "").trim(),
+			aliases: normalizeMultilineText(source.aliases).trim(),
+			links: normalizeMultilineText(source.links).trim(),
+		});
+	}
+
+	function isValidHttpUrl(value) {
+		try {
+			const url = new URL(String(value || "").trim());
+			return url.protocol === "http:" || url.protocol === "https:";
+		} catch {
+			return false;
+		}
+	}
+
+	function isValidCollectionId(value) {
+		return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(String(value || "").trim());
+	}
+
+	function collectionIdConflict(id, currentId = "") {
+		const nextId = String(id || "").trim();
+		const previousId = String(currentId || "").trim();
+		return knownCollections.some((collection) => collection.id === nextId && collection.id !== previousId);
+	}
+
+	function validateCategoryName(value) {
+		const normalized = normalizeCategoryValue(value);
+		if (!normalized) {
+			return "Category name is required.";
+		}
+		if (/[\r\n]/.test(String(value || ""))) {
+			return "Category names must be a single line.";
+		}
+		if (!/[a-z0-9]/i.test(normalized)) {
+			return "Category names must contain at least one letter or number.";
+		}
+		if (normalized.length > 80) {
+			return "Category names should be 80 characters or fewer.";
+		}
+		return "";
+	}
+
+	function validateAuthorProfileLinksInput(value) {
+		const lines = normalizeMultilineText(value)
+			.split("\n")
+			.map((line) => String(line || "").trim())
+			.filter(Boolean);
+		for (const line of lines) {
+			const parts = line.split("|").map((part) => String(part || "").trim());
+			if (parts.length < 2 || !parts[0] || !parts.slice(1).join(" | ")) {
+				return 'Author links must use "Label | https://example.com".';
+			}
+			const href = parts.slice(1).join(" | ").trim();
+			if (!isValidHttpUrl(href)) {
+				return `Invalid author link URL: ${href}`;
+			}
+		}
+		return "";
+	}
+
+	function validateCollectionLinksInput(value) {
+		const lines = normalizeMultilineText(value)
+			.split("\n")
+			.map((line) => String(line || "").trim())
+			.filter(Boolean);
+		for (const line of lines) {
+			const parts = line.split("|").map((part) => String(part || "").trim());
+			if (parts.length < 2 || !parts[0] || !parts.slice(1).join(" | ")) {
+				return 'Collection links must use "Label | https://example.com".';
+			}
+			const href = parts.slice(1).join(" | ").trim();
+			if (!isValidHttpUrl(href)) {
+				return `Invalid collection link URL: ${href}`;
+			}
+		}
+		return "";
+	}
+
+	function formatSavedAtTime(value) {
+		try {
+			return new Intl.DateTimeFormat(undefined, {
+				hour: "numeric",
+				minute: "2-digit",
+			}).format(new Date(value));
+		} catch {
+			return "";
+		}
+	}
+
+	function relativeSavedAt(value) {
+		const diff = Math.max(0, statusClock - value);
+		if (diff < 45_000) {
+			return "Saved just now";
+		}
+		const minutes = Math.round(diff / 60_000);
+		if (minutes < 60) {
+			return `Saved ${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+		}
+		const hours = Math.round(minutes / 60);
+		if (hours < 24) {
+			return `Saved ${hours} hour${hours === 1 ? "" : "s"} ago`;
+		}
+		const days = Math.round(hours / 24);
+		return `Saved ${days} day${days === 1 ? "" : "s"} ago`;
+	}
+
+	function statusTimestampText(value) {
+		if (!value) {
+			return "";
+		}
+		const time = formatSavedAtTime(value);
+		return time ? `${relativeSavedAt(value)} at ${time}.` : `${relativeSavedAt(value)}.`;
+	}
+
+	function timestampValue(value) {
+		const timestamp = Date.parse(String(value || "").trim());
+		return Number.isFinite(timestamp) ? timestamp : 0;
+	}
+
+	function entryCreatedTimestamp(entry) {
+		return timestampValue(entry?.meta?.createdAt);
+	}
+
+	function entryUpdatedTimestamp(entry) {
+		return timestampValue(entry?.meta?.updatedAt);
+	}
+
+	function formatCatalogTimestamp(value) {
+		if (!value) {
+			return "";
+		}
+		return new Intl.DateTimeFormat(undefined, {
+			month: "short",
+			day: "numeric",
+			year: "numeric",
+		}).format(new Date(value));
+	}
+
+	function buildRecentEntries(entries, getTimestamp, limit = 4) {
+		return [...(entries || [])]
+			.filter((entry) => getTimestamp(entry))
+			.sort((left, right) => getTimestamp(right) - getTimestamp(left))
+			.slice(0, limit);
+	}
+
+	function applyEntrySaveTimestamps(entry, previousEntry = null) {
+		const timestamp = new Date().toISOString();
+		const isLocalEditorHost = typeof window !== "undefined" && ["localhost", "127.0.0.1", "::1"].includes(String(window.location.hostname || "").toLowerCase());
+		const editorName = String(authUser?.username || (isLocalEditorHost ? "Coiot" : "")).trim();
+		return normalizePediaEntry({
+			...entry,
+			meta: {
+				...(entry?.meta || {}),
+				createdAt: String(entry?.meta?.createdAt || previousEntry?.meta?.createdAt || timestamp).trim(),
+				updatedAt: timestamp,
+				createdByName: String(entry?.meta?.createdByName || previousEntry?.meta?.createdByName || editorName).trim(),
+				updatedByName: editorName || String(previousEntry?.meta?.updatedByName || "").trim(),
+			},
+		});
+	}
+
+	function recentEntryActorLabel(entry, kind = "updated") {
+		const preferredName = String(kind === "created" ? entry?.meta?.createdByName || "" : entry?.meta?.updatedByName || "").trim();
+		if (preferredName) {
+			return preferredName;
+		}
+
+		const fallbackName = String(kind === "created" ? entry?.meta?.updatedByName || "" : entry?.meta?.createdByName || "").trim();
+		if (fallbackName) {
+			return fallbackName;
+		}
+
+		return "User unknown";
+	}
+
+	function isEntryEditorDirty() {
+		return entryEditorOpen && normalizeMultilineText(entryEditorDraft).trim() !== normalizeMultilineText(entryEditorBaseline).trim();
+	}
+
+	function isAuthorProfileDirty() {
+		return (
+			Boolean(authorProfileEditorOriginalName || authorProfileEditorName) &&
+			serializeAuthorProfileDraft(authorProfileEditorName, authorProfileBlurb, authorProfileLinks) !== authorProfileBaseline
+		);
+	}
+
+	function isCollectionMembershipDirty() {
+		return collectionEditorOpen && serializeCollectionDraft(collectionEditorDraft) !== collectionEditorBaseline;
+	}
+
+	function isCollectionMetadataDirty() {
+		return (
+			collectionMetadataEditorOpen &&
+			serializeCollectionMetadataDraftValue({
+				title: collectionMetadataTitle,
+				id: collectionMetadataId,
+				sourceTemplate: collectionMetadataSourceTemplate,
+				blurb: collectionMetadataBlurb,
+				imageURL: collectionMetadataImageURL,
+				background: collectionMetadataBackground,
+				accent: collectionMetadataAccent,
+				aliases: collectionMetadataAliases,
+				links: collectionMetadataLinks,
+			}) !== collectionMetadataBaseline
+		);
+	}
+
+	function isCollectionCreatorDirty() {
+		return (
+			collectionCreatorOpen &&
+			Boolean(
+				String(newCollectionTitle || "").trim() ||
+				String(newCollectionId || "").trim() ||
+				String(newCollectionSourceTemplate || "").trim() ||
+				String(newCollectionBackground || "").trim() ||
+				String(newCollectionAccent || "").trim() ||
+				String(newCollectionAliases || "").trim(),
+			)
+		);
+	}
+
+	function isCategoryEditorDirty() {
+		return categoryEditorOpen && serializeCategoryDraft(categoryEditorDraft) !== categoryEditorBaseline;
+	}
+
+	function dirtyEditorLabels() {
+		const labels = [];
+		if (isEntryEditorDirty()) {
+			labels.push("entry JSON");
+		}
+		if (isAuthorProfileDirty()) {
+			labels.push("author profile");
+		}
+		if (isCollectionMembershipDirty()) {
+			labels.push("collection memberships");
+		}
+		if (isCollectionMetadataDirty()) {
+			labels.push("collection metadata");
+		}
+		if (isCollectionCreatorDirty()) {
+			labels.push("new collection");
+		}
+		if (isCategoryEditorDirty()) {
+			labels.push("categories");
+		}
+		return labels;
+	}
+
+	function confirmDiscardUnsavedChanges() {
+		if (typeof window === "undefined") {
+			return true;
+		}
+		const labels = dirtyEditorLabels();
+		if (!labels.length) {
+			return true;
+		}
+		return window.confirm(`You have unsaved changes in ${labels.join(", ")}. Leave without saving?`);
 	}
 
 	function colorInputValue(value, fallback = "#000000") {
@@ -478,7 +798,7 @@
 	}
 
 	function entryPath(entry) {
-		return `${PEDIA_BASE_PATH}/${slugifyPediaValue(entry?.slug || entry?.title)}`;
+		return `${PEDIA_BASE_PATH}/civilizations/${slugifyPediaValue(entry?.slug || entry?.title)}`;
 	}
 
 	function collectionPath(collection) {
@@ -510,6 +830,10 @@
 		}
 		const target = event.currentTarget;
 		if (target instanceof HTMLAnchorElement && (target.target === "_blank" || target.hasAttribute("download"))) {
+			return;
+		}
+		if (!options.bypassDirtyCheck && !confirmDiscardUnsavedChanges()) {
+			event.preventDefault();
 			return;
 		}
 		event.preventDefault();
@@ -586,13 +910,22 @@
 		return authorProfileKey(authorProfileEditorName) === authorProfileKey(authorName);
 	}
 
+	function canEditAuthorProfile(authorName) {
+		return Boolean(canEdit && authUsernameKey && authUsernameKey === authorProfileKey(authorName));
+	}
+
 	function startEditingAuthorProfile(authorName) {
+		if (!canEditAuthorProfile(authorName)) {
+			return;
+		}
 		const profile = normalizeAuthorProfileRecord(authorProfileLookup.get(authorProfileKey(authorName)) || { name: authorName });
 		authorProfileEditorOriginalName = profile.name || authorName;
 		authorProfileEditorName = profile.name || authorName;
 		authorProfileBlurb = profile.blurb;
 		authorProfileLinks = authorProfileLinksText(profile.links);
 		authorProfileStatus = "";
+		authorProfileSavedAt = 0;
+		authorProfileBaseline = serializeAuthorProfileDraft(profile.name || authorName, profile.blurb, authorProfileLinksText(profile.links));
 	}
 
 	function stopEditingAuthorProfile() {
@@ -601,6 +934,8 @@
 		authorProfileBlurb = "";
 		authorProfileLinks = "";
 		authorProfileStatus = "";
+		authorProfileSavedAt = 0;
+		authorProfileBaseline = "";
 	}
 
 	async function saveAuthorProfileToLocalProject(profile, options = {}) {
@@ -624,18 +959,31 @@
 	}
 
 	async function saveAuthorProfileDraft() {
+		if (!canEditAuthorProfile(authorProfileEditorOriginalName || authorProfileEditorName)) {
+			authorProfileStatus = "Your username must match this author name to edit the profile.";
+			authorProfileSavedAt = 0;
+			return;
+		}
 		const profile = normalizeAuthorProfileRecord({
-			name: authorProfileEditorName,
+			name: authorProfileEditorOriginalName || authorProfileEditorName,
 			blurb: authorProfileBlurb,
 			links: parseAuthorProfileLinks(authorProfileLinks),
 		});
 		if (!profile.name) {
 			authorProfileStatus = "Author name is required.";
+			authorProfileSavedAt = 0;
+			return;
+		}
+		const linksError = validateAuthorProfileLinksInput(authorProfileLinks);
+		if (linksError) {
+			authorProfileStatus = linksError;
+			authorProfileSavedAt = 0;
 			return;
 		}
 
 		try {
 			authorProfileStatus = "Saving author profile...";
+			authorProfileSavedAt = 0;
 			const previousName = authorProfileEditorOriginalName || authorProfileEditorName;
 			const previousProfile = authorProfileLookup.get(authorProfileKey(previousName)) || null;
 			const savedProfile = pediaCloudWriteReady
@@ -658,8 +1006,11 @@
 			authorProfileBlurb = savedProfile.blurb;
 			authorProfileLinks = authorProfileLinksText(savedProfile.links);
 			authorProfileStatus = `${savedProfile.name} profile saved.`;
+			authorProfileSavedAt = Date.now();
+			authorProfileBaseline = serializeAuthorProfileDraft(savedProfile.name, savedProfile.blurb, authorProfileLinksText(savedProfile.links));
 		} catch (error) {
 			authorProfileStatus = error?.message || "Unable to save author profile.";
+			authorProfileSavedAt = 0;
 		}
 	}
 
@@ -739,6 +1090,12 @@
 				categorySlug: normalized.slice(`${PEDIA_BASE_PATH}/category/`.length),
 			};
 		}
+		if (normalized.startsWith(`${PEDIA_BASE_PATH}/civilizations/`)) {
+			return {
+				kind: "entry",
+				entrySlug: normalized.slice(`${PEDIA_BASE_PATH}/civilizations/`.length),
+			};
+		}
 		if (normalized.startsWith(`${PEDIA_BASE_PATH}/`)) {
 			return {
 				kind: "entry",
@@ -748,7 +1105,13 @@
 		return { kind: "catalog", authorSlug: "" };
 	}
 
-	const allEntries = $derived.by(() => mergeEntries([...cloudEntries, ...importedEntries]));
+	const allEntries = $derived.by(() =>
+		mergeEntries({
+			builtinEntries: BUILTIN_MODDED_CIVS,
+			cloudEntries,
+			importedEntries,
+		}),
+	);
 	const normalizedQuery = $derived(normalizeSearch(searchQuery));
 	const activeAuthorFilterKey = $derived(authorFilterKey(authorFilterName));
 	const authorLookup = $derived.by(() => {
@@ -782,6 +1145,8 @@
 			return matchesQuery && matchesAuthor;
 		}),
 	);
+	const recentAddedEntries = $derived.by(() => buildRecentEntries(filteredEntries, entryCreatedTimestamp));
+	const recentUpdatedEntries = $derived.by(() => buildRecentEntries(filteredEntries, entryUpdatedTimestamp));
 	const catalogGroups = $derived.by(() =>
 		filteredEntries.reduce((groups, entry) => {
 			const authors = activeAuthorFilterKey ? entryAuthors(entry).filter((author) => authorFilterKey(author) === activeAuthorFilterKey) : entryAuthors(entry);
@@ -921,6 +1286,39 @@
 	const pediaCloudWriteReady = $derived(Boolean(cloudPediaConfigured && authAccessToken && authUser?.email && canEdit));
 
 	$effect(() => {
+		authUsernameKey;
+		authorProfileEditorOriginalName;
+		if (authorProfileEditorOriginalName && !canEditAuthorProfile(authorProfileEditorOriginalName)) {
+			stopEditingAuthorProfile();
+		}
+	});
+
+	$effect(() => {
+		if (typeof window === "undefined") {
+			return;
+		}
+		const intervalId = window.setInterval(() => {
+			statusClock = Date.now();
+		}, 30_000);
+		return () => window.clearInterval(intervalId);
+	});
+
+	$effect(() => {
+		if (typeof window === "undefined") {
+			return;
+		}
+		const handleBeforeUnload = (event) => {
+			if (!dirtyEditorLabels().length) {
+				return;
+			}
+			event.preventDefault();
+			event.returnValue = "";
+		};
+		window.addEventListener("beforeunload", handleBeforeUnload);
+		return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+	});
+
+	$effect(() => {
 		if (allEntries.length && !allEntries.some((entry) => entry.id === selectedEntryId)) {
 			selectedEntryId = "";
 		}
@@ -942,8 +1340,10 @@
 		collectionEditorOpen = false;
 		collectionCreatorOpen = false;
 		collectionEditorDraft = selectedEntry?.collections ? [...selectedEntry.collections] : [];
+		collectionEditorBaseline = serializeCollectionDraft(selectedEntry?.collections || []);
 		collectionEditorSelection = "";
 		collectionEditorStatus = "";
+		collectionEditorSavedAt = 0;
 		newCollectionTitle = "";
 		newCollectionId = "";
 		newCollectionSourceTemplate = "";
@@ -953,17 +1353,32 @@
 		categoryEditorEntryId = nextEntryId;
 		categoryEditorOpen = false;
 		categoryEditorDraft = (selectedEntry?.categories || []).map((category) => normalizeCategoryValue(category)).filter(Boolean);
+		categoryEditorBaseline = serializeCategoryDraft((selectedEntry?.categories || []).map((category) => normalizeCategoryValue(category)).filter(Boolean));
 		categoryEditorInput = "";
 		categoryEditorStatus = "";
+		categoryEditorSavedAt = 0;
 	});
 
 	$effect(() => {
 		if (routeState.kind !== "collection" || !selectedCollection) {
 			collectionMetadataEditorOpen = false;
 			collectionMetadataStatus = "";
+			collectionMetadataSavedAt = 0;
+			collectionMetadataBaseline = "";
 			return;
 		}
 		hydrateCollectionMetadataDraft(selectedCollection);
+		collectionMetadataBaseline = serializeCollectionMetadataDraftValue({
+			title: selectedCollection.title,
+			id: selectedCollection.id,
+			sourceTemplate: selectedCollection.sourceTemplate,
+			blurb: selectedCollection.blurb,
+			imageURL: selectedCollection.imageURL,
+			background: selectedCollection.colors?.background,
+			accent: selectedCollection.colors?.accent,
+			aliases: (selectedCollection.aliases || []).join("\n"),
+			links: serializeCollectionLinks(selectedCollection.links),
+		});
 	});
 
 	$effect(() => {
@@ -1019,6 +1434,9 @@
 
 	function openEntry(entry, options = {}) {
 		if (!entry) {
+			return;
+		}
+		if (!options.bypassDirtyCheck && !confirmDiscardUnsavedChanges()) {
 			return;
 		}
 		selectedEntryId = entry.id;
@@ -1095,12 +1513,14 @@
 
 	async function saveEntryToProject(entry, wikiMarkup, successMessage) {
 		const nextEntry = normalizePediaEntry(entry);
+		const previousEntry = allEntries.find((candidate) => candidate.id === nextEntry.id) || null;
+		const timestampedEntry = applyEntrySaveTimestamps(nextEntry, previousEntry);
 
 		if (pediaCloudWriteReady) {
-			const savedEntry = await savePediaEntryToCloud(authAccessToken, nextEntry, wikiMarkup);
-			cloudEntries = sortModdedCivsEntries([...cloudEntries.filter((candidate) => candidate.id !== nextEntry.id && candidate.id !== savedEntry.id), savedEntry]);
+			const savedEntry = await savePediaEntryToCloud(authAccessToken, timestampedEntry, wikiMarkup);
+			cloudEntries = sortModdedCivsEntries([...cloudEntries.filter((candidate) => candidate.id !== timestampedEntry.id && candidate.id !== savedEntry.id), savedEntry]);
 			cloudDeletedEntryIds = cloudDeletedEntryIds.filter((id) => id !== savedEntry.id);
-			importedEntries = sortModdedCivsEntries([...importedEntries.filter((candidate) => candidate.id !== nextEntry.id && candidate.id !== savedEntry.id), savedEntry]);
+			importedEntries = sortModdedCivsEntries([...importedEntries.filter((candidate) => candidate.id !== timestampedEntry.id && candidate.id !== savedEntry.id), savedEntry]);
 			deletedEntryIds = deletedEntryIds.filter((id) => id !== savedEntry.id);
 			if (successMessage) {
 				entryStatus = successMessage;
@@ -1108,9 +1528,9 @@
 			return { ok: true, entry: savedEntry };
 		}
 
-		const payload = await saveEntryToLocalProject(nextEntry, wikiMarkup);
-		importedEntries = sortModdedCivsEntries([...importedEntries.filter((candidate) => candidate.id !== nextEntry.id), nextEntry]);
-		deletedEntryIds = deletedEntryIds.filter((id) => id !== nextEntry.id);
+		const payload = await saveEntryToLocalProject(timestampedEntry, wikiMarkup);
+		importedEntries = sortModdedCivsEntries([...importedEntries.filter((candidate) => candidate.id !== timestampedEntry.id), timestampedEntry]);
+		deletedEntryIds = deletedEntryIds.filter((id) => id !== timestampedEntry.id);
 		if (successMessage) {
 			entryStatus = successMessage;
 		}
@@ -1123,13 +1543,17 @@
 		}
 		entryEditorOpen = true;
 		entryStatus = "";
+		entrySavedAt = 0;
 		entryEditorDraft = `${JSON.stringify(entry, null, 2)}\n`;
+		entryEditorBaseline = entryEditorDraft;
 	}
 
 	function stopEditingEntry() {
 		entryEditorOpen = false;
 		entryEditorDraft = "";
 		entryStatus = "";
+		entrySavedAt = 0;
+		entryEditorBaseline = "";
 	}
 
 	function parseEntryEditorDraft() {
@@ -1142,10 +1566,12 @@
 			importedEntries = sortModdedCivsEntries([...importedEntries.filter((entry) => entry.id !== selectedEntry.id && entry.id !== nextEntry.id), nextEntry]);
 			deletedEntryIds = deletedEntryIds.filter((id) => id !== nextEntry.id);
 			entryStatus = `Previewing edits for ${nextEntry.title}.`;
-			openEntry(nextEntry, { replace: true });
+			entrySavedAt = 0;
+			openEntry(nextEntry, { replace: true, bypassDirtyCheck: true });
 			entryEditorDraft = `${JSON.stringify(nextEntry, null, 2)}\n`;
 		} catch (error) {
 			entryStatus = error?.message || "Unable to parse entry JSON.";
+			entrySavedAt = 0;
 		}
 	}
 
@@ -1153,11 +1579,15 @@
 		try {
 			const nextEntry = parseEntryEditorDraft();
 			entryStatus = "Saving edited entry...";
+			entrySavedAt = 0;
 			await saveEntryToProject(nextEntry, renderWikiMarkupFromEntry(nextEntry), `${nextEntry.title} saved to project data.`);
-			openEntry(nextEntry, { replace: true });
+			openEntry(nextEntry, { replace: true, bypassDirtyCheck: true });
 			entryEditorDraft = `${JSON.stringify(nextEntry, null, 2)}\n`;
+			entryEditorBaseline = entryEditorDraft;
+			entrySavedAt = Date.now();
 		} catch (error) {
 			entryStatus = error?.message || "Unable to save entry.";
+			entrySavedAt = 0;
 		}
 	}
 
@@ -1202,19 +1632,29 @@
 				collections: collectionEditorDraft,
 			});
 			collectionEditorStatus = "Saving collection memberships...";
+			collectionEditorSavedAt = 0;
 			await saveEntryToProject(nextEntry, renderWikiMarkupFromEntry(nextEntry), "");
 			collectionEditorStatus = `${nextEntry.title} collection memberships saved.`;
+			collectionEditorBaseline = serializeCollectionDraft(collectionEditorDraft);
+			collectionEditorSavedAt = Date.now();
 		} catch (error) {
 			collectionEditorStatus = error?.message || "Unable to save collection memberships.";
+			collectionEditorSavedAt = 0;
 		}
 	}
 
 	function toggleCollectionEditor() {
 		collectionEditorOpen = !collectionEditorOpen;
+		if (collectionEditorOpen) {
+			collectionEditorBaseline = serializeCollectionDraft(collectionEditorDraft);
+			collectionEditorSavedAt = 0;
+		}
 		if (!collectionEditorOpen) {
 			collectionCreatorOpen = false;
 			collectionEditorSelection = "";
 			collectionEditorStatus = "";
+			collectionEditorSavedAt = 0;
+			collectionEditorBaseline = "";
 		}
 	}
 
@@ -1233,7 +1673,9 @@
 
 	function addCategoryToDraft() {
 		const nextCategory = normalizeCategoryValue(categoryEditorInput);
-		if (!nextCategory) {
+		const validationError = validateCategoryName(categoryEditorInput);
+		if (validationError) {
+			categoryEditorStatus = validationError;
 			return;
 		}
 		if (categoryEditorDraft.some((category) => normalizeSearch(category) === normalizeSearch(nextCategory))) {
@@ -1260,18 +1702,28 @@
 				categories: categoryEditorDraft,
 			});
 			categoryEditorStatus = "Saving categories...";
+			categoryEditorSavedAt = 0;
 			await saveEntryToProject(nextEntry, renderWikiMarkupFromEntry(nextEntry), "");
 			categoryEditorStatus = `${nextEntry.title} categories saved.`;
+			categoryEditorBaseline = serializeCategoryDraft(categoryEditorDraft);
+			categoryEditorSavedAt = Date.now();
 		} catch (error) {
 			categoryEditorStatus = error?.message || "Unable to save categories.";
+			categoryEditorSavedAt = 0;
 		}
 	}
 
 	function toggleCategoryEditor() {
 		categoryEditorOpen = !categoryEditorOpen;
+		if (categoryEditorOpen) {
+			categoryEditorBaseline = serializeCategoryDraft(categoryEditorDraft);
+			categoryEditorSavedAt = 0;
+		}
 		if (!categoryEditorOpen) {
 			categoryEditorInput = "";
 			categoryEditorStatus = "";
+			categoryEditorSavedAt = 0;
+			categoryEditorBaseline = "";
 		}
 	}
 
@@ -1289,8 +1741,24 @@
 
 	function toggleCollectionMetadataEditor() {
 		collectionMetadataEditorOpen = !collectionMetadataEditorOpen;
+		if (collectionMetadataEditorOpen && selectedCollection) {
+			collectionMetadataSavedAt = 0;
+			collectionMetadataBaseline = serializeCollectionMetadataDraftValue({
+				title: collectionMetadataTitle,
+				id: collectionMetadataId,
+				sourceTemplate: collectionMetadataSourceTemplate,
+				blurb: collectionMetadataBlurb,
+				imageURL: collectionMetadataImageURL,
+				background: collectionMetadataBackground,
+				accent: collectionMetadataAccent,
+				aliases: collectionMetadataAliases,
+				links: collectionMetadataLinks,
+			});
+		}
 		if (!collectionMetadataEditorOpen) {
 			collectionMetadataStatus = "";
+			collectionMetadataSavedAt = 0;
+			collectionMetadataBaseline = "";
 			if (selectedCollection) {
 				hydrateCollectionMetadataDraft(selectedCollection);
 			}
@@ -1335,7 +1803,8 @@
 
 	async function saveCollectionMetadata() {
 		const title = String(collectionMetadataTitle || "").trim();
-		const id = slugifyPediaValue(collectionMetadataId || title);
+		const rawId = String(collectionMetadataId || title).trim();
+		const id = slugifyPediaValue(rawId);
 		const background = String(collectionMetadataBackground || "").trim();
 		const accent = String(collectionMetadataAccent || "").trim();
 		const aliases = [
@@ -1345,15 +1814,16 @@
 				.map((item) => String(item || "").trim())
 				.filter(Boolean),
 		].filter((value, index, array) => array.indexOf(value) === index);
+		const collectionLinksError = validateCollectionLinksInput(collectionMetadataLinks);
 		const links = String(collectionMetadataLinks || "")
 			.split("\n")
 			.map((line) => String(line || "").trim())
 			.filter(Boolean)
 			.map((line) => {
-				const [label, href] = line.split("|").map((part) => String(part || "").trim());
+				const parts = line.split("|").map((part) => String(part || "").trim());
 				return {
-					label,
-					href,
+					label: parts[0],
+					href: parts.slice(1).join(" | ").trim(),
 				};
 			})
 			.filter((link) => link.label && link.href);
@@ -1370,8 +1840,20 @@
 			collectionMetadataStatus = "Collection id is required.";
 			return;
 		}
+		if (!isValidCollectionId(id)) {
+			collectionMetadataStatus = "Collection ids must use lowercase letters, numbers, and hyphens only.";
+			return;
+		}
+		if (collectionIdConflict(id, selectedCollection.id)) {
+			collectionMetadataStatus = `${id} is already used by another collection.`;
+			return;
+		}
 		if (!isValidHexColor(background) || !isValidHexColor(accent)) {
 			collectionMetadataStatus = "Collection background and accent colors must be valid hex values.";
+			return;
+		}
+		if (collectionLinksError) {
+			collectionMetadataStatus = collectionLinksError;
 			return;
 		}
 
@@ -1391,6 +1873,7 @@
 
 		try {
 			collectionMetadataStatus = "Saving collection...";
+			collectionMetadataSavedAt = 0;
 			const savedCollection = pediaCloudWriteReady
 				? await savePediaCollectionToCloud(authAccessToken, collection, { previousId: selectedCollection.id })
 				: (await saveCollectionToLocalProject(collection, { updateExisting: true, previousId: selectedCollection.id })) && collection;
@@ -1401,11 +1884,24 @@
 				);
 			}
 			collectionMetadataStatus = `${savedCollection.title} saved.`;
+			collectionMetadataSavedAt = Date.now();
+			collectionMetadataBaseline = serializeCollectionMetadataDraftValue({
+				title: savedCollection.title,
+				id: savedCollection.id,
+				sourceTemplate: savedCollection.sourceTemplate,
+				blurb: savedCollection.blurb,
+				imageURL: savedCollection.imageURL,
+				background: savedCollection.colors?.background,
+				accent: savedCollection.colors?.accent,
+				aliases: (savedCollection.aliases || []).join("\n"),
+				links: serializeCollectionLinks(savedCollection.links),
+			});
 			if (collection.id !== selectedCollection.id) {
 				navigate?.(collectionPath(savedCollection), { replace: true });
 			}
 		} catch (error) {
 			collectionMetadataStatus = error?.message || "Unable to save collection.";
+			collectionMetadataSavedAt = 0;
 		}
 	}
 
@@ -1450,7 +1946,8 @@
 
 	async function createCollectionDefinition() {
 		const title = String(newCollectionTitle || "").trim();
-		const id = slugifyPediaValue(newCollectionId || title);
+		const rawId = String(newCollectionId || title).trim();
+		const id = slugifyPediaValue(rawId);
 		const background = String(newCollectionBackground || "").trim();
 		const accent = String(newCollectionAccent || "").trim();
 		const aliases = [
@@ -1467,6 +1964,14 @@
 		}
 		if (!id) {
 			collectionEditorStatus = "Collection id is required.";
+			return;
+		}
+		if (!isValidCollectionId(id)) {
+			collectionEditorStatus = "Collection ids must use lowercase letters, numbers, and hyphens only.";
+			return;
+		}
+		if (collectionIdConflict(id)) {
+			collectionEditorStatus = `${id} is already used by another collection.`;
 			return;
 		}
 		if (!isValidHexColor(background) || !isValidHexColor(accent)) {
@@ -1487,6 +1992,7 @@
 
 		try {
 			collectionEditorStatus = "Saving new collection...";
+			collectionEditorSavedAt = 0;
 			const savedCollection = pediaCloudWriteReady ? await savePediaCollectionToCloud(authAccessToken, collection) : (await saveCollectionToLocalProject(collection)) && collection;
 			customCollections = [...customCollections.filter((item) => item?.id !== savedCollection.id), savedCollection];
 			if (pediaCloudWriteReady) {
@@ -1503,8 +2009,10 @@
 			newCollectionBackground = "";
 			newCollectionAccent = "";
 			newCollectionAliases = "";
+			collectionEditorSavedAt = Date.now();
 		} catch (error) {
 			collectionEditorStatus = error?.message || "Unable to save collection.";
+			collectionEditorSavedAt = 0;
 		}
 	}
 
@@ -1714,7 +2222,10 @@
 		return slotCount === 1 ? "pedia-media-rail is-single" : "pedia-media-rail";
 	}
 
-	function showCatalog() {
+	function showCatalog(options = {}) {
+		if (!options.bypassDirtyCheck && !confirmDiscardUnsavedChanges()) {
+			return;
+		}
 		stopEditingEntry();
 		activeView = "catalog";
 		selectedEntryId = "";
@@ -1722,8 +2233,11 @@
 		navigate?.(PEDIA_BASE_PATH);
 	}
 
-	function showConverter() {
+	function showConverter(options = {}) {
 		if (!canEdit) {
+			return;
+		}
+		if (!options.bypassDirtyCheck && !confirmDiscardUnsavedChanges()) {
 			return;
 		}
 		stopEditingEntry();
@@ -1732,7 +2246,10 @@
 		navigate?.(PEDIA_BASE_PATH);
 	}
 
-	function clearAuthorFilter() {
+	function clearAuthorFilter(options = {}) {
+		if (!options.bypassDirtyCheck && !confirmDiscardUnsavedChanges()) {
+			return;
+		}
 		authorFilterName = "";
 		selectedEntryId = "";
 		activeView = "catalog";
@@ -1740,9 +2257,12 @@
 		navigate?.(PEDIA_BASE_PATH);
 	}
 
-	function filterCatalogByAuthor(name) {
+	function filterCatalogByAuthor(name, options = {}) {
 		const nextAuthor = String(name || "").trim();
 		if (!nextAuthor) {
+			return;
+		}
+		if (!options.bypassDirtyCheck && !confirmDiscardUnsavedChanges()) {
 			return;
 		}
 		stopEditingEntry();
@@ -1929,6 +2449,70 @@
 			</div>
 
 			<section class="pedia-catalog-shell stack overflow-hidden" aria-label="Modded civ catalog">
+				{#if recentAddedEntries.length || recentUpdatedEntries.length}
+					<section class="pedia-catalog-activity-grid" aria-label="Recent pedia activity">
+						{#if recentAddedEntries.length}
+							<article class="pedia-catalog-activity-panel stack quarter">
+								<div class="pedia-catalog-group-head">
+									<div class="stack quarter">
+										<p class="eyebrow">Recently Added</p>
+									</div>
+								</div>
+
+								<div class="pedia-catalog-activity-list" role="list">
+									{#each recentAddedEntries as entry (entry.id)}
+										<a
+											class="pedia-catalog-activity-item"
+											href={entryPath(entry)}
+											style={catalogRowStyle(entry)}
+											onclick={(event) => handleRouteAnchorClick(event, entryPath(entry))}
+										>
+											<div class="pedia-catalog-activity-main min-inline-size-0">
+												<strong class="card-title text-box-trim">{entry.title}</strong>
+												<p class="card-copy text-box-trim">{entry.leader}</p>
+											</div>
+											<div class="pedia-catalog-activity-meta">
+												<strong class="pedia-catalog-activity-date">{formatCatalogTimestamp(entry.meta?.createdAt)}</strong>
+												<p class="card-copy text-box-trim">{recentEntryActorLabel(entry, "created")}</p>
+											</div>
+										</a>
+									{/each}
+								</div>
+							</article>
+						{/if}
+
+						{#if recentUpdatedEntries.length}
+							<article class="pedia-catalog-activity-panel stack quarter">
+								<div class="pedia-catalog-group-head">
+									<div class="stack quarter">
+										<p class="eyebrow">Recently Edited</p>
+									</div>
+								</div>
+
+								<div class="pedia-catalog-activity-list" role="list">
+									{#each recentUpdatedEntries as entry (entry.id)}
+										<a
+											class="pedia-catalog-activity-item"
+											href={entryPath(entry)}
+											style={catalogRowStyle(entry)}
+											onclick={(event) => handleRouteAnchorClick(event, entryPath(entry))}
+										>
+											<div class="pedia-catalog-activity-main min-inline-size-0">
+												<strong class="card-title text-box-trim">{entry.title}</strong>
+												<p class="card-copy text-box-trim">{entry.leader}</p>
+											</div>
+											<div class="pedia-catalog-activity-meta">
+												<strong class="pedia-catalog-activity-date">{formatCatalogTimestamp(entry.meta?.updatedAt)}</strong>
+												<p class="card-copy text-box-trim">{recentEntryActorLabel(entry, "updated")}</p>
+											</div>
+										</a>
+									{/each}
+								</div>
+							</article>
+						{/if}
+					</section>
+				{/if}
+
 				{#if allCollections.length}
 					<details class="pedia-catalog-accordion">
 						<summary class="pedia-catalog-accordion-summary">
@@ -2015,7 +2599,7 @@
 										<h3 class="section-title">{group.author}</h3>
 										<p class="card-copy">{overview.blurb}</p>
 									</div>
-									{#if canEdit}
+									{#if canEditAuthorProfile(group.author)}
 										<button
 											type="button"
 											class="pedia-button pedia-button-secondary absolute"
@@ -2027,7 +2611,7 @@
 									{/if}
 								</div>
 
-								{#if canEdit && isEditingAuthorProfile(group.author)}
+								{#if canEditAuthorProfile(group.author) && isEditingAuthorProfile(group.author)}
 									<div class="pedia-author-profile-editor stack">
 										<!-- <label class="stack quarter">
 											<span class="eyebrow">Author Name</span>
@@ -2051,7 +2635,12 @@
 											<button type="button" class="pedia-button" onclick={saveAuthorProfileDraft}>Save Profile</button>
 										</div>
 										{#if authorProfileStatus}
-											<p class="pedia-status">{authorProfileStatus}</p>
+											<p class="pedia-status">
+												<span>{authorProfileStatus}</span>
+												{#if authorProfileSavedAt}
+													<span class="pedia-status-time">{statusTimestampText(authorProfileSavedAt)}</span>
+												{/if}
+											</p>
 										{/if}
 									</div>
 								{/if}
@@ -2242,14 +2831,24 @@
 
 				<section class="pedia-catalog-map stack" aria-label="Civilization map">
 					<div class="pedia-catalog-group-head">
-						<div class="stack quarter">
+						<div class="stack half margin-block-start-quarter">
 							<p class="eyebrow">Modded Civ Distribution</p>
 							<h3 class="section-title">Lacsiraxariscal's TSL Map</h3>
 						</div>
-						<a class="pedia-button pedia-button-secondary" href={CATALOG_MAP_VIEW_URL} target="_blank" rel="noreferrer">Open Full Map</a>
+						<a class="pedia-button pedia-button-secondary" href={CATALOG_MAP_VIEW_URL} target="_blank" rel="noreferrer">Open Externally</a>
 					</div>
 					<div class="pedia-catalog-map-frame">
-						<iframe title="Lacsiraxariscal's TSL Map" src={CATALOG_MAP_EMBED_URL} loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+						{#if catalogMapLoaded}
+							<iframe title="Lacsiraxariscal's TSL Map" src={CATALOG_MAP_EMBED_URL} loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+						{:else}
+							<button type="button" class="pedia-catalog-map-preview" onclick={() => (catalogMapLoaded = true)}>
+								<img class="pedia-catalog-map-preview-image" src="/MapPreview.jpg" alt="Preview of Lacsiraxariscal's TSL map" loading="lazy" />
+								<span class="pedia-catalog-map-preview-scrim" aria-hidden="true"></span>
+								<span class="pedia-catalog-map-preview-copy stack quarter">
+									<strong>Click anywhere to open the Goggle map</strong>
+								</span>
+							</button>
+						{/if}
 					</div>
 				</section>
 			</section>
@@ -2469,7 +3068,12 @@
 					</div>
 
 					{#if collectionMetadataStatus}
-						<p class="pedia-status">{collectionMetadataStatus}</p>
+						<p class="pedia-status">
+							<span>{collectionMetadataStatus}</span>
+							{#if collectionMetadataSavedAt}
+								<span class="pedia-status-time">{statusTimestampText(collectionMetadataSavedAt)}</span>
+							{/if}
+						</p>
 					{/if}
 				</section>
 			{/if}
@@ -2789,7 +3393,12 @@
 							</div>
 						</div>
 						{#if entryStatus}
-							<p class="pedia-status">{entryStatus}</p>
+							<p class="pedia-status">
+								<span>{entryStatus}</span>
+								{#if entrySavedAt}
+									<span class="pedia-status-time">{statusTimestampText(entrySavedAt)}</span>
+								{/if}
+							</p>
 						{/if}
 						<label class="stack half">
 							<span class="eyebrow">Entry JSON</span>
@@ -3343,7 +3952,12 @@
 											{/if}
 
 											{#if collectionEditorStatus}
-												<p class="pedia-status">{collectionEditorStatus}</p>
+												<p class="pedia-status">
+													<span>{collectionEditorStatus}</span>
+													{#if collectionEditorSavedAt}
+														<span class="pedia-status-time">{statusTimestampText(collectionEditorSavedAt)}</span>
+													{/if}
+												</p>
 											{/if}
 										</div>
 									{/if}
@@ -3433,7 +4047,12 @@
 											{/if}
 
 											{#if categoryEditorStatus}
-												<p class="pedia-status">{categoryEditorStatus}</p>
+												<p class="pedia-status">
+													<span>{categoryEditorStatus}</span>
+													{#if categoryEditorSavedAt}
+														<span class="pedia-status-time">{statusTimestampText(categoryEditorSavedAt)}</span>
+													{/if}
+												</p>
 											{/if}
 										</div>
 									{/if}
@@ -3824,6 +4443,87 @@
 		gap: 0.75rem;
 	}
 
+	.pedia-catalog-activity-grid {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.pedia-catalog-activity-panel {
+		display: grid;
+		gap: 0.45rem;
+		background: color-mix(in srgb, var(--pedia-panel) 86%, black 14%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
+		border-radius: 1rem;
+		padding: 0.75rem;
+	}
+
+	.pedia-catalog-activity-panel .eyebrow,
+	.pedia-catalog-activity-panel .card-copy {
+		margin: 0;
+	}
+
+	.pedia-catalog-activity-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+		gap: 0.5rem;
+	}
+
+	.pedia-catalog-activity-item {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: 0.75rem;
+		color: var(--ink);
+		text-decoration: none;
+		background: linear-gradient(135deg, color-mix(in srgb, var(--catalog-accent) 18%, transparent) 0%, transparent 48%), color-mix(in srgb, var(--catalog-surface) 72%, var(--pedia-panel));
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 18%, var(--border-color)),
+			0 2px 6px color-mix(in srgb, black 70%, transparent);
+		border-radius: 0.5rem;
+		padding: 0.75rem 0.65rem;
+	}
+
+	.pedia-catalog-activity-item:hover,
+	.pedia-catalog-activity-item:focus-visible {
+		transform: translateY(-1px);
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 28%, var(--border-color)),
+			0 4px 6px color-mix(in srgb, black 76%, transparent);
+	}
+
+	.pedia-catalog-activity-main {
+		display: grid;
+		gap: 0.5rem;
+		min-inline-size: 0;
+	}
+
+	.pedia-catalog-activity-main .card-title {
+		font-size: 1.05rem;
+		line-height: 1;
+	}
+
+	.pedia-catalog-activity-main .card-copy,
+	.pedia-catalog-activity-meta .card-copy {
+		line-height: 1.05;
+	}
+
+	.pedia-catalog-activity-meta {
+		display: grid;
+		justify-items: end;
+		gap: 0.08rem;
+		min-inline-size: 7.25rem;
+		text-align: end;
+		white-space: nowrap;
+	}
+
+	.pedia-catalog-activity-date {
+		font-size: 0.66rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
 	.pedia-catalog-map {
 		display: grid;
 		gap: 1rem;
@@ -3839,6 +4539,56 @@
 		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
 		border-radius: 0.9rem;
 		overflow: hidden;
+	}
+
+	.pedia-catalog-map-preview {
+		position: relative;
+		inline-size: 100%;
+		min-block-size: 32rem;
+		display: block;
+		padding: 0;
+		border: 0;
+		background: color-mix(in srgb, var(--pedia-panel-soft) 92%, black 8%);
+		color: inherit;
+		cursor: pointer;
+		text-align: left;
+	}
+
+	.pedia-catalog-map-preview:hover,
+	.pedia-catalog-map-preview:focus-visible {
+		filter: brightness(1.03);
+	}
+
+	.pedia-catalog-map-preview-image,
+	.pedia-catalog-map-preview-scrim {
+		position: absolute;
+		inset: 0;
+	}
+
+	.pedia-catalog-map-preview-image {
+		inline-size: 100%;
+		block-size: 100%;
+		display: block;
+		object-fit: cover;
+		object-position: center center;
+	}
+
+	.pedia-catalog-map-preview-scrim {
+		background: linear-gradient(180deg, rgba(6, 10, 16, 0.08), rgba(6, 10, 16, 0.34) 46%, rgba(6, 10, 16, 0.82)), linear-gradient(90deg, rgba(6, 10, 16, 0.72), rgba(6, 10, 16, 0.08) 58%);
+	}
+
+	.pedia-catalog-map-preview-copy {
+		position: absolute;
+		inset-inline-start: 1.5rem;
+		inset-inline-end: 1.5rem;
+		inset-block-end: 1.5rem;
+		inline-size: fit-content;
+		gap: 0.8rem;
+		padding: 1.5rem;
+		border-radius: 0.9rem;
+		/*background: color-mix(in srgb, var(--pedia-panel) 76%, rgba(4, 7, 13, 0.24) 24%);*/
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 25%, var(--border-color));
+		backdrop-filter: blur(0.25rem);
 	}
 
 	.pedia-catalog-map-frame iframe {
@@ -4065,7 +4815,7 @@
 	.pedia-unique-head span {
 		color: var(--pedia-accent-strong);
 		text-transform: uppercase;
-		font-size: 0.8rem;
+		font-size: 0.85rem;
 		letter-spacing: 0.12em;
 	}
 
@@ -4186,6 +4936,8 @@
 	}
 
 	.pedia-status {
+		display: grid;
+		gap: 0.25rem;
 		color: var(--ink);
 		background: color-mix(in srgb, var(--pedia-accent) 12%, var(--control-bg));
 		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 20%, var(--border-color));
@@ -4193,6 +4945,11 @@
 		padding-block: 0.9rem;
 		padding-inline: 1rem;
 		margin: 0;
+	}
+
+	.pedia-status-time {
+		color: var(--muted-ink);
+		font-size: 0.9rem;
 	}
 
 	.pedia-author-civs-accordion {
@@ -5199,6 +5956,20 @@
 			align-items: stretch;
 		}
 
+		.pedia-entry-toolbar {
+			gap: 0.6rem;
+		}
+
+		.pedia-entry-toolbar > .pedia-button,
+		.pedia-entry-toolbar .pedia-link-row,
+		.pedia-entry-toolbar .pedia-link-row .pedia-button {
+			inline-size: 100%;
+		}
+
+		.pedia-entry-toolbar .pedia-link-row .pedia-button {
+			justify-content: center;
+		}
+
 		.pedia-view-switch {
 			inline-size: 100%;
 			justify-content: stretch;
@@ -5218,17 +5989,35 @@
 			align-items: start;
 		}
 
+		.pedia-catalog-activity-item {
+			align-items: start;
+			flex-direction: column;
+		}
+
 		.pedia-catalog-map-frame {
 			min-block-size: 24rem;
+		}
+
+		.pedia-catalog-map-preview {
+			min-block-size: 24rem;
+		}
+
+		.pedia-catalog-map-preview-copy {
+			inset-inline-start: 1rem;
+			inset-inline-end: 1rem;
+			inset-block-end: 1rem;
+			max-inline-size: none;
 		}
 
 		.pedia-wiki-header-row {
 			grid-template-columns: 1fr;
 			justify-items: start;
+			gap: 0.85rem;
 		}
 
 		.pedia-wiki-header h2 {
-			font-size: 2rem;
+			font-size: 1.8rem;
+			line-height: 1.05;
 		}
 
 		.civ-icon {
@@ -5270,8 +6059,46 @@
 			grid-template-columns: 1fr;
 		}
 
+		.pedia-wiki {
+			gap: 1rem;
+		}
+
+		.pedia-wiki-main {
+			gap: 2rem;
+		}
+
+		.pedia-wiki-section .section-title {
+			font-size: 1.4rem;
+		}
+
+		.pedia-wiki-header :global(.section-copy) {
+			font-size: 0.96rem;
+			max-inline-size: 34rem;
+		}
+
 		.pedia-figure-card img {
 			max-block-size: 22rem;
+		}
+
+		.pedia-dawn-layout,
+		.pedia-unique-row,
+		.pedia-entry-support-grid {
+			gap: 1rem;
+		}
+
+		.pedia-entry-support-grid {
+			display: grid;
+			grid-template-columns: 1fr;
+		}
+
+		.pedia-unique-figure-stack {
+			inline-size: min(100%, 14rem);
+			justify-self: center;
+		}
+
+		.pedia-unique-head {
+			flex-direction: column;
+			align-items: start;
 		}
 
 		.pedia-author-work {
@@ -5287,6 +6114,13 @@
 
 		.pedia-author-work-meta span {
 			inline-size: 100%;
+		}
+
+		.pedia-infobox {
+			order: -1;
+			max-block-size: none;
+			overflow: visible;
+			padding: 0.9rem;
 		}
 
 		.pedia-infobox-row {
@@ -5317,7 +6151,20 @@
 		}
 
 		.pedia-wiki-main {
-			gap: 2.25rem;
+			gap: 1.6rem;
+		}
+
+		.pedia-wiki-header-row {
+			gap: 0.75rem;
+		}
+
+		.pedia-wiki-header h2 {
+			font-size: 1.55rem;
+		}
+
+		.civ-icon {
+			inline-size: 4.75rem;
+			block-size: 4.75rem;
 		}
 
 		.pedia-catalog-icon {
@@ -5340,7 +6187,7 @@
 		}
 
 		.pedia-unique-row {
-			gap: 1rem;
+			gap: 0.8rem;
 		}
 
 		.pedia-template-ref-row {
@@ -5349,6 +6196,14 @@
 
 		.pedia-unique-figure {
 			max-inline-size: 12rem;
+		}
+
+		.pedia-infobox-media {
+			min-block-size: 10.5rem;
+		}
+
+		.pedia-infobox-values {
+			justify-items: start;
 		}
 
 		.pedia-name-list {

@@ -64,7 +64,7 @@ function entryAuthors(entry) {
 }
 
 function entryPath(entry) {
-	return `${MODDED_CIVS_PEDIA_PATH}/${compactText(entry?.slug || entry?.title)
+	return `${MODDED_CIVS_PEDIA_PATH}/civilizations/${compactText(entry?.slug || entry?.title)
 		.toLowerCase()
 		.replace(/[^a-z0-9]+/g, "-")
 		.replace(/^-+|-+$/g, "")}`;
@@ -93,6 +93,21 @@ function authorPath(authorName) {
 
 function imageForEntry(entry) {
 	return entry?.presentation?.mapImageUrl || entry?.presentation?.iconImageUrl || SITE_IMAGE;
+}
+
+function entryPreviewFacts(entry) {
+	return uniqueNonEmpty([
+		entry?.leader ? `Leader: ${entry.leader}` : "",
+		entry?.identity?.capital ? `Capital: ${entry.identity.capital}` : "",
+		entry?.identity?.culture ? `Culture: ${entry.identity.culture}` : "",
+		entryAuthors(entry).length ? `Author: ${entryAuthors(entry).join(", ")}` : "",
+	]);
+}
+
+function entryPreviewDescription(entry) {
+	const base = compactText(entry?.summary || entry?.overview?.civilization?.body || `Browse the ${entry?.title || "custom civilization"} entry in the Modded Civs Pedia on Civ Modding Central.`);
+	const facts = entryPreviewFacts(entry).slice(0, 3);
+	return truncateDescription(facts.length ? `${base} ${facts.join(". ")}.` : base);
 }
 
 function imageForCollection(collection) {
@@ -171,11 +186,16 @@ function getPediaSeo(route, manifest) {
 	if (route.kind === "entry") {
 		const { entry } = route;
 		const titleBase = entry?.leader ? `${entry.title} (${entry.leader})` : entry.title;
+		const articleTags = uniqueNonEmpty([
+			entry?.identity?.culture,
+			entry?.identity?.capital,
+			...entryAuthors(entry),
+			...(entry?.identity?.religion || []),
+			...(entry?.collections || []).map((collection) => collection?.title),
+		]).slice(0, 8);
 		return {
 			title: `${titleBase} | Modded Civs Pedia | Civ Modding Central`,
-			description: truncateDescription(
-				entry?.summary || entry?.overview?.civilization?.body || `Browse the ${entry?.title || "custom civilization"} entry in the Modded Civs Pedia on Civ Modding Central.`,
-			),
+			description: entryPreviewDescription(entry),
 			keywords: uniqueNonEmpty([
 				entry?.title,
 				entry?.leader,
@@ -189,10 +209,17 @@ function getPediaSeo(route, manifest) {
 			openGraphType: "article",
 			canonical: `${SITE_URL}${route.path}`,
 			image: imageForEntry(entry),
-			imageAlt: `${titleBase} modded civilization entry`,
+			imageAlt: `${titleBase} custom civilization map and entry artwork`,
 			robots: DEFAULT_ROBOTS,
 			dateModified: parseLastUpdatedDate(entry?.source?.lastUpdated),
 			authorName: entryAuthors(entry).join(", "),
+			articleAuthor: entryAuthors(entry).join(", "),
+			articleSection: "Custom Civilizations",
+			articleTags,
+			twitterLabel1: "Leader",
+			twitterData1: entry?.leader || "",
+			twitterLabel2: entry?.identity?.capital ? "Capital" : "Culture",
+			twitterData2: entry?.identity?.capital || entry?.identity?.culture || "",
 			pathname: route.path,
 			parentPath: MODDED_CIVS_PEDIA_PATH,
 			parentName: PEDIA_HUB_PARENT_NAME,
@@ -558,11 +585,18 @@ function applySeoToHtml(template, seo, noscriptContent) {
 	html = replaceMetaContent(html, "meta-og-description", seo.description);
 	html = replaceMetaContent(html, "meta-og-image", seo.image);
 	html = replaceMetaContent(html, "meta-og-image-alt", seo.imageAlt || "");
+	html = replaceMetaContent(html, "meta-article-author", seo.articleAuthor || "");
+	html = replaceMetaContent(html, "meta-article-section", seo.articleSection || "");
+	html = replaceMetaContent(html, "meta-article-tag", Array.isArray(seo.articleTags) ? seo.articleTags.join(", ") : "");
 	html = replaceMetaContent(html, "meta-article-modified-time", seo.dateModified || "");
 	html = replaceMetaContent(html, "meta-twitter-title", seo.title);
 	html = replaceMetaContent(html, "meta-twitter-description", seo.description);
 	html = replaceMetaContent(html, "meta-twitter-image", seo.image);
 	html = replaceMetaContent(html, "meta-twitter-image-alt", seo.imageAlt || "");
+	html = replaceMetaContent(html, "meta-twitter-label1", seo.twitterLabel1 || "");
+	html = replaceMetaContent(html, "meta-twitter-data1", seo.twitterData1 || "");
+	html = replaceMetaContent(html, "meta-twitter-label2", seo.twitterLabel2 || "");
+	html = replaceMetaContent(html, "meta-twitter-data2", seo.twitterData2 || "");
 	html = replaceCanonicalHref(html, seo.canonical);
 	html = replaceStructuredData(html, buildStructuredData(seo));
 	html = replaceNoscript(html, noscriptContent);

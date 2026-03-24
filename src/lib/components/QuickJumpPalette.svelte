@@ -47,7 +47,7 @@
 	}
 
 	function pediaEntryHref(entry) {
-		return `/modded-civs-pedia/${pediaSlug(entry?.slug || entry?.title)}`;
+		return `/modded-civs-pedia/civilizations/${pediaSlug(entry?.slug || entry?.title)}`;
 	}
 
 	function pediaCollectionHref(collection) {
