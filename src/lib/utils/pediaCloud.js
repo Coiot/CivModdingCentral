@@ -4,6 +4,7 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 const SUPABASE_PEDIA_ENTRIES_TABLE = import.meta.env.VITE_SUPABASE_PEDIA_ENTRIES_TABLE || "cmc_pedia_entries";
 const SUPABASE_PEDIA_COLLECTIONS_TABLE = import.meta.env.VITE_SUPABASE_PEDIA_COLLECTIONS_TABLE || "cmc_pedia_collections";
+const SUPABASE_PEDIA_AUTHOR_PROFILES_TABLE = import.meta.env.VITE_SUPABASE_PEDIA_AUTHOR_PROFILES_TABLE || "cmc_pedia_author_profiles";
 
 let pediaCloudClient = null;
 let pediaCloudClientKey = "";
@@ -41,6 +42,16 @@ function normalizeCollectionRecord(collection) {
 	};
 }
 
+function normalizeAuthorProfileRecord(profile) {
+	const name = cleanText(profile?.name);
+	return {
+		id: cleanText(profile?.id) || slugifyPediaValue(name),
+		name,
+		blurb: cleanText(profile?.blurb),
+		links: cleanLinks(profile?.links),
+	};
+}
+
 function entryFromCloudRow(row) {
 	const state = row?.entry_state && typeof row.entry_state === "object" ? row.entry_state : {};
 	return normalizePediaEntry({
@@ -68,8 +79,17 @@ function collectionFromCloudRow(row) {
 	});
 }
 
+function authorProfileFromCloudRow(row) {
+	const state = row?.profile_state && typeof row.profile_state === "object" ? row.profile_state : {};
+	return normalizeAuthorProfileRecord({
+		...state,
+		id: cleanText(row?.id) || state?.id,
+		name: cleanText(row?.name) || state?.name,
+	});
+}
+
 export function hasPediaCloudConfig() {
-	return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_PEDIA_ENTRIES_TABLE && SUPABASE_PEDIA_COLLECTIONS_TABLE);
+	return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_PEDIA_ENTRIES_TABLE && SUPABASE_PEDIA_COLLECTIONS_TABLE && SUPABASE_PEDIA_AUTHOR_PROFILES_TABLE);
 }
 
 export async function getPediaCloudClient(accessToken = "") {
@@ -147,6 +167,20 @@ export async function loadPediaCollectionsFromCloud(accessToken = "") {
 	}
 
 	return (data || []).map((row) => collectionFromCloudRow(row));
+}
+
+export async function loadPediaAuthorProfilesFromCloud(accessToken = "") {
+	const client = await getPediaCloudClient(accessToken);
+	const { data, error } = await client
+		.from(SUPABASE_PEDIA_AUTHOR_PROFILES_TABLE)
+		.select("id, name, profile_state, created_by_email, updated_by_email, created_at, updated_at")
+		.order("name", { ascending: true });
+
+	if (error) {
+		throw error;
+	}
+
+	return (data || []).map((row) => authorProfileFromCloudRow(row));
 }
 
 export async function savePediaEntryToCloud(accessToken, entry, wikiMarkup = "") {
@@ -264,4 +298,43 @@ export async function deletePediaCollectionFromCloud(accessToken, collectionId) 
 	return {
 		id: cleanText(collectionId),
 	};
+}
+
+export async function savePediaAuthorProfileToCloud(accessToken, profile, options = {}) {
+	const client = await getPediaCloudClient(accessToken);
+	const normalizedProfile = normalizeAuthorProfileRecord(profile);
+	const previousId = cleanText(options?.previousId);
+	const payload = {
+		id: normalizedProfile.id,
+		name: normalizedProfile.name,
+		profile_state: normalizedProfile,
+	};
+
+	if (previousId && previousId !== normalizedProfile.id) {
+		const updateResult = await client
+			.from(SUPABASE_PEDIA_AUTHOR_PROFILES_TABLE)
+			.update(payload)
+			.eq("id", previousId)
+			.select("id, name, profile_state, created_by_email, updated_by_email, created_at, updated_at")
+			.maybeSingle();
+
+		if (updateResult.error) {
+			throw updateResult.error;
+		}
+		if (updateResult.data) {
+			return authorProfileFromCloudRow(updateResult.data);
+		}
+	}
+
+	const { data, error } = await client
+		.from(SUPABASE_PEDIA_AUTHOR_PROFILES_TABLE)
+		.upsert(payload, { onConflict: "id" })
+		.select("id, name, profile_state, created_by_email, updated_by_email, created_at, updated_at")
+		.single();
+
+	if (error) {
+		throw error;
+	}
+
+	return authorProfileFromCloudRow(data);
 }

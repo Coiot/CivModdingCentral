@@ -6,6 +6,7 @@ import { pathToFileURL } from "node:url";
 
 const MODDED_CIVS_PEDIA_DIR = resolve(__dirname, "src/lib/data/modded-civs-pedia");
 const PEDIA_COLLECTIONS_FILE = resolve(__dirname, "src/lib/data/pediaCollections.js");
+const PEDIA_AUTHOR_PROFILES_FILE = resolve(__dirname, "src/lib/data/pediaAuthorProfiles.json");
 
 function jsonResponse(res, statusCode, payload) {
 	res.statusCode = statusCode;
@@ -78,14 +79,41 @@ function normalizeCollectionRecord(collection) {
 	};
 }
 
+function normalizeAuthorProfile(profile) {
+	const name = cleanValue(profile?.name);
+	return {
+		name,
+		blurb: cleanValue(profile?.blurb),
+		links: [
+			...new Map(
+				(Array.isArray(profile?.links) ? profile.links : [])
+					.map((link) => ({
+						label: cleanValue(link?.label),
+						href: cleanValue(link?.href),
+					}))
+					.filter((link) => link.label && link.href)
+					.map((link) => [`${link.label}|${link.href}`, link]),
+			).values(),
+		],
+	};
+}
+
 async function loadPediaCollections() {
 	const moduleUrl = `${pathToFileURL(PEDIA_COLLECTIONS_FILE).href}?t=${Date.now()}`;
 	const module = await import(moduleUrl);
 	return Array.isArray(module?.PEDIA_COLLECTIONS) ? module.PEDIA_COLLECTIONS : [];
 }
 
+async function loadPediaAuthorProfiles() {
+	return JSON.parse(await readFile(PEDIA_AUTHOR_PROFILES_FILE, "utf8"));
+}
+
 function serializePediaCollections(collections) {
 	return `export const PEDIA_COLLECTIONS = ${JSON.stringify(collections, null, 2)};\n`;
+}
+
+function serializePediaAuthorProfiles(profiles) {
+	return `${JSON.stringify(profiles, null, 2)}\n`;
 }
 
 function localPediaSavePlugin() {
@@ -252,6 +280,39 @@ function localPediaSavePlugin() {
 					return jsonResponse(res, 500, {
 						ok: false,
 						message: error?.message || "Unable to delete pedia collection.",
+					});
+				}
+			});
+
+			server.middlewares.use("/__local-api/modded-civs-pedia/authors/save", async (req, res) => {
+				if (req.method !== "POST") {
+					return jsonResponse(res, 405, { ok: false, message: "Method not allowed." });
+				}
+
+				try {
+					const payload = await readJsonBody(req);
+					const profile = normalizeAuthorProfile(payload?.profile);
+					const previousName = cleanValue(payload?.previousName);
+
+					if (!profile.name) {
+						return jsonResponse(res, 400, { ok: false, message: "Author name is required." });
+					}
+
+					const existingProfiles = (await loadPediaAuthorProfiles()).map((item) => normalizeAuthorProfile(item));
+					const nextProfiles = [...existingProfiles.filter((item) => item.name !== previousName && item.name !== profile.name), profile].sort((left, right) =>
+						left.name.localeCompare(right.name),
+					);
+					await writeFile(PEDIA_AUTHOR_PROFILES_FILE, serializePediaAuthorProfiles(nextProfiles), "utf8");
+
+					return jsonResponse(res, 200, {
+						ok: true,
+						profile,
+						filePath: PEDIA_AUTHOR_PROFILES_FILE,
+					});
+				} catch (error) {
+					return jsonResponse(res, 500, {
+						ok: false,
+						message: error?.message || "Unable to save pedia author profiles.",
 					});
 				}
 			});

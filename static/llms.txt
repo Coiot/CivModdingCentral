@@ -29,12 +29,14 @@ Civ Modding Central provides guided planning, template generators, a pattern lib
 
 ### Collections
 
+- 12 Days of Africa: https://civmoddingcentral.dev/modded-civs-pedia/collection/12-days-of-africa
 - 30th Anniversary: https://civmoddingcentral.dev/modded-civs-pedia/collection/30th-anniversary-collection
 - Brazil 200th Anniversary: https://civmoddingcentral.dev/modded-civs-pedia/collection/brazil-200th-anniversary
 - CBR Mk2 10th Anniversary: https://civmoddingcentral.dev/modded-civs-pedia/collection/cbr-mk2-10th-anniversary-collection
 - Crossroads of the World: https://civmoddingcentral.dev/modded-civs-pedia/collection/crossroads-of-the-world
 - Dark Days: https://civmoddingcentral.dev/modded-civs-pedia/collection/dark-days
 - Dutch Civilization Pack: https://civmoddingcentral.dev/modded-civs-pedia/collection/dutch-civilization-pack
+- Kings of the Wild Frontier: https://civmoddingcentral.dev/modded-civs-pedia/collection/kings-of-the-wild-frontier
 - Land of Snows: https://civmoddingcentral.dev/modded-civs-pedia/collection/land-of-snows
 - Monsoon Season: https://civmoddingcentral.dev/modded-civs-pedia/collection/monsoon-season
 - Vanilla Civilizations: https://civmoddingcentral.dev/modded-civs-pedia/collection/vanilla-civilizations
@@ -59,6 +61,13 @@ Civ Modding Central provides guided planning, template generators, a pattern lib
 - Egypt (Senusret III): https://civmoddingcentral.dev/modded-civs-pedia/egypt-senusret-iii
 - Fatimid Caliphate (al-Mahdi Billah): https://civmoddingcentral.dev/modded-civs-pedia/fatimid-caliphate-al-mahdi-billah
 - Fatimid Caliphate (al-Mu'izz): https://civmoddingcentral.dev/modded-civs-pedia/fatimid-caliphate-al-mu-izz
+- Ghana (Kwame Nkrumah): https://civmoddingcentral.dev/modded-civs-pedia/ghana-kwame-nkrumah
+- Ghaznavid Empire (Mahmud ibn Sabuktigin): https://civmoddingcentral.dev/modded-civs-pedia/ghaznavid-empire-mahmud-ibn-sabuktigin
+- Golden Horde (Öz Beg Khan): https://civmoddingcentral.dev/modded-civs-pedia/golden-horde-z-beg-khan
+- Guge (Yeshe-Ö): https://civmoddingcentral.dev/modded-civs-pedia/guge-yeshe
+- Hohokam (I'itoi): https://civmoddingcentral.dev/modded-civs-pedia/hohokam-i-itoi
+- Holy Roman Empire (Frederick II): https://civmoddingcentral.dev/modded-civs-pedia/holy-roman-empire-frederick-ii
+- Holy Roman Empire (Otto I): https://civmoddingcentral.dev/modded-civs-pedia/holy-roman-empire-otto-i
 - Kalmyk Khanate (Ayuka Khan): https://civmoddingcentral.dev/modded-civs-pedia/kalmyk-khanate-ayuka-khan
 - Ayutthaya (Narai): https://civmoddingcentral.dev/modded-civs-pedia/kingdom-of-ayutthaya-narai
 - France (Louis XI): https://civmoddingcentral.dev/modded-civs-pedia/kingdom-of-france-louis-xi
@@ -78,6 +87,9 @@ Civ Modding Central provides guided planning, template generators, a pattern lib
 - The Cheyenne (Woqini): https://civmoddingcentral.dev/modded-civs-pedia/the-cheyenne-woqini
 - The Chipewyan (Thanadelthur): https://civmoddingcentral.dev/modded-civs-pedia/the-chipewyan-thanadelthur
 - The Dzungars (Galdan Khan): https://civmoddingcentral.dev/modded-civs-pedia/the-dzungars-galdan-khan
+- The Gaels (Niall): https://civmoddingcentral.dev/modded-civs-pedia/the-gaels-niall
+- The Guaycuru (Eso): https://civmoddingcentral.dev/modded-civs-pedia/the-guaycuru-eso
+- The Herero (Jacob Morenga): https://civmoddingcentral.dev/modded-civs-pedia/the-herero-jacob-morenga
 - The Khoshuts (Güshi Khan): https://civmoddingcentral.dev/modded-civs-pedia/the-khoshuts
 - The Lenca (Lempira): https://civmoddingcentral.dev/modded-civs-pedia/the-lenca-lempira
 - The Northern Paiute (Truckee): https://civmoddingcentral.dev/modded-civs-pedia/the-northern-paiute-truckee

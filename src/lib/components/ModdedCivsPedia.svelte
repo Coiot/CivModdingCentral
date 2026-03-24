@@ -19,9 +19,11 @@
 	import {
 		deletePediaCollectionFromCloud,
 		hasPediaCloudConfig,
+		loadPediaAuthorProfilesFromCloud,
 		loadPediaCollectionsFromCloud,
 		loadPediaEntriesFromCloud,
 		markPediaEntryDeletedInCloud,
+		savePediaAuthorProfileToCloud,
 		savePediaCollectionToCloud,
 		savePediaEntryToCloud,
 	} from "../utils/pediaCloud.js";
@@ -51,6 +53,7 @@
 	let activeView = $state("catalog");
 	let cloudEntries = $state([]);
 	let cloudCollections = $state([]);
+	let cloudAuthorProfiles = $state([]);
 	let cloudDeletedEntryIds = $state([]);
 	let importedEntries = $state([]);
 	let wikiMarkupInput = $state("");
@@ -83,6 +86,12 @@
 	let categoryEditorEntryId = $state("");
 	let categoryEditorInput = $state("");
 	let categoryEditorStatus = $state("");
+	let customAuthorProfiles = $state([]);
+	let authorProfileEditorOriginalName = $state("");
+	let authorProfileEditorName = $state("");
+	let authorProfileBlurb = $state("");
+	let authorProfileLinks = $state("");
+	let authorProfileStatus = $state("");
 	let customCollections = $state([]);
 	let pediaCloudLoadKey = $state("");
 	let newCollectionTitle = $state("");
@@ -523,6 +532,135 @@
 		return normalizeSearch(value);
 	}
 
+	function normalizeAuthorProfileRecord(profile) {
+		const name = String(profile?.name || "").trim();
+		return {
+			id: String(profile?.id || "").trim() || slugifyPediaValue(name),
+			name,
+			blurb: String(profile?.blurb || "").trim(),
+			links: Array.isArray(profile?.links)
+				? profile.links
+						.map((link) => ({
+							label: String(link?.label || "").trim(),
+							href: String(link?.href || "").trim(),
+						}))
+						.filter((link) => link.label && link.href)
+				: [],
+		};
+	}
+
+	function authorProfileLinksText(links = []) {
+		return (Array.isArray(links) ? links : [])
+			.map((link) => `${String(link?.label || "").trim()} | ${String(link?.href || "").trim()}`)
+			.filter(Boolean)
+			.join("\n");
+	}
+
+	function parseAuthorProfileLinks(value) {
+		return String(value || "")
+			.split("\n")
+			.map((line) => String(line || "").trim())
+			.filter(Boolean)
+			.map((line) => {
+				const parts = line.split(/\s+\|\s+/);
+				if (parts.length >= 2) {
+					return {
+						label: String(parts.shift() || "").trim(),
+						href: parts.join(" | ").trim(),
+					};
+				}
+				const urlMatch = line.match(/https?:\/\/\S+/i);
+				if (!urlMatch) {
+					return { label: "", href: "" };
+				}
+				const href = urlMatch[0].trim();
+				const label = line.slice(0, urlMatch.index).trim();
+				return { label, href };
+			})
+			.filter((link) => link.label && link.href);
+	}
+
+	function isEditingAuthorProfile(authorName) {
+		return authorProfileKey(authorProfileEditorName) === authorProfileKey(authorName);
+	}
+
+	function startEditingAuthorProfile(authorName) {
+		const profile = normalizeAuthorProfileRecord(authorProfileLookup.get(authorProfileKey(authorName)) || { name: authorName });
+		authorProfileEditorOriginalName = profile.name || authorName;
+		authorProfileEditorName = profile.name || authorName;
+		authorProfileBlurb = profile.blurb;
+		authorProfileLinks = authorProfileLinksText(profile.links);
+		authorProfileStatus = "";
+	}
+
+	function stopEditingAuthorProfile() {
+		authorProfileEditorOriginalName = "";
+		authorProfileEditorName = "";
+		authorProfileBlurb = "";
+		authorProfileLinks = "";
+		authorProfileStatus = "";
+	}
+
+	async function saveAuthorProfileToLocalProject(profile, options = {}) {
+		const response = await fetch("/__local-api/modded-civs-pedia/authors/save", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				profile,
+				previousName: options.previousName || "",
+			}),
+		});
+
+		const payload = await response.json().catch(() => ({}));
+		if (!response.ok || !payload?.ok) {
+			throw new Error(payload?.message || "Unable to save author profile.");
+		}
+
+		return normalizeAuthorProfileRecord(payload.profile);
+	}
+
+	async function saveAuthorProfileDraft() {
+		const profile = normalizeAuthorProfileRecord({
+			name: authorProfileEditorName,
+			blurb: authorProfileBlurb,
+			links: parseAuthorProfileLinks(authorProfileLinks),
+		});
+		if (!profile.name) {
+			authorProfileStatus = "Author name is required.";
+			return;
+		}
+
+		try {
+			authorProfileStatus = "Saving author profile...";
+			const previousName = authorProfileEditorOriginalName || authorProfileEditorName;
+			const previousProfile = authorProfileLookup.get(authorProfileKey(previousName)) || null;
+			const savedProfile = pediaCloudWriteReady
+				? await savePediaAuthorProfileToCloud(authAccessToken, profile, {
+						previousId: previousProfile?.id || slugifyPediaValue(previousName),
+					})
+				: await saveAuthorProfileToLocalProject(profile, { previousName });
+			if (pediaCloudWriteReady) {
+				cloudAuthorProfiles = [...cloudAuthorProfiles.filter((item) => item?.id !== savedProfile.id && item?.id !== previousProfile?.id), savedProfile].sort((left, right) =>
+					String(left?.name || "").localeCompare(String(right?.name || "")),
+				);
+			} else {
+				customAuthorProfiles = [
+					...customAuthorProfiles.filter((item) => authorProfileKey(item?.name) !== authorProfileKey(savedProfile.name) && authorProfileKey(item?.name) !== authorProfileKey(previousName)),
+					savedProfile,
+				];
+			}
+			authorProfileEditorOriginalName = savedProfile.name;
+			authorProfileEditorName = savedProfile.name;
+			authorProfileBlurb = savedProfile.blurb;
+			authorProfileLinks = authorProfileLinksText(savedProfile.links);
+			authorProfileStatus = `${savedProfile.name} profile saved.`;
+		} catch (error) {
+			authorProfileStatus = error?.message || "Unable to save author profile.";
+		}
+	}
+
 	function uniqueBy(items, getKey) {
 		const byKey = new Map();
 		for (const item of items || []) {
@@ -625,13 +763,13 @@
 	});
 	const authorProfileLookup = $derived.by(() => {
 		const byKey = new Map();
-		for (const profile of Array.isArray(PEDIA_AUTHOR_PROFILES) ? PEDIA_AUTHOR_PROFILES : []) {
+		for (const profile of [...(Array.isArray(PEDIA_AUTHOR_PROFILES) ? PEDIA_AUTHOR_PROFILES : []), ...(cloudAuthorProfiles || []), ...(customAuthorProfiles || [])]) {
 			const name = String(profile?.name || "").trim();
 			const key = authorProfileKey(name);
-			if (!key || byKey.has(key)) {
+			if (!key) {
 				continue;
 			}
-			byKey.set(key, profile);
+			byKey.set(key, normalizeAuthorProfileRecord(profile));
 		}
 		return byKey;
 	});
@@ -913,10 +1051,15 @@
 		}
 
 		try {
-			const [entryResult, collections] = await Promise.all([loadPediaEntriesFromCloud(authAccessToken), loadPediaCollectionsFromCloud(authAccessToken)]);
+			const [entryResult, collections, authorProfiles] = await Promise.all([
+				loadPediaEntriesFromCloud(authAccessToken),
+				loadPediaCollectionsFromCloud(authAccessToken),
+				loadPediaAuthorProfilesFromCloud(authAccessToken),
+			]);
 			cloudEntries = sortModdedCivsEntries(entryResult.entries || []);
 			cloudDeletedEntryIds = [...new Set(entryResult.deletedEntryIds || [])];
 			cloudCollections = [...(collections || [])].sort((left, right) => String(left?.title || "").localeCompare(String(right?.title || "")));
+			cloudAuthorProfiles = [...(authorProfiles || [])].sort((left, right) => String(left?.name || "").localeCompare(String(right?.name || "")));
 			if (!silent && entryStatus) {
 				entryStatus = "Cloud pedia content refreshed.";
 			}
@@ -1846,13 +1989,52 @@
 					{#each groupedCatalogEntries as group (group.author)}
 						{@const overview = buildAuthorOverview(group.author, group.entries)}
 						<section class="pedia-catalog-group stack" id={authorHeadingId(group.author)} aria-label={`Civs by ${group.author}`}>
-							<article class="pedia-author-overview stack" style={creditCardStyle(group.author)}>
+							<article class="pedia-author-overview stack relative" style={creditCardStyle(group.author)}>
 								<div class="inline between flex-wrap half align-start">
 									<div class="stack quarter">
 										<h3 class="section-title">{group.author}</h3>
 										<p class="card-copy">{overview.blurb}</p>
 									</div>
+									{#if canEdit}
+										<button
+											type="button"
+											class="pedia-button pedia-button-secondary absolute"
+											style="top: 1rem; right: 1rem;"
+											onclick={() => (isEditingAuthorProfile(group.author) ? stopEditingAuthorProfile() : startEditingAuthorProfile(group.author))}
+										>
+											{isEditingAuthorProfile(group.author) ? "Close" : "Edit"}
+										</button>
+									{/if}
 								</div>
+
+								{#if canEdit && isEditingAuthorProfile(group.author)}
+									<div class="pedia-author-profile-editor stack">
+										<!-- <label class="stack quarter">
+											<span class="eyebrow">Author Name</span>
+											<input class="pedia-field" type="text" bind:value={authorProfileEditorName} />
+										</label> -->
+										<label class="stack quarter">
+											<span class="eyebrow">Blurb</span>
+											<textarea class="pedia-json-editor pedia-author-profile-textarea" bind:value={authorProfileBlurb} rows="3"></textarea>
+										</label>
+										<label class="stack quarter">
+											<span class="eyebrow">Links</span>
+											<textarea
+												class="pedia-json-editor pedia-author-profile-textarea"
+												bind:value={authorProfileLinks}
+												rows="5"
+												placeholder="Steam Workshop | https://example.com&#10;Github | https://github.com/example"
+											></textarea>
+										</label>
+										<div class="inline half flex-wrap">
+											<button type="button" class="pedia-button pedia-button-secondary" onclick={stopEditingAuthorProfile}>Cancel</button>
+											<button type="button" class="pedia-button" onclick={saveAuthorProfileDraft}>Save Profile</button>
+										</div>
+										{#if authorProfileStatus}
+											<p class="pedia-status">{authorProfileStatus}</p>
+										{/if}
+									</div>
+								{/if}
 
 								<!-- {#if overview.collections.length}
 									<div class="stack quarter">
@@ -3357,6 +3539,8 @@
 
 <style>
 	.pedia-page {
+		display: grid;
+		gap: 1rem;
 		--pedia-accent: var(--surface-pedia-highlight);
 		--pedia-accent-strong: var(--surface-pedia-highlight-strong);
 		--pedia-border: var(--surface-pedia-border);
@@ -3364,8 +3548,6 @@
 		--pedia-panel-soft: var(--surface-pedia-panel-soft);
 		--pedia-shadow: 0 14px 32px color-mix(in srgb, black 78%, transparent);
 		--pedia-shadow-soft: 0 4px 6px color-mix(in srgb, black 84%, transparent);
-		display: grid;
-		gap: 1rem;
 	}
 
 	.pedia-hero {
@@ -3376,6 +3558,39 @@
 			linear-gradient(135deg, color-mix(in srgb, var(--pedia-panel) 96%, black 4%) 0%, color-mix(in srgb, var(--pedia-panel) 92%, var(--pedia-accent) 8%) 100%);
 		box-shadow: var(--pedia-shadow);
 		border: 1px solid var(--pedia-border);
+	}
+
+	.pedia-author-civs-accordion[open] .pedia-author-civs-summary > div::before {
+		content: "−";
+	}
+
+	.pedia-author-civs-summary > div {
+		position: relative;
+		font-size: 1.25rem;
+		padding-inline-start: 1.45rem;
+	}
+
+	.pedia-author-civs-summary > div::before {
+		position: absolute;
+		inset-block-start: 50%;
+		inset-inline-start: 0;
+		color: var(--person-highlight, var(--pedia-accent-strong));
+		font-size: 1.2rem;
+		font-weight: 700;
+		line-height: 1;
+		transform: translateY(-50%);
+		content: "+";
+	}
+
+	.pedia-main {
+		min-inline-size: 0;
+		display: grid;
+		gap: 1rem;
+	}
+
+	.pedia-toolbar {
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: end;
 	}
 
 	.pedia-toolbar,
@@ -3390,44 +3605,102 @@
 		padding: 1.5rem;
 	}
 
-	.pedia-main {
-		display: grid;
-		gap: 1rem;
-		min-inline-size: 0;
+	.pedia-wiki-header h2 {
+		font-size: 2.5rem;
 	}
 
-	.pedia-toolbar {
-		grid-template-columns: minmax(0, 1fr) auto;
-		align-items: end;
+	.pedia-catalog-group-head .section-title {
+		font-size: 1.5rem;
+	}
+
+	.pedia-author-overview .pedia-link-row .pedia-button {
+		background: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 12%, var(--control-bg));
+		border-color: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 34%, var(--border-color));
+	}
+
+	.pedia-author-overview .pedia-link-row .pedia-button:hover,
+	.pedia-author-overview .pedia-link-row .pedia-button:focus-visible {
+		background: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 22%, var(--control-bg)) !important;
+		box-shadow: 0 4px 10px color-mix(in srgb, black 76%, transparent);
+		border-color: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 56%, var(--border-color)) !important;
+	}
+
+	.pedia-link-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.pedia-button {
+		color: var(--ink);
+		text-decoration: none;
+		font: inherit;
+		text-wrap: nowrap;
+		font-weight: 700;
+		background: color-mix(in srgb, var(--pedia-accent) 18%, var(--control-bg));
+		border: 1px solid color-mix(in srgb, var(--pedia-accent) 40%, var(--border-color));
+		border-radius: 0.8rem;
+		padding-block: 0.7rem;
+		padding-inline: 1rem;
+	}
+
+	.pedia-button:hover,
+	.pedia-button:focus-visible {
+		background: color-mix(in srgb, var(--pedia-accent) 24%, var(--control-bg));
+		box-shadow: 0 2px 2px color-mix(in srgb, black 70%, transparent);
+		border-color: color-mix(in srgb, var(--pedia-accent) 58%, var(--border-color));
+		transform: translateY(-1px);
+	}
+
+	.pedia-button.pedia-button-danger {
+		background: color-mix(in srgb, oklch(0.5 0.25 30) 20%, var(--control-bg));
+		border-color: color-mix(in srgb, oklch(0.8 0.2 30) 60%, var(--border-color));
+	}
+
+	.pedia-button.pedia-button-secondary {
+		background: color-mix(in srgb, var(--pedia-panel) 94%, black 6%);
 	}
 
 	.pedia-toolbar-actions {
 		display: flex;
-		gap: 0.75rem;
-		align-items: center;
 		justify-content: end;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.pedia-search {
+		inline-size: 100%;
+		color: var(--ink);
+		font: inherit;
+		background: color-mix(in srgb, var(--input-bg) 90%, black 10%);
+		box-shadow: inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
+		border: 1px solid color-mix(in srgb, var(--pedia-accent) 28%, var(--border-color));
+		border-radius: 0.85rem;
+		padding-block: 0.8rem;
+		padding-inline: 0.95rem;
 	}
 
 	.pedia-view-switch {
 		display: inline-flex;
 		gap: 0.35rem;
-		padding: 0.3rem;
 		background: color-mix(in srgb, var(--pedia-panel-soft) 92%, black 8%);
 		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 16%, var(--border-color));
 		border-radius: 999px;
+		padding: 0.3rem;
 	}
 
 	.pedia-view-chip {
 		color: var(--muted-ink);
 		font: inherit;
+		text-transform: uppercase;
 		font-size: 0.84rem;
 		font-weight: 700;
 		letter-spacing: 0.08em;
-		text-transform: uppercase;
 		background: transparent;
 		border: 0;
 		border-radius: 999px;
-		padding: 0.55rem 0.9rem;
+		padding-block: 0.55rem;
+		padding-inline: 0.9rem;
 	}
 
 	.pedia-view-chip.is-active {
@@ -3438,37 +3711,621 @@
 			0 4px 10px color-mix(in srgb, black 74%, transparent);
 	}
 
-	.pedia-unique-head {
+	.pedia-catalog-shell {
+		block-size: 100%;
+		max-block-size: 100%;
+		gap: 2rem;
+		overflow: hidden;
+
+		& > * {
+			text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+		}
+	}
+
+	.pedia-catalog-shell {
+		block-size: auto;
+		max-block-size: none;
+		overflow: visible;
+	}
+
+	.pedia-catalog-accordion {
+		background: color-mix(in srgb, var(--pedia-panel) 84%, black 16%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
+		border-radius: 1rem;
+		padding-inline: 1rem;
+		padding-block-start: 0.25rem;
+		padding-block-end: 1rem;
+	}
+
+	.pedia-catalog-accordion[open] .pedia-catalog-group-head::before {
+		content: "−";
+	}
+
+	.pedia-catalog-accordion-summary {
+		background: none;
+		padding-block: 0.75rem 0.45rem;
+		padding-inline-start: 0;
+		cursor: pointer;
+		list-style: none;
+	}
+
+	.pedia-catalog-accordion-summary .pedia-catalog-group-head {
+		position: relative;
+		padding-inline-start: 1.55rem;
+	}
+
+	.pedia-catalog-accordion-summary .pedia-catalog-group-head::before {
+		position: absolute;
+		inset-block-start: 50%;
+		inset-inline-start: 0;
+		color: var(--pedia-accent-strong);
+		font-size: 1.35rem;
+		font-weight: 700;
+		line-height: 1;
+		transform: translateY(-50%);
+		content: "+";
+	}
+
+	.pedia-catalog-accordion-summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.pedia-catalog-accordion-summary::marker {
+		content: "";
+	}
+
+	.pedia-catalog-group-head {
 		display: flex;
 		justify-content: space-between;
-		align-items: start;
+		align-items: center;
 		gap: 0.75rem;
 	}
 
-	.pedia-wiki-header-row {
-		display: grid;
-		grid-template-columns: auto minmax(0, 1fr);
-		gap: 1.5rem;
-		align-items: center;
+	.pedia-author-work-copy .card-copy {
+		margin: 0;
+		text-shadow: 1px 1px 2px color-mix(in srgb, var(--catalog-accent) 40%, #000);
 	}
 
-	.civ-icon {
+	.pedia-credit-card .card-copy {
+		font-size: 0.82rem;
+	}
+
+	.pedia-prose-expanded :global(.card-copy) {
+		margin: 0;
+	}
+
+	.pedia-prose-paragraphs .card-copy {
+		margin: 0;
+	}
+
+	.pedia-catalog-collections {
+		padding-block-end: 0.25rem;
+	}
+
+	.pedia-collection-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+		gap: 0.75rem;
+	}
+
+	.pedia-collection-grid-catalog {
+		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+	}
+
+	.pedia-collection-card {
+		display: grid;
+		gap: 0.4rem;
+		color: var(--ink);
+		text-decoration: none;
+		font: inherit;
+		text-align: left;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--collection-accent) 30%, transparent) 0%, transparent 42%),
+			linear-gradient(150deg, color-mix(in srgb, var(--collection-background) 88%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--collection-background) 28%, #16110f) 100%);
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--collection-accent) 32%, var(--border-color)),
+			var(--pedia-shadow-soft);
+		border: 0;
+		border-radius: 1rem;
+		padding: 1rem;
+		cursor: pointer;
+		--collection-accent: var(--pedia-accent);
+		--collection-background: var(--pedia-panel-soft);
+
+		& .card-title {
+			font-size: 1.15rem;
+		}
+	}
+
+	.pedia-collection-card-catalog {
+		align-content: start;
+	}
+
+	.pedia-catalog-detail-card strong {
+		color: color-mix(in srgb, white 95%, var(--ink));
+		font-size: 1rem;
+		line-height: 1.35;
+	}
+
+	.pedia-catalog-meta strong {
+		text-transform: uppercase;
+		font-size: 0.75rem;
+		letter-spacing: 0.12em;
+		margin-inline-end: 0.35rem;
+	}
+
+	.pedia-category-chip strong {
+		color: var(--pedia-accent-strong);
+		font-size: 0.76rem;
+		letter-spacing: 0.08em;
+	}
+
+	.pedia-infobox-row strong,
+	.pedia-support-row strong {
+		color: color-mix(in srgb, var(--ink) 80%, var(--infobox-accent) 20%);
+		text-transform: uppercase;
+		font-size: 0.8rem;
+		letter-spacing: 0.12em;
+	}
+
+	.pedia-media-placeholder strong {
+		font-family: "Rockwell", "Palatino Linotype", serif;
+	}
+
+	.pedia-music-preview-copy strong {
+		text-transform: uppercase;
+		font-size: 0.8rem;
+		letter-spacing: 0.12em;
+	}
+
+	.pedia-author-work-copy .card-title {
+		font-size: 1.25rem;
+		text-shadow: 1px 1px 2px color-mix(in srgb, var(--catalog-accent) 40%, #000);
+	}
+
+	.pedia-credit-card .card-title {
+		color: color-mix(in srgb, var(--ink) 78%, var(--person-highlight, var(--pedia-accent)) 22%);
+		font-size: 1rem;
+	}
+
+	.pedia-catalog-categories {
+		padding-block-end: 0.25rem;
+	}
+
+	.pedia-category-cloud {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+	}
+
+	.pedia-category-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.55rem;
+		color: var(--ink);
+		text-decoration: none;
+		font: inherit;
+		font-size: 0.84rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		background: color-mix(in srgb, var(--pedia-panel-soft) 88%, var(--control-bg));
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 18%, var(--border-color));
+		border: 0;
+		border-radius: 999px;
+		padding-block: 0.65rem;
+		padding-inline: 0.9rem;
+		cursor: pointer;
+	}
+
+	.pedia-category-chip.is-static {
+		cursor: default;
+	}
+
+	.pedia-author-work-icon span {
+		color: color-mix(in srgb, var(--catalog-accent) 72%, white);
+		font-family: "Rockwell", "Palatino Linotype", serif;
+		font-size: 1rem;
+	}
+
+	.pedia-author-work-meta span {
+		font-weight: 500;
+		background: color-mix(in srgb, var(--catalog-accent) 40%, transparent);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 12%, transparent);
+		border: 1px solid color-mix(in srgb, var(--catalog-accent) 90%, transparent);
+		border-radius: 0.5rem;
+		padding-block: 0.4rem;
+		padding-inline: 0.5rem;
+		text-box: trim-both cap alphabetic;
+		text-shadow: 1px 1px 1px #000;
+	}
+
+	.pedia-catalog-icon span {
+		color: color-mix(in srgb, var(--catalog-accent) 60%, white);
+		font-family: "Rockwell", "Palatino Linotype", serif;
+		font-size: 1.35rem;
+	}
+
+	.pedia-catalog-meta span {
+		margin: 0;
+	}
+
+	.pedia-infobox-row span {
+		color: var(--muted-ink);
+		text-align: end;
+	}
+
+	.pedia-infobox-values span {
+		display: block;
+	}
+
+	.pedia-media-placeholder span {
+		color: var(--pedia-accent-strong);
+		text-transform: uppercase;
+		font-size: 0.8rem;
+		letter-spacing: 0.1em;
+	}
+
+	.pedia-music-preview-copy span {
+		font-size: 0.88rem;
+	}
+
+	.pedia-unique-head span {
+		color: var(--pedia-accent-strong);
+		text-transform: uppercase;
+		font-size: 0.8rem;
+		letter-spacing: 0.12em;
+	}
+
+	.pedia-author-toc-grid {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: start;
+		gap: 0.5rem;
+	}
+
+	.pedia-author-toc-chip {
+		max-inline-size: 100%;
+		flex: 0 1 auto;
+		color: var(--ink);
+		white-space: nowrap;
+		text-align: start;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 25%, transparent) 0%, transparent 40%),
+			linear-gradient(
+				160deg,
+				color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 10%, var(--pedia-panel) 70%) 0%,
+				color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 5%, var(--pedia-panel-soft) 95%) 100%
+			);
+		box-shadow: var(--pedia-shadow-soft);
+		border: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 24%, var(--border-color));
+		border-radius: 0.95rem;
+		padding: 1rem;
+		transition:
+			transform 150ms ease,
+			border-color 150ms ease,
+			box-shadow 150ms ease;
+		text-box: trim-both cap alphabetic;
+
+		&:hover {
+			box-shadow: 0 8px 18px color-mix(in srgb, black 78%, transparent);
+			border-color: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 38%, var(--border-color));
+			transform: translateY(-1px);
+		}
+	}
+
+	.pedia-catalog-groups {
+		gap: 2rem;
+		padding-inline-end: 0.25rem;
+		overflow: auto;
+	}
+
+	.pedia-catalog-group {
+		scroll-padding-block-start: 4rem;
+	}
+
+	.pedia-author-overview {
+		display: grid;
+		gap: 1rem;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 25%, transparent) 0%, transparent 50%),
+			linear-gradient(
+				160deg,
+				color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 10%, var(--pedia-panel) 70%) 0%,
+				color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 5%, var(--pedia-panel-soft) 95%) 100%
+			);
+		box-shadow: var(--pedia-shadow-soft);
+		border: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 34%, var(--border-color));
+		border-radius: 1rem;
+		padding-inline: 1.25rem;
+		padding-block-start: 1.5rem;
+		padding-block-end: 0.75rem;
+
+		& .section-title {
+			font-size: 2rem;
+		}
+	}
+
+	.pedia-author-profile-editor {
+		background: color-mix(in srgb, var(--pedia-panel-soft) 88%, black 12%);
+		border: 1px solid color-mix(in srgb, var(--pedia-accent) 18%, var(--border-color));
+		border-radius: 1rem;
+		padding: 1rem;
+	}
+
+	.pedia-field,
+	.pedia-select {
+		inline-size: 100%;
+		min-inline-size: min(100%, 18rem);
+		max-inline-size: 100%;
+		color: var(--ink);
+		font: inherit;
+		line-height: 1.4;
+		background: color-mix(in srgb, var(--input-bg) 94%, black 6%);
+		box-shadow: inset 0 1px 0 color-mix(in srgb, white 6%, transparent);
+		border: 1px solid color-mix(in srgb, var(--pedia-accent) 24%, var(--border-color));
+		border-radius: 0.95rem;
+		padding-block: 0.7rem;
+		padding-inline: 0.9rem;
+	}
+
+	.pedia-markup-input,
+	.pedia-preview-panel textarea,
+	.pedia-json-editor {
+		inline-size: 100%;
+		min-block-size: 16rem;
+		max-inline-size: 100%;
+		max-block-size: 34rem;
+		color: var(--ink);
+		font: inherit;
+		line-height: 1.55;
+		background: color-mix(in srgb, var(--input-bg) 94%, black 6%);
+		box-shadow: inset 0 1px 0 color-mix(in srgb, white 6%, transparent);
+		border: 1px solid color-mix(in srgb, var(--pedia-accent) 24%, var(--border-color));
+		border-radius: 0.95rem;
+		padding: 1rem;
+		overflow: auto;
+		resize: vertical;
+	}
+
+	.pedia-author-profile-textarea {
+		min-block-size: 4rem;
+		max-block-size: 12rem;
+	}
+
+	.pedia-status {
+		color: var(--ink);
+		background: color-mix(in srgb, var(--pedia-accent) 12%, var(--control-bg));
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 20%, var(--border-color));
+		border-radius: 0.9rem;
+		padding-block: 0.9rem;
+		padding-inline: 1rem;
+		margin: 0;
+	}
+
+	.pedia-author-civs-accordion {
+		display: grid;
+		gap: 1rem;
+		border-top: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 22%, var(--border-color));
+		padding-block-start: 1.5rem;
+		margin-block-start: 0.5rem;
+	}
+
+	.pedia-author-civs-summary {
+		background: none;
+		padding: 0;
+		cursor: pointer;
+		list-style: none;
+
+		& * {
+			text-box: trim-both cap alphabetic;
+		}
+	}
+
+	.pedia-author-civs-summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.pedia-author-civs-summary::marker {
+		content: "";
+	}
+
+	.pedia-catalog-row {
+		position: relative;
+		inline-size: 100%;
+		display: grid;
+		grid-template-columns: minmax(20rem, 26rem) minmax(0, 1fr);
+		align-items: flex-end;
+		gap: 2rem;
+		color: var(--ink);
+		text-decoration: none;
+		font: inherit;
+		text-align: left;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 75%, transparent) 0%, transparent 30%),
+			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 65%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--catalog-surface) 20%, #16110f) 100%);
+		border: 2px solid color-mix(in srgb, var(--catalog-accent) 60%, var(--border-color));
+		border-radius: 1rem;
+		padding: 1.25rem;
+		overflow: clip;
+		transition:
+			transform 150ms ease,
+			background 150ms ease,
+			border-color 150ms ease,
+			box-shadow 150ms ease;
+		cursor: pointer;
+		--catalog-accent: var(--pedia-accent);
+		--catalog-backdrop-image: none;
+		--catalog-surface: var(--pedia-panel-soft);
+	}
+
+	.pedia-catalog-row > * {
+		position: relative;
+		z-index: 1;
+	}
+
+	.pedia-catalog-row::before {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		opacity: 0.38;
+		filter: grayscale(0.3) saturate(0.75) brightness(0.38);
+		background-image: var(--catalog-backdrop-image);
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		transform: scale(1.02);
+		content: "";
+		pointer-events: none;
+	}
+
+	.pedia-catalog-row:hover {
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 75%, transparent) 0%, transparent 30%),
+			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 85%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--catalog-surface) 14%, #16110f) 100%);
+		border-color: color-mix(in srgb, var(--catalog-accent) 75%, var(--border-color));
+	}
+
+	.pedia-catalog-row-meta {
+		position: absolute;
+		top: 0.75rem;
+		right: 0.75rem;
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.pedia-catalog-collection-pills {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 0.35rem;
+	}
+
+	.pedia-catalog-collection-pill {
+		color: color-mix(in srgb, white 90%, var(--ink));
+		text-transform: uppercase;
+		white-space: nowrap;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		background: linear-gradient(160deg, color-mix(in srgb, var(--collection-background) 80%, black 20%) 0%, color-mix(in srgb, var(--collection-accent) 20%, var(--collection-background)) 100%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--collection-accent) 85%, transparent);
+		border-radius: 999px;
+		padding-block: 0.5rem;
+		padding-inline: 0.65rem;
+		--collection-accent: var(--pedia-accent);
+		--collection-background: var(--pedia-panel-soft);
+		text-box: trim-both cap alphabetic;
+		text-overflow: ellipsis;
+		text-shadow: 1px 1px 2px color-mix(in srgb, var(--collection-accent) 20%, #000);
+	}
+
+	.pedia-catalog-row-main {
+		min-inline-size: 0;
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.pedia-catalog-icon-wrap {
 		display: grid;
 		place-items: center;
-		inline-size: clamp(6rem, 10vw, 8rem);
-		block-size: clamp(6rem, 10vw, 8rem);
-		overflow: hidden;
+	}
+
+	.pedia-catalog-icon {
+		inline-size: 7rem;
+		block-size: 7rem;
+		display: grid;
+		place-items: center;
+		filter: drop-shadow(2px 2px 3px color-mix(in srgb, var(--catalog-accent) 30%, #000));
+		overflow: clip;
+	}
+
+	.pedia-catalog-icon img {
+		inline-size: 100%;
+		block-size: 100%;
+		object-fit: contain;
 	}
 
 	.civ-icon img {
 		inline-size: 100%;
 		block-size: 100%;
-		object-fit: contain;
 		filter: drop-shadow(2px 2px 4px rgb(0 0 0 / 0.5));
+		object-fit: contain;
 	}
 
-	.pedia-wiki-header h2 {
-		font-size: 2.5rem;
+	.pedia-author-work-icon img {
+		inline-size: 100%;
+		block-size: 100%;
+		filter: drop-shadow(1px 1px 4px color-mix(in srgb, var(--catalog-accent) 20%, #000));
+		object-fit: contain;
+	}
+
+	.pedia-figure-card img {
+		inline-size: 100%;
+		align-self: flex-start;
+		border-radius: 0.8rem;
+		object-fit: contain;
+	}
+
+	.pedia-music-preview img {
+		inline-size: 100%;
+		aspect-ratio: 16 / 9;
+		display: block;
+		opacity: 0.82;
+		object-fit: cover;
+	}
+
+	.pedia-unique-figure img,
+	.pedia-infobox-media img {
+		inline-size: 100%;
+		block-size: 100%;
+		filter: drop-shadow(2px 2px 4px rgb(0 0 0 / 0.5));
+		border-radius: 1.5rem;
+		object-fit: contain;
+		overflow: clip;
+	}
+
+	.pedia-catalog-identity * {
+		text-shadow: 2px 2px 3px color-mix(in srgb, var(--catalog-accent) 40%, #000);
+	}
+
+	.pedia-catalog-civ-title {
+		max-inline-size: 20rem;
+		color: color-mix(in srgb, white 95%, var(--catalog-accent));
+		text-wrap: balance;
+		font-size: clamp(1.5rem, 2.2vw, 2.25rem);
+		line-height: 1.05;
+		margin: 0;
+	}
+
+	.pedia-catalog-meta {
+		color: var(--muted-ink);
+	}
+
+	.leader-name {
+		color: #fff;
+		font-size: 1.25rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+	}
+
+	.pedia-catalog-row-details {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		align-items: stretch;
+		gap: 1rem;
+		margin-block-end: 1rem;
+	}
+
+	.pedia-catalog-detail-card {
+		background: linear-gradient(180deg, color-mix(in srgb, var(--catalog-surface) 10%, var(--pedia-panel)) 0%, color-mix(in srgb, var(--catalog-surface) 10%, #111) 100%);
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 80%, transparent),
+			1px 2px 2px color-mix(in srgb, #000 60%, transparent);
+		border-radius: 0.75rem;
+		padding-block: 0.65rem;
+		padding-inline: 0.75rem;
 	}
 
 	.pedia-converter-shell {
@@ -3483,9 +4340,9 @@
 
 	.pedia-converter-grid {
 		display: grid;
-		gap: 1rem;
 		grid-template-columns: minmax(0, 1.65fr) minmax(20rem, 0.95fr);
 		align-items: start;
+		gap: 1rem;
 	}
 
 	.pedia-converter-panel,
@@ -3507,56 +4364,50 @@
 		gap: 1rem;
 	}
 
-	.pedia-action-row {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: 1rem;
-	}
-
 	.pedia-hidden-input {
 		display: none;
 	}
 
-	.pedia-markup-input,
-	.pedia-preview-panel textarea,
-	.pedia-json-editor {
-		inline-size: 100%;
-		max-inline-size: 100%;
-		min-block-size: 16rem;
-		max-block-size: 34rem;
-		color: var(--ink);
-		font: inherit;
-		line-height: 1.55;
-		background: color-mix(in srgb, var(--input-bg) 94%, black 6%);
-		box-shadow: inset 0 1px 0 color-mix(in srgb, white 6%, transparent);
-		border: 1px solid color-mix(in srgb, var(--pedia-accent) 24%, var(--border-color));
-		border-radius: 0.95rem;
+	.pedia-preview-actions {
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	.pedia-preview-kicker {
+		color: var(--pedia-accent-strong);
+		text-transform: uppercase;
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+	}
+
+	.pedia-list-copy {
+		display: grid;
+		gap: 0.45rem;
+		padding-inline-start: 1rem;
+	}
+
+	.pedia-preview-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+	}
+
+	.pedia-entry-toolbar {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.pedia-editor-panel {
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--pedia-accent) 18%, transparent) 0%, transparent 42%),
+			linear-gradient(165deg, color-mix(in srgb, var(--pedia-panel-soft) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--pedia-panel-soft) 93%, #16110f 7%) 100%);
+		box-shadow: var(--pedia-shadow-soft);
+		border: 1px solid color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
+		border-radius: 1rem;
 		padding: 1rem;
-		overflow: auto;
-		resize: vertical;
-	}
-
-	.pedia-field,
-	.pedia-select {
-		inline-size: 100%;
-		max-inline-size: 100%;
-		color: var(--ink);
-		font: inherit;
-		line-height: 1.4;
-		background: color-mix(in srgb, var(--input-bg) 94%, black 6%);
-		box-shadow: inset 0 1px 0 color-mix(in srgb, white 6%, transparent);
-		border: 1px solid color-mix(in srgb, var(--pedia-accent) 24%, var(--border-color));
-		border-radius: 0.95rem;
-		min-inline-size: min(100%, 18rem);
-		padding: 0.7rem 0.9rem;
-	}
-
-	.pedia-textarea-compact {
-		min-block-size: 6rem;
-		max-block-size: 10rem;
-		resize: vertical;
 	}
 
 	.pedia-color-field {
@@ -3565,10 +4416,10 @@
 	}
 
 	.pedia-color-picker-row {
+		min-inline-size: 0;
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
-		min-inline-size: 0;
 	}
 
 	.pedia-color-swatch-control {
@@ -3627,40 +4478,14 @@
 		overflow-wrap: anywhere;
 	}
 
-	.pedia-preview-actions {
-		display: grid;
-		gap: 0.75rem;
-	}
-
-	.pedia-preview-kicker {
-		color: var(--pedia-accent-strong);
-		font-size: 0.78rem;
-		font-weight: 700;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-	}
-
-	.pedia-status {
-		color: var(--ink);
-		background: color-mix(in srgb, var(--pedia-accent) 12%, var(--control-bg));
-		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 20%, var(--border-color));
-		border-radius: 0.9rem;
-		padding: 0.9rem 1rem;
-		margin: 0;
-	}
-
-	.pedia-preview-grid {
-		display: grid;
-		gap: 1rem;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+	.pedia-textarea-compact {
+		min-block-size: 6rem;
+		max-block-size: 10rem;
+		resize: vertical;
 	}
 
 	.pedia-collection-hero {
-		--collection-accent: var(--pedia-accent);
-		--collection-background: var(--pedia-panel-soft);
-		--collection-hero-image: none;
 		position: relative;
-		padding: 1rem 1.15rem 1.25rem;
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--collection-accent) 26%, transparent) 0%, transparent 42%),
 			linear-gradient(145deg, color-mix(in srgb, var(--collection-background) 82%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--collection-background) 28%, #16110f) 100%);
@@ -3668,709 +4493,31 @@
 			inset 0 0 0 1px color-mix(in srgb, var(--collection-accent) 34%, var(--border-color)),
 			var(--pedia-shadow-soft);
 		border-radius: 1rem;
+		padding-inline: 1.15rem;
+		padding-block-start: 1rem;
+		padding-block-end: 1.25rem;
 		overflow: clip;
+		--collection-accent: var(--pedia-accent);
+		--collection-background: var(--pedia-panel-soft);
+		--collection-hero-image: none;
 	}
-
-	/*.pedia-collection-hero::before {
-		content: "";
-		position: absolute;
-		inset: 0;
-		z-index: 0;
-		background-image: var(--collection-hero-image);
-		background-position: center;
-		background-repeat: no-repeat;
-		background-size: cover;
-		filter: grayscale(0.5) saturate(0.8) brightness(0.2);
-		opacity: 0.7;
-		pointer-events: none;
-	}*/
 
 	.pedia-collection-hero > * {
 		position: relative;
 		z-index: 1;
 	}
 
-	.pedia-dawn-layout {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-		gap: 1.5rem;
-		align-items: start;
-	}
-
-	.pedia-catalog-shell {
-		block-size: 100%;
-		max-block-size: 100%;
-		gap: 2rem;
-		overflow: hidden;
-
-		& > * {
-			text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-		}
-	}
-
-	.pedia-catalog-collections {
-		padding-block-end: 0.25rem;
-	}
-
-	.pedia-catalog-categories {
-		padding-block-end: 0.25rem;
-	}
-
-	.pedia-catalog-accordion {
-		background: color-mix(in srgb, var(--pedia-panel) 84%, black 16%);
-		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
-		border-radius: 1rem;
-		padding: 0.25rem 1rem 1rem;
-	}
-
-	.pedia-catalog-accordion-summary {
-		cursor: pointer;
-		list-style: none;
-		background: none;
-		padding-block: 0.75rem 0.45rem;
-		padding-inline-start: 0;
-	}
-
-	.pedia-catalog-accordion-summary::-webkit-details-marker {
-		display: none;
-	}
-
-	.pedia-catalog-accordion-summary::marker {
-		content: "";
-	}
-
-	.pedia-catalog-accordion-summary .pedia-catalog-group-head {
-		position: relative;
-		padding-inline-start: 1.55rem;
-	}
-
-	.pedia-catalog-accordion-summary .pedia-catalog-group-head::before {
-		content: "+";
-		position: absolute;
-		inset-inline-start: 0;
-		inset-block-start: 50%;
-		transform: translateY(-50%);
-		color: var(--pedia-accent-strong);
-		font-size: 1.35rem;
-		font-weight: 700;
-		line-height: 1;
-	}
-
-	.pedia-catalog-accordion[open] .pedia-catalog-group-head::before {
-		content: "−";
-	}
-
-	.pedia-catalog-groups {
-		gap: 2rem;
-		overflow: auto;
-		padding-inline-end: 0.25rem;
-	}
-
-	.pedia-catalog-group {
-		scroll-padding-block-start: 4rem;
-	}
-
-	.pedia-catalog-group-head {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 0.75rem;
-	}
-
-	.pedia-catalog-group-head .section-title {
-		font-size: 1.5rem;
-	}
-
-	.pedia-author-toc-grid {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: start;
-		gap: 0.5rem;
-	}
-
-	.pedia-author-toc-chip {
-		flex: 0 1 auto;
-		max-inline-size: 100%;
-		color: var(--ink);
-		text-align: start;
-		white-space: nowrap;
-		text-box: trim-both cap alphabetic;
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 25%, transparent) 0%, transparent 40%),
-			linear-gradient(
-				160deg,
-				color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 10%, var(--pedia-panel) 70%) 0%,
-				color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 5%, var(--pedia-panel-soft) 95%) 100%
-			);
-		box-shadow: var(--pedia-shadow-soft);
-		border: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 24%, var(--border-color));
-		border-radius: 0.95rem;
-		padding: 1rem;
-		transition:
-			transform 150ms ease,
-			border-color 150ms ease,
-			box-shadow 150ms ease;
-
-		&:hover {
-			transform: translateY(-1px);
-			border-color: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 38%, var(--border-color));
-			box-shadow: 0 8px 18px color-mix(in srgb, black 78%, transparent);
-		}
-	}
-
-	.pedia-author-overview {
-		display: grid;
-		gap: 1rem;
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 25%, transparent) 0%, transparent 50%),
-			linear-gradient(
-				160deg,
-				color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 10%, var(--pedia-panel) 70%) 0%,
-				color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 5%, var(--pedia-panel-soft) 95%) 100%
-			);
-		box-shadow: var(--pedia-shadow-soft);
-		border: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 34%, var(--border-color));
-		border-radius: 1rem;
-		padding: 1.5rem 1.25rem 0.75rem;
-
-		& .section-title {
-			font-size: 2rem;
-		}
-	}
-
-	.pedia-author-civs-accordion {
-		display: grid;
-		gap: 1rem;
-		border-top: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 22%, var(--border-color));
-		padding-block-start: 1.5rem;
-		margin-block-start: 0.5rem;
-	}
-
-	.pedia-author-civs-summary {
-		cursor: pointer;
-		list-style: none;
-		background: none;
-		padding: 0;
-
-		& * {
-			text-box: trim-both cap alphabetic;
-		}
-	}
-
-	.pedia-author-civs-summary::-webkit-details-marker {
-		display: none;
-	}
-
-	.pedia-author-civs-summary::marker {
-		content: "";
-	}
-
-	.pedia-author-civs-summary > div {
-		position: relative;
-		font-size: 1.25rem;
-		padding-inline-start: 1.45rem;
-	}
-
-	.pedia-author-civs-summary > div::before {
-		content: "+";
-		position: absolute;
-		inset-inline-start: 0;
-		inset-block-start: 50%;
-		transform: translateY(-50%);
-		color: var(--person-highlight, var(--pedia-accent-strong));
-		font-size: 1.2rem;
-		font-weight: 700;
-		line-height: 1;
-	}
-
-	.pedia-author-civs-accordion[open] .pedia-author-civs-summary > div::before {
-		content: "−";
-	}
-
-	.pedia-author-overview .pedia-link-row .pedia-button {
-		background: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 12%, var(--control-bg));
-		border-color: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 34%, var(--border-color));
-	}
-
-	.pedia-author-overview .pedia-link-row .pedia-button:hover,
-	.pedia-author-overview .pedia-link-row .pedia-button:focus-visible {
-		background: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 22%, var(--control-bg)) !important;
-		border-color: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 56%, var(--border-color)) !important;
-		box-shadow: 0 4px 10px color-mix(in srgb, black 76%, transparent);
-	}
-
 	.pedia-collection-link {
-		text-shadow: 2px 2px 2px rgb(0, 0, 0 / 0.7);
 		background: color-mix(in srgb, var(--collection-background, var(--pedia-accent)) 20%, var(--collection-accent)) !important;
 		border-color: color-mix(in srgb, var(--collection-accent, var(--pedia-accent)) 70%, var(--border-color)) !important;
+		text-shadow: 2px 2px 2px rgb(0, 0, 0 / 0.7);
 	}
 
 	.pedia-collection-link:hover,
 	.pedia-collection-link:focus-visible {
 		background: color-mix(in srgb, var(--collection-background, var(--pedia-accent)) 40%, var(--collection-accent)) !important;
-		border-color: color-mix(in srgb, var(--collection-accent, var(--pedia-accent)) 90%, var(--border-color)) !important;
 		box-shadow: 0x 1px 2px color-mix(in srgb, black 45%, transparent);
-	}
-
-	.pedia-catalog-row {
-		position: relative;
-		--catalog-accent: var(--pedia-accent);
-		--catalog-surface: var(--pedia-panel-soft);
-		--catalog-backdrop-image: none;
-		display: grid;
-		grid-template-columns: minmax(20rem, 26rem) minmax(0, 1fr);
-		gap: 2rem;
-		align-items: flex-end;
-		inline-size: 100%;
-		padding: 1.25rem;
-		color: var(--ink);
-		font: inherit;
-		text-align: left;
-		text-decoration: none;
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 75%, transparent) 0%, transparent 30%),
-			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 65%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--catalog-surface) 20%, #16110f) 100%);
-		border: 2px solid color-mix(in srgb, var(--catalog-accent) 60%, var(--border-color));
-		border-radius: 1rem;
-		overflow: clip;
-		cursor: pointer;
-		transition:
-			transform 150ms ease,
-			background 150ms ease,
-			border-color 150ms ease,
-			box-shadow 150ms ease;
-	}
-
-	.pedia-catalog-row::before {
-		content: "";
-		position: absolute;
-		inset: 0;
-		z-index: 0;
-		background-image: var(--catalog-backdrop-image);
-		background-position: center;
-		background-repeat: no-repeat;
-		background-size: cover;
-		filter: grayscale(0.3) saturate(0.75) brightness(0.38);
-		opacity: 0.38;
-		transform: scale(1.02);
-		pointer-events: none;
-	}
-
-	.pedia-catalog-row:hover {
-		border-color: color-mix(in srgb, var(--catalog-accent) 75%, var(--border-color));
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 75%, transparent) 0%, transparent 30%),
-			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 85%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--catalog-surface) 14%, #16110f) 100%);
-	}
-
-	.pedia-catalog-row > * {
-		position: relative;
-		z-index: 1;
-	}
-
-	.pedia-catalog-row-main {
-		min-inline-size: 0;
-		display: grid;
-		grid-template-columns: auto minmax(0, 1fr);
-		gap: 1rem;
-		align-items: center;
-	}
-
-	.pedia-catalog-icon-wrap {
-		display: grid;
-		place-items: center;
-	}
-
-	.pedia-catalog-icon {
-		display: grid;
-		place-items: center;
-		inline-size: 7rem;
-		block-size: 7rem;
-		overflow: clip;
-		filter: drop-shadow(2px 2px 3px color-mix(in srgb, var(--catalog-accent) 30%, #000));
-	}
-
-	.pedia-catalog-icon img {
-		inline-size: 100%;
-		block-size: 100%;
-		object-fit: contain;
-	}
-
-	.pedia-catalog-icon span {
-		color: color-mix(in srgb, var(--catalog-accent) 60%, white);
-		font-family: "Rockwell", "Palatino Linotype", serif;
-		font-size: 1.35rem;
-	}
-
-	.pedia-catalog-civ-title {
-		max-inline-size: 20rem;
-		color: color-mix(in srgb, white 95%, var(--catalog-accent));
-		font-size: clamp(1.5rem, 2.2vw, 2.25rem);
-		line-height: 1.05;
-		text-wrap: balance;
-		margin: 0;
-	}
-
-	.pedia-catalog-meta {
-		color: var(--muted-ink);
-	}
-
-	.pedia-catalog-meta span {
-		margin: 0;
-	}
-
-	.pedia-catalog-meta strong {
-		font-size: 0.75rem;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		margin-inline-end: 0.35rem;
-	}
-
-	.leader-name {
-		color: #fff;
-		font-size: 1.25rem;
-		font-weight: 700;
-		letter-spacing: 0.12em;
-	}
-
-	.pedia-catalog-row-details {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 1rem;
-		align-items: stretch;
-		margin-block-end: 1rem;
-	}
-
-	.pedia-catalog-row-meta {
-		position: absolute;
-		top: 0.75rem;
-		right: 0.75rem;
-		display: flex;
-		justify-content: flex-end;
-	}
-
-	.pedia-catalog-identity * {
-		text-shadow: 2px 2px 3px color-mix(in srgb, var(--catalog-accent) 40%, #000);
-	}
-
-	.pedia-catalog-detail-card {
-		padding: 0.65rem 0.75rem;
-		background: linear-gradient(180deg, color-mix(in srgb, var(--catalog-surface) 10%, var(--pedia-panel)) 0%, color-mix(in srgb, var(--catalog-surface) 10%, #111) 100%);
-		box-shadow:
-			inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 80%, transparent),
-			1px 2px 2px color-mix(in srgb, #000 60%, transparent);
-		border-radius: 0.75rem;
-	}
-
-	.pedia-catalog-collection-pills {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: flex-end;
-		gap: 0.35rem;
-	}
-
-	.pedia-catalog-collection-pill {
-		--collection-accent: var(--pedia-accent);
-		--collection-background: var(--pedia-panel-soft);
-		color: color-mix(in srgb, white 90%, var(--ink));
-		font-size: 0.7rem;
-		font-weight: 700;
-		letter-spacing: 0.1em;
-		text-overflow: ellipsis;
-		text-transform: uppercase;
-		text-shadow: 1px 1px 2px color-mix(in srgb, var(--collection-accent) 20%, #000);
-		text-box: trim-both cap alphabetic;
-		white-space: nowrap;
-		background: linear-gradient(160deg, color-mix(in srgb, var(--collection-background) 80%, black 20%) 0%, color-mix(in srgb, var(--collection-accent) 20%, var(--collection-background)) 100%);
-		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--collection-accent) 85%, transparent);
-		border-radius: 999px;
-		padding: 0.5rem 0.65rem;
-	}
-
-	.pedia-catalog-detail-card strong {
-		color: color-mix(in srgb, white 95%, var(--ink));
-		font-size: 1rem;
-		line-height: 1.35;
-	}
-
-	.pedia-search {
-		inline-size: 100%;
-		color: var(--ink);
-		font: inherit;
-		background: color-mix(in srgb, var(--input-bg) 90%, black 10%);
-		box-shadow: inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
-		border: 1px solid color-mix(in srgb, var(--pedia-accent) 28%, var(--border-color));
-		border-radius: 0.85rem;
-		padding: 0.8rem 0.95rem;
-	}
-
-	.pedia-link-row {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	.pedia-credit-card {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.5rem;
-		color: var(--ink);
-		text-align: start;
-		text-decoration: none;
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 30%, transparent) 0%, transparent 45%),
-			linear-gradient(165deg, color-mix(in srgb, var(--pedia-panel) 80%, var(--control-bg)) 0%, color-mix(in srgb, var(--pedia-panel-soft) 95%, #16110f 5%) 100%);
-		box-shadow: var(--pedia-shadow-soft);
-		border: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 40%, var(--border-color));
-		border-radius: 1rem;
-		padding: 2rem 1.5rem;
-		transition:
-			transform 150ms ease,
-			border-color 150ms ease,
-			background 150ms ease,
-			box-shadow 150ms ease;
-	}
-
-	.pedia-credit-card:hover {
-		transform: translateY(-2px);
-		border-color: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 45%, var(--border-color));
-		box-shadow: 0 6px 8px color-mix(in srgb, black 75%, transparent);
-	}
-
-	.pedia-template-ref-row {
-		margin-block-start: 0.9rem;
-	}
-
-	.pedia-template-ref {
-		color: var(--ink);
-		font-size: 0.78rem;
-		font-weight: 700;
-		letter-spacing: 0.08em;
-		text-decoration: none;
-		text-transform: uppercase;
-		background: color-mix(in srgb, var(--pedia-accent) 12%, var(--control-bg));
-		border: 1px solid color-mix(in srgb, var(--pedia-accent) 26%, var(--border-color));
-		border-radius: 999px;
-		padding: 0.45rem 0.65rem;
-	}
-
-	.pedia-unique-head span {
-		color: var(--pedia-accent-strong);
-		font-size: 0.8rem;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-	}
-
-	.pedia-unique-pedia {
-		display: grid;
-		gap: 0.7rem;
-		margin-block-start: 0.85rem;
-		padding-block-start: 0.85rem;
-		border-top: 1px solid color-mix(in srgb, var(--pedia-accent) 16%, var(--border-color));
-	}
-
-	/*.pedia-unique-pedia > summary {
-		list-style: none;
-		background: none;
-		padding: 0;
-	}*/
-
-	/*.pedia-unique-pedia > summary::-webkit-details-marker {
-		display: none;
-	}*/
-
-	/*.pedia-unique-pedia > summary::marker {
-		content: "";
-	}*/
-
-	.pedia-unique-pedia-summary {
-		display: inline-flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem;
-		color: var(--pedia-accent-strong);
-		font-size: 0.8rem;
-		font-weight: 700;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		cursor: pointer;
-	}
-
-	.pedia-unique-pedia-body {
-		display: grid;
-		gap: 0.75rem;
-	}
-
-	.pedia-media-placeholder {
-		display: grid;
-		place-items: center;
-		gap: 0.45rem;
-		inline-size: 100%;
-		block-size: 100%;
-		color: var(--pedia-accent-strong);
-		text-align: center;
-		padding: 1rem;
-	}
-
-	.pedia-media-placeholder strong {
-		font-family: "Rockwell", "Palatino Linotype", serif;
-	}
-
-	.pedia-media-placeholder span {
-		color: var(--pedia-accent-strong);
-		font-size: 0.8rem;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-	}
-
-	.pedia-list-copy {
-		display: grid;
-		gap: 0.45rem;
-		padding-inline-start: 1rem;
-	}
-
-	.pedia-prose-disclosure {
-		display: grid;
-		gap: 0.45rem;
-	}
-
-	.pedia-prose-summary {
-		display: grid;
-		gap: 0.45rem;
-		cursor: pointer;
-		list-style: none;
-		background: none;
-		padding-inline-start: 0;
-	}
-
-	.pedia-prose-summary::marker {
-		display: none;
-		content: "";
-	}
-
-	.pedia-prose-disclosure[open] .pedia-prose-summary {
-		background-image: none;
-	}
-
-	.pedia-prose-summary::-webkit-details-marker {
-		display: none;
-	}
-
-	.pedia-prose-summary :global(.pedia-prose-clamp) {
-		display: -webkit-box;
-		overflow: hidden;
-		-webkit-line-clamp: 6;
-		-webkit-box-orient: vertical;
-	}
-
-	.pedia-prose-toggle-row {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.35rem;
-		align-self: start;
-	}
-
-	.pedia-prose-toggle-more,
-	.pedia-prose-toggle-less {
-		color: var(--pedia-accent-strong);
-		font-size: 0.78rem;
-		font-weight: 700;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-	}
-
-	.pedia-prose-toggle-less {
-		display: none;
-	}
-
-	.pedia-prose-toggle-icon {
-		color: var(--pedia-accent-strong);
-		font-size: 0.9rem;
-		line-height: 1;
-		transform: translateY(-1px);
-		transition: transform 150ms ease;
-	}
-
-	.pedia-prose-disclosure[open] .pedia-prose-summary :global(.pedia-prose-clamp) {
-		display: none;
-	}
-
-	.pedia-prose-disclosure[open] .pedia-prose-toggle-more {
-		display: none;
-	}
-
-	.pedia-prose-disclosure[open] .pedia-prose-toggle-less {
-		display: inline;
-	}
-
-	.pedia-prose-disclosure[open] .pedia-prose-toggle-icon {
-		transform: rotate(180deg);
-	}
-
-	.pedia-prose-expanded :global(.card-copy) {
-		margin: 0;
-	}
-
-	.pedia-prose-paragraphs {
-		display: grid;
-		gap: 0.9rem;
-	}
-
-	.pedia-prose-paragraphs .card-copy {
-		margin: 0;
-	}
-
-	.pedia-button {
-		color: var(--ink);
-		font: inherit;
-		font-weight: 700;
-		text-decoration: none;
-		text-wrap: nowrap;
-		background: color-mix(in srgb, var(--pedia-accent) 18%, var(--control-bg));
-		border: 1px solid color-mix(in srgb, var(--pedia-accent) 40%, var(--border-color));
-		border-radius: 0.8rem;
-		padding: 0.7rem 1rem;
-	}
-
-	.pedia-button:hover,
-	.pedia-button:focus-visible {
-		background: color-mix(in srgb, var(--pedia-accent) 24%, var(--control-bg));
-		border-color: color-mix(in srgb, var(--pedia-accent) 58%, var(--border-color));
-		box-shadow: 0 2px 2px color-mix(in srgb, black 70%, transparent);
-		transform: translateY(-1px);
-	}
-
-	.pedia-button.pedia-button-secondary {
-		background: color-mix(in srgb, var(--pedia-panel) 94%, black 6%);
-	}
-
-	.pedia-button.pedia-button-danger {
-		background: color-mix(in srgb, oklch(0.5 0.25 30) 20%, var(--control-bg));
-		border-color: color-mix(in srgb, oklch(0.8 0.2 30) 60%, var(--border-color));
-	}
-
-	.pedia-entry-toolbar {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.75rem;
-	}
-
-	.pedia-editor-panel {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--pedia-accent) 18%, transparent) 0%, transparent 42%),
-			linear-gradient(165deg, color-mix(in srgb, var(--pedia-panel-soft) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--pedia-panel-soft) 93%, #16110f 7%) 100%);
-		box-shadow: var(--pedia-shadow-soft);
-		border: 1px solid color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
-		border-radius: 1rem;
-		padding: 1rem;
-	}
-
-	.pedia-catalog-shell {
-		block-size: auto;
-		max-block-size: none;
-		overflow: visible;
+		border-color: color-mix(in srgb, var(--collection-accent, var(--pedia-accent)) 90%, var(--border-color)) !important;
 	}
 
 	.pedia-wiki {
@@ -4378,11 +4525,41 @@
 		gap: 1.25rem;
 	}
 
+	.pedia-wiki-header-row {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: center;
+		gap: 1.5rem;
+	}
+
+	.civ-icon {
+		inline-size: clamp(6rem, 10vw, 8rem);
+		block-size: clamp(6rem, 10vw, 8rem);
+		display: grid;
+		place-items: center;
+		overflow: hidden;
+	}
+
+	.pedia-media-placeholder {
+		inline-size: 100%;
+		block-size: 100%;
+		display: grid;
+		gap: 0.45rem;
+		place-items: center;
+		color: var(--pedia-accent-strong);
+		text-align: center;
+		padding: 1rem;
+	}
+
 	.pedia-wiki-layout {
 		display: grid;
-		gap: 1.25rem;
 		grid-template-columns: minmax(0, 1fr) minmax(17rem, 21rem);
 		align-items: start;
+		gap: 1.25rem;
+	}
+
+	.pedia-wiki-main {
+		gap: 3rem;
 	}
 
 	.pedia-wiki-main,
@@ -4399,14 +4576,10 @@
 		}
 	}
 
-	.pedia-wiki-main {
-		gap: 3rem;
-	}
-
-	.pedia-credit-grid {
+	.pedia-copy-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-		gap: 0.65rem;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
 	}
 
 	.pedia-copy-card,
@@ -4426,300 +4599,99 @@
 		}
 	}
 
-	.pedia-credit-card {
-		padding: 0.8rem 0.95rem;
-	}
-
-	.pedia-credit-card-button {
-		font: inherit;
-		text-align: left;
-		cursor: pointer;
-	}
-
-	.pedia-credit-card .card-title {
-		font-size: 1rem;
-		color: color-mix(in srgb, var(--ink) 78%, var(--person-highlight, var(--pedia-accent)) 22%);
-	}
-
-	.pedia-credit-card .card-copy {
-		font-size: 0.82rem;
-	}
-
-	.pedia-collection-grid {
+	.pedia-prose-disclosure {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-		gap: 0.75rem;
+		gap: 0.45rem;
 	}
 
-	.pedia-collection-grid-catalog {
-		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+	.pedia-prose-disclosure[open] .pedia-prose-summary {
+		background-image: none;
 	}
 
-	.pedia-collection-card {
-		--collection-accent: var(--pedia-accent);
-		--collection-background: var(--pedia-panel-soft);
+	.pedia-prose-disclosure[open] .pedia-prose-summary :global(.pedia-prose-clamp) {
+		display: none;
+	}
+
+	.pedia-prose-disclosure[open] .pedia-prose-toggle-icon {
+		transform: rotate(180deg);
+	}
+
+	.pedia-prose-disclosure[open] .pedia-prose-toggle-less {
+		display: inline;
+	}
+
+	.pedia-prose-disclosure[open] .pedia-prose-toggle-more {
+		display: none;
+	}
+
+	.pedia-prose-summary {
 		display: grid;
-		gap: 0.4rem;
-		color: var(--ink);
-		font: inherit;
-		text-align: left;
-		text-decoration: none;
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--collection-accent) 30%, transparent) 0%, transparent 42%),
-			linear-gradient(150deg, color-mix(in srgb, var(--collection-background) 88%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--collection-background) 28%, #16110f) 100%);
-		box-shadow:
-			inset 0 0 0 1px color-mix(in srgb, var(--collection-accent) 32%, var(--border-color)),
-			var(--pedia-shadow-soft);
-		border: 0;
-		border-radius: 1rem;
-		padding: 1rem;
-		cursor: pointer;
-
-		& .card-title {
-			font-size: 1.15rem;
-		}
-	}
-
-	.pedia-collection-card-catalog {
-		align-content: start;
-	}
-
-	.pedia-collection-editor {
-		padding: 1rem;
-		background: color-mix(in srgb, var(--pedia-panel-soft) 92%, black 8%);
-		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
-		border-radius: 1rem;
-	}
-
-	.pedia-category-cloud {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.6rem;
-	}
-
-	.pedia-category-editor-input-row {
-		display: grid;
-		gap: 0.8rem;
-		grid-template-columns: minmax(0, 1fr) auto;
-		align-items: end;
-	}
-
-	.pedia-category-chip {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.55rem;
-		color: var(--ink);
-		font: inherit;
-		font-size: 0.84rem;
-		font-weight: 700;
-		letter-spacing: 0.04em;
-		text-decoration: none;
-		background: color-mix(in srgb, var(--pedia-panel-soft) 88%, var(--control-bg));
-		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 18%, var(--border-color));
-		border: 0;
-		border-radius: 999px;
-		padding: 0.65rem 0.9rem;
-		cursor: pointer;
-	}
-
-	.pedia-category-chip strong {
-		color: var(--pedia-accent-strong);
-		font-size: 0.76rem;
-		letter-spacing: 0.08em;
-	}
-
-	.pedia-category-chip.is-static {
-		cursor: default;
-	}
-
-	.pedia-author-works {
-		gap: 0.7rem;
-	}
-
-	.pedia-author-work {
-		--catalog-accent: var(--pedia-accent);
-		--catalog-surface: var(--pedia-panel-soft);
-		display: grid;
-		grid-template-columns: auto minmax(0, 1fr);
-		gap: 0.85rem;
-		align-items: center;
-		inline-size: 100%;
-		color: var(--ink);
-		font: inherit;
-		text-align: left;
-		text-decoration: none;
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 40%, transparent) 0%, transparent 35%),
-			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 65%, var(--pedia-panel)) 0%, color-mix(in srgb, var(--catalog-surface) 20%, #121212) 100%);
-		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 35%, var(--border-color));
-		border: 0;
-		border-radius: 1rem;
-		padding: 1.1rem 1rem;
-		cursor: pointer;
-		transition:
-			transform 150ms ease,
-			box-shadow 150ms ease,
-			background 150ms ease;
-	}
-
-	.pedia-author-work:hover {
-		box-shadow:
-			inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 60%, var(--border-color)),
-			0 4px 6px color-mix(in srgb, black 80%, transparent);
-	}
-
-	.pedia-author-work.is-current {
-		box-shadow:
-			inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 28%, var(--border-color)),
-			0 0 0 1px color-mix(in srgb, var(--catalog-accent) 18%, transparent);
-	}
-
-	.pedia-list-panel-summary {
+		gap: 0.45rem;
+		background: none;
+		padding-inline-start: 0;
 		cursor: pointer;
 		list-style: none;
 	}
 
-	.pedia-list-panel-summary::-webkit-details-marker {
+	.pedia-prose-summary :global(.pedia-prose-clamp) {
+		display: -webkit-box;
+		overflow: hidden;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 6;
+	}
+
+	.pedia-prose-summary::-webkit-details-marker {
 		display: none;
 	}
 
-	.pedia-author-work-icon {
-		display: grid;
-		place-items: center;
-		inline-size: 5rem;
-		block-size: 5rem;
-		flex: 0 0 auto;
+	.pedia-prose-summary::marker {
+		display: none;
+		content: "";
 	}
 
-	.pedia-author-work-icon img {
-		inline-size: 100%;
-		block-size: 100%;
-		object-fit: contain;
-		filter: drop-shadow(1px 1px 4px color-mix(in srgb, var(--catalog-accent) 20%, #000));
+	.pedia-prose-toggle-row {
+		display: inline-flex;
+		align-items: center;
+		align-self: start;
+		gap: 0.35rem;
 	}
 
-	.pedia-author-work-icon span {
-		color: color-mix(in srgb, var(--catalog-accent) 72%, white);
-		font-family: "Rockwell", "Palatino Linotype", serif;
-		font-size: 1rem;
-	}
-
-	.pedia-author-work-copy .card-title {
-		font-size: 1.25rem;
-		text-shadow: 1px 1px 2px color-mix(in srgb, var(--catalog-accent) 40%, #000);
-	}
-
-	.pedia-author-work-copy .card-copy {
-		margin: 0;
-		text-shadow: 1px 1px 2px color-mix(in srgb, var(--catalog-accent) 40%, #000);
-	}
-
-	.pedia-author-work-meta {
-		color: var(--muted-ink);
-		font-size: 0.9rem;
-	}
-
-	.pedia-author-work-meta span {
-		font-weight: 500;
-		text-box: trim-both cap alphabetic;
-		text-shadow: 1px 1px 1px #000;
-		background: color-mix(in srgb, var(--catalog-accent) 40%, transparent);
-		border: 1px solid color-mix(in srgb, var(--catalog-accent) 90%, transparent);
-		border-radius: 0.5rem;
-		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 12%, transparent);
-		padding: 0.4rem 0.5rem;
-	}
-
-	.pedia-author-work-pill {
-		color: color-mix(in srgb, white 85%, var(--catalog-accent));
-		font-size: 0.75rem;
+	.pedia-prose-toggle-more,
+	.pedia-prose-toggle-less {
+		color: var(--pedia-accent-strong);
+		text-transform: uppercase;
+		font-size: 0.78rem;
 		font-weight: 700;
 		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		text-shadow: 1px 1px 1px color-mix(in srgb, var(--catalog-accent) 20%, #000);
 	}
 
-	.pedia-name-list {
+	.pedia-prose-toggle-less {
+		display: none;
+	}
+
+	.pedia-prose-toggle-icon {
+		color: var(--pedia-accent-strong);
+		font-size: 0.9rem;
+		line-height: 1;
+		transition: transform 150ms ease;
+		transform: translateY(-1px);
+	}
+
+	.pedia-prose-paragraphs {
 		display: grid;
-		gap: 0.35rem;
-		padding-inline-start: 2rem;
-		margin: 0;
+		gap: 0.9rem;
 	}
 
-	.pedia-entry-support-grid {
-		gap: 2rem;
-	}
-
-	.pedia-copy-grid {
+	.pedia-dawn-layout {
 		display: grid;
-		gap: 1rem;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	.pedia-music-embed {
-		overflow: hidden;
-		border-radius: 0.9rem;
-		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 16%, var(--border-color));
-	}
-
-	.pedia-music-embed iframe {
-		display: block;
-		inline-size: 100%;
-		aspect-ratio: 16 / 9;
-		border: 0;
-	}
-
-	.pedia-music-preview {
-		position: relative;
-		display: grid;
-		padding: 0;
-		overflow: hidden;
-		border: 0;
-		border-radius: 0.9rem;
-		cursor: pointer;
-		background: color-mix(in srgb, var(--pedia-panel-soft) 90%, black 10%);
-		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 18%, var(--border-color));
-	}
-
-	.pedia-music-preview img {
-		display: block;
-		inline-size: 100%;
-		aspect-ratio: 16 / 9;
-		object-fit: cover;
-		opacity: 0.82;
-	}
-
-	.pedia-music-preview-copy {
-		position: absolute;
-		inset: auto 0 0;
-		display: grid;
-		gap: 0.2rem;
-		padding: 0.9rem;
-		color: var(--ink);
-		text-align: left;
-		background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, black 78%, transparent) 38%, color-mix(in srgb, black 88%, transparent) 100%);
-	}
-
-	.pedia-music-preview-copy strong {
-		font-size: 0.8rem;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-	}
-
-	.pedia-music-preview-copy span {
-		font-size: 0.88rem;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		align-items: start;
+		gap: 1.5rem;
 	}
 
 	.pedia-figure-card {
 		min-inline-size: 0;
 		margin: 0;
-	}
-
-	.pedia-figure-card img {
-		inline-size: 100%;
-		border-radius: 0.8rem;
-		object-fit: contain;
-		align-self: flex-start;
 	}
 
 	.pedia-figure-card figcaption {
@@ -4734,41 +4706,275 @@
 
 	.pedia-unique-row {
 		display: grid;
-		gap: 1.5rem;
 		grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr);
 		align-items: start;
-	}
-
-	.pedia-unique-figure,
-	.pedia-infobox-media {
-		overflow: hidden;
-		/*background: color-mix(in srgb, var(--pedia-panel) 84%, black 16%);*/
-		/*box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 16%, var(--border-color));*/
-		border-radius: 1rem;
+		gap: 1.5rem;
 	}
 
 	.pedia-unique-figure {
 		aspect-ratio: 1;
 	}
 
-	.pedia-unique-art-credit {
-		margin-block: 0;
-		text-align: center;
+	.pedia-unique-figure,
+	.pedia-infobox-media {
+		border-radius: 1rem;
+		overflow: hidden;
+		/*background: color-mix(in srgb, var(--pedia-panel) 84%, black 16%);*/
+		/*box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 16%, var(--border-color));*/
 	}
 
-	.pedia-unique-figure img,
-	.pedia-infobox-media img {
+	.pedia-unique-art-credit {
+		text-align: center;
+		margin-block: 0;
+	}
+
+	.pedia-unique-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: start;
+		gap: 0.75rem;
+	}
+
+	.pedia-unique-pedia {
+		display: grid;
+		gap: 0.7rem;
+		border-top: 1px solid color-mix(in srgb, var(--pedia-accent) 16%, var(--border-color));
+		padding-block-start: 0.85rem;
+		margin-block-start: 0.85rem;
+	}
+
+	.pedia-unique-pedia-summary {
+		display: inline-flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.75rem;
+		color: var(--pedia-accent-strong);
+		text-transform: uppercase;
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.14em;
+		cursor: pointer;
+	}
+
+	.pedia-unique-pedia-body {
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	.pedia-template-ref-row {
+		margin-block-start: 0.9rem;
+	}
+
+	.pedia-template-ref {
+		color: var(--ink);
+		text-decoration: none;
+		text-transform: uppercase;
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		background: color-mix(in srgb, var(--pedia-accent) 12%, var(--control-bg));
+		border: 1px solid color-mix(in srgb, var(--pedia-accent) 26%, var(--border-color));
+		border-radius: 999px;
+		padding-block: 0.45rem;
+		padding-inline: 0.65rem;
+	}
+
+	.pedia-entry-support-grid {
+		gap: 2rem;
+	}
+
+	.pedia-list-panel-summary {
+		cursor: pointer;
+		list-style: none;
+	}
+
+	.pedia-list-panel-summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.pedia-name-list {
+		display: grid;
+		gap: 0.35rem;
+		padding-inline-start: 2rem;
+		margin: 0;
+	}
+
+	.pedia-music-embed {
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 16%, var(--border-color));
+		border-radius: 0.9rem;
+		overflow: hidden;
+	}
+
+	.pedia-music-embed iframe {
 		inline-size: 100%;
-		block-size: 100%;
-		object-fit: contain;
-		border-radius: 1.5rem;
-		filter: drop-shadow(2px 2px 4px rgb(0 0 0 / 0.5));
-		overflow: clip;
+		aspect-ratio: 16 / 9;
+		display: block;
+		border: 0;
+	}
+
+	.pedia-music-preview {
+		position: relative;
+		display: grid;
+		background: color-mix(in srgb, var(--pedia-panel-soft) 90%, black 10%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 18%, var(--border-color));
+		border: 0;
+		border-radius: 0.9rem;
+		padding: 0;
+		overflow: hidden;
+		cursor: pointer;
+	}
+
+	.pedia-music-preview-copy {
+		position: absolute;
+		inset: auto 0 0;
+		display: grid;
+		gap: 0.2rem;
+		color: var(--ink);
+		text-align: left;
+		background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, black 78%, transparent) 38%, color-mix(in srgb, black 88%, transparent) 100%);
+		padding: 0.9rem;
+	}
+
+	.pedia-infobox-row:last-child,
+	.pedia-support-row:last-child {
+		border-block-end: 0;
+		padding-block-end: 0;
+	}
+
+	.pedia-credit-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+		gap: 0.65rem;
+	}
+
+	.pedia-credit-card {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.5rem;
+		color: var(--ink);
+		text-decoration: none;
+		text-align: start;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 30%, transparent) 0%, transparent 45%),
+			linear-gradient(165deg, color-mix(in srgb, var(--pedia-panel) 80%, var(--control-bg)) 0%, color-mix(in srgb, var(--pedia-panel-soft) 95%, #16110f 5%) 100%);
+		box-shadow: var(--pedia-shadow-soft);
+		border: 1px solid color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 40%, var(--border-color));
+		border-radius: 1rem;
+		padding-block: 2rem;
+		padding-inline: 1.5rem;
+		transition:
+			transform 150ms ease,
+			border-color 150ms ease,
+			background 150ms ease,
+			box-shadow 150ms ease;
+	}
+
+	.pedia-credit-card {
+		padding-block: 0.8rem;
+		padding-inline: 0.95rem;
+	}
+
+	.pedia-credit-card:hover {
+		box-shadow: 0 6px 8px color-mix(in srgb, black 75%, transparent);
+		border-color: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 45%, var(--border-color));
+		transform: translateY(-2px);
+	}
+
+	.pedia-credit-card-button {
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+	}
+
+	.pedia-collection-editor {
+		background: color-mix(in srgb, var(--pedia-panel-soft) 92%, black 8%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
+		border-radius: 1rem;
+		padding: 1rem;
+	}
+
+	.pedia-action-row {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.pedia-category-editor-input-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: end;
+		gap: 0.8rem;
+	}
+
+	.pedia-author-works {
+		gap: 0.7rem;
+	}
+
+	.pedia-author-work {
+		inline-size: 100%;
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: center;
+		gap: 0.85rem;
+		color: var(--ink);
+		text-decoration: none;
+		font: inherit;
+		text-align: left;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 40%, transparent) 0%, transparent 35%),
+			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 65%, var(--pedia-panel)) 0%, color-mix(in srgb, var(--catalog-surface) 20%, #121212) 100%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 35%, var(--border-color));
+		border: 0;
+		border-radius: 1rem;
+		padding-block: 1.1rem;
+		padding-inline: 1rem;
+		transition:
+			transform 150ms ease,
+			box-shadow 150ms ease,
+			background 150ms ease;
+		cursor: pointer;
+		--catalog-accent: var(--pedia-accent);
+		--catalog-surface: var(--pedia-panel-soft);
+	}
+
+	.pedia-author-work:hover {
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 60%, var(--border-color)),
+			0 4px 6px color-mix(in srgb, black 80%, transparent);
+	}
+
+	.pedia-author-work.is-current {
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--catalog-accent) 28%, var(--border-color)),
+			0 0 0 1px color-mix(in srgb, var(--catalog-accent) 18%, transparent);
+	}
+
+	.pedia-author-work-icon {
+		inline-size: 5rem;
+		block-size: 5rem;
+		display: grid;
+		flex: 0 0 auto;
+		place-items: center;
+	}
+
+	.pedia-author-work-pill {
+		color: color-mix(in srgb, white 85%, var(--catalog-accent));
+		text-transform: uppercase;
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		text-shadow: 1px 1px 1px color-mix(in srgb, var(--catalog-accent) 20%, #000);
+	}
+
+	.pedia-author-work-meta {
+		color: var(--muted-ink);
+		font-size: 0.9rem;
 	}
 
 	.pedia-infobox {
-		--infobox-accent: var(--pedia-accent);
-		--infobox-surface: var(--pedia-panel-soft);
 		position: sticky;
 		inset-block-start: 1rem;
 		background:
@@ -4779,6 +4985,8 @@
 			0 4px 6px color-mix(in srgb, black 50%, transparent);
 		border-radius: 1rem;
 		padding: 1rem;
+		--infobox-accent: var(--pedia-accent);
+		--infobox-surface: var(--pedia-panel-soft);
 	}
 
 	.pedia-infobox-media {
@@ -4795,45 +5003,50 @@
 
 	.pedia-infobox-row {
 		display: grid;
-		gap: 0.4rem;
 		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: center;
-		padding-block: 0.55rem;
+		gap: 0.4rem;
 		border-block-end: 1px solid color-mix(in srgb, var(--infobox-accent) 20%, var(--border-color));
+		padding-block: 0.55rem;
 
 		&:has(.pedia-infobox-values) {
 			align-items: flex-start;
 		}
 	}
 
-	.pedia-infobox-row:last-child,
-	.pedia-support-row:last-child {
-		padding-block-end: 0;
-		border-block-end: 0;
-	}
-
-	.pedia-infobox-row strong,
-	.pedia-support-row strong {
-		color: color-mix(in srgb, var(--ink) 80%, var(--infobox-accent) 20%);
-		font-size: 0.8rem;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-	}
-
-	.pedia-infobox-row span {
-		color: var(--muted-ink);
-		text-align: end;
-	}
-
 	.pedia-infobox-values {
 		display: grid;
-		gap: 0.2rem;
 		justify-items: end;
+		gap: 0.2rem;
 	}
 
-	.pedia-infobox-values span {
-		display: block;
-	}
+	/*.pedia-collection-hero::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		background-image: var(--collection-hero-image);
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		filter: grayscale(0.5) saturate(0.8) brightness(0.2);
+		opacity: 0.7;
+		pointer-events: none;
+	}*/
+
+	/*.pedia-unique-pedia > summary {
+		list-style: none;
+		background: none;
+		padding: 0;
+	}*/
+
+	/*.pedia-unique-pedia > summary::-webkit-details-marker {
+		display: none;
+	}*/
+
+	/*.pedia-unique-pedia > summary::marker {
+		content: "";
+	}*/
 
 	@media (max-width: 1100px) {
 		.pedia-converter-grid,

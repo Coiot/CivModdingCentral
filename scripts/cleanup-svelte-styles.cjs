@@ -15,6 +15,7 @@ const COMPONENT_FILES = [
 	"src/lib/components/LuaApiExplorer.svelte",
 	"src/lib/components/MapViewer.svelte",
 	"src/lib/components/ModInfoBuilder.svelte",
+	"src/lib/components/ModdedCivsPedia.svelte",
 	"src/lib/components/Navbar.svelte",
 	"src/lib/components/PatternLibrary.svelte",
 	"src/lib/components/SchemaBrowser.svelte",

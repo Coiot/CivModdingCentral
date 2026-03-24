@@ -310,7 +310,7 @@
 					resultGroup: "navigate",
 					preview: {
 						copy: summary,
-						meta: buildPreviewMeta(authors[0], entry?.identity?.culture, `${entry?.uniques?.length || 0} uniques`),
+						meta: buildPreviewMeta(authors[0]),
 						details: [...uniqueNames, ...collections.slice(0, 2).map((collection) => `Collection: ${collection.title}`)].slice(0, 4),
 					},
 				});
