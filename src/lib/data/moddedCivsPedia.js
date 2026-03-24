@@ -1,4 +1,5 @@
-export const MODDED_CIVS_PEDIA_FORMAT_VERSION = 1;
+import { MODDED_CIVS_PEDIA_FORMAT_VERSION } from "./moddedCivsPediaConstants.js";
+import { sortPediaEntries } from "../utils/pediaSorting.js";
 
 const BUILTIN_PEDIA_MODULES = import.meta.glob("./modded-civs-pedia/*.json", {
 	eager: true,
@@ -26,9 +27,5 @@ export const MOD_SUPPORT_LABELS = {
 };
 
 export function sortModdedCivsEntries(entries) {
-	return [...entries].sort((left, right) => {
-		const leftTitle = String(left?.title || "").toLowerCase();
-		const rightTitle = String(right?.title || "").toLowerCase();
-		return leftTitle.localeCompare(rightTitle);
-	});
+	return sortPediaEntries(entries);
 }

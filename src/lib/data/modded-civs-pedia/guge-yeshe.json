@@ -1,0 +1,223 @@
+{
+  "id": "civ-guge-yeshe",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T21:45:42.773Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "guge-yeshe",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=GzBn_nr5uww",
+      "title": "The Whisper of My Blade",
+      "credit": "Cliff Martinez"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=Slq4PctrR0Q",
+      "title": "Unfamiliar Paths",
+      "credit": "Cliff Martinez"
+    }
+  },
+  "title": "Guge",
+  "issues": [],
+  "leader": "Yeshe-Ö",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Guge_(Yeshe-%C3%96)",
+    "lastUpdated": "16 January 2022",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2722159219",
+    "modFolderName": "",
+    "wikiPageTitle": "Guge"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "ExplosiveWatermelon",
+      "role": "UU & UB Icons"
+    },
+    {
+      "name": "Coiot",
+      "role": "Research, City List"
+    },
+    {
+      "name": "Cliff Martinez",
+      "role": "Music"
+    }
+  ],
+  "summary": "Guge led by Yeshe-Ö is a custom civilization by TopHatPaladin, with contributions from ExplosiveWatermelon and Coiot.",
+  "uniques": [
+    {
+      "art": "IconPNG_YesheO.png",
+      "body": "International {{Trade Route Icon}} Trade Routes provide {{Faith Icon}} Faith to their home city, increasing based on the number of {{Citizen}} Specialists in the destination. Cities' {{Faith Icon}} Faith output contributes to their {{Production Icon}} production of buildings.",
+      "name": "Great Dictums of the Lama-King",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_YesheO.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Lotsawa.png",
+      "body": "",
+      "name": "Lotsawa",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Lotsawa.png",
+      "bullets": [
+        "May be trained with {{Production Icon}} Production",
+        "If expended in foreign territory, provides {{Great Person Icon}} Great Writer points for each {{Trade Route Icon}} Trade Route you own"
+      ],
+      "replaces": "Missionary",
+      "artCredit": "Art by ExplosiveWatermelon",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Gyatsa.png",
+      "body": "",
+      "name": "Gyatsa",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Gyatsa.png",
+      "bullets": [
+        "Provides {{Production Icon}} Production for each {{Trade Route Icon}} Trade Route with a city that shares its city's religion",
+        "The amount of {{Production Icon}} Production given scales for every Faith purchase made in its city"
+      ],
+      "replaces": "Temple",
+      "artCredit": "Art by ExplosiveWatermelon",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Tholing",
+    "culture": "Himalayan",
+    "religion": [
+      "Buddhism",
+      "Vajrayana (HR)"
+    ],
+    "adjectives": "Guge",
+    "empireName": "Guge Empire",
+    "government": "Monastic",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Yeshe-Ö",
+      "body": "Yeshe-Ö was one of the first kings of Guge. He played a pivotal role in reestablishing the monastic traditions of Tibetan Buddhism, and sent many translators to India to create Tibetan-language versions of classic Buddhist texts.",
+      "title": "Yeshe-Ö"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Guge",
+      "body": "Guge was a major kingdom from Tibet's \"Era of Fragmentation\". It controlled much of the western Tibetan Plateau for over 700 years, and was sometimes known as the Guge-Purang Kingdom because it was based in the Purang region. Today, Guge is best known for overseeing the revival of Buddhism in Tibet.",
+      "title": "Guge"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"And so ends this life. I look forward to seeing what rewards await me in the next.\"",
+    "blessing": "\"Your people look to you for guidance, Lhachen Yeshe-Ö. As lama-king of Guge, you played an instrumental role in restoring Buddhism's prominence on the Tibetan Plateau. Through your great dictums, you facilitated the construction of new monasteries and ensured their funding through taxation. You also sent forth translators to India, to ensure your kingdom's access to the Buddhist literary tradition. Even after abdicating the throne to devote yourself wholly to monastic duties, you remained a significant figure in Guge; you commissioned some of your kingdom's greatest monasteries after stepping down. For this reason, you have come to be known as one of the most significant figures in Tibetan Buddhism.\nYeshe-Ö, your people have been lost without you, and need your enlightened leadership. Can you restore your dictums and create an empire devoted to faith and wisdom? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"I am Lhachen Yeshe-Ö, the king of Guge. However, I am not just a king but a monk, as the pursuit of faith and service is the most righteous path there is.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Tholing",
+        "Tsaparang",
+        "Dungkar",
+        "Kardung",
+        "Khorchak",
+        "Khyunglung",
+        "Tabo",
+        "Tashigang",
+        "Lhundrub",
+        "Semja",
+        "Chekar",
+        "Dawa",
+        "Zholing",
+        "Tradun",
+        "Shey",
+        "Shang",
+        "Phuri",
+        "Jumla",
+        "Nyiwang",
+        "Alchi",
+        "Lalung",
+        "Lotsang",
+        "Nako",
+        "Johling",
+        "Ripa",
+        "Gumrang",
+        "Tsherlung",
+        "Padung",
+        "Nyarma",
+        "Mangyu",
+        "Sumda Chang",
+        "Triloknath",
+        "Yangton",
+        "Tiyak",
+        "Phuktal",
+        "Dullu",
+        "Charang",
+        "Kedarnath",
+        "Badrinath",
+        "Baryang"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Rinchen",
+        "Legpai",
+        "Trashigon",
+        "Nyimagon",
+        "Nagaraja",
+        "Byangchub",
+        "Lha Ide",
+        "Kyithangpa",
+        "Marpa",
+        "Khor Re"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Himalayan Cultures",
+    "Civilizations with Male leaders",
+    "Tibet"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#911c2f",
+      "background": "#d1b693"
+    },
+    "mapImage": "MapPNG_Guge.png",
+    "iconImage": "IconPNG_Guge.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Guge.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Guge.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_YesheO.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_YesheO.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

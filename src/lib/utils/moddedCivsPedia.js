@@ -1,6 +1,7 @@
-import { MODDED_CIVS_PEDIA_FORMAT_VERSION } from "../data/moddedCivsPedia.js";
+import { MODDED_CIVS_PEDIA_FORMAT_VERSION } from "../data/moddedCivsPediaConstants.js";
 import { getPediaInlineIconByTemplate, resolvePediaInlineIconRef } from "../data/pediaInlineIcons.js";
 import { PEDIA_COLLECTIONS } from "../data/pediaCollections.js";
+import { comparePediaEntriesByTitle } from "./pediaSorting.js";
 
 const FANDOM_TEMPLATE_NAMES = {
 	infobox: ["Infobox civs"],
@@ -450,7 +451,7 @@ export function groupPediaCollections(entries) {
 	return [...grouped.values()]
 		.map((collection) => ({
 			...collection,
-			entries: [...collection.entries].sort((left, right) => String(left?.title || "").localeCompare(String(right?.title || ""))),
+			entries: [...collection.entries].sort(comparePediaEntriesByTitle),
 		}))
 		.sort((left, right) => String(left?.title || "").localeCompare(String(right?.title || "")));
 }
@@ -511,7 +512,7 @@ export function groupPediaCategories(entries) {
 	return [...grouped.values()]
 		.map((category) => ({
 			...category,
-			entries: [...category.entries].sort((left, right) => String(left?.title || "").localeCompare(String(right?.title || ""))),
+			entries: [...category.entries].sort(comparePediaEntriesByTitle),
 		}))
 		.sort((left, right) => String(left?.title || "").localeCompare(String(right?.title || "")));
 }
@@ -666,7 +667,9 @@ function stripLeadingWikiNoise(value) {
 	return cleanText(
 		String(value || "")
 			.replace(/^\s*\{\{Infobox civs[\s\S]*?\}\}\s*/i, "")
-			.replace(/^\s*\{\{[^}]+}}\s*/g, "")
+			.replace(/^\s*\{\{([^}|]+?)(?:\|[^}]*)?\}\}\s*/g, (match, templateName) => {
+				return getPediaInlineIconByTemplate(templateName) ? match : "";
+			})
 			.replace(/^\s*\|[^\n]*\n?/gm, "")
 			.replace(/^\s*Adds the\s+/i, "Adds the ")
 			.replace(/\n{3,}/g, "\n\n"),
@@ -793,9 +796,15 @@ function parseDawnOfMan(section, wikiUrl = "") {
 		imageUrl: buildFandomFileRedirectUrl(image, wikiUrl),
 		artCredit,
 		blessing: stripWikiMarkup(blessingSource),
-		introduction: stripWikiMarkup(introductionMatch?.[1] || ""),
-		defeat: stripWikiMarkup(defeatMatch?.[1] || ""),
+		introduction: normalizeDawnOfManText(introductionMatch?.[1] || ""),
+		defeat: normalizeDawnOfManText(defeatMatch?.[1] || ""),
 	};
+}
+
+function normalizeDawnOfManText(value) {
+	return stripWikiMarkup(value)
+		.replace(/^\s*(?::\s*)+/, "")
+		.trim();
 }
 
 function parseStandaloneIconImage(source, wikiUrl = "", excludedFiles = []) {

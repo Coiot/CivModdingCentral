@@ -103,6 +103,7 @@ const PEDIA_INLINE_ICON_DEFINITIONS = [
 	{ templates: ["Influence Icon", "Influence"], label: "Influence", fileName: "Influence.png" },
 	{ templates: ["International Trade", "International Trade Icon"], label: "International Trade", fileName: "Internationaltrade.png" },
 	{ templates: ["Capital", "Capital Icon"], label: "Capital", fileName: "Capital.png" },
+	{ templates: ["Horse", "Horse Icon"], label: "Horse", fileName: "Horses.png" },
 	{ templates: ["Connection", "Connection Icon"], label: "Connection", fileName: "Connection.png" },
 	{ templates: ["Moves Icon", "Move Icon", "Movement Icon"], label: "Movement", fileName: "Moves.png" },
 	{ templates: ["Occupied Icon"], label: "Occupied", fileName: "Occupied.png" },
@@ -214,7 +215,7 @@ export function segmentPediaInlineText(text, refs) {
 			});
 		}
 		const rawToken = String(match[1] || "").trim();
-		const resolved = iconByToken.get(normalizeLookupKey(rawToken)) || null;
+		const resolved = iconByToken.get(normalizeLookupKey(rawToken)) || getPediaInlineIconByTemplate(rawToken) || null;
 		if (resolved) {
 			segments.push({
 				type: "icon",

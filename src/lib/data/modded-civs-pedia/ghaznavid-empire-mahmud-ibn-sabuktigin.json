@@ -1,0 +1,212 @@
+{
+  "id": "civ-ghaznavid-empire-mahmud-ibn-sabuktigin",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T21:35:14.201Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "ghaznavid-empire-mahmud-ibn-sabuktigin",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=upQKIZNS-M0",
+      "title": "Age of Empires Online - Persia Music 4",
+      "credit": "Chris Rickwood"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=63MOi0kvUxQ",
+      "title": "Age of Empires Online - Persia Music 6",
+      "credit": "Chris Rickwood"
+    }
+  },
+  "title": "Ghaznavid Empire",
+  "issues": [],
+  "leader": "Mahmud ibn Sabuktigin",
+  "source": {
+    "type": "wiki",
+    "version": "v 7",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Ghaznavids_(Mahmud_ibn_Sabuktigin)",
+    "lastUpdated": "24 November 2019",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1479233139",
+    "modFolderName": "",
+    "wikiPageTitle": "Ghaznavid Empire"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "danrell",
+      "role": "Unit Model"
+    },
+    {
+      "name": "LastSword",
+      "role": "Lua"
+    },
+    {
+      "name": "Civ V Helpline",
+      "role": "Advice & Code Fixes"
+    },
+    {
+      "name": "Chris Rickwood",
+      "role": "Music"
+    }
+  ],
+  "summary": "The Ghaznavid Empire led by Mahmud ibn Sabuktigin is a custom civilization by TopHatPaladin, with contributions from LastSword and the Civ V Modding Helpline.",
+  "uniques": [
+    {
+      "art": "IconPNG_Mahmud.png",
+      "body": "Garrisoned Great Generals increase {{Gold Icon}} Gold yields from {{Trade Route Icon}} Trade Routes. {{Trade Route Icon}} Trade Routes increase military production in their home cities.",
+      "name": "Sword of the Dynasty",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Mahmud.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Ghulam.png",
+      "body": "",
+      "name": "Ghulam",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Ghulam.png",
+      "bullets": [
+        "Does not require Iron",
+        "Gains HP and XP when beginning its turn on a Pillaged improvement in enemy territory"
+      ],
+      "replaces": "Longswordsman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Saraparda.png",
+      "body": "",
+      "name": "Saraparda",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Saraparda.png",
+      "bullets": [
+        "Allows rebasing of Great People to other cities with a Saraparda"
+      ],
+      "replaces": "Caravansary",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Hill",
+    "capital": "Ghazni",
+    "culture": "Islamic",
+    "religion": [
+      "Islam",
+      "Sunni (HR)"
+    ],
+    "adjectives": "Ghaznavid",
+    "empireName": "Ghaznavid Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Mahmud_of_Ghazni",
+      "body": "Yamin-ud-Dawla Abul-Qasim Mahmud ibn Sabuktigin, best known as Mahmud of Ghazni, was born in 971 AD. He began his career as a general under his father, Sabuktigin, participating in the capture of Khorasan in 994. However, he was not Sabuktigin's preferred successor; instead, Sabuktigin chose Ismail, his younger son from a more prestigious marriage. To ascend the throne, Mahmud was first forced to defeat his brother at the 998 Battle of Ghazni.",
+      "title": "Mahmud ibn Sabuktigin"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Ghaznavid_Empire",
+      "body": "The Ghaznavids arose out of the failing Samanid Empire in the later 10th century AD. Alp Tigin, a Turkic commander under the Samanids, captured Ghazni in a 962 rebellion; however, he died the next year. After a series of ephemeral leaders, Ghazni fell into the control of Alp Tigin's former slave Sabuktigin. Sabuktigin had been freed when Alp Tigin began his rebellion, and married Alp Tigin's daughter; he would become the patriarch of the Ghaznavid dynasty.",
+      "title": "The Ghaznavids"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"You've destroyed my armies? That's impossible! I won't be defeated like this!\"",
+    "blessing": "\"Greetings, Mahmud of Ghazni, great sultan and sword of the state! You ascended the Ghaznavid throne when it was still a fledgling state, and under your strong hand, it flowered into a regional power. Expanding outwards from Ghazni, you oversaw conquests of Khorasan, Kandahar, eastern Persia, and northwest India; your raids also brought tremendous wealth back to your capital. And you were more than a warrior: you were also one of your dynasty's great patrons of learning. You built colleges, purchased libraries worth of texts, and it was under your auspices that Ferdowsi completed his epic Shahnameh.\nMahmud, your reign was a time of great ascension for the Ghaznavids, but much of your people's glory was lost after your death. They call for you to return to the throne, to drive out the hated Seljuks and reinstate the glory that transpired during your rule. Can you lead your people to match and surpass the glory they once held? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"You enter the camp of Mahmud of Ghazni, conqueror of the Afghans and plunderer of the Hindus. Guard your temples, or you may be next.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Ghazni",
+        "Balkh",
+        "Herat",
+        "Kabul",
+        "Merv",
+        "Lahore",
+        "Rey",
+        "Bost",
+        "Tiginabad",
+        "Nishapur",
+        "Peshawar",
+        "Multan",
+        "Wayhind",
+        "Qusdar",
+        "Zaranj",
+        "Isfahan",
+        "Nagar",
+        "Bhatia",
+        "Sistan",
+        "Gardiz",
+        "Bamiyan",
+        "Hamadan",
+        "Urghun",
+        "Kohat",
+        "Miyanwali",
+        "Dera-Ismail Khan",
+        "Khulm",
+        "Kahmard",
+        "Dandanaqan"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Khusrau",
+        "Ibrahim",
+        "Mas'ud",
+        "Ismail",
+        "Ali",
+        "Kausari",
+        "Sitr-i-Mu'alla"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Islamic Cultures",
+    "Civilizations with Male leaders",
+    "Persia"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#efef4d",
+      "background": "#2b7d35"
+    },
+    "mapImage": "MapPNG_Ghaznavid.png",
+    "iconImage": "Icon_Ghaznavid.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Ghaznavid.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Ghaznavid.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Mahmud.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Mahmud.png",
+    "leaderSceneArtCredit": "Leaderscreen by TopHatPaladin"
+  },
+  "templateRefs": []
+}

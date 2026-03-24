@@ -1,0 +1,212 @@
+{
+  "id": "civ-the-guaycuru-eso",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T21:44:19.764Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "the-guaycuru-eso",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=XT-i0nry2xg",
+      "title": "Chacarera del Violin",
+      "credit": "Kuki Errante"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=nkH_ObqRVpg",
+      "title": "La Juguetone (Chacarera)",
+      "credit": "Kuki Errante"
+    }
+  },
+  "title": "The Guaycuru",
+  "issues": [],
+  "leader": "Eso",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Guaycuru_(Eso)",
+    "lastUpdated": "31 October 2020",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2272585492",
+    "modFolderName": "",
+    "wikiPageTitle": "The Guaycuru"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Patum333",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Kuki Errante",
+      "role": "Music"
+    }
+  ],
+  "summary": "The Guaycuru led by Eso is a custom civilization by TopHatPaladin, with contributions from Patum333.",
+  "uniques": [
+    {
+      "art": "IconPNG_Eso.png",
+      "body": "Capturing Cities or clearing Barbarian Encampments reveals sources of Strategic Resources. Units that require Strategic Resources have +1 Movement while at full health, and provide a burst of {{Food Icon}} Food to their cities upon birth.",
+      "name": "Dance of the Scalps",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Eso.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Haliaganek.png",
+      "body": "",
+      "name": "Haliaganék",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Haliaganek.png",
+      "bullets": [
+        "Upon killing a unit or clearing a Barbarian Encampment, restores the movement of adjacent friendly units"
+      ],
+      "replaces": "Horseman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Nemachaqa.png",
+      "body": "",
+      "name": "Nemacháqa",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Nemachaqa.png",
+      "bullets": [
+        "Requires a worked Strategic Resource in its city, rather than fresh water",
+        "Does not affect {{Great Person Icon}} Great People generation",
+        "+2 {{Food Icon}} Food",
+        "+10 starting XP for newly trained units"
+      ],
+      "replaces": "Garden",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Misión El Toba",
+    "culture": "Great Plains",
+    "religion": [
+      "Catholicism",
+      "Pajelanca (HR)"
+    ],
+    "adjectives": "Guaycuru",
+    "empireName": "Guaycuru Empire",
+    "government": "Nomadic",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Eso was a warrior and chief in the mythology of the Toba and Pilagá, two prominent Guaycuru subgroups. He was famed for vanquishing a range of evildoers, primarily witches. In one incident, he slew a witch who attacked fishermen; in another, he killed a witch who attacked those who gathered honey. Eso is also credited with defeating the villainous Man With A Sharpened Leg, though Sharpened-Leg would meet his final defeat at the hands of another cultural hero, Carancho the hawk.",
+      "title": "Eso"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Guaycuru_peoples",
+      "body": "The Guaycuru are a group of nomadic peoples native to the Gran Chaco region. Extant Guaycuru peoples include the Toba, the Pilagá, the Mocoví, and the Kadiweu. The Guaycuru traditionally lived a hunter-gatherer lifestyle, traveling seasonally between different regions based on the presence of resources: in some seasons they engaged in fishing, and in others they hunted game in the forests. The caraguatá plant, a type of bromeliad, was heavily used by the Guaycuru; its thread was used for nets, bags, ropes, slings, and clothing. The Guaycuru peoples frequently raided each other, as well as other neighboring groups such as the Guaraní. This practice was greatly expanded after Europeans introduced horses to the Gran Chaco; horses allowed the Guaycuru to raid more widely and more effectively, giving them supremacy over the Chaco. The profit from these raids also allowed the Guaycuru to trade with the Spanish for other goods, such as metal knives and hatchets.",
+      "title": "The Guaycuru"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Kill me if you wish, but my people will resist you forevermore.\"",
+    "blessing": "\"Your people stand in awe of you, chief Eso! The Guaycuru were a people of gifted raiders, who were able to harvest resources - by trade and force alike - from land all around the Chaco. You were one of their greatest chiefs, vanquishing those who threatened your fishermen and gatherers, and doing it so effectively that you earned an immortal place in your people's mythology. The Guaycuru's raiding skills were only amplified by the arrival of the horse, which you captured from Spanish interlopers. With these animals on your side, you were able to resist the Spaniards for centuries, with the Guaycuru way of life surviving well past 1800.\nEso, though your people are now divided and under foreign rule, they still have fond memories of the time when the Guaycuru were the terror of the Gran Chaco. Can you gather an army that can outmaneuver and outfight anyone who dares approach you? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"You have stumbled into the land of the Guaycuru! I advise that you leave, before our raiders find you.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Misión El Toba",
+        "Sombrero Negro",
+        "San Martín del Tabacal",
+        "Laguna Martín",
+        "Laguna Los Paces",
+        "Jesús María",
+        "Nuevo Pilcomayo",
+        "Misión Pilagá",
+        "Vaca Perdida",
+        "Pescado Negro",
+        "Buenaventura",
+        "Misión Chaqueña",
+        "Selva San Andrés",
+        "Ledesma",
+        "La Esperanza",
+        "Rivadavia",
+        "San Isidro",
+        "La Mendieta",
+        "Desmonte",
+        "Embarcación",
+        "Orán",
+        "Salta",
+        "Jujuy",
+        "Bermejo",
+        "Paraná",
+        "Mocoví",
+        "Mbayá",
+        "Kadiweu",
+        "Abipón",
+        "Payaguá"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Carancho",
+        "Kosodót",
+        "Asin",
+        "Peritnalik",
+        "Nedámik",
+        "Weda'ik",
+        "Aleixo Garcia",
+        "Tayolique",
+        "Child-Born-In-A-Pot",
+        "Kopilitare"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Great Plains Cultures",
+    "Civilizations with Male leaders",
+    "Bolivia",
+    "Argentina",
+    "Brazil"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#874420",
+      "background": "#d6c798"
+    },
+    "mapImage": "MapPNG_Guaycuru.png",
+    "iconImage": "IconPNG_Guaycuru.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Guaycuru.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Guaycuru.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Eso.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Eso.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

@@ -1,330 +1,316 @@
 {
-  "id": "civ-tibet-ralpachen",
-  "slug": "tibet-ralpachen",
-  "kind": "civilization",
-  "title": "Great Tibet",
-  "leader": "Ralpachen",
-  "authors": [
-    "Coiot"
-  ],
-  "summary": "Tibet led by Ralpachen is a custom civilization by Coiot, with contributions from DarthKyofu, EmeraldRange, and JFD. It was released as part of the Land of Snows event.",
-  "source": {
-    "type": "wiki",
-    "wikiPageTitle": "Tibet",
-    "wikiUrl": "",
-    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3561646829",
-    "version": "v 1",
-    "lastUpdated": "4 September 2025",
-    "modFolderName": ""
-  },
-  "identity": {
-    "empireName": "Tibetan Empire",
-    "adjectives": "Tibetan",
-    "capital": "Lhasa",
-    "bias": "Hills",
-    "religion": [
-      "Buddhism",
-      "Vajrayana (HR)"
-    ],
-    "government": "Monarchy",
-    "culture": "Himalayan",
-    "mapLabelsLanguage": "",
-    "requiredContent": [
-      "Brave New World"
-    ]
-  },
-  "presentation": {
-    "mapImage": "Map Tibetan Empire Ralpachen.png",
-    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Map%20Tibetan%20Empire%20Ralpachen.png",
-    "mapImageCaption": "Map by Coiot and DarthKyofu",
-    "iconImage": "Ralpachen.png",
-    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ralpachen.png",
-    "leaderSceneImage": "Ralpachen Diplo.png",
-    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ralpachen%20Diplo.png",
-    "leaderSceneArtCredit": "Art by Coiot",
-    "colors": {
-      "background": "#EAA617",
-      "icon": "#632707"
-    }
-  },
-  "overview": {
-    "civilization": {
-      "title": "Tibet",
-      "url": "https://en.wikipedia.org/wiki/Tibet",
-      "body": "Of the many cultures of the world who experience the tumult of political stability Tibet has itself a tumultuous history. Tibet emerged as a unified empire some 1300 years ago, however this soon divided the land into territories poised to be influenced by outside powers; much of that from China. Following the collapse of the Qing dynasty Chinese garrisons were disarmed and exiled from Tibet, causing the government to declare its independence. Then a military strike caused Tibet to become incorporated into the People's Republic of China and later abolishing Tibet's government. This merely summarizes the struggle between a small nation trying to unify itself and a superpower hyphenating its domination."
-    },
-    "leader": {
-      "title": "Ralpachen",
-      "body": "Ralpachen, also known as Tritsuk Détsen, was the third Dharma King of Tibet, whose reign marked both the apex of Buddhist patronage and the beginning of the empire's decline. Known for his extraordinary devotion to Buddhism and generous support of the monastic community, he transformed Tibet into a theocratic state where spiritual and temporal power became inseparable. His name, meaning \"Long Hair,\" refers to his practice of allowing monks to sit upon his braided hair during religious ceremonies.",
-      "url": "https://en.wikipedia.org/wiki/Ralpachen"
-    }
-  },
-  "dawnOfMan": {
-    "blessing": "Honor to you, Ralpachen, Third Dharma King of Tibet and devout patron of Buddhism, whose piety and wisdom brought unprecedented prosperity to the Land of Snows! You controlled the great Silk Road caravan routes of Asia, extracting wealth from every merchant train while ensuring their safe passage through your formidable mountain realm. Under your reign, the Tibetan Empire stretched from the scorching oases of the Tarim Basin to the emerald plains of Bengal, and from the lofty Pamir mountains to the distant provinces of Gansu and Yunnan in China. Even the mighty Tang Empire was compelled to treat with you as an equal: you forged a lasting peace and inscribed its terms on stone pillars in Lhasa and Chang'an, a testament to your diplomacy and sagacity.\nIn your zeal for the Dharma, you raised temples across the high plateau—legend holds you built one thousand shrines to glorify the Buddha. Among these was a magnificent nine-tiered temple crowned with a golden roof, built to house sacred scriptures and learned sages Your innovative Tithe system transformed temporal wealth into spiritual merit by assigning the revenue of seven households to sustain each monk under your protection, ensuring the monastic order flourished throughout your domain. Meanwhile, armies built roads over rugged passes, binding holy monasteries with bustling market towns in every corner of your realm. Under your enlightened rule, merchants doubled as missionaries, carrying the Dharma to foreign lands along with their wares, while soldiers stood as guardians of the faith, protecting the realm and its sacred sites from all threats. Your intrepid Chölön spread the dharma, while your formidable warriors ensure that even the most remote mountain citadel remains connected to the beating heart of your empire.\nNow, pious sovereign, Tibet calls upon your wisdom once more. Will you master the Silk Road and make trade routes generate untold wealth from your vast network of city connections? Can you bring harmony to the six realms? Can you build a civilization to stand the test of time?",
-    "introduction": ": I am Ralpachen, King of Dharma. May our meeting be auspicious.",
-    "defeat": ": Though my empire falls, the teachings of the Buddha endure. May you find wisdom in victory."
-  },
-  "templateRefs": [
-    {
-      "label": "Gold",
-      "template": "Gold Icon",
-      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Gold_Icon",
-      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
-      "imageUrls": [
-        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
-        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GoldIcon.png"
-      ]
-    },
-    {
-      "label": "Production",
-      "template": "Production Icon",
-      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
-      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
-      "imageUrls": [
-        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
-        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ProductionIcon.png"
-      ]
-    },
-    {
-      "label": "Faith",
-      "template": "Faith Icon",
-      "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
-      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
-      "imageUrls": [
-        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
-        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Faith.png"
-      ]
-    }
-  ],
-  "uniques": [
-    {
-      "slot": "unique ability",
-      "name": "Chakravartin of the Silk Road",
-      "replaces": "",
-      "art": "RalpachenIcon.png",
-      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/RalpachenIcon.png",
-      "artCredit": "Art by Coiot",
-      "body": "Trade Routes passing through your land grant {{Gold Icon}} Gold per City Connection. Roads on or next to Holy Sites yield +1 {{Gold Icon}} Gold, {{Production Icon}} Production, and {{Faith Icon}} Faith. Cities may Tithe to convert Gold / Production to {{Faith Icon}} Faith and spawn extra purchased units.",
-      "civilopedia": "",
-      "bullets": [],
-      "templateRefs": [
-        {
-          "label": "Gold",
-          "template": "Gold Icon",
-          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Gold_Icon",
-          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
-          "imageUrls": [
-            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
-            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GoldIcon.png"
-          ]
-        },
-        {
-          "label": "Production",
-          "template": "Production Icon",
-          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
-          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
-          "imageUrls": [
-            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
-            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ProductionIcon.png"
-          ]
-        },
-        {
-          "label": "Faith",
-          "template": "Faith Icon",
-          "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
-          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
-          "imageUrls": [
-            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
-            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Faith.png"
-          ]
-        }
-      ]
-    },
-    {
-      "slot": "unique unit",
-      "name": "Chölön",
-      "replaces": "Great Merchant",
-      "art": "ChölönIcon.png",
-      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ch%C3%B6l%C3%B6nIcon.png",
-      "artCredit": "Art by Coiot",
-      "body": "",
-      "civilopedia": "",
-      "bullets": [
-        "Generate {{Faith Icon}} Faith instead of {{Gold Icon}} Gold when conducting trade missions with {{City-State Icon}} City-States, with bonuses based on your trade network.",
-        "Can construct Holy Sites instead of Customs Houses, providing both defensive benefits and yields."
-      ],
-      "templateRefs": []
-    },
-    {
-      "slot": "unique unit",
-      "name": "Zimchongpa",
-      "replaces": "Longswordsman",
-      "art": "ZimchongpaIcon.png",
-      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ZimchongpaIcon.png",
-      "artCredit": "Art by Coiot",
-      "body": "",
-      "civilopedia": "",
-      "bullets": [
-        "Faster and stronger when starting their turn on a Hill or adjacent to a Mountain.",
-        "When garrisoned or adjacent to a City, the City provides the bonuses of Tithe regardless of what the City is producing."
-      ],
-      "templateRefs": []
-    }
-  ],
-  "collections": [
-    {
-      "id": "land-of-snows",
-      "title": "Land of Snows",
-      "sourceTemplate": "LandofSnowsNav",
-      "aliases": [],
-      "colors": {
-        "background": "#7e2222",
-        "accent": "#fad587"
-      },
-      "imageURL": "",
-      "blurb": "",
-      "links": [],
-      "members": []
-    }
-  ],
-  "nameLists": [
-    {
-      "title": "City List",
-      "items": [
-        "Lhasa",
-        "Shigatse",
-        "Nedong",
-        "Gyantse",
-        "Chamdo",
-        "Taklung",
-        "Tsona",
-        "Nakchu",
-        "Jyekundo",
-        "Dege",
-        "Batang",
-        "Saga",
-        "Purang",
-        "Gyanema",
-        "Gartok",
-        "Lhatse",
-        "Phari",
-        "Naktsang",
-        "Namru",
-        "Dirang",
-        "Senge",
-        "Sok",
-        "Drachen",
-        "Sertsa",
-        "Shelkar",
-        "Ngamring",
-        "Kyirong",
-        "Kuti",
-        "Rongshar",
-        "Dzongkha",
-        "Drongpa",
-        "Gyanema",
-        "Dawa",
-        "Tsaparang",
-        "Rutok",
-        "Lhari",
-        "Tar",
-        "Shopamdo",
-        "Pome",
-        "Jomo",
-        "Zhokha",
-        "Riwoche",
-        "Dzogang",
-        "Dechen",
-        "Gonjo",
-        "Dartsedo",
-        "Markham",
-        "Sanan",
-        "Litang",
-        "Cho",
-        "Rima",
-        "Danma",
-        "Sangacho",
-        "Dzito",
-        "Lho",
-        "Gyamda",
-        "|-"
-      ]
-    },
-    {
-      "title": "Spy List",
-      "items": [
-        "We Mangje Lhalo",
-        "Dro Trisumje Taknang",
-        "Lhalung Pelgyi Dorje",
-        "Namde Ösung",
-        "Dranga Yongten",
-        "Nyang Tingngezin Sangpo",
-        "Rinchen Zangpo",
-        "Zhang Gyaltsen",
-        "Namkhai Nyingpo",
-        "Kharchen Pelgyi Wangchuk"
-      ]
-    }
-  ],
-  "music": {
-    "peace": {
-      "title": "",
-      "credit": ""
-    },
-    "war": {
-      "title": "",
-      "credit": ""
-    }
-  },
-  "modSupport": {
-    "aa": false,
-    "civivtraits": false,
-    "culdiv": true,
-    "piety": true,
-    "uci": false,
-    "ynaemp": true,
-    "enlightenmentera": false,
-    "histreligions": true,
-    "ethnicunits": false,
-    "eandd": false,
-    "maplabels": false
-  },
-  "credits": [
-    {
-      "name": "Coiot",
-      "role": "Author"
-    },
-    {
-      "name": "DarthKyofu",
-      "role": "Art (Civilization Icon, Map)"
-    },
-    {
-      "name": "TopHatPaladin",
-      "role": "Debugging"
-    },
-    {
-      "name": "EmeraldRange",
-      "role": "Models"
-    }
-  ],
-  "categories": [
-    "All Civilizations",
-    "Himalayan Cultures",
-    "Coiot",
-    "Tibet",
-    "Land of Snows",
-    "Civilizations with Male leaders"
-  ],
-  "navTemplate": "LandofSnowsNav",
-  "issues": [
-    "Unresolved templates: LandofSnowsNav, CoiotNav"
-  ],
-  "meta": {
-    "formatVersion": 1,
-    "createdAt": "2026-03-23T01:58:02.470Z",
-    "unresolvedTemplates": [
-      "LandofSnowsNav",
-      "CoiotNav"
-    ]
-  }
+	"id": "civ-tibet-ralpachen",
+	"slug": "tibet-ralpachen",
+	"kind": "civilization",
+	"title": "Great Tibet",
+	"leader": "Ralpachen",
+	"authors": ["Coiot"],
+	"summary": "Tibet led by Ralpachen is a custom civilization by Coiot, with contributions from DarthKyofu, EmeraldRange, and JFD. It was released as part of the Land of Snows event.",
+	"source": {
+		"type": "wiki",
+		"wikiPageTitle": "Tibet",
+		"wikiUrl": "",
+		"workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3561646829",
+		"version": "v 1",
+		"lastUpdated": "4 September 2025",
+		"modFolderName": ""
+	},
+	"identity": {
+		"empireName": "Tibetan Empire",
+		"adjectives": "Tibetan",
+		"capital": "Lhasa",
+		"bias": "Hills",
+		"religion": ["Buddhism", "Vajrayana (HR)"],
+		"government": "Monarchy",
+		"culture": "Himalayan",
+		"mapLabelsLanguage": "",
+		"requiredContent": ["Brave New World"]
+	},
+	"presentation": {
+		"mapImage": "Map Tibetan Empire Ralpachen.png",
+		"mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Map%20Tibetan%20Empire%20Ralpachen.png",
+		"mapImageCaption": "Map by Coiot and DarthKyofu",
+		"iconImage": "Ralpachen.png",
+		"iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ralpachen.png",
+		"leaderSceneImage": "Ralpachen Diplo.png",
+		"leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ralpachen%20Diplo.png",
+		"leaderSceneArtCredit": "Art by Coiot",
+		"colors": {
+			"background": "#EAA617",
+			"icon": "#632707"
+		}
+	},
+	"overview": {
+		"civilization": {
+			"title": "Tibet",
+			"url": "https://en.wikipedia.org/wiki/Tibet",
+			"body": "Of the many cultures of the world who experience the tumult of political stability Tibet has itself a tumultuous history. Tibet emerged as a unified empire some 1300 years ago, however this soon divided the land into territories poised to be influenced by outside powers; much of that from China. Following the collapse of the Qing dynasty Chinese garrisons were disarmed and exiled from Tibet, causing the government to declare its independence. Then a military strike caused Tibet to become incorporated into the People's Republic of China and later abolishing Tibet's government. This merely summarizes the struggle between a small nation trying to unify itself and a superpower hyphenating its domination."
+		},
+		"leader": {
+			"title": "Ralpachen",
+			"body": "Ralpachen, also known as Tritsuk Détsen, was the third Dharma King of Tibet, whose reign marked both the apex of Buddhist patronage and the beginning of the empire's decline. Known for his extraordinary devotion to Buddhism and generous support of the monastic community, he transformed Tibet into a theocratic state where spiritual and temporal power became inseparable. His name, meaning \"Long Hair,\" refers to his practice of allowing monks to sit upon his braided hair during religious ceremonies.",
+			"url": "https://en.wikipedia.org/wiki/Ralpachen"
+		}
+	},
+	"dawnOfMan": {
+		"blessing": "Honor to you, Ralpachen, Third Dharma King of Tibet and devout patron of Buddhism, whose piety and wisdom brought unprecedented prosperity to the Land of Snows! You controlled the great Silk Road caravan routes of Asia, extracting wealth from every merchant train while ensuring their safe passage through your formidable mountain realm. Under your reign, the Tibetan Empire stretched from the scorching oases of the Tarim Basin to the emerald plains of Bengal, and from the lofty Pamir mountains to the distant provinces of Gansu and Yunnan in China. Even the mighty Tang Empire was compelled to treat with you as an equal: you forged a lasting peace and inscribed its terms on stone pillars in Lhasa and Chang'an, a testament to your diplomacy and sagacity.\nIn your zeal for the Dharma, you raised temples across the high plateau—legend holds you built one thousand shrines to glorify the Buddha. Among these was a magnificent nine-tiered temple crowned with a golden roof, built to house sacred scriptures and learned sages Your innovative Tithe system transformed temporal wealth into spiritual merit by assigning the revenue of seven households to sustain each monk under your protection, ensuring the monastic order flourished throughout your domain. Meanwhile, armies built roads over rugged passes, binding holy monasteries with bustling market towns in every corner of your realm. Under your enlightened rule, merchants doubled as missionaries, carrying the Dharma to foreign lands along with their wares, while soldiers stood as guardians of the faith, protecting the realm and its sacred sites from all threats. Your intrepid Chölön spread the dharma, while your formidable warriors ensure that even the most remote mountain citadel remains connected to the beating heart of your empire.\nNow, pious sovereign, Tibet calls upon your wisdom once more. Will you master the Silk Road and make trade routes generate untold wealth from your vast network of city connections? Can you bring harmony to the six realms? Can you build a civilization to stand the test of time?",
+		"introduction": ": I am Ralpachen, King of Dharma. May our meeting be auspicious.",
+		"defeat": ": Though my empire falls, the teachings of the Buddha endure. May you find wisdom in victory."
+	},
+	"templateRefs": [
+		{
+			"label": "Gold",
+			"template": "Gold Icon",
+			"href": "https://civilization-v-customisation.fandom.com/wiki/Template:Gold_Icon",
+			"imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+			"imageUrls": [
+				"https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+				"https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GoldIcon.png"
+			]
+		},
+		{
+			"label": "Production",
+			"template": "Production Icon",
+			"href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+			"imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+			"imageUrls": [
+				"https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+				"https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ProductionIcon.png"
+			]
+		},
+		{
+			"label": "Faith",
+			"template": "Faith Icon",
+			"href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+			"imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+			"imageUrls": [
+				"https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+				"https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Faith.png"
+			]
+		}
+	],
+	"uniques": [
+		{
+			"slot": "unique ability",
+			"name": "Chakravartin of the Silk Road",
+			"replaces": "",
+			"art": "RalpachenIcon.png",
+			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/RalpachenIcon.png",
+			"artCredit": "Art by Coiot",
+			"body": "{{Trade Route Icon}} Trade Routes passing through your land grant {{Gold Icon}} Gold per City Connection. Roads on or next to Holy Sites yield +1 {{Gold Icon}} Gold, {{Production Icon}} Production, and {{Faith Icon}} Faith. Cities may Tithe to convert Gold / Production to {{Faith Icon}} Faith and spawn extra purchased units.",
+			"civilopedia": "",
+			"bullets": [],
+			"footnotes": [],
+			"templateRefs": [
+				{
+					"label": "Gold",
+					"template": "Gold Icon",
+					"href": "https://civilization-v-customisation.fandom.com/wiki/Template:Gold_Icon",
+					"imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+					"imageUrls": [
+						"https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gold.png",
+						"https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GoldIcon.png"
+					]
+				},
+				{
+					"label": "Production",
+					"template": "Production Icon",
+					"href": "https://civilization-v-customisation.fandom.com/wiki/Template:Production_Icon",
+					"imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+					"imageUrls": [
+						"https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Production.png",
+						"https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ProductionIcon.png"
+					]
+				},
+				{
+					"label": "Faith",
+					"template": "Faith Icon",
+					"href": "https://civilization-v-customisation.fandom.com/wiki/Template:Faith_Icon",
+					"imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+					"imageUrls": [
+						"https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/FaithIcon.png",
+						"https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Faith.png"
+					]
+				}
+			]
+		},
+		{
+			"slot": "unique unit",
+			"name": "Chölön",
+			"replaces": "Great Merchant",
+			"art": "ChölönIcon.png",
+			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ch%C3%B6l%C3%B6nIcon.png",
+			"artCredit": "Art by Coiot",
+			"body": "",
+			"civilopedia": "",
+			"bullets": [
+				"Generate {{Faith Icon}} Faith instead of {{Gold Icon}} Gold when conducting trade missions with {{City-State Icon}} City-States, with bonuses based on your trade network.",
+				"Can construct Holy Sites instead of Customs Houses, providing both defensive benefits and yields."
+			],
+			"footnotes": [],
+			"templateRefs": []
+		},
+		{
+			"slot": "unique unit",
+			"name": "Zimchongpa",
+			"replaces": "Longswordsman",
+			"art": "ZimchongpaIcon.png",
+			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ZimchongpaIcon.png",
+			"artCredit": "Art by Coiot",
+			"body": "",
+			"civilopedia": "",
+			"bullets": [
+				"Faster and stronger when starting their turn on a Hill or adjacent to a Mountain.",
+				"When garrisoned or adjacent to a City, the City provides the bonuses of Tithe regardless of what the City is producing."
+			],
+			"footnotes": [],
+			"templateRefs": []
+		}
+	],
+	"collections": [
+		{
+			"id": "land-of-snows",
+			"title": "Land of Snows",
+			"sourceTemplate": "LandofSnowsNav",
+			"aliases": [],
+			"colors": {
+				"background": "#7e2222",
+				"accent": "#fad587"
+			},
+			"imageURL": "",
+			"blurb": "",
+			"links": [],
+			"members": []
+		}
+	],
+	"nameLists": [
+		{
+			"title": "City List",
+			"items": [
+				"Lhasa",
+				"Shigatse",
+				"Nedong",
+				"Gyantse",
+				"Chamdo",
+				"Taklung",
+				"Tsona",
+				"Nakchu",
+				"Jyekundo",
+				"Dege",
+				"Batang",
+				"Saga",
+				"Purang",
+				"Gyanema",
+				"Gartok",
+				"Lhatse",
+				"Phari",
+				"Naktsang",
+				"Namru",
+				"Dirang",
+				"Senge",
+				"Sok",
+				"Drachen",
+				"Sertsa",
+				"Shelkar",
+				"Ngamring",
+				"Kyirong",
+				"Kuti",
+				"Rongshar",
+				"Dzongkha",
+				"Drongpa",
+				"Gyanema",
+				"Dawa",
+				"Tsaparang",
+				"Rutok",
+				"Lhari",
+				"Tar",
+				"Shopamdo",
+				"Pome",
+				"Jomo",
+				"Zhokha",
+				"Riwoche",
+				"Dzogang",
+				"Dechen",
+				"Gonjo",
+				"Dartsedo",
+				"Markham",
+				"Sanan",
+				"Litang",
+				"Cho",
+				"Rima",
+				"Danma",
+				"Sangacho",
+				"Dzito",
+				"Lho",
+				"Gyamda",
+				"|-"
+			]
+		},
+		{
+			"title": "Spy List",
+			"items": [
+				"We Mangje Lhalo",
+				"Dro Trisumje Taknang",
+				"Lhalung Pelgyi Dorje",
+				"Namde Ösung",
+				"Dranga Yongten",
+				"Nyang Tingngezin Sangpo",
+				"Rinchen Zangpo",
+				"Zhang Gyaltsen",
+				"Namkhai Nyingpo",
+				"Kharchen Pelgyi Wangchuk"
+			]
+		}
+	],
+	"music": {
+		"peace": {
+			"title": "",
+			"credit": "",
+			"url": ""
+		},
+		"war": {
+			"title": "",
+			"credit": "",
+			"url": ""
+		}
+	},
+	"modSupport": {
+		"aa": false,
+		"civivtraits": false,
+		"culdiv": true,
+		"piety": true,
+		"uci": false,
+		"ynaemp": true,
+		"enlightenmentera": false,
+		"histreligions": true,
+		"ethnicunits": false,
+		"eandd": false,
+		"maplabels": false
+	},
+	"credits": [
+		{
+			"name": "Coiot",
+			"role": "Author"
+		},
+		{
+			"name": "DarthKyofu",
+			"role": "Art (Civilization Icon, Map)"
+		},
+		{
+			"name": "TopHatPaladin",
+			"role": "Debugging"
+		},
+		{
+			"name": "EmeraldRange",
+			"role": "Models"
+		}
+	],
+	"categories": ["All Civilizations", "Himalayan Cultures", "Coiot", "Tibet", "Land of Snows", "Civilizations with Male leaders"],
+	"navTemplate": "LandofSnowsNav",
+	"issues": ["Unresolved templates: LandofSnowsNav, CoiotNav"],
+	"meta": {
+		"formatVersion": 1,
+		"createdAt": "2026-03-23T01:58:02.470Z",
+		"unresolvedTemplates": ["LandofSnowsNav", "CoiotNav"]
+	}
 }

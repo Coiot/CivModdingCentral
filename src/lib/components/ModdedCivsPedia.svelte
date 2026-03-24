@@ -26,6 +26,7 @@
 		savePediaEntryToCloud,
 	} from "../utils/pediaCloud.js";
 	import { personHighlightStyle } from "../utils/personHighlights.js";
+	import { comparePediaEntriesByTitle } from "../utils/pediaSorting.js";
 
 	const PEDIA_BASE_PATH = "/modded-civs-pedia";
 
@@ -443,7 +444,7 @@
 	}
 
 	function authorEntriesForName(authorName) {
-		return allEntries.filter((candidate) => entryAuthors(candidate).includes(authorName)).sort((left, right) => left.title.localeCompare(right.title));
+		return allEntries.filter((candidate) => entryAuthors(candidate).includes(authorName)).sort(comparePediaEntriesByTitle);
 	}
 
 	function proseNeedsDisclosure(value) {
@@ -658,7 +659,7 @@
 			.sort(([left], [right]) => left.localeCompare(right))
 			.map(([author, entries]) => ({
 				author,
-				entries: [...entries].sort((left, right) => left.title.localeCompare(right.title)),
+				entries: [...entries].sort(comparePediaEntriesByTitle),
 			})),
 	);
 	const allCollections = $derived(groupPediaCollections(allEntries));

@@ -1,0 +1,235 @@
+{
+  "id": "civ-the-herero-jacob-morenga",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T21:47:12.216Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "the-herero-jacob-morenga",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "Aga Who",
+      "credit": "Namibian Tales"
+    },
+    "peace": {
+      "url": "",
+      "title": "Tree Shade",
+      "credit": "Namibian Tales"
+    }
+  },
+  "title": "The Herero",
+  "issues": [],
+  "leader": "Jacob Morenga",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Herero_(Jacob_Morenga)",
+    "lastUpdated": "25 March 2025",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3452174812",
+    "modFolderName": "",
+    "wikiPageTitle": "The Herero"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "DMS",
+      "role": "Art (Leaderscene)"
+    },
+    {
+      "name": "Typhlomence",
+      "role": "Art (Unit Model)"
+    },
+    {
+      "name": "Darth_Kyofu",
+      "role": "Art (Revised Civ Icon)"
+    },
+    {
+      "name": "Zharques",
+      "role": "Civ Pedia"
+    },
+    {
+      "name": "Rhea",
+      "role": "Leader Pedia"
+    },
+    {
+      "name": "Namibian Tales",
+      "role": "Music"
+    }
+  ],
+  "summary": "The Herero led by Jacob Morenga are a custom civilization by TopHatPaladin, with contributions from DMS, Typhlomence, Darth_Kyofu, and Zharques.",
+  "uniques": [
+    {
+      "art": "IconPNG_HereroMorenga.png",
+      "body": "Newly trained units gain starting experience per Pasture within three tiles of the city that trained them. Garrisoned Mounted units provide their cities with +1 {{Faith Icon}} Faith per turn.",
+      "name": "Heroes of the Red Flag",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_HereroMorenga.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_HereroOxRider.png",
+      "body": "",
+      "name": "Ox Rider",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_HereroOxRider.png",
+      "bullets": [
+        "Does not require {{Horse Icon}} Horses",
+        "Once per unit, spawns a Cattle resource when promoted on resourceless Desert"
+      ],
+      "replaces": "Cavalry",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Okuruuo.png",
+      "body": "",
+      "name": "Okuruuo Hearth",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Okuruuo.png",
+      "bullets": [
+        "Cities with an Okuruuo Hearth get +5% {{Production Icon}} Production towards Mounted and pre-gunpowder Melee units per point of {{Faith Icon}} Faith they generate"
+      ],
+      "replaces": "Shrine",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Desert",
+    "capital": "Otjimbingwe",
+    "culture": "Bantu",
+    "religion": [
+      "Protestantism",
+      "Amatongo (HR)"
+    ],
+    "adjectives": "Herero",
+    "empireName": "Herero Empire",
+    "government": "Tribal Confederacy\nNomadic Horde",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Jacob_Morenga",
+      "body": "Born to a Herero mother and a Nama father, Jacob Morenga is considered to be one of the national heroes of Namibia, a key figure of resistance to the regime of German Southwest Africa. The leaders of the rebellion in the Herero and Namaqua War had a hard time controlling the multi-ethnic armies they were leading to attempt to expel the Germans - Morenga excelled at it. Out of his hidden fortress at Khauxaǃnas, he utilized the different fighting styles of both the aggressive Herero and the guerilla Namaqua so effectively that the Germans he was fighting branded him the Black Napoleon. Morenga came so close to expelling the Germans that a vote was forced in the Reichstag to immediately reinforce the colony.",
+      "title": "Jacob Morenga"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Herero_people",
+      "body": "The Herero are a Bantu ethnic group inhabiting parts of Southern Africa, primarily residing in Namibia. They speak Otjiherero, a Bantu language. There are also significant populations in Botswana and Angola, due to the 1904 to 1908 genocide of their people by the German Empire. Unlike most Bantu, who are primarily subsistence farmers, the Herero are traditionally pastoralists.",
+      "title": "The Herero"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Kill me if you must, but know that - even in my absence - my men will fight you to the last.\"",
+    "blessing": "\"Greetings, Jacob Morenga, revolutionary spirit of Namibia! You are truly a man ahead of your time. Thanks to your vision of broad African nationalism, which transcended the narrow ethnic loyalties that blinded your peers, you convinced the Herero and Namaqua peoples to put aside their differences and fight with you to protect your desert home from colonialism. Your expert use of guerrilla tactics, and your intense knowledge of the strengths and weaknesses of your multi-ethnic army, brought you tremendous success in battle against the settlers of German South West Africa. This strategic genius led for your allies and enemies alike to grant you great respect, your German adversaries even calling you \"the Black Napoleon.\" Although you ultimately failed in liberating your homeland, and South West Africa would not see total independence until nearly a century after your insurrection ended, history remembers you fondly as the creator of the Namibian national identity, and as the inspiration for generations of freedom fighters to come.\nOh great Herero hero, your people call out for you once again! Will you unite them as you did before, against the enemies of your home? Will you build a civilization that shall stand the test of time?\"",
+    "introduction": "\"You stand in the land of the Herero! I am Jacob Morenga, and I defend my brethren in these lands. Are you friend or foe?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Otjimbingwe",
+        "Okahandja",
+        "Okakarara",
+        "Omaruru",
+        "Otjikune",
+        "Aminuis",
+        "Ovitoto",
+        "Otjandjomboimwe",
+        "Otjiwarongo",
+        "Otjewe",
+        "Okahurimehi",
+        "Okandjira",
+        "Omugulugwombashe",
+        "Okangondo",
+        "Otjomuise",
+        "Epako",
+        "Otjikango",
+        "Okanduu",
+        "Otjivanda",
+        "Ezorongondo",
+        "Ombotozu",
+        "Otjinene",
+        "Okavisume",
+        "Otjitavi",
+        "Okaseta",
+        "Okazapamba",
+        "Omarasa",
+        "Ohamakari"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Maharero",
+        "Tjamuaha",
+        "Kavezeri",
+        "Kuaima",
+        "Vipuira",
+        "Vekuii",
+        "Tjiponda",
+        "Mutjinde",
+        "Tjinaani",
+        "Tjorozumo",
+        "Enzian"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Bantu Cultures",
+    "Civilizations with Male leaders",
+    "Namibia"
+  ],
+  "modSupport": {
+    "aa": true,
+    "uci": true,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "ynaemp": true,
+    "maplabels": true,
+    "civivtraits": true,
+    "ethnicunits": true,
+    "histreligions": true,
+    "enlightenmentera": false
+  },
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#550c1c",
+      "background": "#f3aa98"
+    },
+    "mapImage": "MapPNG_Herero.png",
+    "iconImage": "Herero.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Herero.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Herero.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_Morenga.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_Morenga.png",
+    "leaderSceneArtCredit": "Art by DMS"
+  },
+  "templateRefs": []
+}

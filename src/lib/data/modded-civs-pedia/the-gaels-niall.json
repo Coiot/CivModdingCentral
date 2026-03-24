@@ -1,0 +1,228 @@
+{
+  "id": "civ-the-gaels-niall",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T21:30:53.796Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": []
+  },
+  "slug": "the-gaels-niall",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=qpjnYLLfd44",
+      "title": "Rocky Road to Dublin",
+      "credit": "Unknown performer"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=FTgfhy8dpsc",
+      "title": "Caoineadh Cú Chulainn",
+      "credit": "Davy Spillane"
+    }
+  },
+  "title": "The Gaels",
+  "issues": [],
+  "leader": "Niall",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Gaels_(Niall)",
+    "lastUpdated": "31 October 2019",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1920972415",
+    "modFolderName": "",
+    "wikiPageTitle": "The Gaels"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "COF",
+      "role": "Leaderscreen"
+    },
+    {
+      "name": "Viregel",
+      "role": "Map"
+    },
+    {
+      "name": "JTitan",
+      "role": "Unit Model"
+    },
+    {
+      "name": "JFD",
+      "role": "Utilities"
+    },
+    {
+      "name": "KyteM",
+      "role": "Utilities"
+    },
+    {
+      "name": "Davy Spillane",
+      "role": "Peace Theme"
+    }
+  ],
+  "summary": "The Gaels led by Niall Noígíallach is a custom civilization by TopHatPaladin, with contributions from COF, Viregel, and JTitan.",
+  "uniques": [
+    {
+      "art": "IconPNG_Niall.png",
+      "body": "When upgrading a unit, gain {{Great Person Icon}} Great Writer points based on its Experience. Great Works of Writing increase the growth rate of cities where they are stored.",
+      "name": "Mythological Cycles",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Niall.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Fiann.png",
+      "body": "",
+      "name": "Fiann",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Fiann.png",
+      "bullets": [
+        "Grants {{Great Person Icon}} Great Writer points to the Capital when pillaging tile improvements, more if the tile contains a resource",
+        "May use enemy roads",
+        "May not pillage roads"
+      ],
+      "replaces": "Swordsman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Ringfort.png",
+      "body": "If Grant's Defense Expanded is active, replaces the Hillfort.",
+      "name": "Ringfort",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Ringfort.png",
+      "bullets": [
+        "Contains a {{Great Work Icon}} Great Work of Writing slot; when the slot is filled, grants +10 XP to newly trained units in its city",
+        "Carries over 10% of {{Food Icon}} Food when a Citizen is born"
+      ],
+      "replaces": "Walls",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Tara",
+    "culture": "Northern",
+    "religion": [
+      "Catholicism",
+      "Druidism (HR)"
+    ],
+    "adjectives": "Gaelic",
+    "empireName": "Gaelic Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Niall_of_the_Nine_Hostages",
+      "body": "Niall Noígíallach, known in English as Niall of the Nine Hostages, was an Irish king, who ruled at some point around 400 AD. He was the progenitor of the Uí Néill dynasties; his deeds are mostly attested through chronicles from centuries after his death, so although he was likely a historical or semi-historical figure, our accounts of his life are probably largely legendary.",
+      "title": "Niall"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Gaels",
+      "body": "The Gaels are a Celtic group centered in Ireland, and also present on Scotland and the Isle of Man. Per mythology, the Gaels are descended from Goídel Glas, whose father was one of the supposed constructors of the Tower of Babel; Goídel's descendants would move into Ireland, and gain control of it after defeating the gods in a battle of sorcery. Through DNA studies, we know the Gaels to have first arrived in Ireland around 2000 BC.",
+      "title": "The Gaels"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Alas, the best stories always have the saddest endings. Well fought, friend.\"",
+    "blessing": "\"Greetings, Niall Noígíallach, high king and prodigious ancestor of the Gaels! One of the most significant heroes to emerge from Gaelic myth, you outperformed your four half-brothers to prove yourself the most worthy successor to High King Eochaid, besting those who would seek to eliminate you from the succession. Your greatness as king was proven by the nine hostages that you were sent by your vassals, not just from throughout Ireland but all over the Celtic world. Nor do your deeds even end with your own death! The many Uí Néill dynasties, which claim descent from your sons, went on to hold some of the greatest kingships in Irish history.\nHigh King, your people still speak fondly of your legends, and dream of the day they can see your exploits in person. Can you bring about a world in which such glorious deeds are commonplace once more? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Well met! I am Niall Noígíallach, son of Eochaid, the High King of the Gaels. Can I consider you a friend?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Tara",
+        "Cruachan",
+        "Armagh",
+        "Emain Macha",
+        "Clochar",
+        "Knowth",
+        "Bruree",
+        "Faughart",
+        "Fenagh",
+        "Dromahair",
+        "Kells",
+        "Aileagh",
+        "Carnfree",
+        "Cashel",
+        "Duiblinn",
+        "Donegal",
+        "Tailtin",
+        "Kildare",
+        "Cuailgne",
+        "Kilkenny",
+        "Muine Mór",
+        "Granard",
+        "Rathkeltair",
+        "Faughan Hill",
+        "Oughterard",
+        "Mullaghmast",
+        "Crioch Rios",
+        "Ardagh",
+        "Kilmacrennan",
+        "Naas",
+        "Derry",
+        "Lurg"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Eochaid",
+        "Laidcenn",
+        "Brión",
+        "Fiachrae",
+        "Ailill",
+        "Fergus",
+        "Cairenn",
+        "Mongfind",
+        "Inne",
+        "Rignach"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Northern Cultures",
+    "Civilizations with Male leaders",
+    "Ireland"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#94aaff",
+      "background": "#16653f"
+    },
+    "mapImage": "Map_Gaels.png",
+    "iconImage": "Celtic.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Map_Gaels.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Celtic.png",
+    "mapImageCaption": "Map by Viregel",
+    "leaderSceneImage": "LS_Niall.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_Niall.png",
+    "leaderSceneArtCredit": "Art by COF"
+  },
+  "templateRefs": []
+}

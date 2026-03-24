@@ -9,6 +9,7 @@ const SAME_AS_URLS = ["https://discord.gg/yf8jUXf", "https://old.reddit.com/r/ci
 
 import { BUILTIN_MODDED_CIVS } from "../data/moddedCivsPedia.js";
 import { groupPediaCategories, groupPediaCollections, normalizePediaEntry } from "../utils/moddedCivsPedia.js";
+import { sortPediaEntries } from "../utils/pediaSorting.js";
 import PEDIA_AUTHOR_PROFILES from "../data/pediaAuthorProfiles.json";
 
 const ROUTE_SEO = {
@@ -242,7 +243,12 @@ const BUILTIN_PEDIA_AUTHORS = (() => {
 			});
 		}
 	}
-	return [...bySlug.values()].sort((left, right) => left.name.localeCompare(right.name));
+	return [...bySlug.values()]
+		.map((author) => ({
+			...author,
+			entries: sortPediaEntries(author.entries),
+		}))
+		.sort((left, right) => left.name.localeCompare(right.name));
 })();
 
 function findPediaEntryByPath(pathname) {

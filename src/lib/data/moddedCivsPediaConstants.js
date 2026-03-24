@@ -1,0 +1,1 @@
+export const MODDED_CIVS_PEDIA_FORMAT_VERSION = 1;

@@ -1,6 +1,7 @@
 import { readFile, readdir } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { sortPediaEntries } from "../../src/lib/utils/pediaSorting.js";
 
 const ROOT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const PEDIA_DIR = resolve(ROOT_DIR, "src/lib/data/modded-civs-pedia");
@@ -156,7 +157,10 @@ export async function buildPediaRouteManifest() {
 					.filter(Boolean)
 					.sort()
 					.at(-1) || today,
-			collection,
+			collection: {
+				...collection,
+				entries: sortPediaEntries(collection.entries),
+			},
 		}))
 		.sort((left, right) => left.path.localeCompare(right.path));
 
@@ -178,7 +182,10 @@ export async function buildPediaRouteManifest() {
 					.filter(Boolean)
 					.sort()
 					.at(-1) || today,
-			category,
+			category: {
+				...category,
+				entries: sortPediaEntries(category.entries),
+			},
 		}))
 		.sort((left, right) => left.path.localeCompare(right.path));
 
@@ -208,7 +215,10 @@ export async function buildPediaRouteManifest() {
 					.filter(Boolean)
 					.sort()
 					.at(-1) || today,
-			author,
+			author: {
+				...author,
+				entries: sortPediaEntries(author.entries),
+			},
 		}))
 		.sort((left, right) => left.path.localeCompare(right.path));
 
