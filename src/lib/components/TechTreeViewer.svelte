@@ -26,7 +26,7 @@
 		"Natural History": ["Archaeology"],
 		Surveyor: ["Adventurer"],
 		"Ship of the Line": ["Shipoftheline"],
-		Skirmisher: ["Skirmisher ee"],
+		Skirmisher: ["Skirmisher_ee"],
 		"Summer Palace": ["Summerpalace"],
 		"Smithsonian Institute": ["Smithsonianinstitute"],
 		"Smithsonian Institution": ["Smithsonianinstitute"],

@@ -57,9 +57,9 @@
 		{ key: "FLAVOR_AIR", label: "Air", defaultValue: 3 },
 		{ key: "FLAVOR_EXPANSION", label: "Expansion", defaultValue: 4 },
 		{ key: "FLAVOR_GROWTH", label: "Growth", defaultValue: 7 },
-		{ key: "FLAVOR_TILE_IMPROVEMENT", label: "Tile improvement", defaultValue: 6 },
-		{ key: "FLAVOR_INFRASTRUCTURE", label: "Infrastructure", defaultValue: 6 },
-		{ key: "FLAVOR_PRODUCTION", label: "Production", defaultValue: 6 },
+		{ key: "FLAVOR_TILE_IMPROVEMENT", label: "Tile improvement", defaultValue: 9 },
+		{ key: "FLAVOR_INFRASTRUCTURE", label: "Infrastructure", defaultValue: 4 },
+		{ key: "FLAVOR_PRODUCTION", label: "Production", defaultValue: 4 },
 		{ key: "FLAVOR_GOLD", label: "Gold", defaultValue: 5 },
 		{ key: "FLAVOR_SCIENCE", label: "Science", defaultValue: 5 },
 		{ key: "FLAVOR_CULTURE", label: "Culture", defaultValue: 9 },
@@ -67,7 +67,7 @@
 		{ key: "FLAVOR_GREAT_PEOPLE", label: "Great people", defaultValue: 10 },
 		{ key: "FLAVOR_WONDER", label: "Wonder", defaultValue: 8 },
 		{ key: "FLAVOR_RELIGION", label: "Religion", defaultValue: 9 },
-		{ key: "FLAVOR_DIPLOMACY", label: "Diplomacy", defaultValue: 6 },
+		{ key: "FLAVOR_DIPLOMACY", label: "Diplomacy", defaultValue: 5 },
 		{ key: "FLAVOR_SPACESHIP", label: "Spaceship", defaultValue: 3 },
 		{ key: "FLAVOR_WATER_CONNECTION", label: "Water connection", defaultValue: 2 },
 		{ key: "FLAVOR_NUKE", label: "Nuke", defaultValue: 1 },
@@ -97,14 +97,14 @@
 		},
 		{
 			key: "expansion",
-			label: "empire build-out",
+			label: "empire build out",
 			description: "growth, expansion, land development, and infrastructure",
 			flavors: ["FLAVOR_EXPANSION", "FLAVOR_GROWTH", "FLAVOR_TILE_IMPROVEMENT", "FLAVOR_INFRASTRUCTURE", "FLAVOR_PRODUCTION", "FLAVOR_HAPPINESS"],
 		},
 		{
 			key: "science",
 			label: "science pacing",
-			description: "science growth and long-term tech acceleration",
+			description: "science growth and long term tech acceleration",
 			flavors: ["FLAVOR_SCIENCE", "FLAVOR_SPACESHIP"],
 		},
 		{
@@ -1773,20 +1773,47 @@
 		return `${values.slice(0, -1).join(", ")}, and ${values.at(-1)}`;
 	}
 
+	function rankFlavorSubset(keys) {
+		return rankEntries(
+			keys.map((key) => ({
+				key,
+				label: LEADER_FLAVOR_FIELDS.find((field) => field.key === key)?.label.toLowerCase() || titleFromKey(key).toLowerCase(),
+				value: normalizedLeaderFlavorValues[key] || 0,
+			})),
+		);
+	}
+
+	function leadingFlavorPairText(entries, threshold = 2) {
+		const [first, second, third] = entries;
+		if (!first || !second) {
+			return "";
+		}
+		const pairGap = first.value - second.value;
+		const restGap = second.value - (third?.value ?? 0);
+		if (pairGap <= 1 && restGap >= threshold) {
+			return `${first.label} and ${second.label}`;
+		}
+		return "";
+	}
+
+	function extremeFlavorClauses(keys) {
+		const clauses = [];
+		for (const key of keys) {
+			const label = LEADER_FLAVOR_FIELDS.find((field) => field.key === key)?.label.toLowerCase() || titleFromKey(key).toLowerCase();
+			const value = normalizedLeaderFlavorValues[key] || 0;
+			if (value >= 8) {
+				clauses.push(`${label} is especially high`);
+			} else if (value <= 2) {
+				clauses.push(`${label} is especially low`);
+			}
+		}
+		return clauses;
+	}
+
 	function buildLeaderPlaystyleSummary() {
 		const personality = normalizedLeaderPersonalityValues;
 		const majorApproaches = rankEntries(LEADER_MAJOR_APPROACH_FIELDS.map((field) => ({ key: field.key, label: field.label.toLowerCase(), value: normalizedLeaderMajorBiasValues[field.key] })));
 		const minorApproaches = rankEntries(LEADER_MINOR_APPROACH_FIELDS.map((field) => ({ key: field.key, label: field.label.toLowerCase(), value: normalizedLeaderMinorBiasValues[field.key] })));
-		const topFlavors = rankEntries(LEADER_FLAVOR_FIELDS.map((field) => ({ key: field.key, label: field.label.toLowerCase(), value: normalizedLeaderFlavorValues[field.key] })))
-			.filter((entry) => entry.value >= 6)
-			.slice(0, 4);
-		const flavorGroups = rankEntries(
-			LEADER_FLAVOR_GROUPS.map((group) => ({
-				...group,
-				value: group.flavors.reduce((total, key) => total + (normalizedLeaderFlavorValues[key] || 0), 0),
-			})),
-		);
-		const topGroups = flavorGroups.slice(0, 2);
 
 		const diplomacyScores = [
 			{
@@ -1844,7 +1871,7 @@
 
 		const rivalryParts = [];
 		if (personality.WarmongerHate >= 7) {
-			rivalryParts.push("It reacts sharply to warmongers and conquest-heavy neighbors");
+			rivalryParts.push("It reacts sharply to warmongers and conquest heavy neighbors");
 		} else if (personality.WarmongerHate <= 3) {
 			rivalryParts.push("it is comparatively tolerant of conquest and less likely to care about warmongering");
 		}
@@ -1867,7 +1894,7 @@
 		let cityStates = "With city-states, it mostly treats them as secondary unless they become strategically useful.";
 		const topMinor = minorApproaches[0];
 		if (topMinor?.key === "MINOR_CIV_APPROACH_CONQUEST" || topMinor?.key === "MINOR_CIV_APPROACH_BULLY") {
-			cityStates = "With city-states, it is more likely to pressure, bully, or absorb them than invest in long-term protection.";
+			cityStates = "With city-states, it is more likely to pressure, bully, or absorb them than invest in long term protection.";
 		} else if (topMinor?.key === "MINOR_CIV_APPROACH_PROTECTIVE" || topMinor?.key === "MINOR_CIV_APPROACH_FRIENDLY") {
 			cityStates = "With city-states, it prefers protection, influence, and alliance leverage over outright conquest.";
 		}
@@ -1875,13 +1902,142 @@
 			cityStates += " It will also compete actively when another civ starts dominating that space.";
 		}
 
-		let priorities = "On the map, its decisions are fairly mixed rather than dominated by one clear theme.";
-		if (topGroups.length) {
-			priorities = `On the map, its strongest gameplay priorities are ${joinPlainEnglish(topGroups.map((group) => group.description))}.`;
+		let priorities = [];
+		const offense = normalizedLeaderFlavorValues.FLAVOR_OFFENSE || 0;
+		const defense = normalizedLeaderFlavorValues.FLAVOR_DEFENSE || 0;
+		const offenseDelta = offense - defense;
+		const expansion = normalizedLeaderFlavorValues.FLAVOR_EXPANSION || 0;
+		const growth = normalizedLeaderFlavorValues.FLAVOR_GROWTH || 0;
+		const expansionDelta = expansion - growth;
+		const tileImprovement = normalizedLeaderFlavorValues.FLAVOR_TILE_IMPROVEMENT || 0;
+		const infrastructure = normalizedLeaderFlavorValues.FLAVOR_INFRASTRUCTURE || 0;
+		const developmentDelta = tileImprovement - infrastructure;
+		const unitRoleRank = rankFlavorSubset(["FLAVOR_RECON", "FLAVOR_RANGED", "FLAVOR_MOBILE", "FLAVOR_NAVAL", "FLAVOR_AIR"]);
+		const economyRank = rankFlavorSubset(["FLAVOR_PRODUCTION", "FLAVOR_GOLD", "FLAVOR_SCIENCE", "FLAVOR_CULTURE"]);
+		const roleLeader = unitRoleRank[0];
+		const roleRunnerUp = unitRoleRank[1];
+		const roleMargin = (roleLeader?.value || 0) - (roleRunnerUp?.value || 0);
+		const roleLeadingPair = leadingFlavorPairText(unitRoleRank);
+		const economyLeader = economyRank[0];
+		const economyRunnerUp = economyRank[1];
+		const economyMargin = (economyLeader?.value || 0) - (economyRunnerUp?.value || 0);
+		const economyLeadingPair = leadingFlavorPairText(economyRank);
+		const priorityParts = [["On the map, the important read is which competing flavors clear their rivals, not just which raw numbers happen to be high."]];
+
+		if (offenseDelta >= 3) {
+			priorityParts[0].push("Its offense value clearly beats defense, so it should be more willing to press attacks than sit back and wait.");
+		} else if (offenseDelta <= -3) {
+			priorityParts[0].push("Its defense value clearly beats offense, so it should lean more toward holding ground and reacting to threats than starting wars.");
+		} else {
+			priorityParts[0].push("Its offense and defense values are close, so those two tendencies mostly balance each other out instead of one clearly driving the war plan.");
 		}
-		if (topFlavors.length) {
-			priorities += ` The sharpest individual pulls are ${joinPlainEnglish(topFlavors.map((entry) => entry.label))}.`;
+
+		if (roleLeader && roleRunnerUp) {
+			if (roleLeadingPair) {
+				priorityParts[0].push(
+					`Among recon, ranged, mobile, naval, and air roles, ${roleLeadingPair} are both ahead of the rest, so those two unit styles should get more priority than the other military lanes.`,
+				);
+			} else if (roleMargin >= 3) {
+				priorityParts[0].push(
+					`Among recon, ranged, mobile, naval, and air roles, ${roleLeader.label} stands clearly above the rest, so that unit style should pull the army composition hardest.`,
+				);
+			} else if (roleMargin >= 1) {
+				priorityParts[0].push(
+					`Among the unit role flavors, ${roleLeader.label} leads but ${roleRunnerUp.label} stays close, so the CPU should favor ${roleLeader.label} while still mixing in some ${roleRunnerUp.label}.`,
+				);
+			} else {
+				priorityParts[0].push(
+					`Its unit-role flavors are tightly packed, with ${roleLeader.label} and ${roleRunnerUp.label} effectively tied, so no single combat style should dominate on its own.`,
+				);
+			}
 		}
+
+		priorityParts.push([]);
+
+		if (expansionDelta >= 3) {
+			priorityParts[1].push("Expansion beats growth by a real margin, so it should keep founding new cities longer instead of staying compact.");
+		} else if (expansionDelta <= -3) {
+			priorityParts[1].push("Growth beats expansion by a real margin, so it should be more inclined to stay tighter and invest in developing existing cities.");
+		} else {
+			priorityParts[1].push("Expansion and growth are close enough that they mostly cancel each other out, so city count and city development should stay relatively balanced.");
+		}
+
+		if (developmentDelta >= 3) {
+			priorityParts[1].push("Tile improvement clears infrastructure, so it should lean more toward worker focused land development than constructing buildings in cities.");
+		} else if (developmentDelta <= -3) {
+			priorityParts[1].push("Infrastructure clears tile improvement, so it should lean more toward building out cities than maximizing worker improvements first.");
+		} else {
+			priorityParts[1].push("Tile improvement and infrastructure are close, so neither side should overpower the other in how it develops cities.");
+		}
+
+		priorityParts.push([]);
+
+		if (economyLeader && economyRunnerUp) {
+			if (economyLeadingPair) {
+				priorityParts[2].push(
+					`Within production, gold, science, and culture, ${economyLeadingPair} are both clearly above the rest, so those two should shape the economy more than the other output priorities.`,
+				);
+			} else if (economyMargin >= 3) {
+				priorityParts[2].push(`Within production, gold, science, and culture, ${economyLeader.label} is the clearest economic priority and should suppress the others most strongly.`);
+			} else if (economyMargin >= 1) {
+				priorityParts[2].push(
+					`Within the core economy flavors, ${economyLeader.label} leads with ${economyRunnerUp.label} as the nearest backup, so the economy should tilt in that direction without becoming one note.`,
+				);
+			} else {
+				priorityParts[2].push(`Its production, gold, science, and culture values are tightly bunched, so its economic plan should stay broadly mixed rather than being dominated by one lane.`);
+			}
+		}
+
+		const combatExtremeClauses = extremeFlavorClauses(["FLAVOR_CITY_DEFENSE", "FLAVOR_MILITARY_TRAINING"]);
+		if (combatExtremeClauses.length) {
+			priorityParts.push([`Outside the main combat-role rivalry, ${joinPlainEnglish(combatExtremeClauses)}.`]);
+		}
+
+		const landTradeRoute = normalizedLeaderFlavorValues.FLAVOR_I_LAND_TRADE_ROUTE || 0;
+		const seaTradeRoute = normalizedLeaderFlavorValues.FLAVOR_I_SEA_TRADE_ROUTE || 0;
+		const navalTradeExtremeClauses = extremeFlavorClauses([
+			"FLAVOR_NAVAL_RECON",
+			"FLAVOR_NAVAL_GROWTH",
+			"FLAVOR_NAVAL_TILE_IMPROVEMENT",
+			"FLAVOR_WATER_CONNECTION",
+			"FLAVOR_AIR_CARRIER",
+			"FLAVOR_I_TRADE_ORIGIN",
+			"FLAVOR_I_TRADE_DESTINATION",
+		]);
+		if (landTradeRoute - seaTradeRoute >= 3) {
+			priorityParts.push([
+				"Land trade route clearly beats sea trade route, so commercial routing should lean more toward overland trade than maritime trade.",
+				...(navalTradeExtremeClauses.length ? [`Outside that route split, ${joinPlainEnglish(navalTradeExtremeClauses)}.`] : []),
+			]);
+		} else if (seaTradeRoute - landTradeRoute >= 3) {
+			priorityParts.push([
+				"Sea trade route clearly beats land trade route, so commercial routing should lean more toward maritime trade than overland trade.",
+				...(navalTradeExtremeClauses.length ? [`Outside that route split, ${joinPlainEnglish(navalTradeExtremeClauses)}.`] : []),
+			]);
+		} else {
+			priorityParts.push([
+				"Land and sea trade route values are fairly close, so neither route type should completely crowd out the other.",
+				...(navalTradeExtremeClauses.length ? [`Outside that route split, ${joinPlainEnglish(navalTradeExtremeClauses)}.`] : []),
+			]);
+		}
+
+		const otherExtremeClauses = extremeFlavorClauses([
+			"FLAVOR_HAPPINESS",
+			"FLAVOR_GREAT_PEOPLE",
+			"FLAVOR_WONDER",
+			"FLAVOR_ARCHAEOLOGY",
+			"FLAVOR_RELIGION",
+			"FLAVOR_DIPLOMACY",
+			"FLAVOR_ESPIONAGE",
+			"FLAVOR_SPACESHIP",
+			"FLAVOR_AIRLIFT",
+			"FLAVOR_NUKE",
+			"FLAVOR_USE_NUKE",
+		]);
+		if (otherExtremeClauses.length) {
+			priorityParts.push([`Other standout flavor values: ${joinPlainEnglish(otherExtremeClauses)}.`]);
+		}
+		priorities = priorityParts.map((part) => part.join(" ")).filter(Boolean);
 
 		const toneParts = [];
 		if (personality.Neediness >= 7) {
@@ -1905,7 +2061,7 @@
 			tone = `Outside the main strategy, ${joinPlainEnglish(toneParts)}.`;
 		}
 
-		return [overview, diplomacy, cityStates, priorities, tone].filter(Boolean);
+		return [overview, diplomacy, cityStates, ...priorities, tone].filter(Boolean);
 	}
 
 	function buildInteractiveLeaderExample() {
@@ -2384,7 +2540,9 @@
 		<section class="wizard-analysis-preview" aria-label="Leader behavior summary">
 			<div class="wizard-analysis-card">
 				<span class="wizard-analysis-eyebrow uppercase">How This CPU May Play Like</span>
-				<span class="wizard-analysis-note">Note: This is a simplified plain output based on the numbers, not a full simulation of the game’s behavior code.</span>
+				<span class="wizard-analysis-note"
+					>Note: This is a simplified plain output based on the numbers relative to each setting and not a full accurate simulation of the game’s behavior code.</span
+				>
 				{#each leaderPlaystyleSummary as paragraph (`leader-playstyle-${paragraph}`)}
 					<p>{paragraph}</p>
 				{/each}

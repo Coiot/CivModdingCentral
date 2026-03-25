@@ -90,7 +90,7 @@
 				{
 					href: "/map-viewer",
 					label: "Map Viewer",
-					description: "Inspect community maps down to each tile visually for mod support or CPU-only game setup.",
+					description: "Inspect community maps down to each tile visually for mod support or CPU only game setup.",
 				},
 				{
 					href: "/religion-support",

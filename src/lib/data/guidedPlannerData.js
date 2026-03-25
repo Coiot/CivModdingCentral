@@ -81,7 +81,7 @@ export const tutorialTracks = [
 	},
 	{
 		id: "cpu-only-setup",
-		label: "CPU-Only Game Setup",
+		label: "CPU Only Game Setup",
 		status: "Coming Soon",
 		description: "Setup for players and testers who want heavily modded observer only environments.",
 		href: "/tutorials/cpu-only-game-setup",
@@ -184,7 +184,7 @@ export const siteResourceGroups = [
 				label: "Map Viewer",
 				href: "/map-viewer",
 				status: "Live",
-				description: "Helper for True Starting Location (TSL) and CPU-only game setup.",
+				description: "Helper for True Starting Location (TSL) and CPU only game setup.",
 				kind: "Viewer",
 			},
 			{
@@ -589,7 +589,7 @@ export const plannerDeliverables = [
 		weight: 6,
 		summary: "Create the matching icon work for the second unique component.",
 		doneLabel: "The second unique's icon fits the atlas set and communicates its role clearly.",
-		focus: "If the component is late-game or niche, favor recognition over decorative detail.",
+		focus: "If the component is late game or niche, favor recognition over decorative detail.",
 		hint: "Follow the same icon guidelines as the UA and UU icons, unless it is a unique improvement that requires a different style.",
 		advice: "If the UC2 icon is unclear, borrow visual cues from the base building, unit, or improvement so players understand it faster.",
 		dependencies: ["art-defines"],
