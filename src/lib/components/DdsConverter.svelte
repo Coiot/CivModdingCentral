@@ -204,7 +204,7 @@
 		unit_alpha_bundle: { atlasType: "alpha", sourceSize: 32, sizeOptions: [32], fixedSizes: true, showPreset: false, showSizePicker: false, defaultRows: 1, defaultCols: 1, minSelected: 1 },
 		civ_alpha_bundle: {
 			atlasType: "alpha",
-			sourceSize: 32,
+			sourceSize: 256,
 			sizeOptions: [24, 32, 48, 64, 128, 256],
 			fixedSizes: false,
 			showPreset: false,
@@ -216,7 +216,7 @@
 		},
 		religion_alpha_bundle: {
 			atlasType: "alpha",
-			sourceSize: 32,
+			sourceSize: 128,
 			sizeOptions: [16, 24, 32, 48, 64, 80, 128],
 			fixedSizes: false,
 			showPreset: false,

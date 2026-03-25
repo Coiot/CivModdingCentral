@@ -3227,7 +3227,7 @@
 								<img class="pedia-catalog-map-preview-image" src="/MapPreview.jpg" alt="Preview of Lacsiraxariscal's TSL map" loading="lazy" />
 								<span class="pedia-catalog-map-preview-scrim" aria-hidden="true"></span>
 								<span class="pedia-catalog-map-preview-copy stack quarter">
-									<strong>Click anywhere to open the Goggle map</strong>
+									<strong>Click anywhere to open the Google map</strong>
 								</span>
 							</button>
 						{/if}
