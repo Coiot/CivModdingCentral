@@ -33,6 +33,7 @@
 	const PEDIA_BASE_PATH = "/modded-civs-pedia";
 	const CATALOG_MAP_VIEW_URL = "https://www.google.com/maps/d/u/0/viewer?mid=1bfxc1WS-cwFqfKmfeNcNir6z5Hs&ll=-3.81666561775622e-14%2C108.23139769111205&z=1&client=safari";
 	const CATALOG_MAP_EMBED_URL = "https://www.google.com/maps/d/embed?mid=1bfxc1WS-cwFqfKmfeNcNir6z5Hs&ll=-3.81666561775622e-14%2C108.23139769111205&z=1";
+	const LOCAL_EDITOR_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
 
 	let { routePath = PEDIA_BASE_PATH, navigate = null, canEdit = false, authUser = null, authAccessToken = "", authEnabled = false } = $props();
 
@@ -65,6 +66,8 @@
 	let converterStatus = $state("");
 	let converterIssues = $state([]);
 	let entryEditorOpen = $state(false);
+	let entryEditorMode = $state("form");
+	let entryEditorSection = $state("core");
 	let entryEditorDraft = $state("");
 	let collectionEditorOpen = $state(false);
 	let collectionCreatorOpen = $state(false);
@@ -107,6 +110,8 @@
 	let entryStatus = $state("");
 	let entrySavedAt = $state(0);
 	let entryEditorBaseline = $state("");
+	let entryFormDraft = $state(null);
+	let entryFormBaseline = $state("");
 	let deletedEntryIds = $state([]);
 	let folderInputEl = $state();
 	let jsonInputEl = $state();
@@ -121,6 +126,7 @@
 	let categoryEditorBaseline = $state("");
 	let statusClock = $state(Date.now());
 	const cloudPediaConfigured = $derived(Boolean(authEnabled) && hasPediaCloudConfig());
+	const isLocalProjectEditor = $derived.by(() => typeof window !== "undefined" && LOCAL_EDITOR_HOSTS.has(String(window.location.hostname || "").toLowerCase()));
 	const authUsernameKey = $derived(authorProfileKey(String(authUser?.username || "").trim()));
 
 	function normalizeSearch(value) {
@@ -276,6 +282,307 @@
 		return serializeValue((categories || []).map((category) => normalizeCategoryValue(category)));
 	}
 
+	function multilineListText(items) {
+		return (items || [])
+			.map((item) => String(item || "").trim())
+			.filter(Boolean)
+			.join("\n");
+	}
+
+	function multilineListValues(value, normalize = (item) => String(item || "").trim()) {
+		return normalizeMultilineText(value)
+			.split("\n")
+			.map((item) => normalize(item))
+			.filter(Boolean);
+	}
+
+	function creditLinesText(credits) {
+		return (credits || [])
+			.map((credit) => {
+				const name = String(credit?.name || "").trim();
+				const role = String(credit?.role || "").trim();
+				return name && role ? `${name} | ${role}` : name || role;
+			})
+			.filter(Boolean)
+			.join("\n");
+	}
+
+	function parseCreditLines(value) {
+		return normalizeMultilineText(value)
+			.split("\n")
+			.map((line) => {
+				const parts = String(line || "")
+					.split("|")
+					.map((part) => String(part || "").trim());
+				const name = parts[0] || "";
+				const role = parts.slice(1).join(" | ").trim();
+				return {
+					name,
+					role,
+				};
+			})
+			.filter((credit) => credit.name || credit.role);
+	}
+
+	function blankEntryUniqueDraft() {
+		return {
+			slot: "",
+			name: "",
+			replaces: "",
+			art: "",
+			artUrl: "",
+			artCredit: "",
+			body: "",
+			civilopedia: "",
+			bulletsText: "",
+			footnotesText: "",
+		};
+	}
+
+	function blankEntryNameListDraft() {
+		return {
+			title: "",
+			itemsText: "",
+		};
+	}
+
+	function uniqueDraftFromEntry(unique) {
+		return {
+			slot: String(unique?.slot || "").trim(),
+			name: String(unique?.name || "").trim(),
+			replaces: String(unique?.replaces || "").trim(),
+			art: String(unique?.art || "").trim(),
+			artUrl: String(unique?.artUrl || "").trim(),
+			artCredit: String(unique?.artCredit || "").trim(),
+			body: normalizeMultilineText(unique?.body || "").trim(),
+			civilopedia: normalizeMultilineText(unique?.civilopedia || "").trim(),
+			bulletsText: multilineListText(unique?.bullets || []),
+			footnotesText: multilineListText(unique?.footnotes || []),
+		};
+	}
+
+	function nameListDraftFromEntry(list) {
+		return {
+			title: String(list?.title || "").trim(),
+			itemsText: multilineListText(list?.items || []),
+		};
+	}
+
+	function createEntryFormDraft(entry) {
+		const normalized = normalizePediaEntry(entry);
+		const supportKeys = [...new Set([...Object.keys(MOD_SUPPORT_LABELS), ...Object.keys(normalized.modSupport || {})])];
+		return {
+			title: normalized.title,
+			leader: normalized.leader,
+			summary: normalizeMultilineText(normalized.summary || "").trim(),
+			authorsText: multilineListText(normalized.authors),
+			wikiPageTitle: String(normalized.source?.wikiPageTitle || "").trim(),
+			wikiUrl: String(normalized.source?.wikiUrl || "").trim(),
+			workshopUrl: String(normalized.source?.workshopUrl || "").trim(),
+			directDownload: String(normalized.source?.directDownload || "").trim(),
+			version: String(normalized.source?.version || "").trim(),
+			lastUpdated: String(normalized.source?.lastUpdated || "").trim(),
+			modFolderName: String(normalized.source?.modFolderName || "").trim(),
+			empireName: String(normalized.identity?.empireName || "").trim(),
+			capital: String(normalized.identity?.capital || "").trim(),
+			culture: String(normalized.identity?.culture || "").trim(),
+			governmentText: multilineListText(normalized.identity?.government || []),
+			bias: String(normalized.identity?.bias || "").trim(),
+			adjectives: String(normalized.identity?.adjectives || "").trim(),
+			mapLabelsLanguage: String(normalized.identity?.mapLabelsLanguage || "").trim(),
+			religionText: multilineListText(normalized.identity?.religion || []),
+			requiredContentText: multilineListText(normalized.identity?.requiredContent || []),
+			iconImageUrl: String(normalized.presentation?.iconImageUrl || "").trim(),
+			iconImage: String(normalized.presentation?.iconImage || "").trim(),
+			mapImageUrl: String(normalized.presentation?.mapImageUrl || "").trim(),
+			mapImage: String(normalized.presentation?.mapImage || "").trim(),
+			mapImageCaption: String(normalized.presentation?.mapImageCaption || "").trim(),
+			leaderSceneImageUrl: String(normalized.presentation?.leaderSceneImageUrl || "").trim(),
+			leaderSceneImage: String(normalized.presentation?.leaderSceneImage || "").trim(),
+			leaderSceneArtCredit: String(normalized.presentation?.leaderSceneArtCredit || "").trim(),
+			backgroundColor: String(normalized.presentation?.colors?.background || "").trim(),
+			iconColor: String(normalized.presentation?.colors?.icon || "").trim(),
+			overviewCivilizationTitle: String(normalized.overview?.civilization?.title || "").trim(),
+			overviewCivilizationBody: normalizeMultilineText(normalized.overview?.civilization?.body || "").trim(),
+			overviewLeaderTitle: String(normalized.overview?.leader?.title || "").trim(),
+			overviewLeaderBody: normalizeMultilineText(normalized.overview?.leader?.body || "").trim(),
+			dawnBlessing: normalizeMultilineText(normalized.dawnOfMan?.blessing || "").trim(),
+			dawnIntroduction: normalizeMultilineText(normalized.dawnOfMan?.introduction || "").trim(),
+			dawnDefeat: normalizeMultilineText(normalized.dawnOfMan?.defeat || "").trim(),
+			categoriesText: multilineListText(normalized.categories || []),
+			creditsText: creditLinesText(normalized.credits || []),
+			navTemplate: String(normalized.navTemplate || "").trim(),
+			musicPeaceTitle: String(normalized.music?.peace?.title || "").trim(),
+			musicPeaceCredit: String(normalized.music?.peace?.credit || "").trim(),
+			musicPeaceUrl: String(normalized.music?.peace?.url || "").trim(),
+			musicWarTitle: String(normalized.music?.war?.title || "").trim(),
+			musicWarCredit: String(normalized.music?.war?.credit || "").trim(),
+			musicWarUrl: String(normalized.music?.war?.url || "").trim(),
+			uniques: (normalized.uniques || []).map((unique) => uniqueDraftFromEntry(unique)),
+			nameLists: (normalized.nameLists || []).map((list) => nameListDraftFromEntry(list)),
+			modSupport: Object.fromEntries(supportKeys.map((key) => [key, Boolean(normalized.modSupport?.[key])])),
+		};
+	}
+
+	function serializeEntryFormDraft(form) {
+		return serializeValue({
+			...(form || {}),
+			uniques: (form?.uniques || []).map((unique) => ({
+				slot: String(unique?.slot || "").trim(),
+				name: String(unique?.name || "").trim(),
+				replaces: String(unique?.replaces || "").trim(),
+				art: String(unique?.art || "").trim(),
+				artUrl: String(unique?.artUrl || "").trim(),
+				artCredit: String(unique?.artCredit || "").trim(),
+				body: normalizeMultilineText(unique?.body || "").trim(),
+				civilopedia: normalizeMultilineText(unique?.civilopedia || "").trim(),
+				bulletsText: normalizeMultilineText(unique?.bulletsText || "").trim(),
+				footnotesText: normalizeMultilineText(unique?.footnotesText || "").trim(),
+			})),
+			nameLists: (form?.nameLists || []).map((list) => ({
+				title: String(list?.title || "").trim(),
+				itemsText: normalizeMultilineText(list?.itemsText || "").trim(),
+			})),
+			modSupport: Object.fromEntries(
+				Object.entries(form?.modSupport || {})
+					.map(([key, value]) => [key, Boolean(value)])
+					.sort(([left], [right]) => left.localeCompare(right)),
+			),
+		});
+	}
+
+	function updateEntryFormColor(field, value) {
+		if (!entryFormDraft) {
+			return;
+		}
+		const next = isValidHexColor(value) ? sanitizeHexColor(value) : String(value || "").trim();
+		entryFormDraft[field] = next;
+	}
+
+	function addEntryFormNameList() {
+		if (!entryFormDraft) {
+			return;
+		}
+		entryFormDraft.nameLists = [...(entryFormDraft.nameLists || []), blankEntryNameListDraft()];
+	}
+
+	function removeEntryFormNameList(index) {
+		if (!entryFormDraft) {
+			return;
+		}
+		entryFormDraft.nameLists = (entryFormDraft.nameLists || []).filter((_, itemIndex) => itemIndex !== index);
+	}
+
+	function entryFromFormDraft(form, fallbackEntry = null) {
+		const base = normalizePediaEntry(fallbackEntry || {});
+		return normalizePediaEntry({
+			...base,
+			title: String(form?.title || "").trim(),
+			leader: String(form?.leader || "").trim(),
+			summary: normalizeMultilineText(form?.summary || "").trim(),
+			authors: multilineListValues(form?.authorsText),
+			source: {
+				...base.source,
+				wikiPageTitle: String(form?.wikiPageTitle || "").trim(),
+				wikiUrl: String(form?.wikiUrl || "").trim(),
+				workshopUrl: String(form?.workshopUrl || "").trim(),
+				directDownload: String(form?.directDownload || "").trim(),
+				version: String(form?.version || "").trim(),
+				lastUpdated: String(form?.lastUpdated || "").trim(),
+				modFolderName: String(form?.modFolderName || "").trim(),
+			},
+			identity: {
+				...base.identity,
+				empireName: String(form?.empireName || "").trim(),
+				capital: String(form?.capital || "").trim(),
+				culture: String(form?.culture || "").trim(),
+				government: multilineListValues(form?.governmentText),
+				bias: String(form?.bias || "").trim(),
+				adjectives: String(form?.adjectives || "").trim(),
+				mapLabelsLanguage: String(form?.mapLabelsLanguage || "").trim(),
+				religion: multilineListValues(form?.religionText),
+				requiredContent: multilineListValues(form?.requiredContentText),
+			},
+			presentation: {
+				...base.presentation,
+				iconImage: String(form?.iconImage || "").trim(),
+				iconImageUrl: String(form?.iconImageUrl || "").trim(),
+				mapImage: String(form?.mapImage || "").trim(),
+				mapImageUrl: String(form?.mapImageUrl || "").trim(),
+				mapImageCaption: String(form?.mapImageCaption || "").trim(),
+				leaderSceneImage: String(form?.leaderSceneImage || "").trim(),
+				leaderSceneImageUrl: String(form?.leaderSceneImageUrl || "").trim(),
+				leaderSceneArtCredit: String(form?.leaderSceneArtCredit || "").trim(),
+				colors: {
+					...base.presentation.colors,
+					background: String(form?.backgroundColor || "").trim(),
+					icon: String(form?.iconColor || "").trim(),
+				},
+			},
+			overview: {
+				civilization: {
+					...base.overview.civilization,
+					title: String(form?.overviewCivilizationTitle || "").trim(),
+					body: normalizeMultilineText(form?.overviewCivilizationBody || "").trim(),
+				},
+				leader: {
+					...base.overview.leader,
+					title: String(form?.overviewLeaderTitle || "").trim(),
+					body: normalizeMultilineText(form?.overviewLeaderBody || "").trim(),
+				},
+			},
+			dawnOfMan: {
+				...base.dawnOfMan,
+				blessing: normalizeMultilineText(form?.dawnBlessing || "").trim(),
+				introduction: normalizeMultilineText(form?.dawnIntroduction || "").trim(),
+				defeat: normalizeMultilineText(form?.dawnDefeat || "").trim(),
+			},
+			uniques: (form?.uniques || [])
+				.map((unique, index) => ({
+					slot: String(unique?.slot || "").trim(),
+					name: String(unique?.name || "").trim(),
+					replaces: String(unique?.replaces || "").trim(),
+					art: String(unique?.art || "").trim(),
+					artUrl: String(unique?.artUrl || "").trim(),
+					artCredit: String(unique?.artCredit || "").trim(),
+					body: normalizeMultilineText(unique?.body || "").trim(),
+					civilopedia: normalizeMultilineText(unique?.civilopedia || "").trim(),
+					bullets: multilineListValues(unique?.bulletsText),
+					footnotes: multilineListValues(unique?.footnotesText),
+					templateRefs: base.uniques?.[index]?.templateRefs || [],
+				}))
+				.filter((unique) => unique.name || unique.slot || unique.body || unique.replaces || unique.artUrl || unique.art || unique.civilopedia || unique.bullets.length),
+			nameLists: (form?.nameLists || [])
+				.map((list) => ({
+					title: String(list?.title || "").trim(),
+					items: multilineListValues(list?.itemsText),
+				}))
+				.filter((list) => list.title || list.items.length),
+			music: {
+				peace: {
+					...base.music.peace,
+					title: String(form?.musicPeaceTitle || "").trim(),
+					credit: String(form?.musicPeaceCredit || "").trim(),
+					url: String(form?.musicPeaceUrl || "").trim(),
+				},
+				war: {
+					...base.music.war,
+					title: String(form?.musicWarTitle || "").trim(),
+					credit: String(form?.musicWarCredit || "").trim(),
+					url: String(form?.musicWarUrl || "").trim(),
+				},
+			},
+			modSupport: Object.fromEntries(
+				Object.entries(form?.modSupport || {})
+					.map(([key, value]) => [key, Boolean(value)])
+					.filter(([key, value]) => key || value),
+			),
+			credits: parseCreditLines(form?.creditsText),
+			categories: multilineListValues(form?.categoriesText, normalizeCategoryValue),
+			navTemplate: String(form?.navTemplate || "").trim(),
+		});
+	}
+
 	function serializeCollectionMetadataDraftValue(source = {}) {
 		return serializeValue({
 			title: String(source.title || "").trim(),
@@ -398,6 +705,57 @@
 		return time ? `${relativeSavedAt(value)} at ${time}.` : `${relativeSavedAt(value)}.`;
 	}
 
+	function addEntryFormUnique() {
+		if (!entryFormDraft) {
+			return;
+		}
+		entryFormDraft.uniques = [...(entryFormDraft.uniques || []), blankEntryUniqueDraft()];
+	}
+
+	function removeEntryFormUnique(index) {
+		if (!entryFormDraft) {
+			return;
+		}
+		entryFormDraft.uniques = (entryFormDraft.uniques || []).filter((_, candidateIndex) => candidateIndex !== index);
+	}
+
+	function parseEntryEditorFormDraft() {
+		return entryFromFormDraft(entryFormDraft, selectedEntry);
+	}
+
+	function resolveEntryEditorDraft() {
+		return entryEditorMode === "form" ? parseEntryEditorFormDraft() : parseEntryEditorDraft();
+	}
+
+	function syncEntryEditorDrafts(nextEntry, options = {}) {
+		const normalized = normalizePediaEntry(nextEntry);
+		const nextJson = `${JSON.stringify(normalized, null, 2)}\n`;
+		entryEditorDraft = nextJson;
+		entryFormDraft = createEntryFormDraft(normalized);
+		if (options.saved) {
+			entryEditorBaseline = nextJson;
+			entryFormBaseline = serializeEntryFormDraft(entryFormDraft);
+		}
+	}
+
+	function setEntryEditorMode(nextMode) {
+		if (!entryEditorOpen || nextMode === entryEditorMode) {
+			return;
+		}
+		try {
+			if (nextMode === "form") {
+				entryFormDraft = createEntryFormDraft(parseEntryEditorDraft());
+			} else {
+				entryEditorDraft = `${JSON.stringify(parseEntryEditorFormDraft(), null, 2)}\n`;
+			}
+			entryEditorMode = nextMode;
+			entryStatus = "";
+		} catch (error) {
+			entryStatus = error?.message || `Unable to switch to ${nextMode === "form" ? "form" : "JSON"} mode.`;
+			entrySavedAt = 0;
+		}
+	}
+
 	function timestampValue(value) {
 		const timestamp = Date.parse(String(value || "").trim());
 		return Number.isFinite(timestamp) ? timestamp : 0;
@@ -460,7 +818,13 @@
 	}
 
 	function isEntryEditorDirty() {
-		return entryEditorOpen && normalizeMultilineText(entryEditorDraft).trim() !== normalizeMultilineText(entryEditorBaseline).trim();
+		if (!entryEditorOpen) {
+			return false;
+		}
+		if (entryEditorMode === "form") {
+			return serializeEntryFormDraft(entryFormDraft) !== entryFormBaseline;
+		}
+		return normalizeMultilineText(entryEditorDraft).trim() !== normalizeMultilineText(entryEditorBaseline).trim();
 	}
 
 	function isAuthorProfileDirty() {
@@ -1284,6 +1648,16 @@
 	const collectionMetadataAccentDisplay = $derived(colorDisplay(collectionMetadataAccent, "#FAD587"));
 	const collectionMetadataBackgroundDisplay = $derived(colorDisplay(collectionMetadataBackground, "#7E2222"));
 	const pediaCloudWriteReady = $derived(Boolean(cloudPediaConfigured && authAccessToken && authUser?.email && canEdit));
+	const canUploadConvertedEntry = $derived(Boolean(pediaCloudWriteReady || isLocalProjectEditor));
+	const converterUploadBlockedReason = $derived.by(() => {
+		if (canUploadConvertedEntry) {
+			return "";
+		}
+		if (authUser?.email) {
+			return "Upload is only available for accounts with pedia write access, or while working on localhost.";
+		}
+		return "Sign in with pedia upload access, or use localhost, to upload converted entries.";
+	});
 
 	$effect(() => {
 		authUsernameKey;
@@ -1426,12 +1800,6 @@
 		authorFilterName = routeState.authorSlug ? (authorLookup.get(routeState.authorSlug) ?? "") : "";
 	});
 
-	$effect(() => {
-		if (!canEdit && activeView === "converter") {
-			activeView = "catalog";
-		}
-	});
-
 	function openEntry(entry, options = {}) {
 		if (!entry) {
 			return;
@@ -1542,18 +1910,23 @@
 			return;
 		}
 		entryEditorOpen = true;
+		entryEditorMode = "form";
+		entryEditorSection = "core";
 		entryStatus = "";
 		entrySavedAt = 0;
-		entryEditorDraft = `${JSON.stringify(entry, null, 2)}\n`;
-		entryEditorBaseline = entryEditorDraft;
+		syncEntryEditorDrafts(entry, { saved: true });
 	}
 
 	function stopEditingEntry() {
 		entryEditorOpen = false;
+		entryEditorMode = "form";
+		entryEditorSection = "core";
 		entryEditorDraft = "";
 		entryStatus = "";
 		entrySavedAt = 0;
 		entryEditorBaseline = "";
+		entryFormDraft = null;
+		entryFormBaseline = "";
 	}
 
 	function parseEntryEditorDraft() {
@@ -1562,28 +1935,27 @@
 
 	function previewEditedEntry() {
 		try {
-			const nextEntry = parseEntryEditorDraft();
+			const nextEntry = resolveEntryEditorDraft();
 			importedEntries = sortModdedCivsEntries([...importedEntries.filter((entry) => entry.id !== selectedEntry.id && entry.id !== nextEntry.id), nextEntry]);
 			deletedEntryIds = deletedEntryIds.filter((id) => id !== nextEntry.id);
 			entryStatus = `Previewing edits for ${nextEntry.title}.`;
 			entrySavedAt = 0;
 			openEntry(nextEntry, { replace: true, bypassDirtyCheck: true });
-			entryEditorDraft = `${JSON.stringify(nextEntry, null, 2)}\n`;
+			syncEntryEditorDrafts(nextEntry);
 		} catch (error) {
-			entryStatus = error?.message || "Unable to parse entry JSON.";
+			entryStatus = error?.message || `Unable to parse ${entryEditorMode === "form" ? "entry form" : "entry JSON"}.`;
 			entrySavedAt = 0;
 		}
 	}
 
 	async function saveEditedEntryToProject() {
 		try {
-			const nextEntry = parseEntryEditorDraft();
+			const nextEntry = resolveEntryEditorDraft();
 			entryStatus = "Saving edited entry...";
 			entrySavedAt = 0;
 			await saveEntryToProject(nextEntry, renderWikiMarkupFromEntry(nextEntry), `${nextEntry.title} saved to project data.`);
 			openEntry(nextEntry, { replace: true, bypassDirtyCheck: true });
-			entryEditorDraft = `${JSON.stringify(nextEntry, null, 2)}\n`;
-			entryEditorBaseline = entryEditorDraft;
+			syncEntryEditorDrafts(nextEntry, { saved: true });
 			entrySavedAt = Date.now();
 		} catch (error) {
 			entryStatus = error?.message || "Unable to save entry.";
@@ -2123,6 +2495,10 @@
 		if (!convertedEntry) {
 			return;
 		}
+		if (!canUploadConvertedEntry) {
+			converterStatus = converterUploadBlockedReason || "Upload is not available right now.";
+			return;
+		}
 
 		converterBusy = true;
 		converterStatus = "Saving entry files into src/lib/data/modded-civs-pedia...";
@@ -2186,9 +2562,11 @@
 	}
 
 	function sourceLinks(entry) {
-		return [entry?.source?.wikiUrl ? { label: "Fandom Page", href: entry.source.wikiUrl } : null, entry?.source?.workshopUrl ? { label: "Workshop", href: entry.source.workshopUrl } : null].filter(
-			Boolean,
-		);
+		return [
+			entry?.source?.wikiUrl ? { label: "Fandom Page", href: entry.source.wikiUrl } : null,
+			entry?.source?.workshopUrl ? { label: "Workshop", href: entry.source.workshopUrl } : null,
+			entry?.source?.directDownload ? { label: "Direct Download", href: entry.source.directDownload } : null,
+		].filter(Boolean);
 	}
 
 	function entryMediaSlots(entry) {
@@ -2234,9 +2612,6 @@
 	}
 
 	function showConverter(options = {}) {
-		if (!canEdit) {
-			return;
-		}
 		if (!options.bypassDirtyCheck && !confirmDiscardUnsavedChanges()) {
 			return;
 		}
@@ -2302,6 +2677,15 @@
 		return values.length ? values : ["Unknown"];
 	}
 
+	function entryGovernmentLabel(entry) {
+		return entry?.identity?.government?.join(", ") || "Unknown";
+	}
+
+	function entryGovernmentValues(entry) {
+		const values = Array.isArray(entry?.identity?.government) ? entry.identity.government.map((item) => String(item || "").trim()).filter(Boolean) : [];
+		return values.length ? values : ["Unknown"];
+	}
+
 	function entryPresentationColor(entry, key) {
 		return String(entry?.presentation?.colors?.[key] || "")
 			.trim()
@@ -2327,7 +2711,7 @@
 			{ label: "Adjective", value: entry?.identity?.adjectives || "Unknown" },
 			{ label: "Bias", value: entry?.identity?.bias || "Unknown" },
 			{ label: "Religion", value: entryReligionLabel(entry), values: entryReligionValues(entry) },
-			{ label: "Government", value: entry?.identity?.government || "Unknown" },
+			{ label: "Government", value: entryGovernmentLabel(entry), values: entryGovernmentValues(entry) },
 			{ label: "Culture", value: entry?.identity?.culture || "Unknown" },
 			...(colorValues.length ? [{ label: "Colors", value: colorValues.join(", "), values: colorValues }] : []),
 		];
@@ -2439,12 +2823,10 @@
 
 				<div class="pedia-toolbar-actions">
 					<input class="pedia-search" type="search" bind:value={searchQuery} placeholder="Search civs, leaders, uniques, authors..." />
-					{#if canEdit}
-						<div class="pedia-view-switch" role="tablist" aria-label="Pedia views">
-							<button type="button" class="pedia-view-chip is-active" role="tab" aria-selected="true">Catalog</button>
-							<button type="button" class="pedia-view-chip" role="tab" aria-selected="false" onclick={showConverter}>Converter</button>
-						</div>
-					{/if}
+					<div class="pedia-view-switch" role="tablist" aria-label="Pedia views">
+						<button type="button" class="pedia-view-chip is-active" role="tab" aria-selected="true">Catalog</button>
+						<button type="button" class="pedia-view-chip" role="tab" aria-selected="false" onclick={showConverter}>Converter</button>
+					</div>
 				</div>
 			</div>
 
@@ -2914,9 +3296,14 @@
 							{/if}
 							{#if convertedEntry}
 								<div class="pedia-preview-actions">
-									<span class="pedia-preview-kicker">{convertedEntrySource}</span>
+									<span class="pedia-preview-kicker">Converted a {convertedEntrySource}</span>
 									<div class="inline">
-										<button type="button" class="pedia-button" onclick={saveConvertedEntryToProject} disabled={converterBusy}>Upload</button>
+										<span class="pedia-tooltip-wrap">
+											<button type="button" class="pedia-button" onclick={saveConvertedEntryToProject} disabled={converterBusy || !canUploadConvertedEntry}>Upload</button>
+											{#if !canUploadConvertedEntry}
+												<span class="pedia-tooltip">{converterUploadBlockedReason}</span>
+											{/if}
+										</span>
 										<button type="button" class="pedia-button pedia-button-secondary" onclick={downloadConvertedJson}>Export JSON</button>
 										<button type="button" class="pedia-button pedia-button-secondary" onclick={downloadConvertedWiki}>Export Wiki Markup</button>
 									</div>
@@ -3380,16 +3767,38 @@
 
 				{#if entryEditorOpen}
 					<section class="pedia-editor-panel stack half">
-						<div class="inline between flex-wrap half align-start">
-							<div class="stack quarter">
+						<div class="pedia-editor-panel-head">
+							<div class="stack quarter min-inline-size-0">
 								<p class="eyebrow">Entry Editor</p>
 								<h3 class="card-title">Edit {selectedEntry.title}</h3>
-								<p class="card-copy">Adjust the raw pedia JSON, preview it live, then save it back into the project files.</p>
+								<p class="card-copy">Use the Form view for input fields or JSON for exact raw edits.</p>
 							</div>
-							<div class="inline half flex-wrap">
-								<button type="button" class="pedia-button" onclick={previewEditedEntry}>Preview Edits</button>
-								<button type="button" class="pedia-button pedia-button-secondary" onclick={saveEditedEntryToProject}>Save Edits</button>
-								<button type="button" class="pedia-button pedia-button-secondary" onclick={stopEditingEntry}>Close Editor</button>
+							<div class="pedia-editor-panel-actions">
+								<div class="pedia-view-switch pedia-entry-editor-switch" role="tablist" aria-label="Entry editor modes">
+									<button
+										type="button"
+										class={`pedia-view-chip ${entryEditorMode === "form" ? "is-active" : ""}`}
+										role="tab"
+										aria-selected={entryEditorMode === "form"}
+										onclick={() => setEntryEditorMode("form")}
+									>
+										Form
+									</button>
+									<button
+										type="button"
+										class={`pedia-view-chip ${entryEditorMode === "json" ? "is-active" : ""}`}
+										role="tab"
+										aria-selected={entryEditorMode === "json"}
+										onclick={() => setEntryEditorMode("json")}
+									>
+										JSON
+									</button>
+								</div>
+								<div class="pedia-entry-editor-button-row">
+									<button type="button" class="pedia-button" onclick={previewEditedEntry}>Preview Edits</button>
+									<button type="button" class="pedia-button pedia-button-secondary" onclick={saveEditedEntryToProject}>Save Edits</button>
+									<button type="button" class="pedia-button pedia-button-secondary" onclick={stopEditingEntry}>Close Editor</button>
+								</div>
 							</div>
 						</div>
 						{#if entryStatus}
@@ -3400,10 +3809,554 @@
 								{/if}
 							</p>
 						{/if}
-						<label class="stack half">
-							<span class="eyebrow">Entry JSON</span>
-							<textarea class="pedia-json-editor" bind:value={entryEditorDraft} rows="22" spellcheck="false"></textarea>
-						</label>
+						{#if entryEditorMode === "form" && entryFormDraft}
+							<div class="pedia-entry-form">
+								<div class="pedia-entry-form-nav" role="tablist" aria-label="Entry form sections">
+									<button
+										type="button"
+										class:is-active={entryEditorSection === "core"}
+										class="pedia-entry-form-nav-button"
+										role="tab"
+										aria-selected={entryEditorSection === "core"}
+										onclick={() => (entryEditorSection = "core")}
+									>
+										<span class="eyebrow">Core</span>
+										<strong class="card-title">Basics, Source, Media, and Identity</strong>
+									</button>
+									<button
+										type="button"
+										class:is-active={entryEditorSection === "lore"}
+										class="pedia-entry-form-nav-button"
+										role="tab"
+										aria-selected={entryEditorSection === "lore"}
+										onclick={() => (entryEditorSection = "lore")}
+									>
+										<span class="eyebrow">Lore</span>
+										<strong class="card-title">Overview and Dawn of Man</strong>
+									</button>
+									<button
+										type="button"
+										class:is-active={entryEditorSection === "uniques"}
+										class="pedia-entry-form-nav-button"
+										role="tab"
+										aria-selected={entryEditorSection === "uniques"}
+										onclick={() => (entryEditorSection = "uniques")}
+									>
+										<span class="eyebrow">Uniques</span>
+										<strong class="card-title">{entryFormDraft.uniques.length} Current Unique{entryFormDraft.uniques.length === 1 ? "" : "s"}</strong>
+									</button>
+									<button
+										type="button"
+										class:is-active={entryEditorSection === "credits"}
+										class="pedia-entry-form-nav-button"
+										role="tab"
+										aria-selected={entryEditorSection === "credits"}
+										onclick={() => (entryEditorSection = "credits")}
+									>
+										<span class="eyebrow">Credits, Taxonomy, and Music</span>
+										<strong class="card-title">Credits, Categories, and Theme Embeds</strong>
+									</button>
+									<button
+										type="button"
+										class:is-active={entryEditorSection === "lists"}
+										class="pedia-entry-form-nav-button"
+										role="tab"
+										aria-selected={entryEditorSection === "lists"}
+										onclick={() => (entryEditorSection = "lists")}
+									>
+										<span class="eyebrow">Lists & Support</span>
+										<strong class="card-title">Name Lists and Mod Support</strong>
+									</button>
+								</div>
+								<div class="pedia-entry-form-panel">
+									{#if entryEditorSection === "core"}
+										<div class="pedia-entry-form-body stack half">
+											<div class="stack quarter">
+												<p class="eyebrow">Basics</p>
+												<p class="card-copy">Core identity text that drives the catalog and page header.</p>
+											</div>
+											<div class="pedia-preview-grid pedia-entry-form-grid">
+												<label class="stack quarter">
+													<span class="eyebrow">Title</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.title} placeholder="Holy Roman Empire" />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Leader</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.leader} placeholder="Otto I" />
+												</label>
+											</div>
+											<label class="stack quarter">
+												<span class="pedia-entry-form-label-row"><span class="eyebrow">Summary</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span>
+												<textarea
+													class="pedia-field pedia-textarea-compact pedia-textarea-multiline"
+													rows="3"
+													bind:value={entryFormDraft.summary}
+													placeholder="Short catalog summary."
+												></textarea>
+											</label>
+											<label class="stack quarter">
+												<span class="pedia-entry-form-label-row"><span class="eyebrow">Authors</span><span class="pedia-entry-form-field-hint">1 per line</span></span>
+												<textarea
+													class="pedia-field pedia-textarea-compact pedia-textarea-multiline pedia-textarea-list"
+													rows="3"
+													bind:value={entryFormDraft.authorsText}
+													placeholder="One author per line"
+												></textarea>
+											</label>
+
+											<div class="stack quarter">
+												<p class="eyebrow">Source</p>
+												<p class="card-copy">External links and import metadata shown alongside the entry.</p>
+											</div>
+											<div class="pedia-preview-grid pedia-entry-form-grid">
+												<label class="stack quarter">
+													<span class="eyebrow">Wiki Page Title</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.wikiPageTitle} />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Version</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.version} />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Wiki URL</span>
+													<input class="pedia-field" type="url" bind:value={entryFormDraft.wikiUrl} placeholder="https://..." />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Workshop URL</span>
+													<input class="pedia-field" type="url" bind:value={entryFormDraft.workshopUrl} placeholder="https://..." />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Direct Download URL</span>
+													<input class="pedia-field" type="url" bind:value={entryFormDraft.directDownload} placeholder="https://..." />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Last Updated</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.lastUpdated} />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Mod Folder</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.modFolderName} />
+												</label>
+											</div>
+
+											<div class="stack quarter">
+												<p class="eyebrow">Identity</p>
+												<p class="card-copy">Infobox metadata, government tags, and entry requirements.</p>
+											</div>
+											<div class="pedia-preview-grid pedia-entry-form-grid">
+												<label class="stack quarter">
+													<span class="eyebrow">Capital</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.capital} />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Empire</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.empireName} />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Culture</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.culture} />
+												</label>
+												<label class="stack quarter">
+													<span class="pedia-entry-form-label-row"><span class="eyebrow">Government</span><span class="pedia-entry-form-field-hint">1 per line</span></span>
+													<textarea
+														class="pedia-field pedia-textarea-compact pedia-textarea-multiline pedia-textarea-list"
+														rows="3"
+														bind:value={entryFormDraft.governmentText}
+														placeholder="One government per line"
+													></textarea>
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Bias</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.bias} />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Adjectives</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.adjectives} />
+												</label>
+												<!-- <label class="stack quarter">
+												<span class="eyebrow">Map Labels Language</span>
+												<input class="pedia-field" type="text" bind:value={entryFormDraft.mapLabelsLanguage} />
+											</label> -->
+											</div>
+											<div class="pedia-preview-grid pedia-entry-form-grid">
+												<label class="stack quarter">
+													<span class="pedia-entry-form-label-row"><span class="eyebrow">Religions</span><span class="pedia-entry-form-field-hint">1 per line</span></span>
+													<textarea
+														class="pedia-field pedia-textarea-compact pedia-textarea-multiline pedia-textarea-list"
+														rows="3"
+														bind:value={entryFormDraft.religionText}
+														placeholder="One religion per line"
+													></textarea>
+												</label>
+												<label class="stack quarter">
+													<span class="pedia-entry-form-label-row"
+														><span class="eyebrow">Required Content</span><span class="pedia-entry-form-field-hint">1 per line</span></span
+													>
+													<textarea
+														class="pedia-field pedia-textarea-compact pedia-textarea-multiline pedia-textarea-list"
+														rows="3"
+														bind:value={entryFormDraft.requiredContentText}
+														placeholder="One requirement per line"
+													></textarea>
+												</label>
+											</div>
+
+											<div class="stack quarter">
+												<p class="eyebrow">Media</p>
+												<p class="card-copy">Art asset names, image URLs, captions, and presentation colors.</p>
+											</div>
+											<div class="pedia-preview-grid pedia-entry-form-grid">
+												<label class="stack quarter">
+													<span class="eyebrow">Icon Asset</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.iconImage} placeholder="MyCivAtlas256.dds" />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Icon Image URL</span>
+													<input class="pedia-field" type="url" bind:value={entryFormDraft.iconImageUrl} placeholder="https://..." />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Map Asset</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.mapImage} placeholder="MyCivMap.dds" />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Map Image URL</span>
+													<input class="pedia-field" type="url" bind:value={entryFormDraft.mapImageUrl} placeholder="https://..." />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Map Caption</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.mapImageCaption} />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Leaderscene Asset</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.leaderSceneImage} placeholder="MyCivDOM.dds" />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Leaderscene URL</span>
+													<input class="pedia-field" type="url" bind:value={entryFormDraft.leaderSceneImageUrl} placeholder="https://..." />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Leaderscene Credit</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.leaderSceneArtCredit} />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Background Color</span>
+													<div class="pedia-color-field">
+														<div class="pedia-color-picker-row">
+															<div class="pedia-color-swatch-control relative overflow-hidden">
+																<input
+																	type="color"
+																	value={colorInputValue(entryFormDraft.backgroundColor, "#7E2222")}
+																	oninput={(event) => updateEntryFormColor("backgroundColor", event.currentTarget.value)}
+																	onchange={(event) => updateEntryFormColor("backgroundColor", event.currentTarget.value)}
+																	aria-label="Entry background color"
+																/>
+																<span class="pedia-color-preview" style={`--preview:${colorDisplay(entryFormDraft.backgroundColor, "#7E2222").hex}`} aria-hidden="true"
+																></span>
+															</div>
+															<input
+																class="pedia-field pedia-color-hex-input uppercase"
+																type="text"
+																inputmode="text"
+																spellcheck="false"
+																bind:value={entryFormDraft.backgroundColor}
+																placeholder="#7E2222"
+																oninput={(event) => updateEntryFormColor("backgroundColor", event.currentTarget.value)}
+															/>
+														</div>
+													</div>
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Icon Color</span>
+													<div class="pedia-color-field">
+														<div class="pedia-color-picker-row">
+															<div class="pedia-color-swatch-control relative overflow-hidden">
+																<input
+																	type="color"
+																	value={colorInputValue(entryFormDraft.iconColor, "#FAD587")}
+																	oninput={(event) => updateEntryFormColor("iconColor", event.currentTarget.value)}
+																	onchange={(event) => updateEntryFormColor("iconColor", event.currentTarget.value)}
+																	aria-label="Entry icon color"
+																/>
+																<span class="pedia-color-preview" style={`--preview:${colorDisplay(entryFormDraft.iconColor, "#FAD587").hex}`} aria-hidden="true"
+																></span>
+															</div>
+															<input
+																class="pedia-field pedia-color-hex-input uppercase"
+																type="text"
+																inputmode="text"
+																spellcheck="false"
+																bind:value={entryFormDraft.iconColor}
+																placeholder="#FAD587"
+																oninput={(event) => updateEntryFormColor("iconColor", event.currentTarget.value)}
+															/>
+														</div>
+													</div>
+												</label>
+											</div>
+										</div>
+									{:else if entryEditorSection === "lore"}
+										<div class="pedia-entry-form-body stack half">
+											<div class="pedia-preview-grid pedia-entry-form-grid">
+												<label class="stack quarter">
+													<span class="eyebrow">Civilization Overview Title</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.overviewCivilizationTitle} />
+												</label>
+												<label class="stack quarter">
+													<span class="eyebrow">Leader Overview Title</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.overviewLeaderTitle} />
+												</label>
+											</div>
+											<label class="stack quarter">
+												<span class="pedia-entry-form-label-row"
+													><span class="eyebrow">Civilization Overview</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span
+												>
+												<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="4" bind:value={entryFormDraft.overviewCivilizationBody}></textarea>
+											</label>
+											<label class="stack quarter">
+												<span class="pedia-entry-form-label-row"
+													><span class="eyebrow">Leader Overview</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span
+												>
+												<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="4" bind:value={entryFormDraft.overviewLeaderBody}></textarea>
+											</label>
+											<label class="stack quarter">
+												<span class="pedia-entry-form-label-row"
+													><span class="eyebrow">Dawn Blessing</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span
+												>
+												<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="4" bind:value={entryFormDraft.dawnBlessing}></textarea>
+											</label>
+											<div class="pedia-preview-grid pedia-entry-form-grid">
+												<label class="stack quarter">
+													<span class="pedia-entry-form-label-row"
+														><span class="eyebrow">Introduction</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span
+													>
+													<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="3" bind:value={entryFormDraft.dawnIntroduction}></textarea>
+												</label>
+												<label class="stack quarter">
+													<span class="pedia-entry-form-label-row"><span class="eyebrow">Defeat</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span>
+													<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="3" bind:value={entryFormDraft.dawnDefeat}></textarea>
+												</label>
+											</div>
+										</div>
+									{:else if entryEditorSection === "uniques"}
+										<div class="pedia-entry-form-body stack half">
+											<div class="inline end">
+												<button type="button" class="pedia-button pedia-button-secondary" onclick={addEntryFormUnique}>Add Unique</button>
+											</div>
+											{#if entryFormDraft.uniques.length}
+												<div class="stack half">
+													{#each entryFormDraft.uniques as unique, index (`entry-form-unique-${index}`)}
+														<article class="pedia-entry-form-subcard stack half">
+															<div class="inline between flex-wrap half align-start">
+																<div class="stack quarter">
+																	<p class="eyebrow">Unique {index + 1}</p>
+																	<strong class="card-title">{unique.name || unique.slot || "New Unique"}</strong>
+																</div>
+																<button type="button" class="pedia-button pedia-button-secondary" onclick={() => removeEntryFormUnique(index)}>Remove</button>
+															</div>
+															<div class="pedia-preview-grid pedia-entry-form-grid">
+																<label class="stack quarter">
+																	<span class="eyebrow">Slot</span>
+																	<input class="pedia-field" type="text" bind:value={unique.slot} placeholder="unique ability" />
+																</label>
+																<label class="stack quarter">
+																	<span class="eyebrow">Name</span>
+																	<input class="pedia-field" type="text" bind:value={unique.name} />
+																</label>
+																<label class="stack quarter">
+																	<span class="eyebrow">Replaces</span>
+																	<input class="pedia-field" type="text" bind:value={unique.replaces} />
+																</label>
+																<label class="stack quarter">
+																	<span class="eyebrow">Art File</span>
+																	<input class="pedia-field" type="text" bind:value={unique.art} />
+																</label>
+																<label class="stack quarter">
+																	<span class="eyebrow">Art URL</span>
+																	<input class="pedia-field" type="url" bind:value={unique.artUrl} placeholder="https://..." />
+																</label>
+																<label class="stack quarter">
+																	<span class="eyebrow">Art Credit</span>
+																	<input class="pedia-field" type="text" bind:value={unique.artCredit} />
+																</label>
+															</div>
+															<label class="stack quarter">
+																<span class="pedia-entry-form-label-row"
+																	><span class="eyebrow">Body</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span
+																>
+																<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="4" bind:value={unique.body}></textarea>
+															</label>
+															<div class="pedia-preview-grid pedia-entry-form-grid">
+																<label class="stack quarter">
+																	<span class="pedia-entry-form-label-row"
+																		><span class="eyebrow">Bullets</span><span class="pedia-entry-form-field-hint">1 per line</span></span
+																	>
+																	<textarea
+																		class="pedia-field pedia-textarea-compact pedia-textarea-multiline pedia-textarea-list"
+																		rows="3"
+																		bind:value={unique.bulletsText}
+																		placeholder="One bullet per line"
+																	></textarea>
+																</label>
+																<label class="stack quarter">
+																	<span class="pedia-entry-form-label-row"
+																		><span class="eyebrow">Footnotes</span><span class="pedia-entry-form-field-hint">1 per line</span></span
+																	>
+																	<textarea
+																		class="pedia-field pedia-textarea-compact pedia-textarea-multiline pedia-textarea-list"
+																		rows="3"
+																		bind:value={unique.footnotesText}
+																		placeholder="One note per line"
+																	></textarea>
+																</label>
+															</div>
+															<div class="pedia-preview-grid pedia-entry-form-grid">
+																<label class="stack quarter">
+																	<span class="pedia-entry-form-label-row"
+																		><span class="eyebrow">Civilopedia</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span
+																	>
+																	<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="4" bind:value={unique.civilopedia}></textarea>
+																</label>
+															</div>
+														</article>
+													{/each}
+												</div>
+											{:else}
+												<p class="card-copy">No uniques added yet.</p>
+											{/if}
+										</div>
+									{:else if entryEditorSection === "credits"}
+										<div class="pedia-entry-form-body stack half">
+											<div class="stack quarter">
+												<p class="eyebrow">Credits & Taxonomy</p>
+												<p class="card-copy">Visible credits, categories, nav template data, and music embeds.</p>
+											</div>
+											<div class="pedia-preview-grid pedia-entry-form-grid">
+												<label class="stack quarter">
+													<span class="pedia-entry-form-label-row"><span class="eyebrow">Credits</span><span class="pedia-entry-form-field-hint">Name | Role</span></span>
+													<textarea
+														class="pedia-field pedia-textarea-compact pedia-textarea-multiline pedia-textarea-list"
+														rows="4"
+														bind:value={entryFormDraft.creditsText}
+														placeholder="Name | Role"
+													></textarea>
+												</label>
+												<label class="stack quarter">
+													<span class="pedia-entry-form-label-row"><span class="eyebrow">Categories</span><span class="pedia-entry-form-field-hint">1 per line</span></span>
+													<textarea
+														class="pedia-field pedia-textarea-compact pedia-textarea-multiline pedia-textarea-list"
+														rows="4"
+														bind:value={entryFormDraft.categoriesText}
+														placeholder="One category per line"
+													></textarea>
+												</label>
+											</div>
+											<div class="pedia-preview-grid pedia-entry-form-grid">
+												<label class="stack quarter">
+													<span class="eyebrow">Nav Template</span>
+													<input class="pedia-field" type="text" bind:value={entryFormDraft.navTemplate} />
+												</label>
+											</div>
+											<div class="pedia-entry-form-subcard stack half">
+												<p class="eyebrow">Peace Theme</p>
+												<div class="pedia-preview-grid pedia-entry-form-grid">
+													<label class="stack quarter">
+														<span class="eyebrow">Title</span>
+														<input class="pedia-field" type="text" bind:value={entryFormDraft.musicPeaceTitle} />
+													</label>
+													<label class="stack quarter">
+														<span class="eyebrow">Credit</span>
+														<input class="pedia-field" type="text" bind:value={entryFormDraft.musicPeaceCredit} />
+													</label>
+													<label class="stack quarter">
+														<span class="eyebrow">URL</span>
+														<input class="pedia-field" type="url" bind:value={entryFormDraft.musicPeaceUrl} placeholder="https://..." />
+													</label>
+												</div>
+											</div>
+											<div class="pedia-entry-form-subcard stack half">
+												<p class="eyebrow">War Theme</p>
+												<div class="pedia-preview-grid pedia-entry-form-grid">
+													<label class="stack quarter">
+														<span class="eyebrow">Title</span>
+														<input class="pedia-field" type="text" bind:value={entryFormDraft.musicWarTitle} />
+													</label>
+													<label class="stack quarter">
+														<span class="eyebrow">Credit</span>
+														<input class="pedia-field" type="text" bind:value={entryFormDraft.musicWarCredit} />
+													</label>
+													<label class="stack quarter">
+														<span class="eyebrow">URL</span>
+														<input class="pedia-field" type="url" bind:value={entryFormDraft.musicWarUrl} placeholder="https://..." />
+													</label>
+												</div>
+											</div>
+										</div>
+									{:else if entryEditorSection === "lists"}
+										<div class="pedia-entry-form-body stack half">
+											<div class="inline between flex-wrap half align-start">
+												<div class="stack quarter">
+													<p class="eyebrow">Lists</p>
+													<p class="card-copy">These power the collapsible lists section on the entry page.</p>
+												</div>
+												<button type="button" class="pedia-button pedia-button-secondary" onclick={addEntryFormNameList}>Add List</button>
+											</div>
+											{#if entryFormDraft.nameLists.length}
+												<div class="stack half">
+													{#each entryFormDraft.nameLists as list, index (`entry-form-list-${index}`)}
+														<article class="pedia-entry-form-subcard stack half">
+															<div class="inline between flex-wrap half align-start">
+																<div class="stack quarter">
+																	<p class="eyebrow">List {index + 1}</p>
+																	<strong class="card-title">{list.title || "Untitled List"}</strong>
+																</div>
+																<button type="button" class="pedia-button pedia-button-secondary" onclick={() => removeEntryFormNameList(index)}>Remove</button>
+															</div>
+															<div class="pedia-preview-grid pedia-entry-form-grid">
+																<label class="stack quarter">
+																	<span class="eyebrow">List Title</span>
+																	<input class="pedia-field" type="text" bind:value={list.title} placeholder="City List" />
+																</label>
+																<label class="stack quarter">
+																	<span class="pedia-entry-form-label-row"
+																		><span class="eyebrow">Items</span><span class="pedia-entry-form-field-hint">1 per line</span></span
+																	>
+																	<textarea
+																		class="pedia-field pedia-textarea-compact pedia-textarea-multiline pedia-textarea-list"
+																		rows="4"
+																		bind:value={list.itemsText}
+																		placeholder="Karakorum&#10;Beshbalik&#10;Almalik"
+																	></textarea>
+																</label>
+															</div>
+														</article>
+													{/each}
+												</div>
+											{:else}
+												<p class="card-copy">No lists added yet.</p>
+											{/if}
+
+											<div class="stack quarter">
+												<p class="eyebrow">Mod Support</p>
+												<p class="card-copy">Controls which support rows appear in the Mod Support section.</p>
+											</div>
+											<div class="pedia-entry-form-toggle-grid">
+												{#each Object.entries(MOD_SUPPORT_LABELS) as [key, label] (`support-${key}`)}
+													<label class="pedia-entry-form-toggle">
+														<input type="checkbox" bind:checked={entryFormDraft.modSupport[key]} />
+														<span>{label}</span>
+													</label>
+												{/each}
+											</div>
+										</div>
+									{/if}
+								</div>
+							</div>
+						{:else}
+							<label class="stack half">
+								<span class="eyebrow">Entry JSON</span>
+								<textarea class="pedia-json-editor" bind:value={entryEditorDraft} rows="22" spellcheck="false"></textarea>
+							</label>
+						{/if}
 					</section>
 				{/if}
 
@@ -5228,6 +6181,56 @@
 		gap: 0.75rem;
 	}
 
+	.pedia-tooltip-wrap {
+		position: relative;
+		display: inline-flex;
+	}
+
+	.pedia-tooltip-wrap:hover .pedia-tooltip,
+	.pedia-tooltip-wrap:focus-within .pedia-tooltip {
+		opacity: 1;
+		visibility: visible;
+		transform: translate(-50%, calc(-100% - 0.65rem));
+	}
+
+	.pedia-tooltip {
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 50%;
+		z-index: 12;
+		inline-size: max-content;
+		max-inline-size: min(20rem, calc(100vw - 2rem));
+		color: var(--ink);
+		font-size: 0.75rem;
+		line-height: 1.4;
+		background: color-mix(in srgb, var(--pedia-panel) 94%, black 6%);
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 18%, var(--border-color)),
+			0 10px 24px rgb(0 0 0 / 0.42);
+		border-radius: 0.8rem;
+		padding: 0.7rem 0.85rem;
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		transform: translate(-50%, calc(-100% - 0.4rem));
+		transition:
+			opacity 140ms ease,
+			transform 140ms ease,
+			visibility 140ms ease;
+	}
+
+	.pedia-tooltip::after {
+		content: "";
+		position: absolute;
+		inset-block-start: 100%;
+		inset-inline-start: 50%;
+		inline-size: 0.7rem;
+		block-size: 0.7rem;
+		background: color-mix(in srgb, var(--pedia-panel) 94%, black 6%);
+		box-shadow: inset -1px -1px 0 color-mix(in srgb, var(--pedia-accent) 18%, var(--border-color));
+		transform: translateX(-50%) rotate(45deg);
+	}
+
 	.pedia-preview-kicker {
 		color: var(--pedia-accent-strong);
 		text-transform: uppercase;
@@ -5256,13 +6259,197 @@
 	}
 
 	.pedia-editor-panel {
-		background:
-			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--pedia-accent) 18%, transparent) 0%, transparent 42%),
-			linear-gradient(165deg, color-mix(in srgb, var(--pedia-panel-soft) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--pedia-panel-soft) 93%, #16110f 7%) 100%);
 		box-shadow: var(--pedia-shadow-soft);
 		border: 1px solid color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
 		border-radius: 1rem;
 		padding: 1rem;
+	}
+
+	.pedia-editor-panel-head {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: start;
+		gap: 0.75rem 1rem;
+	}
+
+	.pedia-editor-panel-actions {
+		display: grid;
+		justify-items: start;
+		align-content: start;
+		gap: 0.55rem;
+	}
+
+	.pedia-entry-editor-button-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+	}
+
+	.pedia-entry-form {
+		display: grid;
+		grid-template-columns: minmax(15rem, 18rem) minmax(0, 1fr);
+		align-items: start;
+		gap: 0.7rem 1rem;
+	}
+
+	.pedia-entry-form-nav {
+		display: grid;
+		gap: 0.6rem;
+		align-content: start;
+	}
+
+	.pedia-entry-form-nav-button {
+		display: grid;
+		grid-template-columns: 0.9rem minmax(0, 1fr);
+		column-gap: 0.55rem;
+		row-gap: 0.04rem;
+		align-items: center;
+		background: color-mix(in srgb, var(--pedia-panel-soft) 92%, black 8%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
+		border: none;
+		border-radius: 0.95rem;
+		padding: 0.65rem 0.8rem;
+		text-align: start;
+	}
+
+	.pedia-entry-form-nav-button:not(:disabled):hover {
+		transform: none;
+	}
+
+	.pedia-entry-form-nav-button::before {
+		content: "";
+		grid-column: 1;
+		grid-row: 1 / span 2;
+		inline-size: 0.55rem;
+		block-size: 0.55rem;
+		align-self: center;
+		justify-self: center;
+		border-inline-end: 2px solid color-mix(in srgb, var(--pedia-accent) 72%, white 28%);
+		border-block-end: 2px solid color-mix(in srgb, var(--pedia-accent) 72%, white 28%);
+		transform: rotate(45deg);
+		transform-origin: 55% 55%;
+		transition: transform 140ms ease;
+	}
+
+	.pedia-entry-form-nav-button.is-active::before {
+		transform: rotate(-45deg);
+	}
+
+	.pedia-entry-form-nav-button.is-active {
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--pedia-accent) 10%, transparent) 0%, transparent 46%),
+			linear-gradient(165deg, color-mix(in srgb, var(--pedia-panel-soft) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--pedia-panel-soft) 93%, #16110f 7%) 100%);
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 28%, var(--border-color)),
+			0 4px 12px color-mix(in srgb, black 82%, transparent);
+	}
+
+	.pedia-entry-form-nav-button > * {
+		min-inline-size: 0;
+		grid-column: 2;
+	}
+
+	.pedia-entry-form-panel {
+		min-inline-size: 0;
+	}
+
+	.pedia-entry-form-body {
+		gap: 0.65rem;
+		display: grid;
+		align-self: start;
+		background:
+			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--pedia-accent) 14%, transparent) 0%, transparent 40%),
+			linear-gradient(165deg, color-mix(in srgb, var(--pedia-panel-soft) 98%, var(--control-bg)) 0%, color-mix(in srgb, var(--pedia-panel-soft) 94%, #16110f 8%) 100%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
+		border-radius: 1rem;
+		padding: 0.85rem 0.95rem;
+	}
+
+	.pedia-entry-form-grid {
+		grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+		gap: 0.65rem;
+	}
+
+	.pedia-entry-form-subcard {
+		background: color-mix(in srgb, var(--pedia-panel) 88%, black 12%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 12%, var(--border-color));
+		border-radius: 0.9rem;
+		padding: 0.65rem;
+	}
+
+	.pedia-entry-form-label-row {
+		min-inline-size: 0;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 0.35rem 0.5rem;
+	}
+
+	.pedia-entry-form-field-hint {
+		color: color-mix(in srgb, var(--muted-ink) 88%, white 12%);
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		font-size: 0.62rem;
+		font-weight: 700;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		background: color-mix(in srgb, var(--pedia-accent) 10%, var(--pedia-panel));
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 16%, var(--border-color));
+		border-radius: 999px;
+		padding-block: 0.1rem;
+		padding-inline: 0.35rem;
+	}
+
+	.pedia-entry-editor-switch {
+		inline-size: fit-content;
+		justify-self: start;
+		align-self: start;
+		gap: 0.2rem;
+		background: color-mix(in srgb, var(--pedia-panel) 90%, black 10%);
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 12%, var(--border-color)),
+			0 1px 3px color-mix(in srgb, black 78%, transparent);
+		padding: 0.22rem;
+	}
+
+	.pedia-entry-editor-switch .pedia-view-chip {
+		font-size: 0.78rem;
+		letter-spacing: 0.06em;
+		padding-block: 0.42rem;
+		padding-inline: 0.72rem;
+	}
+
+	.pedia-entry-form-toggle-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+		gap: 0.55rem;
+	}
+
+	.pedia-entry-form-toggle {
+		min-inline-size: 0;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.55rem;
+		color: var(--ink);
+		font-size: 0.88rem;
+		font-weight: 600;
+		background: color-mix(in srgb, var(--pedia-panel) 90%, black 10%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 12%, var(--border-color));
+		border-radius: 0.75rem;
+		padding: 0.5rem 0.65rem;
+		cursor: pointer;
+	}
+
+	.pedia-entry-form-toggle input {
+		inline-size: 1rem;
+		block-size: 1rem;
+		margin: 0;
+		accent-color: color-mix(in srgb, var(--pedia-accent) 72%, white 28%);
+	}
+
+	.pedia-entry-form-toggle span {
+		min-inline-size: 0;
+		overflow-wrap: anywhere;
 	}
 
 	.pedia-color-field {
@@ -5334,9 +6521,23 @@
 	}
 
 	.pedia-textarea-compact {
-		min-block-size: 6rem;
-		max-block-size: 10rem;
+		min-block-size: 4.75rem;
+		max-block-size: 8.75rem;
+		line-height: 1.5;
 		resize: vertical;
+	}
+
+	.pedia-textarea-multiline {
+		background: color-mix(in srgb, var(--input-bg) 92%, black 8%);
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 10%, transparent),
+			inset 0 1px 0 color-mix(in srgb, white 4%, transparent);
+		padding-block: 0.72rem;
+	}
+
+	.pedia-textarea-list {
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+		tab-size: 2;
 	}
 
 	.pedia-collection-hero {
@@ -5982,6 +7183,23 @@
 
 		.pedia-preview-grid {
 			grid-template-columns: 1fr;
+		}
+
+		.pedia-editor-panel-head,
+		.pedia-entry-form {
+			grid-template-columns: 1fr;
+		}
+
+		.pedia-entry-form-nav {
+			grid-template-columns: 1fr;
+		}
+
+		.pedia-editor-panel-actions {
+			justify-items: stretch;
+		}
+
+		.pedia-entry-editor-switch {
+			inline-size: fit-content;
 		}
 
 		.pedia-catalog-group-head {

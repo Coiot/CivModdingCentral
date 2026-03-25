@@ -1,0 +1,245 @@
+{
+  "id": "civ-sogdiana-varkhuman",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T16:45:47.940Z",
+    "updatedAt": "2026-03-25T16:48:05.937Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": [
+      "CrossroadsOfTheWorldNav"
+    ]
+  },
+  "slug": "sogdiana-varkhuman",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=-CgLymZDbjY",
+      "title": "Masyaf – Under Siege 2",
+      "credit": "Jesper Kyd"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=gMpa0BFNPhc",
+      "title": "Wax Impression",
+      "credit": "Jeff Ball"
+    }
+  },
+  "title": "Sogdiana",
+  "issues": [
+    "Unresolved templates: CrossroadsOfTheWorldNav"
+  ],
+  "leader": "Varkhuman",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Sogdiana_(Varkhuman)",
+    "lastUpdated": "17 Jun 2022",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2822039339",
+    "modFolderName": "",
+    "wikiPageTitle": "Sogdiana"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Lasqueto",
+      "role": "Civ Icon, UB Icon"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "UU Icon"
+    },
+    {
+      "name": "Zharques",
+      "role": "Civ Pedia, Leader Pedia, DOM Text"
+    },
+    {
+      "name": "Jeff Ball",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Jesper Kyd",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "Sogdiana led by Varkhuman is a custom civilization by TopHatPaladin, with contributions from Lasqueto, DarthKyofu, and Zharques. It was released as part of the Crossroads of the World event.",
+  "uniques": [
+    {
+      "art": "IconPNG_Varkhuman.png",
+      "body": "When trading with a foreign Capital, gain copies of {{Great Person Icon}} Great People generated in that city. Each type of Great Person tile improvement provides an extra {{Trade Route Icon}} Trade Route slot when first built.",
+      "name": "Golden Peaches of Samarkand",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Varkhuman.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Sabao.png",
+      "body": "",
+      "name": "Sabao",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Sabao.png",
+      "bullets": [
+        "May build either a Customs House or a Manufactory",
+        "Customs Houses built by a Sabao increase the nearest friendly city's {{Trade Route Icon}} Trade Route range by 20%"
+      ],
+      "replaces": "Great Merchant",
+      "artCredit": "Art by DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Shahristan.png",
+      "body": "",
+      "name": "Shahristan",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Shahristan.png",
+      "bullets": [
+        "Increases {{Great Person Icon}} Great People generation by 5% for every {{Trade Route Icon}} Trade Route originating from its city (max. 20%)"
+      ],
+      "replaces": "Caravansary",
+      "artCredit": "Art by Lasqueto",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Samarkand",
+    "culture": "Mesopotamic",
+    "religion": [
+      "Zoroastrianism"
+    ],
+    "adjectives": "Sogdian",
+    "empireName": "Sogdian Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Varkhuman",
+      "body": "Varkhuman, also known as Vargoman, was an Ikhshid, or King, of Samarkand in Sogdiana, succeeding King Shishpin. He is known from the Afrasiab murals of Afrasiyab in Samarkand, where is seen being visited by embassies from numerous countries, including China, where there is a direct inscription in the murals directly mentioning him. Varkhuman was a nominal vassal to the Chinese, as one of the murals show a Chinese embassy carrying silk and a string of silkworm cocoons to the local Sogdian ruler. The scene depicted in the Afrasiyab murals probably occurred soon after 658 CE, when the Tang Dynasty had conquered the Western Turkic Khaganate. Varkhuman's legacy was short-lived, as his palace was destroyed by the Arab general Sa'id ibn Uthman between 675 and 677 CE, very soon after he had died.",
+      "title": "Varkhuman"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Sogdia",
+      "body": "Sogdiana, also known as Sogdia, was a Central Asian Iranian civilization located between the Amu Darya and Syr Darya, overlapping the modern nations of present-day Uzbekistan, Tajikistan, Kazakhstan, and Kyrgyzstan. The Sogdian city-states, although never politically united, were centered on the city of Samarkand. Sogdian merchants and diplomats travelled as far west as the Byzantine Empire. They played an important part as middlemen in the trade route of the Silk Road. While originally following the faiths of Zoroastrianism, Manichaeism, Buddhism and, to a lesser extent, Nestorian Christianity from West Asia. The gradual conversion to Islam among the Sogdians and their descendants began with the Muslim conquest of Transoxiana in the 8th century. The Sogdian conversion to Islam was virtually complete by the end of the Samanid Empire in 999, coinciding with the decline of the Sogdian language, as it was largely supplanted by Persian.",
+      "title": "Sogdiana"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Well, these are the risks of business. Fortunately, we Sogdians thrive in foreign lands...\"",
+    "blessing": "\"You stand at the Crossroads of the World, Varkhuman of Sogdiana, Ikhshid of Samarkand. Your culture is one of trade and silk, for which you play an important part. Standing as an intermediary between the cultures of China and the Byzantines, your location on the Silk Road made trade profitable, with many of your people serving various posts in Imperial China. A loose group of city states, your people together formed a powerful civilization that flourished on the connections between East and West. Your language served as the lingua franca of the Silk Road and Central Asia.\nInfluential Varkhuman, you must once again spread the culture of your people through trade. For a long time, your people were among the most powerful, influential, and important in all of Central Asia. All that remains is your legacy. But you must renew your people, strengthen them, and see them once again be a crucial trading hub on the Silk Road. Can you revitalise your people to achieve their status as one of the great trading civilizations once again? Will you build a civilization that can stand the test of time?\"",
+    "introduction": "\"I see your travels have led you to me! Anything worth buying flows through Sogdiana at one point or another. Now that we've met, I'm happy to send some merchants to you too.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Samarkand",
+        "Bukhara",
+        "Panjikant",
+        "Afrasiyab",
+        "Varakhsha",
+        "Nakhshab",
+        "Chach",
+        "Talas",
+        "Kish",
+        "Suyab",
+        "Akhsikath",
+        "Kanka",
+        "Balasagun",
+        "Sarazm",
+        "Khujand",
+        "Ishtikhan",
+        "Mayamurgh",
+        "Kafir-kala",
+        "Bunjikat",
+        "Rabinjan",
+        "Kushaniya",
+        "Paykand",
+        "Navekat",
+        "Dabusiyya",
+        "Yarkand",
+        "Wardana",
+        "Termez",
+        "Merv",
+        "Dunhuang"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Tughshada",
+        "Divashtich",
+        "Tarkhun",
+        "Gurak",
+        "Rakhanch",
+        "Nanai-dhat",
+        "Miwnay",
+        "Chatis",
+        "Wiyusi",
+        "Apama"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Mesopotamic Cultures",
+    "Civilizations with Male leaders",
+    "Crossroads of the World",
+    "Uzbekistan",
+    "Kyrgyzstan",
+    "Tajikistan"
+  ],
+  "modSupport": {},
+  "collections": [
+    {
+      "id": "crossroads-of-the-world",
+      "blurb": "",
+      "links": [],
+      "title": "Crossroads of the World",
+      "colors": {
+        "accent": "#cc8e34",
+        "background": "#3a2315"
+      },
+      "aliases": [],
+      "members": [],
+      "imageURL": "",
+      "sourceTemplate": "CrossroadsOfTheWorldNav"
+    }
+  ],
+  "navTemplate": "CrossroadsOfTheWorldNav",
+  "presentation": {
+    "colors": {
+      "icon": "#ccddff",
+      "background": "#5c4928"
+    },
+    "mapImage": "MapPNG_Sogdiana.png",
+    "iconImage": "TophatSogdiana.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Sogdiana.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TophatSogdiana.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Varkhuman.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Varkhuman.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

@@ -1,0 +1,243 @@
+{
+  "id": "civ-sokoto-caliphate-usman-dan-fodio",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T16:48:29.993Z",
+    "updatedAt": "2026-03-25T16:50:02.683Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": [
+      "12DoANav"
+    ]
+  },
+  "slug": "sokoto-caliphate-usman-dan-fodio",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=a5zzxvE-qMA",
+      "title": "Bule Toko",
+      "credit": "Smithsonian Folkways Recordings "
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=0uCTewkQkyA",
+      "title": "Araabo",
+      "credit": "Smithsonian Folkways Recordings "
+    }
+  },
+  "title": "Sokoto Caliphate",
+  "issues": [
+    "Unresolved templates: 12DoANav"
+  ],
+  "leader": "Usman dan Fodio",
+  "source": {
+    "type": "wiki",
+    "version": "v 2",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Sokoto_(Usman_dan_Fodio)",
+    "lastUpdated": "7 March 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1808291556",
+    "modFolderName": "",
+    "wikiPageTitle": "Sokoto Caliphate"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Urdnot_Scott",
+      "role": "Map"
+    },
+    {
+      "name": "Nutty",
+      "role": "Yan Lifida Model"
+    },
+    {
+      "name": "Civitar",
+      "role": "Marabout Model"
+    },
+    {
+      "name": "Smithsonian Folkways Recordings",
+      "role": "Music"
+    }
+  ],
+  "summary": "The Sokoto Caliphate led by Usman dan Fodio is a custom civilization by TopHatPaladin, with contributions from Urdnot_Scott, Nutty, and Civitar.",
+  "uniques": [
+    {
+      "art": "IconPNG_Usman.png",
+      "body": "Citadels increase the yields of adjacent tile improvements. When making {{Faith Icon}} Faith purchases, gain {{Great Person Icon}} Great General points scaling with the amount of {{Faith Icon}} Faith spent.",
+      "name": "Fulani Jihads",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Usman.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Dawaki.png",
+      "body": "",
+      "name": "Dawaki",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Dawaki.png",
+      "bullets": [
+        "Generates {{Faith Icon}} Faith from kills",
+        "Earns {{Great Person Icon}} Great General points 50% faster"
+      ],
+      "replaces": "Lancer",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Marabout.png",
+      "body": "",
+      "name": "Marabout",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Marabout.png",
+      "bullets": [
+        "May be expended on an owned Fort or Citadel for a burst of {{Faith Icon}} Faith and {{Science Icon}} Science"
+      ],
+      "replaces": "Missionary",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Sokoto",
+    "culture": "West African",
+    "religion": [
+      "Islam",
+      "Sunni (HR)",
+      "Maguzanci (GHR)"
+    ],
+    "adjectives": "Sokoto",
+    "empireName": "Sokoto Caliphate",
+    "government": "Caliphate",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Usman_dan_Fodio",
+      "body": "Usman dan Fodio, born to a distinguished Fulani family in 1754, was the founder of the Sokoto Caliphate. Although many of the Fulani were pastoralists in that era, his family was part of the urbanized Fulani minority living within the Hausa city-states. Usman received a strong and well-rounded education; the teacher most influential on him was Jibril ibn Umar, whose tutelage influenced Usman's hatred for corruption and his support of jihad as a tool against it. Around 1775, Usman began preaching in his own right, and he stridently condemned the Hausa kings for a variety of practices, including bribery, the enslavement of fellow Muslims, and their tolerance of paganism. These teachings resonated with many who were disillusioned with the Hausa kings, particularly other Fulani, and so Usman gained a substantial following throughout the last quarter of the century.",
+      "title": "Usman dan Fodio"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Sokoto_Caliphate",
+      "body": "The decline and fall of the Bornu Empire in the eighteenth century led to a period of fragmentation in the Sudanian Savanna, reducing the region to a patchwork of independent Hausa and Fulani cities. It was during this era that Usman dan Fodio emerged, preaching and educating in Gobir, but the sultan Yunfa became nervous about Usman's growing influence and sent him into exile. However, when Usman left, his followers largely followed him out of Gobir, which exacerbated the tension; seeking to prevent him from gaining any more power, Yunfa declared war on Usman and his supporters in 1804.",
+      "title": "Sokoto"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Heresy! You may have won on Earth, but you will pay dearly in Jahannam.\"",
+    "blessing": "\"Salutations, Usman dan Fodio, commander of the faithful! Your preaching against the corruption of the Hausa states rallied the Fulani to your cause, and helped you bring the Sokoto Caliphate into not just existence but prominence. Your rulership restored religious law to the Sudanian Savanna, and allowed for scholars to educate their students without fear of reprisal. Your distinguished military record allowed you to overthrow all of the old Hausa kings, and your descendants would stretch the caliphate even farther than you did. Nor did your achievements stop with the political - you were a prolific writer of poems and treatises alike, leaving behind a brilliant and well-rounded model of rulership for those who came after you.\nSultan and caliph, the people of Sokoto long for the prosperity and scholarly rigor that they knew under your auspices. Can you establish an empire that will spread the values of faith and learning to all around you? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Salutations! You stand in the presence of Usman dan Fodio. Are you a fellow man of the faith, or are you an enemy I must destroy?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Sokoto",
+        "Gwandu",
+        "Kano",
+        "Gudu",
+        "Degel",
+        "Zazzau",
+        "Katsina",
+        "Alkalawa",
+        "Birni N'Konni",
+        "Gombe Aba",
+        "Bauchi",
+        "Yola",
+        "Daura",
+        "Biram",
+        "Wurno",
+        "Gawakuke",
+        "Dange Shuni",
+        "Kwasarawa",
+        "Dukku",
+        "Rano",
+        "Gusau",
+        "Nafada",
+        "Akko",
+        "Anka",
+        "Jalingo",
+        "Nupe",
+        "Zango",
+        "Baure"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Muhammed Bello",
+        "Atiku",
+        "Jibril",
+        "Ahmadu",
+        "Gadido",
+        "Maimuna",
+        "Iyya Garka",
+        "Hawa'u",
+        "Mariyatu",
+        "Nana Asma'u"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "West African Cultures",
+    "Civilizations with Male leaders",
+    "Civilizations with two unique units (Civ5)",
+    "12 Days of Africa",
+    "Niger",
+    "Nigeria",
+    "Cameroon"
+  ],
+  "modSupport": {},
+  "collections": [
+    {
+      "id": "12-days-of-africa",
+      "blurb": "",
+      "links": [],
+      "title": "12 Days of Africa",
+      "colors": {
+        "accent": "#c97b3b",
+        "background": "#4b2c20"
+      },
+      "aliases": [],
+      "members": [],
+      "imageURL": "",
+      "sourceTemplate": ""
+    }
+  ],
+  "navTemplate": "Template:12DoANav",
+  "presentation": {
+    "colors": {
+      "icon": "#415f22",
+      "background": "#d3e5a2"
+    },
+    "mapImage": "MapPNG_Sokoto.png",
+    "iconImage": "IconPNG_Sokoto.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Sokoto.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Sokoto.png",
+    "mapImageCaption": "Map by Urdnot_Scott",
+    "leaderSceneImage": "LS_PNG_Usman.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Usman.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

@@ -50,6 +50,7 @@ Civ Modding Central provides guided planning, template generators, a pattern lib
 - NopeCopter: https://civmoddingcentral.dev/modded-civs-pedia/author/nopecopter
 - Orangechrisy: https://civmoddingcentral.dev/modded-civs-pedia/author/orangechrisy
 - Rhoze: https://civmoddingcentral.dev/modded-civs-pedia/author/rhoze
+- Senshi: https://civmoddingcentral.dev/modded-civs-pedia/author/senshi
 - TopHatPaladin: https://civmoddingcentral.dev/modded-civs-pedia/author/tophatpaladin
 - Tradboy: https://civmoddingcentral.dev/modded-civs-pedia/author/tradboy
 
@@ -68,19 +69,31 @@ Civ Modding Central provides guided planning, template generators, a pattern lib
 - Hohokam (I'itoi): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/hohokam-i-itoi
 - Holy Roman Empire (Frederick II): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/holy-roman-empire-frederick-ii
 - Holy Roman Empire (Otto I): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/holy-roman-empire-otto-i
+- Kakatiya (Rudrama Devi): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/kakatiya-rudrama-devi
 - Kalmyk Khanate (Ayuka Khan): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/kalmyk-khanate-ayuka-khan
 - Ayutthaya (Narai): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/kingdom-of-ayutthaya-narai
 - France (Louis XI): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/kingdom-of-france-louis-xi
+- Luba (Ilunga Sungu): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/kingdom-of-luba-ilunga-sungu
+- Latvia (Karlis Ulmanis): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/latvia-karlis-ulmanis
 - Malacca Sultanate (Mansur Shah): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/malacca-sultanate-mansur-shah
 - The Franks (Clovis I): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/merovingian-franks-clovis-i
+- Northern Yuan (Mandukhai): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/northern-yuan-dynasty-mandukhai
 - Osage Nation (Pawhuska): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/osage-nation-pawhuska
+- Pala (Dharmapala): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/pala-empire-dharmapala
 - Palenque El Limón (Leonor): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/palenque-el-lim-n
+- Rashtrakuta (Amoghavarsha I): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/rashtrakuta-empire-amoghavarsha-i
 - Bolivia (Victor Paz Estenssoro): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/republic-of-bolivia-victor-paz-estenssoro
 - Republic of the Seven United Netherlands (Maurice): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/republic-of-the-seven-united-netherlands-maurice
 - Republic of the Seven United Netherlands (William): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/republic-of-the-seven-united-netherlands-william
+- Rome (Romulus): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/roman-kingdom-romulus
+- Sassanid Empire (Shapur II): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/sassanid-empire-shapur-ii
+- Sogdiana (Varkhuman): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/sogdiana-varkhuman
+- Sokoto Caliphate (Usman dan Fodio): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/sokoto-caliphate-usman-dan-fodio
+- Somalia (Mohamed Siad Barre): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/somalia-mohamed-siad-barre
 - Brazil (Mem de Sá): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/state-of-brazil-mem-de-s
 - Brunei (Bolkiah): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/sultanate-of-brunei-bolkiah
 - The Tairona (Guacanaoma): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/tairona-guacanaoma
+- Tang (Taizong): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/tang-dynasty-taizong
 - The Aleut (Agugux): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-aleut-agugux
 - The Anangu (Tjilpi): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-anangu-tjilpi
 - The Chamorro (Matå'pang): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-chamorro-mat-pang
@@ -90,17 +103,30 @@ Civ Modding Central provides guided planning, template generators, a pattern lib
 - The Gaels (Niall): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-gaels-niall
 - The Guaycuru (Eso): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-guaycuru-eso
 - The Herero (Jacob Morenga): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-herero-jacob-morenga
+- The Ket (Olgit): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-ket-olgit
 - The Khoshuts (Güshi Khan): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-khoshuts
 - The Lenca (Lempira): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-lenca-lempira
+- The Ngarrindjeri (Ngurunderi): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-ngarrindjeri-ngurunderi
+- The Noongar (Yagan): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-noongar-yagan
 - The Northern Paiute (Truckee): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-northern-paiute-truckee
+- The Oeselians (Vesse): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-oeselians-vesse
+- The Omagua (Payoreva): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-omagua-payoreva
 - The Pehuence (Janequeo): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-pehuence-janequeo
+- The Pehuenche (Janequeo): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-pehuenche-janequeo
 - The Pomo (Essie Parrish): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-pomo-essie-parrish
 - The Ponca (White Eagle): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-ponca-white-eagle
+- The Purépecha (Tariácuri): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-purepecha-tariacuri
 - The Rozvi (Changamire Dombo): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-rozvi-changamire-dombo
+- The Wampanoag (Massasoit): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-wampanoag-massasoit
+- The Wari (Huarmey): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-wari-huarmey
+- The Yali (Wimayuk Wandik): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-yali-wimayuk-wandik
+- The Yellowknives (Akaitcho): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-yellowknives-akaitcho
 - The Zenú (Totó): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/the-zen-tot
 - Great Tibet (Ralpachen): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/tibet-ralpachen
 - Tibet (Thupten Gyatso): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/tibet-thupten-gyatso
+- Tuva (Donduk Kuular): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/tuva-donduk-kuular
 - Yarlung (Nyatri Tsenpo): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/yarlung-nyatri-tsenpo
+- The Zulu (Cetshwayo): https://civmoddingcentral.dev/modded-civs-pedia/civilizations/zulu-kingdom-cetshwayo
 
 ## Discovery
 

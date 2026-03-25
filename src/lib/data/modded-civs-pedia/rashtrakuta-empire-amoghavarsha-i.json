@@ -1,0 +1,232 @@
+{
+  "id": "civ-rashtrakuta-empire-amoghavarsha-i",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T16:38:49.202Z",
+    "updatedAt": "2026-03-25T16:41:44.053Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "rashtrakuta-empire-amoghavarsha-i",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=NiHNqcWAxq8",
+      "title": "Neranammitinayya",
+      "credit": "M.S. Subbulakshmi"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=-mC70SN4lck",
+      "title": "Varnam-Kanada",
+      "credit": "Sanjay Subrahmanyan"
+    }
+  },
+  "title": "Rashtrakuta",
+  "issues": [],
+  "leader": "Amoghavarsha I",
+  "source": {
+    "type": "wiki",
+    "version": "v 3",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Rashtrakuta_(Amoghavarsha_I)",
+    "lastUpdated": "24 August 2019",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1627866904",
+    "modFolderName": "",
+    "wikiPageTitle": "Rashtrakuta Empire"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "grant",
+      "role": "Basadi Graphics and Icon"
+    },
+    {
+      "name": "Chrisy15",
+      "role": "SQL Sorcery"
+    },
+    {
+      "name": "danrell",
+      "role": "UU Model"
+    },
+    {
+      "name": "JFD, LastSword, Neirai, whoward69",
+      "role": "Utilities"
+    },
+    {
+      "name": "Sanjay Subrahmanyan",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "M.S. Subbulakshmi",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Rashtrakuta Empire led by Amoghavarsha I is a custom civilization by TopHatPaladin, with contributions from Chrisy15, grant, and danrell.",
+  "uniques": [
+    {
+      "art": "IconPNG_Amoghavarsha.png",
+      "body": "Cities producing at least 4 {{Faith Icon}} Faith per turn generate points per turn toward a random cultural {{Great Person Icon}} Great Person. Happiness buildings contain a slots for {{Great Work Icon}} Great Works of Art.",
+      "name": "Royal Path for Poets",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Amoghavarsha.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Sthirabhuta.png",
+      "body": "",
+      "name": "Sthirabhuta Kataka",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Sthirabhuta.png",
+      "bullets": [
+        "+5% Combat Strength (max. +20%) for each {{Great Work Icon}} Great Work in the city where it was trained",
+        "Generates {{Golden Age}} Golden Age Points from kills"
+      ],
+      "replaces": "Pikeman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Basadi.png",
+      "body": "",
+      "name": "Basadi",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Basadi.png",
+      "bullets": [
+        "Unlocked at Theology",
+        "Must be built on Hills, and not adjacent to another Basadi",
+        "Generates +2 {{Golden Age}} Golden Age Points, as well as +2 {{Culture Icon}} Culture after researching Archaeology",
+        "During Golden Ages, generates {{Faith Icon}} Faith for each Great Work in the nearest owned city"
+      ],
+      "replaces": "Unique Improvement",
+      "artCredit": "Art by grant",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Manyakheta",
+    "culture": "Bharata",
+    "religion": [
+      "Hinduism",
+      "Jainism (HR)"
+    ],
+    "adjectives": "Rashtrakuta",
+    "empireName": "Rashtrakuta Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Amoghavarsha Nrupathanga I (r. 815 – 877) was born in 800, during the reign of his father Govinda III. Born as Sharva, he took the name Amoghavarsha when he ascended the throne at the age of 14. During his minority, the empire was ruled by his cousin, Karka Suvarnavarsha; however, beginning in 816, a series of revolts wracked the Rashtrakuta empire. Amoghavarsha managed to subdue the last of these in 821, by which point he assumed sole rulership of the empire.",
+      "title": "Amoghavarsha I"
+    },
+    "civilization": {
+      "url": "",
+      "body": "The origins of the Rashtrakuta dynasty are contested; however, by the time they ascended to become the dominant power in southern India, the Rashtrakuta elite were a Kannada-speaking populace. The founder of the Rashtrakuta imperial dynasty was Dantidurga, who initially came to power as a vassal of the Chalukya in 735. For most of his reign, Dantidurga remained a vassal of the Chalukya, but he wrested his independence in a successful battle in 753. In the remaining few years of his life, Dantidurga then led a series of military ventures against neighboring states. This established Karnataka as the heartland of the fledgling Rashtrakuta empire.",
+      "title": "History"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"And so we are condemned to the annals of history. I urge you to at least remember us fondly.\"",
+    "blessing": "\"Salutations, Amoghavarsha Nrupathanga, the Ashoka of the south! In your reign of over sixty years, you definitively established yourself as the most illustrious ruler of the Rashtrakuta empire. Reigning over a vast swath of southern India, your empire wrested tribute from all of its surrounding states, and although you did not prefer to fight you were fearsome if tested. Your real glory, though, was in your religious patronage: you commissioned great arts, not just in your own Jain tradition but also in those of the Hindus and Buddhists. You even contributed to this tradition yourself! Your Kavirajamarga standardized the poetic stylings of your court, and it inaugurated the ancient tradition of Kannada literature.\nAmoghavarsha, your people clamor for the resplendence and cultural output of your empire. Can you establish an empire that rules with generosity and faith for all of its subjects? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"A pilgrim arrives! Well met, stranger. I am known as Amoghavarsha Nrupathanga, the emperor of the Rashtrakuta.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Manyakheta",
+        "Mayurkhandi",
+        "Lattaluru",
+        "Pattakadal",
+        "Sthambadri",
+        "Aihole",
+        "Kolhapur",
+        "Ellora",
+        "Konnur",
+        "Achalapura",
+        "Nashik",
+        "Badami",
+        "Bharuch",
+        "Tripuri",
+        "Amravati",
+        "Samangad",
+        "Banaras",
+        "Banavasi",
+        "Someshvara",
+        "Sanjan",
+        "Vemulawada",
+        "Surat",
+        "Baroda",
+        "Sirur",
+        "Jabalpur",
+        "Niravadyapura",
+        "Peruvanguru",
+        "Shravanabelagola",
+        "Sribhavan"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Bankesha",
+        "Govinda",
+        "Jinasena",
+        "Virasena",
+        "Gunabhadra",
+        "Chandrabbalabbe",
+        "Revakanimmadi",
+        "Shilamahadeva",
+        "Sankha",
+        "Gamundabbe"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Bharata Cultures",
+    "Civilizations with Male leaders",
+    "India",
+    "Civilizations with Unique Improvements"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#e6724c",
+      "background": "#234a48"
+    },
+    "mapImage": "MapBigPNG_Rashtrakuta.png",
+    "iconImage": "IconPNG_Rashtrakuta.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapBigPNG_Rashtrakuta.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Rashtrakuta.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Amoghavarsha.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Amoghavarsha.png",
+    "leaderSceneArtCredit": "Leaderscreen by TopHatPaladin"
+  },
+  "templateRefs": []
+}

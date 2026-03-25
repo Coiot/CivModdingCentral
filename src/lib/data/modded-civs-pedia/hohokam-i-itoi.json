@@ -1,135 +1,152 @@
 {
   "id": "civ-hohokam-i-itoi",
-  "slug": "hohokam-i-itoi",
   "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T21:49:23.649Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": [
+      "KingsOfTheWildFrontierNav"
+    ],
+    "updatedAt": "2026-03-23T21:51:16.881202+00:00"
+  },
+  "slug": "hohokam-i-itoi",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=Mc9xm6UmVp8",
+      "title": "The Fine Joys of Tobacco",
+      "credit": "Woody Jackson"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=nl1F_PUhpI8",
+      "title": "Chaco Mystery",
+      "credit": "Scott August"
+    }
+  },
   "title": "Hohokam",
+  "issues": [
+    "Unresolved templates: KingsOfTheWildFrontierNav"
+  ],
   "leader": "I'itoi",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Hohokam_(I%27itoi)",
+    "lastUpdated": "31 July 2021",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2562756860",
+    "modFolderName": "",
+    "wikiPageTitle": "Hohokam"
+  },
   "authors": [
     "TopHatPaladin"
   ],
-  "summary": "Hohokam led by I'itoi is a custom civilization by TopHatPaladin, with contributions from Lasqueto, JakeWalrusWhale, and danrell.",
-  "source": {
-    "type": "wiki",
-    "wikiPageTitle": "Hohokam",
-    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Hohokam_(I%27itoi)",
-    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2562756860",
-    "version": "v 1",
-    "lastUpdated": "31 July 2021",
-    "modFolderName": ""
-  },
-  "identity": {
-    "empireName": "Hohokam Empire",
-    "adjectives": "Hohokam",
-    "capital": "Snaketown",
-    "bias": "",
-    "religion": [
-      "Catholicism",
-      "Kachina (HR)"
-    ],
-    "government": "Monarchy\nTribal Confederacy",
-    "culture": "Great Plains",
-    "mapLabelsLanguage": "",
-    "requiredContent": [
-      "Brave New World"
-    ]
-  },
-  "presentation": {
-    "mapImage": "MapPNG_Hohokam.png",
-    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Hohokam.png",
-    "mapImageCaption": "Map by TopHatPaladin",
-    "iconImage": "IconPNG_Hohokam.png",
-    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Hohokam.png",
-    "leaderSceneImage": "LS_PNG_Iitoi.png",
-    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Iitoi.png",
-    "leaderSceneArtCredit": "Art by Lasqueto",
-    "colors": {
-      "background": "#b76748",
-      "icon": "#e7dc95"
-    }
-  },
-  "overview": {
-    "civilization": {
-      "title": "Hohokam",
-      "url": "https://en.wikipedia.org/wiki/Hohokam",
-      "body": "Hohokam was a civilization based in the Sonora Desert of the American Southwest, today known only from its material culture. It was an ancestor of the O'odham peoples, including the Tohono O'odham and Pima. The Hohokam people lived a sedentary, urbanized lifestyle, and famously maintained large systems of irrigation canals to sustain themselves. They were also vigorous traders who exchanged goods with the California region and Mesoamerica."
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
     },
-    "leader": {
-      "title": "'''I'itoi'''",
-      "body": "I'itoi (also known as I'ithi or Se:he, \"Elder Brother\") is a culture hero and creator god from O'odham mythology. He is credited with creating the Hohokam people, who he brought forth from the underworld. I'itoi was a warrior who killed enemies of the O'odham people, such as Eagleman; he also helped shape the landscape of the Sonora Desert.",
-      "url": "https://en.wikipedia.org/wiki/I%27itoi"
+    {
+      "name": "Lasqueto",
+      "role": "Leaderscreen, Leader Icon"
+    },
+    {
+      "name": "JakeWalrusWhale",
+      "role": "UU Icon"
+    },
+    {
+      "name": "danrell",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Scott August",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Woody Jackson",
+      "role": "War Theme"
     }
-  },
-  "dawnOfMan": {
-    "blessing": "\"Greetings, I'itoi, the Elder Brother, the Man in the Maze! As the man who first led the Hohokam people from the underworld and up to the surface, it is now your destiny to lead them. Following your Himdag commandments, the Hohokam established a vast network of immigration canals throughout the arid Sonora Desert, allowing them to build urbanized settlements within this harsh environment. They also fostered trade with the rich lands of Mesoamerica, providing not just new crops but also the turquoise with which you made your ornate jewelry. Eventually, drought would cause Hohokam to collapse and be supplanted by the modern O'odham peoples, but you still commanded the Sonora for almost 1500 years.\nElder Brother I'itoi, it is time to excavate your long-forgotten canals and become the master of the desert once more. Can you create an oasis empire that is the envy of all of your rivals? Can you build a civilization that will stand the test of time?\"",
-    "introduction": "\"I am I'itoi, the Man in the Maze! I have taken these inhospitable lands and forged them into the triumphant cities you see here.\"",
-    "defeat": "\"Such a great empire, dried up and turned to dust...\""
-  },
-  "templateRefs": [],
+  ],
+  "summary": "Hohokam led by I'itoi is a custom civilization by TopHatPaladin, with contributions from Lasqueto, JakeWalrusWhale, and danrell.",
   "uniques": [
     {
-      "slot": "unique ability",
-      "name": "Himdag Commandments",
-      "replaces": "",
       "art": "IconPNG_Iitoi.png",
-      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Iitoi.png",
-      "artCredit": "Art by Lasqueto",
       "body": "Owned Mountains act as sources of Fresh Water. During {{Golden Age}} Golden Ages, Farms yield {{Production Icon}} Production equal to their {{Food Icon}} Food output.",
-      "civilopedia": "",
+      "name": "Himdag Commandments",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Iitoi.png",
       "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by Lasqueto",
       "footnotes": [],
+      "civilopedia": "",
       "templateRefs": []
     },
     {
-      "slot": "unique unit",
-      "name": "Ko'idkam",
-      "replaces": "Archer",
       "art": "IconPNG_Koidkam.png",
-      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Koidkam.png",
-      "artCredit": "Art by JakeWalrusWhale",
       "body": "",
-      "civilopedia": "",
+      "name": "Ko'idkam",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Koidkam.png",
       "bullets": [
         "+20% defensive strength (6 vs. 5)",
         "+2 {{Moves Icon}} Moves when starting its turn on a tile with Fresh Water access"
       ],
+      "replaces": "Archer",
+      "artCredit": "Art by JakeWalrusWhale",
       "footnotes": [],
+      "civilopedia": "",
       "templateRefs": []
     },
     {
-      "slot": "unique building",
-      "name": "Platform Mound",
-      "replaces": "Temple",
       "art": "IconPNG_PlatformMound.png",
-      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_PlatformMound.png",
-      "artCredit": "Art by TopHatPaladin",
       "body": "",
-      "civilopedia": "",
+      "name": "Platform Mound",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_PlatformMound.png",
       "bullets": [
         "If its city contains a {{Trade Route Icon}} Trade Route, all worked freshwater tiles provide {{Golden Age}} Golden Age Points"
       ],
+      "replaces": "Temple",
+      "artCredit": "Art by TopHatPaladin",
       "footnotes": [],
+      "civilopedia": "",
       "templateRefs": []
     }
   ],
-  "collections": [
-    {
-      "id": "kings-of-the-wild-frontier",
-      "title": "Kings of the Wild Frontier",
-      "sourceTemplate": "",
-      "aliases": [],
-      "colors": {
-        "background": "#3b2416",
-        "accent": "#d7a35d"
-      },
-      "imageURL": "",
-      "blurb": "",
-      "links": [],
-      "members": []
+  "identity": {
+    "bias": "",
+    "capital": "Snaketown",
+    "culture": "Great Plains",
+    "religion": [
+      "Catholicism",
+      "Kachina (HR)"
+    ],
+    "adjectives": "Hohokam",
+    "empireName": "Hohokam Empire",
+    "government": "Monarchy\nTribal Confederacy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/I%27itoi",
+      "body": "I'itoi (also known as I'ithi or Se:he, \"Elder Brother\") is a culture hero and creator god from O'odham mythology. He is credited with creating the Hohokam people, who he brought forth from the underworld. I'itoi was a warrior who killed enemies of the O'odham people, such as Eagleman; he also helped shape the landscape of the Sonora Desert.",
+      "title": "'''I'itoi'''"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Hohokam",
+      "body": "Hohokam was a civilization based in the Sonora Desert of the American Southwest, today known only from its material culture. It was an ancestor of the O'odham peoples, including the Tohono O'odham and Pima. The Hohokam people lived a sedentary, urbanized lifestyle, and famously maintained large systems of irrigation canals to sustain themselves. They were also vigorous traders who exchanged goods with the California region and Mesoamerica.",
+      "title": "Hohokam"
     }
-  ],
+  },
+  "dawnOfMan": {
+    "defeat": "\"Such a great empire, dried up and turned to dust...\"",
+    "blessing": "\"Greetings, I'itoi, the Elder Brother, the Man in the Maze! As the man who first led the Hohokam people from the underworld and up to the surface, it is now your destiny to lead them. Following your Himdag commandments, the Hohokam established a vast network of immigration canals throughout the arid Sonora Desert, allowing them to build urbanized settlements within this harsh environment. They also fostered trade with the rich lands of Mesoamerica, providing not just new crops but also the turquoise with which you made your ornate jewelry. Eventually, drought would cause Hohokam to collapse and be supplanted by the modern O'odham peoples, but you still commanded the Sonora for almost 1500 years.\nElder Brother I'itoi, it is time to excavate your long-forgotten canals and become the master of the desert once more. Can you create an oasis empire that is the envy of all of your rivals? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"I am I'itoi, the Man in the Maze! I have taken these inhospitable lands and forged them into the triumphant cities you see here.\""
+  },
   "nameLists": [
     {
-      "title": "City List",
       "items": [
         "Snaketown",
         "Casa Grande",
@@ -158,10 +175,10 @@
         "Las Colinas",
         "Las Muertos",
         "Papagueria"
-      ]
+      ],
+      "title": "City List"
     },
     {
-      "title": "Spy List",
       "items": [
         "Elder Brother",
         "Earth Doctor",
@@ -173,46 +190,8 @@
         "Szeukha",
         "Hick-Vick",
         "Tall Flowers"
-      ]
-    }
-  ],
-  "music": {
-    "peace": {
-      "title": "Chaco Mystery",
-      "credit": "Scott August",
-      "url": "https://www.youtube.com/watch?v=nl1F_PUhpI8"
-    },
-    "war": {
-      "title": "The Fine Joys of Tobacco",
-      "credit": "Woody Jackson",
-      "url": "https://www.youtube.com/watch?v=Mc9xm6UmVp8"
-    }
-  },
-  "modSupport": {},
-  "credits": [
-    {
-      "name": "TopHatPaladin",
-      "role": "Design, Code, Art, Text"
-    },
-    {
-      "name": "Lasqueto",
-      "role": "Leaderscreen, Leader Icon"
-    },
-    {
-      "name": "JakeWalrusWhale",
-      "role": "UU Icon"
-    },
-    {
-      "name": "danrell",
-      "role": "Unit Model"
-    },
-    {
-      "name": "Scott August",
-      "role": "Peace Theme"
-    },
-    {
-      "name": "Woody Jackson",
-      "role": "War Theme"
+      ],
+      "title": "Spy List"
     }
   ],
   "categories": [
@@ -224,20 +203,37 @@
     "United States",
     "Mexico"
   ],
-  "navTemplate": "KingsOfTheWildFrontierNav",
-  "issues": [
-    "Unresolved templates: KingsOfTheWildFrontierNav"
+  "modSupport": {},
+  "collections": [
+    {
+      "id": "kings-of-the-wild-frontier",
+      "blurb": "",
+      "links": [],
+      "title": "Kings of the Wild Frontier",
+      "colors": {
+        "accent": "#d7a35d",
+        "background": "#3b2416"
+      },
+      "aliases": [],
+      "members": [],
+      "imageURL": "",
+      "sourceTemplate": ""
+    }
   ],
-  "meta": {
-    "createdAt": "2026-03-23T21:49:23.649Z",
-    "formatVersion": 1,
-    "unresolvedTemplates": [
-      "KingsOfTheWildFrontierNav"
-    ],
-    "updatedAt": "2026-03-24T19:49:07.559Z",
-    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
-    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
-    "createdByName": "TopHatPaladin",
-    "updatedByName": "Coiot"
-  }
+  "navTemplate": "KingsOfTheWildFrontierNav",
+  "presentation": {
+    "colors": {
+      "icon": "#e7dc95",
+      "background": "#b76748"
+    },
+    "mapImage": "MapPNG_Hohokam.png",
+    "iconImage": "IconPNG_Hohokam.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Hohokam.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Hohokam.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Iitoi.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Iitoi.png",
+    "leaderSceneArtCredit": "Art by Lasqueto"
+  },
+  "templateRefs": []
 }

@@ -1,0 +1,233 @@
+{
+  "id": "civ-sassanid-empire-shapur-ii",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T16:43:54.602Z",
+    "updatedAt": "2026-03-25T16:45:27.590Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": [
+      "10thAnniversaryCollectionNav"
+    ]
+  },
+  "slug": "sassanid-empire-shapur-ii",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=3outQoC4qiA",
+      "title": "Warriors of Ahura",
+      "credit": "Richard Beddow"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=SffZoQoVvbE",
+      "title": "Sacred Fires",
+      "credit": "Richard Beddow"
+    }
+  },
+  "title": "Sassanid Empire",
+  "issues": [
+    "Unresolved templates: 10thAnniversaryCollectionNav"
+  ],
+  "leader": "Shapur II",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Sassanids_(Shapur_II)",
+    "lastUpdated": "24 April 2021",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2235695964",
+    "modFolderName": "",
+    "wikiPageTitle": "Sassanid Empire"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Janboruta",
+      "role": "Civ Icon, Map"
+    },
+    {
+      "name": "JFD",
+      "role": "Faith purchase interface"
+    },
+    {
+      "name": "danrell",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Richard Beddow",
+      "role": "Music"
+    }
+  ],
+  "summary": "The Sassanid Empire led by Shapur II is a custom civilization by TopHatPaladin, with contributions from janboruta and JFD. It was released as part of the Civ V 10th Anniversary event.",
+  "uniques": [
+    {
+      "art": "IconPNG_Shapur.png",
+      "body": "Cities connected to the {{Capital}} Capital yield {{Faith Icon}} Faith when gaining Population, scaling based on distance from the Capital. May purchase Workers and Settlers with {{Faith Icon}} Faith.",
+      "name": "Brother of the Sun and Moon",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Shapur.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Aswar.png",
+      "body": "",
+      "name": "Aswar",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Aswar.png",
+      "bullets": [
+        "May be purchased with {{Faith Icon}} Faith",
+        "+25% {{Strength Icon}} Combat Strength (15 vs. 12)",
+        "+25% {{Strength Icon}} Combat Strength against Melee units"
+      ],
+      "replaces": "Horseman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_FireTemple.png",
+      "body": "",
+      "name": "Atroshan",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_FireTemple.png",
+      "bullets": [
+        "+1 {{Food Icon}} Food, increasing to +2 if its city is connected to the {{Capital}} Capital",
+        "Yields a burst of {{Food Icon}} Food when making a Faith purchase in its city"
+      ],
+      "replaces": "Temple",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Ctesiphon",
+    "culture": "Mesopotamic",
+    "religion": [
+      "Zoroastrianism"
+    ],
+    "adjectives": "Sassanid",
+    "empireName": "Sassanid Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Shapur_II",
+      "body": "Shapur II was the longest-reigning king in Persian history, ruling for the entirety of his 70-year life. After the death of Hormizd II in 309, all of Hormizd's living children were killed or driven off, leaving a power vacuum; legend holds that this crisis was resolved by placing a crown upon the womb of Ifra Hormizd, thus crowning the unborn Shapur II in utero. Upon reaching the age of 16 and receiving the full powers of kingship, Shapur launched a campaign against the Arabs in 325. He crossed the Persian Gulf and brought most of eastern Arabia under Sassanid sway, introducing Zoroastrianism to the region and even launching raids as far west as Medina.",
+      "title": "Shapur II"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Sasanian_Empire",
+      "body": "The Sassanid Empire was founded in the city of Istakhr, by King Ardashir of Persis. Internal discord in Parthia prevented the Arsacid dynasty from realizing how much power Ardashir was consolidating, and so they were powerless to stop him from being crowned Shahanshah in 224. Ardashir then rapidly expanded throughout the region of Persia, a wave of conquests that would be continued by his son, Shapur I. Shapur I would be a vigorous ruler who expanded the Sassanid Empire into Bactria and Roman Mesopotamia, as well as founding major cities such as Nishapur. However, around the turn of the fourth century, the restoration of Roman power would push back the Sassanids' western border.",
+      "title": "Sassanid Empire"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Impossible... the eternal fire has been extinguished. How could it have come to this?\"",
+    "blessing": "\"Great Shapur, Shahanshah of the Sassanid Empire, brother of the sun and moon, king of the four corners! In your seventy years as king, you vastly expanded the power and prestige of the Persian realm. You claimed land from the Kushano-Sasanians to the east, the Arabs to the south, and the Romans to the west; the last of these campaigns even reduced Georgia and Armenia to vassals under your control. You were also a staunch defender of the Zoroastrian faith, assembling the Avesta and crushing the Christianity of the hated Romans. Nor were you purely destructive - you also built and rebuilt numerous cities, including Susa, Nisibis, and Vuzurg-Shapur.\nShapur II, your people still think wistfully about the glorious achievements of your reign. Can you once more create a Sassanid Empire that no opponents can even hope to match? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"You stand in the presence of the Shahanshah of Iran! You are surely familiar with my accomplishments, so I shan't bore you by repeating them.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Ctesiphon",
+        "Istakhr",
+        "Gundeshapur",
+        "Gor",
+        "Shushtar",
+        "Veh-Ardashir",
+        "Susa",
+        "Nishapur",
+        "Arbela",
+        "Ecbatana",
+        "Bishapur",
+        "Ray",
+        "Zaranj",
+        "Nahavand",
+        "Spahan",
+        "Merv",
+        "Amol",
+        "Karkh Meshan",
+        "Yazd",
+        "Ganzak",
+        "Vahman-Ardashir",
+        "Samarkand",
+        "Balkh",
+        "Gurgan",
+        "Sanjan",
+        "Bukhara",
+        "Mosul",
+        "Ahvaz",
+        "Vuzurg-Shapur",
+        "Darabgerd",
+        "Harev",
+        "Narmashir",
+        "Dastagird",
+        "Kath",
+        "Tus",
+        "Pushang",
+        "Afrasiyab"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Ardashir",
+        "Bahram",
+        "Narseh",
+        "Hormizd",
+        "Yazdegerd",
+        "Barbad",
+        "Kayad",
+        "Nakisa",
+        "Zurvandukht",
+        "Shushandukht"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Iranian Cultures",
+    "Civilizations with Male leaders",
+    "10th Anniversary Civs"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "10thAnniversaryCollectionNav",
+  "presentation": {
+    "colors": {
+      "icon": "#d7bd98",
+      "background": "#520527"
+    },
+    "mapImage": "MapPNG_Sassanid.png",
+    "iconImage": "IconPNG_Sassanid.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Sassanid.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Sassanid.png",
+    "mapImageCaption": "Map by janboruta",
+    "leaderSceneImage": "LS_PNG_Shapur.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Shapur.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

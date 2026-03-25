@@ -1,0 +1,231 @@
+{
+  "id": "civ-northern-yuan-dynasty-mandukhai",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T03:52:16.257Z",
+    "updatedAt": "2026-03-25T03:56:37.059Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "northern-yuan-dynasty-mandukhai",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=NZRjDNZbQCU",
+      "title": "Steppes of the Nomads",
+      "credit": "Robin Birner and Yannick Süß"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=Y3jf0lxx4ow",
+      "title": "Fiddler of the Plains",
+      "credit": "Richard Beddow"
+    }
+  },
+  "title": "Northern Yuan",
+  "issues": [],
+  "leader": "Mandukhai",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Northern_Yuan_(Mandukhai)",
+    "lastUpdated": "18 March 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1763916160",
+    "modFolderName": "",
+    "wikiPageTitle": "Northern Yuan Dynasty"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Francesca",
+      "role": "Civ Icon"
+    },
+    {
+      "name": "Chrisy15",
+      "role": "Design Assistance"
+    },
+    {
+      "name": "EmeraldRange",
+      "role": "Design Assistance"
+    },
+    {
+      "name": "GeneralMatt, Wolfdog, bernie14",
+      "role": "Chongzu Model"
+    },
+    {
+      "name": "Richard Beddow",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Robin Birner and Yannick Süß",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Northern Yuan dynasty led by Mandukhai is a custom civilization by TopHatPaladin.",
+  "uniques": [
+    {
+      "art": "IconPNG_Mandukhai.png",
+      "body": "Units trained in conquered Cities receive +1 {{Moves Icon}} Movement while at war with the player you took it from. Defeating Units damages adjacent Cities.",
+      "name": "Eight White Yurts",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Mandukhai.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_HuihuiPao.png",
+      "body": "",
+      "name": "Huihui Pao",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_HuihuiPao.png",
+      "bullets": [
+        "Cheaper to construct (100 vs. 120 {{Production Icon}} )",
+        "May chop down Forests, each time allowing it to make a single attack without setting up"
+      ],
+      "replaces": "Trebuchet",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Chongzu.png",
+      "body": "",
+      "name": "Chongzu",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Chongzu.png",
+      "bullets": [
+        "Unlocked at Gunpowder",
+        "No penalty against Cities",
+        "Gains Experience at double rate",
+        "May be expended in a friendly city, contributing {{Production Icon}} Production based on its Experience towards whatever Unit is currently being trained"
+      ],
+      "replaces": "Lancer",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Karakorum",
+    "culture": "Steppe",
+    "religion": [
+      "Tengriism"
+    ],
+    "adjectives": "Northern Yuan",
+    "empireName": "Northern Yuan Dynasty",
+    "government": "Nomadic",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Mandukhai",
+      "body": "Mandukhai was born in approximately 1449; her father was Chorosbai, an aristocrat who held the title of chingsang (grand councillor). She first entered renown after marrying Manduul Khan at age sixteen, especially after she came to be Manduul's favorite wife - taking precedence over his first wife, Yeke Qabar-tu. In 1479, Manduul died suddenly with no children, leading to a succession crisis. Mandukhai procured Batumöngke, a seven-year-old orphan descended directly from Genghis Khan; she then adopted the boy and had him crowned as Dayan Khan, thereby placing herself in the position of regent.",
+      "title": "Mandukhai"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Northern_Yuan_dynasty",
+      "body": "The Northern Yuan Dynasty is the designation used for the Mongols of the Yuan Dynasty, after the Ming drove them out of China proper in the later 14th century. The Yuan power was most severely broken in 1388, after the Ming achieved a decisive victory over them at the Battle of Buyur Lake. This caused the Mongols to fragment, initiating a time known as the \"period of small kings\"; Ming intervention in the early 15th century also prevented any one group from achieving primacy.",
+      "title": "Northern Yuan"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Impossible! It must have been sabotage... how else could I have failed?\"",
+    "blessing": "\"Salutations, Mandukhai Khatun the Wise, reunifier of the Mongol peoples! After being driven out of China, the Yuan - now Northern Yuan - were largely subjected to the Oirats in the 15th century. Under your rule, that changed; after the death of your first husband, you assumed control over the Mongols and led them to a grand victory over their ancient Oirat foes. This unified the Mongols for the first time in a century, and your prudent reorganization of the tümens helped preserve the Northern Yuan for a century beyond your death.\nO Mandukhai, your successes have survived in the imagination of the Mongols, and they clamor for the triumph and glory that they experienced under your control. Can you overrun your foes and rebuild Mongol dominance? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"You stand before Mandukhai Khatun, the descendant of Genghis Khan and the reunifier of his peoples. What accomplishments can you boast of?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Karakorum",
+        "Shangdu",
+        "Yingchang",
+        "Ordos",
+        "Burkhan Khaldun",
+        "Khalkha",
+        "Orkhon",
+        "Hohhot",
+        "Chahar",
+        "Kherlen",
+        "Bayanbulag",
+        "Tuul",
+        "Khentii",
+        "Ikh Khorig",
+        "Tümed",
+        "Bayankhongor",
+        "Shargaljuut",
+        "Erdene Zuu",
+        "Onon",
+        "Ögii",
+        "Uriankhai",
+        "Yünsheebüü",
+        "Tumu",
+        "Darkhad",
+        "Xilinhot",
+        "Baotou",
+        "Hulun",
+        "Amur",
+        "Hami"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Batumöngke",
+        "Barsbolad",
+        "Turbolad",
+        "Manduul",
+        "Mahakörgis",
+        "Chorosbai",
+        "Samar",
+        "Yeke Qabar-tu",
+        "Khusei",
+        "Jimisgene"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Steppe Cultures",
+    "Civilizations with Female leaders",
+    "Civilizations with two unique units (Civ5)",
+    "Mongolia"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#77b3e1",
+      "background": "#712e47"
+    },
+    "mapImage": "MapPNG_Mandukhai.png",
+    "iconImage": "Icon_Mandukhai.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Mandukhai.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Mandukhai.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Mandukhai.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Mandukhai.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

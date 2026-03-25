@@ -1,0 +1,218 @@
+{
+  "id": "civ-kakatiya-rudrama-devi",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T03:38:24.293Z",
+    "updatedAt": "2026-03-25T03:40:10.158Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "kakatiya-rudrama-devi",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=djRGSAzKxS0",
+      "title": "Nuvve Naa Swasa [Instrumental Version]",
+      "credit": "M.M. Keeravani"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=qnXy5wfTsLE",
+      "title": "Nee Shenam [Flute Cover]",
+      "credit": "R.P. Patnaik, covered by SurDurbar"
+    }
+  },
+  "title": "Kakatiya",
+  "issues": [],
+  "leader": "Rudrama Devi",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Kakatiya_(Rudrama_Devi)",
+    "lastUpdated": "7 March 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2908681726",
+    "modFolderName": "",
+    "wikiPageTitle": "Kakatiya"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Zharques",
+      "role": "Text (Pedias, DOM)"
+    },
+    {
+      "name": "danrell",
+      "role": "Unit Model"
+    },
+    {
+      "name": "R.P. Patnaik",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "M.M. Keeravani",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "Kakatiya led by Rudrama Devi is a custom civilization by TopHatPaladin, with contributions from Zharques and danrell.",
+  "uniques": [
+    {
+      "art": "IconPNG_RudramaDevi.png",
+      "body": "When promoted in or adjacent to a friendly City, units provide a burst of {{Food Icon}} Food to that City. When sharing a tile with a military unit, Workers may be expended to grant that unit 5 XP.",
+      "name": "An Army from Every Caste",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_RudramaDevi.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_DakDanda.png",
+      "body": "",
+      "name": "Dakshinabhuja-Danda",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_DakDanda.png",
+      "bullets": [
+        "Gains Experience 25% faster",
+        "When promoted in friendly territory, any adjacent pillaged improvements are repaired"
+      ],
+      "replaces": "Knight",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_IrrigTank.png",
+      "body": "",
+      "name": "Irrigation Tank",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_IrrigTank.png",
+      "bullets": [
+        "No terrain requirements",
+        "+1 {{Food Icon}} Food for every Experience-granting building in its city"
+      ],
+      "replaces": "Garden",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Orugallu",
+    "culture": "Bharata",
+    "religion": [
+      "Hinduism",
+      "Shaivism (HR)"
+    ],
+    "adjectives": "Kakatiya",
+    "empireName": "Kakatiya Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Rudrama_Devi",
+      "body": "Rudrama Devi, known also as Maharani Rudramma Devi or Rudhramadevi, was a queen of the Kakatiya dynasty in the Deccan Plateau from 1263 to 1289 or 1295, her death. She was among the women to rule as monarchs in India and promoted a male image in order to do so. This was a significant change and one that was followed by her successor and also by the later Vijayanagara Empire.",
+      "title": "Rudrama Devi"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Kakatiya_dynasty",
+      "body": "The Kakatiya dynasty was an Indian dynasty that ruled most of eastern Deccan region between 12th and 14th centuries. Early Kakatiya rulers served as feudatories to Rashtrakutas and Western Chalukyas for more than two centuries. They assumed sovereignty under Prataparudra I in 1163 CE. Ganapati Deva significantly expanded Kakatiya lands during the 1230s. Ganapati Deva was succeeded by Rudrama Devi, who successfully repelled the attacks of Yadavas. After the successful siege of Warangal in 1310, Prataparudra II was forced to pay annual tribute to Delhi. Another attack by Ulugh Khan in 1323 saw stiff resistance by the Kakatiyan army, but they were finally defeated.",
+      "title": "Kakatiya dynasty"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"You have destroyed something great today. May all your cruelties be repaid in kind.\"",
+    "blessing": "\"Strengthen your resolve, Rudrama Devi of the Kakatiya dynasty, for your enemies wish to see you defeated and broken. Without a brother, you were chosen by your father to lead the Kakatiyas. As such, you were trained in the arts of literature, war, and diplomacy. Upon your ascendancy to the throne, other male cousins and unwieldy noblemen attempted to block your succession. But, promoting a masculine image, you instead cemented your rule, so much so that by the time Marco Polo visited during his travels, he had nought but praise for the warrior queen of India. Throughout this time, you strengthened your capital, continuing with fortifications such as curtain walls to protect your people. Even then you faced challenges from other dynasties, repelling some but not others. You are remembered as a capable and strong leader.\nOh unyielding Rudrama Devi, many things have changed but much remains the same. Many will underestimate you; you must ignore them, and show the world that you can once again shape your own destiny, impress the likes of Marco Polo once more. Can you prove yourself once again adept at ruling while aristocrats plot your demise? Will you build a civilization that can stand the test of time?\"",
+    "introduction": "\"Well met! You have entered the lands of the Kakatiya. Do not bother telling me your caste - I am happy to negotiate with anyone who can be useful to me.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Orugallu",
+        "Hanumakonda",
+        "Golconda",
+        "Ramappa",
+        "Motupalli",
+        "Ghanpur",
+        "Ongole",
+        "Nidadavolu",
+        "Nagunur",
+        "Raichur",
+        "Kalyani",
+        "Kaulas",
+        "Elgandal",
+        "Medak",
+        "Ramagiri",
+        "Bhuvangiri",
+        "Nizamabad",
+        "Upparapalli",
+        "Khammam",
+        "Kuravi",
+        "Gandhari",
+        "Kazipet",
+        "Draksharamam",
+        "Kanchipuram",
+        "Tripuranthakam",
+        "Simhachalam"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Ganapati",
+        "Rudra",
+        "Prola",
+        "Gunda",
+        "Beta",
+        "Prataparudra",
+        "Mummadamba",
+        "Virabhadra",
+        "Bayyama",
+        "Somaladevi"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Bharata Cultures",
+    "Civilizations with Female leaders",
+    "India"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#254448",
+      "background": "#f8ba70"
+    },
+    "mapImage": "MapPNG_Kakatiya.png",
+    "iconImage": "Kakatiya.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Kakatiya.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Kakatiya.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_RudramaDevi.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_RudramaDevi.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

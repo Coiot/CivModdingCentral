@@ -1,0 +1,225 @@
+{
+  "id": "civ-the-purepecha-tariacuri",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T16:36:14.491Z",
+    "updatedAt": "2026-03-25T16:37:48.816Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "the-purepecha-tariacuri",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=2uIQu_7r8yQ",
+      "title": "Pirekua Michoacana",
+      "credit": "Marco Antonio Solis"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=scQyyo7JFTY",
+      "title": "Pirekua Flor de Cantela",
+      "credit": "Joaquin Pantoja"
+    }
+  },
+  "title": "The Purépecha",
+  "issues": [],
+  "leader": "Tariácuri",
+  "source": {
+    "type": "wiki",
+    "version": "v 4",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Pur%C3%A9pecha_(Tari%C3%A1curi)",
+    "lastUpdated": "7 March 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1484582883",
+    "modFolderName": "",
+    "wikiPageTitle": "The Purépecha"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Reedstilt",
+      "role": "Research"
+    },
+    {
+      "name": "danrell",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Joaquin Pantoja",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Marco Antonio Solis",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Purépecha led by Tariácuri is a custom civilization by TopHatPaladin, with contributions from Reedstilt.",
+  "uniques": [
+    {
+      "art": "IconPNG_Tariacuri.png",
+      "body": "Cities enter We Love The King Day the first time a mine is built in their working radius. May convert enemy units that start their turns adjacent to mines you control.",
+      "name": "Fires of Curicaueri",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Tariacuri.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Quangariecha.png",
+      "body": "",
+      "name": "Quangariecha",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Quangariecha.png",
+      "bullets": [
+        "Can be used, once in its lifetime, to claim a neutral Hill tile"
+      ],
+      "replaces": "Swordsman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Yacata.png",
+      "body": "",
+      "name": "Yácata",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Yacata.png",
+      "bullets": [
+        "Requires a source of either Iron, Copper, Silver, or Gold",
+        "Yields +3 {{Production Icon}} Production during We Love The King Day"
+      ],
+      "replaces": "Mint",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Hill",
+    "capital": "Tzintzuntzan",
+    "culture": "Mesoamerican",
+    "religion": [
+      "Catholicism",
+      "Tlateomatiliztli (HR)"
+    ],
+    "adjectives": "Purépecha",
+    "empireName": "Purépecha Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Tariácuri, born circa 1270 CE, was the first cazonci of the Purépecha empire. His father, Pauácume, died when Tariácuri was still a young child; instead, Tariácuri was largely raised by a group of priests of the fire god Curicaueri. Tariácuri initially intended to follow his guardians' path and become a priest, but after being driven from his home city of Pátzcuaro by enemy forces, Tariácuri was forced to retake the city by military force. The success of this reconquest inspired Tariácuri to expand the Purépecha domains, and so over his five-decade reign, Tariácuri was able to bring the entire Lake Pátzcuaro basin into his family's control.",
+      "title": "Tariácuri"
+    },
+    "civilization": {
+      "url": "",
+      "body": "The Purépecha empire, of western Mexico, originated in the Lake Pátzcuaro basin in around 1300. Tariácuri was the first leader of the empire, and he united the Lake Pátzcuaro communities during the first decades of the fourteenth century; during this period, Tzintzuntzan, Pátzcuaro, and Ihuatzio emerged as the foremost Purépecha cities.",
+      "title": "The Purépecha"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"By destroying us, you have done the world a disservice. May your deeds weigh heavy upon you.\"",
+    "blessing": "\"Greetings, Tariácuri, uniter of the Purépecha people and first cazonci of the Purépecha empire! Despite the early death of your father and your expulsion from Pátzcuaro in your youth, you not only reclaimed your birthplace but even grew to dominate the entire Lake Pátzcuaro basin. Your people were famed for their metallurgy, giving them the tools to be fearsome warriors and capable merchants; these skills allowed the Purépecha to resist the strength of the Aztec empire, and to remain an independent polity until the arrival of the Spaniards.\nTariácuri, blessed of Curicaueri, your people call for you to restore the glorious days of empire. Can you establish a state that can defend against all conquerors? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Greetings, stranger. This is the land of the Purépecha, and I am their ruler. Do you seek refuge, or commerce?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Tzintzuntzan",
+        "Pátzcuaro",
+        "Ihuatzio",
+        "Angamuco",
+        "Erongarícuaro",
+        "Urichu",
+        "Tzinguitzuri",
+        "Uruapan",
+        "Tziróndaro",
+        "Cutzamala",
+        "Huandacareo",
+        "Tzacapu",
+        "Zacatotlán",
+        "Uringuarapexo",
+        "Cherán",
+        "Cuerámaro",
+        "Tlazazalca",
+        "Janitzio",
+        "Purépero",
+        "Celaya",
+        "Acámbaro",
+        "Zinapécuaro",
+        "Zurumuato",
+        "Curutarán",
+        "Matlatzinco",
+        "Tagancícuaro",
+        "Acuitzio",
+        "Yurirapúndaro",
+        "Tamazula",
+        "La Huacana",
+        "Charapan",
+        "Cupareo",
+        "Cóporo",
+        "Zamora de Hidalgo"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Hiquingaje",
+        "Hiripan",
+        "Tangáxuan",
+        "Tzitzipandáquare",
+        "Zuangua",
+        "Cuerecuaperi",
+        "Sicuirancha",
+        "Tzetahcu",
+        "Pauácume",
+        "Eréndira"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Mesoamerican Cultures",
+    "Civilizations with Male leaders",
+    "Mexico"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#43673c",
+      "background": "#e1bd65"
+    },
+    "mapImage": "Map_PNG_Purepecha.png",
+    "iconImage": "IconPNG_Purepecha.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Map_PNG_Purepecha.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Purepecha.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Tariacuri.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Tariacuri.png",
+    "leaderSceneArtCredit": "Leaderscreen by TopHatPaladin"
+  },
+  "templateRefs": []
+}

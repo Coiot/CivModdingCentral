@@ -1,0 +1,215 @@
+{
+  "id": "civ-the-yali-wimayuk-wandik",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T17:06:13.728Z",
+    "updatedAt": "2026-03-25T17:07:33.199Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "the-yali-wimayuk-wandik",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=_tHhDexxoco",
+      "title": "Listen! The River is Returning",
+      "credit": "David Hirschfelder"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=k_UKJfaBBDg",
+      "title": "A Sacred Place",
+      "credit": "David Hirschfelder"
+    }
+  },
+  "title": "The Yali",
+  "issues": [],
+  "leader": "Wimayuk Wandik",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Yali_(Wimayuk_Wandik)",
+    "lastUpdated": "17 August 2023",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3021829588",
+    "modFolderName": "",
+    "wikiPageTitle": "The Yali"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Lasqueto",
+      "role": "Civ Icon"
+    },
+    {
+      "name": "Zwei833",
+      "role": "Unit Model"
+    },
+    {
+      "name": "David Hirschfelder",
+      "role": "Music"
+    }
+  ],
+  "summary": "The Yali led by Wimayuk Wandik is a custom civilization by TopHatPaladin, with contributions from Lasqueto and Zwei833.",
+  "uniques": [
+    {
+      "art": "IconPNG_Wandik.png",
+      "body": "Improving a Bonus Resource begins a We Love The King Day in the nearest city. We Love The King Days increase {{Culture Icon}} Culture as well as {{Food Icon}} Food.",
+      "name": "Seeds of Singing",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Wandik.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Hemangi.png",
+      "body": "",
+      "name": "Hemangi",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Hemangi.png",
+      "bullets": [
+        "Does not require Iron",
+        "If promoted while on a neutral tile with a resource, claims that tile"
+      ],
+      "replaces": "Swordsman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Leseai.png",
+      "body": "",
+      "name": "Leseai",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Leseai.png",
+      "bullets": [
+        "Grants +10 XP to newly trained units",
+        "When We Love The King Day begins in a city with a Leseai, it also begins in the {{Capital}} Capital"
+      ],
+      "replaces": "Granary",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Wamena",
+    "culture": "Oceanic",
+    "religion": [
+      "Protestantism",
+      "Malagan (HR)"
+    ],
+    "adjectives": "Yali",
+    "empireName": "Yali Empire",
+    "government": "Tribal Confederacy\nRepublic",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "http://www.cnn.com/2011/LIVING/05/08/author.mitchell.zuckoff.interview/index.html",
+      "body": "Wimayuk Wandik was a leader of the Yali village of Uwambo. He became known to the West after sheltering several Americans who survived a plane crash in the Baliem Valley in 1945. Though he shared no common language with the Americans, who nicknamed him \"Chief Pete\", Wimayuk advocated for their protection and kept them safe until their eventual rescue.",
+      "title": "Wimayuk Wandik"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Yali_people",
+      "body": "The Yali are an indigenous people of northwestern New Guinea, just to the east of the Baliem Valley, currently located within the Indonesian state of Papua. They are closely related to the Dani people who live within the valley proper.",
+      "title": "The Yali"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Slay me if you must, but my descendants will avenge whatever misdeeds are done to me.\"",
+    "blessing": "\"Hal-loak-nak, Wimayuk Wandik! A vigorous and creative leader of the Yali village of Uwambo, your flexible attitude and eye for alliance-building served your people well when a group of injured Americans unexpectedly crashed down from the sky. By convincing your people to welcome the new arrivals, who you viewed as the heralds of a potentially fortunate new era, you ensured that your brief contact with the Western world was a happy one characterized by frequent gift exchange.\nO Wimayuk, while the new era you foresaw has come to pass, its realities are more complex than you likely hoped for. The publicity surrounding the American plane crash and the rescue of its survivors led missionaries to discover the Baliem Valley; today, most Yali have left behind their traditional lifestyle, and have become Christians seeking to make their way in the globalized world of the twenty-first century. Can you reassert the Yali's legacy as a venerable culture, free of the Dutch and Indonesian yokes? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"It's not often we see visitors in the Baliem Valley! I am known as Wimayuk Wandik, the kain of the village you see before you.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Wamena",
+        "Uwambo",
+        "Koloima",
+        "Angguruk",
+        "Kosarek",
+        "Holuwon",
+        "Wesagalep",
+        "Lokoparek",
+        "Obia",
+        "Soroba",
+        "Wamerek",
+        "Togoluk",
+        "Wuserem",
+        "Kurima",
+        "Kurulu",
+        "Pika",
+        "Mundima",
+        "Abumpuk",
+        "Wosi",
+        "Ogi Ridge",
+        "Lake Habbema",
+        "Ubahak",
+        "Sibi",
+        "Yahulie",
+        "Podeng",
+        "Aike"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Nakmatugi",
+        "Yaralok",
+        "Helenma",
+        "Yunggukwe",
+        "Pugulik",
+        "Maruk",
+        "Gilelek",
+        "Lisaniak",
+        "Keaugi",
+        "Weaklekek"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Oceanic Cultures",
+    "Civilizations with Male leaders",
+    "Papua New Guinea",
+    "Indonesia"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#27071b",
+      "background": "#cc6a35"
+    },
+    "mapImage": "MapPNG_Yali.png",
+    "iconImage": "TophatYali.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Yali.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TophatYali.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Yali.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Yali.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

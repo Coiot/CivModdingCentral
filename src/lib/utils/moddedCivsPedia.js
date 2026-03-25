@@ -78,6 +78,7 @@ const DEFAULT_ENTRY = {
 		wikiPageTitle: "",
 		wikiUrl: "",
 		workshopUrl: "",
+		directDownload: "",
 		version: "",
 		lastUpdated: "",
 		modFolderName: "",
@@ -88,7 +89,7 @@ const DEFAULT_ENTRY = {
 		capital: "",
 		bias: "",
 		religion: [],
-		government: "",
+		government: [],
 		culture: "",
 		mapLabelsLanguage: "",
 		requiredContent: [],
@@ -1239,7 +1240,10 @@ export async function createPediaEntryFromWikiMarkup(markup, options = {}) {
 			.split("\n")
 			.map((item) => cleanText(item))
 			.filter(Boolean),
-		government: stripWikiMarkup(civInfoParams.government),
+		government: stripWikiMarkup(civInfoParams.government)
+			.split("\n")
+			.map((item) => cleanText(item))
+			.filter(Boolean),
 		culture: stripWikiMarkup(civInfoParams.culture),
 		mapLabelsLanguage: stripWikiMarkup(civInfoParams.maplabelslanguage),
 		requiredContent: parseRequirements(source),
@@ -2264,7 +2268,7 @@ export async function createPediaEntryFromModFolderFiles(fileList) {
 		capital: cityList[0] || findTextForTag(textByTag, cityNames.find((row) => row.CivilizationType === civRow.Type)?.CityName),
 		bias: formatSqlIdentifier(biasType),
 		religion: religionList,
-		government: formatSqlIdentifier(governmentType),
+		government: formatSqlIdentifier(governmentType) ? [formatSqlIdentifier(governmentType)] : [],
 		culture: formatSqlIdentifier(cultureType),
 		requiredContent: [],
 	};
@@ -2447,7 +2451,7 @@ export function renderWikiMarkupFromEntry(entryInput) {
 |empire_name = ${entry.identity.empireName}
 |adjectives = ${entry.identity.adjectives}
 |capital = ${entry.identity.capital}
-|government = ${entry.identity.government}
+|government = ${entry.identity.government.join("\n")}
 |maplabelslanguage = ${entry.identity.mapLabelsLanguage}
 |mercenaries =
 |religiousintolerance =
@@ -2530,6 +2534,9 @@ export function normalizePediaEntry(entryInput) {
 		...entry.identity,
 		...(source.identity || {}),
 		religion: ensureArray(source?.identity?.religion)
+			.map((item) => cleanText(item))
+			.filter(Boolean),
+		government: ensureArray(source?.identity?.government)
 			.map((item) => cleanText(item))
 			.filter(Boolean),
 		requiredContent: ensureArray(source?.identity?.requiredContent)

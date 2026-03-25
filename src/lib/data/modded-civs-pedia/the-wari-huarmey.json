@@ -1,0 +1,238 @@
+{
+  "id": "civ-the-wari-huarmey",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T17:03:28.218Z",
+    "updatedAt": "2026-03-25T17:05:50.556Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "the-wari-huarmey",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=KlVB0CmvVU4",
+      "title": "Peru 1b",
+      "credit": "Troels Brun Folmann"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=3YfCjM2MM6I",
+      "title": "Peru 1a",
+      "credit": "Troels Brun Folmann"
+    }
+  },
+  "title": "The Wari",
+  "issues": [],
+  "leader": "Huarmey",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Wari_(Huarmey)",
+    "lastUpdated": "3 January 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3638378831",
+    "modFolderName": "",
+    "wikiPageTitle": "The Wari"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Lasqueto",
+      "role": "Art (Civ Icon)"
+    },
+    {
+      "name": "Danrell",
+      "role": "Art (Unit Model)"
+    },
+    {
+      "name": "Troels Brun Folmann",
+      "role": "Music"
+    }
+  ],
+  "summary": "The Wari led by Huarmey are a custom civilization by TopHatPaladin, with contributions from Lasqueto and Danrell.",
+  "uniques": [
+    {
+      "art": "IconPNG_Huarmey.png",
+      "body": "Defensive Buildings increase the rate of border growth in their cities. When you first acquire a tile with a Bonus Resource, gain a burst of {{Production Icon}} Production and {{Culture Icon}} Culture in your {{Capital}} Capital.",
+      "name": "Cities of White Plaster",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Huarmey.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Champi.png",
+      "body": "",
+      "name": "Champi",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Champi.png",
+      "bullets": [
+        "Ignores terrain costs",
+        "+1 Sight and faster healing when beginning its turn on a Bonus Resource"
+      ],
+      "replaces": "Swordsman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Pucara.png",
+      "body": "",
+      "name": "Pucara",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Pucara.png",
+      "bullets": [
+        "+10 City Health",
+        "Allows {{Production Icon}} Production to be sent through internal trade routes",
+        "Increases the yields of internal trade routes received by its city"
+      ],
+      "replaces": "Caravansary",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Huari",
+    "culture": "Andean",
+    "religion": [
+      "Catholicism",
+      "Pachaism (HR)"
+    ],
+    "adjectives": "Wari",
+    "empireName": "Wari Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World and the Spain/Inca DLC"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/El_Castillo_de_Huarmey",
+      "body": "The \"Huarmey Queen\" or \"Lady of Huarmey\" is the moniker used for a Wari noblewoman whose remains were found in a tomb in 2013. She is thought to have lived around 800 AD; based on the condition of her skeleton, it is believed that she lived into her sixties and lived a relatively sedentary, well-fed lifestyle. She is believed to have been a highly skilled weaver, which would have been a strongly valued trait in Wari society. Grave goods found at the Lady of Huarmey's tomb include gold ear flares, a copper ceremonial axe, and a silver goblet.",
+      "title": "Huarmey"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Wari_Empire",
+      "body": "The Wari were an empire that controlled large portions of modern-day Peru in the Middle Horizon period (ca. 600 – 1000 AD) of Andean history. Though we know little about specific Wari individuals or politics, they have an extensive archaeological record showing their range and influence. The Wari were one of the first Andean cultures to practice terrace farming, and were also recognizable for their white plaster architecture. The Wari relationship with Tiwanaku, the other major Andean polity of the era, has also been a subject of interest to historians; the two appear to have coexisted peacefully, but some speculate that they may have been mutually distrustful rivals.",
+      "title": "The Wari"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Your victory will be short-lived. Once the wells dry up and the farms deteriorate, your people will beg for my return.\"",
+    "blessing": "\"May the Staff God always favor you, O Lady of Huarmey! Thanks to your sumptuous burial, you have become one of the only known denizens of the once-great Wari empire. Under nobles like you, the Wari built a sprawling empire throughout the Andes, founding and conquering numerous cities and erecting dense networks of white-plaster architecture to mark your presence. Your people were also renowned technological innovators who pioneered the irrigation and terrace farming methods that later empires like the Inca would go on to iterate upon. Your many grave goods, including items made of gold, silver, and copper, stand as a testament to the rich trade network that the Wari commanded at their height. In the end, your empire would remain unconquered by any others; instead, after the Wari were laid low by drought, the region collapsed into the decentralization of its Late Intermediate Period.\nHuarmey Queen, the mountains once again call out for the rulership of a strong hand. Can you marshal your soldiers and engineers to revolutionize your homeland? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Behold the splendor of the Wari! I am the Lady of Huarmey, and all you see has been constructed on my orders.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Huari",
+        "Pikillacta",
+        "Conchopata",
+        "Cerro Baúl",
+        "Huaro",
+        "Viracochapampa",
+        "Jincamocco",
+        "Honcopampa",
+        "Wariwillka",
+        "Castillo de Huarmey",
+        "Cerro Mejía",
+        "Cerro Pátapo",
+        "Pacheco",
+        "Espíritu Pampa",
+        "Ñawinpukyo",
+        "Azángaro",
+        "Cotocotuyoc",
+        "Pachacámac",
+        "Quilcapampa",
+        "Jargampata",
+        "El Palacio",
+        "Ancón",
+        "Raqchi",
+        "Cerro Llamocca",
+        "Leqles Pata",
+        "Wilcahuaín",
+        "Pataraya",
+        "Pakaytambo",
+        "Mamacha Corral",
+        "Era Mocco",
+        "Huaca Pucllana",
+        "Huaca del Loro",
+        "Corral Redondo",
+        "Santa Rosa de Pucala",
+        "Pacapacarí",
+        "Socos",
+        "Lambrasniyoq"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Wichama",
+        "Inti",
+        "Pariacaca",
+        "Kón",
+        "Viracocha",
+        "Supay",
+        "Urcuchillay",
+        "Willka Raymi",
+        "Mama Quilla",
+        "Pachamama"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Andean Cultures",
+    "Civilizations with Female leaders",
+    "Peru"
+  ],
+  "modSupport": {
+    "aa": true,
+    "uci": true,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "ynaemp": true,
+    "maplabels": true,
+    "civivtraits": true,
+    "ethnicunits": true,
+    "histreligions": true,
+    "enlightenmentera": false
+  },
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#803529",
+      "background": "#ebe8d9"
+    },
+    "mapImage": "MapPNG_Wari.png",
+    "iconImage": "IconPNG_Wari.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Wari.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Wari.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Huarmey.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Huarmey.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

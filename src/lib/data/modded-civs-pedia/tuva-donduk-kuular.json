@@ -1,0 +1,230 @@
+{
+  "id": "civ-tuva-donduk-kuular",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T16:55:09.210Z",
+    "updatedAt": "2026-03-25T16:57:34.243Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "tuva-donduk-kuular",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    }
+  },
+  "title": "Tuva",
+  "issues": [],
+  "leader": "Donduk Kuular",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Tuva_(Donduk_Kuular)",
+    "lastUpdated": "1 January 2020",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1955199915",
+    "modFolderName": "",
+    "wikiPageTitle": "Tuva"
+  },
+  "authors": [
+    "Senshi",
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "Senshi",
+      "role": "Design, Code, Text, Map"
+    },
+    {
+      "name": "TopHatPaladin",
+      "role": "Art, Lua, Text"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Text (Civilopedias)"
+    },
+    {
+      "name": "DJSHenninger",
+      "role": "Art (Ger Kharuul graphics)"
+    },
+    {
+      "name": "danrell",
+      "role": "Art (Unit Model)"
+    }
+  ],
+  "summary": "Tuva led by Donduk Kuular is a custom civilization by Senshi and TopHatPaladin, with contributions from DJSHenninger, danrell, and DarthKyofu.",
+  "uniques": [
+    {
+      "art": "IconPNG_Kuular.png",
+      "body": "{{Great Work Icon}} Great Works exert Religious Pressure when stored in cities following your {{Religion Icon}} Religion. Mountains provide slots for a {{Great Work Icon}} Great Work of Music to cities within two tiles.",
+      "name": "Peaks of Uriankhai",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Kuular.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_ThroatSinger.png",
+      "body": "",
+      "name": "Throat Singer",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_ThroatSinger.png",
+      "bullets": [
+        "+1 Sight and {{Moves Icon}} Movement",
+        "May freely enter the territory of rival civilizations which share your {{Religion Icon}} Religion",
+        "Removes Heresy when expended in a friendly city"
+      ],
+      "replaces": "Great Musician",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "GerKharuul.png",
+      "body": "",
+      "name": "Ger Kharuul",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/GerKharuul.png",
+      "bullets": [
+        "Unlocked at Trapping",
+        "+1 {{Production Icon}} Production",
+        "+1 {{Faith Icon}} Faith and +25% {{Strength Icon}} Defense, doubled after adopting a {{Religion Icon}} Religion",
+        "Provides a burst of {{Great Person Icon}} Great Musician points when a nearby city is converted"
+      ],
+      "replaces": "Unique Improvement",
+      "artCredit": "Art by DJSHenninger",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Hills",
+    "capital": "Kyzyl",
+    "culture": "Steppe",
+    "religion": [
+      "Vajrayana Buddhism"
+    ],
+    "adjectives": "Tuvan",
+    "empireName": "Tuvan Empire",
+    "government": "",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Born in Tannu Uriankhai, a Qing Dynasty vassal state that become nominally independent at the fall of Qing dynasty due to 1911 revolution in China, Donduk was originally a Lamaist monk. As leader of a group of Russian-supported Bolsheviks, he proclaimed the independence of the People's Republic of Tannu Tuva from the Russian Empire in 1921. He subsequently switched his affiliation to the Tuvan People's Revolutionary Party.",
+      "title": "Donduk Kuular"
+    },
+    "civilization": {
+      "url": "",
+      "body": "The Tuvans or Tuvinians are a Turkic ethnic group native to Tuva. They speak Tuvan, a Siberian Turkic language. They are also regarded in Mongolia as one of the Uriankhai peoples. Tuvans have historically been cattle-herding nomads, tending to herds of goats, sheep, camels, reindeer, cattle and yaks for the past thousands of years. They have traditionally lived in yurts covered by felt or chums covered with birch bark or hide that they relocate seasonally as they move to newer pastures. Traditionally, the Tuvans were divided into nine regions called khoshuun, namely the Tozhu, Salchak, Oyunnar, Khemchik, Khaasuut, Shalyk, Nibazy, Daavan and Choodu, and Beezi. The first four were ruled by Uriankhai Mongol princes, while the rest were administered by Borjigin Mongol princes.",
+      "title": "Tuva"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Well done, I'm sure your annexation of a small steppe republic will go down in history as a great achievement. All we wanted was autonomy!\"",
+    "blessing": "\"Salutations, Donduk Kuular, defender of the revolution and the Tuvan people! Although the region of Tuva had a troubled history, with the Chinese and Russians both seeking to subsume you into their empires, you knew you would have to fight to defend the ancient and robust Tuvan culture. Originally a monk, you seized the opportunity in 1921 to declare a People's Republic of Tannu Tuva, independent from all of its rivals; however, your monastic background led you to maintain a long-running closeness with the lamas. These convictions would ultimately be your undoing. Angered by your defiance of his party line, Stalin arranged for a coup against Tannu Tuva, which saw you ousted from power and ultimately executed; however, you persist as a symbol of Tuvan autonomy.\nO Chairman, the time has come for the Tuvans to seize their freedoms once again. Can you lead your people in a triumphant song, one that will resonate throughout all of Asia? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Hello. This is the free state of Tannu Tuva, and I am its humble Prime Minister. We ask only for solitude.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Kyzyl",
+        "Ak-Dovurak",
+        "Shagonar",
+        "Chadan",
+        "Turan",
+        "Kaa-Khem",
+        "Kyzyl-Mazhalyk",
+        "Bay-Khaak",
+        "Saryg-Sep",
+        "Teeli",
+        "Sug-Aksy",
+        "Samagaltay",
+        "Erzin",
+        "Khovu-Aksy",
+        "Khandagayty",
+        "Chaa-Khol",
+        "Toora-Khem",
+        "Mugur-Aksy",
+        "Kungurtug",
+        "Ölgii",
+        "Mörön",
+        "Ulaankhus",
+        "Tsengel",
+        "Delüün",
+        "Nogoonnur",
+        "Tarialan",
+        "Bulgan",
+        "Tsagaan-Uul",
+        "Jargalant",
+        "Galt",
+        "Sagsai",
+        "Bayannuur"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Khertek",
+        "Salchak",
+        "Sherig-ool",
+        "Kaadyr-ool",
+        "Saryg-Donggak",
+        "Irgit",
+        "Mongush",
+        "Shagdyr",
+        "Kongar-ol",
+        "Chechenol"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Senshidenshi",
+    "TopHatPaladin",
+    "Steppe Cultures",
+    "Civilizations with Male leaders",
+    "Civilizations with Unique Improvements",
+    "Great People Civilizations",
+    "Russia"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#cca351",
+      "background": "#123b4c"
+    },
+    "mapImage": "TuvaMap.png",
+    "iconImage": "TuvaIconWiki.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TuvaMap.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TuvaIconWiki.png",
+    "mapImageCaption": "Map by Senshi",
+    "leaderSceneImage": "LS_PNG_Kuular.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Kuular.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

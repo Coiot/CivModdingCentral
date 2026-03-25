@@ -1,0 +1,218 @@
+{
+  "id": "civ-the-omagua-payoreva",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T03:59:42.366Z",
+    "updatedAt": "2026-03-25T04:00:57.036Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "the-omagua-payoreva",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=mSalylAoOao",
+      "title": "Kambeba",
+      "credit": "Usuf"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=RiE4fyTZurM",
+      "title": "Homãpani Ashaninka",
+      "credit": "Katari"
+    }
+  },
+  "title": "The Omagua",
+  "issues": [],
+  "leader": "Payoreva",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Omagua_(Payoreva)",
+    "lastUpdated": "1 December 2019",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1925987551",
+    "modFolderName": "",
+    "wikiPageTitle": "The Omagua"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "JFD",
+      "role": "Utilities"
+    },
+    {
+      "name": "hangman",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Katari",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Usuf",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Omagua led by Payoreva is a custom civilization by TopHatPaladin, with contributions from hangman.",
+  "uniques": [
+    {
+      "art": "IconPNG_Payoreva.png",
+      "body": "When a Worker is trained, gain a sum of {{Food Icon}} Food in its city. Units ignore terrain costs from moving along rivers.",
+      "name": "Interfluvial Chiefdoms",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Payoreva.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Estolica.png",
+      "body": "",
+      "name": "Estolica",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Estolica.png",
+      "bullets": [
+        "Starts with the Woodsman promotion",
+        "May pick up unowned Bonus Resources and deposit them on resourceless owned tiles"
+      ],
+      "replaces": "Archer",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_ManiocPit.png",
+      "body": "",
+      "name": "Manioc Pit",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_ManiocPit.png",
+      "bullets": [
+        "When its city grows in population, gain the yields of adjacent Tile Improvements as a lump sum"
+      ],
+      "replaces": "Granary",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Cararíes",
+    "culture": "Katuje",
+    "religion": [
+      "Catholicism",
+      "Pajelanca (HR)"
+    ],
+    "adjectives": "Omagua",
+    "empireName": "Omagua Empire",
+    "government": "Republic\nTribal",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Payoreva was an Omagua chieftain who led a revolt against the Jesuits at the dawn of the eighteenth century. He first entered the historical record in 1701, where he is described as a \"principal chief\" who orchestrated a plan to burn down the church of a local Jesuit mission. This plot was set to involve two Omagua groups, the Camurís and Pebas, but the Spaniards discovered Payoreva's plans and had him arrested that summer. Although Payoreva was ultimately unsuccessful in his rebellions, his indefatigable resistance made him a mysterious and frustrating figure for Jesuit chroniclers.",
+      "title": "Payoreva"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Omagua_people",
+      "body": "The Omagua people (also known as the Cambeba) were speakers of a Tupian language who lived along the upper Amazon, in modern-day Brazil and Peru. Their most significant sites were largely along the Solimões River, as well as various other rivers in the region. One of the Omagua's most distinctive cultural traits was the practice of forehead-flattening; a piece of wood would be bound to the foreheads of Omagua babies and left there, causing the forehead to grow into a flat shape. The Omagua took great pride in this practice, and considered most neighboring groups uncivilized for not doing so. What was most immediately distinctive to outside observers, however, was the clothing woven by the Omagua; whereas many Amazonian tribes wore little to no clothing, the Omagua dressed in multicolored cotton textiles, a trait that drew approving comments from the leaders of several Spanish expeditions.",
+      "title": "The Omagua"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"You can destroy me, but you will never destroy the Omagua spirit. I will be avenged.\"",
+    "blessing": "\"Greetings, Cacique Payoreva, boldest and fiercest fighter of Spanish oppression! Although many of your contemporaries were swayed by the sweet words of the Jesuits, you held firm to your convictions, plotting two uprisings against the missions that invaded your land. First, you planned to burn the Jesuits' church, as well as anyone unfortunate enough to be inside it; however, this plot was discovered before you could carry it out, forcing you to try a new tack. Your second plan, to abandon the Jesuit missions in favor of secret free settlements, saw more success - until, once again, the Jesuits lured your people back into captivity. Even as times grew dire, though, you supported the Omagua people to the end.\nPayoreva, the time has come for the Omagua to claim their destiny, and they look to you to forge their freedom. Can you throw off the shackles of all those who would seek to rule you? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Welcome to the realm of the Omagua, the most great and illustrious of peoples! You appear to be another of those round-headed savages, but perhaps we can get along anyway.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Cararíes",
+        "San Joaquin",
+        "Camadsuari",
+        "Ibarate",
+        "Manicuri",
+        "San Pablo",
+        "Guacurayby",
+        "Nuestra Señora de Guadalupe",
+        "Juaboni",
+        "Guapapate",
+        "Nuestra Señora de las Nieves",
+        "Manutá",
+        "Tefé",
+        "Macuaya",
+        "Santa Thereza",
+        "Peranamsasi",
+        "Abacaxis",
+        "Santa Maria Mayor",
+        "San Ignacio",
+        "Zuruite",
+        "Solimões",
+        "Ucayale",
+        "Javari",
+        "Juruá",
+        "Napo",
+        "Içá",
+        "Yarapa",
+        "Marañón"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Samuel Fritz",
+        "Mativa",
+        "Arimavani",
+        "Carabaina",
+        "Manoto",
+        "Ayraparú",
+        "Paguana",
+        "Canuria",
+        "Conori"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Katuje Cultures",
+    "Civilizations with Male leaders",
+    "Brazil"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#72b9d7",
+      "background": "#335b26"
+    },
+    "mapImage": "MapPNG2_Omagua.png",
+    "iconImage": "IconPNG_Omagua.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG2_Omagua.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Omagua.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Payoreva.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Payoreva.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

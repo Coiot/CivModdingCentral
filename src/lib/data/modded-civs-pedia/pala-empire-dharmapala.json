@@ -1,0 +1,221 @@
+{
+  "id": "civ-pala-empire-dharmapala",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T16:33:43.758Z",
+    "updatedAt": "2026-03-25T16:35:50.646Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "pala-empire-dharmapala",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=d0BQ2RyHmd0",
+      "title": "The Hard Road",
+      "credit": "Cliff Martinez"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=SEjHMeHhmdc",
+      "title": "Milon Hobe Koto Dine",
+      "credit": "Karaoke Video Bangla"
+    }
+  },
+  "title": "Pala",
+  "issues": [],
+  "leader": "Dharmapala",
+  "source": {
+    "type": "wiki",
+    "version": "v 2",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Pala_(Dharmapala)",
+    "lastUpdated": "21 October 2018",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1627848219",
+    "modFolderName": "",
+    "wikiPageTitle": "Pala Empire"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "JFD, Neirai",
+      "role": "Utilities"
+    },
+    {
+      "name": "Karaoke Video Bangla",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Cliff Martinez",
+      "role": "War Theme"
+    },
+    {
+      "name": "All the lads",
+      "role": "Feedback and support"
+    }
+  ],
+  "summary": "The Pala Empire led by Dharmapala is a custom civilization by TopHatPaladin.",
+  "uniques": [
+    {
+      "art": "IconPNG_Dharmapala.png",
+      "body": "When expending {{Great Person Icon}} Great People in friendly territory, gain a burst of {{Production Icon}} Production in the nearest city. Cities that contain Wonders generate +2 {{Faith Icon}} Faith and {{Tourism Icon}} Tourism per turn.",
+      "name": "Dharmachakra Network",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Dharmapala.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_WarElephant.png",
+      "body": "",
+      "name": "Hati Ghoradaura",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_WarElephant.png",
+      "bullets": [
+        "Does not require Horses",
+        "When promoted or killed in enemy territory, generates a burst of {{Faith Icon}} Faith and automatically pillages its tile"
+      ],
+      "replaces": "Knight",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Mahavihara.png",
+      "body": "",
+      "name": "Mahavihara",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Mahavihara.png",
+      "bullets": [
+        "+10% bonus to {{Great Person Icon}} Great Person generation",
+        "Bonus increases to +20% if the city contains a Wonder"
+      ],
+      "replaces": "University",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Bikrampur",
+    "culture": "Bharata",
+    "religion": [
+      "Buddhism",
+      "Mahayana (HR)"
+    ],
+    "adjectives": "Pala",
+    "empireName": "Pala Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Dharmapala, the second Pala king, ruled for a forty-year period around the turn of the ninth century. His father, Gopala, had unified the Bengal and Bihar regions into the Pala heartland; Dharmapala built upon these achievements by expanding deep into northern India. As one leg of the \"Kannauj Triangle,\" Dharmapala's reign was marked by persistent conflict with the western Gurjara-Pratihara and the southern Rashtrakuta; however, Dharmapala's rulership allowed the Pala to assert themselves as the dominant northern power, and Dharmapala took the title of Uttarapathasvamin - \"Lord of the North.\"",
+      "title": "Dharmapala"
+    },
+    "civilization": {
+      "url": "",
+      "body": "The Pala Empire (8th – 12th centuries AD) was a kingdom in Bangladesh and eastern India, centered in what is today Bengal and Bihar. The Pala Empire was founded by Gopala I, a warrior who unified the previously fragmented Bengal region. Gopala's successors, Dharmapala and Devapala, then expanded the empire greatly; the Pala become one part of the \"Kannauj Triangle,\" the trio of nations that controlled the bulk of the Indian subcontinent. After the death of Devapala, however, the Pala Empire could not be held together as strongly; they lost several key battles to the Rashtrakuta, and suffered a nearly-complete collapse.",
+      "title": "Pala Empire"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"So this is how it ends. Promise me you'll take better care of the monasteries than I did.\"",
+    "blessing": "\"O great Dharmapala, emperor and uttarapathasvamin, may immeasurable light and life be upon you! You inherited the fledgling Pala Empire when it had only just unified Bengal and Bihar, and under your guiding hand, you were able to outmaneuver the Pratihara and Rashtrakuta, making your own domain the preeminent power in northern India. While overseeing this grand territorial expansion, you also found time to be a generous patron of Buddhism, building dozens of viharas in your empire. These great seats of learning stood for centuries, attracting Buddhist scholars from across Asia and truly proving that the Pala were India's greatest Buddhist empire.\nDharmapala, your people call for you to reawaken their zeal for learning, to return the Pala Empire to the dominant status it once enjoyed. Can you embark on a grand building program to match your earlier achievements? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Welcome to the illustrious realm of the Pala! Are you here to study, or just to marvel at what I've built?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Bikrampur",
+        "Pataliputra",
+        "Monghyr",
+        "Gauda",
+        "Paharpur",
+        "Ramavati",
+        "Mahipal",
+        "Nalanda",
+        "Somapura",
+        "Vikramshila",
+        "Kannauj",
+        "Odantapura",
+        "Jagaddala",
+        "Bodh Gaya",
+        "Gokarna",
+        "Kedar",
+        "Khalimpur",
+        "Valgudar",
+        "Karnasuvarna",
+        "Uttarama",
+        "Jagjivanpur",
+        "Campa",
+        "Vaisali",
+        "Rajagrha",
+        "Varanasi",
+        "Kusinagara",
+        "Sravasti",
+        "Ayodhya",
+        "Kausambi"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Rannavati",
+        "Gopala",
+        "Vapyata",
+        "Mahata Devi",
+        "Vakpala",
+        "Jayapala",
+        "Mahendrapala",
+        "Shurapala",
+        "Vigrahapala",
+        "Ramapala"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Bharata Cultures",
+    "Civilizations with Male leaders",
+    "India"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#942821",
+      "background": "#f09041"
+    },
+    "mapImage": "MapBigPNG_Pala.png",
+    "iconImage": "IconPNG_Pala.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapBigPNG_Pala.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Pala.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Dharmapala.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Dharmapala.png",
+    "leaderSceneArtCredit": "Leaderscreen by TopHatPaladin"
+  },
+  "templateRefs": []
+}

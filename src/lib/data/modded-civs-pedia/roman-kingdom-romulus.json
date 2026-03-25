@@ -1,0 +1,220 @@
+{
+  "id": "civ-roman-kingdom-romulus",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T16:42:18.528Z",
+    "updatedAt": "2026-03-25T16:43:33.449Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "roman-kingdom-romulus",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=TbbYKif8Tnk",
+      "title": "Ancient Roman Melody Fragments 2",
+      "credit": "Geoff Knorr & Michael Curran"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=-DuXkhyYbx0",
+      "title": "Ancient Roman Melody Fragments 1",
+      "credit": "Geoff Knorr & Michael Curran"
+    }
+  },
+  "title": "Rome",
+  "issues": [],
+  "leader": "Romulus",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Rome_(Romulus)",
+    "lastUpdated": "25 December 2021",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2694126309",
+    "modFolderName": "",
+    "wikiPageTitle": "Roman Kingdom"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "DMS",
+      "role": "UU Icon"
+    },
+    {
+      "name": "Zharques",
+      "role": "Text (Pedias, DOM)"
+    },
+    {
+      "name": "danrell",
+      "role": "Unit Model"
+    }
+  ],
+  "summary": "Rome led by Romulus is a custom civilization by TopHatPaladin, with contributions from DMS, Zharques, and danrell. It does not replace Augustus' Rome.",
+  "uniques": [
+    {
+      "art": "IconPNG_Romulus.png",
+      "body": "Clearing a Barbarian Encampment may cause the Capital to gain a {{Citizen}} Citizen. Cities are founded with Walls; when capturing a foreign city, its defensive buildings are not destroyed.",
+      "name": "Raised by Wolves",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Romulus.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Celeres.png",
+      "body": "",
+      "name": "Celeres",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Celeres.png",
+      "bullets": [
+        "+17% {{Strength Icon}} Combat Strength when beginning its turn near a Barbarian",
+        "When killing a Barbarian, \"stores\" a {{Citizen}} Citizen, which it will then deposit in the next city it enters"
+      ],
+      "replaces": "Horseman",
+      "artCredit": "Art by DMS",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Asylum.png",
+      "body": "",
+      "name": "Asylum",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Asylum.png",
+      "bullets": [
+        "+7% Building Production",
+        "When a unit trained in a city with an Asylum captures a city, gain a {{Citizen}} Citizen in the city that trained that unit"
+      ],
+      "replaces": "Shrine",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Rome",
+    "culture": "Classical",
+    "religion": [
+      "Catholicism",
+      "Dodekatheism (HR)"
+    ],
+    "adjectives": "Roman",
+    "empireName": "Roman Kingdom",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Romulus",
+      "body": "Romulus was the legendary founder and first king of Rome. Known best for the myths surrounding Rome's origins and cultural traditions, the myth of he and his brother Remus’ discovery and suckling by a she-wolf, establishment of Rome on the Palatine Hill, and subsequent death of Remus, the Rape of the Sabine Women and Battle of the Lacus Curtius, Romulus’ legendary nature has left a large imprint on history. It is not clear to what extent a historical figure underlies the mythical Romulus.",
+      "title": "Romulus"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Roman_Kingdom",
+      "body": "The Roman Empire is the most remarkable and long-lived political entity in the history of Western Civilization. It was founded around the 8th century BC, and portions of it survived until the 14th century AD. The Romans were great innovators in some areas, and they were not shy about appropriating good ideas they found in other cultures. They greatly shaped Western culture, law, art, architecture, religion, language, and warfare.",
+      "title": "Rome"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"I was supposed to be the greatest! How could you do this to me?!\"",
+    "blessing": "\"Blessings of Jupiter be upon you, Romulus Rex, founder and king of Rome. Son of Numitor, you and your brother were cast into the Tiber as a child by your uncle. But the gods looked favourably upon you, and you survived, being suckled by a she-wolf as a baby. You grew up unaware of your origins, until you overthrew your uncle and reinstated your father. Founding Rome for yourself, you slew your brother. You then built your fledgling city, invite any and all to come and build the city with you, building institutions and organising the new city so that it would thrive for centuries to come. But women would not come to this new city, so you devised a plan to kidnap and marry women from other Latin Tribes, leading to the Rape of the Sabine Women. The Sabines eventually joined with you, leading to the first steps to become an empire.\nKing Romulus, a new dawn has begun. Refound Rome, and lead it to another glory age of conquest, of empire, and of history. Retread your steps, building Rome anew, and leading its disparate populations to become one once more. Will you lead Rome to become a legendary figure once more? Can you build a civilization that can stand the test of time?\"",
+    "introduction": "\"Welcome to Rome! It may not look like much yet, but trust me, I'm just getting started. Before long, this will be the greatest city of all time.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Rome",
+        "Gabii",
+        "Antemnae",
+        "Ostia",
+        "Janiculum",
+        "Reate",
+        "Cameria",
+        "Caenina",
+        "Fidenae",
+        "Lavinium",
+        "Alba Longa",
+        "Laurentum",
+        "Corniculum",
+        "Politorium",
+        "Suessa Pometia",
+        "Apiolae",
+        "Crustumerium",
+        "Medullia",
+        "Ficulea",
+        "Nomentum",
+        "Ameriola",
+        "Ficana",
+        "Cora",
+        "Tarquinii",
+        "Antium",
+        "Tusculum",
+        "Aricia",
+        "Lanuvium",
+        "Veii",
+        "Clusium",
+        "Caere",
+        "Ardea"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Remus",
+        "Numitor",
+        "Lausus",
+        "Tarpeius",
+        "Numa",
+        "Pomponius",
+        "Curtius",
+        "Tatius",
+        "Rhea Silvia",
+        "Hersilia"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Classical Cultures",
+    "Civilizations with Male leaders",
+    "Rome"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#deaa2d",
+      "background": "#7a181c"
+    },
+    "mapImage": "MapPNG_RomanKingdom.png",
+    "iconImage": "IconPNG_RomanKingdom.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_RomanKingdom.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_RomanKingdom.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Romulus.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Romulus.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

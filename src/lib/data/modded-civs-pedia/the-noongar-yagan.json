@@ -1,0 +1,240 @@
+{
+  "id": "civ-the-noongar-yagan",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T03:50:27.615Z",
+    "updatedAt": "2026-03-25T03:51:47.499Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "the-noongar-yagan",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "Yhuko Pappora",
+      "credit": "Ash Dargan"
+    },
+    "peace": {
+      "url": "",
+      "title": "Juripin",
+      "credit": "Richard Walley"
+    }
+  },
+  "title": "The Noongar",
+  "issues": [],
+  "leader": "Yagan",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Noongar_(Yagan)",
+    "lastUpdated": "26 March 2023",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2953252235",
+    "modFolderName": "",
+    "wikiPageTitle": "The Noongar"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Typhlomence",
+      "role": "Improvement Model"
+    },
+    {
+      "name": "Zharques",
+      "role": "Text (Civ & Leader Pedias, DOM)"
+    },
+    {
+      "name": "JTitan",
+      "role": "Unit Model"
+    },
+    {
+      "name": "CSIRO & Lasqueto",
+      "role": "Tree model in improvement"
+    },
+    {
+      "name": "Richard Walley",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Ash Dargan",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Noongar led by Yagan is a custom civilization by TopHatPaladin, with contributions from Typhlomence, Zharques, JTitan, and Lasqueto.",
+  "uniques": [
+    {
+      "art": "IconPNG_Yagan.png",
+      "body": "Repairing pillaged improvements yields a burst of {{Food Icon}} Food in the closest city. When a city grows in {{Citizen}} Population, units within two tiles gain XP.",
+      "name": "Inheritance of the Kaartdijin",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Yagan.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Gidjiboryl.png",
+      "body": "",
+      "name": "Gidjiboryl",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Gidjiboryl.png",
+      "bullets": [
+        "Pays no movement cost to pillage",
+        "+1 {{Moves Icon}} Movement when beginning its turn on an animal resource"
+      ],
+      "replaces": "Spearman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_ColdFire.png",
+      "body": "",
+      "name": "Cold-Fire Grounds",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_ColdFire.png",
+      "bullets": [
+        "Unlocked at Trapping",
+        "Must be built on resourceless flat terrain",
+        "+1 {{Food Icon}} Food",
+        "Intermittently pillages an adjacent tile, yielding a burst of {{Culture Icon}} Culture when it does so",
+        "If it pillages a resourceless tile, spawns a random animal resource on that tile"
+      ],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Mendyarrup",
+    "culture": "Aboriginal",
+    "religion": [
+      "Protestantism",
+      "Tjukurpa (HR)"
+    ],
+    "adjectives": "Noongar",
+    "empireName": "Noongar Empire",
+    "government": "Tribal Confederacy\nMonarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Yagan",
+      "body": "Yagan was an Aboriginal Australian warrior from the Noongar people. Yagan was pursued by the local authorities after he killed Erin Entwhistle, a servant of farmer Archibald Butler. It was an act of retaliation after Thomas Smedley, another of Butler's servants, shot at a group of Noongar people stealing potatoes and fowls, killing one of them. The government offered a bounty for Yagan's capture, dead or alive, and a young settler, William Keats, shot and killed him. He is considered a legendary figure by the Noongar.",
+      "title": "Yagan"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Noongar",
+      "body": "The Noongar are Aboriginal Australian peoples who live in the south-west corner of Western Australia, from Geraldton on the west coast to Esperance on the south coast. There are 14 different Noongar groups: Amangu, Ballardong, Yued, Kaneang, Koreng, Mineng, Njakinjaki, Njunga, Pibelmen, Pindjarup, Wadandi, Whadjuk, Wiilman and Wudjari. The members of the collective Noongar cultural block descend from peoples who spoke several languages and dialects that were often mutually intelligible. In the 2001 Australian census, 21,000 persons identified as indigenous in the south-west of Western Australia.",
+      "title": "The Noongar"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Kill me if you must, but my people will fight you to the end.\"",
+    "blessing": "\"The time for courage is now, oh Yagan of the Noongar people, Son of Midgegooroo. Your people’s history with the whitefella is long and complicated, the story of the greatest of respects and the most damaging of events, of waxing and waning admiration. You were, at time, celebrated in the Western capital Perth, holding corroborees on the land claimed by the white men from across the sea. But at other times, you were a fearsome warrior, dispensing tribal justice in a way incompatible with the genuine differences in legal frameworks between those of the traditional Noongar practices and those of Western Australia at the time. You stood your ground and fought for your people’s rights, for the ability to choose your own justice as it had been practiced for hundreds of generations before. Your death, though through betrayal, was not in vain, and your name still echoes throughout history, a name standing for pride in the modern Noongar canon.\nOh Yagan, there are many battles still ahead. Winning one battle will not win the war, but it will bring you closer to your goal of genuine acceptance of your ways. Negotiating from a position of more power makes more sense than negotiating from a position of weakness. Can you fight for your way of life? Will you build a civilization that can stand the test of time?\"",
+    "introduction": "\"Welcome to the lands of the Noongar. I am the one who defends them, by force if necessary.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Mendyarrup",
+        "Mandurah",
+        "Pinjarra",
+        "Badjaling",
+        "Nannup",
+        "Jerramungup",
+        "Ballardong",
+        "Katter Kich",
+        "Walyallup",
+        "Gargangara",
+        "Boyagin",
+        "Mulka",
+        "Manjimup",
+        "Dalwallinu",
+        "Garrakatta",
+        "Meeandip",
+        "Barragup Mungah",
+        "Goolamrup",
+        "Kattanning",
+        "Wadjamup",
+        "Booyup",
+        "Ngoolormayup",
+        "Geenunginy Bo",
+        "Wickepin",
+        "Koikyenunuruff"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Midgegooroo",
+        "Naral",
+        "Gyallipert",
+        "Manyat",
+        "Domjum",
+        "Yellagonga",
+        "Nundjan",
+        "Weeip",
+        "Tjyllyungoo",
+        "Mokare"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Sahul Cultures",
+    "Civilizations with Male leaders",
+    "Australia",
+    "Civilizations with Unique Improvements"
+  ],
+  "modSupport": {
+    "uci": true,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "ynaemp": false,
+    "maplabels": false,
+    "civivtraits": true,
+    "ethnicunits": true,
+    "histreligions": true,
+    "enlightenmentera": false
+  },
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#ffa126",
+      "background": "#293c54"
+    },
+    "mapImage": "MapPNG_Noongar.png",
+    "iconImage": "IconPNG_Noongar.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Noongar.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Noongar.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Yagan.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Yagan.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

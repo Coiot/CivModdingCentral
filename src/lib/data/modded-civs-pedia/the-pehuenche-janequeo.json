@@ -1,0 +1,228 @@
+{
+  "id": "civ-the-pehuenche-janequeo",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-24T19:47:44.042Z",
+    "updatedAt": "2026-03-25T03:37:22.158Z",
+    "createdByName": "Coiot",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "unresolvedTemplates": [
+      "Pinenut ResourceFont",
+      "TradboyNav",
+      "ArilasquetoNav"
+    ]
+  },
+  "slug": "the-pehuenche-janequeo",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "Chaliwün",
+      "credit": "Carmen Curical Ñanco"
+    },
+    "peace": {
+      "url": "",
+      "title": "Pewenche Wentru",
+      "credit": "Carmen Curical Ñanco"
+    }
+  },
+  "title": "The Pehuenche",
+  "issues": [
+    "Unresolved templates: Pinenut ResourceFont, TradboyNav, ArilasquetoNav"
+  ],
+  "leader": "Janequeo",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "November 2025",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3598796431",
+    "modFolderName": "",
+    "wikiPageTitle": "The Pehuenche"
+  },
+  "authors": [
+    "Tradboy",
+    "Lasqueto"
+  ],
+  "credits": [
+    {
+      "name": "Tradboy",
+      "role": "Design,Research, SQL, Art (Map,UU Icon,UB Icon, Leaderscene)"
+    },
+    {
+      "name": "Lasqueto",
+      "role": "Design,Art (Color scheme, Civ Icon, Unit Flag,UU Icon,UB Icon, Leaderscene, Resource texture, Resource icon)"
+    },
+    {
+      "name": "Rhoze",
+      "role": "Code (Lua)"
+    }
+  ],
+  "summary": "The Pehuenche led by Janequeo are a custom civilization mod by Tradboy and Lasqueto, with contributions from Rhoze.",
+  "uniques": [
+    {
+      "art": "Pehuenche leader icon.png",
+      "body": "EUnits on Forest and Jungle tiles gain an increased Flanking Bonus and may retreat from attacks. Entering these tiles may reveal the Ngüilliu resource which stores food every turn and grants it as a burst upon being claimed.",
+      "name": "Pruloncon",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Pehuenche%20leader%20icon.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by Lasqueto",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "Pehuenches UU icon.png",
+      "body": "",
+      "name": "Reñi",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Pehuenches%20UU%20icon.png",
+      "bullets": [
+        "Doesn't require Horses and its a melee unit.",
+        "Starts with Woodsman promotion.",
+        "Increased Movement based on XP."
+      ],
+      "replaces": "Lancer",
+      "artCredit": "Art by Tradboy and Lasqueto",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "Pehuenches UB icon.png",
+      "body": "",
+      "name": "Dolinko",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Pehuenches%20UB%20icon.png",
+      "bullets": [
+        "Grants a small burst of {{Food Icon}} Food on City Growth and XP to trained Units, increasing for every Ngüilliu claimed."
+      ],
+      "replaces": "Granary",
+      "artCredit": "Art by Tradboy and Lasqueto",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Forest",
+    "capital": "Llifén",
+    "culture": "Andean",
+    "religion": [
+      "Catholicism",
+      "Witran Mapu (HR)"
+    ],
+    "adjectives": "Pehuenche",
+    "empireName": "Pehuenche Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Janequeo_(lonco)",
+      "body": "Not much is known about Janequeo's early life, as she first appears in historical records in 1585. She was originally the main wife of the Toqui Huepotaén, who ruled over a group of Pehuenche and Mapuche on Llifen. Janequeo herself seems to have been of mixed Mapuche and Pehuenche origin, with her original name most likely being Anuqueupu, which roughly translates to Sharpened Spearhead.\nJanequeo initially supported her husband's campaigns against the Spanish. During these initial battles, Huepotaén had captured Fort Livén from the Spanish and used it as a base of operations. An increased offensive by their Spanish foes saw the fort retaken with Huepotaén still inside, which led to his capture, torture, and eventual death.\nEnraged by the assassination of her husband, Janequeo ascended as Lonco (War leader) of Llifén and rallied a sizable force of Pehuenches, Mapuches and Puelches with the help of her brother Huechuntureo and their Lof (Familial Clan). For her first target, she attacked Fort Livén, killing all the Spanish in the fort, gathering their heads as trophies and burning down the fort as revenge for her husband.",
+      "title": "Janequeo"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Pehuenche",
+      "body": "The Pehuenche are a subdivision of the Mapuche, living within the forest ranges of the Andes, with many communities living on both sides of the mountain range, distributed within modern day Chile and Argentina. Their ancestral territory ranges from the Nevado de Chillán to the Llaima volcano, with many Pehuenche settling in the Pampas region during the Conquest of the Desert in the 1800s. Many academics believe that the Pehuenche were among the first tribes to adopt Mapuche culture and language, with many theorizing that the Pehuenche were originally a Huarpean speaking people.",
+      "title": "The Pehuenche"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "You will be remembered in the annals of history as the first and only person to have ever defeated me. Enjoy that while you can.",
+    "blessing": "We salute you, fearsome Janequeo, Lonco of the Llifén! You mounted a fierce resistance against the colonizers who killed your beloved husband, returning the favor by leading an alliance of Pehuenches and Mapuches that speared through the Spanish without a single defeat.\nOh, most accomplished and undefeated Lonco of your time, the Pehuenche call for your guidance, to plant the seeds of the Pewen so your people can sow their fruits in a victorious future. Can you build a civilization that will stand the test of time?",
+    "introduction": "You are brave to step into a Pewen grove when I, Janequeo, fierce leader of the Pehuenche, lurk within. Are you an ally or my next target?"
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Llifén",
+        "Kupan Kupalme",
+        "Currumil",
+        "Algo",
+        "Peñi Huán",
+        "Ñorquincó",
+        "Tayiñ Raquizuán",
+        "Lefimán",
+        "Plácido Puel",
+        "Catalán",
+        "Quepuca Ralco",
+        "Ralco Lepoy",
+        "Pitril",
+        "Cauñicú",
+        "Malla Malla",
+        "Trapa Trapa",
+        "Butalelbun",
+        "El Avellano",
+        "Malargüe",
+        "Guayali",
+        "Los Guindos",
+        "Atay Pehuen",
+        "Mapu Choique",
+        "Pehuen-Ko"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Piempán",
+        "Puñalef",
+        "Loncopán",
+        "Lincopí",
+        "Malgamain",
+        "Peileguén",
+        "Mellipi",
+        "Huepotaén",
+        "Lliguenquén",
+        "Curruibilu",
+        "Guenocal",
+        "Yanquelemus"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "Tradboy",
+    "Arilasqueto",
+    "All Civilizations",
+    "Andean Cultures"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": false,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "ynaemp": true,
+    "maplabels": false,
+    "civivtraits": false,
+    "ethnicunits": false,
+    "mercenaries": false,
+    "histreligions": true,
+    "enlightenmentera": false,
+    "claimscoloniescrimes": false
+  },
+  "collections": [],
+  "navTemplate": "TradboyNav",
+  "presentation": {
+    "colors": {
+      "icon": "#193831",
+      "background": "#8fc4cc"
+    },
+    "mapImage": "Pehuenche Map.png",
+    "iconImage": "Pehuenche.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Pehuenche%20Map.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Pehuenche.png",
+    "mapImageCaption": "Map by Tradboy",
+    "leaderSceneImage": "Pehuenche LS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Pehuenche%20LS.png",
+    "leaderSceneArtCredit": "Art by Lasqueto and Traboy"
+  },
+  "templateRefs": []
+}

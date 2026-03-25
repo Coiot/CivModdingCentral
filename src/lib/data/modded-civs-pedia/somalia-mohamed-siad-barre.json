@@ -1,0 +1,234 @@
+{
+  "id": "civ-somalia-mohamed-siad-barre",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T16:50:32.860Z",
+    "updatedAt": "2026-03-25T16:52:19.407Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "somalia-mohamed-siad-barre",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=qpjnYLLfd44",
+      "title": "Second Attack",
+      "credit": "Henry Jackman"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=cFCcGs9GNOQ",
+      "title": "Men are Cruel and Kind",
+      "credit": "Aamina Camaari"
+    }
+  },
+  "title": "Somalia",
+  "issues": [],
+  "leader": "Mohamed Siad Barre",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Somalia_(Siad_Barre)",
+    "lastUpdated": "21 September 2019",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1894002160",
+    "modFolderName": "",
+    "wikiPageTitle": "Somalia"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "TranquilSilence",
+      "role": "Design"
+    },
+    {
+      "name": "Urdnot_Scott",
+      "role": "Map"
+    },
+    {
+      "name": "Lime",
+      "role": "Icons (Duub Cas, Gabyaga)"
+    },
+    {
+      "name": "Ekmek",
+      "role": "Duub Cas Model"
+    },
+    {
+      "name": "Aamina Camaari",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Henry Jackman",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "Somalia led by Mohamed Siad Barre is a custom civilization by TopHatPaladin, with contributions from Urdnot_Scott, Lime, and Ekmek.",
+  "uniques": [
+    {
+      "art": "IconPNG_SiadBarre.png",
+      "body": "{{Trade Route Icon}} Trade Routes grant additional starting XP to Naval Units trained in their home cities. Gain {{Great Person Icon}} Gabyaga points when promoting Naval Units.",
+      "name": "Star of Unity",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_SiadBarre.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_DuubCas.png",
+      "body": "",
+      "name": "Duub Cas",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_DuubCas.png",
+      "bullets": [
+        "+15% {{Strength Icon}} Combat Strength when beginning its turn along a friendly {{Trade Route Icon}} Trade Route",
+        "+2 {{Moves Icon}} Movement in friendly territory"
+      ],
+      "replaces": "Marine",
+      "artCredit": "Art by Lime",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Gabyaga.png",
+      "body": "",
+      "name": "Gabyaga",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Gabyaga.png",
+      "bullets": [
+        "Provides an extra {{Trade Route Icon}} Trade Route slot when garrisoned in a city"
+      ],
+      "replaces": "Great Writer",
+      "artCredit": "Art by Lime",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Coastal",
+    "capital": "Mogadishu",
+    "culture": "Islamic",
+    "religion": [
+      "Islam",
+      "Sunni (HR)"
+    ],
+    "adjectives": "Somali",
+    "empireName": "Somali Empire",
+    "government": "Military",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Siad_Barre",
+      "body": "Jaalle Mohamed Siad Barre was a soldier and politician who served as the President of Somalia from 1969 to 1991. He was born in 1919, near Shilavo in modern-day Ethiopia, as a member of the Marehan clan (a subclan of the Darod). He began his military service in 1935, when he claimed to have been born in Garbahare in order to be eligible to join the Italian Zaptié forces; he fought in the Italian conquest of Ethiopia, and later joined the military forces of British Somaliland, where he rose to the rank of Major General. Because of this military experience, Siad Barre was selected as Vice Chairman of the Somali Army after the nation attained its independence in 1960.",
+      "title": "Siad Barre"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Somali_Democratic_Republic",
+      "body": "On 1 July 1960, the two portions of Somaliland unified to form the independent Somali Republic. This government, a presidential republic, lasted for nine years before its second president – Abdirashid Ali Shermarke – was assassinated in the city of Las Anod. Within a week of his death, the Somali Army executed a bloodless takeover of the country, and General Mohamed Siad Barre became President. A proponent of scientific socialism, Siad Barre initiated successful literacy and public works programs, but his tenure was plagued by human rights abuses that worsened after the unsuccessful Ogaden War in 1977–78.",
+      "title": "Somalia"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"If I must leave Somalia, I will leave buildings but not people.\"",
+    "blessing": "\"Greetings, General Siad Barre! Victorious leader, you were one of the most prominent figures in the Somali military since the state first gained its independence, and so when President Shermarke was assassinated, you were the natural choice to take over his office. As President of Somalia, you began a program of scientific socialism, revitalizing the economy with nationalized industry and cooperative farms; you also spread literacy, with a standardized Latin script that could be used by all Somalis. Militarily, your tenure was less decisive – although the Ogaden War was a great success in its early months, the betrayal of the Soviets prevented you from attaining your victory. This would have a long-reaching ripple effect that colored the rest of your reign, but you would continue to fight for your people and your clan.\nGeneral, the time has come for you to once again seize the helm of Somalia, and wrest it from both external colonizers and those who would oppress your clan. Can you restore the strong hand that you used to push Somalia forward? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Greetings! I am Mohamed Siad Barre, the man who brought freedom and prosperity to the Somali peoples.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Mogadishu",
+        "Hargeisa",
+        "Berbera",
+        "Galdogob",
+        "Baidoa",
+        "Burao",
+        "Beledweyne",
+        "Abudwak",
+        "Borama",
+        "Jowhar",
+        "Las Anod",
+        "Adado",
+        "Dusmareb",
+        "Bardera",
+        "Galkayo",
+        "Bosaso",
+        "Harardhere",
+        "Merca",
+        "Guriel",
+        "Kismayo",
+        "Garoowe",
+        "Afgooye",
+        "Erigavo",
+        "Garbahare",
+        "Badhan",
+        "Boon",
+        "Qoryoley",
+        "Banderadley",
+        "Buuhoodle",
+        "Jariban",
+        "Hudur",
+        "Hobyo",
+        "Bu'ale"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Cabdullaahi",
+        "Cabdiraxmaan",
+        "Faarax",
+        "Xuseen",
+        "Cabdiqaasim",
+        "Xasan",
+        "Cusmaan",
+        "Maxamud",
+        "Axmed",
+        "Khadija"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Islamic Cultures",
+    "Civilizations with Male leaders",
+    "Civilizations with two unique units (Civ5)",
+    "Somalia",
+    "Great People Civilizations"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#bfe7ff",
+      "background": "#0072bc"
+    },
+    "mapImage": "Map_Somalia.png",
+    "iconImage": "IconPNG_Somalia.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Map_Somalia.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Somalia.png",
+    "mapImageCaption": "Map by Urdnot_Scott",
+    "leaderSceneImage": "LS_PNG_SiadBarre.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_SiadBarre.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

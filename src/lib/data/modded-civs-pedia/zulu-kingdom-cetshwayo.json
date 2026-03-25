@@ -1,0 +1,226 @@
+{
+  "id": "civ-zulu-kingdom-cetshwayo",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T17:09:57.086Z",
+    "updatedAt": "2026-03-25T17:11:55.676Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": [
+      "10thAnniversaryCollectionNav"
+    ]
+  },
+  "slug": "zulu-kingdom-cetshwayo",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=WH0UNkMT8ws",
+      "title": "Isandhlwana (Part 2)",
+      "credit": "Elmer Bernstein"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=5oKCG7hsUzI",
+      "title": "First Sight of Kwa-Bulawayo",
+      "credit": "Dave Pollecutt"
+    }
+  },
+  "title": "The Zulu",
+  "issues": [
+    "Unresolved templates: 10thAnniversaryCollectionNav"
+  ],
+  "leader": "Cetshwayo",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Zulu_(Cetshwayo)",
+    "lastUpdated": "25 September 2020",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2238255022",
+    "modFolderName": "",
+    "wikiPageTitle": "Zulu Kingdom"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Sukritact",
+      "role": "Map"
+    },
+    {
+      "name": "Dave Pollecutt",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Elmer Bernstein",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Zulu led by Cetshwayo is a custom civilization by TopHatPaladin, with contributions from Sukritact. It was released as part of the Civ V 10th Anniversary event. It also changes the capital of Shaka's Zulu to Kwa-Bulawayo.",
+  "uniques": [
+    {
+      "art": "IconPNG_Cetshwayo.png",
+      "body": "When the destination city of a {{Trade Route Icon}} Trade Route expands its cultural borders, the origin city expands as well. {{Trade Route Icon}} Trade Routes to Occupied or Puppeted cities yield {{Golden Age}} Golden Age Points.",
+      "name": "Washing of the Spears",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Cetshwayo.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Ibutho.png",
+      "body": "",
+      "name": "Ibutho",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Ibutho.png",
+      "bullets": [
+        "Unlocked at Chivalry",
+        "Part of the Melee (vs. Gun) combat class",
+        "16% base {{Strength Icon}} Combat Strength when attacking (20 vs. 24)",
+        "8% base {{Strength Icon}} Combat Strength when defending (22 vs. 24)",
+        "+33% {{Strength Icon}} Combat Strength after being promoted three times"
+      ],
+      "replaces": "Musketman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Kraal.png",
+      "body": "",
+      "name": "Kraal",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Kraal.png",
+      "bullets": [
+        "May be built in any city, regardless of resources",
+        "Instantly claims neutral Pasture resources workable by its city",
+        "When its city's cultural borders expand, units in or adjacent to the city gain XP"
+      ],
+      "replaces": "Stable",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Ulundi",
+    "culture": "Bantu",
+    "religion": [
+      "Protestantism",
+      "Amatongo (HR)"
+    ],
+    "adjectives": "Zulu",
+    "empireName": "Zulu Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Cetshwayo",
+      "body": "Cetshwayo kaMpande was the last independent king of the Zulu Kingdom. He was born in approximately 1826 to Mpande, who at the time was a relatively minor half-brother of Shaka Zulu; however, Mpande eventually rose to the kingship in 1840. In the early 1850s, Cetshwayo then rose to prominence himself as one of Mpande's most important administrators. Cetshwayo's ascendancy led him into conflict with his younger brother, Mbuyazi, who was Mpande's favorite son; tensions mounted between the two and eventually boiled over into outright warfare. Cetshwayo crushed Mbuyazi's followers, and slew Mbuyazi himself, in the 1856 Battle of Ndondakusuka. After this victory, Cetshwayo's power only increased, and he became the de facto ruler of the Zulu under his father's auspices.",
+      "title": "Cetshwayo"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Zulu_Kingdom",
+      "body": "After the increasing brutality of Shaka in his later life, he was assassinated by his half-brother Dingane in 1828. Dingane also went on a purge of the sons of Senzangakhona, leaving alive only Mpande, who was assumed to be a non-threat due to his relative disinterest in ruling. However, Dingane's aggression against the Boers led a Boer force to back Mpande in rebelling against Dingane, and so in 1840 Dingane was overthrown and killed. Mpande thus became king himself, although he continued to have limited interest in kingship, leading other key figures from the Zulu Kingdom to assume much of the power. In particular, Mpande's eldest son Cetshwayo fought off his various rivals to become the de facto ruler as early as 1856.",
+      "title": "Zulu Kingdom"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"I will be gracious in my defeat. Perhaps now there may be rest.\"",
+    "blessing": "\"Salutations, Cetshwayo kaMpande, the final king of an independent Zululand! In the cutthroat world of Zulu politics, you were one of its most adept players, besting Mbuyazi to become the de facto king during your father's later life. It was during this period that you developed your diplomatic skills, negotiating adeptly with British and Boers alike to ensure peace and minimize land concessions. You also sought to modernize the Zulu army by introducing muskets to the regiments, helping to iterate upon your uncle Shaka's achievements. The British ultimately fabricated a cause for war against you, but the first victory was yours, in the Battle of Isandlwana. While this war would end in your overthrow, you were still recognized for your many achievements, and people even in Britain would come to support your cause.\nCetshwayo, it is time for the Zulu to reassert their sovereignty against all those who would seek to encroach upon it. Can you repel all threats to your kingdom and establish an impenetrable realm? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"I am Cetshwayo kaMpande, king of the Zulu. I believe we can forge a powerful alliance, as long as you give us the respect we deserve.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Ulundi",
+        "Eshowe",
+        "Umgungundlovu",
+        "Isandlwana",
+        "Nongoma",
+        "Nodwengu",
+        "Hlobane",
+        "Ndondakusuka",
+        "Maqongqo",
+        "Kambula",
+        "Sokhexe",
+        "Ethekwini",
+        "Pongola",
+        "Msunduzi",
+        "Umlathuze",
+        "Abaqulusi",
+        "Umlalazi",
+        "Mtubatuba",
+        "Okhahlamba",
+        "Mbonambi",
+        "Nkandla",
+        "Umshwathi",
+        "Umngeni",
+        "Edumbe",
+        "Mkhambathini",
+        "Mthonjaneni",
+        "Mpofani",
+        "Impendle",
+        "Ntambanana"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Mpande",
+        "Mbuyazi",
+        "Umthonga",
+        "Ntshingwayo",
+        "Dabulamanzi",
+        "Ndlela",
+        "Ngqumbazi",
+        "Nandi",
+        "Songiya",
+        "Monase"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Bantu Cultures",
+    "Civilizations with Male leaders",
+    "10th Anniversary Civs",
+    "South Africa"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "10thAnniversaryCollectionNav",
+  "presentation": {
+    "colors": {
+      "icon": "#ccac96",
+      "background": "#4a2513"
+    },
+    "mapImage": "MapSuk_Cetshwayo.png",
+    "iconImage": "Zulu_(Cetshwayo).png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapSuk_Cetshwayo.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Zulu_(Cetshwayo).png",
+    "mapImageCaption": "Map by Sukritact",
+    "leaderSceneImage": "LS_PNG_Cetshwayo.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Cetshwayo.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

@@ -1,0 +1,215 @@
+{
+  "id": "civ-the-ket-olgit",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T03:40:32.117Z",
+    "updatedAt": "2026-03-25T03:42:14.299Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": [
+      "Decision"
+    ]
+  },
+  "slug": "the-ket-olgit",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=6Tq5vaCzh7Q",
+      "title": "Hurricane Wasteland",
+      "credit": "Robin Birner & Yannick Süß"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=GVZI_IRNvP0",
+      "title": "Catamaran Mirage",
+      "credit": "Robin Birner & Yannick Süß"
+    }
+  },
+  "title": "The Ket",
+  "issues": [
+    "Unresolved templates: Decision"
+  ],
+  "leader": "Olgit",
+  "source": {
+    "type": "wiki",
+    "version": "v 3",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Ket_(Olgit)",
+    "lastUpdated": "7 March 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1627884329",
+    "modFolderName": "",
+    "wikiPageTitle": "The Ket"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "danrell",
+      "role": "Fish-Oil Bowman Model"
+    },
+    {
+      "name": "Civitar",
+      "role": "Sening Model"
+    },
+    {
+      "name": "Robin Birner & Yannick Süß",
+      "role": "Music"
+    }
+  ],
+  "summary": "The Ket led by Olgit is a custom civilization by TopHatPaladin, with contributions from danrell and Civitar.",
+  "uniques": [
+    {
+      "art": "IconPNG_Olgit.png",
+      "body": "Receive {{Food Icon}} Food when a unit is killed in your territory, plus {{Faith Icon}} Faith if said unit was a Barbarian. When your borders expand, damage foreign units on or adjacent to the newly claimed tile.",
+      "name": "Bangos Sorcery",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Olgit.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_FishOil.png",
+      "body": "",
+      "name": "Fish-Oil Bowman",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_FishOil.png",
+      "bullets": [
+        "Inflicts a \"Poisoned\" status on units it attacks, causing the target to lose half its current HP when it next moves"
+      ],
+      "replaces": "Archer",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Sening.png",
+      "body": "",
+      "name": "Sening",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Sening.png",
+      "bullets": [
+        "+10% {{Strength Icon}} Combat Strength to adjacent units",
+        "If expended in a friendly city, claims a random unowned tile workable by that city"
+      ],
+      "replaces": "Missionary",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Kellog",
+    "culture": "Polar",
+    "religion": [
+      "Orthodoxy",
+      "Samanism (HR)",
+      "Kuptyng (LR)"
+    ],
+    "adjectives": "Ket",
+    "empireName": "Ket Empire",
+    "government": "Tribal\nNomadic",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Olgit was a warrior figure and hero from Ket mythology. Like many traditional Ket heroes, Olgit distinguished himself in battle against the Evenks; Evenki raiders frequently attacked the Ket, providing the basis for such stories. Olgit was also the progenitor of the Qengtandeng moiety, one of the two exogamous marriage groups into which the Ket divided themselves. Like many other Ket heroes, Olgit was eventually immortalized as a mountainous crag along the eastern bank of the Yenisei River.",
+      "title": "Olgit"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Ket_people",
+      "body": "The Ket, sometimes called the Yenisei Ostyaks, are an indigenous people of Siberia, who live along the Yenisei River. They traditionally lived a predominantly hunter-gatherer lifestyle, although some of the more northern Ket also engaged in pastoralism. The Ket language, the sole survivor of the Yeniseian language family, is thought by some scholars to be related to the Na-Dené languages of North America; if this theory is true, it will be the first confirmed language family that connects the Americas to Eurasia.",
+      "title": "The Ket"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"This is Hosedam's doing, isn't it? I should have seen this coming.\"",
+    "blessing": "\"Greetings, Olgit, hero and progenitor of the Ket! Your people are one of the most enigmatic of Siberia, with only a thousand living to the present day, and an ill-attested language that may even be related to those of North America. Even so, you are remembered as one of their great heroes, achieving many victories against the hated Evenks and becoming the original ancestor of the great Qengtandeng clan. Your deeds were immortalized by the gods, who honored you by turning you into a crag along the banks of the Yenisei River.\nOlgit, all the Ket shamans of today seek your intercession, calling for you above all other spirits. Can you forge an existence in some of the harshest terrains on Earth? Can you rally your hunters and shamans to conquer your enemies? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"What are you doing all the way out here? My name's Olgit. Let me get you to safety.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Kellog",
+        "Surgutikha",
+        "Sulomay",
+        "Maduyka",
+        "Pakulikha",
+        "Serkovo",
+        "Bakhta",
+        "Goroshikha",
+        "Kangatovo",
+        "Vereshchagino",
+        "Farkovo",
+        "Baklanikha",
+        "Sym",
+        "Kostino",
+        "Verkhneimbatsk",
+        "Sumarokovo",
+        "Turukhansk",
+        "Vorogovo",
+        "Svetlogorsk",
+        "Bor",
+        "Kureyka",
+        "Zotino"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Doh",
+        "Balna",
+        "Togeta",
+        "Belegin",
+        "Alba",
+        "Syoksa",
+        "Bissimdes",
+        "Deles",
+        "Hosedam",
+        "Tomam"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Polar Cultures",
+    "Civilizations with Male leaders",
+    "Civilizations with two unique units (Civ5)",
+    "Russia"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#5b1212",
+      "background": "#7b9792"
+    },
+    "mapImage": "MapPNG_Ket.png",
+    "iconImage": "IconPNG_Ket.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Ket.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Ket.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Olgit.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Olgit.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

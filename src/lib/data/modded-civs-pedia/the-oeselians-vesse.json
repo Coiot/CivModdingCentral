@@ -1,0 +1,225 @@
+{
+  "id": "civ-the-oeselians-vesse",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T03:57:38.091Z",
+    "updatedAt": "2026-03-25T03:59:16.333Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "the-oeselians-vesse",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=YGC0MtaBw_k",
+      "title": "Thor",
+      "credit": "Andreas Waldetoft"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=hTZqqXpLtsk",
+      "title": "(unknown title)",
+      "credit": "the Chicago Eesti Rahvamuusika Ansambel"
+    }
+  },
+  "title": "The Oeselians",
+  "issues": [],
+  "leader": "Vesse",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Oeselians_(Vesse)",
+    "lastUpdated": "7 December 2020",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2312653027",
+    "modFolderName": "",
+    "wikiPageTitle": "The Oeselians"
+  },
+  "authors": [
+    "ExplosiveWatermelon",
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "ExplosiveWatermelon",
+      "role": "Design, Code, Text, Unit Model"
+    },
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Art, Text"
+    },
+    {
+      "name": "Senshi",
+      "role": "Civ Icon"
+    },
+    {
+      "name": "Chicago Eesti Rahvamuusika Ansambel",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Andreas Waldetoft",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Oeselians led by Vesse is a custom civilization by ExplosiveWatermelon and TopHatPaladin, with contributions from Senshi.",
+  "uniques": [
+    {
+      "art": "IconPNG_Vesse.png",
+      "body": "Naval {{Trade Route Icon}} Trade Routes increase Naval Unit Strength and increase {{Production Icon}} Naval Unit Production in their origin depending on the distance traveled. {{Gold Icon}} Gold generation increases the yields of internal Trade Routes.",
+      "name": "Thunderbolt of Taara",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Vesse.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Piratica.png",
+      "body": "",
+      "name": "Piratica",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Piratica.png",
+      "bullets": [
+        "Earns {{Faith Icon}} Faith upon killing an enemy unit",
+        "When initiating an attack, damages adjacent enemy units"
+      ],
+      "replaces": "Trireme",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Hiis.png",
+      "body": "",
+      "name": "Hiis",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Hiis.png",
+      "bullets": [
+        "Religious units born in a city with a Hiis create Forest when expended",
+        "Forests near its city increase the range of naval {{Trade Route Icon}} Trade Routes"
+      ],
+      "replaces": "Shrine",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Valjala",
+    "culture": "Northern",
+    "religion": [
+      "Catholicism",
+      "Taivaanaula (GHR)"
+    ],
+    "adjectives": "Oeselian",
+    "empireName": "Oeselian Empire",
+    "government": "",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Saint_George%27s_Night_Uprising#Rebellion_in_%C3%96sel",
+      "body": "Vesse was an Oeselian chief who is best known for leading the Oeselians during the St. George's Night Uprising. This uprising was the last stand of the Estonian pagan beliefs against Christianity. It is unknown how exactly Vesse first rose to prominence; the New Prussian Chronicle simply states that he had been elected by his people.\nIn the St. George's Night Uprising, Vesse marshaled the Oeselians to begin violent resistance against the Livonian Order. They slew the Germans on the island of Saaremaa, drowned the priests, and ultimately captured the Livonian Order's fortress of Pöide. This victory proved to be short-lived, however; the Livonian Order ultimately recaptured the fortress the next year, at which point they seized Vesse and tortured him to death.\nVesse is still seen as an important figure in Estonian history, and today, the city of Tallinn has streets and railway stations named after him.",
+      "title": "Vesse"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Inhabitants_of_Saaremaa",
+      "body": "The Oeselians are the native inhabitants of Saaremaa, an island off the coast of mainland Estonia. During the Viking Age, they participated extensively in naval raids throughout the Baltic; later, their ongoing resistance to Christianity led them into conflict with the Livonian Order. Much of what we know about the Oeselians comes from the major primary sources from the Northern Crusades: the Chronicle of Henry of Livonia, and the Livonian Rhymed Chronicle. These sources describe the Oeselians as capable warriors, who ranged as far as Denmark raiding Christians and pagans alike. Oeselian vikings used two principal types of ship: the liburna for merchant voyages, and the piratica for warfare.",
+      "title": "The Oeselians"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"I'll be waiting for you at the gates of hell, heathen. You've won this time, but you've earned no favor with the gods.\"",
+    "blessing": "\"May the hammer of gods strike down your foes, oh great Vesse of the Oeselians. For many years have your people graced the Baltic Sea, dominating the waves in a manner few else could. Your Piraticas were among the finest ships, and the Liburna would carry back your hard-earned plunder. Yet it was at the hand of the Crusader scourge that your people started to fall. After the massacre of the four kings, you picked up the fight for your culture once more, knowing that only the gallows awaited you.\nVesse, the gods bless you with life once more! The world is cruel, and you shall show them no mercy. Can you stand where once you've fallen before? Can your ships send your enemies to the depths? Can you build a Civilization that will stand the test of time?\"",
+    "introduction": "\"However you've washed up on these shores, know that you'll find either a warm bed, or a cold grave. My name is Vesse, I speak for the peoples of Saaremaa.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Valjala",
+        "Kuressaare",
+        "Salme",
+        "Poide",
+        "Varbola",
+        "Kaarma",
+        "Muhu",
+        "Kihelkonna",
+        "Kooljamagi",
+        "Lihula",
+        "Vana-Parnu",
+        "Kambla",
+        "Ulus-Parnu",
+        "Jamaja",
+        "Karja",
+        "Kanavere",
+        "Sojamae",
+        "Mustjala",
+        "Kotsu",
+        "Ridala",
+        "Soontagama",
+        "Marjamaa",
+        "Vigala",
+        "Valgevalja",
+        "Paalda",
+        "Lohu",
+        "Vilijandi",
+        "Puha",
+        "Maansari",
+        "Lohavere",
+        "Turaida"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Ylle",
+        "Culle",
+        "Enu",
+        "Muntelene",
+        "Tappete",
+        "Yalde",
+        "Melete",
+        "Cake",
+        "Kalevipoeg",
+        "Suur Toll"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "ExplosiveWatermelon",
+    "Northern Cultures",
+    "Civilizations with Male leaders",
+    "Estonia"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#68afa5",
+      "background": "#1e333d"
+    },
+    "mapImage": "MapPNG_Osel.png",
+    "iconImage": "IconPNG_Oeselian.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Osel.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Oeselian.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Vesse.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Vesse.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

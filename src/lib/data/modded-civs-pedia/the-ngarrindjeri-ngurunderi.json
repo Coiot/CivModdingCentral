@@ -1,0 +1,224 @@
+{
+  "id": "civ-the-ngarrindjeri-ngurunderi",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T03:48:09.600Z",
+    "updatedAt": "2026-03-25T03:50:04.543Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "the-ngarrindjeri-ngurunderi",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=J9yf_c04yLg",
+      "title": "Kura Tungar",
+      "credit": "Ruby Hunter"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=AnKEHY-S4ck",
+      "title": "Ngarrindjeri",
+      "credit": "Israel Carter"
+    }
+  },
+  "title": "The Ngarrindjeri",
+  "issues": [],
+  "leader": "Ngurunderi",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Ngarrindjeri_(Ngurunderi)",
+    "lastUpdated": "14 December 2020",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2321230874",
+    "modFolderName": "",
+    "wikiPageTitle": "The Ngarrindjeri"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "ExplosiveWatermelon",
+      "role": "Improvement Model"
+    },
+    {
+      "name": "JTitan",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Israel Carter",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Ruby Hunter",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Ngarrindjeri led by Ngurunderi is a custom civilization by TopHatPaladin, with contributions from ExplosiveWatermelon and JTitan.",
+  "uniques": [
+    {
+      "art": "IconPNG_Ngurunderi.png",
+      "body": "When a city's cultural borders expand, gain {{Golden Age}} Golden Age Points for every improved resource worked by that city. Cities claim nearby workable tiles upon entering We Love The King Day.",
+      "name": "Confederacy of Lakalinyeri",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Ngurunderi.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Kaike.png",
+      "body": "",
+      "name": "Kaike",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Kaike.png",
+      "bullets": [
+        "+20% {{Strength Icon}} Combat Strength when beginning its turn on or adjacent to a Luxury Resource",
+        "May repair pillaged improvements"
+      ],
+      "replaces": "Spearman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_OvenMound.png",
+      "body": "",
+      "name": "Oven Mound",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_OvenMound.png",
+      "bullets": [
+        "Unlocked at Trapping",
+        "Must be built on flat terrain adjacent to a river",
+        "+1 {{Food Icon}} Food and {{Culture Icon}} Culture",
+        "Provides +1 {{Culture Icon}} Culture to adjacent Camps and Fishing Boats"
+      ],
+      "replaces": "Unique Improvement",
+      "artCredit": "Art by ExplosiveWatermelon & TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Pomberuk",
+    "culture": "Aboriginal",
+    "religion": [
+      "Protestantism",
+      "Tjukurpa (HR)",
+      "Kaldowinyeri (AR)"
+    ],
+    "adjectives": "Ngarrindjeri",
+    "empireName": "Ngarrindjeri Empire",
+    "government": "Tribal",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "http://www.murrayriver.com.au/about-the-murray/ponde-dreamtime/",
+      "body": "Ngurunderi is a legendary culture hero of the Ngarrindjeri, who is credited with the formation of the Murray River. Ngurunderi sought to capture an enormous cod named Pondi, who was swimming in a stream in New South Wales; as Pondi fled from Ngurunderi, its flailing created the twists and turns of the Murray River. After successfully capturing Pondi, Ngurunderi cut it into pieces and threw it into the water; each piece became a different species of fish. Ngurunderi was also an accomplished fighter, who at one point slew a chief in the Coorong who had stolen his children. After attaining various successes on Earth, Ngurunderi traveled to a heavenly realm called Wyirrewarri, where he has lived since.",
+      "title": "Ngurunderi"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Ngarrindjeri",
+      "body": "The Ngarrindjeri are an Aboriginal group who lives along the lower Murray River and the Coorong in the modern-day state of South Australia. The Ngarrindjeri are a diverse group that comprises eighteen territorial clans, known as \"lakalinyeri\"; each lakinyeri is governed by a council of elders known as tendi, and the tendi elect a leader, titled the rupulli, who administers the entire Ngarrindjeri confederacy. The level of cohesion among the lakalinyeri is debated; some scholars argue that 'Ngarrindjeri' is an ahistorical umbrella term imposed by European colonists.",
+      "title": "The Ngarrindjeri"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"I have failed my people... promise me you will protect these lands in the way I could not.\"",
+    "blessing": "\"Greetings, Ngurunderi, hero of the Ngarrindjeri peoples! Your deeds helped create the Ngarrindjeri lifestyle; when you chased the great cod Pondi, its flailing carved the path of the Murray River, upon which your descendants depend. Further, once you caught Pondi, you chopped him into all the species of fish that your descendants now eat. Thanks to your efforts, the Ngarrindjeri were able to maintain a semi-sedentary lifestyle along the river banks, using skillfully woven nets to catch a variety of game.\nNgurunderi, despite your achievements, the arrival of European peoples has led to the spoliation of your lands. Can you return from the heavenly realm of Wyirrewarri? Can you throw off all of your rivals and reassert your people's traditional lifestyle? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Well met! I am Ngurunderi, the champion of the Ngarrindjeri and of all our peoples. And what may I call you?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Pomberuk",
+        "Raukkan",
+        "Tagalang",
+        "Murungun",
+        "Lalangenggul",
+        "Kauwira",
+        "Peindjalong",
+        "Kumarangk",
+        "Parawa",
+        "Parnka Point",
+        "Roonka",
+        "Tartanga",
+        "Nulcoowarra",
+        "Karta",
+        "Bonney Reserve",
+        "Goolwa",
+        "Coorong",
+        "Millewa",
+        "Yarli",
+        "Milang",
+        "Narrung",
+        "Ngaut Ngaut",
+        "Fromm's Landing",
+        "Longkuwar",
+        "Meningie",
+        "Ngarlung",
+        "Pelican Point",
+        "Pulluwewal"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Matummeri",
+        "Waiungare",
+        "Thukabi",
+        "David Unaipon",
+        "Potpalingada",
+        "Nepele",
+        "Parampari",
+        "Major Sumner",
+        "Nahraminyeri",
+        "Koomi"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Sahul Cultures",
+    "Civilizations with Male leaders",
+    "Australia",
+    "Civilizations with Unique Improvements"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#7daecd",
+      "background": "#78371a"
+    },
+    "mapImage": "MapPNG_Ngarrindjeri.png",
+    "iconImage": "IconPNG_Ngarrindjeri.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Ngarrindjeri.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Ngarrindjeri.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Ngurunderi.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Ngurunderi.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

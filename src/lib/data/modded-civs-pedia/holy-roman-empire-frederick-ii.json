@@ -1,200 +1,235 @@
 {
-	"id": "civ-holy-roman-empire-frederick-ii",
-	"kind": "civilization",
-	"meta": {
-		"createdAt": "2026-03-23T21:51:52.529Z",
-		"formatVersion": 1,
-		"createdByName": "TopHatPaladin",
-		"updatedByName": "TophatPaladin",
-		"unresolvedTemplates": ["10thAnniversaryCollectionNav"]
-	},
-	"slug": "holy-roman-empire-frederick-ii",
-	"music": {
-		"war": {
-			"url": "https://www.youtube.com/watch?v=nJiSLU0k4B0",
-			"title": "Armed Combat",
-			"credit": "Jan Valta and Adam Sporka"
-		},
-		"peace": {
-			"url": "https://www.youtube.com/watch?v=3FZHzc3Wxks",
-			"title": "Rorate Caeli",
-			"credit": "Robin Birner and Yannick Süß"
-		}
-	},
-	"title": "Holy Roman Empire",
-	"issues": ["Unresolved templates: 10thAnniversaryCollectionNav"],
-	"leader": "Frederick II",
-	"source": {
-		"type": "wiki",
-		"version": "v 1",
-		"wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Holy_Roman_Empire_(Frederick_II)",
-		"lastUpdated": "21 September 2020",
-		"workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2234887887",
-		"modFolderName": "",
-		"wikiPageTitle": "Holy Roman Empire"
-	},
-	"authors": ["TopHatPaladin"],
-	"credits": [
-		{
-			"name": "TopHatPaladin",
-			"role": "Design, Code, Text, Leaderscreen"
-		},
-		{
-			"name": "DarthKyofu",
-			"role": "Civ Icon"
-		},
-		{
-			"name": "Francesca",
-			"role": "Other Art"
-		},
-		{
-			"name": "Nutty",
-			"role": "Unit Model"
-		},
-		{
-			"name": "Robin Birner and Yannick Süß",
-			"role": "Peace Theme"
-		},
-		{
-			"name": "Jan Valta and Adam Sporka",
-			"role": "War Theme"
-		}
-	],
-	"summary": "The Holy Roman Empire led by Frederick II is a custom civilization by TopHatPaladin, with contributions from Francesca, DarthKyofu, and Nutty. It was released as part of the Civ V 10th Anniversary event.",
-	"uniques": [
-		{
-			"art": "IconPNG_Frederick.png",
-			"body": "Constructing a Great Person Tile Improvement creates a {{Great Work Icon}} Great Work of Writing, if possible, in the nearest city. Constructing a building with Specialist slots provides a sum of points toward the relevant {{Great Person Icon}} Great Person.",
-			"name": "Astonishment of the World",
-			"slot": "unique ability",
-			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Frederick.png",
-			"bullets": [],
-			"replaces": "",
-			"artCredit": "Art by TopHatPaladin",
-			"footnotes": [],
-			"civilopedia": "",
-			"templateRefs": []
-		},
-		{
-			"art": "IconPNG_Ministerialis.png",
-			"body": "",
-			"name": "Ministerialis",
-			"slot": "unique unit",
-			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Ministerialis.png",
-			"bullets": ["Yields {{Science Icon}} Science when promoted", "If garrisoned in a city, increases the rate of building production in that city"],
-			"replaces": "Knight",
-			"artCredit": "Art by Francesca",
-			"footnotes": [],
-			"civilopedia": "",
-			"templateRefs": []
-		},
-		{
-			"art": "IconPNG_Menagerie.png",
-			"body": "",
-			"name": "Imperial Menagerie",
-			"slot": "unique unit",
-			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Menagerie.png",
-			"bullets": ["Boosts {{Great Person Icon}} Great People generation by 20%", "+1 {{Science Icon}} Science for every Great Work in its city"],
-			"replaces": "Zoo",
-			"artCredit": "Art by Francesca",
-			"footnotes": [],
-			"civilopedia": "",
-			"templateRefs": []
-		}
-	],
-	"identity": {
-		"bias": "",
-		"capital": "Palermo",
-		"culture": "Central",
-		"religion": ["Catholicism"],
-		"adjectives": "Hohenstaufen",
-		"empireName": "Holy Roman Empire",
-		"government": "Empire",
-		"requiredContent": ["Brave New World"],
-		"mapLabelsLanguage": ""
-	},
-	"overview": {
-		"leader": {
-			"url": "https://en.wikipedia.org/wiki/Frederick_II,_Holy_Roman_Emperor",
-			"body": "Frederick II was the Holy Roman Emperor and the King of Sicily throughout the first half of the thirteenth century, ruling both domains at the apogee of the Hohenstaufen dynasty. He was an intellectually curious and active king, although his religious skepticism and his political interests in Italy made him a frequent enemy of the papacy; during his lifetime, he would be excommunicated three times.",
-			"title": "Frederick II"
-		},
-		"civilization": {
-			"url": "https://en.wikipedia.org/wiki/Hohenstaufen_dynasty",
-			"body": "The Hohenstaufen dynasty was a family that initially rose to prominence in the Duchy of Swabia in 1079, and went on to rule the Holy Roman Empire from 1138 to 1254. The first Hohenstaufen duke, Frederick I of Swabia, married a daughter of Emperor Henry IV. Thus, his two sons – Frederick and Conrad – came to be considered for the imperial throne after Henry V died heirless in 1125. These bids for the crown were initially unsuccessful; despite the Hohenstaufens' efforts, the next emperor would be Lothair of Supplinburg. However, after Lothair died in 1137, Conrad (then the Duke of Franconia) managed to ascend to the throne himself.",
-			"title": "Hohenstaufen Dynasty"
-		}
-	},
-	"dawnOfMan": {
-		"defeat": "\"Well, that's that for my reign. I don't suppose you'd let me stay on as your court falconer?\"",
-		"blessing": "\"Hail, Holy Roman Emperor Frederick II, king of Sicily, Germany, Italy, and Jerusalem! One of the most intellectually curious figures of the Middle Ages, your reign was commissioned by the production of a wide range of knowledge and literature. You patronized Sicilian-language poetry and translations of Greek and Arabic text, and even wrote a text yourself: The Art of Hunting with Birds, the world's first treatise on falconry. You also hosted many astronomers at your court, and issued sweeping reforms of Sicilian law that would last for centuries beyond your death. Politically, you would bring the Holy Roman Empire to its territorial apex: it was united with Sicily during your rule, as well as briefly Jerusalem, and your expansion into northern Italy and resistance of the Mongols helped ensure the size of the heartland as well.\nFrederick, scholars and laypeople alike reminisce about the vibrant court you maintained, and its many intellectual accomplishments. Can you create an empire that amasses and refines all of the human knowledge in the world? Can you build a civilization that will stand the test of time?\"",
-		"introduction": "\"Welcome to Sicily! Oh, and the Holy Roman Empire, as well. I am known as Frederick. Care to go for a hunt?\""
-	},
-	"nameLists": [
-		{
-			"items": [
-				"Palermo",
-				"Mainz",
-				"Frankfurt",
-				"Aachen",
-				"Cologne",
-				"Heidelberg",
-				"Magdeburg",
-				"Braunschweig",
-				"Regensburg",
-				"Freiburg",
-				"Vienna",
-				"Augsburg",
-				"Trier",
-				"Nuremberg",
-				"Messina",
-				"Goslar",
-				"Koblenz",
-				"Worms",
-				"Munich",
-				"Speyer",
-				"Leipzig",
-				"Ulm",
-				"Gelnhausen",
-				"Salerno",
-				"Kiel",
-				"Erfurt",
-				"Konstanz",
-				"Marburg",
-				"Reutlingen",
-				"Göppingen",
-				"Brindisi",
-				"Hanover",
-				"Münster",
-				"Kassel",
-				"Bonn",
-				"Rimini",
-				"Lucera"
-			],
-			"title": "City List"
-		},
-		{
-			"items": ["Conrad", "Roger", "Otto", "Henry", "Manfred", "Agnes", "Margaret", "Yolande", "Isabella", "Constance"],
-			"title": "Spy List"
-		}
-	],
-	"categories": ["All Civilizations", "TopHatPaladin", "Central Cultures", "Civilizations with Male leaders", "10th Anniversary Civs", "Germany", "Medieval Era", "Alternate Leaders"],
-	"modSupport": {},
-	"collections": [],
-	"navTemplate": "10thAnniversaryCollectionNav",
-	"presentation": {
-		"colors": {
-			"icon": "#b79638",
-			"background": "#36312b"
-		},
-		"mapImage": "MapPNG_Hohenstaufen.png",
-		"iconImage": "Icon_Hohenstaufen.png",
-		"mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Hohenstaufen.png",
-		"iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Hohenstaufen.png",
-		"mapImageCaption": "Map by Francesca",
-		"leaderSceneImage": "LS_PNG_Frederick.png",
-		"leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Frederick.png",
-		"leaderSceneArtCredit": "Art by TopHatPaladin"
-	},
-	"templateRefs": []
+  "id": "civ-holy-roman-empire-frederick-ii",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T21:51:52.529Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": [
+      "10thAnniversaryCollectionNav"
+    ],
+    "updatedAt": "2026-03-23T21:55:17.79369+00:00"
+  },
+  "slug": "holy-roman-empire-frederick-ii",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=nJiSLU0k4B0",
+      "title": "Armed Combat",
+      "credit": "Jan Valta and Adam Sporka"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=3FZHzc3Wxks",
+      "title": "Rorate Caeli",
+      "credit": "Robin Birner and Yannick Süß"
+    }
+  },
+  "title": "Holy Roman Empire",
+  "issues": [
+    "Unresolved templates: 10thAnniversaryCollectionNav"
+  ],
+  "leader": "Frederick II",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Holy_Roman_Empire_(Frederick_II)",
+    "lastUpdated": "21 September 2020",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2234887887",
+    "modFolderName": "",
+    "wikiPageTitle": "Holy Roman Empire"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Text, Leaderscreen"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Civ Icon"
+    },
+    {
+      "name": "Francesca",
+      "role": "Other Art"
+    },
+    {
+      "name": "Nutty",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Robin Birner and Yannick Süß",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Jan Valta and Adam Sporka",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Holy Roman Empire led by Frederick II is a custom civilization by TopHatPaladin, with contributions from Francesca, DarthKyofu, and Nutty. It was released as part of the Civ V 10th Anniversary event.",
+  "uniques": [
+    {
+      "art": "IconPNG_Frederick.png",
+      "body": "Constructing a Great Person Tile Improvement creates a {{Great Work Icon}} Great Work of Writing, if possible, in the nearest city. Constructing a building with Specialist slots provides a sum of points toward the relevant {{Great Person Icon}} Great Person.",
+      "name": "Astonishment of the World",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Frederick.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Ministerialis.png",
+      "body": "",
+      "name": "Ministerialis",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Ministerialis.png",
+      "bullets": [
+        "Yields {{Science Icon}} Science when promoted",
+        "If garrisoned in a city, increases the rate of building production in that city"
+      ],
+      "replaces": "Knight",
+      "artCredit": "Art by Francesca",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Menagerie.png",
+      "body": "",
+      "name": "Imperial Menagerie",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Menagerie.png",
+      "bullets": [
+        "Boosts {{Great Person Icon}} Great People generation by 20%",
+        "+1 {{Science Icon}} Science for every Great Work in its city"
+      ],
+      "replaces": "Zoo",
+      "artCredit": "Art by Francesca",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Palermo",
+    "culture": "Central",
+    "religion": [
+      "Catholicism"
+    ],
+    "adjectives": "Hohenstaufen",
+    "empireName": "Holy Roman Empire",
+    "government": "Empire",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Frederick_II,_Holy_Roman_Emperor",
+      "body": "Frederick II was the Holy Roman Emperor and the King of Sicily throughout the first half of the thirteenth century, ruling both domains at the apogee of the Hohenstaufen dynasty. He was an intellectually curious and active king, although his religious skepticism and his political interests in Italy made him a frequent enemy of the papacy; during his lifetime, he would be excommunicated three times.",
+      "title": "Frederick II"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Hohenstaufen_dynasty",
+      "body": "The Hohenstaufen dynasty was a family that initially rose to prominence in the Duchy of Swabia in 1079, and went on to rule the Holy Roman Empire from 1138 to 1254. The first Hohenstaufen duke, Frederick I of Swabia, married a daughter of Emperor Henry IV. Thus, his two sons – Frederick and Conrad – came to be considered for the imperial throne after Henry V died heirless in 1125. These bids for the crown were initially unsuccessful; despite the Hohenstaufens' efforts, the next emperor would be Lothair of Supplinburg. However, after Lothair died in 1137, Conrad (then the Duke of Franconia) managed to ascend to the throne himself.",
+      "title": "Hohenstaufen Dynasty"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Well, that's that for my reign. I don't suppose you'd let me stay on as your court falconer?\"",
+    "blessing": "\"Hail, Holy Roman Emperor Frederick II, king of Sicily, Germany, Italy, and Jerusalem! One of the most intellectually curious figures of the Middle Ages, your reign was commissioned by the production of a wide range of knowledge and literature. You patronized Sicilian-language poetry and translations of Greek and Arabic text, and even wrote a text yourself: The Art of Hunting with Birds, the world's first treatise on falconry. You also hosted many astronomers at your court, and issued sweeping reforms of Sicilian law that would last for centuries beyond your death. Politically, you would bring the Holy Roman Empire to its territorial apex: it was united with Sicily during your rule, as well as briefly Jerusalem, and your expansion into northern Italy and resistance of the Mongols helped ensure the size of the heartland as well.\nFrederick, scholars and laypeople alike reminisce about the vibrant court you maintained, and its many intellectual accomplishments. Can you create an empire that amasses and refines all of the human knowledge in the world? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Welcome to Sicily! Oh, and the Holy Roman Empire, as well. I am known as Frederick. Care to go for a hunt?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Palermo",
+        "Mainz",
+        "Frankfurt",
+        "Aachen",
+        "Cologne",
+        "Heidelberg",
+        "Magdeburg",
+        "Braunschweig",
+        "Regensburg",
+        "Freiburg",
+        "Vienna",
+        "Augsburg",
+        "Trier",
+        "Nuremberg",
+        "Messina",
+        "Goslar",
+        "Koblenz",
+        "Worms",
+        "Munich",
+        "Speyer",
+        "Leipzig",
+        "Ulm",
+        "Gelnhausen",
+        "Salerno",
+        "Kiel",
+        "Erfurt",
+        "Konstanz",
+        "Marburg",
+        "Reutlingen",
+        "Göppingen",
+        "Brindisi",
+        "Hanover",
+        "Münster",
+        "Kassel",
+        "Bonn",
+        "Rimini",
+        "Lucera"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Conrad",
+        "Roger",
+        "Otto",
+        "Henry",
+        "Manfred",
+        "Agnes",
+        "Margaret",
+        "Yolande",
+        "Isabella",
+        "Constance"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Central Cultures",
+    "Civilizations with Male leaders",
+    "10th Anniversary Civs",
+    "Germany",
+    "Medieval Era",
+    "Alternate Leaders"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "10thAnniversaryCollectionNav",
+  "presentation": {
+    "colors": {
+      "icon": "#b79638",
+      "background": "#36312b"
+    },
+    "mapImage": "MapPNG_Hohenstaufen.png",
+    "iconImage": "Icon_Hohenstaufen.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Hohenstaufen.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Hohenstaufen.png",
+    "mapImageCaption": "Map by Francesca",
+    "leaderSceneImage": "LS_PNG_Frederick.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Frederick.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
 }

@@ -1,0 +1,220 @@
+{
+  "id": "civ-the-wampanoag-massasoit",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T16:58:14.113Z",
+    "updatedAt": "2026-03-25T17:03:05.766Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "the-wampanoag-massasoit",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=t1Zy-ebO0cc",
+      "title": "Through the Frontier",
+      "credit": "Lorne Balfe"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=VyIN3IE938Y",
+      "title": "Wampanoag (People of the First Light)",
+      "credit": "Joey Curtin & Marc Cooper"
+    }
+  },
+  "title": "The Wampanoag",
+  "issues": [],
+  "leader": "Massasoit",
+  "source": {
+    "type": "wiki",
+    "version": "v 7",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Wampanoag_(Massasoit)",
+    "lastUpdated": "6 Feb 2019",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1479222015",
+    "modFolderName": "",
+    "wikiPageTitle": "The Wampanoag"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Troller0001",
+      "role": "Lua"
+    },
+    {
+      "name": "Chrisy15",
+      "role": "Advice & Code Fixes"
+    },
+    {
+      "name": "Joey Curtin & Marc Cooper",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Lorne Balfe",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Wampanoag led by Massasoit is a custom civilization by TopHatPaladin, with contributions from Troller0001 and the Civ V Modding Helpline.",
+  "uniques": [
+    {
+      "art": "icon_massasoit.png",
+      "body": "Gain Great Writer points from Fishing Boats. Units pay just 1 movement point to embark or disembark.",
+      "name": "Wampum Belt Weavers",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/icon_massasoit.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "icon_pniese.png",
+      "body": "",
+      "name": "Pniese",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/icon_pniese.png",
+      "bullets": [
+        "Heals at double rate",
+        "Recovers 25% of maximum HP upon killing an enemy unit"
+      ],
+      "replaces": "Pikeman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "icon_wetu.png",
+      "body": "",
+      "name": "Wetu",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/icon_wetu.png",
+      "bullets": [
+        "Costs less Production (60 vs. 75) than the Lighthouse",
+        "Contains a Great Work of Writing slot"
+      ],
+      "replaces": "Lighthouse",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Coast, Forest",
+    "capital": "Potumtuk",
+    "culture": "Woodlands",
+    "religion": [
+      "Protestantism",
+      "Orenda (HR)"
+    ],
+    "adjectives": "Wampanoag",
+    "empireName": "Wampanoag Empire",
+    "government": "Tribal",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Ousamequin, titled \"Massasoit\" (Great Leader), was the sachem of the Wampanoag peoples throughout much of the seventeenth century. He was born to the Pokanoket branch of the Wampanoag, around 1581; his birthplace was the village of Montaup, in what is today eastern Rhode Island. Massasoit, assisted by the English-speaking Tisquantum, was famed for forging an alliance between the Wampanoag and the English settlers in the region. The alliance was a productive one: the English nursed Massasoit back to health during his illness in 1623, and Massasoit sheltered Roger Williams after Williams' exile from the Massachusetts Bay Colony. Peace reigned between the English and the Wampanoag for the duration of Massasoit's life, but the alliance collapsed within twenty years of Massasoit’s death in 1661.",
+      "title": "Massasoit"
+    },
+    "civilization": {
+      "url": "",
+      "body": "The Wampanoag (also rendered \"Wôpanâak\") are an Algonquian nation indigenous to modern-day Rhode Island and eastern Massachusetts. The term 'Wampanoag' translates literally to \"People of the Dawn,\" alluding to their location along the Atlantic coast. The Wampanoag lived a semi-sedentary lifestyle, in which men would travel the coasts on fishing expeditions and women would cultivate the staple crops of beans, squash, and maize. Among the Wampanoag, women owned property and served as the heads of families, but political and military power was generally controlled by men.",
+      "title": "The Wampanoag"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"You may have extinguished the Wampanoag nation, but our people will still find refuge in the forests. Don't think you've won.\"",
+    "blessing": "\"Greetings, Massasoit Ousamequin, greatest sachem of the Wampanoag people! You ascended to your title at a dark time in Wampanoag history; enemies from the Mi'kmaq and Pequot nations had infringed upon Wampanoag land, and your population had been devastated by disease. However, once the English landed on your shores, you used shrewd diplomacy to bring the Wampanoag to a position of strength. Your people's knowledge of the land helped preserve the fledgling Plymouth colony, and in return, the English helped you defeat the Pequot once and for all. Although the English would turn against the Wampanoag after your death, your capable leadership preserved peace in the region for forty years.\nMassasoit, your people call for you to restore the glory of the Wampanoag nation. Can you protect your population against those who seek to dominate it, both militarily and culturally? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Welcome to the hunting grounds of the Wampanoag! My name is Ousamequin, and they call me Massasoit. I hope we can forge a fruitful alliance in the coming years.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Potumtuk",
+        "Montaup",
+        "Shawmut",
+        "Pokanoket",
+        "Aquinnah",
+        "Nipmuc",
+        "Pocasset",
+        "Patuxet",
+        "Mashpee",
+        "Nauset",
+        "Assonet",
+        "Aquidneck",
+        "Pocumtuc",
+        "Peskeompscut",
+        "Nantucket",
+        "Chappaquiddick",
+        "Ponkapoag",
+        "Wamesit",
+        "Natick",
+        "Hassanamesit",
+        "Sowams",
+        "Almouchiquois",
+        "Pennacook",
+        "Eansketambawg",
+        "Squagheag",
+        "Menemsha Pond",
+        "Wessagusset",
+        "Mawaga",
+        "Gay Head"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Canonchet",
+        "Monoco",
+        "Sonkanuchoo",
+        "Muttawmp",
+        "Matoonas",
+        "Woonekanuske",
+        "Wunnatuckquannumou",
+        "Askamaboo",
+        "Quaiapen",
+        "Weetamoo"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Woodlands Cultures",
+    "Civilizations with Male leaders"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#5c2a47",
+      "background": "#e1a032"
+    },
+    "mapImage": "wampamap.png",
+    "iconImage": "wampanoag_icon.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/wampamap.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/wampanoag_icon.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "Massasoit_LS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Massasoit_LS.png",
+    "leaderSceneArtCredit": "Leaderscreen by TopHatPaladin"
+  },
+  "templateRefs": []
+}

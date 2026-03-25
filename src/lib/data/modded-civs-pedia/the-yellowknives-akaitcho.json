@@ -1,0 +1,225 @@
+{
+  "id": "civ-the-yellowknives-akaitcho",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T17:07:51.737Z",
+    "updatedAt": "2026-03-25T17:09:36.026Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "the-yellowknives-akaitcho",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=a_CVuQ-taHg",
+      "title": "La Bataille",
+      "credit": "Claude Fradette and Guy Bélanger"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=D8BSZbzRtlo",
+      "title": "Walking in Hell",
+      "credit": "Claude Fradette and Guy Bélanger"
+    }
+  },
+  "title": "The Yellowknives",
+  "issues": [],
+  "leader": "Akaitcho",
+  "source": {
+    "type": "wiki",
+    "version": "v 2",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/The_Yellowknives_(Akaitcho)",
+    "lastUpdated": "7 March 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2562756860",
+    "modFolderName": "",
+    "wikiPageTitle": "The Yellowknives"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Lasqueto",
+      "role": "Civ Icon"
+    },
+    {
+      "name": "Urdnot",
+      "role": "Map"
+    },
+    {
+      "name": "Civitar",
+      "role": "Copper Axeman Model"
+    },
+    {
+      "name": "Patum333",
+      "role": "Kwik'ìì Doò Model"
+    },
+    {
+      "name": "Claude Fradette and Guy Bélanger",
+      "role": "Music"
+    }
+  ],
+  "summary": "The Yellowknives led by Akaitcho is a custom civilization by TopHatPaladin, with contributions from Lasqueto, Urdnot, Zharques, Civitar, and Patum333.",
+  "uniques": [
+    {
+      "art": "IconPNG_Akaitcho.png",
+      "body": "Strategic Resources, as well as {{Copper Icon}} Copper, provide {{Food Icon}} Food to the city working them. Units receive +1 Sight when beginning their turn in Tundra or Snow.",
+      "name": "Long Distances Over Snow",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Akaitcho.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_CopperAxeman.png",
+      "body": "",
+      "name": "Copper Axeman",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_CopperAxeman.png",
+      "bullets": [
+        "+20% {{Strength Icon}} Combat Strength (6 vs. 5)",
+        "Reveals a Strategic Resource near the tile of any Ancient Ruin it clears"
+      ],
+      "replaces": "Scout",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_KwikiiDoo.png",
+      "body": "",
+      "name": "Kwik'ìì Doò",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_KwikiiDoo.png",
+      "bullets": [
+        "+1 {{Moves Icon}} Movement",
+        "Gains 5 HP when beginning its turn on a tile with a resource"
+      ],
+      "replaces": "Musketman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Tundra",
+    "capital": "Dettah",
+    "culture": "Woodlands",
+    "religion": [
+      "Protestantism",
+      "Sgaanaang (HR)"
+    ],
+    "adjectives": "Yellowknife",
+    "empireName": "Yellowknife Empire",
+    "government": "Tribal Confederacy\nRepublic",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": "First Americans"
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Akaitcho",
+      "body": "Akaitcho was the chief of the Yellowknives, one of the five First Nations groups of the Dene, who lived north and northeast of the Great Slave Lake. His territory included the region from the eastern portion of the Great Slave Lake, in the Northwest Territories, Canada, to the Coppermine River, in Nunavut. He was recruited to act as interpreter, guide, and hunter for John Franklin's first of three Arctic expeditions, the Coppermine Expedition of 1819–1822.",
+      "title": "Akaitcho"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Yellowknives",
+      "body": "The Yellowknives, or T'atsaot'ine, are a Dene subgroup, native to the Canadian Shield in the modern-day Northwest Territories. Their traditional lands are north of the Great Slave Lake and along the Coppermine River. The \"Yellowknife\" name derives from the yellowish copper that the Yellowknives used for most of their tools; this copper is also the source of the Coppermine River's name.",
+      "title": "The Yellowknives"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Impossible! We were unbeatable! How could this have happened?\"",
+    "blessing": "\"The time to protect your tribe is now, oh indomitable Akaitcho, chief of the Yellowknives. A shrewd leader, you traded supplies with the North West Company's Fort Providence, helping to keep your small band together and provisioned. In 1820, when your tribe numbered about 190, you were recruited by John Franklin and the Royal Navy for the Coppermine Expedition to find the Northwest Passage, in return for debt cancellation, cloth, ammunition, tobacco, and iron products. The journey was harsh, with the trek from Fort Providence to Fort Enterprise sapping morale and left supplies running short. The group reached the Arctic Ocean, and Akaitcho and the Yellowknives left with instructions to leave caches on the way back. But many of your hunters died, you did not receive ammunition from Fort Providence to kill game, and believed most of Franklin's expedition were doomed, and so did not restock the Fort Enterprise. But Franklin refused to blame Akaitcho, as he had not been paid and consistently treated his party with kindness. Throughout the subsequent years, the Yellowknives fortunes reversed, with Fort Providence and trade shutting.\nOh resolute Akaitcho, conditions are still harsh. Cities may now stand in the ruins of the trading posts, but heavy snow and fog still blanket the traditional lands of your people. Will you protect your people and guide them to safety and prosperity? Can you build a civilization that can stand the test of time?\"",
+    "introduction": "\"There aren't many who have it in them to survive out here! You must be a brave one. The name's Akaitcho, pleased to meet you.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Dettah",
+        "Ndilo",
+        "Ti Cho",
+        "Tsi-Wah Cho",
+        "Kwe Ka Tszoa",
+        "Weledeh-Cheh",
+        "Necha Go Do",
+        "Ek'ati Ndi",
+        "Ta-Cheh",
+        "Enodah",
+        "Tadeh Cho",
+        "Itawo Ti",
+        "Teghi Ti Deh",
+        "Tehti",
+        "Burwash Point",
+        "Jolliffe Island",
+        "Weleh-Cheh",
+        "Liwe-Cheh",
+        "Mackay Lake",
+        "Weleh Ti",
+        "Drybones Bay",
+        "Moose Bay",
+        "Wool Bay",
+        "Gordon Lake",
+        "Beniah Lake",
+        "Whitebeach Point",
+        "Ptarmigan Point",
+        "Latham Island",
+        "Bloody Falls"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Long Legs",
+        "Kah-Teh-Whee",
+        "Sah-Tli",
+        "Itawo",
+        "Yamozha",
+        "Willie Crapeau",
+        "Joseph \"Susie\" Drygeese",
+        "Potfighter",
+        "White Capot",
+        "Keskarrah"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Woodlands Cultures",
+    "Civilizations with Male leaders",
+    "Civilizations with two unique units (Civ5)"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#c39212",
+      "background": "#2f0e0e"
+    },
+    "mapImage": "MapPNG_Yellowknife.png",
+    "iconImage": "IconPNG_Yellowknives.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Yellowknife.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Yellowknives.png",
+    "mapImageCaption": "Map by Urdnot",
+    "leaderSceneImage": "LS_PNG_Akaitcho.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Akaitcho.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

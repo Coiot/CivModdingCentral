@@ -1,193 +1,220 @@
 {
-	"id": "civ-holy-roman-empire-otto-i",
-	"kind": "civilization",
-	"meta": {
-		"createdAt": "2026-03-23T21:56:19.810Z",
-		"formatVersion": 1,
-		"createdByName": "TopHatPaladin",
-		"updatedByName": "Coiot",
-		"unresolvedTemplates": []
-	},
-	"slug": "holy-roman-empire-otto-i",
-	"music": {
-		"war": {
-			"url": "https://www.youtube.com/watch?v=HQgaNjFCeuw",
-			"title": "Swordplay",
-			"credit": "Harry Gregson-Williams"
-		},
-		"peace": {
-			"url": "https://www.youtube.com/watch?v=rDcUC8Z4Kuc",
-			"title": "Ave Maria Stella",
-			"credit": "Robin Birner and Yannick Süß"
-		}
-	},
-	"title": "Holy Roman Empire",
-	"issues": [],
-	"leader": "Otto I",
-	"source": {
-		"type": "wiki",
-		"version": "v 1",
-		"wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Holy_Roman_Empire_(Otto_I)",
-		"lastUpdated": "28 December 2022",
-		"workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1698865955",
-		"modFolderName": "",
-		"wikiPageTitle": "Holy Roman Empire"
-	},
-	"authors": ["TopHatPaladin"],
-	"credits": [
-		{
-			"name": "TopHatPaladin",
-			"role": "Design, Code, Art, Text"
-		},
-		{
-			"name": "Francesca",
-			"role": "Civ Icon, Building Icon"
-		},
-		{
-			"name": "danrell",
-			"role": "Unit Model"
-		},
-		{
-			"name": "Robin Birner and Yannick Süß",
-			"role": "Peace Theme"
-		},
-		{
-			"name": "Harry Gregson-Williams",
-			"role": "War Theme"
-		}
-	],
-	"summary": "The Holy Roman Empire led by Otto I is a custom civilization by TopHatPaladin, with contributions from Francesca and danrell.",
-	"uniques": [
-		{
-			"art": "IconPNG_OttoI.png",
-			"body": "When a city is converted to your {{Religion Icon}} Religion, gain {{Great Person Icon}} Great Artist points scaling with its Population. Receive {{Science Icon}} Science per turn for every original Capital that follows your {{Religion Icon}} Religion.",
-			"name": "Ottonian Renaissance",
-			"slot": "unique ability",
-			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_OttoI.png",
-			"bullets": [],
-			"replaces": "",
-			"artCredit": "Art by TopHatPaladin",
-			"footnotes": [],
-			"civilopedia": "",
-			"templateRefs": []
-		},
-		{
-			"art": "IconPNG_LegioRegia.png",
-			"body": "",
-			"name": "Legio Regia",
-			"slot": "unique unit",
-			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_LegioRegia.png",
-			"bullets": [
-				"Gains +15% {{Strength Icon}} Combat Strength when beginning its turn stacked with a religious unit",
-				"Generates {{Great Person Icon}} Great Artist points when capturing cities"
-			],
-			"replaces": "Swordsman",
-			"artCredit": "Art by TopHatPaladin",
-			"footnotes": [],
-			"civilopedia": "",
-			"templateRefs": []
-		},
-		{
-			"art": "Icon_Kaiserpfalz.png",
-			"body": "",
-			"name": "Kaiserpfalz",
-			"slot": "unique building",
-			"artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Kaiserpfalz.png",
-			"bullets": ["Contains a slot for a Great Work of Art", "If the slot is filled with a foreign-created Great Work or Artifact, yields +2 {{Science Icon}} Science"],
-			"replaces": "Castle",
-			"artCredit": "Art by Francesca",
-			"footnotes": [],
-			"civilopedia": "",
-			"templateRefs": []
-		}
-	],
-	"identity": {
-		"bias": "",
-		"capital": "Magdeburg",
-		"culture": "Central",
-		"religion": ["Catholicism"],
-		"adjectives": "Ottonian",
-		"empireName": "Holy Roman Empire",
-		"government": "Holy Roman Empire",
-		"requiredContent": ["Brave New World"],
-		"mapLabelsLanguage": ""
-	},
-	"overview": {
-		"leader": {
-			"url": "https://en.wikipedia.org/wiki/Otto_I,_Holy_Roman_Emperor",
-			"body": "Otto I was born on 23 November 912, possibly in Wallhausen, to Duke Henry the Fowler and his second wife, Matilda. Although Henry was simply the Duke of Saxony at the time of Otto's birth, he was elected King of East Francia in 919, placing Otto in the German royal family.",
-			"title": "Otto I"
-		},
-		"civilization": {
-			"url": "https://en.wikipedia.org/wiki/Ottonian_dynasty",
-			"body": "The Ottonian Dynasty was a ruling dynasty of the Holy Roman Empire, reigning from 919 to 1024 AD. The dynasty's name came from the fact that it had three consecutive emperors named Otto; other names of the dynasty include \"the Saxon dynasty\" and the Liudolfings.",
-			"title": "Ottonian Dynasty"
-		}
-	},
-	"dawnOfMan": {
-		"defeat": "\"I may have failed on Earth, but I will be rewarded in Heaven.\"",
-		"blessing": "\"Hail, Otto the Great, Holy Roman Emperor and protector of Christendom! Where your father united the fractured German states through decentralized power, you were able to consolidate the highest authority upon yourself, reigning as the supreme ruler of central Europe. This authority was backed by military strength: your invasions of Italy and the Slavic realms were great successes, and your defeat of the Hungarians put a decisive end to the period of Magyar raids in Europe. Your staunch faith and involvement in Italy also brought you closer to the Byzantine Empire, leading to a cultural exchange that sparked the Ottonian Renaissance; arts and architecture flourished under your patronage.\nOtto, your people clamor for the strong hand with which you led the state, effortlessly crushing enemies both external and internal. Can you resume your well-rounded rulership and create an empire of both military and artistic dominance? Can you build a civilization that will stand the test of time?\"",
-		"introduction": "\"Welcome to my kaiserpfalz! I am known as Otto, and here is where I conduct the business of the Holy Roman Empire.\""
-	},
-	"nameLists": [
-		{
-			"items": [
-				"Magdeburg",
-				"Cologne",
-				"Aachen",
-				"Quedlinburg",
-				"Mainz",
-				"Augsburg",
-				"Bremen",
-				"Memleben",
-				"Wallhausen",
-				"Merseburg",
-				"Meissen",
-				"Pavia",
-				"Speyer",
-				"Trier",
-				"Saalfeld",
-				"Chur",
-				"Brandenburg",
-				"Worms",
-				"Milan",
-				"Nordhausen",
-				"Arnstadt",
-				"Zeitz",
-				"Regensburg",
-				"Egeln",
-				"Langenzenn",
-				"Illertissen",
-				"Ravenna",
-				"Eresburg",
-				"Haldensleben",
-				"Enger",
-				"Ulm"
-			],
-			"title": "City List"
-		},
-		{
-			"items": ["Henry", "Bruno", "Thankmar", "Liudolf", "Berengar", "Conrad", "Hedwig", "Gerberga", "Matilda", "Liutgarde"],
-			"title": "Spy List"
-		}
-	],
-	"categories": ["All Civilizations", "TopHatPaladin", "Central Cultures", "Civilizations with Male leaders", "Germany", "Medieval Era", "Alternate Leaders"],
-	"modSupport": {},
-	"collections": [],
-	"navTemplate": "",
-	"presentation": {
-		"colors": {
-			"icon": "#1a1412",
-			"background": "#a79278"
-		},
-		"mapImage": "MapPNG_Otto.png",
-		"iconImage": "Icon_Ottonian.png",
-		"mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Otto.png",
-		"iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Ottonian.png",
-		"mapImageCaption": "Map by TopHatPaladin",
-		"leaderSceneImage": "LS_PNG_Otto.png",
-		"leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Otto.png",
-		"leaderSceneArtCredit": "Leaderscreen by TopHatPaladin"
-	},
-	"templateRefs": []
+  "id": "civ-holy-roman-empire-otto-i",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-23T21:56:19.810Z",
+    "formatVersion": 1,
+    "unresolvedTemplates": [],
+    "updatedAt": "2026-03-23T21:59:48.084477+00:00"
+  },
+  "slug": "holy-roman-empire-otto-i",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=HQgaNjFCeuw",
+      "title": "Swordplay",
+      "credit": "Harry Gregson-Williams"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=rDcUC8Z4Kuc",
+      "title": "Ave Maria Stella",
+      "credit": "Robin Birner and Yannick Süß"
+    }
+  },
+  "title": "Holy Roman Empire",
+  "issues": [],
+  "leader": "Otto I",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Holy_Roman_Empire_(Otto_I)",
+    "lastUpdated": "28 December 2022",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1698865955",
+    "modFolderName": "",
+    "wikiPageTitle": "Holy Roman Empire"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Francesca",
+      "role": "Civ Icon, Building Icon"
+    },
+    {
+      "name": "danrell",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Robin Birner and Yannick Süß",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Harry Gregson-Williams",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Holy Roman Empire led by Otto I is a custom civilization by TopHatPaladin, with contributions from Francesca and danrell.",
+  "uniques": [
+    {
+      "art": "IconPNG_OttoI.png",
+      "body": "When a city is converted to your {{Religion Icon}} Religion, gain {{Great Person Icon}} Great Artist points scaling with its Population. Receive {{Science Icon}} Science per turn for every original Capital that follows your {{Religion Icon}} Religion.",
+      "name": "Ottonian Renaissance",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_OttoI.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_LegioRegia.png",
+      "body": "",
+      "name": "Legio Regia",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_LegioRegia.png",
+      "bullets": [
+        "Gains +15% {{Strength Icon}} Combat Strength when beginning its turn stacked with a religious unit",
+        "Generates {{Great Person Icon}} Great Artist points when capturing cities"
+      ],
+      "replaces": "Swordsman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "Icon_Kaiserpfalz.png",
+      "body": "",
+      "name": "Kaiserpfalz",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Kaiserpfalz.png",
+      "bullets": [
+        "Contains a slot for a Great Work of Art",
+        "If the slot is filled with a foreign-created Great Work or Artifact, yields +2 {{Science Icon}} Science"
+      ],
+      "replaces": "Castle",
+      "artCredit": "Art by Francesca",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Magdeburg",
+    "culture": "Central",
+    "religion": [
+      "Catholicism"
+    ],
+    "adjectives": "Ottonian",
+    "empireName": "Holy Roman Empire",
+    "government": "Holy Roman Empire",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Otto_I,_Holy_Roman_Emperor",
+      "body": "Otto I was born on 23 November 912, possibly in Wallhausen, to Duke Henry the Fowler and his second wife, Matilda. Although Henry was simply the Duke of Saxony at the time of Otto's birth, he was elected King of East Francia in 919, placing Otto in the German royal family.",
+      "title": "Otto I"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Ottonian_dynasty",
+      "body": "The Ottonian Dynasty was a ruling dynasty of the Holy Roman Empire, reigning from 919 to 1024 AD. The dynasty's name came from the fact that it had three consecutive emperors named Otto; other names of the dynasty include \"the Saxon dynasty\" and the Liudolfings.",
+      "title": "Ottonian Dynasty"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"I may have failed on Earth, but I will be rewarded in Heaven.\"",
+    "blessing": "\"Hail, Otto the Great, Holy Roman Emperor and protector of Christendom! Where your father united the fractured German states through decentralized power, you were able to consolidate the highest authority upon yourself, reigning as the supreme ruler of central Europe. This authority was backed by military strength: your invasions of Italy and the Slavic realms were great successes, and your defeat of the Hungarians put a decisive end to the period of Magyar raids in Europe. Your staunch faith and involvement in Italy also brought you closer to the Byzantine Empire, leading to a cultural exchange that sparked the Ottonian Renaissance; arts and architecture flourished under your patronage.\nOtto, your people clamor for the strong hand with which you led the state, effortlessly crushing enemies both external and internal. Can you resume your well-rounded rulership and create an empire of both military and artistic dominance? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Welcome to my kaiserpfalz! I am known as Otto, and here is where I conduct the business of the Holy Roman Empire.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Magdeburg",
+        "Cologne",
+        "Aachen",
+        "Quedlinburg",
+        "Mainz",
+        "Augsburg",
+        "Bremen",
+        "Memleben",
+        "Wallhausen",
+        "Merseburg",
+        "Meissen",
+        "Pavia",
+        "Speyer",
+        "Trier",
+        "Saalfeld",
+        "Chur",
+        "Brandenburg",
+        "Worms",
+        "Milan",
+        "Nordhausen",
+        "Arnstadt",
+        "Zeitz",
+        "Regensburg",
+        "Egeln",
+        "Langenzenn",
+        "Illertissen",
+        "Ravenna",
+        "Eresburg",
+        "Haldensleben",
+        "Enger",
+        "Ulm"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Henry",
+        "Bruno",
+        "Thankmar",
+        "Liudolf",
+        "Berengar",
+        "Conrad",
+        "Hedwig",
+        "Gerberga",
+        "Matilda",
+        "Liutgarde"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Central Cultures",
+    "Civilizations with Male leaders",
+    "Germany",
+    "Medieval Era",
+    "Alternate Leaders"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#1a1412",
+      "background": "#a79278"
+    },
+    "mapImage": "MapPNG_Otto.png",
+    "iconImage": "Icon_Ottonian.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Otto.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Icon_Ottonian.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Otto.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Otto.png",
+    "leaderSceneArtCredit": "Leaderscreen by TopHatPaladin"
+  },
+  "templateRefs": []
 }

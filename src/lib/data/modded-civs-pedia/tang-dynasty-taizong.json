@@ -1,0 +1,231 @@
+{
+  "id": "civ-tang-dynasty-taizong",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T16:52:52.972Z",
+    "updatedAt": "2026-03-25T16:54:38.715Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": [
+      "Decision"
+    ]
+  },
+  "slug": "tang-dynasty-taizong",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=d0BQ2RyHmd0",
+      "title": "The Way of the Dragon",
+      "credit": "Robin Birner and Yannick Süß"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=SEjHMeHhmdc",
+      "title": "Venerable Dynasty",
+      "credit": "Robin Birner and Yannick Süß"
+    }
+  },
+  "title": "Tang",
+  "issues": [
+    "Unresolved templates: Decision"
+  ],
+  "leader": "Taizong",
+  "source": {
+    "type": "wiki",
+    "version": "v 2",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Tang_(Taizong)",
+    "lastUpdated": "24 April 2021",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1627873808",
+    "modFolderName": "",
+    "wikiPageTitle": "Tang Dynasty"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Civ Icon, Map & Leaderscreen Revision"
+    },
+    {
+      "name": "Vox Populi",
+      "role": "Building Icon"
+    },
+    {
+      "name": "danrell",
+      "role": "UU Model"
+    },
+    {
+      "name": "Robin Birner and Yannick Süß",
+      "role": "Music"
+    }
+  ],
+  "summary": "The Tang Dynasty led by Taizong is a custom civilization by TopHatPaladin, with contributions from DarthKyofu, danrell, and Vox Populi.",
+  "uniques": [
+    {
+      "art": "IconPNG_Taizong.png",
+      "body": "Internal Trade Routes provide increased yields based on the {{Science Icon}} Science output of their origin city. Courthouses generate {{Science Icon}} +1 Science per turn.",
+      "name": "Four Garrisons of Anxi",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Taizong.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Forbidden.png",
+      "body": "",
+      "name": "Forbidden Guard",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Forbidden.png",
+      "bullets": [
+        "When garrisoned in an Occupied or Puppeted city, increases {{Food Icon}} Growth in that city by 10%"
+      ],
+      "replaces": "Composite Bowman",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Shuyuan.png",
+      "body": "",
+      "name": "Shuyuan Academy",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Shuyuan.png",
+      "bullets": [
+        "Generates +2 {{Happiness Icon}} Local Happiness if its city is the origin of a Trade Route",
+        "If you also own the Trade Route's destination, that city receives the same {{Happiness Icon}} Happiness bonus"
+      ],
+      "replaces": "University",
+      "artCredit": "Art by Vox Populi",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Chang'an",
+    "culture": "Far Eastern",
+    "religion": [
+      "Taoism"
+    ],
+    "adjectives": "Tang",
+    "empireName": "Tang Empire",
+    "government": "Mandate of Heaven",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Emperor_Taizong_of_Tang",
+      "body": "Emperor Taizong, born Li Shimin in 598, was the second emperor of the Tang Dynasty. Upon taking the throne, Taizong immediately began surrounding himself with capable advisors, dismissing many of his father's chancellors and appointing his own. He made a point of welcoming and listening to criticism, seeking to differentiate himself from tyrants such as Yang of Sui.",
+      "title": "Taizong"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Tang_dynasty",
+      "body": "The Tang Dynasty was an imperial dynasty that ruled over China from 618 to 907 AD. The dynasty's founder, Li Yuan, was the governor of Taiyuan and a prominent military leader; he also claimed descent from Laozi, the founder of Taoist school of thought. In 617, amid the collapse of the Sui Dynasty, Li Yuan raised his supporters in rebellion, and seized Chang'an before the end of the year. In June of 618, the last Sui emperor died, and Li Yuan subsequently had himself crowned as Emperor Gaozu of Tang.",
+      "title": "Tang"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Pig! You will never be able to replicate that which you have destroyed.\"",
+    "blessing": "\"Hail, Taizong of Tang, Emperor of China and Son of Heaven! Born as the second son of a regional official, you persuaded your father to rebel against the faltering Sui Dynasty, a rebellion that led to the birth of the Tang Empire. During your reign, the Tang consolidated their power, and also achieved success against many of their enemies: you subjugated Tuyuhun, the Turks, and the oasis states of the Tarim Basin, leading China to a position of great wealth and security. You also kept a firm guiding hand on the aristocracy, preventing rebellion and punishing nobles who acted dishonorably, while still taking on capable advisors and avoiding the tyrannical behavior that had beset some of your predecessors. Ultimately, you left behind a legacy of success and prosperity that would last for decades beyond your death.\nEmperor Taizong, your people clamor for the strength and clarity that you brought to the throne, and long to see you reclaim the glory you once held. Can you conquer your enemies and become the center of a thriving cosmopolitan trade? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Salutations! You stand in the presence of the Emperor Taizong. Men call me the Son of Heaven; it's something of a meaningless title, but I like it nonetheless.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Chang'an",
+        "Luoyang",
+        "Yangzhou",
+        "Taiyuan",
+        "Chengdu",
+        "Zhengzhou",
+        "Baoji",
+        "Kaifeng",
+        "Guangzhou",
+        "Jicheng",
+        "Dunhuang",
+        "Hangzhou",
+        "Tongchuan",
+        "Mayi",
+        "Fuzhou",
+        "Caozhou",
+        "Songzhou",
+        "Huaiyuan",
+        "Huanggang",
+        "Guizhou",
+        "Jinling",
+        "Shangluo",
+        "Xingzhou",
+        "Suzhou",
+        "Shiyan",
+        "Handan",
+        "Qixian",
+        "Jingzhou",
+        "Yanzhou",
+        "Weihui",
+        "Gannan",
+        "Suiyang",
+        "Qingzhou",
+        "Xiangyang",
+        "Weizhou",
+        "Changsha"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Xuanzang",
+        "Wen Yanbo",
+        "Wei Zheng",
+        "Fang Xuanling",
+        "Gaozong",
+        "Taimu",
+        "Zhangsun",
+        "Xincheng",
+        "Chengyang",
+        "Linchuan"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Oriental Cultures",
+    "Civilizations with Male leaders",
+    "China",
+    "Alternate Leaders"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#a5a321",
+      "background": "#4b110b"
+    },
+    "mapImage": "Map_Tang.png",
+    "iconImage": "IconPNG_Tang.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Map_Tang.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Tang.png",
+    "mapImageCaption": "Map by TopHatPaladin and DarthKyofu",
+    "leaderSceneImage": "LS_Taizong.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_Taizong.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin and DarthKyofu"
+  },
+  "templateRefs": []
+}

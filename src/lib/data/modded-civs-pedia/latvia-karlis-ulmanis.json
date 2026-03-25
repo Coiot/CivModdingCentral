@@ -1,0 +1,224 @@
+{
+  "id": "civ-latvia-karlis-ulmanis",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T03:43:07.918Z",
+    "updatedAt": "2026-03-25T03:44:32.320Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "latvia-karlis-ulmanis",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=p4S1pOdaENw",
+      "title": "Daļa - Grave Molto",
+      "credit": "Imants Kalniņš"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=HNpJqmRKc7s",
+      "title": "Kalnu Dziesma",
+      "credit": "Jēkabs Zariņš"
+    }
+  },
+  "title": "Latvia",
+  "issues": [],
+  "leader": "Karlis Ulmanis",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Latvia_(Karlis_Ulmanis)",
+    "lastUpdated": "7 March 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2091356862",
+    "modFolderName": "",
+    "wikiPageTitle": "Latvia"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "bernie14",
+      "role": "Unit Model"
+    },
+    {
+      "name": "JFD",
+      "role": "Utilities"
+    },
+    {
+      "name": "Jēkabs Zariņš",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Imants Kalniņš",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "Latvia led by Karlis Ulmanis is a custom civilization by TopHatPaladin. It replaces the city-state of Riga with Odessa.",
+  "uniques": [
+    {
+      "art": "IconPNG_Ulmanis.png",
+      "body": "Cities passively generate {{Golden Age}} Golden Age Points when all their {{Citizen}} Specialist slots are filled. When built, Great Person Tile Improvements trigger We Love The King Day in the nearest city.",
+      "name": "Song of Rebirth",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Ulmanis.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Aizsargi.png",
+      "body": "",
+      "name": "Aizsargi",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Aizsargi.png",
+      "bullets": [
+        "May be expended to \"Root Out Opposition\", destroying a Great Person Tile Improvement and spawning a copy of the appropriate Great Person"
+      ],
+      "replaces": "Great War Infantry",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_Chamber.png",
+      "body": "",
+      "name": "Chamber of Professions",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Chamber.png",
+      "bullets": [
+        "+1 {{Happiness Icon}} Happiness for every {{Citizen}} Specialist in its city",
+        "+20% {{Great Person Icon}} Great Person generation during We Love The King Day"
+      ],
+      "replaces": "Police Station",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Riga",
+    "culture": "Totalitarian",
+    "religion": [
+      "Protestantism",
+      "Lutheranism (HR)"
+    ],
+    "adjectives": "Latvian",
+    "empireName": "Latvian Empire",
+    "government": "Totalitarian",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/K%C4%81rlis_Ulmanis",
+      "body": "Karlis Ulmanis was a four-time Prime Minister of Latvia during the interwar period, as well as its President from 1936 to 1940. He was born to a successful farming family, which would influence him throughout his life; Ulmanis studied agriculture at university, and would found the Latvian Farmers' Union party. In March 1934, Ulmanis was appointed Prime Minister for the fourth time; but this time, two months into his tenure, Ulmanis executed a bloodless self-coup to centralize power under himself. Working in conjunction with Janis Balodis, the Minister of War, Ulmanis declared a state of war; political parties were dissolved, the parliament suspended, and politicians and military officers were detained if they resisted the coup. After the coup, Ulmanis ruled Latvia as an authoritarian, corporatist state that answered to him personally rather than to a ruling party.",
+      "title": "Karlis Ulmanis"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Latvia",
+      "body": "Latvia is a country in northern Europe, along the eastern shore of the Baltic Sea. Along with Estonia and Lithuania, it is known as one of the \"Baltic states.\" There first came to be a country called Latvia in 1918, when it broke away from the Russian Empire; this was a short-lived independence, with the Soviet Union recapturing Latvia in 1940. However, Latvia has been independent again since the fall of the Soviet Union in 1991. Throughout its long periods of foreign rule, Latvians maintained a distinct identity through their language and other cultural traditions such as music.",
+      "title": "Latvia"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"How dare you? Latvia is mine! You may wrest the country away from me, but you will never win the hearts of its people.\"",
+    "blessing": "\"Hail, Karlis Ulmanis, Prime Minister and President of Latvia! Both before and during Latvian independence, you dedicated your life to your country; you were among the founders of the People's Council that declared Latvian independence, and then became its first Prime Minister. After several more terms, you would stage a coup that placed you in total control of the country, allowing you to pursue your vision of Latvia unilaterally. Your tight control over the economy allowed Latvia to flourish even despite the Great Depression, and your advocacy of education helped bring people of all sorts into the Latvian fold. Even after being deposed by the Soviet Union, you have remained an important figure in Latvia's imagination.\nPrime Minister, the Latvian people seek to live under your firm but steady hand once more. Can you recapture the heights of prosperity that you were able to harness during your lifetime? Can you outmaneuver those who would seek to extinguish Latvia's sun? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Welcome! I am Karlis Ulmanis, the leader of Latvia and of the Latvian people. If there's anything you need, let me know, and I will make it happen.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Riga",
+        "Liepaja",
+        "Daugavpils",
+        "Jelgava",
+        "Rezekne",
+        "Valmiera",
+        "Jurmala",
+        "Jekabpils",
+        "Ventspils",
+        "Tukums",
+        "Krustpils",
+        "Ogre",
+        "Kuldiga",
+        "Cesis",
+        "Talsi",
+        "Bauska",
+        "Saldus",
+        "Dobele",
+        "Kraslava",
+        "Sigulda",
+        "Aluksne",
+        "Ludza",
+        "Limbazi",
+        "Valka",
+        "Smiltene",
+        "Gulbene",
+        "Madona",
+        "Preili",
+        "Lielvarde",
+        "Kandava",
+        "Balvi",
+        "Aizpute",
+        "Ilskile",
+        "Berze"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Janis",
+        "Zigfrids",
+        "Alberts",
+        "Konstantins",
+        "Peteris",
+        "Guntis",
+        "Luize",
+        "Anna",
+        "Ruta",
+        "Laimdota"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Totalitarian Cultures",
+    "Civilizations with Male leaders"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#c7c7d0",
+      "background": "#80353c"
+    },
+    "mapImage": "MapPNG_Latvia.png",
+    "iconImage": "IconPNG_Latvia.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Latvia.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Latvia.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Ulmanis.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Ulmanis.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

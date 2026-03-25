@@ -1,0 +1,254 @@
+{
+  "id": "civ-kingdom-of-luba-ilunga-sungu",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-03-25T03:45:08.868Z",
+    "updatedAt": "2026-03-25T03:47:42.514Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": [
+      "Resistance"
+    ]
+  },
+  "slug": "kingdom-of-luba-ilunga-sungu",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=46Umd3GN7Sw",
+      "title": "Mambala Dance",
+      "credit": "Hugh Tracey"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=ESP9Os13U_k",
+      "title": "Kazadi Ngandi",
+      "credit": "Hugh Tracey"
+    }
+  },
+  "title": "Luba",
+  "issues": [
+    "Unresolved templates: Resistance"
+  ],
+  "leader": "Ilunga Sungu",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Luba_(Ilunga_Sungu)",
+    "lastUpdated": "9 Feb 2021",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2389975221",
+    "modFolderName": "",
+    "wikiPageTitle": "Kingdom of Luba"
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Text, Misc. Art"
+    },
+    {
+      "name": "Darth_Kyofu",
+      "role": "Leaderscreen"
+    },
+    {
+      "name": "Urdnot",
+      "role": "Map"
+    },
+    {
+      "name": "Alga",
+      "role": "Icon (Nzappa Zap)"
+    },
+    {
+      "name": "Grant",
+      "role": "Icon (Mbudye Lodge)"
+    },
+    {
+      "name": "Sukritact",
+      "role": "Unit Model"
+    },
+    {
+      "name": "Enigma",
+      "role": "Research"
+    },
+    {
+      "name": "Thirdvoice",
+      "role": "Research (City List)"
+    },
+    {
+      "name": "KyteM",
+      "role": "Utilities"
+    },
+    {
+      "name": "Hugh Tracey",
+      "role": "Music"
+    }
+  ],
+  "summary": "The Kingdom of Luba led by Ilunga Sungu is a custom civilization by TopHatPaladin, with contributions from Darth_Kyofu, Urdnot, Grant, Alga, and Sukritact.",
+  "uniques": [
+    {
+      "art": "IconPNG_IlungaSungu.png",
+      "body": "When conquering a city, instantly fill an empty {{Great Work Icon}} Great Work slot in that city. Units start with additional experience for each type of {{Great Work Icon}} Great Work present in the city where they were trained.",
+      "name": "Long Claw of Memory",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_IlungaSungu.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_NzappaZap.png",
+      "body": "",
+      "name": "Nzappa Zap",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_NzappaZap.png",
+      "bullets": [
+        "Generates {{Great Person Icon}} Great Artist points from kills",
+        "Cities captured by a Nzappa Zap do not enter Resistance"
+      ],
+      "replaces": "Swordsman",
+      "artCredit": "Art by Alga",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_MbudyeLodge.png",
+      "body": "",
+      "name": "Mbudye Lodge",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_MbudyeLodge.png",
+      "bullets": [
+        "Contains two slots for {{Great Work Icon}} Great Works of Art",
+        "Receives a Theming Bonus if both slots are filled with foreign-created Great Works or Artifacts",
+        "Provides a Growth bonus for each filled slot"
+      ],
+      "replaces": "Castle",
+      "artCredit": "Art by Grant",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Katende",
+    "culture": "Bantu",
+    "religion": [
+      "Protestantism",
+      "Amatongo (HR)"
+    ],
+    "adjectives": "Luba",
+    "empireName": "Luba Empire",
+    "government": "Monarchy",
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Ilunga_Sungu",
+      "body": "Ilunga Sungu was the ruler of the Luba Kingdom around the turn of the nineteenth century. His father was the king Kekenya, and his mother was a Songye princess; consequently, Ilunga Sungu would have likely lived with his mother's family in the Songye lands during his childhood. Kekenya died when Ilunga Sungu was a young child, and so the throne devolved instead to Ilunga Sungu's cousin, Kumwimbe Kaumbu. However, after Kumwimbe Kaumbu died (circa 1780), there ensued a succession struggle; Ilunga Sungu won this struggle and thus rose to kingship himself. Ilunga Sungu inaugurated his reign by settling a new capital city, Katende. While traditional Luba capitals had been on the northeast side of Lake Boya, Katende was instead on the southwest, so as to be closer to the salt-producing Mashyo region. He also established a residence in Kipushya, near the empire's main iron mines. Maintaining these twin residences allowed Ilunga Sungu to maintain close control of the kingdom's most important resources.",
+      "title": "Ilunga Sungu"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Kingdom_of_Luba",
+      "body": "The Luba Kingdom ruled over its surrounding states with a tributary system. The mulopwe (\"sacred king\") was the overall leader of the empire, and maintained a large court of nobles. This court included members of the Mbudye, a secret society who preserved the oral histories of Luba. Tributary states were ruled by balopwe - \"clan kings\" - and paid their tributes to the central government via agricultural and mineral resources.",
+      "title": "Luba"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"I may have been defeated, but I will never be forgotten.\"",
+    "blessing": "\"May you ever be remembered, great king Ilunga Sungu. It was you who brought the Kingdom of Luba to its greatest height; you added the Hemba and Holoholo to your empire's long list of tributaries, and created an empire stretching from Lake Boya to Lake Tanganyika. You also maintained tight control over the kingdom's rich resources, maintaining one residence next to the salt-producing heartland and another next to your iron mines. It is thanks to powerful rulers like you that Luba became the most dominant kingdom of the Upemba Depression, spreading its trade networks and artistic styles all throughout the region.\nIlunga Sungu, your people have preserved your legend in their oral histories, and now they seek to recreate it. Can you become master of all the world's great resources? Can you cultivate memories that will last for all of history? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"You have arrived at the Luba Kingdom! I hope you have had a chance to see our markets, for we have the most splendid trade goods in this world.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Katende",
+        "Mwibele",
+        "Kipushya",
+        "Kabongo",
+        "Budyende",
+        "Kitabi",
+        "Musumba",
+        "Bukama",
+        "Kamina",
+        "Dyombo",
+        "Bunkaya",
+        "Mwansabombwe",
+        "Kolwezi",
+        "Bukunga",
+        "Dilala",
+        "Ntumbo",
+        "Manika",
+        "Kalemie",
+        "Lubidi",
+        "Ankoro",
+        "Sandoa",
+        "Munza",
+        "Kapanga",
+        "Gandajika",
+        "Kamolongo",
+        "Kampumo",
+        "Rwashi",
+        "Katuba",
+        "Kambove",
+        "Tshituru",
+        "Kipushi",
+        "Pweto",
+        "Mtshatsha",
+        "Kikula",
+        "Kamolondo",
+        "Kako",
+        "Panda"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Mujibu",
+        "Kumwimbe",
+        "Kalala",
+        "Ngongo",
+        "Maniema",
+        "Umpafu",
+        "Mbidi Kiluwe",
+        "Dyango",
+        "Mabele",
+        "Bulanda"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Bantu Cultures",
+    "Civilizations with Male leaders",
+    "Congo"
+  ],
+  "modSupport": {},
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#e0b8af",
+      "background": "#2d3856"
+    },
+    "mapImage": "MapPNG_Luba.png",
+    "iconImage": "IconPNG_Luba.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Luba.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Luba.png",
+    "mapImageCaption": "Map by Urdnot",
+    "leaderSceneImage": "LS_PNG_IlungaSungu.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_IlungaSungu.png",
+    "leaderSceneArtCredit": "Art by Darth_Kyofu"
+  },
+  "templateRefs": []
+}
