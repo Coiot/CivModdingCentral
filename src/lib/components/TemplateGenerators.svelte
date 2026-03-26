@@ -10,7 +10,7 @@
 	let nextUrlSyncMode = $state("replace");
 
 	const activeWizardCard = $derived(wizardCards[activeWizardIndex] || wizardCards[0]);
-	const activeWizardTouchpoints = $derived(
+	const activeWizardReferences = $derived(
 		(activeWizardCard?.touchpoints || []).map((touchpoint) => ({
 			key: `${touchpoint.href}:${touchpoint.label}`,
 			label: touchpoint.label,
@@ -255,8 +255,8 @@
 						</div>
 					{/if}
 
-					<section class="wizard-block wizard-block--touchpoints" aria-label="Reference touchpoints">
-						<ReferenceSurfacePanel title="Generator References" ariaLabel="Generator references" items={activeWizardTouchpoints} tone="schema" />
+					<section class="wizard-block wizard-block--touchpoints" aria-label="Reference links">
+						<ReferenceSurfacePanel title="Generator References" ariaLabel="Generator references" items={activeWizardReferences} tone="schema" />
 					</section>
 				</article>
 			</div>

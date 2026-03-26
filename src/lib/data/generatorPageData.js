@@ -587,7 +587,7 @@ export const recipeLaunchRecipes = [
 		copy: "Use safe compatibility SQL patterns when you need to patch base game, DLC, or modded rows without assuming every referenced row exists in every load order.",
 		deliverables: [
 			"“UPDATE”, “DELETE”, and “INSERT OR REPLACE” starter patterns.",
-			"“WHERE EXISTS” guards against missing rows or missing DLC content.",
+			"“WHERE EXISTS” acts as a safety check against missing rows or missing DLC content.",
 			"A compact reference for compatibility edits that do not rely on blind row replacement.",
 		],
 		example: {
@@ -598,7 +598,7 @@ export const recipeLaunchRecipes = [
 					"SQL/Compatibility/BalancePatch.sql",
 					"sql",
 					"UPDATE Buildings\nSET Cost = Cost + 15\nWHERE Type = 'BUILDING_WATERMILL';\n\nINSERT OR REPLACE INTO Building_YieldChanges (BuildingType, YieldType, Yield)\nSELECT 'BUILDING_WATERMILL', 'YIELD_FOOD', 3\nWHERE EXISTS (SELECT 1 FROM Buildings WHERE Type = 'BUILDING_WATERMILL');\n\nDELETE FROM Unit_FreePromotions\nWHERE UnitType = 'UNIT_ARCHER'\n\tAND PromotionType = 'PROMOTION_DRILL_1'\n\tAND EXISTS (SELECT 1 FROM Units WHERE Type = 'UNIT_ARCHER');\n\nINSERT INTO Civilization_UnitClassOverrides (CivilizationType, UnitClassType, UnitType)\nSELECT 'CIVILIZATION_CMC_ATLAS', 'UNITCLASS_ARCHER', 'UNIT_CMC_ATLAS_LONGBOW'\nWHERE EXISTS (SELECT 1 FROM Civilizations WHERE Type = 'CIVILIZATION_CMC_ATLAS')\n\tAND EXISTS (SELECT 1 FROM Units WHERE Type = 'UNIT_CMC_ATLAS_LONGBOW');",
-					"Compact compatibility pattern showing guarded updates, deletes, and merge-style inserts.",
+					"Compact compatibility pattern showing safety-checked updates, deletes, and merge-style inserts.",
 				),
 			],
 		},
@@ -696,7 +696,7 @@ export const recipeLaunchRecipes = [
 		deliverables: [
 			"A compact gate callback with early returns.",
 			"City and team-level condition checks that can be swapped in and out.",
-			"Touchpoints for the tables or hooks behind common capital, coastal, and tech gates.",
+			"References for the tables or hooks behind common capital, coastal, and tech gates.",
 		],
 		example: {
 			title: "Gate variants by state type",
@@ -771,7 +771,7 @@ end)`,
 		deliverables: [
 			"Starter audio database rows for sound IDs and 2D script hooks.",
 			"A mod action split for database updates plus imported audio files.",
-			"Touchpoints for the main Civ V audio tables involved in custom sound setup.",
+			"References for the main Civ V audio tables involved in custom sound setup.",
 		],
 		example: {
 			title: "Custom audio scaffold",
@@ -894,11 +894,11 @@ end)`,
 		copy: "Wrap repetitive SaveData usage into small helpers so a trigger can fire once ever, once per era, once per player-turn, or once per city without rewriting key logic every time.",
 		deliverables: [
 			"Namespaced key helpers for player, city, and global scopes.",
-			"Single-purpose guard functions that return early before the expensive gameplay work runs.",
+			"Single-purpose safety check functions that return early before the expensive gameplay work runs.",
 			"Starter examples for once-ever and once-per-turn checks.",
 		],
 		example: {
-			title: "Trigger guard variants",
+			title: "Trigger safety check variants",
 			summary: "Centralize the key building once, then expose different scopes like once ever, once per player-turn, or once per city so callers do not keep rebuilding them.",
 			files: [
 				snippetFile(
@@ -916,9 +916,9 @@ end)`,
 			],
 		},
 		touchpoints: [
-			linkToLua("Game.GetGameTurn", "game-getgameturn-80", "methods", "Turn stamp for per-turn and per-era trigger guards."),
+			linkToLua("Game.GetGameTurn", "game-getgameturn-80", "methods", "Turn stamp for per-turn and per-era trigger safety checks."),
 			linkToLua("GameEvents.PlayerDoTurn", "game-event-playerdoturn-72", "gameEvents", "Typical consumer of a once-per-player-turn wrapper."),
-			linkToPage("City Tracking Table", "/pattern-library", "Natural companion when the guard scope is per-city and the rest of the mechanic already tracks city-local runtime state."),
+			linkToPage("City Tracking Table", "/pattern-library", "Natural companion when the safety check scope is per-city and the rest of the mechanic already tracks city-local runtime state."),
 		],
 	},
 	{
@@ -929,7 +929,7 @@ end)`,
 		deliverables: [
 			"Helper that chooses between a holy city, the largest eligible city, or a final fallback city.",
 			"Single return path for reward code, notifications, or building grants.",
-			"Starter touchpoints for religion-aware targeting and reward-safe fallback selection.",
+			"Starter references for religion-aware targeting and reward-safe fallback selection.",
 		],
 		example: {
 			title: "Resolver variants by fallback style",
@@ -1335,7 +1335,7 @@ return resolveCapitalOrCoastalCity`,
 		title: "Tech Unlock Listener",
 		focus: "Tech reactions",
 		status: "Lua Pattern",
-		copy: "React cleanly when a team gains a technology, then route that state change into a reward, a building sync, or a notification without duplicating the same unlock guard everywhere.",
+		copy: "React cleanly when a team gains a technology, then route that state change into a reward, a building sync, or a notification without duplicating the same unlock safety check everywhere.",
 		deliverables: [
 			"“TeamTechResearched” listener with a single target tech check.",
 			"Team-to-player resolution block for the civs on that team.",
@@ -1374,7 +1374,7 @@ return resolveCapitalOrCoastalCity`,
 		deliverables: [
 			"Central helper that flips a promotion on or off from a boolean condition.",
 			"Example unit loop or targeted unit update path.",
-			"Schema touchpoints for the promotion rows and eligible unit combats.",
+			"Schema references for the promotion rows and eligible unit combats.",
 		],
 		example: {
 			title: "Promotion sync variants",
@@ -1419,7 +1419,7 @@ end`,
 		deliverables: [
 			"Single sync function that calculates the correct building count.",
 			"A recurring or event-driven caller that keeps the dummy row accurate.",
-			"Schema touchpoints for the building class and effect rows attached to the dummy.",
+			"Schema references for the building class and effect rows attached to the dummy.",
 		],
 		example: {
 			title: "Count-based dummy updater",
@@ -1454,7 +1454,7 @@ end`,
 		deliverables: [
 			"Trait lookup block that keeps the gameplay logic trait-centered.",
 			"A simple hook showing how to bail out for civs without the trait.",
-			"Schema touchpoints for the trait and its leader wiring.",
+			"Schema references for the trait and its leader setup.",
 		],
 		example: {
 			title: "Trait-gated turn effect",
@@ -1483,7 +1483,7 @@ end`,
 		deliverables: [
 			"Pre-upgrade state capture idea for names, markers, or promotions.",
 			"A “UnitUpgraded” reapply block for the new unit.",
-			"Schema touchpoints for the upgrade class and promotion rows involved.",
+			"Schema references for the upgrade class and promotion rows involved.",
 		],
 		example: {
 			title: "Upgrade carryover note",
@@ -1571,7 +1571,7 @@ end`,
 		deliverables: [
 			"Radius-search scaffold with a clear validity predicate.",
 			"A stable fallback order for plots around a city.",
-			"Schema touchpoints for the units or improvements that will use the chosen plot.",
+			"Schema references for the units or improvements that will use the chosen plot.",
 		],
 		example: {
 			title: "Plot search variants",
@@ -1816,7 +1816,7 @@ end`,
 		deliverables: [
 			"A spawn flow that resolves the source city before the unit is created.",
 			"A clear gotcha note about religion inheritance on spawned religious units.",
-			"Religion schema touchpoints for belief and religion setup behind the unit logic.",
+			"Religion schema references for belief and religion setup behind the unit logic.",
 		],
 		example: {
 			title: "Spawn in religion city, then relocate",
@@ -1867,17 +1867,17 @@ end`,
 		},
 		touchpoints: [
 			linkToLua("GameEvents.PlayerDoTurn", "game-event-playerdoturn-72", "gameEvents", "Recurring hook for cooldown-plus-notification mechanics."),
-			linkToLua("Player:AddNotification", "player-addnotification-5", "methods", "Show the player that the guarded effect actually resolved."),
+			linkToLua("Player:AddNotification", "player-addnotification-5", "methods", "Show the player that the safety-checked effect actually resolved."),
 			linkToLua("Game.GetGameTurn", "game-getgameturn-80", "methods", "Back the cooldown stamp with the current turn."),
 			{
 				label: "SaveData Cooldown / Once-Per-City / Once-Per-Player",
 				href: "/pattern-library",
-				note: "Use the dedicated persistence recipe when the guard needs explicit per-player or per-city keys instead of a compact combined example.",
+				note: "Use the dedicated persistence recipe when the safety check needs explicit per-player or per-city keys instead of a compact combined example.",
 			},
 			{
 				label: "Notification Utility Wrapper",
 				href: "/pattern-library",
-				note: "Pair it with the wrapper recipe when the same guarded effect needs reusable local, global, or met-only notification handling.",
+				note: "Pair it with the wrapper recipe when the same safety-checked effect needs reusable local, global, or met-only notification handling.",
 			},
 		],
 	},
@@ -1888,8 +1888,8 @@ end`,
 		copy: "Keep city lifecycle logic grouped by when the city is being founded, captured, or asked to construct something. The safe data you can read varies by hook, so the recipe should make that explicit.",
 		deliverables: [
 			"A starter hook map for city creation, capture, and construct-time checks.",
-			"Notes on when to use event-time guards versus turn-time follow-up syncs.",
-			"Schema touchpoints for the building and city rows these hooks often affect.",
+			"Notes on when to use event-time safety checks versus turn-time follow-up syncs.",
+			"Schema references for the building and city rows these hooks often affect.",
 		],
 		example: {
 			title: "City lifecycle hook map",
@@ -2017,7 +2017,7 @@ end`,
 		copy: "Read one config or saved option up front, then branch the feature behavior from that flag instead of scattering hardcoded booleans across multiple gameplay files.",
 		deliverables: [
 			"Single toggle read path for a feature flag.",
-			"A guard that turns the mechanic on or off before any deeper work runs.",
+			"A safety check that turns the mechanic on or off before any deeper work runs.",
 			"A clear handoff point between mod setup and gameplay logic.",
 		],
 		example: {
@@ -2057,7 +2057,7 @@ end`,
 		deliverables: [
 			"A “GameEvents.CityTrained” scaffold that resolves the city and unit safely.",
 			"A post-train handoff point for promotions, dummy buildings, or reward bursts.",
-			"Schema touchpoints for unit rows, promotions, and city payloads.",
+			"Schema references for unit rows, promotions, and city data tables.",
 		],
 		example: {
 			title: "Promote and notify on trained unit",
@@ -2091,7 +2091,7 @@ end`,
 		deliverables: [
 			"A “UnitPrekill” hook scaffold that only acts on the first callback while the dying unit still exists.",
 			"A clean branch for yield bursts, spawned aftermath units, or cleanup of tracked data.",
-			"Schema touchpoints for units, promotions, and any tables mirrored by the death effect.",
+			"Schema references for units, promotions, and any tables mirrored by the death effect.",
 		],
 		example: {
 			title: "Death payout and cleanup",
@@ -2128,7 +2128,7 @@ end`,
 			"A handoff pattern to more specialized spawn logic when only some unit types matter.",
 		],
 		example: {
-			title: "Normalize newly created unit state",
+			title: "Set up newly created unit state",
 			summary: "This example gives every new unit Drill I and stores the turn when it was created.",
 			files: [
 				snippetFile(
@@ -2163,7 +2163,7 @@ end`,
 		deliverables: [
 			"A “PlayerCityFounded” scaffold that resolves the founded city from the plot.",
 			"Starter city payloads for buildings, notifications, or tracked flags.",
-			"Schema touchpoints for city naming, buildings, and any founding-time tables that interact with the setup.",
+			"Schema references for city naming, buildings, and any founding-time tables that interact with the setup.",
 		],
 		example: {
 			title: "Founded-city variants",
@@ -2204,7 +2204,7 @@ end`,
 		deliverables: [
 			"A “CityCaptureComplete” scaffold that resolves the captured city from the conquest plot.",
 			"A cleanup block for old owner state and a setup block for new owner state.",
-			"Schema touchpoints for building proxys and city conquest payload tables.",
+			"Schema references for building proxies and city conquest data tables.",
 		],
 		example: {
 			title: "Capture follow-up variants",
@@ -2245,7 +2245,7 @@ end`,
 		deliverables: [
 			"A “BuildFinished” scaffold for plot-level improvement completion.",
 			"A clear split between validating the finished improvement result and applying the resulting effect.",
-			"Schema touchpoints for builds, improvements, and plot resources that the effect may touch.",
+			"Schema references for builds, improvements, and plot resources that the effect may touch.",
 		],
 		example: {
 			title: "Reward a completed mine",
@@ -2286,7 +2286,7 @@ end`,
 		deliverables: [
 			"A “PlayerAdoptPolicy” and “PlayerAdoptPolicyBranch” scaffold with clean filtering.",
 			"A one-time reward branch for units, dummy buildings, or yield bursts.",
-			"Schema touchpoints for the policy, branch, and policy payload tables involved.",
+			"Schema references for the policy, branch, and policy data tables involved.",
 		],
 		example: {
 			title: "Reward a specific policy adoption",
@@ -2356,7 +2356,7 @@ end`,
 		deliverables: [
 			"A recurring Golden Age state check with one clear helper that decides whether the effect should be on or off.",
 			"A city sync loop that grants and removes the hidden payload without stacking duplicates.",
-			"Schema touchpoints for the hidden building row and the effect tables that actually carry the temporary bonus.",
+			"Schema references for the hidden building row and the effect tables that actually carry the temporary bonus.",
 		],
 		example: {
 			title: "Turn on a Golden Age only city bonus",
@@ -2391,7 +2391,7 @@ end`,
 		deliverables: [
 			"A narrow reward hook that filters the exact event or object that should pay out Golden Age points.",
 			"A reusable helper for adding Golden Age meter progress and anchoring a notification to the relevant city or plot.",
-			"Schema touchpoints for the building, unit, or other row that represents the unique reward source.",
+			"Schema references for the building, unit, or other row that represents the unique reward source.",
 		],
 		example: {
 			title: "Grant Golden Age points from a completed unique building",
@@ -2420,7 +2420,7 @@ end`,
 		deliverables: [
 			"A direct building Tourism example using `Building_YieldChanges`.",
 			"A direct improvement Tourism example using `Improvement_Yields`.",
-			"Schema touchpoints for the rows that own the Tourism output and the table that actually stores the yield payload.",
+			"Schema references for the rows that own the Tourism output and the table that actually stores the yield data.",
 		],
 		example: {
 			title: "Tourism on a building and landmark-style improvement",
@@ -2526,7 +2526,7 @@ end`,
 		deliverables: [
 			"A paired train/create promotion scaffold.",
 			"A narrow place to resolve the promotion from unit type, combat class, or owner state.",
-			"Schema touchpoints for promotion rows and unit free-promotion tables.",
+			"Schema references for promotion rows and unit free-promotion tables.",
 		],
 		example: {
 			title: "Seed promotions on train or create",

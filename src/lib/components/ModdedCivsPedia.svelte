@@ -3773,7 +3773,8 @@
 								<h3 class="card-title">Edit {selectedEntry.title}</h3>
 								<p class="card-copy">Use the Form view for input fields or JSON for exact raw edits.</p>
 							</div>
-							<div class="pedia-editor-panel-actions">
+
+							<div class="pedia-entry-editor-button-row">
 								<div class="pedia-view-switch pedia-entry-editor-switch" role="tablist" aria-label="Entry editor modes">
 									<button
 										type="button"
@@ -3794,11 +3795,9 @@
 										JSON
 									</button>
 								</div>
-								<div class="pedia-entry-editor-button-row">
-									<button type="button" class="pedia-button" onclick={previewEditedEntry}>Preview Edits</button>
-									<button type="button" class="pedia-button pedia-button-secondary" onclick={saveEditedEntryToProject}>Save Edits</button>
-									<button type="button" class="pedia-button pedia-button-secondary" onclick={stopEditingEntry}>Close Editor</button>
-								</div>
+								<button type="button" class="pedia-button" onclick={previewEditedEntry}>Preview Edits</button>
+								<button type="button" class="pedia-button pedia-button-secondary" onclick={saveEditedEntryToProject}>Save Edits</button>
+								<button type="button" class="pedia-button pedia-button-secondary" onclick={stopEditingEntry}>Close Editor</button>
 							</div>
 						</div>
 						{#if entryStatus}
@@ -3821,7 +3820,7 @@
 										onclick={() => (entryEditorSection = "core")}
 									>
 										<span class="eyebrow">Core</span>
-										<strong class="card-title">Basics, Source, Media, and Identity</strong>
+										<strong class="card-title">Basics, Identity, Links</strong>
 									</button>
 									<button
 										type="button"
@@ -3845,17 +3844,7 @@
 										<span class="eyebrow">Uniques</span>
 										<strong class="card-title">{entryFormDraft.uniques.length} Current Unique{entryFormDraft.uniques.length === 1 ? "" : "s"}</strong>
 									</button>
-									<button
-										type="button"
-										class:is-active={entryEditorSection === "credits"}
-										class="pedia-entry-form-nav-button"
-										role="tab"
-										aria-selected={entryEditorSection === "credits"}
-										onclick={() => (entryEditorSection = "credits")}
-									>
-										<span class="eyebrow">Credits, Taxonomy, and Music</span>
-										<strong class="card-title">Credits, Categories, and Theme Embeds</strong>
-									</button>
+
 									<button
 										type="button"
 										class:is-active={entryEditorSection === "lists"}
@@ -3864,17 +3853,24 @@
 										aria-selected={entryEditorSection === "lists"}
 										onclick={() => (entryEditorSection = "lists")}
 									>
-										<span class="eyebrow">Lists & Support</span>
-										<strong class="card-title">Name Lists and Mod Support</strong>
+										<span class="eyebrow">Named Lists</span>
+										<strong class="card-title">City Lists and Spy Lists</strong>
+									</button>
+									<button
+										type="button"
+										class:is-active={entryEditorSection === "credits"}
+										class="pedia-entry-form-nav-button"
+										role="tab"
+										aria-selected={entryEditorSection === "credits"}
+										onclick={() => (entryEditorSection = "credits")}
+									>
+										<span class="eyebrow">Misc. Extras</span>
+										<strong class="card-title">Credits, Music, Support</strong>
 									</button>
 								</div>
 								<div class="pedia-entry-form-panel">
 									{#if entryEditorSection === "core"}
-										<div class="pedia-entry-form-body stack half">
-											<div class="stack quarter">
-												<p class="eyebrow">Basics</p>
-												<p class="card-copy">Core identity text that drives the catalog and page header.</p>
-											</div>
+										<div class="pedia-entry-form-body stack">
 											<div class="pedia-preview-grid pedia-entry-form-grid">
 												<label class="stack quarter">
 													<span class="eyebrow">Title</span>
@@ -3883,6 +3879,15 @@
 												<label class="stack quarter">
 													<span class="eyebrow">Leader</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.leader} placeholder="Otto I" />
+												</label>
+												<label class="stack quarter">
+													<span class="pedia-entry-form-label-row"><span class="eyebrow">Authors</span><span class="pedia-entry-form-field-hint">1 per line</span></span>
+													<textarea
+														class="pedia-field pedia-textarea-compact pedia-textarea-multiline pedia-textarea-list"
+														rows="3"
+														bind:value={entryFormDraft.authorsText}
+														placeholder="One author per line"
+													></textarea>
 												</label>
 											</div>
 											<label class="stack quarter">
@@ -3894,29 +3899,16 @@
 													placeholder="Short catalog summary."
 												></textarea>
 											</label>
-											<label class="stack quarter">
-												<span class="pedia-entry-form-label-row"><span class="eyebrow">Authors</span><span class="pedia-entry-form-field-hint">1 per line</span></span>
-												<textarea
-													class="pedia-field pedia-textarea-compact pedia-textarea-multiline pedia-textarea-list"
-													rows="3"
-													bind:value={entryFormDraft.authorsText}
-													placeholder="One author per line"
-												></textarea>
-											</label>
 
-											<div class="stack quarter">
-												<p class="eyebrow">Source</p>
-												<p class="card-copy">External links and import metadata shown alongside the entry.</p>
-											</div>
 											<div class="pedia-preview-grid pedia-entry-form-grid">
 												<label class="stack quarter">
 													<span class="eyebrow">Wiki Page Title</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.wikiPageTitle} />
 												</label>
-												<label class="stack quarter">
+												<!-- <label class="stack quarter">
 													<span class="eyebrow">Version</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.version} />
-												</label>
+												</label> -->
 												<label class="stack quarter">
 													<span class="eyebrow">Wiki URL</span>
 													<input class="pedia-field" type="url" bind:value={entryFormDraft.wikiUrl} placeholder="https://..." />
@@ -3926,23 +3918,19 @@
 													<input class="pedia-field" type="url" bind:value={entryFormDraft.workshopUrl} placeholder="https://..." />
 												</label>
 												<label class="stack quarter">
-													<span class="eyebrow">Direct Download URL</span>
+													<span class="eyebrow">Direct URL</span>
 													<input class="pedia-field" type="url" bind:value={entryFormDraft.directDownload} placeholder="https://..." />
 												</label>
 												<label class="stack quarter">
 													<span class="eyebrow">Last Updated</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.lastUpdated} />
 												</label>
-												<label class="stack quarter">
+												<!-- <label class="stack quarter">
 													<span class="eyebrow">Mod Folder</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.modFolderName} />
-												</label>
+												</label> -->
 											</div>
 
-											<div class="stack quarter">
-												<p class="eyebrow">Identity</p>
-												<p class="card-copy">Infobox metadata, government tags, and entry requirements.</p>
-											</div>
 											<div class="pedia-preview-grid pedia-entry-form-grid">
 												<label class="stack quarter">
 													<span class="eyebrow">Capital</span>
@@ -3956,15 +3944,7 @@
 													<span class="eyebrow">Culture</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.culture} />
 												</label>
-												<label class="stack quarter">
-													<span class="pedia-entry-form-label-row"><span class="eyebrow">Government</span><span class="pedia-entry-form-field-hint">1 per line</span></span>
-													<textarea
-														class="pedia-field pedia-textarea-compact pedia-textarea-multiline pedia-textarea-list"
-														rows="3"
-														bind:value={entryFormDraft.governmentText}
-														placeholder="One government per line"
-													></textarea>
-												</label>
+
 												<label class="stack quarter">
 													<span class="eyebrow">Bias</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.bias} />
@@ -3989,6 +3969,15 @@
 													></textarea>
 												</label>
 												<label class="stack quarter">
+													<span class="pedia-entry-form-label-row"><span class="eyebrow">Government</span><span class="pedia-entry-form-field-hint">1 per line</span></span>
+													<textarea
+														class="pedia-field pedia-textarea-compact pedia-textarea-multiline pedia-textarea-list"
+														rows="3"
+														bind:value={entryFormDraft.governmentText}
+														placeholder="One government per line"
+													></textarea>
+												</label>
+												<label class="stack quarter">
 													<span class="pedia-entry-form-label-row"
 														><span class="eyebrow">Required Content</span><span class="pedia-entry-form-field-hint">1 per line</span></span
 													>
@@ -4001,45 +3990,41 @@
 												</label>
 											</div>
 
-											<div class="stack quarter">
-												<p class="eyebrow">Media</p>
-												<p class="card-copy">Art asset names, image URLs, captions, and presentation colors.</p>
-											</div>
 											<div class="pedia-preview-grid pedia-entry-form-grid">
 												<label class="stack quarter">
-													<span class="eyebrow">Icon Asset</span>
+													<span class="eyebrow text-nowrap">Icon Asset</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.iconImage} placeholder="MyCivAtlas256.dds" />
 												</label>
 												<label class="stack quarter">
-													<span class="eyebrow">Icon Image URL</span>
+													<span class="eyebrow text-nowrap">Icon Image URL</span>
 													<input class="pedia-field" type="url" bind:value={entryFormDraft.iconImageUrl} placeholder="https://..." />
 												</label>
 												<label class="stack quarter">
-													<span class="eyebrow">Map Asset</span>
+													<span class="eyebrow text-nowrap">Map Asset</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.mapImage} placeholder="MyCivMap.dds" />
 												</label>
 												<label class="stack quarter">
-													<span class="eyebrow">Map Image URL</span>
+													<span class="eyebrow text-nowrap">Map Image URL</span>
 													<input class="pedia-field" type="url" bind:value={entryFormDraft.mapImageUrl} placeholder="https://..." />
 												</label>
 												<label class="stack quarter">
-													<span class="eyebrow">Map Caption</span>
+													<span class="eyebrow text-nowrap">Map Caption</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.mapImageCaption} />
 												</label>
 												<label class="stack quarter">
-													<span class="eyebrow">Leaderscene Asset</span>
+													<span class="eyebrow text-nowrap">Leaderscene Asset</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.leaderSceneImage} placeholder="MyCivDOM.dds" />
 												</label>
 												<label class="stack quarter">
-													<span class="eyebrow">Leaderscene URL</span>
+													<span class="eyebrow text-nowrap">Leaderscene URL</span>
 													<input class="pedia-field" type="url" bind:value={entryFormDraft.leaderSceneImageUrl} placeholder="https://..." />
 												</label>
 												<label class="stack quarter">
-													<span class="eyebrow">Leaderscene Credit</span>
+													<span class="eyebrow text-nowrap">Leaderscene Credit</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.leaderSceneArtCredit} />
 												</label>
 												<label class="stack quarter">
-													<span class="eyebrow">Background Color</span>
+													<span class="eyebrow text-nowrap">Background Color</span>
 													<div class="pedia-color-field">
 														<div class="pedia-color-picker-row">
 															<div class="pedia-color-swatch-control relative overflow-hidden">
@@ -4066,7 +4051,7 @@
 													</div>
 												</label>
 												<label class="stack quarter">
-													<span class="eyebrow">Icon Color</span>
+													<span class="eyebrow text-nowrap">Icon Color</span>
 													<div class="pedia-color-field">
 														<div class="pedia-color-picker-row">
 															<div class="pedia-color-swatch-control relative overflow-hidden">
@@ -4095,7 +4080,7 @@
 											</div>
 										</div>
 									{:else if entryEditorSection === "lore"}
-										<div class="pedia-entry-form-body stack half">
+										<div class="pedia-entry-form-body stack">
 											<div class="pedia-preview-grid pedia-entry-form-grid">
 												<label class="stack quarter">
 													<span class="eyebrow">Civilization Overview Title</span>
@@ -4139,14 +4124,13 @@
 										</div>
 									{:else if entryEditorSection === "uniques"}
 										<div class="pedia-entry-form-body stack half">
-											<div class="inline end">
-												<button type="button" class="pedia-button pedia-button-secondary" onclick={addEntryFormUnique}>Add Unique</button>
-											</div>
+											<button type="button" class="pedia-button pedia-button-secondary" onclick={addEntryFormUnique}>Add Unique</button>
+
 											{#if entryFormDraft.uniques.length}
 												<div class="stack half">
 													{#each entryFormDraft.uniques as unique, index (`entry-form-unique-${index}`)}
 														<article class="pedia-entry-form-subcard stack half">
-															<div class="inline between flex-wrap half align-start">
+															<div class="inline between half align-start">
 																<div class="stack quarter">
 																	<p class="eyebrow">Unique {index + 1}</p>
 																	<strong class="card-title">{unique.name || unique.slot || "New Unique"}</strong>
@@ -4166,6 +4150,8 @@
 																	<span class="eyebrow">Replaces</span>
 																	<input class="pedia-field" type="text" bind:value={unique.replaces} />
 																</label>
+															</div>
+															<div class="pedia-preview-grid pedia-entry-form-grid">
 																<label class="stack quarter">
 																	<span class="eyebrow">Art File</span>
 																	<input class="pedia-field" type="text" bind:value={unique.art} />
@@ -4225,11 +4211,7 @@
 											{/if}
 										</div>
 									{:else if entryEditorSection === "credits"}
-										<div class="pedia-entry-form-body stack half">
-											<div class="stack quarter">
-												<p class="eyebrow">Credits & Taxonomy</p>
-												<p class="card-copy">Visible credits, categories, nav template data, and music embeds.</p>
-											</div>
+										<div class="pedia-entry-form-body stack">
 											<div class="pedia-preview-grid pedia-entry-form-grid">
 												<label class="stack quarter">
 													<span class="pedia-entry-form-label-row"><span class="eyebrow">Credits</span><span class="pedia-entry-form-field-hint">Name | Role</span></span>
@@ -4250,12 +4232,12 @@
 													></textarea>
 												</label>
 											</div>
-											<div class="pedia-preview-grid pedia-entry-form-grid">
+											<!-- <div class="pedia-preview-grid pedia-entry-form-grid">
 												<label class="stack quarter">
 													<span class="eyebrow">Nav Template</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.navTemplate} />
 												</label>
-											</div>
+											</div> -->
 											<div class="pedia-entry-form-subcard stack half">
 												<p class="eyebrow">Peace Theme</p>
 												<div class="pedia-preview-grid pedia-entry-form-grid">
@@ -4290,21 +4272,24 @@
 													</label>
 												</div>
 											</div>
+											<div class="pedia-entry-form-toggle-grid">
+												{#each Object.entries(MOD_SUPPORT_LABELS) as [key, label] (`support-${key}`)}
+													<label class="pedia-entry-form-toggle">
+														<input type="checkbox" bind:checked={entryFormDraft.modSupport[key]} />
+														<span>{label}</span>
+													</label>
+												{/each}
+											</div>
 										</div>
 									{:else if entryEditorSection === "lists"}
 										<div class="pedia-entry-form-body stack half">
-											<div class="inline between flex-wrap half align-start">
-												<div class="stack quarter">
-													<p class="eyebrow">Lists</p>
-													<p class="card-copy">These power the collapsible lists section on the entry page.</p>
-												</div>
-												<button type="button" class="pedia-button pedia-button-secondary" onclick={addEntryFormNameList}>Add List</button>
-											</div>
+											<button type="button" class="pedia-button pedia-button-secondary" onclick={addEntryFormNameList}>Add List</button>
+
 											{#if entryFormDraft.nameLists.length}
-												<div class="stack half">
+												<div class="stack">
 													{#each entryFormDraft.nameLists as list, index (`entry-form-list-${index}`)}
 														<article class="pedia-entry-form-subcard stack half">
-															<div class="inline between flex-wrap half align-start">
+															<div class="inline between half align-start">
 																<div class="stack quarter">
 																	<p class="eyebrow">List {index + 1}</p>
 																	<strong class="card-title">{list.title || "Untitled List"}</strong>
@@ -4334,19 +4319,6 @@
 											{:else}
 												<p class="card-copy">No lists added yet.</p>
 											{/if}
-
-											<div class="stack quarter">
-												<p class="eyebrow">Mod Support</p>
-												<p class="card-copy">Controls which support rows appear in the Mod Support section.</p>
-											</div>
-											<div class="pedia-entry-form-toggle-grid">
-												{#each Object.entries(MOD_SUPPORT_LABELS) as [key, label] (`support-${key}`)}
-													<label class="pedia-entry-form-toggle">
-														<input type="checkbox" bind:checked={entryFormDraft.modSupport[key]} />
-														<span>{label}</span>
-													</label>
-												{/each}
-											</div>
 										</div>
 									{/if}
 								</div>
@@ -5308,14 +5280,15 @@
 		color: var(--muted-ink);
 		font: inherit;
 		text-transform: uppercase;
-		font-size: 0.84rem;
+		font-size: 0.9rem;
 		font-weight: 700;
 		letter-spacing: 0.08em;
+		text-box: trim-both cap alphabetic;
 		background: transparent;
 		border: 0;
 		border-radius: 999px;
-		padding-block: 0.55rem;
-		padding-inline: 0.9rem;
+		padding-block: 0.75rem;
+		padding-inline: 1rem;
 	}
 
 	.pedia-view-chip.is-active {
@@ -6281,8 +6254,9 @@
 
 	.pedia-entry-editor-button-row {
 		display: flex;
+		align-items: center;
 		flex-wrap: wrap;
-		gap: 0.45rem;
+		gap: 0.5rem;
 	}
 
 	.pedia-entry-form {
@@ -6366,8 +6340,8 @@
 	}
 
 	.pedia-entry-form-grid {
-		grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
-		gap: 0.65rem;
+		grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+		gap: 0.5rem;
 	}
 
 	.pedia-entry-form-subcard {
@@ -6403,7 +6377,7 @@
 	.pedia-entry-editor-switch {
 		inline-size: fit-content;
 		justify-self: start;
-		align-self: start;
+		align-self: center;
 		gap: 0.2rem;
 		background: color-mix(in srgb, var(--pedia-panel) 90%, black 10%);
 		box-shadow:
@@ -6413,16 +6387,14 @@
 	}
 
 	.pedia-entry-editor-switch .pedia-view-chip {
-		font-size: 0.78rem;
-		letter-spacing: 0.06em;
-		padding-block: 0.42rem;
-		padding-inline: 0.72rem;
+		font-size: 1rem;
+		letter-spacing: 0.08em;
 	}
 
 	.pedia-entry-form-toggle-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
-		gap: 0.55rem;
+		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+		gap: 0.5rem;
 	}
 
 	.pedia-entry-form-toggle {

@@ -242,7 +242,7 @@
 		},
 		{
 			label: "Art + Audio Generator",
-			description: "Double check if you used the generator when the converted files are ready and you need atlas rows, colors, and art-def wiring.",
+			description: "Double check if you used the generator when the converted files are ready and you need atlas rows, colors, and art definition setup.",
 			href: "/template-generators?generator=art-audio-setup",
 		},
 		{
