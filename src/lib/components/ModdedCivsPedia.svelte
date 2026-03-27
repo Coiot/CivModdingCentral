@@ -1,5 +1,7 @@
 <script>
+	import { tick } from "svelte";
 	import PEDIA_AUTHOR_PROFILES from "../data/pediaAuthorProfiles.json";
+	import PediaInlineIconAutocomplete from "./PediaInlineIconAutocomplete.svelte";
 	import PediaInlineText from "./PediaInlineText.svelte";
 	import { PEDIA_INLINE_ICONS, resolvePediaInlineIconRef } from "../data/pediaInlineIcons.js";
 	import { PEDIA_COLLECTIONS } from "../data/pediaCollections.js";
@@ -113,6 +115,13 @@
 	let entryEditorBaseline = $state("");
 	let entryFormDraft = $state(null);
 	let entryFormBaseline = $state("");
+	let activeInlineIconFieldKey = $state("");
+	let activeInlineIconFieldLabel = $state("");
+	let activeInlineIconTextarea = $state(null);
+	let inlineIconPopoverQuery = $state("");
+	let inlineIconPopoverStart = $state(-1);
+	let inlineIconPopoverEnd = $state(-1);
+	let inlineIconActiveIndex = $state(0);
 	let deletedEntryIds = $state([]);
 	let folderInputEl = $state();
 	let jsonInputEl = $state();
@@ -473,6 +482,145 @@
 			return;
 		}
 		entryFormDraft.nameLists = (entryFormDraft.nameLists || []).filter((_, itemIndex) => itemIndex !== index);
+	}
+
+	function inlineIconFieldValue(fieldKey) {
+		if (!entryFormDraft || !fieldKey) {
+			return "";
+		}
+		if (fieldKey.startsWith("unique:")) {
+			const [, indexText, fieldName] = fieldKey.split(":");
+			const index = Number(indexText);
+			return String(entryFormDraft.uniques?.[index]?.[fieldName] || "");
+		}
+		return String(entryFormDraft[fieldKey] || "");
+	}
+
+	function updateInlineIconFieldValue(fieldKey, nextValue) {
+		if (!entryFormDraft || !fieldKey) {
+			return;
+		}
+		if (fieldKey.startsWith("unique:")) {
+			const [, indexText, fieldName] = fieldKey.split(":");
+			const index = Number(indexText);
+			entryFormDraft.uniques = (entryFormDraft.uniques || []).map((unique, uniqueIndex) =>
+				uniqueIndex === index
+					? {
+							...unique,
+							[fieldName]: nextValue,
+						}
+					: unique,
+			);
+			return;
+		}
+		entryFormDraft[fieldKey] = nextValue;
+	}
+
+	function closeInlineIconPopover() {
+		inlineIconPopoverQuery = "";
+		inlineIconPopoverStart = -1;
+		inlineIconPopoverEnd = -1;
+		inlineIconActiveIndex = 0;
+	}
+
+	function setInlineIconTarget(fieldKey, label, event) {
+		activeInlineIconFieldKey = fieldKey;
+		activeInlineIconFieldLabel = label;
+		activeInlineIconTextarea = event?.currentTarget || null;
+	}
+
+	function inlineIconAutocompleteContext(value, selectionStart) {
+		const source = String(value || "");
+		const caret = Math.max(0, Number(selectionStart || 0));
+		const beforeCaret = source.slice(0, caret);
+		const openIndex = beforeCaret.lastIndexOf("{{");
+		if (openIndex < 0) {
+			return null;
+		}
+		const closeIndex = beforeCaret.lastIndexOf("}}");
+		if (closeIndex > openIndex) {
+			return null;
+		}
+		const query = beforeCaret.slice(openIndex + 2);
+		if (query.includes("\n") || query.includes("{") || query.includes("}")) {
+			return null;
+		}
+		return {
+			query,
+			start: openIndex,
+			end: caret,
+		};
+	}
+
+	function syncInlineIconPopover(fieldKey, label, event) {
+		setInlineIconTarget(fieldKey, label, event);
+		const textarea = event?.currentTarget;
+		if (!(textarea instanceof HTMLTextAreaElement)) {
+			closeInlineIconPopover();
+			return;
+		}
+		const context = inlineIconAutocompleteContext(textarea.value, textarea.selectionStart);
+		if (!context) {
+			closeInlineIconPopover();
+			return;
+		}
+		const nextQuery = context.query;
+		const shouldResetIndex = activeInlineIconFieldKey !== fieldKey || inlineIconPopoverQuery !== nextQuery || inlineIconPopoverStart !== context.start || inlineIconPopoverEnd !== context.end;
+		inlineIconPopoverQuery = context.query;
+		inlineIconPopoverStart = context.start;
+		inlineIconPopoverEnd = context.end;
+		if (shouldResetIndex) {
+			inlineIconActiveIndex = 0;
+		}
+	}
+
+	async function insertInlineIcon(template) {
+		if (!activeInlineIconFieldKey) {
+			return;
+		}
+		const token = `{{${template}}}`;
+		const currentValue = inlineIconFieldValue(activeInlineIconFieldKey);
+		const textarea = activeInlineIconTextarea;
+		const start = inlineIconPopoverStart >= 0 ? inlineIconPopoverStart : textarea && typeof textarea.selectionStart === "number" ? textarea.selectionStart : currentValue.length;
+		let end = inlineIconPopoverEnd >= 0 ? inlineIconPopoverEnd : textarea && typeof textarea.selectionEnd === "number" ? textarea.selectionEnd : currentValue.length;
+		if (currentValue.slice(end, end + 2) === "}}") {
+			end += 2;
+		}
+		updateInlineIconFieldValue(activeInlineIconFieldKey, `${currentValue.slice(0, start)}${token}${currentValue.slice(end)}`);
+		closeInlineIconPopover();
+		await tick();
+		if (textarea && typeof textarea.focus === "function") {
+			const caret = start + token.length;
+			textarea.focus();
+			if (typeof textarea.setSelectionRange === "function") {
+				textarea.setSelectionRange(caret, caret);
+			}
+		}
+	}
+
+	function handleInlineIconKeydown(fieldKey, label, event) {
+		syncInlineIconPopover(fieldKey, label, event);
+		if (!inlineIconOptions.length) {
+			return;
+		}
+		if (event.key === "ArrowDown") {
+			event.preventDefault();
+			inlineIconActiveIndex = (inlineIconActiveIndex + 1) % inlineIconOptions.length;
+			return;
+		}
+		if (event.key === "ArrowUp") {
+			event.preventDefault();
+			inlineIconActiveIndex = (inlineIconActiveIndex - 1 + inlineIconOptions.length) % inlineIconOptions.length;
+			return;
+		}
+		if ((event.key === "Enter" || event.key === "Tab") && inlineIconPopoverStart >= 0) {
+			event.preventDefault();
+			insertInlineIcon(inlineIconOptions[inlineIconActiveIndex]?.template || inlineIconOptions[0]?.template || "");
+			return;
+		}
+		if (event.key === "Escape") {
+			closeInlineIconPopover();
+		}
 	}
 
 	function entryFromFormDraft(form, fallbackEntry = null) {
@@ -1727,6 +1875,19 @@
 			return "Upload is only available for accounts with pedia write access, or while working on localhost.";
 		}
 		return "Sign in with pedia upload access, or use localhost, to upload converted entries.";
+	});
+	const inlineIconOptions = $derived.by(() => {
+		const query = normalizeSearch(inlineIconPopoverQuery);
+		return uniqueBy(PEDIA_INLINE_ICONS, (icon) => icon.template)
+			.filter((icon) => !query || normalizeSearch(`${icon.label} ${icon.template}`).includes(query))
+			.sort((left, right) => {
+				const leftText = normalizeSearch(`${left.label} ${left.template}`);
+				const rightText = normalizeSearch(`${right.label} ${right.template}`);
+				const leftStarts = query ? Number(!leftText.startsWith(query)) : 0;
+				const rightStarts = query ? Number(!rightText.startsWith(query)) : 0;
+				return leftStarts - rightStarts || left.label.localeCompare(right.label);
+			})
+			.slice(0, query ? 18 : 12);
 	});
 
 	$effect(() => {
@@ -3046,7 +3207,7 @@
 						{@const overview = buildAuthorOverview(group.author, group.entries)}
 						<section class="pedia-catalog-group stack" id={authorHeadingId(group.author)} aria-label={`Civs by ${group.author}`}>
 							<article class="pedia-author-overview stack relative" style={creditCardStyle(group.author)}>
-								<div class="inline between half align-start">
+								<div class="inline between half flex-wrap align-start">
 									<div class="flex-column nogap">
 										<h3 class="section-title">{group.author}</h3>
 										<p class="card-copy">{overview.blurb}</p>
@@ -3953,14 +4114,28 @@
 													></textarea>
 												</label>
 											</div>
-											<label class="stack quarter">
+											<label class="stack quarter pedia-inline-icon-target">
 												<span class="pedia-entry-form-label-row"><span class="eyebrow">Summary</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span>
 												<textarea
 													class="pedia-field pedia-textarea-compact pedia-textarea-multiline"
 													rows="3"
 													bind:value={entryFormDraft.summary}
 													placeholder="Short catalog summary."
+													onfocus={(event) => syncInlineIconPopover("summary", "Summary", event)}
+													oninput={(event) => syncInlineIconPopover("summary", "Summary", event)}
+													onkeyup={(event) => syncInlineIconPopover("summary", "Summary", event)}
+													onmouseup={(event) => syncInlineIconPopover("summary", "Summary", event)}
+													onkeydown={(event) => handleInlineIconKeydown("summary", "Summary", event)}
+													onblur={closeInlineIconPopover}
 												></textarea>
+												<PediaInlineIconAutocomplete
+													visible={activeInlineIconFieldKey === "summary" && inlineIconOptions.length > 0 && inlineIconPopoverStart >= 0}
+													options={inlineIconOptions}
+													fieldLabel="Summary"
+													fieldValue={inlineIconFieldValue("summary")}
+													activeIndex={inlineIconActiveIndex}
+													onSelect={insertInlineIcon}
+												/>
 											</label>
 
 											<div class="pedia-preview-grid pedia-entry-form-grid">
@@ -4154,34 +4329,124 @@
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.overviewLeaderTitle} />
 												</label>
 											</div>
-											<label class="stack quarter">
+											<label class="stack quarter pedia-inline-icon-target">
 												<span class="pedia-entry-form-label-row"
 													><span class="eyebrow">Civilization Overview</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span
 												>
-												<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="4" bind:value={entryFormDraft.overviewCivilizationBody}></textarea>
+												<textarea
+													class="pedia-field pedia-textarea-compact pedia-textarea-multiline"
+													rows="4"
+													bind:value={entryFormDraft.overviewCivilizationBody}
+													onfocus={(event) => syncInlineIconPopover("overviewCivilizationBody", "Civilization Overview", event)}
+													oninput={(event) => syncInlineIconPopover("overviewCivilizationBody", "Civilization Overview", event)}
+													onkeyup={(event) => syncInlineIconPopover("overviewCivilizationBody", "Civilization Overview", event)}
+													onmouseup={(event) => syncInlineIconPopover("overviewCivilizationBody", "Civilization Overview", event)}
+													onkeydown={(event) => handleInlineIconKeydown("overviewCivilizationBody", "Civilization Overview", event)}
+													onblur={closeInlineIconPopover}
+												></textarea>
+												<PediaInlineIconAutocomplete
+													visible={activeInlineIconFieldKey === "overviewCivilizationBody" && inlineIconOptions.length > 0 && inlineIconPopoverStart >= 0}
+													options={inlineIconOptions}
+													fieldLabel="Civilization Overview"
+													fieldValue={inlineIconFieldValue("overviewCivilizationBody")}
+													activeIndex={inlineIconActiveIndex}
+													onSelect={insertInlineIcon}
+												/>
 											</label>
-											<label class="stack quarter">
+											<label class="stack quarter pedia-inline-icon-target">
 												<span class="pedia-entry-form-label-row"
 													><span class="eyebrow">Leader Overview</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span
 												>
-												<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="4" bind:value={entryFormDraft.overviewLeaderBody}></textarea>
+												<textarea
+													class="pedia-field pedia-textarea-compact pedia-textarea-multiline"
+													rows="4"
+													bind:value={entryFormDraft.overviewLeaderBody}
+													onfocus={(event) => syncInlineIconPopover("overviewLeaderBody", "Leader Overview", event)}
+													oninput={(event) => syncInlineIconPopover("overviewLeaderBody", "Leader Overview", event)}
+													onkeyup={(event) => syncInlineIconPopover("overviewLeaderBody", "Leader Overview", event)}
+													onmouseup={(event) => syncInlineIconPopover("overviewLeaderBody", "Leader Overview", event)}
+													onkeydown={(event) => handleInlineIconKeydown("overviewLeaderBody", "Leader Overview", event)}
+													onblur={closeInlineIconPopover}
+												></textarea>
+												<PediaInlineIconAutocomplete
+													visible={activeInlineIconFieldKey === "overviewLeaderBody" && inlineIconOptions.length > 0 && inlineIconPopoverStart >= 0}
+													options={inlineIconOptions}
+													fieldLabel="Leader Overview"
+													fieldValue={inlineIconFieldValue("overviewLeaderBody")}
+													activeIndex={inlineIconActiveIndex}
+													onSelect={insertInlineIcon}
+												/>
 											</label>
-											<label class="stack quarter">
+											<label class="stack quarter pedia-inline-icon-target">
 												<span class="pedia-entry-form-label-row"
 													><span class="eyebrow">Dawn Blessing</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span
 												>
-												<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="4" bind:value={entryFormDraft.dawnBlessing}></textarea>
+												<textarea
+													class="pedia-field pedia-textarea-compact pedia-textarea-multiline"
+													rows="4"
+													bind:value={entryFormDraft.dawnBlessing}
+													onfocus={(event) => syncInlineIconPopover("dawnBlessing", "Dawn Blessing", event)}
+													oninput={(event) => syncInlineIconPopover("dawnBlessing", "Dawn Blessing", event)}
+													onkeyup={(event) => syncInlineIconPopover("dawnBlessing", "Dawn Blessing", event)}
+													onmouseup={(event) => syncInlineIconPopover("dawnBlessing", "Dawn Blessing", event)}
+													onkeydown={(event) => handleInlineIconKeydown("dawnBlessing", "Dawn Blessing", event)}
+													onblur={closeInlineIconPopover}
+												></textarea>
+												<PediaInlineIconAutocomplete
+													visible={activeInlineIconFieldKey === "dawnBlessing" && inlineIconOptions.length > 0 && inlineIconPopoverStart >= 0}
+													options={inlineIconOptions}
+													fieldLabel="Dawn Blessing"
+													fieldValue={inlineIconFieldValue("dawnBlessing")}
+													activeIndex={inlineIconActiveIndex}
+													onSelect={insertInlineIcon}
+												/>
 											</label>
 											<div class="pedia-preview-grid pedia-entry-form-grid">
-												<label class="stack quarter">
+												<label class="stack quarter pedia-inline-icon-target">
 													<span class="pedia-entry-form-label-row"
 														><span class="eyebrow">Introduction</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span
 													>
-													<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="3" bind:value={entryFormDraft.dawnIntroduction}></textarea>
+													<textarea
+														class="pedia-field pedia-textarea-compact pedia-textarea-multiline"
+														rows="3"
+														bind:value={entryFormDraft.dawnIntroduction}
+														onfocus={(event) => syncInlineIconPopover("dawnIntroduction", "Introduction", event)}
+														oninput={(event) => syncInlineIconPopover("dawnIntroduction", "Introduction", event)}
+														onkeyup={(event) => syncInlineIconPopover("dawnIntroduction", "Introduction", event)}
+														onmouseup={(event) => syncInlineIconPopover("dawnIntroduction", "Introduction", event)}
+														onkeydown={(event) => handleInlineIconKeydown("dawnIntroduction", "Introduction", event)}
+														onblur={closeInlineIconPopover}
+													></textarea>
+													<PediaInlineIconAutocomplete
+														visible={activeInlineIconFieldKey === "dawnIntroduction" && inlineIconOptions.length > 0 && inlineIconPopoverStart >= 0}
+														options={inlineIconOptions}
+														fieldLabel="Introduction"
+														fieldValue={inlineIconFieldValue("dawnIntroduction")}
+														activeIndex={inlineIconActiveIndex}
+														onSelect={insertInlineIcon}
+													/>
 												</label>
-												<label class="stack quarter">
+												<label class="stack quarter pedia-inline-icon-target">
 													<span class="pedia-entry-form-label-row"><span class="eyebrow">Defeat</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span>
-													<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="3" bind:value={entryFormDraft.dawnDefeat}></textarea>
+													<textarea
+														class="pedia-field pedia-textarea-compact pedia-textarea-multiline"
+														rows="3"
+														bind:value={entryFormDraft.dawnDefeat}
+														onfocus={(event) => syncInlineIconPopover("dawnDefeat", "Defeat", event)}
+														oninput={(event) => syncInlineIconPopover("dawnDefeat", "Defeat", event)}
+														onkeyup={(event) => syncInlineIconPopover("dawnDefeat", "Defeat", event)}
+														onmouseup={(event) => syncInlineIconPopover("dawnDefeat", "Defeat", event)}
+														onkeydown={(event) => handleInlineIconKeydown("dawnDefeat", "Defeat", event)}
+														onblur={closeInlineIconPopover}
+													></textarea>
+													<PediaInlineIconAutocomplete
+														visible={activeInlineIconFieldKey === "dawnDefeat" && inlineIconOptions.length > 0 && inlineIconPopoverStart >= 0}
+														options={inlineIconOptions}
+														fieldLabel="Defeat"
+														fieldValue={inlineIconFieldValue("dawnDefeat")}
+														activeIndex={inlineIconActiveIndex}
+														onSelect={insertInlineIcon}
+													/>
 												</label>
 											</div>
 										</div>
@@ -4228,14 +4493,32 @@
 																	<input class="pedia-field" type="text" bind:value={unique.artCredit} />
 																</label>
 															</div>
-															<label class="stack quarter">
+															<label class="stack quarter pedia-inline-icon-target">
 																<span class="pedia-entry-form-label-row"
 																	><span class="eyebrow">Body</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span
 																>
-																<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="4" bind:value={unique.body}></textarea>
+																<textarea
+																	class="pedia-field pedia-textarea-compact pedia-textarea-multiline"
+																	rows="4"
+																	bind:value={unique.body}
+																	onfocus={(event) => syncInlineIconPopover(`unique:${index}:body`, `Unique ${index + 1} Body`, event)}
+																	oninput={(event) => syncInlineIconPopover(`unique:${index}:body`, `Unique ${index + 1} Body`, event)}
+																	onkeyup={(event) => syncInlineIconPopover(`unique:${index}:body`, `Unique ${index + 1} Body`, event)}
+																	onmouseup={(event) => syncInlineIconPopover(`unique:${index}:body`, `Unique ${index + 1} Body`, event)}
+																	onkeydown={(event) => handleInlineIconKeydown(`unique:${index}:body`, `Unique ${index + 1} Body`, event)}
+																	onblur={closeInlineIconPopover}
+																></textarea>
+																<PediaInlineIconAutocomplete
+																	visible={activeInlineIconFieldKey === `unique:${index}:body` && inlineIconOptions.length > 0 && inlineIconPopoverStart >= 0}
+																	options={inlineIconOptions}
+																	fieldLabel={`Unique ${index + 1} Body`}
+																	fieldValue={inlineIconFieldValue(`unique:${index}:body`)}
+																	activeIndex={inlineIconActiveIndex}
+																	onSelect={insertInlineIcon}
+																/>
 															</label>
 															<div class="pedia-preview-grid pedia-entry-form-grid">
-																<label class="stack quarter">
+																<label class="stack quarter pedia-inline-icon-target">
 																	<span class="pedia-entry-form-label-row"
 																		><span class="eyebrow">Bullets</span><span class="pedia-entry-form-field-hint">1 per line</span></span
 																	>
@@ -4244,9 +4527,25 @@
 																		rows="3"
 																		bind:value={unique.bulletsText}
 																		placeholder="One bullet per line"
+																		onfocus={(event) => syncInlineIconPopover(`unique:${index}:bulletsText`, `Unique ${index + 1} Bullets`, event)}
+																		oninput={(event) => syncInlineIconPopover(`unique:${index}:bulletsText`, `Unique ${index + 1} Bullets`, event)}
+																		onkeyup={(event) => syncInlineIconPopover(`unique:${index}:bulletsText`, `Unique ${index + 1} Bullets`, event)}
+																		onmouseup={(event) => syncInlineIconPopover(`unique:${index}:bulletsText`, `Unique ${index + 1} Bullets`, event)}
+																		onkeydown={(event) => handleInlineIconKeydown(`unique:${index}:bulletsText`, `Unique ${index + 1} Bullets`, event)}
+																		onblur={closeInlineIconPopover}
 																	></textarea>
+																	<PediaInlineIconAutocomplete
+																		visible={activeInlineIconFieldKey === `unique:${index}:bulletsText` &&
+																			inlineIconOptions.length > 0 &&
+																			inlineIconPopoverStart >= 0}
+																		options={inlineIconOptions}
+																		fieldLabel={`Unique ${index + 1} Bullets`}
+																		fieldValue={inlineIconFieldValue(`unique:${index}:bulletsText`)}
+																		activeIndex={inlineIconActiveIndex}
+																		onSelect={insertInlineIcon}
+																	/>
 																</label>
-																<label class="stack quarter">
+																<label class="stack quarter pedia-inline-icon-target">
 																	<span class="pedia-entry-form-label-row"
 																		><span class="eyebrow">Footnotes</span><span class="pedia-entry-form-field-hint">1 per line</span></span
 																	>
@@ -4255,15 +4554,51 @@
 																		rows="3"
 																		bind:value={unique.footnotesText}
 																		placeholder="One note per line"
+																		onfocus={(event) => syncInlineIconPopover(`unique:${index}:footnotesText`, `Unique ${index + 1} Footnotes`, event)}
+																		oninput={(event) => syncInlineIconPopover(`unique:${index}:footnotesText`, `Unique ${index + 1} Footnotes`, event)}
+																		onkeyup={(event) => syncInlineIconPopover(`unique:${index}:footnotesText`, `Unique ${index + 1} Footnotes`, event)}
+																		onmouseup={(event) => syncInlineIconPopover(`unique:${index}:footnotesText`, `Unique ${index + 1} Footnotes`, event)}
+																		onkeydown={(event) => handleInlineIconKeydown(`unique:${index}:footnotesText`, `Unique ${index + 1} Footnotes`, event)}
+																		onblur={closeInlineIconPopover}
 																	></textarea>
+																	<PediaInlineIconAutocomplete
+																		visible={activeInlineIconFieldKey === `unique:${index}:footnotesText` &&
+																			inlineIconOptions.length > 0 &&
+																			inlineIconPopoverStart >= 0}
+																		options={inlineIconOptions}
+																		fieldLabel={`Unique ${index + 1} Footnotes`}
+																		fieldValue={inlineIconFieldValue(`unique:${index}:footnotesText`)}
+																		activeIndex={inlineIconActiveIndex}
+																		onSelect={insertInlineIcon}
+																	/>
 																</label>
 															</div>
 															<div class="pedia-preview-grid pedia-entry-form-grid">
-																<label class="stack quarter">
+																<label class="stack quarter pedia-inline-icon-target">
 																	<span class="pedia-entry-form-label-row"
 																		><span class="eyebrow">Civilopedia</span><span class="pedia-entry-form-field-hint">line breaks kept</span></span
 																	>
-																	<textarea class="pedia-field pedia-textarea-compact pedia-textarea-multiline" rows="4" bind:value={unique.civilopedia}></textarea>
+																	<textarea
+																		class="pedia-field pedia-textarea-compact pedia-textarea-multiline"
+																		rows="4"
+																		bind:value={unique.civilopedia}
+																		onfocus={(event) => syncInlineIconPopover(`unique:${index}:civilopedia`, `Unique ${index + 1} Civilopedia`, event)}
+																		oninput={(event) => syncInlineIconPopover(`unique:${index}:civilopedia`, `Unique ${index + 1} Civilopedia`, event)}
+																		onkeyup={(event) => syncInlineIconPopover(`unique:${index}:civilopedia`, `Unique ${index + 1} Civilopedia`, event)}
+																		onmouseup={(event) => syncInlineIconPopover(`unique:${index}:civilopedia`, `Unique ${index + 1} Civilopedia`, event)}
+																		onkeydown={(event) => handleInlineIconKeydown(`unique:${index}:civilopedia`, `Unique ${index + 1} Civilopedia`, event)}
+																		onblur={closeInlineIconPopover}
+																	></textarea>
+																	<PediaInlineIconAutocomplete
+																		visible={activeInlineIconFieldKey === `unique:${index}:civilopedia` &&
+																			inlineIconOptions.length > 0 &&
+																			inlineIconPopoverStart >= 0}
+																		options={inlineIconOptions}
+																		fieldLabel={`Unique ${index + 1} Civilopedia`}
+																		fieldValue={inlineIconFieldValue(`unique:${index}:civilopedia`)}
+																		activeIndex={inlineIconActiveIndex}
+																		onSelect={insertInlineIcon}
+																	/>
 																</label>
 															</div>
 														</article>
@@ -5881,6 +6216,10 @@
 		border: 1px solid color-mix(in srgb, var(--pedia-accent) 18%, var(--border-color));
 		border-radius: 1rem;
 		padding: 1rem;
+	}
+
+	.pedia-inline-icon-target {
+		position: relative;
 	}
 
 	.pedia-author-featured-list {
