@@ -906,7 +906,6 @@
 			inset 0 0 0 1px color-mix(in srgb, var(--spotlight-accent) 38%, var(--border-color)),
 			0 6px 8px color-mix(in srgb, black 65%, transparent);
 		border-color: color-mix(in srgb, var(--spotlight-accent) 80%, var(--home-border));
-		transform: translateY(-1px);
 	}
 
 	.pedia-spotlight-main {

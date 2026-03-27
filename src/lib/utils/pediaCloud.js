@@ -49,6 +49,7 @@ function normalizeAuthorProfileRecord(profile) {
 		name,
 		blurb: cleanText(profile?.blurb),
 		links: cleanLinks(profile?.links),
+		featuredEntries: [...new Set((Array.isArray(profile?.featuredEntries) ? profile.featuredEntries : []).map((entry) => cleanText(entry)).filter(Boolean))],
 	};
 }
 

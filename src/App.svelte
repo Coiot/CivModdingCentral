@@ -16,6 +16,7 @@
 	import TemplateGenerators from "./lib/components/TemplateGenerators.svelte";
 	import GuidedPlanner from "./lib/components/GuidedPlanner.svelte";
 	import UnitFlagPreviewer from "./lib/components/UnitFlagPreviewer.svelte";
+	import ModDoctor from "./lib/components/ModDoctor.svelte";
 
 	const AUTH_STORAGE_KEY = "cmc-auth-session";
 
@@ -291,7 +292,8 @@
 			currentPath === "/pattern-library" ||
 			currentPath === "/template-generators" ||
 			currentPath === "/guided-planner" ||
-			currentPath === "/unit-flag-previewer"
+			currentPath === "/unit-flag-previewer" ||
+			currentPath === "/mod-doctor"
 		) {
 			return;
 		}
@@ -902,6 +904,8 @@
 					<GuidedPlanner {authUser} authAccessToken={authSession.accessToken} authEnabled={AUTH_ENABLED} />
 				{:else if currentPath === "/unit-flag-previewer"}
 					<UnitFlagPreviewer />
+				{:else if currentPath === "/mod-doctor"}
+					<ModDoctor />
 				{:else if currentPath === "/schema-browser" && schemaBrowserLoadError}
 					<p class="status error">{schemaBrowserLoadError}</p>
 				{:else if currentPath === "/schema-browser" && SchemaBrowserComponent}

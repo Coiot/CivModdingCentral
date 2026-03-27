@@ -23,26 +23,31 @@
         "label": "Youtube",
         "href": "https://www.youtube.com/channel/UCyKT0We3nrm7Mm0d4AtxnkQ"
       }
-    ]
+    ],
+    "featuredEntries": []
   },
   {
     "name": "DarthKyofu",
     "blurb": "",
-    "links": []
+    "links": [],
+    "featuredEntries": []
   },
   {
     "name": "ExplosiveWatermelon",
     "blurb": "",
-    "links": []
+    "links": [],
+    "featuredEntries": []
   },
   {
     "name": "JFD",
     "blurb": "",
-    "links": []
+    "links": [],
+    "featuredEntries": []
   },
   {
     "name": "Orangechrisy",
     "blurb": "",
-    "links": []
+    "links": [],
+    "featuredEntries": []
   }
 ]

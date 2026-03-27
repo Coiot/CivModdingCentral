@@ -95,6 +95,7 @@ function normalizeAuthorProfile(profile) {
 					.map((link) => [`${link.label}|${link.href}`, link]),
 			).values(),
 		],
+		featuredEntries: [...new Set((Array.isArray(profile?.featuredEntries) ? profile.featuredEntries : []).map((entry) => cleanValue(entry)).filter(Boolean))],
 	};
 }
 

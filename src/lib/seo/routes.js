@@ -95,6 +95,13 @@ const ROUTE_SEO = {
 		keywords: "Civilization V Lua API explorer, Civ 5 GameEvents, Civ 5 Lua methods, Player API, City API",
 		pageType: "CollectionPage",
 	},
+	"/mod-doctor": {
+		title: "Mod Doctor for Civ V Errors, Compatibility, and DLL Checks | Civ Modding Central",
+		description: "Upload a Civilization V mod folder and optional logs to scan for likely SQL, XML, and Lua errors, compatibility risks, duplicate types, and CP, VP, or VMC helper notes.",
+		keywords: "Civilization V mod checker, Civ 5 error parser, Database.log triage, xml.log parser, Lua.log parser, Community Patch compatibility, VMC helper, Vox Populi compatibility",
+		pageType: "WebApplication",
+		applicationCategory: "DeveloperApplication",
+	},
 	"/modded-civs-pedia": {
 		title: "Modded Civs Pedia for Civilization V Custom Civilizations | Civ Modding Central",
 		description: "Browse structured entries for custom Civilization V civilizations and convert fandom wiki markup or mod folders into reusable pedia JSON and wiki outputs.",

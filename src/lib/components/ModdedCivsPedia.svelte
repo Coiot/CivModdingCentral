@@ -96,6 +96,7 @@
 	let authorProfileEditorName = $state("");
 	let authorProfileBlurb = $state("");
 	let authorProfileLinks = $state("");
+	let authorProfileFeaturedEntries = $state("");
 	let authorProfileStatus = $state("");
 	let authorProfileSavedAt = $state(0);
 	let authorProfileBaseline = $state("");
@@ -266,11 +267,12 @@
 		return JSON.stringify(value);
 	}
 
-	function serializeAuthorProfileDraft(name, blurb, linksText) {
+	function serializeAuthorProfileDraft(name, blurb, linksText, featuredEntriesText) {
 		return serializeValue({
 			name: String(name || "").trim(),
 			blurb: normalizeMultilineText(blurb).trim(),
 			links: normalizeMultilineText(linksText).trim(),
+			featuredEntries: normalizeMultilineText(featuredEntriesText).trim(),
 		});
 	}
 
@@ -830,7 +832,7 @@
 	function isAuthorProfileDirty() {
 		return (
 			Boolean(authorProfileEditorOriginalName || authorProfileEditorName) &&
-			serializeAuthorProfileDraft(authorProfileEditorName, authorProfileBlurb, authorProfileLinks) !== authorProfileBaseline
+			serializeAuthorProfileDraft(authorProfileEditorName, authorProfileBlurb, authorProfileLinks, authorProfileFeaturedEntries) !== authorProfileBaseline
 		);
 	}
 
@@ -1236,12 +1238,20 @@
 						}))
 						.filter((link) => link.label && link.href)
 				: [],
+			featuredEntries: [...new Set((Array.isArray(profile?.featuredEntries) ? profile.featuredEntries : []).map((entry) => String(entry || "").trim()).filter(Boolean))],
 		};
 	}
 
 	function authorProfileLinksText(links = []) {
 		return (Array.isArray(links) ? links : [])
 			.map((link) => `${String(link?.label || "").trim()} | ${String(link?.href || "").trim()}`)
+			.filter(Boolean)
+			.join("\n");
+	}
+
+	function authorProfileFeaturedEntriesText(featuredEntries = []) {
+		return (Array.isArray(featuredEntries) ? featuredEntries : [])
+			.map((entry) => String(entry || "").trim())
 			.filter(Boolean)
 			.join("\n");
 	}
@@ -1270,12 +1280,56 @@
 			.filter((link) => link.label && link.href);
 	}
 
+	function parseAuthorProfileFeaturedEntries(value) {
+		return multilineListValues(value);
+	}
+
+	function authorProfileEntryLookupKeys(entry) {
+		const keys = new Set();
+		for (const value of [entry?.id, entry?.slug, entry?.title]) {
+			const key = normalizeSearch(value);
+			if (key) {
+				keys.add(key);
+			}
+		}
+		return [...keys];
+	}
+
+	function resolveAuthorFeaturedEntries(entries, featuredEntries = []) {
+		const byKey = new Map();
+		for (const entry of Array.isArray(entries) ? entries : []) {
+			for (const key of authorProfileEntryLookupKeys(entry)) {
+				if (!byKey.has(key)) {
+					byKey.set(key, entry);
+				}
+			}
+		}
+		const seen = new Set();
+		const resolved = [];
+		for (const rawValue of Array.isArray(featuredEntries) ? featuredEntries : []) {
+			const key = normalizeSearch(rawValue);
+			const match = key ? byKey.get(key) : null;
+			if (!match || seen.has(match.id)) {
+				continue;
+			}
+			seen.add(match.id);
+			resolved.push(match);
+		}
+		return resolved;
+	}
+
 	function isEditingAuthorProfile(authorName) {
 		return authorProfileKey(authorProfileEditorName) === authorProfileKey(authorName);
 	}
 
 	function canEditAuthorProfile(authorName) {
-		return Boolean(canEdit && authUsernameKey && authUsernameKey === authorProfileKey(authorName));
+		if (!canEdit) {
+			return false;
+		}
+		if (isLocalProjectEditor) {
+			return true;
+		}
+		return Boolean(authUsernameKey && authUsernameKey === authorProfileKey(authorName));
 	}
 
 	function startEditingAuthorProfile(authorName) {
@@ -1287,9 +1341,15 @@
 		authorProfileEditorName = profile.name || authorName;
 		authorProfileBlurb = profile.blurb;
 		authorProfileLinks = authorProfileLinksText(profile.links);
+		authorProfileFeaturedEntries = authorProfileFeaturedEntriesText(profile.featuredEntries);
 		authorProfileStatus = "";
 		authorProfileSavedAt = 0;
-		authorProfileBaseline = serializeAuthorProfileDraft(profile.name || authorName, profile.blurb, authorProfileLinksText(profile.links));
+		authorProfileBaseline = serializeAuthorProfileDraft(
+			profile.name || authorName,
+			profile.blurb,
+			authorProfileLinksText(profile.links),
+			authorProfileFeaturedEntriesText(profile.featuredEntries),
+		);
 	}
 
 	function stopEditingAuthorProfile() {
@@ -1297,6 +1357,7 @@
 		authorProfileEditorName = "";
 		authorProfileBlurb = "";
 		authorProfileLinks = "";
+		authorProfileFeaturedEntries = "";
 		authorProfileStatus = "";
 		authorProfileSavedAt = 0;
 		authorProfileBaseline = "";
@@ -1332,6 +1393,7 @@
 			name: authorProfileEditorOriginalName || authorProfileEditorName,
 			blurb: authorProfileBlurb,
 			links: parseAuthorProfileLinks(authorProfileLinks),
+			featuredEntries: parseAuthorProfileFeaturedEntries(authorProfileFeaturedEntries),
 		});
 		if (!profile.name) {
 			authorProfileStatus = "Author name is required.";
@@ -1369,9 +1431,15 @@
 			authorProfileEditorName = savedProfile.name;
 			authorProfileBlurb = savedProfile.blurb;
 			authorProfileLinks = authorProfileLinksText(savedProfile.links);
+			authorProfileFeaturedEntries = authorProfileFeaturedEntriesText(savedProfile.featuredEntries);
 			authorProfileStatus = `${savedProfile.name} profile saved.`;
 			authorProfileSavedAt = Date.now();
-			authorProfileBaseline = serializeAuthorProfileDraft(savedProfile.name, savedProfile.blurb, authorProfileLinksText(savedProfile.links));
+			authorProfileBaseline = serializeAuthorProfileDraft(
+				savedProfile.name,
+				savedProfile.blurb,
+				authorProfileLinksText(savedProfile.links),
+				authorProfileFeaturedEntriesText(savedProfile.featuredEntries),
+			);
 		} catch (error) {
 			authorProfileStatus = error?.message || "Unable to save author profile.";
 			authorProfileSavedAt = 0;
@@ -1417,10 +1485,12 @@
 			(item) => item?.name,
 		).filter((item) => item?.name);
 		const summary = String(profile?.blurb || "").trim();
+		const featuredEntries = resolveAuthorFeaturedEntries(entries, profile?.featuredEntries);
 		return {
 			name: authorName,
 			blurb: summary,
 			links: Array.isArray(profile?.links) ? profile.links : [],
+			featuredEntries,
 			collections,
 			categories,
 			stats: [
@@ -2863,7 +2933,7 @@
 							</article>
 						{/if}
 
-						{#if recentUpdatedEntries.length}
+						<!-- {#if recentUpdatedEntries.length}
 							<article class="pedia-catalog-activity-panel stack quarter">
 								<div class="pedia-catalog-group-head">
 									<div class="stack quarter">
@@ -2891,7 +2961,7 @@
 									{/each}
 								</div>
 							</article>
-						{/if}
+						{/if} -->
 					</section>
 				{/if}
 
@@ -2976,21 +3046,29 @@
 						{@const overview = buildAuthorOverview(group.author, group.entries)}
 						<section class="pedia-catalog-group stack" id={authorHeadingId(group.author)} aria-label={`Civs by ${group.author}`}>
 							<article class="pedia-author-overview stack relative" style={creditCardStyle(group.author)}>
-								<div class="inline between flex-wrap half align-start">
-									<div class="stack quarter">
+								<div class="inline between half align-start">
+									<div class="flex-column nogap">
 										<h3 class="section-title">{group.author}</h3>
 										<p class="card-copy">{overview.blurb}</p>
 									</div>
-									{#if canEditAuthorProfile(group.author)}
-										<button
-											type="button"
-											class="pedia-button pedia-button-secondary absolute"
-											style="top: 1rem; right: 1rem;"
-											onclick={() => (isEditingAuthorProfile(group.author) ? stopEditingAuthorProfile() : startEditingAuthorProfile(group.author))}
-										>
-											{isEditingAuthorProfile(group.author) ? "Close" : "Edit"}
-										</button>
-									{/if}
+									<div class="inline half">
+										{#if overview.links.length}
+											<div class="pedia-link-row inline half flex-wrap">
+												{#each overview.links as link (`${group.author}-${link.href}`)}
+													<a class="pedia-button pedia-button-secondary" href={link.href} target="_blank" rel="noreferrer">{link.label}</a>
+												{/each}
+											</div>
+										{/if}
+										{#if canEditAuthorProfile(group.author)}
+											<button
+												type="button"
+												class="pedia-button pedia-button-secondary"
+												onclick={() => (isEditingAuthorProfile(group.author) ? stopEditingAuthorProfile() : startEditingAuthorProfile(group.author))}
+											>
+												{isEditingAuthorProfile(group.author) ? "Close" : "Edit"}
+											</button>
+										{/if}
+									</div>
 								</div>
 
 								{#if canEditAuthorProfile(group.author) && isEditingAuthorProfile(group.author)}
@@ -3012,6 +3090,15 @@
 												placeholder="Steam Workshop | https://example.com&#10;Github | https://github.com/example"
 											></textarea>
 										</label>
+										<label class="stack quarter">
+											<span class="eyebrow">Featured Civs</span>
+											<textarea
+												class="pedia-json-editor pedia-author-profile-textarea"
+												bind:value={authorProfileFeaturedEntries}
+												rows="4"
+												placeholder="Use one entry id, slug, or exact title per line"
+											></textarea>
+										</label>
 										<div class="inline half flex-wrap">
 											<button type="button" class="pedia-button pedia-button-secondary" onclick={stopEditingAuthorProfile}>Cancel</button>
 											<button type="button" class="pedia-button" onclick={saveAuthorProfileDraft}>Save Profile</button>
@@ -3027,53 +3114,29 @@
 									</div>
 								{/if}
 
-								<!-- {#if overview.collections.length}
-									<div class="stack quarter">
-										<p class="eyebrow">Collections</p>
-										<div class="pedia-category-cloud">
-											{#each overview.collections as collection (collection.id)}
-												{@const collectionTarget = authorCollectionTarget(collection)}
-												{#if collectionTarget}
-													<button type="button" class="pedia-category-chip" onclick={() => navigate?.(collectionPath(collectionTarget))}>
-														<span>{collection.title}</span>
-														<strong>{collectionEntryCount(collectionTarget)}</strong>
-													</button>
-												{:else}
-													<span class="pedia-category-chip is-static">
-														<span>{collection.title}</span>
-													</span>
-												{/if}
+								{#if overview.featuredEntries.length}
+									<div class="pedia-author-featured-shell stack quarter">
+										<p class="eyebrow">Featured Civs</p>
+										<div class="pedia-author-featured-list" role="list">
+											{#each overview.featuredEntries as entry (entry.id)}
+												<div role="listitem">
+													<a
+														class="pedia-catalog-activity-item pedia-author-featured-item"
+														href={entryPath(entry)}
+														style={catalogRowStyle(entry)}
+														onclick={(event) => handleRouteAnchorClick(event, entryPath(entry))}
+													>
+														<div class="pedia-catalog-activity-main min-inline-size-0">
+															<strong class="card-title text-box-trim">{entry.title}</strong>
+														</div>
+														<div class="pedia-catalog-activity-meta">
+															<strong class="pedia-catalog-activity-date">Leader</strong>
+															<p class="card-copy text-box-trim">{entry.leader || "No leader listed"}</p>
+														</div>
+													</a>
+												</div>
 											{/each}
 										</div>
-									</div>
-								{/if}
-
-								{#if overview.categories.length}
-									<div class="stack quarter">
-										<p class="eyebrow">Themes</p>
-										<div class="pedia-category-cloud">
-											{#each overview.categories as category (category.id)}
-												{@const categoryTarget = authorCategoryTarget(category)}
-												{#if categoryTarget}
-													<button type="button" class="pedia-category-chip" onclick={() => navigate?.(categoryPath(categoryTarget))}>
-														<span>{category.title}</span>
-														<strong>{categoryTarget.entries.length}</strong>
-													</button>
-												{:else}
-													<span class="pedia-category-chip is-static">
-														<span>{category.title}</span>
-													</span>
-												{/if}
-											{/each}
-										</div>
-									</div>
-								{/if} -->
-
-								{#if overview.links.length}
-									<div class="pedia-link-row inline half flex-wrap">
-										{#each overview.links as link (`${group.author}-${link.href}`)}
-											<a class="pedia-button pedia-button-secondary" href={link.href} target="_blank" rel="noreferrer">{link.label}</a>
-										{/each}
 									</div>
 								{/if}
 
@@ -4987,11 +5050,11 @@
 
 						<section class="pedia-wiki-section" id="more-by-author">
 							<h3 class="section-title">More by Author</h3>
-							<div class="stack half">
+							<div class="stack">
 								{#each entryAuthors(selectedEntry) as authorName (`${selectedEntry.id}-${authorName}`)}
 									<section class="pedia-author-section stack half">
 										<div class="inline between flex-wrap half align-baseline">
-											<h4 class="card-title">{authorName}</h4>
+											<h4 class="card-title text-xl margin-block-start-half">{authorName}</h4>
 											<!-- <button type="button" class="pedia-button pedia-button-secondary" onclick={() => filterCatalogByAuthor(authorName)}>
 												View {authorName} in Catalog
 											</button> -->
@@ -5302,7 +5365,6 @@
 	.pedia-catalog-shell {
 		block-size: 100%;
 		max-block-size: 100%;
-		gap: 2rem;
 		overflow: hidden;
 
 		& > * {
@@ -5783,7 +5845,7 @@
 	}
 
 	.pedia-catalog-groups {
-		gap: 2rem;
+		gap: 1rem;
 		padding-inline-end: 0.25rem;
 		overflow: auto;
 	}
@@ -5819,6 +5881,20 @@
 		border: 1px solid color-mix(in srgb, var(--pedia-accent) 18%, var(--border-color));
 		border-radius: 1rem;
 		padding: 1rem;
+	}
+
+	.pedia-author-featured-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		gap: 0.5rem;
+	}
+
+	.pedia-author-featured-item {
+		min-block-size: 100%;
+	}
+
+	.pedia-author-overview:has(.pedia-author-civs-accordion[open]) .pedia-author-featured-shell {
+		display: none;
 	}
 
 	.pedia-field,
@@ -6601,7 +6677,7 @@
 	}
 
 	.pedia-wiki-main {
-		gap: 3rem;
+		gap: 2rem;
 	}
 
 	.pedia-copy-grid {

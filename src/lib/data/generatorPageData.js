@@ -659,7 +659,7 @@ export const recipeLaunchRecipes = [
 		deliverables: [
 			"City loop pattern for syncing hidden or visible buildings.",
 			"Clear condition block for grants versus removals.",
-			"A city-state sync scaffold that avoids leaving stale building proxys behind.",
+			"A city-state sync scaffold that avoids leaving stale building proxies behind.",
 		],
 		example: {
 			title: "Grant or remove variants",
@@ -669,7 +669,7 @@ export const recipeLaunchRecipes = [
 					"Lua/Gameplay/SyncCoastalDummy.lua",
 					"lua",
 					"local iDummy = GameInfoTypes.BUILDING_CMC_DUMMY_GARRISON\n\nlocal function syncCity(pCity)\n\tif not pCity then\n\t\treturn\n\tend\n\tlocal shouldHave = pCity:IsCoastal(10) and not pCity:IsPuppet()\n\tpCity:SetNumRealBuilding(iDummy, shouldHave and 1 or 0)\nend\n\nGameEvents.PlayerDoTurn.Add(function(iPlayer)\n\tlocal pPlayer = Players[iPlayer]\n\tif not pPlayer or not pPlayer:IsAlive() then\n\t\treturn\n\tend\n\tfor pCity in pPlayer:Cities() do\n\t\tsyncCity(pCity)\n\tend\nend)",
-					"Reusable city-loop helper for keeping building proxys in sync with changing city state.",
+					"Reusable city-loop helper for keeping building proxies in sync with changing city state.",
 				),
 				snippetFile(
 					"Lua/Gameplay/ClearOccupiedDummy.lua",
