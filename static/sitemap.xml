@@ -2,55 +2,55 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://civmoddingcentral.dev/</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/civ-icon-maker</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/civ5mod-ziper</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/community-links</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/dds-converter</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/guided-planner</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/lua-api-explorer</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/map-viewer</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -212,7 +212,7 @@
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/civ-battle-royale-mk-iii</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -308,7 +308,7 @@
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/category/gods-and-kings</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -782,7 +782,7 @@
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/civilizations/republic-of-the-seven-united-netherlands-william</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.72</priority>
   </url>
@@ -1028,7 +1028,7 @@
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/civilizations/yarlung-nyatri-tsenpo</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.72</priority>
   </url>
@@ -1100,49 +1100,49 @@
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/modded-civs-pedia/collection/vanilla-civilizations</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.76</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/modinfo-builder</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/pattern-library</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/religion-support</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/schema-browser</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/tech-tree-viewer</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/template-generators</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://civmoddingcentral.dev/workshop-uploader</loc>
-    <lastmod>2026-03-27</lastmod>
+    <lastmod>2026-04-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>

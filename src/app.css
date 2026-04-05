@@ -399,6 +399,10 @@ textarea {
 	field-sizing: content;
 }
 
+textarea {
+	max-inline-size: 100%;
+}
+
 select {
 	background-image:
 		linear-gradient(45deg, transparent 50%, color-mix(in oklch, var(--muted-ink) 78%, var(--ink) 22%) 50%),
@@ -448,6 +452,13 @@ details > summary::marker {
 		inline-size: 100%;
 		padding-inline: 0.75rem;
 		padding-block: 0.75rem;
+	}
+
+	.hero,
+	.page-hero,
+	.surface-panel {
+		padding-inline: 1rem;
+		padding-block: 1rem;
 	}
 }
 

@@ -5319,15 +5319,15 @@
 						<div class="export-preview">
 							<label>
 								SQL Preview
-								<textarea class="export-textarea" rows="8" readonly value={exportSqlText} spellcheck="false"></textarea>
+								<textarea class="export-textarea" rows="8" readonly wrap="off" value={exportSqlText} spellcheck="false"></textarea>
 							</label>
 							<label>
 								Lua Preview
-								<textarea class="export-textarea" rows="8" readonly value={exportLuaText} spellcheck="false"></textarea>
+								<textarea class="export-textarea" rows="8" readonly wrap="off" value={exportLuaText} spellcheck="false"></textarea>
 							</label>
 							<label>
 								Modinfo Preview
-								<textarea class="export-textarea" rows="8" readonly value={exportModInfoText} spellcheck="false"></textarea>
+								<textarea class="export-textarea" rows="8" readonly wrap="off" value={exportModInfoText} spellcheck="false"></textarea>
 							</label>
 						</div>
 					</div>
@@ -5391,13 +5391,20 @@
 										class="export-textarea"
 										rows="6"
 										readonly
+										wrap="off"
 										value={ynaempCurrentSqlText || "-- Select a supported map tile and enter a CivilizationType."}
 										spellcheck="false"
 									></textarea>
 								</label>
 								<label>
 									Session SQL
-									<textarea class="export-textarea" rows="10" readonly value={ynaempSavedSqlText || "-- Save one or more map rows to build the combined INSERT."} spellcheck="false"
+									<textarea
+										class="export-textarea"
+										rows="10"
+										readonly
+										wrap="off"
+										value={ynaempSavedSqlText || "-- Save one or more map rows to build the combined INSERT."}
+										spellcheck="false"
 									></textarea>
 								</label>
 							</div>
@@ -5682,11 +5689,20 @@
 	}
 
 	.viewer-header {
+		/*position: sticky;*/
+		/*inset-block-start: 0.75rem;*/
+		z-index: 6;
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: space-between;
 		align-items: center;
+		justify-content: space-between;
 		gap: 1rem;
+		/*background: color-mix(in oklch, var(--panel-bg) 90%, black 10%);*/
+		backdrop-filter: blur(10px);
+		/*border: 1px solid color-mix(in oklch, var(--surface-support-border) 55%, transparent);
+		border-radius: 1rem;*/
+		/*padding-block: 0.75rem;
+		padding-inline: 0.85rem;*/
 	}
 
 	.map-meta {
@@ -6147,11 +6163,12 @@
 	}
 
 	.side-panel {
-		min-height: 540px;
 		display: grid;
 		grid-template-rows: auto 1fr;
+		min-height: 540px;
+		max-block-size: calc(100dvh - 1.5rem);
 		border-radius: 1rem;
-		overflow: hidden;
+		overflow: clip;
 	}
 
 	.side-panel.is-collapsed {
@@ -6159,6 +6176,9 @@
 	}
 
 	.tab-row {
+		position: sticky;
+		inset-block-start: 0;
+		z-index: 2;
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(4.6rem, 1fr));
 		gap: 0.5rem;
@@ -6205,7 +6225,7 @@
 		padding-block: 0.9rem;
 		padding-inline: 0.9rem;
 		overflow: auto;
-		overflow: clip;
+		overscroll-behavior: contain;
 
 		& h3,
 		& h4 {
@@ -6232,6 +6252,12 @@
 			border-radius: 0.55rem;
 			padding-block: 0.44rem;
 			padding-inline: 0.5rem;
+		}
+
+		& textarea {
+			field-sizing: fixed;
+			min-block-size: 7rem;
+			resize: vertical;
 		}
 
 		& button {
@@ -6726,9 +6752,14 @@
 
 	.export-textarea {
 		min-block-size: 8rem;
+		padding-inline-end: 0.75rem;
 		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 		font-size: 0.75rem;
 		line-height: 1.4;
+		white-space: pre;
+		overflow-wrap: normal;
+		overflow: auto;
+		tab-size: 2;
 		resize: vertical;
 	}
 
@@ -6863,19 +6894,6 @@
 		margin: 0;
 	}
 
-	.export-toggle {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		color: var(--ink);
-		font-size: 0.82rem;
-	}
-
-	.export-toggle-row {
-		display: grid;
-		gap: 0.45rem;
-	}
-
 	.map-label {
 		stroke-linejoin: round;
 		paint-order: stroke fill;
@@ -6924,12 +6942,21 @@
 	}
 
 	@media (max-width: 1024px) {
+		.viewer-header {
+			inset-block-start: 0.5rem;
+		}
+
 		.workspace {
 			grid-template-columns: 1fr;
 		}
 
 		.side-panel {
+			max-block-size: none;
 			min-height: auto;
+		}
+
+		.tab-row {
+			inset-block-start: 0.5rem;
 		}
 
 		.viewport {
@@ -6941,15 +6968,58 @@
 		.viewer-header {
 			flex-direction: column;
 			align-items: stretch;
+			gap: 0.75rem;
+			padding-block: 0.7rem;
+			padding-inline: 0.75rem;
 		}
 
 		.tile-map-controls {
 			inline-size: 100%;
+			/*position: sticky;*/
+			inset-block-start: 0;
+			z-index: 1;
+			padding-block: 0.5rem;
+			padding-inline: 0.6rem;
+			overflow-x: auto;
+			overscroll-behavior-x: contain;
+			scrollbar-width: none;
+
+			&::-webkit-scrollbar {
+				display: none;
+			}
 		}
 
 		.tile-map-select {
 			inline-size: 100%;
 			max-inline-size: 100%;
+		}
+
+		.tile-map-control-group {
+			flex: 1 1 100%;
+			min-inline-size: 0;
+			flex-wrap: wrap;
+		}
+
+		.tile-map-toolbar-divider {
+			display: none;
+		}
+
+		.tab-row {
+			inset-block-start: 0;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.panel-body {
+			padding-block: 0.8rem;
+			padding-inline: 0.8rem;
+		}
+
+		.pin-action-row button:not(.danger-icon-button) {
+			text-wrap: wrap;
+		}
+
+		.export-textarea {
+			min-block-size: 11rem;
 		}
 
 		.viewport {
