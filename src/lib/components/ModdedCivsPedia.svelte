@@ -4183,10 +4183,10 @@
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.culture} />
 												</label>
 
-												<label class="stack quarter">
+												<!-- <label class="stack quarter">
 													<span class="eyebrow">Bias</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.bias} />
-												</label>
+												</label> -->
 												<label class="stack quarter">
 													<span class="eyebrow">Adjectives</span>
 													<input class="pedia-field" type="text" bind:value={entryFormDraft.adjectives} />
@@ -5606,7 +5606,7 @@
 	.pedia-author-overview .pedia-link-row .pedia-button:hover,
 	.pedia-author-overview .pedia-link-row .pedia-button:focus-visible {
 		background: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 22%, var(--control-bg)) !important;
-		box-shadow: 0 4px 10px color-mix(in srgb, black 76%, transparent);
+		box-shadow: 0 2px 4px color-mix(in srgb, black 76%, transparent);
 		border-color: color-mix(in srgb, var(--person-highlight, var(--pedia-accent)) 56%, var(--border-color)) !important;
 	}
 

@@ -30,6 +30,7 @@
 	const BASE_CACHE_NAME = `${STORAGE_PREFIX}-base-v${BASE_CACHE_VERSION}`;
 	const BASE_PREFETCH_LIMIT = 3;
 	const LAST_MAP_STORAGE_KEY = `${STORAGE_PREFIX}:last-map-id`;
+	const YNAEMP_SESSION_STORAGE_KEY = `${STORAGE_PREFIX}:ynaemp-support`;
 	const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
 	const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 	const SUPABASE_PINS_TABLE = import.meta.env.VITE_SUPABASE_PINS_TABLE || "cmc_map_pins";
@@ -87,7 +88,82 @@
 			href: "/pattern-library?pattern=build-finished-trigger",
 		},
 	];
-	const PANEL_TAB_ORDER = ["edit", "labels", "notes", "export", "settings"];
+	const PANEL_TAB_ORDER = ["edit", "labels", "notes", "export", "ynaemp", "settings"];
+	const YNAEMP_MAP_PREFIXES = [
+		"Adriatic",
+		"Aegean",
+		"AfriAsiaAust",
+		"AfriGiant",
+		"AfriSouthEuro",
+		"AfricaLarge",
+		"Americas",
+		"AmericasGiant",
+		"Apennine",
+		"Asia",
+		"AsiaSmall",
+		"AsiaSteppeGiant",
+		"AtlanticGiant",
+		"AustralasiaGiant",
+		"Australia",
+		"BritishIsles",
+		"Caribbean",
+		"CaribbeanHuge",
+		"Caucasus",
+		"CentralAfricaLarge",
+		"CentralAsia",
+		"Cordiform",
+		"Denmark",
+		"EarthMk3",
+		"EastAsia",
+		"EuroEastern",
+		"EuroGiant",
+		"EuroLarge",
+		"EuroLargeNew",
+		"GermanyHuge",
+		"GreatestEarth",
+		"Iberia",
+		"India",
+		"IndiaGiant",
+		"IndianOcean",
+		"Indonesia",
+		"JapanHuge",
+		"Levant",
+		"Mediterranean",
+		"MediterraneanHuge",
+		"Mesopotamia",
+		"MesopotamiaGiant",
+		"Netherlands",
+		"NileValley",
+		"NorthAmericaGiant",
+		"NorthAmericaHuge",
+		"NorthAtlantic",
+		"NorthEastAsia",
+		"NorthSeaEurope",
+		"NorthSeaGiant",
+		"NorthWestEurope",
+		"Orient",
+		"Pacific",
+		"Patagonia",
+		"RussiaLarge",
+		"ScotlandIrelandHuge",
+		"SeaOfJapan",
+		"SouthAmericaCentralGiant",
+		"SouthAmericaCentralHuge",
+		"SouthAmericaGiant",
+		"SouthAmericaLarge",
+		"SouthAsiaHuge",
+		"SouthPacific",
+		"SouthPacificGiant",
+		"SouthernAfrica",
+		"Texcoco",
+		"Vietnam",
+		"Wales",
+		"WestAfrica",
+		"Yagem",
+		"Yahem",
+	];
+	const YNAEMP_MAP_PREFIX_LOOKUP = new Set(YNAEMP_MAP_PREFIXES);
+	const YNAEMP_MAP_PREFIX_ORDER = new Map(YNAEMP_MAP_PREFIXES.map((prefix, index) => [prefix, index]));
 	const KNOWN_NATURAL_WONDER_FEATURES = new Set([
 		"FEATURE_CRATER",
 		"FEATURE_FUJI",
@@ -202,6 +278,13 @@
 	let exportWarnings = $state([]);
 	let exportPinCount = $state(0);
 	let exportPinScope = $state("all");
+	let ynaempCivilizationTypeInput = $state("");
+	let ynaempAltXInput = $state("");
+	let ynaempAltYInput = $state("");
+	let ynaempAltCapitalNameInput = $state("");
+	let ynaempStatus = $state("");
+	let ynaempSavedRows = $state([]);
+	let ynaempSessionReady = $state(false);
 	let fitScaleLimit = $state(1);
 	let pinCloudSyncDirty = $state(false);
 	let pinCloudSyncBusy = $state(false);
@@ -226,41 +309,94 @@
 	let activeMapId = $state("");
 	let mapLoadToken = 0;
 	let mapPinCounts = $state({});
+	let mapSortMode = $state("pins");
 
 	const maps = $derived.by(() => (Array.isArray(providedMaps) && providedMaps.length ? providedMaps : defaultMaps));
-	const mapsForSelect = $derived.by(() => {
-		if (!maps.length) {
-			return [];
-		}
-
-		return maps
-			.map((entry, index) => {
-				const rawCount = mapPinCounts?.[entry?.id];
-				const hasCount = Number.isFinite(rawCount);
-				return {
-					entry,
-					index,
-					count: hasCount ? Number(rawCount) : -1,
-					hasCount,
-				};
-			})
-			.sort((a, b) => {
-				if (a.hasCount && b.hasCount && a.count !== b.count) {
-					return b.count - a.count;
-				}
-				if (a.hasCount !== b.hasCount) {
-					return a.hasCount ? -1 : 1;
-				}
-				return a.index - b.index;
-			})
-			.map((item) => item.entry);
-	});
 	const preferredDefaultMapId = $derived.by(() => {
 		if (!maps.length) {
 			return "";
 		}
 		const cbrx = maps.find((entry) => entry?.id === "cbrx");
 		return String(cbrx?.id || maps[0]?.id || "");
+	});
+	const mapSelectCurrentId = $derived.by(() => {
+		const normalizedId = String(activeMapId || "").trim();
+		if (normalizedId) {
+			return normalizedId;
+		}
+		const providedId = String(providedMapItem?.id || "").trim();
+		if (providedId) {
+			return providedId;
+		}
+		return preferredDefaultMapId;
+	});
+	const mapsForSelect = $derived.by(() => {
+		if (!maps.length) {
+			return [];
+		}
+
+		const currentId = mapSelectCurrentId;
+		const items = maps
+			.map((entry, index) => {
+				const id = String(entry?.id || "").trim();
+				const rawCount = mapPinCounts?.[entry?.id];
+				const hasCount = Number.isFinite(rawCount);
+				const title = String(entry?.title || entry?.id || `Map ${index + 1}`).trim();
+				return {
+					entry,
+					id,
+					title,
+					index,
+					count: hasCount ? Number(rawCount) : -1,
+					hasCount,
+				};
+			})
+			.sort((a, b) => {
+				if (mapSortMode === "za") {
+					const reverseTitle = b.title.localeCompare(a.title, undefined, { sensitivity: "base" });
+					return reverseTitle || a.index - b.index;
+				}
+				if (mapSortMode === "az") {
+					const titleCompare = a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+					return titleCompare || a.index - b.index;
+				}
+				if (a.hasCount && b.hasCount && a.count !== b.count) {
+					return b.count - a.count;
+				}
+				if (a.hasCount !== b.hasCount) {
+					return a.hasCount ? -1 : 1;
+				}
+				const titleCompare = a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+				return titleCompare || a.index - b.index;
+			})
+			.map((item) => ({
+				...item.entry,
+				optionLabel: item.hasCount ? `${item.title} (${item.count})` : item.title,
+				count: item.count,
+				hasCount: item.hasCount,
+			}));
+
+		if (!currentId || items.some((item) => item.id === currentId)) {
+			return items;
+		}
+
+		const currentItem = maps.find((entry) => String(entry?.id || "").trim() === currentId);
+		if (!currentItem) {
+			return items;
+		}
+
+		const rawCount = mapPinCounts?.[currentItem?.id];
+		const hasCount = Number.isFinite(rawCount);
+		const title = String(currentItem?.title || currentItem?.id || "Current map").trim();
+		return [
+			{
+				...currentItem,
+				optionLabel: hasCount ? `${title} (${Number(rawCount)})` : title,
+				count: hasCount ? Number(rawCount) : -1,
+				hasCount,
+			},
+			...items,
+		];
 	});
 	const currentMap = $derived.by(() => {
 		const normalizedId = String(activeMapId || "").trim();
@@ -279,6 +415,8 @@
 		}
 		return maps[0] || null;
 	});
+	const currentMapPrefix = $derived.by(() => deriveYnaempMapPrefix(currentMap));
+	const currentMapSupportsYnaemp = $derived.by(() => YNAEMP_MAP_PREFIX_LOOKUP.has(currentMapPrefix));
 
 	const selectedTile = $derived(selectedTileKey ? tileLookup.get(selectedTileKey) || null : null);
 	const hoveredTile = $derived(hoveredTileKey ? tileLookup.get(hoveredTileKey) || null : null);
@@ -309,6 +447,49 @@
 	const inspectedTilePinSource = $derived.by(() => (inspectedTilePin ? resolvePinSource(inspectedTilePin) : ""));
 	const inspectedTilePinPrimaryDisplay = $derived.by(() => formatColorDisplay(inspectedTilePin?.primary, "#243746"));
 	const inspectedTilePinSecondaryDisplay = $derived.by(() => formatColorDisplay(inspectedTilePin?.secondary, "#f3d37f"));
+	const ynaempCivilizationType = $derived.by(() => String(ynaempCivilizationTypeInput || editPinGameDefineInput || inspectedTilePin?.gameDefineName || "").trim());
+	const ynaempCurrentSavedRow = $derived.by(() => {
+		if (!ynaempCivilizationType || !currentMapPrefix) {
+			return null;
+		}
+		return ynaempSavedRows.find((row) => row.civilizationType === ynaempCivilizationType && row.mapPrefix === currentMapPrefix) || null;
+	});
+	const ynaempCurrentRow = $derived.by(() => {
+		if (!selectedTile || !ynaempCivilizationType || !currentMapPrefix || !currentMapSupportsYnaemp) {
+			return null;
+		}
+		return {
+			civilizationType: ynaempCivilizationType,
+			mapPrefix: currentMapPrefix,
+			x: selectedTile.col,
+			y: selectedTile.sourceRow,
+			altX: parseNumberInput(ynaempAltXInput),
+			altY: parseNumberInput(ynaempAltYInput),
+			altCapitalName: String(ynaempAltCapitalNameInput || "").trim() || null,
+		};
+	});
+	const ynaempSavedRowsSorted = $derived.by(() =>
+		[...ynaempSavedRows].sort((a, b) => {
+			const civCompare = a.civilizationType.localeCompare(b.civilizationType, undefined, { sensitivity: "base" });
+			if (civCompare) {
+				return civCompare;
+			}
+			const aOrder = Number(YNAEMP_MAP_PREFIX_ORDER.get(a.mapPrefix) ?? Number.MAX_SAFE_INTEGER);
+			const bOrder = Number(YNAEMP_MAP_PREFIX_ORDER.get(b.mapPrefix) ?? Number.MAX_SAFE_INTEGER);
+			if (aOrder !== bOrder) {
+				return aOrder - bOrder;
+			}
+			return a.mapPrefix.localeCompare(b.mapPrefix, undefined, { sensitivity: "base" });
+		}),
+	);
+	const ynaempCurrentSqlText = $derived.by(() => buildYnaempInsertSql(ynaempCurrentRow ? [ynaempCurrentRow] : []));
+	const ynaempSavedSqlText = $derived.by(() => buildYnaempInsertSql(ynaempSavedRowsSorted));
+	const ynaempCurrentCoverage = $derived.by(() => {
+		if (!ynaempCivilizationType) {
+			return 0;
+		}
+		return ynaempSavedRows.filter((row) => row.civilizationType === ynaempCivilizationType).length;
+	});
 	const pinEditorMode = $derived.by(() => {
 		if (matchedSelectedPin) {
 			return "edit";
@@ -445,6 +626,21 @@
 				activeMapId = fallbackId;
 			}
 		}
+	});
+
+	$effect(() => {
+		if (ynaempSessionReady || typeof sessionStorage === "undefined") {
+			return;
+		}
+		ynaempSavedRows = normalizeYnaempRows(loadSessionJson(YNAEMP_SESSION_STORAGE_KEY, []));
+		ynaempSessionReady = true;
+	});
+
+	$effect(() => {
+		if (!ynaempSessionReady) {
+			return;
+		}
+		saveSessionJson(YNAEMP_SESSION_STORAGE_KEY, ynaempSavedRows);
 	});
 
 	$effect(() => {
@@ -2308,6 +2504,134 @@
 		window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 	}
 
+	function deriveYnaempMapPrefix(mapEntry) {
+		const sourceUrl = String(mapEntry?.mapConfig?.sourceUrl || "").trim();
+		const fileName = sourceUrl.split("/").pop() || "";
+		return fileName.replace(/\.Civ5Map$/i, "").trim();
+	}
+
+	function normalizeYnaempRows(value) {
+		if (!Array.isArray(value)) {
+			return [];
+		}
+		return value
+			.map((row) => {
+				const civilizationType = String(row?.civilizationType || "").trim();
+				const mapPrefix = String(row?.mapPrefix || "").trim();
+				const x = Number(row?.x);
+				const y = Number(row?.y);
+				if (!civilizationType || !mapPrefix || !Number.isFinite(x) || !Number.isFinite(y)) {
+					return null;
+				}
+				return {
+					civilizationType,
+					mapPrefix,
+					x: Math.round(x),
+					y: Math.round(y),
+					altX: Number.isFinite(Number(row?.altX)) ? Math.round(Number(row.altX)) : null,
+					altY: Number.isFinite(Number(row?.altY)) ? Math.round(Number(row.altY)) : null,
+					altCapitalName: String(row?.altCapitalName || "").trim() || null,
+				};
+			})
+			.filter(Boolean);
+	}
+
+	function sqlStringLiteral(value) {
+		return `'${String(value || "").replace(/'/g, "''")}'`;
+	}
+
+	function sqlNumberOrNull(value) {
+		return Number.isFinite(Number(value)) ? String(Math.round(Number(value))) : "null";
+	}
+
+	function sqlStringOrNull(value) {
+		return String(value || "").trim() ? sqlStringLiteral(value) : "null";
+	}
+
+	function buildYnaempInsertSql(rows) {
+		if (!Array.isArray(rows) || !rows.length) {
+			return "";
+		}
+
+		const values = rows
+			.map(
+				(row) =>
+					`\t(${sqlStringLiteral(row.civilizationType)}, ${sqlStringLiteral(row.mapPrefix)}, ${sqlNumberOrNull(row.x)}, ${sqlNumberOrNull(row.y)}, ${sqlNumberOrNull(row.altX)}, ${sqlNumberOrNull(row.altY)}, ${sqlStringOrNull(row.altCapitalName)})`,
+			)
+			.join(",\n");
+
+		return `INSERT INTO\n\tCivilizations_YnAEMP (CivilizationType, MapPrefix, X, Y, AltX, AltY, AltCapitalName)\nVALUES\n${values};`;
+	}
+
+	function upsertYnaempCurrentRow() {
+		if (!currentMapPrefix || !currentMapSupportsYnaemp) {
+			ynaempStatus = "This map is not in the YnAEMP support list.";
+			return;
+		}
+		if (!selectedTile || !ynaempCurrentRow) {
+			ynaempStatus = "Select a tile first to generate a YnAEMP row.";
+			return;
+		}
+		if (!ynaempCivilizationType) {
+			ynaempStatus = "Enter a CivilizationType or use the pin editor game define.";
+			return;
+		}
+
+		const nextRows = [...ynaempSavedRows];
+		const existingIndex = nextRows.findIndex((row) => row.civilizationType === ynaempCurrentRow.civilizationType && row.mapPrefix === ynaempCurrentRow.mapPrefix);
+		if (existingIndex >= 0) {
+			nextRows[existingIndex] = ynaempCurrentRow;
+			ynaempStatus = `Updated ${ynaempCurrentRow.civilizationType} on ${ynaempCurrentRow.mapPrefix}.`;
+		} else {
+			nextRows.push(ynaempCurrentRow);
+			ynaempStatus = `Saved ${ynaempCurrentRow.civilizationType} on ${ynaempCurrentRow.mapPrefix}.`;
+		}
+		ynaempSavedRows = normalizeYnaempRows(nextRows);
+	}
+
+	function removeCurrentYnaempRow() {
+		if (!ynaempCurrentSavedRow) {
+			ynaempStatus = "No saved YnAEMP row for this civilization on the current map.";
+			return;
+		}
+		removeYnaempSavedRow(ynaempCurrentSavedRow);
+	}
+
+	function removeYnaempSavedRow(targetRow) {
+		if (!targetRow) {
+			return;
+		}
+		ynaempSavedRows = ynaempSavedRows.filter((row) => !(row.civilizationType === targetRow.civilizationType && row.mapPrefix === targetRow.mapPrefix));
+		ynaempStatus = `Removed ${targetRow.civilizationType} on ${targetRow.mapPrefix}.`;
+	}
+
+	function clearYnaempSavedRows() {
+		ynaempSavedRows = [];
+		ynaempStatus = "Cleared all session YnAEMP rows.";
+	}
+
+	function loadYnaempSavedRow(targetRow) {
+		if (!targetRow) {
+			return;
+		}
+		ynaempCivilizationTypeInput = targetRow.civilizationType;
+		ynaempAltXInput = Number.isFinite(Number(targetRow.altX)) ? String(targetRow.altX) : "";
+		ynaempAltYInput = Number.isFinite(Number(targetRow.altY)) ? String(targetRow.altY) : "";
+		ynaempAltCapitalNameInput = String(targetRow.altCapitalName || "");
+		const matchingMap = maps.find((entry) => deriveYnaempMapPrefix(entry) === targetRow.mapPrefix);
+		if (matchingMap?.id && matchingMap.id !== activeMapId) {
+			handleSelectMap(matchingMap.id);
+		}
+		ynaempStatus = `Loaded ${targetRow.civilizationType} on ${targetRow.mapPrefix}.`;
+	}
+
+	function downloadYnaempSql() {
+		if (!ynaempSavedSqlText) {
+			return;
+		}
+		downloadTextFile("Civilizations_YnAEMP.sql", ynaempSavedSqlText);
+	}
+
 	function rebuildExportPayload() {
 		const exportSourcePins = exportPinScope === "local" ? localPins : [...localPins, ...sharedPins];
 		const normalizedPins = normalizePinsForExport(exportSourcePins);
@@ -3087,6 +3411,32 @@
 		}
 		try {
 			localStorage.setItem(key, JSON.stringify(value));
+		} catch {
+			// Ignore write failures.
+		}
+	}
+
+	function loadSessionJson(key, fallback) {
+		if (typeof sessionStorage === "undefined") {
+			return fallback;
+		}
+		try {
+			const raw = sessionStorage.getItem(key);
+			if (!raw) {
+				return fallback;
+			}
+			return JSON.parse(raw);
+		} catch {
+			return fallback;
+		}
+	}
+
+	function saveSessionJson(key, value) {
+		if (typeof sessionStorage === "undefined") {
+			return;
+		}
+		try {
+			sessionStorage.setItem(key, JSON.stringify(value));
 		} catch {
 			// Ignore write failures.
 		}
@@ -4005,13 +4355,21 @@
 				</p>
 			</div>
 
-			<div class="tile-map-controls inline half flex-wrap" role="toolbar" aria-label="Map zoom controls">
+			<div class="tile-map-controls inline half flex-wrap" role="toolbar" aria-label="Map controls">
 				<div class="tile-map-control-group">
 					<span class="tile-map-control-label">Map</span>
-					<select class="tile-map-select" value={activeMapId || currentMap?.id || ""} onchange={(event) => handleSelectMap(event.currentTarget.value)} aria-label="Select map">
+					<select class="tile-map-select" value={mapSelectCurrentId || currentMap?.id || ""} onchange={(event) => handleSelectMap(event.currentTarget.value)} aria-label="Select map">
 						{#each mapsForSelect as option (option.id)}
-							<option value={option.id}>{option.title}</option>
+							<option value={option.id}>{option.optionLabel || option.title}</option>
 						{/each}
+					</select>
+				</div>
+				<div class="tile-map-control-group">
+					<span class="tile-map-control-label">Sort</span>
+					<select class="tile-map-select tile-map-select-compact" value={mapSortMode} onchange={(event) => (mapSortMode = event.currentTarget.value)} aria-label="Sort maps">
+						<option value="pins">Pins then A-Z</option>
+						<option value="az">A-Z</option>
+						<option value="za">Z-A</option>
 					</select>
 				</div>
 				<div class="tile-map-toolbar-divider" aria-hidden="true"></div>
@@ -4320,18 +4678,7 @@
 					>
 						Notes
 					</button>
-					<button
-						id="map-tools-tab-export"
-						type="button"
-						role="tab"
-						class:active={panelTab === "export"}
-						aria-selected={panelTab === "export"}
-						aria-controls="map-tools-panel-export"
-						tabindex={panelTab === "export" ? 0 : -1}
-						onclick={() => selectPanelTab("export")}
-					>
-						Export
-					</button>
+
 					<button
 						id="map-tools-tab-settings"
 						type="button"
@@ -4343,6 +4690,32 @@
 						onclick={() => selectPanelTab("settings")}
 					>
 						Settings
+					</button>
+					<button
+						id="map-tools-tab-export"
+						type="button"
+						role="tab"
+						class="span-2"
+						class:active={panelTab === "export"}
+						aria-selected={panelTab === "export"}
+						aria-controls="map-tools-panel-export"
+						tabindex={panelTab === "export" ? 0 : -1}
+						onclick={() => selectPanelTab("export")}
+					>
+						Export CPU Game
+					</button>
+					<button
+						id="map-tools-tab-ynaemp"
+						type="button"
+						role="tab"
+						class="span-2"
+						class:active={panelTab === "ynaemp"}
+						aria-selected={panelTab === "ynaemp"}
+						aria-controls="map-tools-panel-ynaemp"
+						tabindex={panelTab === "ynaemp" ? 0 : -1}
+						onclick={() => selectPanelTab("ynaemp")}
+					>
+						YnAEMP Support
 					</button>
 				</div>
 
@@ -4960,6 +5333,116 @@
 					</div>
 				{/if}
 
+				{#if panelTab === "ynaemp"}
+					<div id="map-tools-panel-ynaemp" class="panel-body" role="tabpanel" aria-labelledby="map-tools-tab-ynaemp">
+						<h3>YnAEMP Support</h3>
+						<p class="panel-intro">Generate `Civilizations_YnAEMP` rows from the selected tile and store a collection across multiple maps for export.</p>
+						<!-- <div class="export-summary">
+							<div class="export-metric inline">
+								<span class="export-label">Map Prefix</span>
+								<span class="export-value">{currentMapPrefix || "-"}</span>
+							</div>
+							<div class="export-metric">
+								<span class="export-label">Coverage</span>
+								<span class="export-value">{ynaempCivilizationType ? `${ynaempCurrentCoverage}/${YNAEMP_MAP_PREFIXES.length}` : `0/${YNAEMP_MAP_PREFIXES.length}`}</span>
+							</div>
+						</div> -->
+						{#if !currentMapSupportsYnaemp}
+							<p class="auth-hint">This map is not in the tracked YnAEMP support set.</p>
+						{/if}
+						{#if selectedTile}
+							<p class="tile-id">Selected: {tileLabel(selectedTile)}</p>
+							<div class="pin-meta-row">
+								<label class="pin-meta-field">
+									CivilizationType
+									<input
+										type="text"
+										value={ynaempCivilizationTypeInput}
+										oninput={(event) => (ynaempCivilizationTypeInput = event.currentTarget.value)}
+										placeholder={editPinGameDefineInput || DEFAULT_GAME_DEFINE_PREFIX}
+									/>
+								</label>
+								<label class="pin-meta-field">
+									Alt Capital Name
+									<input type="text" value={ynaempAltCapitalNameInput} oninput={(event) => (ynaempAltCapitalNameInput = event.currentTarget.value)} placeholder="Optional override" />
+								</label>
+								<label class="pin-meta-field">
+									Alt X
+									<input type="number" value={ynaempAltXInput} oninput={(event) => (ynaempAltXInput = event.currentTarget.value)} placeholder="Optional" />
+								</label>
+								<label class="pin-meta-field">
+									Alt Y
+									<input type="number" value={ynaempAltYInput} oninput={(event) => (ynaempAltYInput = event.currentTarget.value)} placeholder="Optional" />
+								</label>
+							</div>
+							<div class="button-row inline half flex-wrap">
+								<button type="button" onclick={upsertYnaempCurrentRow} disabled={!ynaempCurrentRow}>Save Current Tile</button>
+								<!-- <button type="button" onclick={removeCurrentYnaempRow} disabled={!ynaempCurrentSavedRow}>Remove Current Map Row</button>
+								<button type="button" onclick={downloadYnaempSql} disabled={!ynaempSavedSqlText}>Download SQL</button> -->
+								<button type="button" class="danger-text-button" onclick={clearYnaempSavedRows} disabled={!ynaempSavedRows.length}>Clear Session</button>
+							</div>
+							{#if ynaempStatus}
+								<p class="status-inline">{ynaempStatus}</p>
+							{/if}
+							<div class="export-preview">
+								<label>
+									Current Map SQL
+									<textarea
+										class="export-textarea"
+										rows="6"
+										readonly
+										value={ynaempCurrentSqlText || "-- Select a supported map tile and enter a CivilizationType."}
+										spellcheck="false"
+									></textarea>
+								</label>
+								<label>
+									Session SQL
+									<textarea class="export-textarea" rows="10" readonly value={ynaempSavedSqlText || "-- Save one or more map rows to build the combined INSERT."} spellcheck="false"
+									></textarea>
+								</label>
+							</div>
+							{#if ynaempSavedRowsSorted.length}
+								<div class="tile-pin-list">
+									<p class="tile-pin-list-title">Saved YnAEMP Rows</p>
+									{#each ynaempSavedRowsSorted as row (`${row.civilizationType}-${row.mapPrefix}`)}
+										<div class="tile-pin-item">
+											<button type="button" class="tile-pin-load" onclick={() => loadYnaempSavedRow(row)}>
+												<span>{row.civilizationType}</span>
+												<span class="tile-pin-meta">{row.mapPrefix} @ {row.x}, {row.y}</span>
+											</button>
+											<button
+												type="button"
+												class="danger-icon-button tile-pin-remove"
+												onclick={() => removeYnaempSavedRow(row)}
+												aria-label={`Remove ${row.civilizationType} on ${row.mapPrefix}`}
+											>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="1.8"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													aria-hidden="true"
+												>
+													<path d="M10 11v6" />
+													<path d="M14 11v6" />
+													<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+													<path d="M3 6h18" />
+													<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+												</svg>
+											</button>
+										</div>
+									{/each}
+								</div>
+							{/if}
+						{:else}
+							<p>Select a tile first, then save the YnAEMP row for this map.</p>
+						{/if}
+					</div>
+				{/if}
+
 				{#if panelTab === "settings"}
 					<div id="map-tools-panel-settings" class="panel-body" role="tabpanel" aria-labelledby="map-tools-tab-settings">
 						<h3>Settings</h3>
@@ -5231,7 +5714,7 @@
 	.tile-map-controls {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: center;
+		align-items: flex-end;
 		gap: 0.5rem;
 		border-radius: 0.75rem;
 		padding-block: 0.25rem;
@@ -5266,6 +5749,10 @@
 		border-radius: 0.55rem;
 		padding-block: 0.36rem;
 		padding-inline: 0.5rem;
+	}
+
+	.tile-map-select-compact {
+		max-inline-size: min(10rem, 30vw);
 	}
 
 	.tile-map-toolbar-divider {
@@ -5703,6 +6190,10 @@
 				border-color: color-mix(in oklch, var(--surface-support-highlight) 56%, var(--surface-support-border));
 				text-shadow: none;
 			}
+		}
+
+		& .span-2 {
+			grid-column: span 2;
 		}
 	}
 
@@ -6182,7 +6673,7 @@
 
 	.export-metric {
 		display: grid;
-		gap: 0.2rem;
+		gap: 0.25rem;
 	}
 
 	.export-label {
@@ -6454,6 +6945,11 @@
 
 		.tile-map-controls {
 			inline-size: 100%;
+		}
+
+		.tile-map-select {
+			inline-size: 100%;
+			max-inline-size: 100%;
 		}
 
 		.viewport {
