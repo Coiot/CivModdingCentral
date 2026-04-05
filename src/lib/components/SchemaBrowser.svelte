@@ -162,7 +162,6 @@
 	];
 	const QUERY_OPERATORS_WITHOUT_VALUE = new Set(["isEmpty", "isNotEmpty"]);
 	const QUERY_OPERATOR_BY_ID = new Map(QUERY_OPERATOR_DEFS.map((operator) => [operator.id, operator]));
-	const rowSearchBlobCache = new Map();
 	const tableCardElements = new Map();
 
 	let searchQuery = $state("");
@@ -215,7 +214,7 @@
 				return "Search Buildings, archer, PrereqTech, Language_en_US, or UnitPromotions...";
 		}
 	});
-	const searchedTables = $derived.by(() => TABLES.map((table) => buildTableSearchResult(table, normalizedQuery, searchMode)));
+	const searchedTables = $derived.by(() => TABLES.map((table) => buildTableSearchResult(table, normalizedQuery, searchMode, selectedTableName)));
 	const CATEGORY_COUNTS = $derived.by(() =>
 		CATEGORY_DEFS.map((category) => ({
 			id: category.id,
@@ -544,7 +543,7 @@
 		return numberFormatter.format(value || 0);
 	}
 
-	function buildTableSearchResult(table, query, mode) {
+	function buildTableSearchResult(table, query, mode, scopedTableName = "") {
 		const tableNameMatch = query ? table.name.toLowerCase().includes(query) : false;
 		const matchedColumns = query ? table.columns.filter((column) => `${column.name} ${column.type}`.toLowerCase().includes(query)).slice(0, 4) : [];
 		const matchedRelations = query
@@ -552,8 +551,9 @@
 					.filter((link) => `${link.from || ""} ${link.toTable || ""} ${link.toColumn || ""} ${link.fromTable || ""} ${link.fromColumn || ""}`.toLowerCase().includes(query))
 					.slice(0, 3)
 			: [];
-		const rowValuesMatch = query ? getRowSearchBlob(table).includes(query) : false;
-		const matchedRows = rowValuesMatch ? findMatchingRows(table, query, ROW_MATCH_LIMIT) : [];
+		const shouldSearchRows = Boolean(query) && mode !== "tables" && mode !== "columns" && mode !== "relationships" && (mode === "rows" || !scopedTableName || table.name === scopedTableName);
+		const matchedRows = shouldSearchRows ? findMatchingRows(table, query, ROW_MATCH_LIMIT) : [];
+		const rowValuesMatch = matchedRows.length > 0;
 		const matchedRowSummaries = matchedRows.map((item) => summarizeMatchedRow(item.row, query));
 		let matchesQuery = !query;
 		if (query) {
@@ -924,19 +924,6 @@
 	function truncateText(value, maxLength = 42) {
 		const text = String(value);
 		return text.length > maxLength ? `${text.slice(0, maxLength - 1)}...` : text;
-	}
-
-	function getRowSearchBlob(table) {
-		const cached = rowSearchBlobCache.get(table.name);
-		if (cached) {
-			return cached;
-		}
-		const blob = table.rows
-			.map((row) => Object.values(row).join(" "))
-			.join(" ")
-			.toLowerCase();
-		rowSearchBlobCache.set(table.name, blob);
-		return blob;
 	}
 
 	function rowEntryMatchesQuery([_key, value], query) {
