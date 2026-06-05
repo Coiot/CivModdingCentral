@@ -7429,7 +7429,12 @@
 		margin-block-start: 0.85rem;
 	}
 
+	.pedia-unique-pedia[open] .pedia-unique-pedia-summary::before {
+		content: "−";
+	}
+
 	.pedia-unique-pedia-summary {
+		position: relative;
 		display: inline-flex;
 		justify-content: space-between;
 		align-items: center;
@@ -7440,6 +7445,28 @@
 		font-weight: 700;
 		letter-spacing: 0.14em;
 		cursor: pointer;
+		list-style: none;
+		padding-inline-start: 1.35rem;
+	}
+
+	.pedia-unique-pedia-summary::before {
+		position: absolute;
+		inset-block-start: 50%;
+		inset-inline-start: 0;
+		color: var(--pedia-accent-strong);
+		font-size: 1.05rem;
+		font-weight: 800;
+		line-height: 1;
+		transform: translateY(-50%);
+		content: "+";
+	}
+
+	.pedia-unique-pedia-summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.pedia-unique-pedia-summary::marker {
+		content: "";
 	}
 
 	.pedia-unique-pedia-body {
