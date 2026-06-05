@@ -3,26 +3,32 @@
   "kind": "civilization",
   "meta": {
     "createdAt": "2026-03-23T04:15:21.816Z",
+    "updatedAt": "2026-05-03T02:30:25.538Z",
+    "createdByName": "EmeraldRange",
     "formatVersion": 1,
+    "updatedByName": "EmeraldRange",
+    "cloudCreatedByEmail": "isaac.volpe@me.com",
+    "cloudUpdatedByEmail": "emerald.range2964@gmail.com",
     "unresolvedTemplates": [
       "CrossroadsOfTheWorldNav",
       "EmeraldNav",
       "DEFAULTSORT:Kalmyks (Ayuka Khan)"
-    ],
-    "updatedAt": "2026-03-23T04:15:23.873686+00:00"
+    ]
   },
   "slug": "kalmyk-khanate-ayuka-khan",
   "music": {
     "war": {
+      "url": "",
       "title": "[https://www.youtube.com/watch?v=Rpix2vIz44E Horse-head fiddle performed",
       "credit": "Baator Gavrilovitch Bukhaev]'''\""
     },
     "peace": {
+      "url": "",
       "title": "[https://www.youtube.com/watch?v=RQE46tGziyk Edjin duun",
       "credit": "Okna Tsahan Zam]'''\";"
     }
   },
-  "title": "Kalmyk Khanate",
+  "title": "The Kalmyks",
   "issues": [
     "Unresolved templates: CrossroadsOfTheWorldNav, EmeraldNav, DEFAULTSORT:Kalmyks (Ayuka Khan)"
   ],
@@ -34,7 +40,8 @@
     "lastUpdated": "20 July 2022",
     "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2838133116",
     "modFolderName": "",
-    "wikiPageTitle": "Kalmyk Khanate"
+    "wikiPageTitle": "Kalmyk Khanate",
+    "directDownload": ""
   },
   "authors": [],
   "credits": [
@@ -137,8 +144,8 @@
       "Vajrayana (HR)"
     ],
     "adjectives": "",
-    "empireName": "",
-    "government": "",
+    "empireName": "Kalmyk Khanate",
+    "government": [],
     "requiredContent": [
       "Brave New World"
     ],
@@ -227,19 +234,23 @@
     "Mongolia"
   ],
   "modSupport": {
+    "aa": false,
     "uci": true,
     "exce": true,
     "wftw": false,
     "eandd": false,
     "piety": true,
     "culdiv": true,
+    "traits": false,
     "ynaemp": true,
+    "slavery": false,
     "maplabels": true,
     "civivtraits": true,
     "ethnicunits": true,
     "mercenaries": true,
     "sovereignty": true,
     "histreligions": true,
+    "enlightenmentera": false,
     "claimscoloniescrimes": true
   },
   "collections": [

@@ -1,0 +1,227 @@
+{
+  "id": "civ-the-tupiniquim-tibiri",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-04-13T15:57:11.919Z",
+    "updatedAt": "2026-04-13T15:57:11.922Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "unresolvedTemplates": [
+      "DEFAULTSORT:Tupiniquim (Tibiriçá)",
+      "GreatPerson",
+      "AlgaNav"
+    ]
+  },
+  "slug": "the-tupiniquim-tibiri",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    }
+  },
+  "title": "The Tupiniquim",
+  "issues": [
+    "Unresolved templates: DEFAULTSORT:Tupiniquim (Tibiriçá), GreatPerson, AlgaNav"
+  ],
+  "leader": "Tibiriçá",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "April 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3705741932",
+    "modFolderName": "",
+    "wikiPageTitle": "The Tupiniquim",
+    "directDownload": ""
+  },
+  "authors": [
+    "Alga"
+  ],
+  "credits": [
+    {
+      "name": "Alga",
+      "role": "Author"
+    },
+    {
+      "name": "Darth",
+      "role": "Art"
+    },
+    {
+      "name": "Leugi",
+      "role": "Art (Unit Icon)"
+    }
+  ],
+  "summary": "The Tupiniquim led by Tibiriçá are a custom civilization by Alga, with contributions from Darth and Leugi.",
+  "uniques": [
+    {
+      "art": "TupiniLI.png",
+      "body": "Over time your cities convert to the Religion of declared friends. There is a chance that entering religious units convert to your Empire.",
+      "name": "The Iperoig Armistice",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TupiniLI.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by Darth",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "TupiniUU.png",
+      "body": "",
+      "name": "Ibirapema Warrior",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TupiniUU.png",
+      "bullets": [
+        "+10% {{Strength Icon}} Combat Strength against Cities and Ranged Defense when stacked with a Religious Unit.",
+        "Does not require {{Iron Icon}} Iron."
+      ],
+      "replaces": "Longswordsman",
+      "artCredit": "Art by Leugi and Darth",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "TupiniUB.png",
+      "body": "",
+      "name": "Rammed Earth Church",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TupiniUB.png",
+      "bullets": [
+        "Cannot be manually built or bought.",
+        "Automatically built once your City owns a Shrine and gets converted to a foreign Religion.",
+        "+1 {{Food Icon}} Food, +1 {{Faith Icon}} Faith, +1 {{Production Icon}} Production and +3% Great People Generation per Plantation.",
+        "Units killed or expended add a small {{Production Icon}} Production boost to the City based on its {{Faith Icon}} Faith yield."
+      ],
+      "replaces": "Garden",
+      "artCredit": "Art by Darth",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "None",
+    "capital": "Piratininga",
+    "culture": "",
+    "religion": [
+      "Catholicism"
+    ],
+    "adjectives": "Tupiniquim",
+    "empireName": "Tupiniquim Empire",
+    "government": [],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Chief Tibiriçá baptized as Martim Afonso was an Amerindian leader who converted to Christianity under the auspices of José de Anchieta. He led the Tupiniquim people of Piratininga and other tribes. His daughter, Bartira, took the name Isabel and married a Portuguese man named João Ramalho. After his conversion to Christianity he became a strategic ally and protector of the Jesuits and the Portuguese; his name appears on letters to Saint Ignatius of Loyola and King João III of Portugal. Tibiriçá chose to side with the Jesuits and against his own brother Piquerobi with help of his nephew and his son-in-law João Ramalho. His granddaughters and their descendants married Portuguese noblemen that led the colonization of São Paulo under Martim Afonso de Sousa, including Jorge Ferreira, Domingos Luiz (a knight of the Order of Christ), and Tristão de Oliveira, son of capitão-mor Antonio de Oliveira and Genebra Leitão de Vasconcelos, both of important noble families.",
+      "title": "Tibiriçá"
+    },
+    "civilization": {
+      "url": "",
+      "body": "Tupiniquim (also Tupinã-ki, Topinaquis, Tupinaquis, Tupinanquins, Tupiniquins) are an indigenous people of Brazil of the Tupi family, who now live in three indigenous territories (Terras Indígenas in Portuguese). The indigenous territories (Caieiras Velhas, Pau-Brasil and Comboios) are located near the cities of Santa Cruz and Vila do Riacho in the municipality of Aracruz in northern Espírito Santo state, southeastern Brazil. Caieiras Velhas Indigenous Territory is located along the banks of the Piraquê-Açu River. The Pau-Brasil Indigenous Territory is near Sahy Creek. The Comboios Indigenous Territory is located on the banks of the Comboios River. A 2010 census determined the population of Tupiniquim in all three indigenous territories as 2,630.",
+      "title": "The Tupiniquim"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "Your sins shall destroy this holy earth, but not my faith.",
+    "blessing": "Great Chief Tibiriçá of the Tupiniquim, your actions had great impact on the East Coast of Brazil, when your nephew came to ask if you would join the Confederation with their French Allies against the Portuguese! First agreeing, later siding with Portugal and the Jesuits, you got your nephew killed and took side along Martim Afonso de Sousa saving the Bay which would later become Rio de Janeiro, while your main village alongside Padre Nobriega would develop into the future Sao Paulo.\nChief Tibiriçá, later named Martim Afonso himself, your people trust onto your wise guidance and hope that you will bring again so much great heirs into the world. Can you build a civilization that can stand the test of time?",
+    "introduction": "Who are you? What did you bring to me, Tibiriçá? I am the ruler of this land and defender of it's new found faith, or are you about to change this?"
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Piratininga",
+        "Jurubatuba",
+        "Ibirapuera",
+        "Aldeia Nova",
+        "Reis Magos",
+        "Araribá",
+        "Irajá",
+        "Pinheiros",
+        "São Miguel",
+        "Itanhaém",
+        "Ingaguaçu",
+        "Burikioca",
+        "Upau-Nema",
+        "Peruybe",
+        "Piaçaguera",
+        "Guaxindiba",
+        "Piranema",
+        "Carapicuíba",
+        "Potiry",
+        "Batinga",
+        "Peguaoty",
+        "Santo Amaro",
+        "Pakurity",
+        "Mbotuy"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Martim Afonso",
+        "Bartira",
+        "Piquerobi",
+        "Durthiçá",
+        "Potira",
+        "Ítalo",
+        "Ará",
+        "Pirijá",
+        "João Ramalho",
+        "Maria da Gra"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Alga",
+    "Katuje Cultures",
+    "Brazil"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": false,
+    "eandd": false,
+    "piety": false,
+    "culdiv": false,
+    "ynaemp": false,
+    "maplabels": false,
+    "civivtraits": false,
+    "ethnicunits": false,
+    "mercenaries": false,
+    "histreligions": false,
+    "enlightenmentera": false,
+    "claimscoloniescrimes": false
+  },
+  "collections": [],
+  "navTemplate": "AlgaNav",
+  "presentation": {
+    "colors": {
+      "icon": "#a2d7d4",
+      "background": "#7a1609"
+    },
+    "mapImage": "TupiniquimMap.png",
+    "iconImage": "Tupiniquim.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TupiniquimMap.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Tupiniquim.png",
+    "mapImageCaption": "Map by Darth",
+    "leaderSceneImage": "Tibirica.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Tibirica.png",
+    "leaderSceneArtCredit": "Art by Darth"
+  },
+  "templateRefs": []
+}

@@ -1,0 +1,273 @@
+{
+  "id": "civ-afsharid-iran-nader-shah",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-04-06T03:34:37.023Z",
+    "updatedAt": "2026-04-06T06:14:33.937Z",
+    "createdByName": "Pouākai",
+    "formatVersion": 1,
+    "updatedByName": "Pouākai",
+    "cloudCreatedByEmail": "shadowkiwi.nui@gmail.com",
+    "cloudUpdatedByEmail": "shadowkiwi.nui@gmail.com",
+    "unresolvedTemplates": [
+      "about",
+      "CrossroadsOfTheWorldNav",
+      "MCnav",
+      "DEFAULTSORT:Afsharids (Nader Shah)"
+    ]
+  },
+  "slug": "afsharid-iran-nader-shah",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    }
+  },
+  "title": "The Afsharids",
+  "issues": [
+    "Unresolved templates: about, CrossroadsOfTheWorldNav, MCnav, DEFAULTSORT:Afsharids (Nader Shah)"
+  ],
+  "leader": "Nader Shah",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "29 Jul 2022",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2842216877",
+    "modFolderName": "",
+    "wikiPageTitle": "Afsharid Iran",
+    "directDownload": ""
+  },
+  "authors": [
+    "More Civilisations"
+  ],
+  "credits": [
+    {
+      "name": "DJSHenniger",
+      "role": "Original Author, Text"
+    },
+    {
+      "name": "Pouakai",
+      "role": "Code"
+    },
+    {
+      "name": "Zharques",
+      "role": "Text"
+    },
+    {
+      "name": "Darth",
+      "role": "Art (Leaderscene and icon, civ icon)"
+    },
+    {
+      "name": "JakeWalrusWhale",
+      "role": "Art (UU icon)"
+    },
+    {
+      "name": "Alga",
+      "role": "Art (UU icon)"
+    },
+    {
+      "name": "TarcisioCM",
+      "role": "Art (Map)"
+    },
+    {
+      "name": "EmeraldRange",
+      "role": "Art (Unit models)"
+    }
+  ],
+  "summary": "",
+  "uniques": [
+    {
+      "art": "MC Afsharids 256.png",
+      "body": "Units temporarily receive additional {{Moves Icon}} Movement following a declaration of war or capturing a city. Upgrading units provides a small burst of {{Science Icon}} Science.",
+      "name": "Sword of Persia",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC%20Afsharids%20256.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by Darth",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "MC Jazayerchiha 256.png",
+      "body": "",
+      "name": "Jazayerchiha",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC%20Jazayerchiha%20256.png",
+      "bullets": [
+        "+8% {{Strength Icon}} Combat Strength (24 vs 26)",
+        "+10% {{Production Icon}} Production cost (150 vs 165)",
+        "When starting a turn next to a mounted unit, both units receive +1 {{Moves Icon}} Movement and +10% {{Strength Icon}} Combat Strength"
+      ],
+      "replaces": "Musketman | Line Infantry",
+      "artCredit": "Art by Alga",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "MC Savaran 256.png",
+      "body": "",
+      "name": "Savaran e Saltanati",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC%20Savaran%20256.png",
+      "bullets": [
+        "+20% {{Strength Icon}} Combat Strength when flanking",
+        "25% {{Strength Icon}} Combat Strength penalty when attacking cities (instead of 33%)"
+      ],
+      "replaces": "Knight | Cuirassier",
+      "artCredit": "Art by JakeWalrusWhale",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "None",
+    "capital": "Mashhad",
+    "culture": "Iranian",
+    "religion": [
+      "Islam",
+      "Sunni (HR)"
+    ],
+    "adjectives": "",
+    "empireName": "",
+    "government": [],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": "Middle Eastern"
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Nader_Shah",
+      "body": "Nader Shah Afshar was the founder of the Afsharid dynasty of Iran and one of the most powerful rulers in Iranian history, ruling as shah of Iran from 1736 to 1747, when he was assassinated during a rebellion. He fought numerous campaigns throughout the Middle East, the Caucasus, Central and South Asia, such as the battles of Herat, Mihmandust, Murche-Khort, Agh-Darband, Yeghevard, Khyber Pass, Karnal and Kars. Because of his military genius, some historians have described him as the Napoleon of Persia, the Sword of Persia, or the Second Alexander. Nader idolized Genghis Khan and Timur, the previous conquerors from Central Asia. He imitated their military prowess and—especially later in his reign—their cruelty. His victories during his campaigns briefly made him West Asia's most powerful sovereign, ruling over what was arguably the most powerful empire in the world, but his empire and the dynasty he founded quickly disintegrated after he was assassinated in 1747.",
+      "title": "Nader Shah"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Afsharid_Iran",
+      "body": "Afsharid Iran was an Iranian empire established by the Turkoman Afshar tribe in Iran's north-eastern province of Khorasan. The ruling Afsharid dynasty was founded in 1736 by the brilliant military commander Nader Shah, who deposed the last member of the Safavid dynasty and proclaimed himself as the Shah of Iran and lasted most of the mid-to-late eighteenth century. During Nader's reign, Iran reached its greatest extent since the Sasanian Empire. At its height it controlled modern-day Iran, Armenia, Georgia, Azerbaijan Republic, parts of the North Caucasus, Afghanistan, Bahrain, Turkmenistan, Uzbekistan and Pakistan, and parts of Iraq, Turkey, United Arab Emirates and Oman. After his death, most of his empire was divided between the Zands, Durranis, Georgians, and the Caucasian khanates, while Afsharid rule was confined to a small local state in Khorasan. Finally, the Afsharid dynasty was overthrown by Agha Mohammad Khan Qajar in 1796, who would establish a new native Iranian empire and restore Iranian suzerainty over several of the aforementioned regions.",
+      "title": "The Afsharids"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"There is no war in paradise? How can there be any delights there?\"\nAttacked: \"Have no doubt, I will find cause to one day break you.\"\nDeclaration of War: \"I hope you are preparing your armies. I shall defeat you in hours.\"",
+    "blessing": "\"Hail to you Nader Shah, Shahanshah, Sultan bar salatin-e-jahan, Napoleon of Persia, the Second Alexander. Of humble origins, your prowess as a superb military commander saw you rise from a herdsman’s son to an assistant to the governor, to shah Tahmasp II’s right hand man, to regent for Abbas III, to, finally, shah in your own right. Your brilliance as a military commander led to you reuniting all of Iran, capturing Delhi, and pushing into the Caucasus to see Iran at its greatest extent since the Sasanian Empire. You plundered an enormous amount of treasure for the Afsharids, seizing the Peacock Throne, the Koh-i-Noor and Darya-ye Noor on your plundering of DelhiSpectacular Nader Shah, you must once again draw from your military talent against overwhelming odds to regain your place as a renowned leader across the world. Revive your military, show your men the respect they once received from you, and march, once more, from one edge of your empire to the other. Stand strong in the face of enemies on all sides to forge a new empire. Can you rise from humble beginnings to be a true king of kings? Will you build a civilization that can stand the test of time?\"",
+    "introduction": "\"Who is that? Another petty ruler? I am willing to incorporate your lands into my might empire, but you must be willing to fight for me.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Mashhad",
+        "Isfahan",
+        "Damghan",
+        "Hamadan",
+        "Nahavand",
+        "Kermanshah",
+        "Shiraz",
+        "Qazvin",
+        "Tabriz",
+        "Bandar-e-Bushehr",
+        "Bushehr",
+        "Tehran",
+        "Resht",
+        "Gulnabad",
+        "Dastgerd",
+        "Quchan",
+        "Murche-Khort",
+        "Zarghan",
+        "Shirvan",
+        "Sabzevar",
+        "Zaveh",
+        "Gonabad",
+        "Zibad",
+        "Dargaz",
+        "Sangan",
+        "Kfer Qal'eh"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Nadi",
+        "Mariyeh",
+        "Afari",
+        "Adeleh",
+        "Bahadur",
+        "Reza",
+        "Abbas",
+        "Adil",
+        "Ebrahim",
+        "Ardashir"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "More Civilizations",
+    "Iranian Cultures",
+    "Crossroads of the World",
+    "Civilizations with Male leaders",
+    "Civilizations with two unique units (Civ5)",
+    "Persia",
+    "Turkmenistan"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": false,
+    "eandd": false,
+    "piety": false,
+    "culdiv": false,
+    "traits": false,
+    "ynaemp": false,
+    "slavery": false,
+    "maplabels": false,
+    "civivtraits": false,
+    "ethnicunits": false,
+    "mercenaries": false,
+    "histreligions": false,
+    "enlightenmentera": false,
+    "claimscoloniescrimes": false
+  },
+  "collections": [
+    {
+      "id": "crossroads-of-the-world",
+      "blurb": "",
+      "links": [],
+      "title": "Crossroads of the World",
+      "colors": {
+        "accent": "#cc8e34",
+        "background": "#3a2315"
+      },
+      "aliases": [],
+      "members": [],
+      "imageURL": "",
+      "sourceTemplate": "CrossroadsOfTheWorldNav"
+    }
+  ],
+  "navTemplate": "CrossroadsOfTheWorldNav",
+  "presentation": {
+    "colors": {
+      "icon": "#B62E0E",
+      "background": "#F9DFC1"
+    },
+    "mapImage": "MapAfsharid512.png",
+    "iconImage": "Afsharids.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapAfsharid512.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Afsharids.png",
+    "mapImageCaption": "Map by Regalman",
+    "leaderSceneImage": "MC Afsharids Leaderscene.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC%20Afsharids%20Leaderscene.png",
+    "leaderSceneArtCredit": "Art by Darth"
+  },
+  "templateRefs": []
+}

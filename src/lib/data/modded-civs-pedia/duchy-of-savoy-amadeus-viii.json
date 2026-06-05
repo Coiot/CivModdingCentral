@@ -1,0 +1,243 @@
+{
+  "id": "civ-duchy-of-savoy-amadeus-viii",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-05-23T06:18:31.564Z",
+    "updatedAt": "2026-05-23T06:18:59.443Z",
+    "createdByName": "Senshi",
+    "formatVersion": 1,
+    "updatedByName": "Senshi",
+    "cloudCreatedByEmail": "senshidenshi@gmail.com",
+    "cloudUpdatedByEmail": "senshidenshi@gmail.com",
+    "unresolvedTemplates": [
+      "SenshiNav"
+    ]
+  },
+  "slug": "duchy-of-savoy-amadeus-viii",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    }
+  },
+  "title": "Savoy",
+  "issues": [
+    "Unresolved templates: SenshiNav"
+  ],
+  "leader": "Amadeus VIII",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "23 May 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3731051860",
+    "modFolderName": "",
+    "wikiPageTitle": "Savoy (Amadeus VIII)",
+    "directDownload": ""
+  },
+  "authors": [
+    "Senshi"
+  ],
+  "credits": [
+    {
+      "name": "Senshi",
+      "role": "Design, Code, Art (Map), Additonal Text"
+    },
+    {
+      "name": "Chrisy15",
+      "role": "Lua"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art (Civ Icon and Alpha, Leaderscene and Leader Icon, Brother of Saint Maurice Icon, Cappella Icon)"
+    },
+    {
+      "name": "Zharques",
+      "role": "Pedias"
+    }
+  ],
+  "summary": "Savoy led by Amadeus VIII is a custom civilization by Senshi, with contributions from Chrisy15, DarthKyofu, and Zharques.",
+  "uniques": [
+    {
+      "art": "Amadeus.png",
+      "body": "+2 {{Faith Icon}} Faith from Great Works. When your cities first convert to a Religion, a random Great Work Slot within them is filled.",
+      "name": "Shroud of Turin",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Amadeus.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "SaintMaurice.png",
+      "body": "",
+      "name": "Brother of Saint Maurice",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/SaintMaurice.png",
+      "bullets": [
+        "Double movement in Hills.",
+        "Heals 20 HP when beginning a turn in friendly territory.",
+        "When constructed, provides half its Production cost towards the next defensive Building in the City."
+      ],
+      "replaces": "Knight",
+      "artCredit": "Art by DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "Cappella.png",
+      "body": "",
+      "name": "Cappella",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Cappella.png",
+      "bullets": [
+        "Has a slot for a Great Work of Art",
+        "When its Great Work Slot is filled, pays for the maintenance of all {{Faith Icon}} Faith buildings in this City."
+      ],
+      "replaces": "Temple",
+      "artCredit": "Art by DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Hills",
+    "capital": "Chambéry",
+    "culture": "Southern",
+    "religion": [
+      "Catholicism"
+    ],
+    "adjectives": "Savoyard",
+    "empireName": "Duchy of Savoy",
+    "government": [
+      "Principality",
+      "Papacy"
+    ],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Amadeus_VIII,_Duke_of_Savoy",
+      "body": "Amadeus VIII, known as Amadeus the Peaceful and Antipope Felix V, was Count of Savoy from 1391 to 1416 and Duke of Savoy from 1416 to 1440. He was the first to hold the ducal title, granted by Emperor Sigismund. Known for his diplomatic temperament and administrative reforms, he strengthened the state's institutions and fostered internal peace. He also claimed the papacy from 1439 to 1449 in opposition to Popes Eugene IV and Nicholas V, becoming the last historical antipope recognised by a significant portion of the Catholic clergy.",
+      "title": "Amadeus VIII"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Duchy_of_Savoy",
+      "body": "Savoy, formerly a part of the Kingdom of Burgundy, emerged as the feudal County of Savoy ruled by the House of Savoy during the 11th to 14th centuries. The original territory, also known as ducal Savoy, is largely coterminous with the modern French Savoie and Haute-Savoie départements in the region of Rhône-Alpes, but the historical expansion of Savoyard territories, as the Duchy of Savoy included parts of what is now western Italy and southwestern Switzerland. The county and duchy were Imperial fiefs, subject of the Holy Roman Empire, until 1792, with a vote in the Imperial Diet. From the 16th century, Savoy belonged to the Upper Rhenish Circle.",
+      "title": "Savoy"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "It was a mistake on my part to focus on temporal matters. I shall live out the rest of my days in a hermitage.",
+    "blessing": "\"Blessings be upon you, pious and peaceful Duke Amadeus VIII! As head of the House of Savoy, you rule over a patchwork of territories, from Bresse in France to the Swiss Alps, through the Aosta Valley and Piedmont, and onto the Ligurian Coast. Under your rule, these territories flourished owing to your strong and progressive administration, diplomatic temperament, and championing of peace both within and outside your realm. In addition to your successes as a temporal leader, you were strongly involved in clerical matters, founding your own holy order of knights and championing the cause of conciliarism in the Church. Your steadfast support of the Council of Basel led you to be elected as Antipope Felix V, the last Antipope with significant support to date. As with all things in your life, you deftly ended this papal conflict peacefully and diplomatically, with your life and contributions celebrated by the Papacy upon your death in 1451. Truly, you brought the House of Savoy into a new age of peace and prosperity!\nGreat Duke, your people call upon your gentle hand once more to guide them. The cry of \"Amadeus, Amadeus!\" echoes throughout the mountains, will you answer it? Will you rule your subjects in pursuit of peace, piety, and diplomacy? Will you build a civilization that can stand the test of time?\"",
+    "introduction": "Felicitations, ruler. I am Amadeus, the Duke of these lands, and I do all in the name of peace and in the name of God. What brings you to my chapel?"
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Chambéry",
+        "Turin",
+        "Thonon",
+        "Nice",
+        "Geneva",
+        "Aosta",
+        "Annecy",
+        "Pinerolo",
+        "Bourg-en-Bresse",
+        "Lausanne",
+        "Cuneo",
+        "Faucigny",
+        "Aix-les-Bains",
+        "Vercelli",
+        "Sallanches",
+        "Chieri",
+        "Châtillon",
+        "Cluses",
+        "Conflans",
+        "Bâgé",
+        "Saint-Jean-de-Maurienne",
+        "Biella",
+        "Agliè",
+        "Louhans",
+        "Collegno",
+        "Contes",
+        "Ugine",
+        "Sarre",
+        "Belley"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Louis",
+        "Bonne",
+        "Odon",
+        "Aleman",
+        "Jean",
+        "Bartholomew",
+        "Andrea",
+        "Amadeus the Green",
+        "Amadeus the Red",
+        "Amadeus the Happy"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Senshidenshi",
+    "Civilizations with Male leaders",
+    "France",
+    "Italy",
+    "Switzerland",
+    "Southern Cultures"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": false,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "traits": false,
+    "ynaemp": true,
+    "slavery": false,
+    "maplabels": false,
+    "civivtraits": false,
+    "ethnicunits": false,
+    "mercenaries": false,
+    "histreligions": true,
+    "enlightenmentera": false,
+    "claimscoloniescrimes": false
+  },
+  "collections": [],
+  "navTemplate": "SenshiNav",
+  "presentation": {
+    "colors": {
+      "icon": "#FCEDED",
+      "background": "#A02957"
+    },
+    "mapImage": "SavoyMap412.png",
+    "iconImage": "Savoy.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/SavoyMap412.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Savoy.png",
+    "mapImageCaption": "Map by Senshi",
+    "leaderSceneImage": "AmadeusLS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/AmadeusLS.png",
+    "leaderSceneArtCredit": "Art by DarthKyofu"
+  },
+  "templateRefs": []
+}

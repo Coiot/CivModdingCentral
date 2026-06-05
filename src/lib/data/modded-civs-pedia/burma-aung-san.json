@@ -1,0 +1,246 @@
+{
+  "id": "civ-burma-aung-san",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-05-03T02:37:25.659Z",
+    "updatedAt": "2026-05-03T02:43:32.824Z",
+    "createdByName": "EmeraldRange",
+    "formatVersion": 1,
+    "updatedByName": "EmeraldRange",
+    "cloudCreatedByEmail": "emerald.range2964@gmail.com",
+    "cloudUpdatedByEmail": "emerald.range2964@gmail.com",
+    "unresolvedTemplates": [
+      "EmeraldNav"
+    ]
+  },
+  "slug": "burma-aung-san",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "A Burmese marching song from WWII",
+      "credit": "Imperial Japanese Army"
+    },
+    "peace": {
+      "url": "",
+      "title": "တို့ဗမာ",
+      "credit": "YMB Saya Tin"
+    }
+  },
+  "title": "Burma",
+  "issues": [
+    "Unresolved templates: EmeraldNav"
+  ],
+  "leader": "Aung San",
+  "source": {
+    "type": "wiki",
+    "version": "",
+    "wikiUrl": "",
+    "lastUpdated": "",
+    "workshopUrl": "",
+    "modFolderName": "",
+    "wikiPageTitle": "Burma",
+    "directDownload": ""
+  },
+  "authors": [
+    "EmeraldRange"
+  ],
+  "credits": [
+    {
+      "name": "EmeraldRange",
+      "role": "Author"
+    },
+    {
+      "name": "Chrisy15",
+      "role": "Contributor"
+    }
+  ],
+  "summary": "Burma led by Aung San is a custom civilization mod by EmeraldRange with contributions from Chrisy15.",
+  "uniques": [
+    {
+      "art": "ERBurmaLeader.png",
+      "body": "+20% {{Strength Icon}} Combat Strength for every enemy unit one tile away outnumbering your unit. +15% {{Strength Icon}} Combat Strength when next to a city originally owned by Burma at the start of your turn.",
+      "name": "One Worth One Hundred",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ERBurmaLeader.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by EmeraldRange",
+      "footnotes": [
+        "ကလောင်စုံ: တပ်မတော်၏ဖခင်, 9-11"
+      ],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "ERBurmaUU.png",
+      "body": "",
+      "name": "Boh",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ERBurmaUU.png",
+      "bullets": [
+        "Provides 1 XP to adjacent units every turn when in foreign territory"
+      ],
+      "replaces": "Great General",
+      "artCredit": "Art by EmeraldRange",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "ERBurmaUB.png",
+      "body": "",
+      "name": "YMBA School",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ERBurmaUB.png",
+      "bullets": [
+        "+1 {{Science Icon}} Science from normal",
+        "Provides {{Science Icon}} Science from {{Faith Icon}} Faith producing Buildings."
+      ],
+      "replaces": "Library",
+      "artCredit": "Art by EmeraldRange",
+      "footnotes": [
+        "Lieberman 2003: 151–152"
+      ],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "Yangon",
+    "culture": "Mandala",
+    "religion": [
+      "Buddhism",
+      "Theravada (HR)"
+    ],
+    "adjectives": "",
+    "empireName": "State of Burma",
+    "government": [],
+    "requiredContent": [
+      "BNW and, if used together with Sukritact's Burma, modifies it to be the Bagan Dynasty"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "The completion of the Burma Road from Mandalay to Kunming was keeping China afloat in the face of Japanese imperialism in World War 2 and the rubber plantations in Burma was critical to supplying the US's military production. With the front of the Greater East Asian Co-prosperity Sphere, Japan, having intercepted and trained 30 Burmese rebels into generals, invaded Burma in 1942. The Aung San formed the Burma Independence Army and recruited local people as they joined forces with the Japanese. As they were allied and had nominal control of Thailand, they invaded successfully from the southern tip of Burma upwards. After conquering Dawei/Tavoy, another division entered Burma from the East. The Japanese took Mawlamyine, a city that was hard to defend due to its proximity to a 1.5-mile wide river mouth.\nThe Japanese advanced onto Yangon, unobstructed by the British Burmese attempt to stop them at Sittang by blowing up bridges across the Sittang River. This decision not to hold a defensive position at the river made the British realise that Yangon was largely indefensible and retreated from Yangon, burning and destroying the port and oil fields. The Japanese attempted to block them off from retreating north but failed. The Japanese established the State of Burma in 1943, under the theoretical rule of the Thirty Comrades, lead by Prime Minister Ba Maw and War Minister Aung San. However, the Burmese began to see the falsity of the promised independence as soon as their government was declared.\nMeanwhile, the British retreated and attempted to stop the Japanese in Central Burma, as Mandalay was the critical start of the Burma Road into China. Hoping for the Japanese to slow down and for Chinese reinforcements, the British were slowly pushed back. The British kept the Japanese at bay in Taungoo, but once the city fell, Japanese troops mobilised rapidly along the highway to Mandalay. In 1944, the British joined the many civilian refugees, mostly Indians fearing both the Japanese and the Burmese's wrath, in retreating fully to India. The Burma Road was severed and the Japanese chased the British up along the Arakan coast but stopped short of Bangladesh due to British scorched Earth destruction of Chittagong.\nDuring the Burma Campaign, the Burmese Independence Army (BIA) established by Aung San had garnered ridiculous support amongst locals. As they were aiding Japanese conquests with the promise of independence, many of these enthusiastic civilian recruits were trained properly under the Japanese and Burmese Bohs. The size of the BIA had grown so much it was reorganised as the Burmese National Army, still led by Defence Minister Aung San.\nThe apparent betrayal of the Japanese caused Aung San to secretly attempt communication with the Allies. Aung San also reached a hand out to some of the other Thirty Comrades who aligned themselves with different ideologies. In August 1944, after the Allied retreat, the Anti-Fascist People's Freedom League was established in secret between these ideologically opposed independence groups.\nIn the Central campaign, the British had presumed that the Japanese would continue their aggressive attacks and fight in the plains to the Northwest, but the new Japanese commander avoided areas like the plains where British troops were adept and skilled. After realising this, the British made progress across Western Burma and covertly crossed the Irrawaddy towards Meiktila, faking an attack on Mandalay. They reached Meiktila on the 24th of February, ironically catching a Japanese generals' meeting on the possibility of a flank away from Mandalay. Because so much of the British army was there, they took the city with ease and fended off a Japanese countersiege afterwards. The British siege of Mandalay was won after a hard battle, but the Japanese escaped through the sewers and tunnels under the ancient city.\nThe Japanese fled south and found themselves with a new enemy: the Burmese National Army whose uprising was in full swing in March. the BNA joined and cooperated with the British to chase Japan south before the Monsoon in June and a Karen uprising in the east cut off the roads to Thailand, further weakening the Japanese. The British enacted an amphibious assault from the South on Yangon, fearing that the Japanese would fight in Yangon even through the monsoon rather than surrender.\nHowever, when paratroopers and the assault arrived, they only found that the Japanese were retreating from the city eastwards. Burmese rebels and bandits intercepted the retreating Japanese trying to cross the river at Sittaung and the British support led to 10,000 Japanese casualties.\nBy the time Britain had taken Burma back, the war had basically been won and the atomic bombs would be dropped soon. The economic ruin over 4 years, consistent Burmese nationalism and Aung San's argument that their inaction from 1943 to the Race for Rangoon allowed the British to approach Meiktila unseen made it difficult to hold on to the colony after the end of the war.\nAung San's popularity was apparent when he was elected Premier with a sweeping majority. Aung San negotiated and solidified a unified Burma with all the non-Bamar ethnic groups in Panglong and began the process for independence. But the falling out between Aung San's communists and the other ideologues in the Anti-Fascist League led to Aung San's assassination by the conservatives in the AFL on the 19th of July. U Nu continued the government and presided over the independence of Burma on January 4 1948.",
+      "title": "World War Two"
+    },
+    "civilization": {
+      "url": "",
+      "body": "Burma is a Southeast Asian country located between India and Thailand. Although there were several civilisations to develop in the region before them, the Pyu civilisation is considered to be the earliest predecessors of Burma. However, historians believe that it was only near the end of the Pyu era that Burmese horseback raiders from modern-day Yunan province came into the Pyu lands, eventually settling in Bagan.\nAnawratha, now considered the Father of Burma, conquered and united the many Pyu realms and the Mon people to the south into the First Myanmar Empire. Bagan later fell into collapse through Mongol raids and was succeeded by several smaller kingdoms in the period known as the Interregnum, which lasted for over 2 centuries. In 1510, the principality of Taungoo conquered not just Burma, but also Ayutthaya, Lanna and Lan Xang under Bayinnaung, establishing the largest contiguous empire in the history of Southeast Asia. The Taungoo Empire was succeeded by the Konbaung in 1752 once Taungoo's power had declined significantly.The Konbaung sought to be stable by reversing a long-standing policy of vassalage and ethnic self-rule for its domain and beginning a long Burmanisation process.  However, after an expansion into Assam and Manipur in the early 1800s, they came into conflict with the British over territorial disputes, starting the Anglo Burmese Wars.\nThe first Anglo Burmese War broke out over territorial disputes in Northeastern India. Initially Burmese familiarity with the terrain, having conquered Assam only 10 years before, provided enormous success in India. However, the British surprised the Burmese by attacking Yangon directly by the navy, easily taking the city as the alarmed Burmese retreated entirely from India. After a long gruelling war, the Burmese army came to peace terms with the British in the Treaty of Yadanabo, ceding Northeastern India, Arakan, Yangon and Taninthari. The Burmese Empire ceased to be any threat to the British, became steeped in debt and had its martial pride destroyed. After two more wars, the entirety of Burma was annexed into the British Raj in 1885.\nAlthough the British had annexed all of Burma by the start of 1886, the unceremonial removal of the royal family and general dissatisfaction generated widespread revolts and fighting that the British were unable to quell effectively for another decade. Burma was relegated to a province of British India and many of the outer peoples in Burma faced even worse oppression as the British fully ended any ethnic self-rule. The British separated state and monastery, causing severe disruptions in Burmese society. The British encouraged secular schooling and English to discourage a sense of cultural unity that wasn't British.\nThe biggest actors representing the Burmese in the first parts of British colonialism was the YMBA and Burmese who went to England to be educated in universities. The YMBA propagated and served as the remnants of the theocratic institutions of the Konbaung while the university Burmese pushed for reforms and greater Burmese representation in British India. The first strikes broke out in 1920 against the British tertiary education system. Many monks later lead protests and hunger strikes in the late 1920s, with some inspiring armed revolt in Arakan and the first martyr for Burmese independence: U Wisara. In 1930, Saya San led the Galon Revolution that became regional and then national. The insurgency was put down after 2 years of guerrilla fighting. The trial of Saya San, who was executed, spurred political activism. Aung San would become involved when he and other students refused to oust the author of anonymous articles in his magazine. In 1936, the Dobama association was formed with the intention of returning Burma to its true masters: the Bamar. In 1937, the British granted Burma its own assembly, government and separation from British India, but this did little to quell the revolutionary sentiments. The year 1938 was the year 1300 in the Burmese calendar and saw the 1300 Revolution, lead by students. They successfully managed to attack and penetrate the Secretariat, the seat of British government. However several people were killed after fighting broke out in Yangon.",
+      "title": "Background"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"If it is no trouble, I'd like to have roti with garden peas.\"",
+    "blessing": "Bogyokegyi Aung San! We salute you for your resolve in 1300, your courage in the war and your cunning in turning on the Japanese. Burma is a long proud nation that the wicked British relegated to a minor province from which you fought to return it to its former martial glory. You fought righteously valuing every member of your small army, training civilians into elite forces at the battleground and having the moral integrity to switch sides once you learnt of the true intentions of the Japanese. Although you were so suddenly assassinated by U Saw, you brought Burma to its independence and restored the martial pride of the Burmese people.\nGreat Thakin Aung San, your people long for you to return in times of hardship. Burma is once again under the threat of imperial powers. Can you rise up to fight the challenge? Will self-determination prevail once again? Can you build a civilisation that can stand the test of time?",
+    "introduction": "\"Greetings Comrade. Are you a friend or enemy to this great land, Burma?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Yangon",
+        "Mawlamyine",
+        "Bago",
+        "Pathein",
+        "Mandalay",
+        "Taungoo",
+        "Maymyo",
+        "Taunggyi",
+        "Meiktila",
+        "Yenangyaung",
+        "Kawkareik",
+        "Lashio",
+        "Magway",
+        "Phyu",
+        "Pyay",
+        "Oktwin",
+        "Kyaing Toan",
+        "Loikaw",
+        "Myitkyina",
+        "Indaw",
+        "Shwetaung",
+        "Sittwe",
+        "Banmaw",
+        "Hpa-An",
+        "Bagan",
+        "Pakokku",
+        "Kyaikthto",
+        "Kyaukgyi",
+        "Myaungmya",
+        "Kalaw",
+        "Taungdwingyi",
+        "Hlegu",
+        "Thaton",
+        "Dawei",
+        "Thone Gwa",
+        "Hinthada",
+        "Nyaung Shwe",
+        "Letpadan",
+        "Kyaik Don",
+        "Sakan Gyi",
+        "Bilin"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Chit",
+        "Hla",
+        "Khin",
+        "Kyi",
+        "Suu",
+        "San",
+        "Lin",
+        "Soe",
+        "Than",
+        "Myint"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "Mandala Cultures",
+    "Burma",
+    "All Civilizations",
+    "EmeraldRange",
+    "Civilizations with Male leaders",
+    "Great People Civilizations"
+  ],
+  "modSupport": {
+    "aa": true,
+    "uci": true,
+    "eandd": true,
+    "piety": true,
+    "culdiv": true,
+    "traits": false,
+    "ynaemp": false,
+    "slavery": false,
+    "maplabels": false,
+    "civivtraits": false,
+    "ethnicunits": false,
+    "mercenaries": false,
+    "histreligions": true,
+    "enlightenmentera": true,
+    "claimscoloniescrimes": true
+  },
+  "collections": [],
+  "navTemplate": "EmeraldNav",
+  "presentation": {
+    "colors": {
+      "icon": "#570F19",
+      "background": "#526a3e"
+    },
+    "mapImage": "ERBurmaMap.png.png",
+    "iconImage": "SBurma_Icon.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ERBurmaMap.png.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/SBurma_Icon.png",
+    "mapImageCaption": "Map by EmeraldRange",
+    "leaderSceneImage": "Aung_San_Leaderscreen.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Aung_San_Leaderscreen.png",
+    "leaderSceneArtCredit": "Art by EmeraldRange"
+  },
+  "templateRefs": []
+}

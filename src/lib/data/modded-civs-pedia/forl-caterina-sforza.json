@@ -1,0 +1,242 @@
+{
+  "id": "civ-forl-caterina-sforza",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-05-03T01:54:49.446Z",
+    "updatedAt": "2026-05-03T01:54:49.449Z",
+    "createdByName": "Senshi",
+    "formatVersion": 1,
+    "updatedByName": "Senshi",
+    "unresolvedTemplates": [
+      "SenshiNav"
+    ]
+  },
+  "slug": "forl-caterina-sforza",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    }
+  },
+  "title": "Forlì",
+  "issues": [
+    "Unresolved templates: SenshiNav"
+  ],
+  "leader": "Caterina Sforza",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "27 April 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3715287855",
+    "modFolderName": "",
+    "wikiPageTitle": "Forlì",
+    "directDownload": ""
+  },
+  "authors": [
+    "Senshi"
+  ],
+  "credits": [
+    {
+      "name": "Senshi",
+      "role": "Design, Code, Art (Map), Text, Additonal"
+    },
+    {
+      "name": "Chrisy15",
+      "role": "Lua"
+    },
+    {
+      "name": "Lasqueto",
+      "role": "Art (Civ Icon, Leaderscene and Icon, Black Band Icon, Alchemical Lab Icon)"
+    },
+    {
+      "name": "Orangechrisy",
+      "role": "Art (Map)"
+    },
+    {
+      "name": "Zharques",
+      "role": "Pedias"
+    }
+  ],
+  "summary": "Forlì led by Caterina Sforza is a custom civilization by Senshi, with contributions from Chrisy15, Lasqueto, Orangechrisy and Zharques.",
+  "uniques": [
+    {
+      "art": "CaterinaSforzaIcon.png",
+      "body": "Upon earning a Great General, gain another Great Person of your choice.",
+      "name": "Tiger of Romagna",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CaterinaSforzaIcon.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by Lasqueto",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "BlackBandIcon.png",
+      "body": "",
+      "name": "Black Band",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/BlackBandIcon.png",
+      "bullets": [
+        "Classed as a Gun unit, upgrades to Rifleman.",
+        "+50% {{Strength Icon}} Combat Strength (24 vs 16).",
+        "Begins with the Great Generals II Promotion.",
+        "No combat bonus vs mounted Units.",
+        "May be purchased without the Mercenary Army policy after researching Gunpowder."
+      ],
+      "replaces": "Landsknecht",
+      "artCredit": "Art by Lasqueto",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "AlchemicalGardenIcon.png",
+      "body": "",
+      "name": "Alchemical Garden",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/AlchemicalGardenIcon.png",
+      "bullets": [
+        "Unlocked at Chemistry.",
+        "Requires an Aqueduct instead of a Hospital.",
+        "56% {{Production Icon}} Production Cost (220 vs 500).",
+        "Whenever this city generates a Great Person, all Great Person improvements within its borders are converted to that Great Person's improvement."
+      ],
+      "replaces": "Medical Lab",
+      "artCredit": "Art by Lasqueto",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Avoid Tundra",
+    "capital": "Forlì",
+    "culture": "Southern",
+    "religion": [
+      "Catholicism"
+    ],
+    "adjectives": "Forlivese",
+    "empireName": "County of Forlì",
+    "government": [
+      "Principality"
+    ],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Caterina_Sforza",
+      "body": "Caterina Sforza was an Italian noblewoman who ruled as Countess of Forlì and Lady of Imola, initially alongside her husband Girolamo Riario, and later as regent for their son, Ottaviano Riario. A descendant of a dynasty of prominent condottieri, Caterina Sforza distinguished herself from an early age through bold and impetuous actions aimed at safeguarding her possessions from usurpers and defending her dominions amid political intrigues. Her fearless and assertive character earned her the nickname La Tigre. In her private life, Caterina was devoted to various activities, including experiments in alchemy and a love of hunting, dancing, and horse riding. She was educated and engaged in religious rituals and matters, commissioned works of art, stood as a fashion icon, and was a collector of many jewels and clothing. In addition, she undertook urban, residential, and military architectural projects.",
+      "title": "Caterina Sforza"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Forl%C3%AC",
+      "body": "Forlì is a city in Northern Italy, which was a free commune and important Ghibelline stronghold during the struggle between the Papacy and the Empire. Between the thirteenth and sixteenth centuries it was held on-and-off by the Ordelaffi family, before being given to Girolamo Riario, the husband of Caterina Sforza. After the death of Girolamo, Caterina held it as regent for her eldest son Ottaviano, before its capture by Cesare Borgia and integration into the Papal States.",
+      "title": "Forlì"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "Bastard! You think because you have stormed my castle that you have power over me? I will die before I submit to you!",
+    "blessing": "\"Be ever bold, indomitable Caterina Sforza, Countess of Forlì and Lady of Imola! A daughter of the mighty Sforza family, you came to Forlì as its Countess through your marriage to Girolamo Riario. When your husband was killed by rival families who plotted to take the city for themselves, you fiercely resisted their unjust usurpation, tricking your enemies and cowing them into submission despite them holding each of your children hostage! After defeating these conspirators, you governed Forlì as regent for your young son, ruling justly for your subjects and ruthlessly for your enemies, and safeguarding your realm against all who would try to seize it. You also contributed much to the sciences, personally performing countless experiments in the overlapping fields of alchemy, fashion, and medicine. Your strength and ferocity earned you the nickname The Tiger, feared and admired across all of Italy!\nOh Caterina, your reign ended far too soon, as your cities were coerced and conquered by the machinations of the infamous Borgias. But the people of Forlì long for their tiger to roar once more! Will you once more rule with fierce independence, cunning ruthless, and legendary tenacity? Will you build a civilization to stand the test of time?\"",
+    "introduction": "I am Caterina Sforza, the indomitable Tiger of Forlì. I give the world to my friends, and leave no mercy for my enemies. Which are you? Make up your mind."
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Forlì",
+        "Imola",
+        "Dozza",
+        "Forlimpopoli",
+        "Castrocaro Terme",
+        "Riolo Terme",
+        "Bagnara di Romagna",
+        "Castel Bolognese",
+        "Casalfiumanese",
+        "Casola Valsenio",
+        "Mordano",
+        "Fornò",
+        "Castiglione",
+        "Bubano",
+        "Coriano",
+        "Toscanella",
+        "Tossignano",
+        "Pieve Acquedotto",
+        "Bagnolo",
+        "Branzolino",
+        "Barisano",
+        "Poggio",
+        "Roncadello",
+        "Casemurate",
+        "Ravaldino",
+        "Malmissole",
+        "Grisignano",
+        "Villafranca",
+        "Monte Poggiolo"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Girolamo",
+        "Giacomo",
+        "Giovanni",
+        "Polidoro",
+        "Achille",
+        "Francesco",
+        "Ottaviano",
+        "Bartolomeo",
+        "Bianca",
+        "Ludovico"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Senshidenshi",
+    "Civilizations with Female leaders",
+    "Italy",
+    "Southern Cultures"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": false,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "ynaemp": true,
+    "maplabels": false,
+    "civivtraits": false,
+    "ethnicunits": false,
+    "histreligions": true,
+    "enlightenmentera": false
+  },
+  "collections": [],
+  "navTemplate": "SenshiNav",
+  "presentation": {
+    "colors": {
+      "icon": "#210620",
+      "background": "#EAC177"
+    },
+    "mapImage": "ForliMap412.png",
+    "iconImage": "ForliIcon.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ForliMap412.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ForliIcon.png",
+    "mapImageCaption": "Map by Orangechrisy",
+    "leaderSceneImage": "CaterinaSforzaLS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CaterinaSforzaLS.png",
+    "leaderSceneArtCredit": "Art by Lasqueto"
+  },
+  "templateRefs": []
+}

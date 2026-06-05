@@ -1,0 +1,273 @@
+{
+  "id": "civ-kampuchea-pol-pot",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-05-03T02:21:27.597Z",
+    "updatedAt": "2026-05-03T02:24:36.543Z",
+    "createdByName": "EmeraldRange",
+    "formatVersion": 1,
+    "updatedByName": "EmeraldRange",
+    "cloudCreatedByEmail": "emerald.range2964@gmail.com",
+    "cloudUpdatedByEmail": "emerald.range2964@gmail.com",
+    "unresolvedTemplates": [
+      "EmeraldNav"
+    ]
+  },
+  "slug": "kampuchea-pol-pot",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "Execution",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "Blood Sucking + Evacuation",
+      "credit": ""
+    }
+  },
+  "title": "Kampuchea",
+  "issues": [
+    "Unresolved templates: EmeraldNav"
+  ],
+  "leader": "Pol Pot",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "31 October 2025",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3597141719",
+    "modFolderName": "",
+    "wikiPageTitle": "Kampuchea",
+    "directDownload": ""
+  },
+  "authors": [],
+  "credits": [
+    {
+      "name": "EmeraldRange",
+      "role": "Design, Code, Text"
+    },
+    {
+      "name": "Orangechrisy",
+      "role": "Lua"
+    },
+    {
+      "name": "RawSasquatch",
+      "role": "Leaderscene, Leader UU, UB Icons"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Civ Icon"
+    },
+    {
+      "name": "Chrisy15",
+      "role": "Design"
+    },
+    {
+      "name": "danrell",
+      "role": "UU model"
+    }
+  ],
+  "summary": "Kampuchea led by Pol Pot is a custom civilisation mod by EmeraldRange, with contributions from RawSasquatch, Orangechrisy, Chrisy15, DarthKyofu and danrell.",
+  "uniques": [
+    {
+      "art": "PolPotLIcon.png",
+      "body": "May sacrifice Specialists to provide that specialist's yield and corresponding {{Great Person Icon}} Great People points to that city's Farms for 10 turns. 10% {{Production Icon}} Production malus in Cities with specialists.",
+      "name": "Year Zero",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PolPotLIcon.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by RawSasquatch",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "KampucheaUU.png",
+      "body": "",
+      "name": "Khmer Rouge",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/KampucheaUU.png",
+      "bullets": [
+        "If starting on a Farm, will receive the total yields of that Farm as {{Strength Icon}} Combat Strength for that turn."
+      ],
+      "replaces": "Rifleman",
+      "artCredit": "Art by RawSasquatch",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "KampucheaUB.png",
+      "body": "(Standalone)",
+      "name": "Collecitvisation Project",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/KampucheaUB.png",
+      "bullets": [
+        "Unlocked at Economics.",
+        "May be built ten times, but each time it's built that city gets a -8% {{Production Icon}} Building Production malus.",
+        "Provides corresponding yields and {{Great Person Icon}} GPP of all unworked specialist slots in the city while the project is being built.",
+        "Deletes all buildings with specialist slots and provides a burst of {{Culture Icon}} Culture upon being built."
+      ],
+      "replaces": "",
+      "artCredit": "Art by RawSasquatch",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Jungle",
+    "capital": "Phnom Penh",
+    "culture": "Mandala",
+    "religion": [
+      "Buddhism",
+      "Theravada (HR)"
+    ],
+    "adjectives": "",
+    "empireName": "",
+    "government": [],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Saloth Sar was born in the village of Prek Sbauv, outside the city of Kampong Thom on 25 May 1928. His father was half Chinese and half Khmer, owning 22 acres of rice land and the largest house in the village. His mother, Sok Nem, was a pious Buddhist who raised six children and travelled often to the monastery in Kampong Thom. His cousin Meak was one of the wives of King Sisowath and a ballet teacher. Meak informally adopted him and his older brother, having them move to Phnom Penh. Being from a relatively prosperous family, he was sent to be educated at the Roman Catholic primary school, funded by Meak. He learnt French but struggled in school being held back two years. Still, he completed his primary schooling in 1943. He also often visited the king's palace and had his first relations with some of the king's concubines.\nHe enjoyed a privileged position in Cambodian society, learning violin, football and basketball and meeting many friends who would later serve in his government in a theatre troupe. He could not immediately go to college, but WW2 interrupted any plans for education anyways. In 1949, he gained a scholarship to study engineering and made his way to Paris as part of a tiny elite of Cambodians reaching tertiary education. He met more friends there that would serve in his regime. In Paris, he and Iang Sary established a Marxist circle, growing in his leftist beliefs after the Chinese Communist Party won the Chinese civil war. Saar found Marx's texts difficult and didn't understand them but found Stalin's works quite interesting. After failing his exams twice in a row, he conveniently volunteered to return to Cambodia to determine which anti-monarchist group the Circle should support.\nIf the early biography of Saloth Sar seems unrelated, it is because his upbringing seems almost designed to be hypocritical to the man that he became. Saloth Sar, arriving in Cambodia worked with the Viet Minh and was tasked with growing cassava. As the First Indochinese war waged on, he slowly rose to become an aide to the secretary of the Khmer Viet Minh's Eastern Zone. In 1954, when the war ended and Sihanouk reached an agreement with North Vietnam, Saloth Sar chose to remain in Cambodia rather than retreat into Vietnam with his comrades. Saloth Sar returned to Phnom Penh, deciding to pursue their aims electorally. But without proper elections as promised, he turned to teach history at a private school. Slowly the North Vietnamese influence declined and, after riots in 1962, King Sihanouk dismissed the government and asked Sar and 33 other leftists to establish a government. Instead, Sar left for a Viet Cong encampment and became a \"full-time revolutionary\". He spent the next six years plotting rebellion, going to Hanoi, Beijing and working with many others to try and garner support. The movement was renamed the Communist Party of Kampuchea and King Sihanouk designated them as the Khmer Rouge.\nIn 1970, while after Lon Nol's coup, China urged Sar to form an alliance with Sihanouk- for which he agreed. This massively grew the numbers for the Khmer Rouge with many being peasants fighting for the king, not for communism, for which they had little understanding. He stressed wanting weapons from Hanoi and no troops. Still because of the Second Indochina War, Vietnam invaded Cambodia anyways. Sar returned to Cambodia and began to refer to himself as Pol Pot. Most of the control had been gained by the North Vietnamese, who merely handed the control over to Pol Pot.\nPol Pot began to prune the Khmer Rouge, promoting those he considered poor peasants. Ironically, the highest leadership positions remained among his initial circle of friends whether it be from the private royal circle of his youth or his university friends from Paris. During the next three years, Pol Pot worked to garner support from the rural residents of the areas he controlled, being largely successful. Though even then he was already executing a couple opponents to his regime and forcing people to dress in the black uniforms with red scarves of the peasants. He collectivised the villages and gained a strong control over the food supply and started to assault Phnom Penh. He was largely unsuccessful until 1974 when Lon Nol lost a lot of domestic and international support. The troops defending Phnom Penh surrendered, and the Khmer Rouge entered immediately executing up to 800 government, military and police personnel.",
+      "title": ""
+    },
+    "civilization": {
+      "url": "",
+      "body": "Democratic Kampuchea was the official name of the Cambodian state from 1976 to 1979, under the leadership of Pol Pot and the Communist Party of Kampuchea- better known as the Khmer Rouge. Kampuchea saw extreme societal \"reform\" as the Khmer Rouge forcibly deurbanised the country, sent people to labour and death camps and perpetrated the largest genocide measured by percentage of the population killed- a quarter of the country, about 2 million people, in just under four years.\nMost Cambodians are descendants of the Khmers, who in the 6th century established the Indian-influenced Angkor Empire, and for the next 900 years ruled the area of present-day Cambodia and a large terrorital state using the city of Angkor as its capital. After the Thai migrations of the 14th century following the Mongol conquests, the empire began to decline By the 17th century, Vietnam would conquer the Mekong Delta on a slow \"Southward March\", leaving the Khmer state small and dominated by its neighbours.\nKing Ang Duong and Norodom Prohmbarirak officially became a French protectorate on 11 August 1863. The French, joining Cambodia to Laos and Vietnam to form French Indochina, ruled the protectorate until the end of World War II and meddled with royal succession elevating an obscure 18 year old named Norodom Sihanouk in 1941.\nDuring World War II, the Axis powers occupied Cambodia with Japanese authorities allowing Vichy French to remain ruling Cambodia. Towards the end of the war, however, the Japanese declared a new Kingdom of Kampuchea under Sihanouk. This made the situation after Japan's defeat complicated as the Free French were determined to recover Indochina but were facing a measure of genuine self-government. This coincided with the First Indochinese War where the communist Viet Minh continued warfare in Vietnam as the French attempted to retake North Veitnam ultimately failing and ending the war at the 1954 NATO-backed peace conference., Accordingly in 1953, a partial agreement was reached upon which Sihanouk declared that independence had been achieved, prompting the communist Viet Minh to withdraw from Cambodia.\nSoon after, the second Indochinese War broke out with the Vietnamese forces with the United States remaining worried about the expansion of communism after the French loss. The US engaged in a drawn-out proxy war against the North- which was supported by China and the Soviet Union. The United States would heavily bomb Laos and Cambodia during this period to stop the Ho Chi Minh Trail. The trail also supported Cambodian communist forces, called the Khmer Rouge, creating a stronghold in northeast Cambodia. The Cambodian Civil War broke out in 1967 primarily triggered by growing dissent from the middle class and left, especially after the 1967 election of General Lon Nol and his right-wing government. At the same time, King Sihanouk remained neutral in ways frustrating to both sides- disallowing American use of his airspace while also clamping down on communist insurgency. While he was on a visit to Beijing, Lon Nol launched a coup in 1970, establishing the Khmer Republic aligning itself more strongly with the US. This aggravated the North Vietnamese who renewed efforts in Cambodia, giving territories over to the Khmer Rouge. Though, by 1973, two leaders had emerged within the Khmer Rouge- Iang Sery and Pol Pot- who began internal purges against Vietnamese-trained communists. With the overwhelming military failure of the Khmer Republic and the looming American loss in Vietnam, these purges allowed the Khmer Rouge to become an independent and dominant force. In 1975, in the same year that Vietnam conquered Saigon and ended the Second Indochinese War, the Khmer Rouge launched a sustained offensive capturing Phnom Penh and collapsing the Khmer Republic.",
+      "title": ""
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"I did not join the resistance movement to kill people, to kill the nation. Look at me now. Am I a savage person? My conscience is clear, only you are the savage.\"",
+    "blessing": "Everything must be destroyed and made anew. You were born Saloth Sâr, now you are Pol Pot. The nation was Cambodia, now it is Kampuchea. You fought against the state, now you rule with an iron fist. Within four years, you killed over 1.5 million people, 25% of Cambodia's population, to pursue an agrarian society you hoped would evolve into a communist one. You marched intellectuals, ethnic minorities, urban labourers onto camps and farms, and buried them in the Killing Fields. All cultures to be destroyed. All to achieve \"complete egalitarianism\". All to wear the same black garment.\nOh Pol Pot, you are a stain on humanity. But as with all dictators, some still yearn for your return, supporters still cling to your ideology. Will there be another Year Zero? Can you remake civilization from standing the test of time?",
+    "introduction": "\"I'm quite modest. I don't want to tell people I'm a leader. Are you very hungry? The Angkar will take ensure you are stuffed with food.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Phnom  Penh",
+        "Siem Reap",
+        "Battambang",
+        "Kampong Som",
+        "Kratie",
+        "Stung Treng",
+        "Sisophon",
+        "Ban Lung",
+        "Kampong Chnang",
+        "Preah Vihear",
+        "Kampong Cham",
+        "Takeo",
+        "Saen Monourom",
+        "Koh Kong",
+        "Kompong Thom",
+        "Prey Veng",
+        "Neak Luong",
+        "Pursat",
+        "Svay Rieng",
+        "Choeung Ek",
+        "Kampot",
+        "Tbeng Meanchey",
+        "Poipet",
+        "Tuol Sleng",
+        "Baray",
+        "Prey Ta Tauch",
+        "Chamkar Khnao",
+        "Wat Samrong Knong",
+        "Chamkar Leu",
+        "Kok Pring",
+        "Thpong",
+        "Lvea Em",
+        "Peam Chor",
+        "Kra Lanh",
+        "Anlong Veng",
+        "Malai",
+        "Pailin",
+        "Bokor Hill"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Sary",
+        "Nuon",
+        "Samphan",
+        "Duch",
+        "Henry",
+        "Thirith",
+        "Pinnary",
+        "At",
+        "Chaem",
+        "Kin"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "EmeraldRange",
+    "Mandala Cultures",
+    "Khmer",
+    "Civilizations with Male leaders",
+    "Dark Days"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": true,
+    "exce": true,
+    "wftw": false,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "traits": false,
+    "ynaemp": true,
+    "slavery": false,
+    "maplabels": true,
+    "civivtraits": true,
+    "ethnicunits": true,
+    "mercenaries": true,
+    "sovereignty": true,
+    "histreligions": true,
+    "enlightenmentera": false,
+    "claimscoloniescrimes": true
+  },
+  "collections": [
+    {
+      "id": "dark-days",
+      "blurb": "",
+      "links": [],
+      "title": "Dark Days Collection",
+      "colors": {
+        "accent": "#f26707",
+        "background": "#470202"
+      },
+      "aliases": [],
+      "members": [],
+      "imageURL": "",
+      "sourceTemplate": "DarkDaysNav"
+    }
+  ],
+  "navTemplate": "DarkDaysNav",
+  "presentation": {
+    "colors": {
+      "icon": "#e8960f",
+      "background": "#620308"
+    },
+    "mapImage": "PolPotMap.png",
+    "iconImage": "Kampuchea.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PolPotMap.png",
+    "iconImageUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/d/d7/Kampuchea.png/revision/latest?cb=20251101015708",
+    "mapImageCaption": "Map by RawSasquatch",
+    "leaderSceneImage": "PolPotLS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PolPotLS.png",
+    "leaderSceneArtCredit": "Leaderscreen by RawSasquatch"
+  },
+  "templateRefs": []
+}

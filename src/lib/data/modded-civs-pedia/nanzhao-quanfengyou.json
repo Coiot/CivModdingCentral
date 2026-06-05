@@ -1,0 +1,248 @@
+{
+  "id": "civ-nanzhao-quanfengyou",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-04-16T00:07:39.548Z",
+    "updatedAt": "2026-05-03T02:39:14.424Z",
+    "createdByName": "EmeraldRange",
+    "formatVersion": 1,
+    "updatedByName": "EmeraldRange",
+    "cloudCreatedByEmail": "emerald.range2964@gmail.com",
+    "cloudUpdatedByEmail": "emerald.range2964@gmail.com",
+    "unresolvedTemplates": [
+      "EmeraldNav"
+    ]
+  },
+  "slug": "nanzhao-quanfengyou",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    }
+  },
+  "title": "Nanzhao",
+  "issues": [
+    "Unresolved templates: EmeraldNav"
+  ],
+  "leader": "Quanfengyou",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "16 April 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3707613739",
+    "modFolderName": "",
+    "wikiPageTitle": "Nanzhao",
+    "directDownload": ""
+  },
+  "authors": [],
+  "credits": [
+    {
+      "name": "EmeraldRange",
+      "role": "Design, Code, Art"
+    },
+    {
+      "name": "Francesca",
+      "role": "Map"
+    },
+    {
+      "name": "Tradboy",
+      "role": "UB Icon"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "UB Icon"
+    },
+    {
+      "name": "bernie14",
+      "role": "UU Model"
+    }
+  ],
+  "summary": "",
+  "uniques": [
+    {
+      "art": "LeaderIcon darth.png",
+      "body": "Units ignore terrain costs when starting next to a river. Melee attacks on flatland cities yield {{Gold Icon}} Gold and have a chance to siphon population.",
+      "name": "Headwaters of Zomia",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LeaderIcon%20darth.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by EmeraldRange",
+      "footnotes": [
+        "Bryson M. Goddess on the Frontier: Religion, Ethnicity, and Gender in Southwest China. Stanford University, 2017."
+      ],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "NanzhaoUU.png",
+      "body": "",
+      "name": "Lifeless White-shirt",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/NanzhaoUU.png",
+      "bullets": [
+        "+50% {{Strength Icon}} Combat Strength against cities.",
+        "Adjacent enemy hill tiles have a chance to spawn another Lifeless White-shirts unit depending on enemy {{Unhappiness Icon}} happiness."
+      ],
+      "replaces": "Spearman",
+      "artCredit": "Art by EmeraldRange",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "Nazhao UBn.png",
+      "body": "",
+      "name": "Wudao",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Nazhao%20UBn.png",
+      "bullets": [
+        "Requires Freshwater.",
+        "Each land {{Trade Route Icon}} trade route to or from conquered cities provides +4 {{Gold Icon}} Gold and +2 {{Happiness Icon}} Global Happiness.",
+        "+50HP",
+        "+1 {{Science Icon}} Science from Cultural specialists."
+      ],
+      "replaces": "Caravansary",
+      "artCredit": "Art by Tradboy and DarthKyofu",
+      "footnotes": [
+        "Daniels C. Nanzhao as a Southeast Asian kingdom, c.738–902. Journal of Southeast Asian Studies. 2021;52(2):188-213. doi:10.1017/S0022463421000424"
+      ],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Hills",
+    "capital": "Yangjumie",
+    "culture": "Far Eastern",
+    "religion": [
+      "Buddhism",
+      "Vajrayana (HR)"
+    ],
+    "adjectives": "Nanzhao",
+    "empireName": "Nanzhao Empire",
+    "government": [
+      "Monarchy"
+    ],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": "Chinese"
+  },
+  "overview": {
+    "leader": {
+      "url": "https://zh.wikipedia.org/wiki/%E5%8A%9D%E4%B8%B0%E7%A5%90",
+      "body": "Quanfengyou was born as one of the younger sons of Xungequan, the fourth king of Nanzhao. By the time of Xungequan's reign, Nanzhao had been heavily looking to expand into Southeast Asia down the river valleys and building up its presence in relation to the Tang. Xungequan had taken the title Piaoxin, ruler of the Pyu, to indicate his suzerainty over the Pyu city-states of the Irrawaddy valley. In Nanzhao tradition, Quanfengyou's first syllable was named after the last syllable of his father. Like many other aristocratic sons of the time, he was sent to the Tang capital of Chang'an to be educated as part of Nanzhao's view of itself as a Sinitic civilising force at the edge of civilisation.\nQuanfengyou then consolidated the area near Nanzhao conquering Kunlun to its east and Nuwang to its south. Soon after though, he set his sights south and attacked the Pyu city state of Halin, destroying the city in 832. He returned again in 835, raiding Halin to take back 3000 civilians to resettle in Tuodong back in the core.\nFortified settlements and trade posts in the Upper Irrawaddy were already a large part of the Nanzhao Kingdom’s strategic and economic presence. In 849, Nanzhao established just another fortified settlement at the confluence of the Irrawaddy and the Chindwin. One of the ethnic groups that Nanzhao employed in their army were called the Mranma. To prevent the Pyu from re-asserting themselves, they were settled near this settlement. A certain Mranma archer called Pyusawhti ruled a small polity in the area that would later become the Bagan Empire and the Burmese nation.\nAfter its consolidation in its southwest, Nanzhao turned its attention to Annam in its southeast. Quanfengyou sent a raid into Annam which was also a Tang tributary. Despite this, Quanfengyou attempted to keep relations good with the Tang. However, when the Tang refused to accept a Nanzhao gift of a rhinoceros in 854, relations soured. Quanfengyou had also named his song Shilong, which were taboo to the memory of Tang emperors Shimin and Longji. Tang writers even referred to Shilong as Qiulong. This was slightly ironic as by this time, Quanfengyou called himself Fengyou and named his song Shilong in adherence to the Chinese two-syllable naming system.",
+      "title": "Quanfengyou"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Nanzhao",
+      "body": "Nanzhao was a medieval kingdom in what is now Yunnan Province, southwestern China. Yunnan is a mountainous inland region with the Himalayas and high elevations in the northwest slowly descending to mid elevations in the east. There are six major river systems that flow through the area: the Yangtze River flowing to Shanghai, the Pearl River going to Hong Kong, the Mekong flowing to Cambodia, the Red River flowing to Hanoi, the Salween flowing to the Shan states and the Irrawaddy flowing to Yangon. The region also has several major freshwater lakes. Lake Dian forms the main lake for the modern Yunnanese capital of Kunming, and in Nanzhao’s time the more northwesterly Erhai Lake was the main lake around which the Dali old city formed.\nIn 649, the chief of the Mengshe tribe, Xinuluo, founded a state called the Great Meng and declared himself king, while acknowledging the Tang dynasty’s suzerainty over him. In 652, he peacefully annexed the lands of the Baiman state of Zhang, defeating its chief Lejinqiu and taking control of the Erhai Lake area. Both Wuman and Baiman were incorporated into this state with Wuman as warriors and Baiman as ministers. Xinuluo sent his son to Chang’an to seek approval from the Tang emperor, who sent back an official title and troops to defeat rebellious tribes and enhanced Xinuluo’s position. But in 704, the Tibetan Empire successfully subjugated the Wuman and turned the Baiman into its tributaries. Xinuluo’s son established a walled city at Yongchang and continued currying favour with Tang.",
+      "title": "Nanzhao"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"So, another hand takes what was secured at great cost. You are a miserable barbarian, indeed.\"",
+    "blessing": "O mighty Quanfengyou, King of Mashynzy and Lord of Dian, you brought the teachings of the Tang court to become master over the southwestern barbarians with walled trade circuits. From the throne at the edge of civilisation, your decisive authority won the loyalty of your people. Seizing opportunity, you even sent your armies to attack Chengdu and masterfully outmanoeuvred China, taking their riches while still enjoying their patronage.\nYet the core lands of Nanzhao have slipped back into the hands of the Chinese Emperor. The barbarians now call themselves emperors too. Will you strike again where others hesitate? Will you once more drive armies across rivers and mountains? Can you descend down and build a civilisation that can stand the test of time?",
+    "introduction": "\"An arrival at my borders? Whether you remain in Nanzhao, depends on if you remain civilised enough.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Yangjumie",
+        "Yongchang",
+        "Tuodong",
+        "Guangdang",
+        "Yinsheng",
+        "Jianchuan",
+        "Taihe",
+        "Tonghai",
+        "Nongdong",
+        "Lishui",
+        "Huichuan",
+        "Tuonan",
+        "Tengchong",
+        "Shanchan",
+        "Yueli",
+        "Fengyi",
+        "Jinbao",
+        "Wumeng",
+        "Cangwang",
+        "Lianxun",
+        "Weiyuan",
+        "Kainan",
+        "Changbang",
+        "Anxi",
+        "Lirun",
+        "Yongbei",
+        "Liuzhuihe",
+        "Mangnai",
+        "Jinsheng",
+        "Moling",
+        "Shenlong",
+        "Yangzong",
+        "Muze",
+        "Bagan",
+        "Zhugeliang"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Yimouxun",
+        "Quanlisheng",
+        "Piluoge",
+        "Xinuluo",
+        "Xungequan",
+        "Shayi",
+        "Sunli",
+        "Anhua",
+        "Yueying",
+        "Cishan"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [],
+  "modSupport": {
+    "aa": false,
+    "uci": true,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "traits": false,
+    "ynaemp": true,
+    "slavery": false,
+    "maplabels": true,
+    "civivtraits": true,
+    "ethnicunits": true,
+    "mercenaries": false,
+    "histreligions": true,
+    "enlightenmentera": true,
+    "claimscoloniescrimes": false
+  },
+  "collections": [],
+  "navTemplate": "EmeraldNav",
+  "presentation": {
+    "colors": {
+      "icon": "#fb7b92",
+      "background": "#291c21"
+    },
+    "mapImage": "Nanzhaomap.png",
+    "iconImage": "Nanzhao.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Nanzhaomap.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Nanzhao.png",
+    "mapImageCaption": "Map by Francesca",
+    "leaderSceneImage": "NanzhaoLS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/NanzhaoLS.png",
+    "leaderSceneArtCredit": "Art by EmeraldRange"
+  },
+  "templateRefs": []
+}

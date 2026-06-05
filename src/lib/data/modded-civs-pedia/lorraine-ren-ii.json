@@ -1,0 +1,249 @@
+{
+  "id": "civ-lorraine-ren-ii",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-05-03T01:57:08.509Z",
+    "updatedAt": "2026-05-03T01:57:08.513Z",
+    "createdByName": "Senshi",
+    "formatVersion": 1,
+    "updatedByName": "Senshi",
+    "unresolvedTemplates": [
+      "SenshiNav"
+    ]
+  },
+  "slug": "lorraine-ren-ii",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    }
+  },
+  "title": "Lorraine",
+  "issues": [
+    "Unresolved templates: SenshiNav"
+  ],
+  "leader": "René II",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "17 April 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3708447554",
+    "modFolderName": "",
+    "wikiPageTitle": "Lorraine",
+    "directDownload": ""
+  },
+  "authors": [
+    "Senshi"
+  ],
+  "credits": [
+    {
+      "name": "Senshi",
+      "role": "Concept, Design, Code, Pedias (Rene II, Coutilier, Lothringerhaus)"
+    },
+    {
+      "name": "Francesca",
+      "role": "Concept, Design, Art (Leaderscene, Map)"
+    },
+    {
+      "name": "TopHatPaladin",
+      "role": "Lua"
+    },
+    {
+      "name": "Coiot",
+      "role": "Lua"
+    },
+    {
+      "name": "Lasqueto",
+      "role": "Art (Coutilier Icon, Lothringerhaus Icon, Coutilier Model Reskin)"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art (Civ Icon and Alpha, Leader Icon)"
+    },
+    {
+      "name": "Zharques",
+      "role": "Pedias (Lorraine, read it)"
+    }
+  ],
+  "summary": "Lorraine led by René II is a custom civilization by Senshi, with contributions from Francesca, TopHatPaladin, Coiot, Lasqueto, DarthKyofu and Zharques.",
+  "uniques": [
+    {
+      "art": "ReneIIIcon.png",
+      "body": "Defeating the last enemy unit attacking one of your Cities fills a Great Work slot in that City. Cities automatically construct {{Culture Icon}} Culture Buildings as they Heal.",
+      "name": "Hercules of Our Times",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ReneIIIcon.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "CoutilierIcon.png",
+      "body": "",
+      "name": "Coutilier",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CoutilierIcon.png",
+      "bullets": [
+        "Begins with the Charge Promotion.",
+        "May move after being purchased.",
+        "When purchased or constructed while at War, ignores terrain costs and zone of control for one turn and gains enough movement to reach the nearest wounded enemy Unit."
+      ],
+      "replaces": "Knight",
+      "artCredit": "Art by Lasqueto",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "LothringerhausIcon.png",
+      "body": "",
+      "name": "Lothringerhaus",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LothringerhausIcon.png",
+      "bullets": [
+        "17% Production Cost (50 vs 60).",
+        "No maintenance cost.",
+        "Enemy units in tiles owned by this City provide that tile's yields to the city."
+      ],
+      "replaces": "Granary",
+      "artCredit": "Art by Lasqueto",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Grassland",
+    "capital": "Nancy",
+    "culture": "Western",
+    "religion": [
+      "Catholicism"
+    ],
+    "adjectives": "Lorrainian",
+    "empireName": "Duchy of Lorraine",
+    "government": [
+      "Principality"
+    ],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "René II was Duke of Lorraine from 1473 to 1508, as well as the Duke of Bar from 1483 and the holder of several counties and baronies across France and the western Holy Roman Empire. Known as a patron of the arts and sciences, including receiving dedications from Amerigo Vespucci, René also successfully united the Duchy of Bar and County of Vaudemont to Lorraine, where they would remain until the duchy's annexation centuries later. He is most famous, however, for his involvement in the Burgundian Wars, which saw him successfully resist an invasion by the powerful Burgundian Duke Charles the Bold. With the help of Swiss allies, René would ultimately defeat and kill Charles at the Battle of Nancy in 1477, leading to the dismantling of the Burgundian State.",
+      "title": "René II"
+    },
+    "civilization": {
+      "url": "",
+      "body": "The Duchy of Lorraine, initially also known as the Duchy of Upper Lorraine, was a duchy of the Holy Roman Empire, which existed from the 10th century until 1766, when it was annexed by the Kingdom of France. Founded following the division of the old Stem Duchy of Lotharingia into two separate duchies, Upper Lorraine in time came to be known just as the Duchy of Lorraine. The Duchy of Lorraine was coveted and briefly occupied by the dukes of Burgundy and the kings of France, but was ruled by the dukes of the House of Lorraine after 1473. In 1737, the duchy was given to Stanislaus I, the former monarch of Polish-Lithuanian Commonwealth, who had lost his throne as a result of the War of the Polish Succession, with the understanding that it would fall to the French crown on his death. When Stanislaus died on 23 February 1766, Lorraine was annexed by France and reorganized as the province of Lorraine and Barrois.",
+      "title": "Lorraine"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "You have achieved what the boldest and most powerful men of the age could not. I would be awed, were I not so disgusted.",
+    "blessing": "\"We salute you, René II, most valiant of princes, Hercules of our times, who dared challenge the Lion to combat! You rule as Duke of Lorraine, the heir to the old kingdom of Lotharingia, a land both in France and in the Holy Roman Empire. Your duchy is a bountiful and fertile one, but even more so than that, a fiercely independent one. Lorraine was never conquered, only inherited. And what better symbol of Lorrainian resilience is there than you, great René? As a young duke, your domain was threatened by the powerful and ambitious Charles the Bold of Burgundy, who swept into your proud duchy with a seemingly insurmountable modern army. Unbowed and undeterred, you and your allies struck back against the Burgundians, routing their armies at the gates of Nancy and slaying Lorraine's would-be conqueror! Your heroic deeds will live on forever, in history and in poetry.\nValiant René, the people of Lorraine once more call out for a tenacious hand to see them through the tribulations that lie ahead. Will you once more defend your duchy, and bring it into a new age of prestige and prosperity? Will you build a civilization that can stand the test of time?\"",
+    "introduction": "Well met, stranger! I am René II, and I rule these lands as their Duke. Let it be known that Lorraine has never been conquered, and has resisted foes far more fearsome than it! If you aim to conquer us, your armies will fall like the others. Feel free to try, though. I do enjoy a challenge."
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Nancy",
+        "Metz",
+        "Lunéville",
+        "Bar-le-Duc",
+        "Thionville",
+        "Épinal",
+        "Verdun",
+        "Forbach",
+        "Sarreguemines",
+        "Saint-Dié",
+        "Hayange",
+        "Toul",
+        "Neufchâteau",
+        "Saint-Avold",
+        "Fameck",
+        "Longwy",
+        "Pont-à-Mousson",
+        "Sarrebourg",
+        "Florange",
+        "Villerupt",
+        "Golbey",
+        "Briey",
+        "Gérardmer",
+        "Remiremont",
+        "Commercy",
+        "Rambervillers",
+        "Saint-Mihiel",
+        "Sierck",
+        "Bitche"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Antoine",
+        "Yolande",
+        "Claude",
+        "Jean",
+        "Louis",
+        "Francois",
+        "Pierre",
+        "Nicole",
+        "Mireille",
+        "Jeanne"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Senshidenshi",
+    "Civilizations with Male leaders",
+    "France",
+    "Germany",
+    "Western Cultures",
+    "Lorraine"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": false,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "ynaemp": true,
+    "maplabels": false,
+    "civivtraits": false,
+    "ethnicunits": false,
+    "histreligions": true,
+    "enlightenmentera": false
+  },
+  "collections": [],
+  "navTemplate": "SenshiNav",
+  "presentation": {
+    "colors": {
+      "icon": "#550824",
+      "background": "#DC9C3F"
+    },
+    "mapImage": "LorraineMap412.png",
+    "iconImage": "LorraineIconWiki.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LorraineMap412.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LorraineIconWiki.png",
+    "mapImageCaption": "Map by Francesca",
+    "leaderSceneImage": "ReneIILS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ReneIILS.png",
+    "leaderSceneArtCredit": "Art by Francesca"
+  },
+  "templateRefs": []
+}

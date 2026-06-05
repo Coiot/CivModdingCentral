@@ -961,10 +961,6 @@
 		fill: currentColor;
 	}
 
-	.user-wrap,
-	.help-wrap {
-	}
-
 	.user-trigger {
 		display: inline-flex;
 		justify-content: center;
@@ -1223,7 +1219,7 @@
 				radial-gradient(circle at 100% 0, color-mix(in oklch, var(--nav-group-accent) 30%, transparent) 0%, transparent 40%),
 				linear-gradient(160deg, color-mix(in oklch, var(--nav-group-surface) 90%, black 10%) 0%, color-mix(in oklch, var(--nav-group-surface) 70%, black 30%) 100%);
 			box-shadow:
-				inset 0 1px 0 color-mix(in oklch, var(--nav-group-accent-strong) 60%, transparent),
+				inset 0 1px 0 color-mix(in oklch, var(--nav-group-accent-strong) 50%, transparent),
 				0 8px 12px color-mix(in oklch, #000 90%, transparent);
 			border-color: color-mix(in oklch, var(--nav-group-accent) 86%, var(--panel-border));
 			transform: translateY(-1px);

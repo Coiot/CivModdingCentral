@@ -1,0 +1,259 @@
+{
+  "id": "civ-kingdom-of-aceh-darussalam-iskandar-muda",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-04-06T03:18:24.624Z",
+    "updatedAt": "2026-04-06T06:13:42.067Z",
+    "createdByName": "Pouākai",
+    "formatVersion": 1,
+    "updatedByName": "Pouākai",
+    "cloudCreatedByEmail": "shadowkiwi.nui@gmail.com",
+    "cloudUpdatedByEmail": "shadowkiwi.nui@gmail.com",
+    "unresolvedTemplates": [
+      "MCnav",
+      "MonsoonSEAson"
+    ]
+  },
+  "slug": "kingdom-of-aceh-darussalam-iskandar-muda",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    }
+  },
+  "title": "Aceh",
+  "issues": [
+    "Unresolved templates: MCnav, MonsoonSEAson"
+  ],
+  "leader": "Iskandar Muda",
+  "source": {
+    "type": "wiki",
+    "version": "v 2",
+    "wikiUrl": "",
+    "lastUpdated": "4 May 2020",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=2082534108",
+    "modFolderName": "",
+    "wikiPageTitle": "Kingdom of Aceh Darussalam",
+    "directDownload": ""
+  },
+  "authors": [
+    "More Civilisations"
+  ],
+  "credits": [
+    {
+      "name": "Pouakai",
+      "role": "Design, Code, Text, Art (Map)"
+    },
+    {
+      "name": "DMS",
+      "role": "Art (Leaderscene)"
+    },
+    {
+      "name": "TopHatPaladin",
+      "role": "Lua"
+    },
+    {
+      "name": "EmeraldRange",
+      "role": "Lua, Art (Ghali Icon)"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art (Civ Icon & Alpha, Leader icon)"
+    },
+    {
+      "name": "JakeWalrusWhale",
+      "role": "Art (Menuasah Icon)"
+    }
+  ],
+  "summary": "Aceh, led by Iskandar Muda, is a custom civilisation by More Civilisations, with contributions from Pouakai, DMS, DarthKyofu, EmeraldRange, TopHatPaladin and JakeWalrusWhale. The civ was initially released as part of the Monsoon Season event.",
+  "uniques": [
+    {
+      "art": "MC_Iskandar_Muda.png",
+      "body": "Outgoing {{Trade Route Icon}} Trade Routes provide +3 {{Gold Icon}} Gold when travelling to cities following your religion. {{Gold Icon}} Gold purchases are +5% cheaper to purchase for every luxury resource owned (up to 50%)",
+      "name": "Porch of Mecca",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC_Iskandar_Muda.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "MC_Ghali.png",
+      "body": "",
+      "name": "Ghali",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC_Ghali.png",
+      "bullets": [
+        "2 base {{Strength Icon}} Combat Strength, but +2 {{Strength Icon}} Combat Strength for each unique resource improved in the city of origin.",
+        "+2 {{Moves Icon}} Movement when on Coastal tiles.",
+        "May cross Deep Ocean."
+      ],
+      "replaces": "Caravel | Galleon",
+      "artCredit": "Art by EmeraldRange",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "MC_Meunasah.png",
+      "body": "",
+      "name": "Menuasah",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC_Meunasah.png",
+      "bullets": [
+        "Increases outgoing religious pressure by +50%",
+        "Provides +1 {{Gold Icon}} Gold on {{Trade Route Icon}} Trade Routes from this city for every type of luxury resource improved by the city."
+      ],
+      "replaces": "Caravansary",
+      "artCredit": "Art by JakeWalrusWhale",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Coast",
+    "capital": "Kutaraja",
+    "culture": "East Indies",
+    "religion": [
+      "Islam (Sunni)"
+    ],
+    "adjectives": "",
+    "empireName": "",
+    "government": [],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": "MidEastern, Asian"
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Iskandar_Muda",
+      "body": "Iskandar Muda was the most powerful Sultan of Aceh, reigning for nearly thirty years at the start of the 17th century. Under his rule, Aceh reached its greatest extend, including much of Sumatra and the Malay peninsula. Born as Perkasa Alam, Iskandar Muda was descended from both lines of Acehnese sultans, and was briefly imprisoned after attempting to lead a rebellion against his uncle in 1605. The successes of Iskandar Muda were based on his military strength. His armed forces consisted of a navy of heavy galleys each with 600-800 men, a cavalry using Persian horses, an elephant corps, conscripted infantry forces and more than 2000 cannons and guns (of both Sumatran and European origin).",
+      "title": "Iskandar Muda"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Aceh_Sultanate",
+      "body": "The Aceh Sultanate was a strong regional power located at the northern tip of Sumatra, with a peak in the 16th and 17th centuries. Its location gave it a significant historical advantage from both an economic and trading perspective. Pilgrims on the Hajj brought significant income to Mecca through its role as the final launching point from the Indonesian archipelago, giving Aceh the necessary funds to control trade through the straights of Malacca and increase their income further. At its peak, the sultanate covered much of the Sumatran coast and the southern end of the Malay peninsula, and was able to stand toe-to-toe with invading Portugese forces and other states in the region.",
+      "title": "Aceh"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Even Iskandar himself died eventually. Now I shall join him in Paradise.\"",
+    "blessing": "\"Greetings, Iskandar Muda, Sultan of Aceh and terror of the Nusantara! Under your command, Aceh grew mighty - expanding her reach beyond the western reaches of Sumatra to include vast swathes of the island and even Malay - no longer would it be merely a waypoint to Mecca! Your ships were the rulers of the waves, unchallenged by even the mightiest of foreign craft, and helped your rule grow wide. So fearsome is your military prowess that you have been named the successor to Iskandar himself, a name which still instils fear and awe from Malacca to Constantinople. Yet you grow restless still - the waves beckon, with more beyond the horizon to rule over.\nGreat Sultan, your people look once more to you! They are in need of your military might to lead them to a new golden age of prosperity. Will you heed their call, and once more lead your people to victory? Will you build a civilization that can stand the test of time?\"",
+    "introduction": "\"Lo, an emissary of a new great kingdom from beyond the waves! I am Iskandar Muda, heir to the Great Iskandar and Sultan of the Nusantara. What brings you here?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Kutaraja",
+        "Pasai",
+        "Padang",
+        "Indrapura",
+        "Peureulak",
+        "Muko-muko",
+        "Pariaman",
+        "Langsa",
+        "Trumon",
+        "Deli",
+        "Perlak",
+        "Singkil",
+        "Bengkalis",
+        "Natal",
+        "Bruas",
+        "Perak",
+        "Tiku",
+        "Kedah",
+        "Pahang",
+        "Siak",
+        "Rengat",
+        "Trengganu",
+        "Gunungsitoli",
+        "Aru",
+        "Pedir",
+        "Painan"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Mohamed",
+        "Ibrahim",
+        "Musa",
+        "Ali",
+        "Alauddin",
+        "Iskandar",
+        "Jauhar",
+        "Syarif",
+        "Tuanku",
+        "Sulaiman"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "More Civilizations",
+    "East Indies Cultures",
+    "Indonesia",
+    "Monsoon Season"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": true,
+    "eandd": true,
+    "piety": true,
+    "culdiv": true,
+    "traits": false,
+    "ynaemp": true,
+    "slavery": true,
+    "maplabels": true,
+    "civivtraits": true,
+    "ethnicunits": true,
+    "mercenaries": true,
+    "histreligions": true,
+    "enlightenmentera": true,
+    "claimscoloniescrimes": true
+  },
+  "collections": [
+    {
+      "id": "monsoon-season",
+      "blurb": "",
+      "links": [],
+      "title": "Monsoon Season",
+      "colors": {
+        "accent": "#6ec6ca",
+        "background": "#355c7d"
+      },
+      "aliases": [],
+      "members": [],
+      "imageURL": "",
+      "sourceTemplate": ""
+    }
+  ],
+  "navTemplate": "MCnav",
+  "presentation": {
+    "colors": {
+      "icon": "#eeefdc",
+      "background": "#a62231"
+    },
+    "mapImage": "MC_Aceh_Map.png",
+    "iconImage": "MC_Aceh.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC_Aceh_Map.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC_Aceh.png",
+    "mapImageCaption": "Map by Pouakai",
+    "leaderSceneImage": "MC_Iskandar_Scene.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC_Iskandar_Scene.png",
+    "leaderSceneArtCredit": "Art by DMS"
+  },
+  "templateRefs": []
+}

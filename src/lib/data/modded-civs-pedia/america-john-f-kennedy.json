@@ -1,0 +1,249 @@
+{
+  "id": "civ-america-john-f-kennedy",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-04-06T03:38:17.077Z",
+    "updatedAt": "2026-04-06T03:40:27.084Z",
+    "createdByName": "Pouākai",
+    "formatVersion": 1,
+    "updatedByName": "Pouākai",
+    "cloudCreatedByEmail": "shadowkiwi.nui@gmail.com",
+    "cloudUpdatedByEmail": "shadowkiwi.nui@gmail.com",
+    "unresolvedTemplates": [
+      "DISPLAYTITLE:America (John F. Kennedy)",
+      "MCnav"
+    ]
+  },
+  "slug": "america-john-f-kennedy",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    }
+  },
+  "title": "America",
+  "issues": [
+    "Unresolved templates: DISPLAYTITLE:America (John F. Kennedy), MCnav"
+  ],
+  "leader": "John F. Kennedy",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "21 July 2019",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1810508482",
+    "modFolderName": "",
+    "wikiPageTitle": "America",
+    "directDownload": ""
+  },
+  "authors": [
+    "More Civilisations"
+  ],
+  "credits": [
+    {
+      "name": "Pouakai",
+      "role": "Design, Code, Art (Map)"
+    },
+    {
+      "name": "Sukritact",
+      "role": "Art (UU icon, civ icon)"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art (Leaderscene, leader icon, UB icon)"
+    },
+    {
+      "name": "JFD",
+      "role": "Code"
+    }
+  ],
+  "summary": "America, led by John F. Kennedy, is a custom civilization mod by More Civilisations, with contributions from DarthKyofu, JFD, and Sukritact.",
+  "uniques": [
+    {
+      "art": "MC_JFK_leader.png",
+      "body": "+5% {{Science Icon}} Science for every 10 {{Tourism Icon}} Tourism generated, up to +50%. Units and spaceship parts are produced 20% faster when at war with a civilisation following an opposing ideology.",
+      "name": "The Right Stuff",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC_JFK_leader.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "MC_AH1_256.png",
+      "body": "",
+      "name": "AH-1 Cobra",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC_AH1_256.png",
+      "bullets": [
+        "Receives a +10% boost to {{Strength Icon}} Combat Strength for each unused {{Moves Icon}} Movement point.",
+        "Generates a small amount of {{Culture Icon}} Culture while in enemy territory."
+      ],
+      "replaces": "Helicopter Gunship",
+      "artCredit": "Art by Sukritact",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "MC_Grocer_256.png",
+      "body": "",
+      "name": "Supermarket",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC_Grocer_256.png",
+      "bullets": [
+        "+1 {{Gold Icon}} Gold for every 3 {{Citizen}} Citizens in this city.",
+        "Does not require an Aqueduct."
+      ],
+      "replaces": "Hospital",
+      "artCredit": "Art by DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "",
+    "capital": "",
+    "culture": "",
+    "religion": [],
+    "adjectives": "",
+    "empireName": "",
+    "government": [],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/John_F._Kennedy",
+      "body": "Twenty years after John F. Kennedy was assassinated, a public opinion poll indicated that he was rated best overall of the nine presidents since Herbert Hoover. Among five positive attributes surveyed, Kennedy \"most inspired confidence in the White House,\" according to 40 percent of those asked, followed by Franklin D. Roosevelt at 23 percent. Sixty percent considered Kennedy as having had the \"most appealing personality,\" followed again by Roosevelt at 11 percent. Kennedy edged Roosevelt on \"best in domestic affairs\" and on having \"cared most about the elderly, the poor and those most in economic trouble.\" Political scientists, historians, and national journalists have on the whole tended to view Kennedy less favorably than has the general public. Some \"experts\" hold Kennedy in high regard, but others are extremely critical of him. A significant number probably agree that his promise outstripped his performance and that he left an ambiguous legacy. Neither popular nor expert opinion would actually be wrong about Kennedy. Indeed, they are in a sense opposite sides of the same coin, for Kennedy's inflation to mythic proportions by the public and his demythologizing by experts both derive significantly from the manner of his death.",
+      "title": "John F. Kennedy"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/United_States",
+      "body": "The United States of America is a world \"super-power\" (which more or less means that it possesses weapons capable of destroying everything on the planet). A relatively young civilization, the United States formed in the 18th century, nearly self-destructed in the 19th century, and became the most powerful and dominant military, technological, cultural and economical civilization in the 20th. One can hardly guess what will happen to it in the 21st.",
+      "title": "America"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"This loss was not born of the failure of our convictions, but that we failed to serve those convictions well enough. One day soon, we shall serve those convictions again.\"",
+    "blessing": "Greetings, Mr President! You lead the American people in a time of great advserity. From the ashes of war, your nation rose above those who wished it harm with a technological and military might the world had yet to see. While American steel rebuilt a continent ravaged by conflict, you gazed upwards to the heavens with the knowledge that American spirit would soon slip the surley bonds of Earth, to that new frontier where once men had but dreamt of venturing.\nPresident Kennedy! America's ascendency has not gone unchallenged, and new powers have risen to question our place in the world. Your allies call on you to defend not only America, but also Europe, democracy, and freedom, from such new threats. Will you heed their call, standing tall once more as a shining beacon of all that is just and right? Will you face down all those who wish America harm, regardless of where they lie? Can you lead America further into a golden age of prosperity? Can you build a civilisation that will stand the test of time?",
+    "introduction": "\"It is my sacred privilege to welcome you to these fifty United States, of which I am honored to lead.\"\nIntroduction: \"Welcome to America: Land of the free, home of the brave. Let us discuss our mutual commitments to human rights. You are committed to human rights, aren't you?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Washington",
+        "New York",
+        "Boston",
+        "Chicago",
+        "Philadelphia",
+        "Detroit",
+        "Baltimore",
+        "Houston",
+        "Los Angeles",
+        "St Louis",
+        "Milwaukee",
+        "San Francisco",
+        "Dallas",
+        "New Orleans",
+        "Pittsburgh",
+        "Birmingham",
+        "San Diego",
+        "Seattle",
+        "Buffalo",
+        "Cincinnati",
+        "Memphis",
+        "Denver",
+        "Atlanta",
+        "Minneapolis",
+        "Indianapolis",
+        "Kansas City",
+        "Columbus",
+        "Phoenix",
+        "San Antonio",
+        "Newark",
+        "Louisville",
+        "Portland",
+        "Oakland",
+        "Fort Worth",
+        "Long Beach",
+        "Montgomery",
+        "Cape Canaveral",
+        "Toledo",
+        "Omaha",
+        "Norfolk"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Lyndon",
+        "Steve",
+        "Malcolm",
+        "Jack",
+        "James",
+        "Andy",
+        "Don",
+        "Audrey",
+        "Jackie",
+        "Peggy"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "More Civilizations",
+    "Civilizations with Male leaders",
+    "United States",
+    "All Civilizations",
+    "Colonial Cultures"
+  ],
+  "modSupport": {
+    "aa": false,
+    "cbp": false,
+    "uci": true,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "traits": false,
+    "ynaemp": true,
+    "slavery": false,
+    "maplabels": true,
+    "civivtraits": true,
+    "ethnicunits": true,
+    "mercenaries": true,
+    "histreligions": true,
+    "enlightenmentera": true,
+    "claimscoloniescrimes": true
+  },
+  "collections": [],
+  "navTemplate": "MCnav",
+  "presentation": {
+    "colors": {
+      "icon": "#9FBED8",
+      "background": "#184B82"
+    },
+    "mapImage": "MC_JFK_Map.png",
+    "iconImage": "MC_America_256.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC_JFK_Map.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC_America_256.png",
+    "mapImageCaption": "Map by Pouakai",
+    "leaderSceneImage": "MC_JFK_Leaderscene.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC_JFK_Leaderscene.png",
+    "leaderSceneArtCredit": "Art by DarthKyofu"
+  },
+  "templateRefs": []
+}

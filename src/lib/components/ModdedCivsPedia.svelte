@@ -46,9 +46,10 @@
 		{ id: "name-lists", label: "Lists" },
 		{ id: "music", label: "Music" },
 		{ id: "mod-support", label: "Mod Support" },
+		{ id: "artwork", label: "Artwork" },
+		{ id: "credits", label: "Credits" },
 		{ id: "collections", label: "Part of Collection" },
 		{ id: "categories", label: "Categories" },
-		{ id: "credits", label: "Credits" },
 		{ id: "more-by-author", label: "More by Author" },
 	];
 
@@ -68,6 +69,11 @@
 	let converterStatus = $state("");
 	let converterIssues = $state([]);
 	let entryEditorOpen = $state(false);
+	let fandomWikiExportOpen = $state(false);
+	let fandomWikiExportEntryId = $state("");
+	let fandomWikiImportInput = $state("");
+	let fandomWikiImportStatus = $state("");
+	let fandomWikiImportBusy = $state(false);
 	let entryEditorMode = $state("form");
 	let entryEditorSection = $state("core");
 	let entryEditorDraft = $state("");
@@ -127,6 +133,7 @@
 	let jsonInputEl = $state();
 	let activeMusicPreviewKey = $state("");
 	let failedImageUrls = $state([]);
+	let imageFailureResetSignature = "";
 	let catalogMapLoaded = $state(false);
 	let collectionEditorSavedAt = $state(0);
 	let collectionEditorBaseline = $state("");
@@ -1654,6 +1661,9 @@
 		if (normalized === PEDIA_BASE_PATH) {
 			return { kind: "catalog", authorSlug: "" };
 		}
+		if (normalized === `${PEDIA_BASE_PATH}/converter`) {
+			return { kind: "converter" };
+		}
 		if (normalized.startsWith(`${PEDIA_BASE_PATH}/author/`)) {
 			return {
 				kind: "catalog",
@@ -1812,6 +1822,7 @@
 		return bySlug;
 	});
 	const selectedEntry = $derived(allEntries.find((entry) => entry.id === selectedEntryId) || null);
+	const fandomWikiExportText = $derived(fandomWikiExportOpen && selectedEntry ? renderWikiMarkupFromEntry(selectedEntry) : "");
 	const convertedJsonText = $derived(convertedEntry ? JSON.stringify(convertedEntry, null, 2) : "");
 	const convertedWikiText = $derived(convertedEntry ? renderWikiMarkupFromEntry(convertedEntry) : "");
 	const routeState = $derived(parseRouteState(routePath));
@@ -1840,6 +1851,25 @@
 	const availableCollectionOptions = $derived.by(() => {
 		const selectedIds = new Set((collectionEditorDraft || []).map((collection) => collection?.id).filter(Boolean));
 		return knownCollections.filter((collection) => !selectedIds.has(collection.id));
+	});
+
+	$effect(() => {
+		const signature = allEntries
+			.map((entry) =>
+				[
+					entry.id,
+					entry.presentation?.iconImageUrl,
+					entry.presentation?.mapImageUrl,
+					entry.presentation?.leaderSceneImageUrl,
+					entry.meta?.updatedAt,
+					entry.meta?.createdAt,
+				].join("~"),
+			)
+			.join("|");
+		if (signature !== imageFailureResetSignature) {
+			imageFailureResetSignature = signature;
+			failedImageUrls = [];
+		}
 	});
 	const knownCategoryOptions = $derived.by(() => {
 		const byKey = new Map();
@@ -1931,6 +1961,13 @@
 
 	$effect(() => {
 		const nextEntryId = selectedEntry?.id || "";
+		if (fandomWikiExportEntryId && fandomWikiExportEntryId !== nextEntryId) {
+			fandomWikiExportOpen = false;
+			fandomWikiExportEntryId = "";
+			fandomWikiImportInput = "";
+			fandomWikiImportStatus = "";
+			fandomWikiImportBusy = false;
+		}
 		if (nextEntryId === collectionEditorEntryId) {
 			if (nextEntryId !== categoryEditorEntryId) {
 				categoryEditorEntryId = nextEntryId;
@@ -2011,6 +2048,13 @@
 
 		if (routeState.kind === "category" && selectedCategory) {
 			activeView = "category";
+			selectedEntryId = "";
+			authorFilterName = "";
+			return;
+		}
+
+		if (routeState.kind === "converter") {
+			activeView = "converter";
 			selectedEntryId = "";
 			authorFilterName = "";
 			return;
@@ -2673,6 +2717,81 @@
 		}
 	}
 
+	function exportEntryToFandomWiki(entry) {
+		if (!entry) {
+			return;
+		}
+		fandomWikiExportEntryId = entry.id;
+		fandomWikiExportOpen = true;
+		fandomWikiImportStatus = "";
+		entryEditorOpen = false;
+		entryStatus = `${entry.title || "Entry"} rendered into fandom wiki markup.`;
+	}
+
+	function closeFandomWikiExport() {
+		fandomWikiExportOpen = false;
+		fandomWikiExportEntryId = "";
+		fandomWikiImportStatus = "";
+	}
+
+	function downloadFandomWikiExport() {
+		if (!selectedEntry || !fandomWikiExportText) {
+			return;
+		}
+		downloadTextFile(`${slugifyPediaValue(selectedEntry.slug || selectedEntry.title)}.wiki.txt`, fandomWikiExportText, "text/plain");
+	}
+
+	async function reimportFandomWikiIntoEntry() {
+		if (!selectedEntry || fandomWikiImportBusy) {
+			return;
+		}
+		if (!String(fandomWikiImportInput || "").trim()) {
+			fandomWikiImportStatus = "Paste fandom wiki markup before importing.";
+			return;
+		}
+		if (!canUploadConvertedEntry) {
+			fandomWikiImportStatus = converterUploadBlockedReason || "Saving is not available right now.";
+			return;
+		}
+
+		fandomWikiImportBusy = true;
+		fandomWikiImportStatus = "Parsing fandom markup...";
+		try {
+			const currentEntry = normalizePediaEntry(selectedEntry);
+			const parsedEntry = normalizePediaEntry(
+				await createPediaEntryFromWikiMarkup(fandomWikiImportInput, {
+					wikiUrl: currentEntry.source?.wikiUrl || "",
+					title: currentEntry.title,
+					leader: currentEntry.leader,
+				}),
+			);
+			const nextEntry = normalizePediaEntry({
+				...parsedEntry,
+				id: currentEntry.id,
+				slug: currentEntry.slug,
+				source: {
+					...currentEntry.source,
+					...parsedEntry.source,
+					wikiUrl: parsedEntry.source?.wikiUrl || currentEntry.source?.wikiUrl || "",
+				},
+				meta: {
+					...currentEntry.meta,
+					...parsedEntry.meta,
+					createdAt: currentEntry.meta?.createdAt,
+					createdByName: currentEntry.meta?.createdByName,
+				},
+			});
+			await saveEntryToProject(nextEntry, renderWikiMarkupFromEntry(nextEntry), "");
+			selectedEntryId = nextEntry.id;
+			fandomWikiImportStatus = `${nextEntry.title || "Entry"} updated from fandom markup.`;
+			entryStatus = fandomWikiImportStatus;
+		} catch (error) {
+			fandomWikiImportStatus = error?.message || "Unable to import fandom markup.";
+		} finally {
+			fandomWikiImportBusy = false;
+		}
+	}
+
 	async function handleFolderChange(event) {
 		const files = event.currentTarget?.files;
 		if (!files?.length) {
@@ -2792,6 +2911,46 @@
 		failedImageUrls = [...failedImageUrls, url];
 	}
 
+	function imageCacheVersion(entry) {
+		return String(entry?.meta?.updatedAt || entry?.meta?.createdAt || "").trim();
+	}
+
+	function pediaImageSrc(url, entry) {
+		const rawUrl = String(url || "").trim();
+		const version = imageCacheVersion(entry);
+		if (!rawUrl || !version) {
+			return rawUrl;
+		}
+		try {
+			const base = typeof window !== "undefined" ? window.location.origin : "https://civilization-modding-central.pages.dev";
+			const parsed = new URL(rawUrl, base);
+			if (typeof window !== "undefined" && parsed.origin !== window.location.origin) {
+				return rawUrl;
+			}
+			parsed.searchParams.set("v", version);
+			if (!/^[a-z][a-z0-9+.-]*:/i.test(rawUrl)) {
+				return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+			}
+			return parsed.toString();
+		} catch {
+			return rawUrl;
+		}
+	}
+
+	function imageDownloadName(entry, imageUrl, fallback) {
+		const explicit = String(fallback || "").trim();
+		if (explicit) {
+			return explicit.split("/").pop();
+		}
+		try {
+			const parsed = new URL(String(imageUrl || "").trim(), "https://example.com");
+			const name = decodeURIComponent(parsed.pathname.split("/").filter(Boolean).pop() || "");
+			return name || `${slugifyPediaValue(entry?.slug || entry?.title || "pedia-image")}.png`;
+		} catch {
+			return `${slugifyPediaValue(entry?.slug || entry?.title || "pedia-image")}.png`;
+		}
+	}
+
 	function sourceLinks(entry) {
 		return [
 			entry?.source?.wikiUrl ? { label: "Fandom Page", href: entry.source.wikiUrl } : null,
@@ -2823,6 +2982,13 @@
 				url: entry?.presentation?.iconImageUrl,
 				copy: entry?.presentation?.iconImage ? "Civilization icon asset." : "Icon asset pending.",
 			},
+			...(entry?.uniques || []).map((unique, index) => ({
+				id: `unique-${index}`,
+				label: unique?.name ? `${unique.name} Art` : `Unique ${index + 1} Art`,
+				file: unique?.art,
+				url: unique?.artUrl,
+				copy: unique?.artCredit || unique?.slot || "Unique artwork asset.",
+			})),
 		];
 		return slots.filter((slot) => slot.file || slot.url);
 	}
@@ -2849,7 +3015,7 @@
 		stopEditingEntry();
 		activeView = "converter";
 		selectedEntryId = "";
-		navigate?.(PEDIA_BASE_PATH);
+		navigate?.(`${PEDIA_BASE_PATH}/converter`);
 	}
 
 	function clearAuthorFilter(options = {}) {
@@ -3333,7 +3499,7 @@
 															<div class="pedia-catalog-icon">
 																{#if hasWorkingImage(entry.presentation?.iconImageUrl)}
 																	<img
-																		src={entry.presentation.iconImageUrl}
+																		src={pediaImageSrc(entry.presentation.iconImageUrl, entry)}
 																		alt={`${entry.title} icon`}
 																		loading="lazy"
 																		referrerpolicy="no-referrer"
@@ -3552,11 +3718,11 @@
 					<div class="pedia-preview-grid">
 						<label class="pedia-preview-panel stack half">
 							<span class="eyebrow">Pedia JSON</span>
-							<textarea rows="18" readonly>{convertedJsonText}</textarea>
+							<textarea rows="18" readonly wrap="off">{convertedJsonText}</textarea>
 						</label>
 						<label class="pedia-preview-panel stack half">
 							<span class="eyebrow">Fandom Wiki Output</span>
-							<textarea rows="18" readonly>{convertedWikiText}</textarea>
+							<textarea rows="18" readonly wrap="off">{convertedWikiText}</textarea>
 						</label>
 					</div>
 				{/if}
@@ -3729,7 +3895,7 @@
 										<div class="pedia-catalog-icon">
 											{#if hasWorkingImage(entry.presentation?.iconImageUrl)}
 												<img
-													src={entry.presentation.iconImageUrl}
+													src={pediaImageSrc(entry.presentation.iconImageUrl, entry)}
 													alt={`${entry.title} icon`}
 													loading="lazy"
 													referrerpolicy="no-referrer"
@@ -3857,7 +4023,7 @@
 										<div class="pedia-catalog-icon">
 											{#if hasWorkingImage(entry.presentation?.iconImageUrl)}
 												<img
-													src={entry.presentation.iconImageUrl}
+													src={pediaImageSrc(entry.presentation.iconImageUrl, entry)}
 													alt={`${entry.title} icon`}
 													loading="lazy"
 													referrerpolicy="no-referrer"
@@ -3954,6 +4120,7 @@
 				<div class="pedia-link-row inline half flex-wrap">
 					{#if canEdit}
 						<button type="button" class="pedia-button pedia-button-secondary" onclick={() => startEditingEntry(selectedEntry)}>Edit Entry</button>
+						<button type="button" class="pedia-button pedia-button-secondary" onclick={() => exportEntryToFandomWiki(selectedEntry)}>Reconvert</button>
 						<button type="button" class="pedia-button pedia-button-danger" onclick={deleteSelectedEntry}>Delete Entry</button>
 					{/if}
 					{#each sourceLinks(selectedEntry) as link (link.href)}
@@ -3968,7 +4135,7 @@
 						<div class="civ-icon">
 							{#if hasWorkingImage(selectedEntry.presentation?.iconImageUrl)}
 								<img
-									src={selectedEntry.presentation.iconImageUrl}
+									src={pediaImageSrc(selectedEntry.presentation.iconImageUrl, selectedEntry)}
 									alt={`${selectedEntry.title} icon`}
 									loading="lazy"
 									referrerpolicy="no-referrer"
@@ -3988,6 +4155,46 @@
 						</div>
 					</div>
 				</header>
+
+				{#if fandomWikiExportOpen}
+					<section class="pedia-editor-panel stack half">
+						<div class="pedia-editor-panel-head">
+							<div class="stack quarter min-inline-size-0">
+								<p class="eyebrow">Fandom Export</p>
+								<h3 class="card-title">{selectedEntry.title} Wiki Markup</h3>
+								<p class="card-copy">Render this CMC entry back into fandom markup, or paste fandom markup to update this CMC entry.</p>
+							</div>
+							<div class="pedia-entry-editor-button-row">
+								<button type="button" class="pedia-button pedia-button-secondary" onclick={downloadFandomWikiExport}>Download Wiki Markup</button>
+								<button type="button" class="pedia-button pedia-button-secondary" onclick={closeFandomWikiExport}>Close</button>
+							</div>
+						</div>
+						<div class="pedia-preview-grid">
+							<label class="pedia-preview-panel stack half">
+								<span class="eyebrow">Fandom Wiki Output</span>
+								<textarea rows="20" readonly wrap="off">{fandomWikiExportText}</textarea>
+							</label>
+							<div class="pedia-preview-panel stack half">
+								<div class="inline between flex-wrap half align-center">
+									<span class="eyebrow">Reimport Fandom</span>
+									<button type="button" class="pedia-button pedia-button-secondary" onclick={reimportFandomWikiIntoEntry} disabled={fandomWikiImportBusy}>
+										{fandomWikiImportBusy ? "Importing..." : "Import Updates"}
+									</button>
+								</div>
+								<textarea
+									rows="20"
+									wrap="off"
+									bind:value={fandomWikiImportInput}
+									placeholder="Paste updated fandom wiki markup here to update this CMC pedia entry."
+									disabled={fandomWikiImportBusy}
+								></textarea>
+								{#if fandomWikiImportStatus}
+									<p class="pedia-status">{fandomWikiImportStatus}</p>
+								{/if}
+							</div>
+						</div>
+					</section>
+				{/if}
 
 				{#if entryEditorOpen}
 					<section class="pedia-editor-panel stack half">
@@ -4827,7 +5034,7 @@
 								{#if hasWorkingImage(selectedEntry.presentation?.leaderSceneImageUrl)}
 									<figure class="pedia-figure-card">
 										<img
-											src={selectedEntry.presentation.leaderSceneImageUrl}
+											src={pediaImageSrc(selectedEntry.presentation.leaderSceneImageUrl, selectedEntry)}
 											alt={`${selectedEntry.title} Dawn of Man art`}
 											loading="lazy"
 											referrerpolicy="no-referrer"
@@ -5092,6 +5299,33 @@
 								</div>
 							</section>
 						</div>
+
+						{#if entryMediaSlots(selectedEntry).length}
+							<section class="pedia-wiki-section" id="artwork">
+								<h3 class="section-title">Artwork Downloads</h3>
+								<div class="pedia-artwork-download-list">
+									{#each entryMediaSlots(selectedEntry) as slot (slot.id)}
+										<div class="pedia-artwork-download-row">
+											<div class="stack quarter min-inline-size-0">
+												<strong class="card-title text-box-trim">{slot.label}</strong>
+												<p class="card-copy text-box-trim">{slot.file || slot.copy}</p>
+											</div>
+											{#if slot.url}
+												<a
+													class="pedia-button pedia-button-secondary"
+													href={slot.url}
+													download={imageDownloadName(selectedEntry, slot.url, slot.file)}
+													target="_blank"
+													rel="noreferrer"
+												>
+													Download
+												</a>
+											{/if}
+										</div>
+									{/each}
+								</div>
+							</section>
+						{/if}
 
 						<section class="pedia-wiki-section" id="credits">
 							<h3 class="section-title">Credits</h3>
@@ -5407,7 +5641,7 @@
 														<div class="pedia-author-work-icon">
 															{#if hasWorkingImage(entry.presentation?.iconImageUrl)}
 																<img
-																	src={entry.presentation.iconImageUrl}
+																	src={pediaImageSrc(entry.presentation.iconImageUrl, entry)}
 																	alt={`${entry.title} icon`}
 																	loading="lazy"
 																	referrerpolicy="no-referrer"
@@ -5452,7 +5686,7 @@
 						<div class="pedia-infobox-media overflow-hidden">
 							{#if hasWorkingImage(selectedEntry.presentation?.mapImageUrl)}
 								<img
-									src={selectedEntry.presentation.mapImageUrl}
+									src={pediaImageSrc(selectedEntry.presentation.mapImageUrl, selectedEntry)}
 									alt={`${selectedEntry.title} map`}
 									loading="lazy"
 									referrerpolicy="no-referrer"
@@ -6267,7 +6501,9 @@
 		border: 1px solid color-mix(in srgb, var(--pedia-accent) 24%, var(--border-color));
 		border-radius: 0.95rem;
 		padding: 1rem;
-		overflow: auto;
+		field-sizing: fixed;
+		overflow-x: auto;
+		overflow-y: auto;
 		resize: vertical;
 	}
 
@@ -6658,13 +6894,6 @@
 		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: start;
 		gap: 0.75rem 1rem;
-	}
-
-	.pedia-editor-panel-actions {
-		display: grid;
-		justify-items: start;
-		align-content: start;
-		gap: 0.55rem;
 	}
 
 	.pedia-entry-editor-button-row {
@@ -7138,6 +7367,10 @@
 	}
 
 	.pedia-figure-card figcaption {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
 		color: var(--muted-ink);
 		font-size: 0.88rem;
 	}
@@ -7145,6 +7378,23 @@
 	.pedia-unique-list {
 		display: grid;
 		gap: 1.5rem;
+	}
+
+	.pedia-artwork-download-list {
+		display: grid;
+		gap: 0.45rem;
+	}
+
+	.pedia-artwork-download-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		min-inline-size: 0;
+		border-radius: 0.65rem;
+		background: color-mix(in srgb, var(--pedia-panel-soft) 82%, black 18%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pedia-accent) 14%, var(--border-color));
+		padding: 0.75rem 0.85rem;
 	}
 
 	.pedia-unique-row {
@@ -7435,7 +7685,12 @@
 	}
 
 	.pedia-infobox-media {
-		min-block-size: 13rem;
+		display: grid;
+		place-items: center;
+		inline-size: 100%;
+		aspect-ratio: 4 / 3;
+		min-block-size: 10rem;
+		max-block-size: min(42dvh, 19rem);
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--infobox-accent) 22%, transparent) 0%, transparent 40%),
 			linear-gradient(180deg, color-mix(in srgb, var(--infobox-surface) 22%, var(--pedia-panel)) 0%, color-mix(in srgb, var(--pedia-panel) 88%, black 12%) 100%);
@@ -7544,8 +7799,14 @@
 			align-items: stretch;
 		}
 
+		.pedia-toolbar,
 		.pedia-entry-toolbar {
+			/*position: sticky;
+			z-index: 8;*/
 			gap: 0.6rem;
+			/*background: color-mix(in srgb, var(--pedia-panel) 92%, black 8%);
+			backdrop-filter: blur(10px);
+			border: 1px solid color-mix(in srgb, var(--pedia-accent) 18%, var(--border-color));*/
 		}
 
 		.pedia-entry-toolbar > .pedia-button,
@@ -7579,10 +7840,6 @@
 
 		.pedia-entry-form-nav {
 			grid-template-columns: 1fr;
-		}
-
-		.pedia-editor-panel-actions {
-			justify-items: stretch;
 		}
 
 		.pedia-entry-editor-switch {
@@ -7740,8 +7997,8 @@
 		.pedia-markup-input,
 		.pedia-preview-panel textarea,
 		.pedia-json-editor {
-			min-block-size: 12rem;
-			max-block-size: 22rem;
+			min-block-size: 14rem;
+			max-block-size: 24rem;
 			padding: 0.85rem;
 		}
 
@@ -7793,6 +8050,16 @@
 
 		.pedia-unique-row {
 			gap: 0.8rem;
+		}
+
+		.pedia-artwork-download-row {
+			align-items: stretch;
+			flex-direction: column;
+		}
+
+		.pedia-artwork-download-row .pedia-button {
+			justify-content: center;
+			inline-size: 100%;
 		}
 
 		.pedia-template-ref-row {

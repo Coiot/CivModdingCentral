@@ -1,0 +1,262 @@
+{
+  "id": "civ-konbaung-empire-alaungpaya",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-04-11T00:19:48.413Z",
+    "updatedAt": "2026-05-03T02:30:40.123Z",
+    "createdByName": "EmeraldRange",
+    "formatVersion": 1,
+    "updatedByName": "EmeraldRange",
+    "cloudCreatedByEmail": "emerald.range2964@gmail.com",
+    "cloudUpdatedByEmail": "emerald.range2964@gmail.com",
+    "unresolvedTemplates": [
+      "EmeraldNav"
+    ]
+  },
+  "slug": "konbaung-empire-alaungpaya",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "Pleasing Melody (Harp Version)",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "The Silver Sandbank",
+      "credit": ""
+    }
+  },
+  "title": "Konbaung",
+  "issues": [
+    "Unique Attributes table was not parsed cleanly. Check the wiki markup format.",
+    "No collapsible name lists were found in the wiki markup.",
+    "Unresolved templates: EmeraldNav"
+  ],
+  "leader": "Alaungpaya",
+  "source": {
+    "type": "wiki",
+    "version": "",
+    "wikiUrl": "",
+    "lastUpdated": "",
+    "workshopUrl": "",
+    "modFolderName": "",
+    "wikiPageTitle": "Konbaung Empire",
+    "directDownload": ""
+  },
+  "authors": [
+    "EmeraldRange"
+  ],
+  "credits": [
+    {
+      "name": "EmeraldRange",
+      "role": "Author"
+    },
+    {
+      "name": "Chrisy15",
+      "role": "Contributor"
+    },
+    {
+      "name": "TarcisioCM",
+      "role": "Contributor"
+    }
+  ],
+  "summary": "Konbaung led by AlaungpayaEmeraldRange's Konbaung Empire is a custom civilization mod by EmeraldRange.with contributions from Chrisy15 and TarcisioCM.",
+  "uniques": [
+    {
+      "art": "Alaungpaya_Icon.png",
+      "body": "{{Great People Icon}} Great People that end their turn in cities provide boosts to their respective yield. If there is a Former Palace, you can station a {{Great Person Icon}} Great Person permanently for a boost.",
+      "name": "Leadership of the First Quality",
+      "slot": "Unique Ability",
+      "artUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/c/c5/Alaungpaya_Icon.png/revision/latest?cb=20190713044216",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "EmeraldRange",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "Mingala_Cannon_Icon.png",
+      "body": "When stationed in a city with an Old Palace or on a Great Person tile improvement, receive +2 {{Great Person Icon}} Great Person Points corresponding to the improvement or the {{Great Person Icon}} Great Person stationed in the city's Old Palace.",
+      "name": "Mingala Cannon",
+      "slot": "Unique Unit",
+      "artUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/d/d1/Mingala_Cannon_Icon.png/revision/latest?cb=20190713044530",
+      "bullets": [],
+      "replaces": "Cannon",
+      "artCredit": "EmeraldRange",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "NewFormer_Palaces_Icon.png",
+      "body": "",
+      "name": "New Palace",
+      "slot": "Unique Building",
+      "artUrl": "https://static.wikia.nocookie.net/civilization-v-customisation/images/d/d5/NewFormer_Palaces_Icon.png/revision/latest?cb=20190713045308",
+      "bullets": [
+        "Unlocked with Civil Service.",
+        "When built, moves the Palace to this city.",
+        "Turns the previous Palace into a Former Palace."
+      ],
+      "replaces": "Palace",
+      "artCredit": "EmeraldRange",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "",
+      "body": "",
+      "name": "Former Palace",
+      "slot": "Unique Building",
+      "artUrl": "",
+      "bullets": [
+        "Provides the same yields as a normal palace",
+        "+1 extra {{Culture Icon}} culture than the previously built Palace."
+      ],
+      "replaces": "",
+      "artCredit": "",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Avoid Forest\nAvoid Jungle",
+    "capital": "Shwebo (changes with UB)",
+    "culture": "Mandala",
+    "religion": [
+      "Buddhism",
+      "Theravada (HR)"
+    ],
+    "adjectives": "Konbaung",
+    "empireName": "Konbaung Empire",
+    "government": [
+      "Monarchy"
+    ],
+    "requiredContent": [
+      "BNW and, if used together with Sukritact's Burma, modifies it to be the Bagan Dynasty"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "(excerpts from the Konbaung civlopedia)\nThe Konbaung dynasty was the third dynasty of Burma whose power was seated around the modern area of Mandalay with its capital changing multiple times for various political, strategic and religious reasons. The monarchs of the Konbaung Dynasty arose to power after the fall of the Restored Taungoo Dynasty and expanded is borders from the small village of Shwebo back to the extent of the Restored Taungoo Empire and further into Thailand.\nIn the eighteenth century, the Restored Taungoo Dynasty began declining quickly. The village chief of Moksobo, Aung Zeya, watched as invasions from Manipur raided further and further into Upper Burma and the Taungoo failed to reconquer Lanna. The village of Moksobo was truly a village, with only about three hundred households, and lied near the ancient Pyu city-state of Hanlin.\nAung Zeya gathered the support of 46 other villages in the area around Moksobo when a restored Hanthawaddy Kingdom that emerged from the power vacuum in the South of the Taungoo Empire began conquering Upper Burma. Aung Zeya proclaimed himself to be the king of the Konbaung Dynasty and fashioned the regnal name Alaungpaya for himself. The village of Moksobo was renamed Shwebo and proclaimed the capital of his new dynasty. Alaungpaya challenged the Restored Hanthawaddy Kingdom with his band of fighters and reunited all of Burma by 1759.\nThe Konbaung Dynasty administered its many regions in the mandala style that previous dynasties had, however, it stationed members of the royal family in its provinces to prevent ethnic collapse. Several laws, called yazagaing, dictated every aspect of people's lives, including the architecture of people's houses, their fashion, their funerals and the use of speech all depending on the social standing of the person in question. Specific articles of clothing were often reserved for certain classes and the peasantry was not allowed to received rites for funerals.\nDespite the heavy rigid hierarchy, the literacy rate was remarkably high for the time at 50% for males. The widespread literacy of even peasants allowed for a flourishing of literature. One popular genre was historical epics and translations of classic tales from other regions modified to fit Burmese culture. Classics like the Ramayana were rewritten as the Yama Zattaw. This interest in historical epics also encouraged the first histories of Burma to be written by the state.\nThe Dynasty also pushed forward in culturally integrating the peoples under their control. Although integration efforts had occurred in previous dynasties, the efforts of the Konbaung made the Burmese language and culture eclipse many others, especially the culture of the Mon people in lower Burma. Captives from military campaigns and people from faraway lands, including French soldiers, were encouraged to marry into the Burmese community to enrich the community. The new knowledge and skills from other ethnicities were valued, but integrated into Burmese culture to serve the dynasty.",
+      "title": "Konbaung"
+    },
+    "civilization": {
+      "url": "",
+      "body": "(excerpts from the Konbaung civlopedia)\nThe Burmese nation considers the Bagan Dynasty, from its founder Anawratha Minsaw, to be the founder of the First Myanmar Empire, even though several advanced civilisations, like the Pyu city-states, prospered along the Irrawaddy River prior to the Bagan period.  The Bagan Empire was destabilised by Mongol attacks, although never conquered by the Mongols. The Interregnum period followed the collapse of the Bagan, in which several kingdoms, like Inwa, thrived but none ever fully reconquered Burma proper.\nBy the 16th century, the ambitious conquests of Tabinshwehti and Bayinnaung ended the Interregnum through the establishment of the Taungoo Dynasty. The militaristic expansionism of the Taungoo collapsed on itself quickly but was restored to a respectable extent by the Nyaungyan restoration.",
+      "title": "Pre-Konbaung Burma"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"You may defeat me, but my successors will return to re-establish Burma!\"",
+    "blessing": "'Hail the King of Burma, Alaung Mintayagyi, he who foresaw and ensured the collapse of the Taungoo Dynasty. From your lowly village of Shwebo, you rose your way up to reconquering all of Burma under the flag of the Konbaung Dynasty. Although your reign was short, the legacy of the Third Burmese Empire will astound the world forever with its beauty and literature. The Dynasty that you created remained strong for centuries and fostered a golden age for Burmese culture. Its countless epics and plays will continue to inspire generations to come and its monarchs will continue to capture the imagination of artists into eternity.\nGreat Alaungpaya, Burma is once again in a time of trouble, besieged by enemies from within! Will you rise up once again to establish order? Will you once again usher in an age of art? Can you build a civilisation that can stand the test of time?\nIntroduction: \"I welcome you to Burma, I am Alaung Mintayagyi. Perhaps you have been impressed by my battles?\"\nIntroduction: \"I am Alaung Mintayagyi, Leader of the First Quality, King of Burma. What stories do you have to tell?\"\nDefeat: \"'Alas, this series of victories have been too good to be true. All must end.\"",
+    "introduction": "\"I welcome you to Burma, I am Alaung Mintayagyi. Perhaps you have been impressed by my battles?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Moe",
+        "Kyi",
+        "Nyo",
+        "Paing",
+        "Shwe",
+        "Phyo",
+        "Naing",
+        "Win",
+        "Thet",
+        "Lin"
+      ],
+      "title": "Spy List"
+    },
+    {
+      "items": [
+        "Shwebo",
+        "Inwa",
+        "Amarapura",
+        "Mandalay",
+        "Sagaing",
+        "Yadanarpon",
+        "Yangon",
+        "Badon",
+        "Myaydu",
+        "Pyay",
+        "Pathein",
+        "Bhamo",
+        "Bago",
+        "Mottama",
+        "Dala",
+        "Myeik",
+        "Taungoo",
+        "Dawei",
+        "Mong Yang",
+        "Shwegu",
+        "Salin",
+        "Mong Kawng",
+        "Nyaung Oo",
+        "Ayutthaya",
+        "Meiktila",
+        "Hinthada",
+        "Imphal",
+        "Dispur",
+        "Chaing Mai",
+        "Golaghat",
+        "Kengtung",
+        "Chindwin",
+        "Chaungyi",
+        "Monywa",
+        "Mogok",
+        "Magway",
+        "Hpa An",
+        "Vientiane",
+        "Phitsanulok",
+        "Thanlyin"
+      ],
+      "title": "City List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Mandala Cultures",
+    "Burma",
+    "EmeraldRange"
+  ],
+  "modSupport": {
+    "aa": true,
+    "uci": false,
+    "eandd": true,
+    "piety": true,
+    "culdiv": true,
+    "traits": false,
+    "ynaemp": true,
+    "slavery": false,
+    "maplabels": false,
+    "civivtraits": false,
+    "ethnicunits": false,
+    "mercenaries": false,
+    "histreligions": true,
+    "enlightenmentera": true,
+    "claimscoloniescrimes": false
+  },
+  "collections": [],
+  "navTemplate": "EmeraldNav",
+  "presentation": {
+    "colors": {
+      "icon": "#ABFFE3",
+      "background": "#751524"
+    },
+    "mapImage": "KonbaungCartographyPNG.png",
+    "iconImage": "Konbaung Icon.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/KonbaungCartographyPNG.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Konbaung%20Icon.png",
+    "mapImageCaption": "Map by EmeraldRange",
+    "leaderSceneImage": "Alaungpaya_Scenepng.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Alaungpaya_Scenepng.png",
+    "leaderSceneArtCredit": "Leaderscene by TarcisioCM"
+  },
+  "templateRefs": []
+}

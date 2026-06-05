@@ -1,0 +1,238 @@
+{
+  "id": "civ-the-maldives-damahaar",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-04-13T15:58:02.368Z",
+    "updatedAt": "2026-04-13T15:58:02.372Z",
+    "createdByName": "",
+    "formatVersion": 1,
+    "updatedByName": "",
+    "unresolvedTemplates": [
+      "DEFAULTSORT:Maldives (Damahaar)",
+      "RhozeNav"
+    ]
+  },
+  "slug": "the-maldives-damahaar",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "Ekuveri Vafaatheri",
+      "credit": "Jameela Hassan"
+    },
+    "peace": {
+      "url": "",
+      "title": "Dhivehi Qaumy Zuvaanun",
+      "credit": "Yaabe"
+    }
+  },
+  "title": "The Maldives",
+  "issues": [
+    "Unresolved templates: DEFAULTSORT:Maldives (Damahaar), RhozeNav"
+  ],
+  "leader": "Damahaar",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "April 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3705762703",
+    "modFolderName": "",
+    "wikiPageTitle": "The Maldives",
+    "directDownload": ""
+  },
+  "authors": [
+    "Rhoze"
+  ],
+  "credits": [
+    {
+      "name": "Rhoze",
+      "role": "Author"
+    },
+    {
+      "name": "Darth",
+      "role": "Art"
+    },
+    {
+      "name": "Lasqueto",
+      "role": "Art (Civilization Icon)"
+    },
+    {
+      "name": "Regalman",
+      "role": "Art (Map)"
+    }
+  ],
+  "summary": "The Maldives led by Damahaar are a custom civilization by Rhoze, with contributions from Darth, Lasqueto, and Regalman.",
+  "uniques": [
+    {
+      "art": "MaldLI.png",
+      "body": "{{Gold Icon}} Gold from {{Trade Route Icon}} International Trade Routes is increased by the product of improved water tiles in the origin city and the number of landmasses you have settled.",
+      "name": "Overflowing Shell Treasury",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MaldLI.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by Darth",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "MaldUU1.png",
+      "body": "",
+      "name": "Dhoni",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MaldUU1.png",
+      "bullets": [
+        "+50% {{Production Icon}} Production Coast, having one extra charge if built this way.",
+        "May turn into a Settler when adjacent to a foreign landmass.",
+        "Provides {{Faith Icon}} Faith equal to your {{Gold Icon}} Gold per turn when finishing an improvement."
+      ],
+      "replaces": "Work Boat",
+      "artCredit": "Art by Darth",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "MaldUU2.png",
+      "body": "",
+      "name": "Sawamia",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MaldUU2.png",
+      "bullets": [
+        "+2 Embarked Movement.",
+        "Creates a Holy Site on its tile when a new city is settled nearby, up to 1 per settle.",
+        "Holy Sites on water tiles get +2 {{Production Icon}} Production, and +1 {{Happiness Icon}} Happiness if on an Atoll."
+      ],
+      "replaces": "Great Prophet",
+      "artCredit": "Art by Darth",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Coast",
+    "capital": "Abannba",
+    "culture": "",
+    "religion": [
+      "Hinduism"
+    ],
+    "adjectives": "Dheyvi",
+    "empireName": "The Maldives",
+    "government": [],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Damahaar, or Damahara or Danhara, is an obscure monarch of the early Maldives, the final ruler of the Solar dynasty. She married a prince from Kalinga who established the Lunar dynasty. She features in descriptions by some Arab geographers: al-Idrisi describes a queen crowned by gold and wearing gold clothes, who was generous to her servants, while al-Jawaliqi writes of a queen of Abannba (Malé) who rode an elephant to lead her populous army, while robed in gold. Other writers say that women were traditionally leaders and arbiters on the islands, though by the time of recorded history this was not often the case.",
+      "title": "Damahaar"
+    },
+    "civilization": {
+      "url": "",
+      "body": "The Maldives is an archipelagic country in South Asia, located in the Indian Ocean, near the southeastern boundary of the Arabian Sea. The Maldives is southwest of Sri Lanka and India, about 750 kilometres from the Asian continent's mainland. The Maldives' chain of 26 atolls stretches across the equator from Ihavandhippolhu Atoll in the north to Addu Atoll in the south. Malé is the capital and the most populated city, traditionally called the \"King's Island\", where the ancient royal dynasties ruled from its central location. The Maldives has been inhabited for over 2,500 years. Documented contact with the outside world began around 947 AD when Arab travellers began visiting the islands. In the 12th century, Islam reached the Maldivian Archipelago, which was soon consolidated as a sultanate, developing strong commercial and cultural ties with Asia and Africa. From the mid-16th century, the region came under the increasing influence of European colonial powers, with the Maldives becoming a British protectorate in 1887. Independence from the United Kingdom came in 1965, and a presidential republic was established in 1968 with an elected People's Majlis. The ensuing decades have seen political instability, efforts at democratic reform, and environmental challenges posed by climate change and rising sea levels.",
+      "title": "The Maldives"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "Don't forget me... Write down my name...",
+    "blessing": "Oh, gilded queen, your richness speaks to a shining past! Respected and feared for your wealth and power, your generosity and money were such that tales of you found their way to the far west. Taking power out of the distant past, you traded the money cowries of your sparkling islands and used them to enrich your people. Clad in gold, reflecting the sun, you embraced the moon, and the future.\nNow, oh revered queen, the tides of times have swept away you, your legacy, and your gods. And yet memory remains, irremovable. The original people of the shining chain cry out for you and your wealth! Can you trade your shells for unimaginable gain? Can you settle all the pristine islands waiting for your footsteps? Can you build a civilization to stand the test of time?",
+    "introduction": "Was my majesty too blinding for you? I apologise. Here, let us work out some sailing routes."
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Abannba",
+        "Is Midu",
+        "Kasinawa Magu",
+        "Mahal",
+        "Isduvammathi",
+        "Faadu Pur",
+        "Ari Adhe",
+        "Mulakatholhu",
+        "Nilande",
+        "Felide",
+        "Kolhumaduva",
+        "Suvadinmathi",
+        "Miladummaduva",
+        "Addu Fuvah Mulakatholhu",
+        "Maalhosmaduva",
+        "Malikatholhu",
+        "Thiladummathi",
+        "Gan",
+        "Vaadhoo",
+        "Kaashidhoo",
+        "Giraavaru",
+        "Hithadhoo",
+        "Meedhoo",
+        "Hulhudhoo",
+        "Hanimaadhoo",
+        "Filladhoo",
+        "Villingili",
+        "Kulhudhuffushi",
+        "Naifaru",
+        "Feydhoo",
+        "Hinnavaru",
+        "Nolhivaram",
+        "Huraa"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Soodasarunaditya",
+        "Baladitya",
+        "Laukabarana",
+        "Sandura",
+        "Ananda",
+        "Kamanhaar",
+        "Rehendihaar",
+        "Aiminabi",
+        "Henevi",
+        "Dogi Aiha"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Rhoze",
+    "Civilizations with Female Leaders"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": false,
+    "eandd": false,
+    "piety": false,
+    "culdiv": false,
+    "ynaemp": true,
+    "maplabels": false,
+    "civivtraits": false,
+    "ethnicunits": false,
+    "mercenaries": false,
+    "histreligions": false,
+    "enlightenmentera": false,
+    "claimscoloniescrimes": false
+  },
+  "collections": [],
+  "navTemplate": "RhozeNav",
+  "presentation": {
+    "colors": {
+      "icon": "#135859",
+      "background": "#e3d9d1"
+    },
+    "mapImage": "MaldivesMap.png",
+    "iconImage": "Maldives.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MaldivesMap.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Maldives.png",
+    "mapImageCaption": "Map by Regalman",
+    "leaderSceneImage": "Damahaar.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Damahaar.png",
+    "leaderSceneArtCredit": "Art by Darth"
+  },
+  "templateRefs": []
+}

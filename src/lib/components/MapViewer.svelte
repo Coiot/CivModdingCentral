@@ -30,6 +30,7 @@
 	const BASE_CACHE_NAME = `${STORAGE_PREFIX}-base-v${BASE_CACHE_VERSION}`;
 	const BASE_PREFETCH_LIMIT = 3;
 	const LAST_MAP_STORAGE_KEY = `${STORAGE_PREFIX}:last-map-id`;
+	const PIN_EDIT_TARGET_STORAGE_KEY = `${STORAGE_PREFIX}:pin-edit-target`;
 	const YNAEMP_SESSION_STORAGE_KEY = `${STORAGE_PREFIX}:ynaemp-support`;
 	const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
 	const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
@@ -892,7 +893,7 @@
 			const localLabels = loadStorageJson(storageKey("labels"), null);
 			const localSettings = loadStorageJson(storageKey("settings"), {});
 			const storedPinViewMode = loadStorageJson(storageKey("pin-view-mode"), null);
-			const storedPinEditTarget = loadStorageJson(storageKey("pin-edit-target"), null);
+			const storedPinEditTarget = loadStorageJson(PIN_EDIT_TARGET_STORAGE_KEY, null);
 			const storedPanelCollapsed = loadStorageJson(storageKey("panel-collapsed"), null);
 
 			let basePayload = await loadCachedBasePayload(currentMap?.id, baseUrl);
@@ -915,7 +916,7 @@
 			pinViewMode = normalizePinViewMode(storedPinViewMode);
 			saveStorageJson(storageKey("pin-view-mode"), pinViewMode);
 			pinEditTarget = canEdit ? normalizePinEditTarget(storedPinEditTarget) : "local";
-			saveStorageJson(storageKey("pin-edit-target"), pinEditTarget);
+			saveStorageJson(PIN_EDIT_TARGET_STORAGE_KEY, pinEditTarget);
 			panelCollapsedPreference = typeof storedPanelCollapsed === "boolean" ? storedPanelCollapsed : true;
 			panelCollapsed = panelCollapsedPreference;
 			localPins = normalizePins(Array.isArray(localPinsStored) ? localPinsStored : []);
@@ -2286,7 +2287,7 @@
 	function setPinEditTarget(nextTarget) {
 		const normalized = normalizePinEditTarget(nextTarget);
 		pinEditTarget = canEdit ? normalized : "local";
-		saveStorageJson(storageKey("pin-edit-target"), pinEditTarget);
+		saveStorageJson(PIN_EDIT_TARGET_STORAGE_KEY, pinEditTarget);
 		syncEditorsFromSelection();
 	}
 
@@ -4867,13 +4868,6 @@
 							</div>
 							<div class="button-row pin-action-row inline half flex-wrap">
 								<span class="ui-tooltip-wrap relative">
-									<button type="button" onclick={startNewPinEntry} disabled={!canEditPins}>New Pin</button>
-									{#if !canEditPins}
-										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
-									{/if}
-								</span>
-
-								<span class="ui-tooltip-wrap relative">
 									<button type="button" onclick={addOrUpdatePin} disabled={!canEditPins || pinEditorMode === "idle"}>{upsertCivButtonLabel}</button>
 									{#if !canEditPins}
 										<span class="ui-tooltip">Sign in or switch to local to edit pins.</span>
@@ -4886,6 +4880,13 @@
 									<button type="button" onclick={copyPin} disabled={!matchedSelectedPin}>Copy Pin</button>
 									{#if !matchedSelectedPin}
 										<span class="ui-tooltip">Load a pin first to copy it.</span>
+									{/if}
+								</span>
+
+								<span class="ui-tooltip-wrap relative">
+									<button type="button" onclick={startNewPinEntry} disabled={!canEditPins}>New Pin</button>
+									{#if !canEditPins}
+										<span class="ui-tooltip">Sign in or switch to Local edit target to edit pins.</span>
 									{/if}
 								</span>
 

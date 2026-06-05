@@ -1,0 +1,237 @@
+{
+  "id": "civ-malaysia-mahathir-mohamad",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-04-11T00:10:56.633Z",
+    "updatedAt": "2026-04-11T00:14:07.083Z",
+    "createdByName": "EmeraldRange",
+    "formatVersion": 1,
+    "updatedByName": "EmeraldRange",
+    "cloudCreatedByEmail": "emerald.range2964@gmail.com",
+    "cloudUpdatedByEmail": "emerald.range2964@gmail.com",
+    "unresolvedTemplates": [
+      "EmeraldNav"
+    ]
+  },
+  "slug": "malaysia-mahathir-mohamad",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    }
+  },
+  "title": "Malaysia",
+  "issues": [
+    "Unresolved templates: EmeraldNav"
+  ],
+  "leader": "Mahathir Mohamad",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "17 February 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3668385760",
+    "modFolderName": "",
+    "wikiPageTitle": "Malaysia",
+    "directDownload": ""
+  },
+  "authors": [
+    "EmeraldRange"
+  ],
+  "credits": [
+    {
+      "name": "EmeraldRange",
+      "role": "All"
+    }
+  ],
+  "summary": "",
+  "uniques": [
+    {
+      "art": "MalaysiaLeader Icon.png",
+      "body": "Gain {{Golden Age}} Golden Age Points when {{Faith Icon}} Faith generation exceeds your Specialists' total yields. Engineers and Merchants generate extra {{Great Person Icon}} Great People Points from having same-type Specialists in their city.",
+      "name": "Grand Coalition Bargain",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MalaysiaLeader%20Icon.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by EmeraldRange",
+      "footnotes": [
+        "Mauzy, D. K. (1978). Consociationalism and coalition politics in Malaysia (T). University of British Columbia. Retrieved from https://open.library.ubc.ca/collections/ubctheses/831/items/1.0100232"
+      ],
+      "civilopedia": "== Malaysia ==\n=== Geography ===\nMalaysia is a Southeast Asian country located on strategic sea-lane that exposes it to global trade and foreign culture. It is a federal constitutional monarchy with 13 states and a nine Sultans who rotate ruling the country as the Yang di Pertuan Agong. Located near the equator, its climate is hot and humid, experiencing two monsoon seasons. The county has two distinct parts- Malaya which occupies most of the southernmost part of continental Asia on the Malay Peninsula, and Eastern Malaysia which occupies most of the northern portion of the island of Borneo. Eastern Malaysia lies across the South China Sea from Malaya, and Malaya is situated on the Strait of Malacca, the most important thoroughfare in global commerce which carries 40% of the world’s trade.\nMalaysia is significantly divided ethnically between the majority Malay and the significant Chinese and Indian minorities. While Malaysian Malay (as opposed to Indonesian Malay) is the standard language, though English is a strong active second language. The country is officially Islamic but grants constitutional freedoms to non-Muslims. The government of Malaysia is modelled after their former colonizer of Britain, using the Westminster system. Its history has been dominated by coalition politics and a consociationalist bargain keeping politics as the realm for the bumiputera (or people of the soil) and keeping business as the realm for the minorities like the Chinese.\n=== Early History ===\nWhile Malaysia is a modern concept and nation, the area that constitutes the modern country of has a longer history. The earliest humans found in the area are from the Niah caves on Sarawak, being part of the larger theory that homo sapiens passed through Malaysia before inhabiting East Asia. Early ethnic groups included the Negritos and the Senoi. Proto-Malay people arrived in the area around 1000 BC participating in the Maritime Jade Road, a trading network that existed between 2000 BC and 1000 AD.\nDuring the first millennium AD, the Malay people became the dominant ethnicity on the peninsula, founding early states including Gangga Negara and Old Kedah. These states were heavily influenced by India. The area was described in various Indian epics. These descriptions made its way along the growing trade networks of the 1st century BC to as far as the Greeks who called the area the Golden Chersonese. The Han dynasty of China brought pottery and other goods to Borneo during this time. South Indian states like the Pallava dynasty spread their influence to Malaysia in the 4th and 5th centuries. By the 6th century, Hinduism, Buddhism and other Indian influences like the use of Sanskrit was widespread in Malaysia.\n=== Srivijaya and Malacca ===\nIn the 7th and 8th centuries the Srivijaya Empire rose to dominate much of Malaya. Srivijaya centred its power in Sumatra with its capital at Palembang and controlled the coasts of Java, the Malay Peninsula and part of Borneo. Trade with China and the Chola Empire in India led the Srivijaya Empire to prosper for about five centuries. But in 1025, the relations with the Chola fell apart and the Chola raided and razed Kota Gelanggi and Kedah, both sites in Malaya under Srivijayan influence. Through the remaining part of the 11th century, Srivijaya was regularly weakened by its relationship with its Javanese vassals breaking down. The centre of power for Srivijaya shifted up towards Malayu, a town on the Indonesian side of the Straits of Malacca near Jambi. Northern empires regularly pushed into Malay areas, taking over smaller Malay states on the outskirts of Srivijayan control. During this period of contestation, the port of Santubong, near modern-day Kuching, became one of the earliest major trade posts on what would become Malaysian Borneo.\nIn 1324, a Srivijaya prince called Sang Nila Utama founded the Kingdom of Singapura in Temasek on the island of Singapore. This Kingdom’s last ruler was called Parameswara. He was expelled from Temasek by expanding Majapahit forces in 1401 and headed north to found the Sultanate of Malacca; the kingdom having become Muslim by this point. Throughout the last couple hundred years, the growing influence of Islam in the area had been slowly weakening the legitimacy and hold of foreign empires prior to the Majapahit invasion. He reaffirmed the protection of the Chinese emperor against the Ayutthaya Kingdom during a visit by legendary explorer Zheng He. Malacca used its position to dominate and control the trade, retaining crucial relations with China on one side and with the Islamic states to its west. Parameswara took on a Persian bride and styled himself Iskandar Shah. During this period, the Malay culture became more strongly established with various arts being associated with the Malay language and the people within the Sultanate.\n=== The Portuguese, Johor and Brunei ===\nIn 1511, Afonso de Albuquerque of Portugal led an expedition to seize Malacca to use it as a base for the Portuguese’ growing trade ambitions. After successfully taking over the city, the Malaccan Sultan Alauddin Riayat Shah II fled to the southern tip and established the Sultanate of Johor. Johor grew to be one of several powerful trading states the peninsula, though they lost the territories on the other side of the strait to the ascendant Sultanate of Aceh. These three powers struggled to dominate the area and its lucrative trade as the relevance of the Strait of Malacca only grew with the dominance of Global Trade.\nFurther to the east, the island of Borneo was dominated by the Brunei Sultanate. The ancient kingdom had slowly grown while under the domination of the Majapahit. By the 15th century, they had adopted Islam and become independent, growing in power from the influence of Muslim merchants. Under the rule of Bolkiah, the empire grew to its peak taking over parts of the Philippines to its east and establishing strong vassalage relations with various Malay sultanates in Western Borneo. In particular, the Sultanate of Sarawak had become a major seaport that was nearly fully integrated into the Bruneian Empire.\n=== The Dutch and the Spanish ===\nIn their struggles with Aceh and the Portuguese, Johor sought an alliance with the Dutch and their newly established VOC company in the 17th century. The Dutch were already at war with Portugal by the time they attempted to get involved in the Malacca Strait, and with their help, Johor established a loose control over most of the various Malay state. The one state that remained independent and mostly peaceful was the Perak Sultanate in the north, who engaged with Aceh for protection, but became consumed by Aceh after its royal family died in a cholera outbreak in 1635.\nWhile trying to gain control of Perak, Aceh disliked the growing dominance of Malacca. As such Aceh attempted to invade the peninsula in 1629. However, they had a disastrous battle on Duyon River against Portugal and Johor who destroyed and sunk 19,000 Aceh troops. The Dutch finally took Malacca in 1941 with Johor’s help and dismantled Portuguese Malaya. In the aftermath, trade power shifted to Jambi- much further south on Sumatra. After a failed alliance attempt, Johor and Jambi went to war in the 1660s. By 1679, Johor finally won over the war even after several close calls where the Johor sultan had to flee to Pahang. But numerous power grabs and shifts in influence between the Malay, the Bugis and the Minangkabau ethnic groups lead to Johor’s decline which was punctuated by its loss in a conflict with the Dutch in 1784.\nIn the east, the Bruneian Empire rapidly declined after several failed attempts to keep and regain its territory in the Philippines as Spanish expeditions successfully created the Philippines. Brunei was heavily assaulted during the Castilian war, mostly by Visayan and Latin American soldiers fighting for the Spanish Empire. By the end of the 18th century, Sarawak had become independent and only nominally part of the Bruneian Sultanate.\n=== British Colonialism ===\nIn the late 18th century, the collapse of Ayutthaya to its north shook up the politics of the area. The British leased a territory near Penang from the Sultan of Kedah in 1786 and established Georgetown. During the Napoleonic wars in 1795, the British took over Dutch Malacca with Dutch permission to stop the French from taking it. Although they gave it back, the British founded free ports, such as Singapore, that broke up the Dutch monopoly causing more conflict. Various Malay Sultans aligned themselves now with the British to prevent Siamese expansionism. In 1824, the Anglo-Dutch treaty established “Malaya” as the formal name of the new colony., More states were forced to accept British 'protection' over the coming decades.\nWith Bruneian attempting to reassert itself on Borneo, a British adventurer James Brooke accepted a request for assistance from Sarawak. In 1841, Brooke became the Rajah of Sarawak and established Sarawak’s independence, expanding Sarawak against a declining Brunei. In 1885, the British North Borneo Company took over territory to the east of Brunei and, similarly, expanded against a declining Brunei. The overall British possessions remained complex with various Malay Sultanates federating as part of the larger territory of British Malaya, while direct control was held over the Straits Settlements. Johor remained the sole future Malaysian Sultanate to be independent. Unlike Brunei, who had been reduced to a small territory, Johor largely would operate within British Malaya with full independence but having to be careful to consult with the British.\nIn 1895 the 'protected' states on Malaya were persuaded to form a federation. In the early 20th century, a new industry grew up in Malaya: rubber. The Malayan rubber industry boomed with the labour of imported Indian workers- mostly Tamil. The Malayan tin industry also prospered, and an oil industry began growing rapidly in Singapore. During the prosperous 1920s, many Chinese immigrants came to live and work in there, overtaking pre-existing Chinese peranakan communities. Both Chinese and Indians developed ethnic business networks. After the Great Depression of the 1930s, immigration was restricted to try and help unemployment.\n=== World War II and Independence ===\nOn December 8, 1941, the Japanese invaded Malay Peninsula and they quickly overran it as part of the Second World War. A couple weeks later they also took over Sarawak and North Borneo’s capitals. The last British troops withdrew across the straits into Singapore Island on 31 January 1942 before losing the island by 15 February. During the Japanese occupation, the Malays were viewed from a pan-Asian perspective and the sense of unity with other “bumiputera” (people of the soil) was fomented as Japan attempted to take over Indonesia. The Chinese, though, were treated harshness with a massacre of up to 80,000 Chinese occurring during the Sook Ching massacre. Despite their supposed support of Malay nationalism, Japan allowed its fellow Axis member Thailand to annex four Malay states in the north, causing the Japanese to become unpopular. After Japan’s surrender, the British were largely welcomed but ethnic tensions and the desire of independence was significantly stronger. In 1946, under negotiations with the United Malays National Organisation (UMNO), the various British colonies on the peninsula were united into the Federation of Malaya while the Brookes ceded Sarawak to British Borth Borneo.\nThe plans for independence were delayed as Malaysian communists shifted towards insurrection, being primarily based through Chinese trade unions and networks. Then Britain’s new constitution in 1948 classified most ethnic Chinese as non-citizens and allowed peasants to be evicted for plantations. This sparked the Malayan Emergency where a prolonged communist insurgency gripped Malaya’s politics. The British relocated several rural Chinese into guarded concentration villages and found the methods successful in disrupting the insurgency until it was ultimately resolved by 1960. This model then became touted as the premier anti-communist strategy for the Western powers in the Cold War.\nTo counter the more radical communists, the Malayan Chinese Association (MCA) pushed for a moderate view where Chinese were given citizenship in the proposed independent Malaya. Compromises and bargains between UMNO and the MCA led to the recognition of Chinese and Indians as equal citizens, but that Malay language and Malay sultans to be the primary method of government. Malay education and development were to be promoted- allowing Malaya to be governed by the Malays but with some representation for the minorities to protect their business interests. In 1961, Singaporean Prime Minister Lee Kuan Yew proposed uniting North Borneo into “Malaysia” as part of an attempt to keep Chinese communists under control by keeping the Malay people a demographic majority. By 1963, Malaya, Sarawak and Borth Borneo were all finalised to join and form Malaysia, becoming independent on 19 September.\n=== Independence to present. ===\nIndonesia was angered by the formation of Malaysia, calling it a neo-colonialist plot. With attacks on Malayan embassies and support for communists in Sarawak, the confrontation lasted until 1966 when Indonesia’s president was ousted.\nRacial Strife also grew over the question of education- as the Malays wanted to fold education within the realm of politics while the Chinese saw education as crucial to their dominance in economics. This crisis led to the expulsion of Singapore to maintain the Malay hold on political domination against increasingly assertive Chinese politicians like Lee Kuan Yew. Despite this, UMNO lost its majority in parliament in 1969, sparking widespread riots. After resolving the emergency, the new 1971 government restricted the system, outlawing criticism of the Malaysian monarchies or the special position of Malays in politics. The new system tacitly allowed ambitious minority politicians to convert their race to being Malay to bring dissenters into the Malay side of politics.\nThe 1970s saw coalition politics in the new parliament continue to increase the economic participation and benefits to bumiputera. Coalition power consolidated by 1981 when Mahathir Mohamad began his 22 year long prime ministership fully spearheading the new economic policies to develop Malaysia’s economy for the Malays while maintaining the ethno-political balance to keep racial strife from rearing itself again. His policies brough rural Malays into the new economy using state-owned enterprises like Petroliam Nasional Berhad (PETRONAS). He focused on export-orientated industrialisation. His rule saw a resurgence of Islam and conservatism and further entrenchment of Malaysia’s racial bargain. Mahathir retired in 2002 with a successor continuing the same politics into the 2000s. The 2008 crisis coincided with attempts to restructure subsidies, causing significant upheaval. Malaysia saw a new party rule for the first time in 2009, focusing more on ethnic harmony, anti-corruption measures and higher taxes.\nBy 2018 the new administration was deeply unpopular due to rising living costs and growing crackdown on dissent, leading to Mahathir coming out of retiring to win the election and restore the rule of law. After promising to ratify the UN’s convention to eliminate racial discrimination, he ultimately did not ratify the convention after protests from Malays. He abruptly resigned in 2020, forcing the Yang di Pertuan Agong to assign a new prime minister. COVID and successive political corruption problems led to political instability until Mahathir’s former deputy Anwar Ibrahim became prime minister in 2022.\n== Mahathir Mohamad ==\n=== Early Life and Education ===\nMahathir bin Mohamad was born in the British protectorate of Kedah in 1925 into a poor neighbourhood of Alor Setar. His mother was a Kedah Malay while his father was from Penang of Malay and Indian descent, and both had been previously married. Mahathir had six half-siblings and two full-siblings and shared a small unelectrified home with the rest of his family. Once he began attention an all-boys elementary school, he became quickly fluent in English, exceling in it enough to edit the student newspaper and win a position at a selective English-language secondary school. When schools were closed during the Japanese occupation of Malay in World War II, he started a small business selling coffee and snacks.\nAfter the war, he graduated with the highest rank and was enrolled to study medicine in Singapore at what later became the University of Malaya/Singapore. After his graduation, he began a residency at Penang General Hospital, after which he was sent to various government clinics in more rural locations. In 1955, he became the undeveloped island of Langkawi’s first stationed doctor which influenced his attitude towards developing Malaysia.\n=== Entrance into Politics ===\nMahathir built up a reputation of being a caring doctor, taking a lower salary to establish himself and then later opening his private practice- the first for a Malay in Malaysia. He would make house calls and trudge through rice fields garnering him a reputation. He became involved in welfare and public health discussions, becoming president of the Kedah Tuberculosis Association while visiting Indian plantation workers to treat the disease. Mahathri’s political ambitions were also sparked by the racial controversies following the Japanese surrender, joining protests against granting non-Malays citizenship. He joined the United Malays National Organisation (UMNO) while working as a physician. By the time that Malaya became independent in 1959, he had become the chairman of UMNO in Kedah.\nDespite this, he ruled himself out of the election following disagreements with the prime minister, who had retained British forces post-independence to resolve insurgency issues. But in 1964, Mahathir stood for election for the seat involving Alor Setar, primarily proposing minimum education qualifications for politicians. He won his election and became a backbencher who got involved in the conflict surrounding Singapore’s status in the country. He lost his seat in 1969, which Mahathir attributed to vote splitting amongst Malay between the two Malay parties. When the election led to race riots, Mahathir criticised the government and expressed his dissent towards the prime minister Tunku for failing to uphold Malay interest, causing him to be fired from UMNO and nearly arrested.\nAfter his expulsion from UMNO, Mahathir wrote his first book titled The Malay Dilemma where he set out his vision for the Malay race, arguing that the government needed to support Malay’s economic interests against Chinese dominance but not provide so much support that Malay businesses did not have to face competition to create innovation. He described Malays as people who avoided hard work and did not appreciate the value of money. The book was banned by the Tunku government for being critical of Tunku.\nIn 1971, Mahathir announced his plan to rejoin UMNO meeting the new Prime Minister Abdul Razak Hussein. After being allowed back, Razak appointed him as senator for Kedah by recognising his potential. Mahathir re-rose quickly, becoming part of the Supreme Council again and winning a house election in 1974, becoming the newly appointed Minister for Education. In 1976, the new prime minister Hussein Onn had declining health. Mahathir and two others wrestled for the position of deputy prime minister. Ultimately, he was chosen by Hussein due to significant liabilities that the other choices had.\n=== Rise to Prime Ministership ===\nAs deputy prime minister, he continued his work primarily in education and industry, implementing heavy industry policies using government corporations to invest in the long-term development of manufacturing sectors. Personally interested in driving and cars, he particularly focused on promoting the creation of a Malaysian car industry. He simplified a lot of processes for business and development and spent much of his time promoting Malaysian business and trade interests with foreign countries, including with North Korea’s Kim Il Sung.\nIn 1981, after 4 years as his deputy, Hussein resigned and made way for Mahathir to become prime minister in 1981. Mahathir prioritised a clean and efficient government, freeing political prisoners and initiating campaigns to combat corruption with things like clock-in systems for government departments, limiting ministers to one piece of land to own and setting goals for his minister to show progress in achieving objectives. His deputy prime minister unbanned Mahathir’s book The Malay Dilemma. In 1982, he secured a decisive victory strengthening UMNO’s hold on parliament with his development-first approach resonating with the people. The next two years was primarily framed by his public feud with the Sultans as he attempted to limit their powers despite popular support for the Sultans. With a compromise, the crisis was resolved and Mahathir rode int 1984 being elected a second time without opposition.\n=== New Economic Policy ===\nMahathir inherited the New Economic Policy- which tried to improve the economic condition of the Malay race through various targets and affirmative action. Mahathir shifted the way it was implemented by privatising many of the government corporations that had been formed to give the Malay these benefits, similar to his contemporary Margaret Thatcher. Mahathir’s privatisation generally improved the working conditions of Malaysians and gave control of these businesses to the Malay race all while raising revenue for the government. Still, Mahathir did not go fully into the liberal agenda, continuing to use the government to sponsor and encourage manufacturing, such as with his establishment of the Proton car brand and the use of protective tariffs. He also worked to turn the poor island of Langkawi he was once a doctor for into a tourist destination by developing sea and air port infrastructure while declaring it a duty-free zone.\nAt the same time that he was implementing these liberal reforms, Malaysia was also experiencing a resurgence of Islamic conservatism amongst Malays. The Grand Coalition that had kept UMNO in power after the riots of 1969 was at risk when the more right leaning portions took increasingly stronger Islamist stands. To appeal to this side of the Malay base, he established Islamic institutions to incorporate things like Islamic education into the model of government oversight and development. He managed to recruit a younger Islamic leader Anwar Ibrahim to moderate some of the Islamist elements but also employed state-sponsored violence and arrests to crack down on extremists.\n=== Power Struggles ===\nMahathir faced his first political challenge in 1987 when he was challenged by Tengku Razaleigh for the prime ministership. The support of the press, party heavyweights and the Sultan of Johor, he managed to win with a narrow margin in an internal party contest. In response, Razaleigh’s side pursued litigation. The High Courts ruled that UMNO was an illegal organisation due to unregistered branches. This ultimately had little practical effect as Mahathir managed to re-registered as “UMNO Baru” (aka New UMNO). After the debacle, he criticised the judiciary and got the Lord President of the Supreme Court dismissed by the Yang di Pertuan Agong, who at the time was the Sultan of Johor.\nMahathir suffered a heart attack in 1989 but continued going after successful treatment in his own country. He established a Heart Institute and won the 1990 election. The strong mandate from the election allowed him to end Malaysia’s long running communist insurgency with a peace deal later that year.\n=== New Vision and Crisis ===\n1990 was significant for Mahathir as the New Economic Policy was written to expire that year. Mahathir unveiled a new economic policy called Vision 2020 the “fully develop in 30 years” targeting an aggressive 7% annual growth rate. Unlike his prior views, this saw a shift in Mahathir’s racial politics as he sought to break down ethnic boundaries, opening the government’s benefits up to non-Malays. His new policies were largely successful- by 1995 he had reduced poverty rates and income inequality dramatically. He had also fomented a stronger pan-Malaysian identity with slogans like Malaysai Boleh (“Malaysia can”). He also chased the aggressive developmental targets with large infrastructure projects like a large hydroelectric dam in Sarawak, a new science and technology university and the Multimedia Super Corridor- a new information technology district modelled after Silicon Valley that Bill Gates called “really awesome”. He also relocated much of the public service to Putrajaya and planned the foundation of “Cyberjaya” next to it to be a futuristic planned city. He founded Malaysia’s space program and launched the country’s first satellite in 1995.\nThis aggressive growth was mostly built on the back of slashed corporate taxes and liberal financial regulations. The foreign investment that led to Malaysia’s massive boom during the 1990s came crashing down in 1997 during the Asian financial crisis. Malaysia’s main stock exchange index fell over 75% as the Malaysian currency rapidly devalued due to currency speculation. Mahathir cut more government spending and raised more interest rates in line with liberal recommendations from the International Monetary Fund, but only seemed to make the crisis worse. In 1998, Mahathir defied liberal economic theory and implemented strong authoritarian measures, such as banning offshore trading and forcibly pegging the ringgit to the dollar. Despite these measures being less successful elsewhere, in Malaysia, it helped the country escape the crisis faster than its neighbours. Mahathir had once again come out of a crisis and returned Malaysia to a economically beneficial position.\n=== Final Years and Retirement ===\nDespite the massive financial crisis, Mahathir’s biggest threat by 1997 was the ambition of his long-time deputy prime minister Anwar Ibrahim- a more religious and less authoritarian alternate to Mahathir. The crisis saw Anwar sidelined as Mahathir shifted towards aggressive control measures to stabilise the economy. In September 1998, Anwar was dismissed and then arrested on charges of corruption and sodomy- alleging that Anwar had intimidated people with his position to sodomise them. Mahathir would follow this up by expanding women’s rights and making it illegal to discrimination on the grounds of sex. In 2002, Mahathir opened the PETRONC complex, as an integrated hub for petroleum which reattracted significant foreign investment. Soon after, he announced that he would resign, citing his old age. He resigned in 2003 after spending time to anoint and ensure a successor ending his 22 year long prime ministership. His retirement saw an outpouring of public gratitude, and he was named the Father of Modernisation.\nAfter his retirement, he vowed to stay out of politics, rejecting an emeritus role in the new cabinet. However, he retained a busy schedule representing Malaysia with various foreign engagement to promote trade and investment. He remained a senior advisor or chairman of various companies, including Petronas and Proton. Although he primarily became a businessman, his views were still sought after within the Malaysian political sphere. Not that Mahathir minded, he once complained that he was not getting enough airtime on Malaysian news about his views. In 2008 when UMNO lost its majority for the first time since 1969, he resigned from the party and criticised the direction of the party\n=== Return to Power ===\nIn 2015, at age 90, he repeated called for the prime minister to resign over scandals of corruption and attended mass protests against the UMNO government. He formed a new party BERSATU in 2016 and officially joined the opposition coalition in 2017. The government withdrew his personal protection guards, which caused more criticism of the government. He became their prime ministerial candidate in 2017, in part because Anwar Ibrahim was still imprisoned due to the sodomy scandal. Despite being the one to cause the scandal, he campaigned in the 2018 election on a promise to pardon Anwar.\nHis campaign was successful, and Mahathir became prime minister again in 2018 at the age of 92. Despite contestation over the election by the former government, the palace affirmed Mahathir’s election. As promised his pardoned Anwar, reopened investigations into the scandals and abolished the unpopular Goods and Services Tax (GST). He fired thousands of civil servants and attempted to bring back his liberal policies.\nUnlike his past tenures, the economy slowed with these reforms. Mahathir attempted to set a new set of economic policies in late 2019 and prepared to return power to Anwar. However, he announced his retirement suddenly in March 2020 leading the scramble. His successor was then hit with the COVID-19 pandemic creating more instability. For Mahathir, however, he returned to retirement continuing to remain active in politics and business.",
+      "templateRefs": []
+    },
+    {
+      "art": "Malaysia UU2.png",
+      "body": "",
+      "name": "Gerak Khas",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Malaysia%20UU2.png",
+      "bullets": [
+        "+1 {{Moves Icon}} Movement",
+        "+1 Sight when starting in rough terrain.",
+        "+15% {{Strength Icon}} Combat Strength when defending.",
+        "Provides +1 {{Happiness Icon}} Local Happiness when starting on a rough terrain tile with an improvement you own."
+      ],
+      "replaces": "Paratrooper",
+      "artCredit": "Art by EmeraldRange",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "MalaysiaUU1.png",
+      "body": "",
+      "name": "JAKIM Officer",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MalaysiaUU1.png",
+      "bullets": [
+        "When used to remove heresy, generates {{Golden Age}} Golden Age Points if the city has more {{Faith Icon}} faith generation than specialists",
+        "Otherwise, permanently adds +2 {{Faith Icon}} Faith to the city instead."
+      ],
+      "replaces": "Inquisitor",
+      "artCredit": "Art by EmeraldRange",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Coast",
+    "capital": "Kuala Lumpur",
+    "culture": "East Indies",
+    "religion": [
+      "Islam",
+      "Sunni (HR)"
+    ],
+    "adjectives": "Malaysian",
+    "empireName": "Malaysia",
+    "government": [
+      "Monarchy"
+    ],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": "Indonesian"
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Mahathir_Mohamad",
+      "body": "Mahathir bin Mohamad was born in the British protectorate of Kedah in 1925 into a poor neighbourhood of Alor Setar, sharing a small unelectrified home with his family. After university, he became the undeveloped island of Langkawi’s first stationed doctor which influenced his attitude towards developing Malaysia. Mahathir’s political ambitions were sparked by racial controversies following the Japanese surrender. He rose within UMNO, winning his election in 1964 but lost his seat in 1969. He criticised the government for failing to uphold Malay interests in the subsequent riots, causing him to be fired from UMNO and nearly arrested.\nAfter his expulsion, Mahathir wrote The Malay Dilemma, arguing that the government needed to support Malay’s economic interests against Chinese dominance. After being allowed back to UMNO in 1971, he re-rose quickly. As deputy prime minister in 1976, he particularly focused on promoting the creation of a Malaysian car industry.\nMahathir inherited the New Economic Policy as prime minister- which tried to improve the economic condition of the Malay race through various targets and affirmative action. Mahathir use privatisation to rework the system. In 2002, he announced that he would resign. After his retirement, he vowed to stay out of politics, rejecting an emeritus role in the new cabinet.\nIn 2015, at age 90, he repeatedly called for the prime minister to resign over scandals of corruption. He campaigned in the 2018 election and became prime minister again in 2018 at the age of 92. He announced his retirement suddenly in March 2020. His successor was then hit with the COVID-19 pandemic creating more instability.",
+      "title": "Mahathir Mohamad"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Malaysia",
+      "body": "Malaysia is a Southeast Asian country located on strategic sea-lane that exposes it to global trade and foreign culture. It is a federal constitutional monarchy with 13 states and a nine Sultans who rotate ruling the country as the Yang di Pertuan Agong. Located near the equator, its climate is hot and humid, experiencing two monsoon seasons. The county has two distinct parts- Malaya which occupies most of the southernmost part of continental Asia on the Malay Peninsula, and Eastern Malaysia which occupies most of the northern portion of the island of Borneo. Eastern Malaysia lies across the South China Sea from Malaya, and Malaya is situated on the Strait of Malacca, the most important thoroughfare in global commerce which carries 40% of the world’s trade.\nMalaysia is significantly divided ethnically between the majority Malay and the significant Chinese and Indian minorities. While Malaysian Malay (as opposed to Indonesian Malay) is the standard language, though English is a strong active second language. The country is officially Islamic but grants constitutional freedoms to non-Muslims. The government of Malaysia is modelled after their former colonizer of Britain, using the Westminster system. Its history has been dominated by coalition politics and a consociationalist bargain keeping politics as the realm for the bumiputera (or people of the soil) and keeping business as the realm for the minorities like the Chinese.",
+      "title": "Malaysia"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Fine, I resign. Not many dictators announce their resignation. I don't care much whether people remember me or not anyways. If they don't remember, I'm dead anyways.\"",
+    "blessing": "Esteemed salutations, the Most Honourable Tun Dr. Mahathir Mohamad, steadfast architect of modern Malaysia. Rising from humble roots in Kedah, you guided a young federation through the trials of post-colonial racial crises into an era of industry, ambition, and global recognition. Through new economics, new districts and new visions, your skilled statecraft balanced government investment with liberal finance. You coralled the races of Malaysia to lift up the rural poor people of the soil into a sleek and efficient modern country.\nO Father of Modernisation, your party has since descended into corruption and decadance. Will you come forth to guide the Malaysian people towards prosperity? Can you lend a steady hand to grow your native industries? Can you build a civilisation that can stand the test of time?",
+    "introduction": "\"Welcome to Malaysia. I am its prime minister Tun Mahathir bin Mohamad. I've had quite a long time in government and I've learned a few things. For example, I welcome those who seek prosperity with us.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Kuala  Lumpur",
+        "Johor Bahru",
+        "Kuching",
+        "George Town",
+        "Shah Alam",
+        "Kota Kinabalu",
+        "Ipoh",
+        "Malacca",
+        "Putrajaya",
+        "Kuantan",
+        "Petaling Jaya",
+        "Alor Setar",
+        "Seremban",
+        "Kuala Terengganu",
+        "Kota Bharu",
+        "Port Klang",
+        "Sandakan",
+        "Langkawi",
+        "Sepang",
+        "Subang Jaya",
+        "Miri",
+        "Kajang",
+        "Bintulu",
+        "Kangar",
+        "Iskandar Puteri",
+        "Muar",
+        "Lahad Datu",
+        "Raub",
+        "Seri Menanti",
+        "Ampang Jaya",
+        "Sibu",
+        "Kampar",
+        "Tawau",
+        "Cyberjaya",
+        "Multimedia Super Corridor"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Adam",
+        "Ahmad",
+        "Haziq",
+        "Daniel",
+        "Anwar",
+        "Nur",
+        "Aisyah",
+        "Aina",
+        "Sarah",
+        "Siti"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "EmeraldRange",
+    "Malaysia",
+    "Civilizations with Male leaders"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": true,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "traits": false,
+    "ynaemp": true,
+    "slavery": false,
+    "maplabels": true,
+    "civivtraits": true,
+    "ethnicunits": true,
+    "mercenaries": false,
+    "histreligions": true,
+    "enlightenmentera": true,
+    "claimscoloniescrimes": false
+  },
+  "collections": [],
+  "navTemplate": "EmeraldNav",
+  "presentation": {
+    "colors": {
+      "icon": "#f59c34",
+      "background": "#0a1945"
+    },
+    "mapImage": "MalaysiaRecartography.png",
+    "iconImage": "ER_Malaysia.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MalaysiaRecartography.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ER_Malaysia.png",
+    "mapImageCaption": "Map by EmeraldRange",
+    "leaderSceneImage": "MalaysiaLS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MalaysiaLS.png",
+    "leaderSceneArtCredit": "Art by EmeraldRange"
+  },
+  "templateRefs": []
+}

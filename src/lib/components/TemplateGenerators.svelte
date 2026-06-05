@@ -1,5 +1,6 @@
 <script>
 	import ReferenceSurfacePanel from "./ReferenceSurfacePanel.svelte";
+	import IconAtlasPlaceholderGenerator from "./IconAtlasPlaceholderGenerator.svelte";
 	import WizardExamplePreview from "./WizardExamplePreview.svelte";
 	import { exampleSupportsLanguage, wizardCards } from "../data/generatorPageData.js";
 
@@ -252,6 +253,12 @@
 					{#if exampleSupportsLanguage(activeWizardCard.example, activeSnippetLanguage)}
 						<div class="wizard-block wizard-block--example">
 							<WizardExamplePreview example={activeWizardCard.example} activeLanguage={activeSnippetLanguage} />
+						</div>
+					{/if}
+
+					{#if activeWizardCard.example?.preview?.interactiveKind === "art-audio-bundle"}
+						<div class="wizard-block wizard-block--example">
+							<IconAtlasPlaceholderGenerator />
 						</div>
 					{/if}
 

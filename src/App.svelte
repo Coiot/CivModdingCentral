@@ -292,6 +292,7 @@
 			currentPath === "/pattern-library" ||
 			currentPath === "/template-generators" ||
 			currentPath === "/guided-planner" ||
+			currentPath === "/ui-screen-viewer" ||
 			currentPath === "/unit-flag-previewer" ||
 			currentPath === "/mod-doctor"
 		) {

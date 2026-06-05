@@ -1,0 +1,289 @@
+{
+  "id": "civ-pyu-city-states-duttabaung",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-05-03T02:31:03.923Z",
+    "updatedAt": "2026-05-03T02:36:01.247Z",
+    "createdByName": "EmeraldRange",
+    "formatVersion": 1,
+    "updatedByName": "EmeraldRange",
+    "cloudCreatedByEmail": "emerald.range2964@gmail.com",
+    "cloudUpdatedByEmail": "emerald.range2964@gmail.com",
+    "unresolvedTemplates": [
+      "Great Artist",
+      "Great Engineer",
+      "EmeraldNav"
+    ]
+  },
+  "slug": "pyu-city-states-duttabaung",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "Solo Tune",
+      "credit": "Pat Waing"
+    },
+    "peace": {
+      "url": "",
+      "title": "Back to Bagan",
+      "credit": "Aung Win"
+    }
+  },
+  "title": "The Pyu",
+  "issues": [
+    "Unresolved templates: Great Artist, Great Engineer, EmeraldNav"
+  ],
+  "leader": "Duttabaung",
+  "source": {
+    "type": "wiki",
+    "version": "v 10",
+    "wikiUrl": "",
+    "lastUpdated": "September 2025",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=1386710146",
+    "modFolderName": "",
+    "wikiPageTitle": "Pyu City-States",
+    "directDownload": ""
+  },
+  "authors": [
+    "EmeraldRange"
+  ],
+  "credits": [
+    {
+      "name": "EmeraldRange",
+      "role": "Author"
+    },
+    {
+      "name": "Chrisy15",
+      "role": "Code (Lua)"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art (Civilization Icon, Unique Icon Retouches)"
+    },
+    {
+      "name": "Francesca",
+      "role": "Art (Leaderscene)"
+    }
+  ],
+  "summary": "The Pyu led by Duttabaung are a custom civilization mod by EmeraldRange, with contributions from Chrisy15, DarthKyofu, and Francesca.",
+  "uniques": [
+    {
+      "art": "ERPyuLeader.png",
+      "body": "Defensive Buildings provide +2 {{Food Icon}} Food and +2 {{Faith Icon}} Faith. {{Tourism Icon}} Tourism Modifer from having a {{Trade Route Icon}} Trade Route with another Civilization increased by 10%.",
+      "name": "Earth Within, Sky Around",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ERPyuLeader.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by EmeraldRange and DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "ERPyuGP.png",
+      "body": "",
+      "name": "Ten Flower Craftsman",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ERPyuGP.png",
+      "bullets": [
+        "Produces {{Great Work Icon}} Great Works of Craft, which yield 2 {{Faith Icon}} Faith and increase {{Gold Icon}} Gold from incoming {{Trade Route Icon}} International Trade Routes by +2.",
+        "Each type of Craft provides a unique bonus to its City.",
+        "Pabe: +5% Land Unit {{Production Icon}} Production.",
+        "Pabu: +1 {{Gold Icon}} Gold from Forests.",
+        "Pagyi: +1 {{Great Artist Icon}} Great Artist Point.",
+        "Pahtein: +1 {{Culture Icon}} Culture from {{Gold Resource Icon}} Gold and {{Gems Icon}} Gems.",
+        "Paput: +2 {{Gold Icon}} Gold and +1 {{Faith Icon}} Faith from {{Ivory Icon}} Ivory.",
+        "Pantamawt: +1 {{Culture Icon}} Culture from {{Stone Icon}} Stone and {{Marble Icon}} Marble.",
+        "Patawt: +1 {{Happiness Icon}} Local Happiness.",
+        "Patinn: +1 {{Culture Icon}} Culture from {{Iron Icon}} Iron and {{Copper Icon}} Copper.",
+        "Payan: +1 {{Great Engineer Icon}} Great Engineer Point.",
+        "Payun: +1 {{Gold Icon}} Gold from Jungle."
+      ],
+      "replaces": "Great Artist",
+      "artCredit": "Art by EmeraldRange and DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "ERPyuUB.png",
+      "body": "",
+      "name": "Pahto",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ERPyuUB.png",
+      "bullets": [
+        "+1 {{Defense Icon}} Defence for every 3 {{Faith Icon}} Faith produced by the City.",
+        "Has a {{Great Work Icon}} Great Work of Art Slot.",
+        "Has an Artist specialist slot."
+      ],
+      "replaces": "Shrine",
+      "artCredit": "Art by EmeraldRange and DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "None",
+    "capital": "Sri Ksetra",
+    "culture": "Mandala",
+    "religion": [
+      "Buddhism",
+      "Theravada (HR)"
+    ],
+    "adjectives": "Pyu",
+    "empireName": "Pyu Empire",
+    "government": [
+      "Principality"
+    ],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Duttabaung",
+      "body": "Duttabaung was the legendary founder of Sri Ksetra and, according to the Burmese chronicles' incredibly early dates for the start of the Pyu city-states era, was born in 5th century BCE. If he had existed, he would have been born in the 7th century BCE, around the start of the Burmese Era. As little historical evidence exists, the majority of what is known about Duttabaung comes from the Glass Palace Chronicles from the Konbaung era.",
+      "title": "Duttabaung"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Pyu_city-states",
+      "body": "Around the 2nd century BCE, Tibeto-Burman speaking people migrated south into modern-day Burma from Qinghai and settled into Pyu city-states. There are archaeological records of prior peoples in the region, however, these people, the Pyu, are the earliest inhabitants who we have written records of. The Pyu most likely called themselves Tircul in the Pyu language, an ancient Tibeto-Burman language related to old Burmese. Along with their settlements, we also have records of their language and culture through the extensive trade networks from the Andaman sea up the Irrawaddy River into several Chinese dynasties, from the Han to the Song.\nThe Pyu were largely peaceful and set up the beginnings for the Mandala political model that would dominate Southeast Asian politics. In line with the Buddhinisation of peninsular Southeast Asia, the Pyu started to move from their Hindu roots towards ruling in line with the ideals of a Buddhist Chakravartin. Instead of military conquest, the Pyu organised themselves through a loose confederation of city-states where each city claimed to be the central core of the entire system. However, the Pyu never developed the system to the point where Mandalas were used to organise and justify proper empires due to their commitment to non-violence.",
+      "title": "Pyu City-States"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "This is impossible, no weapon may pierce me and my bells will never stop ringing!",
+    "blessing": "Great Ruler of the Universe, Duttabaung, king majestical, the Seven Exalted Ones have called you forth back to your people. May you erupt from the ashes of Mount Popa to bring a thousand fields of glory to Thayae Khittaya once again! The Pyu people have flourished for centuries along the Irrawaddy River, creating the complex Mandala system of political relation. The Mandala of Thayae Khittaya, of course, is the strongest. For Thayae Khittaya's walls heightened its glory and its arts and crafts extended your sovereignty far beyond the city.\nSince your departure into the heavens, King Duttabaung, the Pyu have been ransacked by the Chinese and the Burmese. Shall you descend upon your people and bring the Pyu back to their former glory? Will you spread your righteous rule through the refinement of your cities? Can you build a civilisation that will stand the test of time?",
+    "introduction": "Great Traveller, I welcome you to the centre of the universe, Sri Ksetra! I am its king, Duttabaung."
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Sri Ksetra",
+        "Hanlin",
+        "Beikthano",
+        "Tagaung",
+        "Maingmaw",
+        "Beinnaka",
+        "Myede",
+        "Salin",
+        "Saku",
+        "Pyay",
+        "Kontalin",
+        "Padaung",
+        "Salae",
+        "Pyedawtha",
+        "Popa",
+        "Hpo Oo",
+        "Lekaing",
+        "Shwetaung",
+        "Pin'le",
+        "Bhamo",
+        "Taungdwin",
+        "Nyaungyan",
+        "Bagan",
+        "Dali",
+        "Pathein",
+        "Dala",
+        "Mindon",
+        "Myataung",
+        "Nyaung Oo",
+        "Thaton",
+        "Myinzaing",
+        "Pakhangyi",
+        "Mattaya",
+        "Myedu"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Nanda",
+        "Eaindrea",
+        "Ohmar",
+        "Thiri",
+        "Theingi",
+        "Thiha",
+        "Thukha",
+        "Arkar",
+        "Yazar",
+        "Thurein"
+      ],
+      "title": "Spy List"
+    },
+    {
+      "items": [
+        "Pabe Sayar - Bowl with a Peacock Insignia",
+        "Pabe Sayar - A Dha Sword",
+        "Pabu Sayar - Ivory Handle",
+        "Pabu Sayar - Heavenly Natthar",
+        "Pagyi Sayar - Past Buddhas",
+        "Pagyi Sayar - Realisation of Dhamma",
+        "Pagyi Sayar - The Sangha",
+        "Pahtein Sayar - Decorated Eye Symbol",
+        "Pahtein Sayar - Toe Naya Ring",
+        "Pahtein Sayar - Gold Seal Ring",
+        "Pahtein Sayar - Twisted Gold Ring",
+        "Paput Sayar - Offering Vessel",
+        "Paput Sayar - Wooden Railings",
+        "Pantamawt Sayar - Reliquary",
+        "Pantamawt Sayar - The Buddha Tames Nalagiri",
+        "Patawt Sayar - Throne For the Buddha",
+        "Patawt Sayar - Naga (Burmese Dragon)",
+        "Patinn Sayar - Dancers in Bronze",
+        "Patinn Sayar - Bronze Stele",
+        "Patinn Sayar - Life of the Buddha",
+        "Payan Sayar - Bawbawgyi Pahto",
+        "Payan Sayar - Bebe Pahto",
+        "Payan Sayar - Payama Pahto",
+        "Payun Sayar - Bagan Betel Box",
+        "Payun Sayar - Two Heavenly Abodes"
+      ],
+      "title": "Ten Flower Craftsman List"
+    }
+  ],
+  "categories": [
+    "Burma",
+    "Mandala Cultures",
+    "Civilizations with Male leaders",
+    "All Civilizations",
+    "EmeraldRange",
+    "Great People Civilizations"
+  ],
+  "modSupport": {
+    "aa": true,
+    "uci": true,
+    "eandd": true,
+    "piety": true,
+    "culdiv": true,
+    "traits": false,
+    "ynaemp": true,
+    "slavery": false,
+    "maplabels": false,
+    "civivtraits": true,
+    "ethnicunits": false,
+    "mercenaries": false,
+    "histreligions": true,
+    "enlightenmentera": false,
+    "claimscoloniescrimes": false
+  },
+  "collections": [],
+  "navTemplate": "EmeraldNav",
+  "presentation": {
+    "colors": {
+      "icon": "#edc193",
+      "background": "#22434f"
+    },
+    "mapImage": "ERPyuMap.png",
+    "iconImage": "Thayae_Khittaya_icon.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ERPyuMap.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Thayae_Khittaya_icon.png",
+    "mapImageCaption": "Map by EmeraldRange and DarthKyofu",
+    "leaderSceneImage": "ERPyuLS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ERPyuLS.png",
+    "leaderSceneArtCredit": "Art by Francesca"
+  },
+  "templateRefs": []
+}

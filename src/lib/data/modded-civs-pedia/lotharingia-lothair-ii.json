@@ -1,0 +1,257 @@
+{
+  "id": "civ-lotharingia-lothair-ii",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-05-03T01:58:52.030Z",
+    "updatedAt": "2026-05-03T01:58:52.034Z",
+    "createdByName": "Senshi",
+    "formatVersion": 1,
+    "updatedByName": "Senshi",
+    "unresolvedTemplates": [
+      "SenshiNav",
+      "NCnav"
+    ]
+  },
+  "slug": "lotharingia-lothair-ii",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    }
+  },
+  "title": "Lotharingia",
+  "issues": [
+    "Unresolved templates: SenshiNav, NCnav"
+  ],
+  "leader": "Lothair II",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "17 April 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3708447117",
+    "modFolderName": "",
+    "wikiPageTitle": "Lotharingia",
+    "directDownload": ""
+  },
+  "authors": [
+    "Senshi",
+    "NopeCopter"
+  ],
+  "credits": [
+    {
+      "name": "Senshi",
+      "role": "Design, Code, Art (Civ Alpha), Text (Mangonel and Bishop Pedia entries + additional text)"
+    },
+    {
+      "name": "NopeCopter",
+      "role": "Code, Lua"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art (Leaderscene and Icon, Civ Icon and Colours, Mangonel Icon, Bishop Icon)"
+    },
+    {
+      "name": "Francesca",
+      "role": "Art (Map)"
+    },
+    {
+      "name": "Zharques",
+      "role": "Lotharingia and Lothair II Pedia entries"
+    }
+  ],
+  "summary": "Lotharingia led by Lothair II is a custom civilization by Senshi and NopeCopter, with contributions from DarthKyofu, Francesca, and Zharques.",
+  "uniques": [
+    {
+      "art": "LothairIIIcon.png",
+      "body": "May trade away all {{Influence Icon}} Influence with an Allied City-State in exchange for your choice of a Great Person. Met City-States provide +1 of their base Yield to the Capital as long as no other Civilization has more Influence with them than you.",
+      "name": "Council of Metz",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LothairIIIcon.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "MangonelIcon.png",
+      "body": "",
+      "name": "Mangonel",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MangonelIcon.png",
+      "bullets": [
+        "Unlocked at Metal Casting.",
+        "+29% {{RangedStrength Icon}} Ranged Strength (18 vs 14).",
+        "100% Attack Bonus vs Cities (+100% vs +200%).",
+        "While in the borders of a City-State, other Civilizations lose 1 Influence per turn with them."
+      ],
+      "replaces": "Trebuchet",
+      "artCredit": "Art by DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "BishopIcon.png",
+      "body": "",
+      "name": "Bishop",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/BishopIcon.png",
+      "bullets": [
+        "When expended within the borders of a City-State, provides 10 {{Influence Icon}} Influence.",
+        "When expended within the borders of a rival Civilization, they lose 10 {{Influence Icon}} Influence with the closest City-State."
+      ],
+      "replaces": "Missionary",
+      "artCredit": "Art by DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "River",
+    "capital": "Aachen",
+    "culture": "Central",
+    "religion": [
+      "Catholicism"
+    ],
+    "adjectives": "Lotharingian",
+    "empireName": "Kingdom of Lotharingia",
+    "government": [
+      "Monarchy"
+    ],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Lothair II was the king of Lotharingia from 855 until his death in 869. He was the son of Lothair I, Emperor of the Carolingian Empire, King of Italy and King of Middle Francia. The territory of Lothair I was divided by the Treaty of Prüm, under which Lothair II was given Lothair I's territory between Frisia and the Alps, which became known as Lotharingia. Much of his reign was dedicated to his long divorce case with his wife Teutberga so that he could remarry his long-standing lover Waldrada, and the conflicts arising from the Frankish division of territory under the Treaty of Verdun.",
+      "title": "Lothair II"
+    },
+    "civilization": {
+      "url": "",
+      "body": "Lotharingia was an early medieval polity of the late Carolingian and early Ottonian era. Established in 855 by the Treaty of Prüm as a distinct kingdom within the Carolingian Empire, the name Lotharingia derives from the name of its first ruler, king Lothair II, who received this territory as his share of the Kingdom of Middle Francia. Lotharingia was divided by the Treaty of Meerssen from 869-870. It was territorially reunited in 880 by the Treaty of Ribemont, and reestablished as a kingdom from 895 to 900. In 903 it was organized as a duchy, which existed up to 959 or 965, when it was divided into two distinct duchies: Upper Lotharingia and Lower Lotharingia. Several consecutive conflicts between East and West Francia over Lotharingia were based on the fact that these were the old Frankish homelands of Austrasia, so possession of them was a matter of great prestige to their kings as true claimant of Frankish imperial legacy.",
+      "title": "Lotharingia"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "The kingdom that bears my name is now yours to keep, conqueror. Perhaps I will finally be able to get a divorce...",
+    "blessing": "\"Greetings to you, Lothair II, righteous King of Lotharingia! You are a Carolingian, heir to the mighty empire of Charlemagne. Following the partitions of the empire, first by your grandfather and then your father, you have become the sovereign of the very heartland of the Franks, ruling from Charlemagne's own seat in Aachen. With no name encompassing your demesne, which encompassed swathes of Austrasia, Frisia, and Burgundy, the realm was named in your honour, birthing the kingdom of Lotharingia! In your quite literal position as the middleman between East and West Francia, you served as a great mediator between your kingly uncles, preventing the Carolingian dynasty from falling to infighting. Sadly, your diplomatic endeavours were overshadowed by your ten-year quest to secure a divorce, where your best attempts were thwarted by a hostile Papacy. Though your aims to secure your realm and lineage ultimately ended in failure, much of your domain still bears your name over a millennium later!\nOh Lothair, once more your kingdom cries out for its namesake. Your enemies and exes are thorns in your side no longer, and you may finally rule as you see fit. Will you show your subjects they were right to live in the 'land of Lothair'? Will you build a civilization that can stand the test of time?\"",
+    "introduction": "Greetings, fine ruler! I am Lothair, and this realm is mine in right and in name."
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Aachen",
+        "Metz",
+        "Cologne",
+        "Trier",
+        "Verdun",
+        "Liège",
+        "Cambrai",
+        "Utrecht",
+        "Strasbourg",
+        "Toul",
+        "Prüm",
+        "Asselt",
+        "Antwerp",
+        "Bonn",
+        "Nijmegen",
+        "Neuss",
+        "Deventer",
+        "Colmar",
+        "Dorestad",
+        "Thionville",
+        "Valenciennes",
+        "Völklingen",
+        "Leuven",
+        "Friemersheim",
+        "Herstal",
+        "Sélestat",
+        "Sinzig",
+        "Deutz",
+        "Leuze",
+        "Jupille",
+        "Longlier",
+        "Paliseul",
+        "Commercy",
+        "Rambervillers",
+        "Vlatten",
+        "Sankt Goar",
+        "Neumagen",
+        "Mouzon",
+        "Douzy",
+        "Binsfeld"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Hugo",
+        "Waldrada",
+        "Bertha",
+        "Gunther",
+        "Theotgaud",
+        "Hetto",
+        "Hincmar",
+        "Boso",
+        "Ermengarde",
+        "Odo"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Senshidenshi",
+    "NopeCopter",
+    "Civilizations with Male leaders",
+    "Lorraine",
+    "France",
+    "Germany",
+    "Netherlands",
+    "Belgium",
+    "Central Cultures"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": false,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "ynaemp": true,
+    "maplabels": false,
+    "civivtraits": false,
+    "ethnicunits": false,
+    "histreligions": true,
+    "enlightenmentera": false
+  },
+  "collections": [],
+  "navTemplate": "SenshiNav",
+  "presentation": {
+    "colors": {
+      "icon": "#731D05",
+      "background": "#C8B078"
+    },
+    "mapImage": "LotharingiaMap412.png",
+    "iconImage": "LotharingiaIconWiki.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LotharingiaMap412.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LotharingiaIconWiki.png",
+    "mapImageCaption": "Map by Francesca",
+    "leaderSceneImage": "LothairIILS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LothairIILS.png",
+    "leaderSceneArtCredit": "Art by DarthKyofu"
+  },
+  "templateRefs": []
+}

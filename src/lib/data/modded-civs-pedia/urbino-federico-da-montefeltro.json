@@ -1,0 +1,254 @@
+{
+  "id": "civ-urbino-federico-da-montefeltro",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-05-03T01:53:02.022Z",
+    "updatedAt": "2026-05-03T01:53:02.026Z",
+    "createdByName": "Senshi",
+    "formatVersion": 1,
+    "updatedByName": "Senshi",
+    "unresolvedTemplates": [
+      "SenshiNav"
+    ]
+  },
+  "slug": "urbino-federico-da-montefeltro",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    }
+  },
+  "title": "Urbino",
+  "issues": [
+    "Unresolved templates: SenshiNav"
+  ],
+  "leader": "Federico da Montefeltro",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "26 April 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3714581552",
+    "modFolderName": "",
+    "wikiPageTitle": "Urbino",
+    "directDownload": ""
+  },
+  "authors": [
+    "Senshi"
+  ],
+  "credits": [
+    {
+      "name": "Senshi",
+      "role": "Design, Code, Art (Map), Text, Additonal"
+    },
+    {
+      "name": "Chrisy15",
+      "role": "Lua"
+    },
+    {
+      "name": "Lasqueto",
+      "role": "Art (Leaderscene and Icon, Capitano di Ventura Icon and Flag, Scriptorium Icon)"
+    },
+    {
+      "name": "Janboruta",
+      "role": "Art (Civ Alpha)"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Art (Civ Icon and Colours)"
+    },
+    {
+      "name": "Zharques",
+      "role": "Pedias"
+    }
+  ],
+  "summary": "Urbino led by Federico da Montefeltro is a custom civilization by Senshi, with contributions from Chrisy15, Lasqueto, Janboruta, DarthKyofu and Zharques.",
+  "uniques": [
+    {
+      "art": "MontefeltroIcon.png",
+      "body": "Great Works and Theming Bonuses provide {{Science Icon}} Science equal to their {{Culture Icon}} Culture output.",
+      "name": "Light of Italy",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MontefeltroIcon.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by Lasqueto",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "CapitanoIcon.png",
+      "body": "",
+      "name": "Capitano di Ventura",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CapitanoIcon.png",
+      "bullets": [
+        "Units within two tiles spend no movement to pillage and receive {{Gold Icon}} Gold from attacking Cities.",
+        "May be expended to Hurry Production in a City."
+      ],
+      "replaces": "Great General",
+      "artCredit": "Art by Lasqueto",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "ScriptoriumIcon.png",
+      "body": "",
+      "name": "Scriptorium",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/ScriptoriumIcon.png",
+      "bullets": [
+        "Has an additional Great Work slot.",
+        "Provides a Theming Bonus when filled with Great Works from the same Era but different Civilizations.",
+        "When this Theming Bonus is filled, provides +2 {{Happiness Icon}} Happiness."
+      ],
+      "replaces": "Amphitheater",
+      "artCredit": "Art by Lasqueto",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Hills",
+    "capital": "Urbino",
+    "culture": "Southern",
+    "religion": [
+      "Catholicism"
+    ],
+    "adjectives": "Urbinate",
+    "empireName": "Duchy of Urbino",
+    "government": [
+      "Principality"
+    ],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Federico_da_Montefeltro",
+      "body": "Federico da Montefeltro, known by the regnal number Federico III, was duke of Urbino, ruling the duchy from 1444 until his death in 1482. He was one of the most successful condottieri of the Italian Renaissance, a renowned intellectual humanist and civic leader with a reputation for martial skill and honour. Montefeltro commissioned the construction of a great library, perhaps the largest of Italy after the Vatican's, complete with a team of scribes in its scriptorium. He also assembled a large humanistic court in his Ducal Palace, designed by Luciano Laurana and Francesco di Giorgio Martini.",
+      "title": "Federico da Montefeltro"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Duchy_of_Urbino",
+      "body": "Urbino was a county, then an independent duchy, located in the northern half of the modern region of Marche in Italy. During the time as a duchy, it was bordered by the Adriatic Sea in the east, the Republic of Florence in the west and the Papal States in the south. During the Renaissance, the duchy was led by Federico da Montefeltro, who led the duchy to its maximum territorial expansion and notable economic prosperity. After a short rule by Cesare Borgia, the dukedom went to the della Rovere papal family, who held it until 1625, when Pope Urban VIII annexed it to the Papal States, who transformed it into the Legation of Urbino.",
+      "title": "Urbino"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "You have bested me this day. Would you honour the last request of an old soldier? All I ask is that my wonderful studiolo here remains intact.",
+    "blessing": "\"Greetings to you, Federico da Montefeltro, the incomparable Light of Italy! You rule the small but prosperous Duchy of Urbino, a state in the heartlands of the Marche in central Italy. Distinguishing yourself from a young age as a mercenary condottiero, you rose to become one of the most successful mercenary leaders of the Renaissance, with your martial skill and honour renowned and rewarded across Europe. Your success on the battlefield is outstripped only by your contributions to enlightened culture as one of the leading humanists of the Renaissance. You transformed Urbino into one of the grandest beacons of Renaissance art and science, patronising and supporting emerging artists and creating the greatest and most comprehensive library outside of the Vatican. You were equally well-regarded as a civic leader, going through great efforts to care for every citizen of your realm and being unafraid to live and walk among the people. Whether on the battlefield, in the studiolo, or in the civic square, you won the respect of all both within your realm and without!\nMost beloved leader, the people of Urbino call for the Light of Italy to shine upon them once more! Will you usher in a new great age of humanism, and ensure the enrichment of all under your domain? Will you build a civilization that can stand the test of time?\"",
+    "introduction": "Ah, you must be that foreign leader I was told about! Welcome to Urbino. I am its Duke, Federico da Montefeltro. Tell me, are you a fellow lover of the arts?"
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Urbino",
+        "Gubbio",
+        "Casteldurante",
+        "Fossombrone",
+        "San Leo",
+        "Cagli",
+        "Pergola",
+        "Gabicce",
+        "Fermignano",
+        "Sassocorvaro",
+        "Montecalvo",
+        "Petriano",
+        "Sant'Agata Feltria",
+        "Cantiano",
+        "Piobbico",
+        "Apecchio",
+        "Auditore",
+        "Sant'Ippolito",
+        "Lunano",
+        "Mercatello",
+        "Montecopiolo",
+        "Frontone",
+        "Monte Grimano",
+        "Talamello",
+        "Piandicastello",
+        "Castel Colonna",
+        "Costacciaro",
+        "Piagge",
+        "Barchi",
+        "Monterado",
+        "Serra Sant'Abbondio",
+        "Scheggia",
+        "Belforte all'Isauro",
+        "Peglio",
+        "Pietrarubbia",
+        "Monte Cerignone",
+        "Borgo Pace",
+        "Isola del Piano",
+        "Casteldelci",
+        "Frontino",
+        "Pascelupo"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Giovanni",
+        "Giovanna",
+        "Guidobaldo",
+        "Gentile",
+        "Battista",
+        "Costanza",
+        "Agnese",
+        "Guidantonio",
+        "Bernadino",
+        "Raphael"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "Senshidenshi",
+    "Civilizations with Male leaders",
+    "Italy",
+    "Southern Cultures"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": false,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "ynaemp": true,
+    "maplabels": false,
+    "civivtraits": false,
+    "ethnicunits": false,
+    "histreligions": true,
+    "enlightenmentera": false
+  },
+  "collections": [],
+  "navTemplate": "SenshiNav",
+  "presentation": {
+    "colors": {
+      "icon": "#FFF068",
+      "background": "#0481A9"
+    },
+    "mapImage": "UrbinoMap412.png",
+    "iconImage": "UrbinoIcon.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/UrbinoMap412.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/UrbinoIcon.png",
+    "mapImageCaption": "Map by Senshi",
+    "leaderSceneImage": "MontefeltroLS.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MontefeltroLS.png",
+    "leaderSceneArtCredit": "Art by Lasqueto"
+  },
+  "templateRefs": []
+}

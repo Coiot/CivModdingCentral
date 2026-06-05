@@ -1,0 +1,235 @@
+{
+  "id": "civ-the-sahtu-edward-blondin",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-04-15T15:25:54.744Z",
+    "updatedAt": "2026-04-15T15:27:16.452Z",
+    "createdByName": "TopHatPaladin",
+    "formatVersion": 1,
+    "updatedByName": "TopHatPaladin",
+    "cloudCreatedByEmail": "tophatpaladin@gmail.com",
+    "cloudUpdatedByEmail": "tophatpaladin@gmail.com",
+    "unresolvedTemplates": []
+  },
+  "slug": "the-sahtu-edward-blondin",
+  "music": {
+    "war": {
+      "url": "https://www.youtube.com/watch?v=yKtWdxOCfoo",
+      "title": "Caribou Reel",
+      "credit": "Andy De Jarlis"
+    },
+    "peace": {
+      "url": "https://www.youtube.com/watch?v=mBAlFkX7jBs",
+      "title": "The Bucksaw Waltz",
+      "credit": "John Arcand"
+    }
+  },
+  "title": "The Sahtu",
+  "issues": [],
+  "leader": "Edward Blondin",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "",
+    "lastUpdated": "15 April 2026",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3707160227",
+    "modFolderName": "",
+    "wikiPageTitle": "The Sahtu",
+    "directDownload": ""
+  },
+  "authors": [
+    "TopHatPaladin"
+  ],
+  "credits": [
+    {
+      "name": "TopHatPaladin",
+      "role": "Design, Code, Art, Text"
+    },
+    {
+      "name": "Lasqueto",
+      "role": "Art (Civ Icon)"
+    },
+    {
+      "name": "John Arcand",
+      "role": "Peace Theme"
+    },
+    {
+      "name": "Andy De Jarlis",
+      "role": "War Theme"
+    }
+  ],
+  "summary": "The Sahtu led by Edward Blondin are a custom civilization by TopHatPaladin, with contributions from Lasqueto.",
+  "uniques": [
+    {
+      "art": "IconPNG_Blondin.png",
+      "body": "Trade Routes to Major Civilizations yield increased {{Science Icon}} Science for each copy of Strategic Resources you are trading to your trade partner. Mined Strategic Resources provide double quantity.",
+      "name": "Where Water Meets Oil",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Blondin.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_MotorCanoe.png",
+      "body": "",
+      "name": "Motorized Canoe",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_MotorCanoe.png",
+      "bullets": [
+        "When improving a resource not adjacent to any land resources, spawns a Strategic Resource on an adjacent land tile",
+        "+2 Movement upon researching Biology"
+      ],
+      "replaces": "Work Boat",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "IconPNG_PumpStation.png",
+      "body": "",
+      "name": "Pump Station",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_PumpStation.png",
+      "bullets": [
+        "Unlocked at Plastics",
+        "Requires Oil instead of Uranium",
+        "Provides +1 {{Food Icon}} Food for each tile containing Strategic Resources in its city's workable radius"
+      ],
+      "replaces": "Nuclear Plant",
+      "artCredit": "Art by TopHatPaladin",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Coastal",
+    "capital": "Déline",
+    "culture": "Woodlands",
+    "religion": [
+      "Protestantism",
+      "Sgaanaang (HR)"
+    ],
+    "adjectives": "Sahtu",
+    "empireName": "Sahtu Empire",
+    "government": [
+      "Tribal Confederacy",
+      "Republic"
+    ],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Edward_Blondin",
+      "body": "Edward Blondin was a Sahtu Dene trapper active in the early twentieth century. A skilled outdoorsman with an entrepreneurial mindset, he made several contributions that helped facilitate industrial development in the Great Bear Lake area.",
+      "title": "Edward Blondin"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Sahtu",
+      "body": "The Sahtu are a Dene subgroup who inhabit the area around Great Bear Lake - itself known as 'Sahtu' in the local language - in Canada's Northwest Territories. Due to the area's extreme remoteness, the Sahtu region was of little interest to Europeans, except insofar as it had potential for resource extraction. In particular, the discovery of oil and uranium transformed the Sahtu region in the twentieth century.",
+      "title": "The Sahtu"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Well, I had a good run. If you find yourself lost and freezing in the wilderness, don't say I didn't warn you.\"",
+    "blessing": "\"Salutations, Edward Blondin! The early twentieth century was a time of great transformation for the Sahtu people, spurred on by the discovery of oil and uranium in their homeland around the Great Bear Lake. Sahtu men like you were at the forefront of that discovery, with some accounts even holding that you were the first person to bring the oil to the attention of the Canadian government. Over the subsequent decades, you would serve a number of other roles that facilitated the growth of the energy industry in your region. As a surveying guide for the Canol oil pipeline, a captain directing cargo ships to and from the Eldorado Mine, and an advisor to the Fisheries Research Board of Canada, your quick thinking and broad skill set kept you at the heart of the action for many years. Unfortunately, some of the attention you spurred came with drawbacks - the passage of Treaty 11 robbed your people of their land claims, and poor uranium-handling practices spread sickness among them. But the Sahtu have proven resilient, and have won back administration of large chunks of land and a voice over the disposition of its resources.\nMr. Blondin, the Canadians may have taken advantage of your industrious spirit once, but you now have the opportunity to turn the tables and secure a spot in history for the Sahtu people. Can you assert total control of a resource-rich land that becomes the world's envy? Can you build a civilization that will stand the test of time?\"",
+    "introduction": "\"Well, I'll be! You must be one crazy bastard to have ended up all the way out here. The name's Edward. I've got food and supplies, if you're looking to buy.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Déline",
+        "Tulít'a",
+        "Rádeyilikóé",
+        "K'áhbamítúé",
+        "Saoyú-'ehdacho",
+        "Tlegóhli",
+        "Turíli",
+        "Port Radium",
+        "Ituroto",
+        "Chukezetúe",
+        "Cameron Bay",
+        "Turílideh",
+        "Itseretúe",
+        "Chukezedeh",
+        "'ehdaíla",
+        "Echo Bay",
+        "Sahtú Dé",
+        "Tthedzéh Kóé",
+        "Kweghatah",
+        "Luedehk'aledeh",
+        "Nágazideh",
+        "Kátl'o Dehé",
+        "Nere'e",
+        "K'alutúe",
+        "Tachinetúe",
+        "Shalitúe",
+        "Zhatí Kóé"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Karkesee",
+        "Salie",
+        "Onzie",
+        "Paul",
+        "George",
+        "Karkeye",
+        "Louis Ayah",
+        "Suzera",
+        "Julia",
+        "Eliza"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "TopHatPaladin",
+    "Woodlands Cultures",
+    "Civilizations with Male leaders"
+  ],
+  "modSupport": {
+    "aa": true,
+    "uci": true,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "traits": false,
+    "ynaemp": true,
+    "slavery": false,
+    "maplabels": true,
+    "civivtraits": true,
+    "ethnicunits": true,
+    "mercenaries": false,
+    "histreligions": true,
+    "enlightenmentera": false,
+    "claimscoloniescrimes": false
+  },
+  "collections": [],
+  "navTemplate": "",
+  "presentation": {
+    "colors": {
+      "icon": "#093f6b",
+      "background": "#e6a551"
+    },
+    "mapImage": "MapPNG_Sahtu.png",
+    "iconImage": "IconPNG_Sahtu.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MapPNG_Sahtu.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/IconPNG_Sahtu.png",
+    "mapImageCaption": "Map by TopHatPaladin",
+    "leaderSceneImage": "LS_PNG_Blondin.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/LS_PNG_Blondin.png",
+    "leaderSceneArtCredit": "Art by TopHatPaladin"
+  },
+  "templateRefs": []
+}

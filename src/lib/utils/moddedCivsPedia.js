@@ -535,6 +535,71 @@ function inlineTemplateLabel(templateName) {
 	return "";
 }
 
+function canonicalInlineTemplateName(templateName) {
+	const normalizedName = normalizeInlineTemplateName(templateName);
+	const icon = getPediaInlineIconByTemplate(normalizedName);
+	return icon?.canonicalTemplate || icon?.template || normalizedName;
+}
+
+const CIV_FONT_ICON_TEMPLATES = {
+	ICON_FOOD: "Food Icon",
+	ICON_PRODUCTION: "Production Icon",
+	ICON_GOLD: "Gold Icon",
+	ICON_RESEARCH: "Science Icon",
+	ICON_SCIENCE: "Science Icon",
+	ICON_CULTURE: "Culture Icon",
+	ICON_PEACE: "Culture Icon",
+	ICON_FAITH: "Faith Icon",
+	ICON_HAPPINESS: "Happiness Icon",
+	ICON_HAPPINESS_1: "Happiness Icon",
+	ICON_HAPPINESS_3: "Happiness Icon",
+	ICON_UNHAPPINESS: "Unhappiness Icon",
+	ICON_GOLDEN_AGE: "Golden Age",
+	ICON_GREAT_PEOPLE: "Great Person Icon",
+	ICON_GREAT_PERSON: "Great Person Icon",
+	ICON_GREAT_ADMIRAL: "Great Admiral Icon",
+	ICON_GREAT_ARTIST: "Great Artist Icon",
+	ICON_GREAT_ENGINEER: "Great Engineer Icon",
+	ICON_GREAT_GENERAL: "Great General Icon",
+	ICON_GREAT_MERCHANT: "Great Merchant Icon",
+	ICON_GREAT_MUSICIAN: "Great Musician Icon",
+	ICON_GREAT_SCIENTIST: "Great Scientist Icon",
+	ICON_GREAT_WRITER: "Great Writer Icon",
+	ICON_TOURISM: "Tourism Icon",
+	ICON_INFLUENCE: "Influence Icon",
+	ICON_CAPITAL: "Capital",
+	ICON_CITIZEN: "Citizen",
+	ICON_CITY_STATE: "City-State Icon",
+	ICON_TRADE_ROUTE: "Trade Route Icon",
+	ICON_TRADE_ROUTES: "Trade Route Icon",
+	ICON_MOVES: "Moves Icon",
+	ICON_MOVEMENT: "Moves Icon",
+	ICON_STRENGTH: "Strength Icon",
+	ICON_RANGE_STRENGTH: "Range Strength Icon",
+	ICON_RANGED_STRENGTH: "Range Strength Icon",
+	ICON_DEFENSE: "Defense Icon",
+	ICON_RELIGION: "Religion Icon",
+	ICON_RES_GOLD: "Gold Resource Icon",
+	ICON_GOLD_RESOURCE: "Gold Resource Icon",
+};
+
+function civFontIconTemplateName(token) {
+	const normalized = String(token || "")
+		.trim()
+		.toUpperCase();
+	if (CIV_FONT_ICON_TEMPLATES[normalized]) {
+		return CIV_FONT_ICON_TEMPLATES[normalized];
+	}
+	const withoutPrefix = normalized.replace(/^ICON_/, "");
+	const title = withoutPrefix
+		.split(/_+/)
+		.filter(Boolean)
+		.map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+		.join(" ");
+	const withIcon = title ? `${title} Icon` : "";
+	return getPediaInlineIconByTemplate(withIcon) ? withIcon : "";
+}
+
 function collapseTemplateWordDupes(value) {
 	let next = String(value || "");
 	for (const label of [
@@ -564,35 +629,46 @@ function collapseTemplateWordDupes(value) {
 
 function normalizeInlineWikiTemplates(value, wikiUrl = "") {
 	const refs = [];
-	const text = String(value || "").replace(/\{\{\s*([^}|]+?)(?:\|[^}]*)?\}\}/g, (match, templateName) => {
+	const addRef = (templateName) => {
 		const normalizedName = normalizeInlineTemplateName(templateName);
 		if (normalizedName === "!") {
-			return "|";
+			return { token: "|", label: "" };
 		}
 		if (normalizedName.toLowerCase() === "edit") {
-			return " ";
+			return { token: " ", label: "" };
 		}
 		const label = inlineTemplateLabel(normalizedName);
 		if (!label) {
-			return " ";
+			return { token: " ", label: "" };
 		}
 		const icon = getPediaInlineIconByTemplate(normalizedName);
-		const href = icon?.href || buildFandomTemplateUrl(normalizedName, wikiUrl);
+		const canonicalTemplate = canonicalInlineTemplateName(normalizedName);
+		const href = icon?.href || buildFandomTemplateUrl(canonicalTemplate, wikiUrl);
 		if (href && !refs.some((ref) => ref.href === href)) {
 			refs.push({
 				label: icon?.label || label,
-				template: icon?.template || normalizedName,
+				template: canonicalTemplate,
 				href,
 				imageUrl: icon?.imageUrl || "",
 			});
 		}
-		return ` {{${normalizedName}}} `;
-	});
+		return { token: ` {{${canonicalTemplate}}} `, label };
+	};
+	const text = String(value || "")
+		.replace(/\{\{\s*([^}|]+?)(?:\|[^}]*)?\}\}/g, (match, templateName) => addRef(templateName).token)
+		.replace(/\[(ICON_[A-Z0-9_]+)]/g, (match, token) => {
+			const templateName = civFontIconTemplateName(token);
+			return templateName ? addRef(templateName).token : " ";
+		});
 
 	return {
 		text: collapseTemplateWordDupes(text),
 		refs,
 	};
+}
+
+function extractInlineTemplateRefs(value, wikiUrl = "") {
+	return normalizeTemplateRefs(normalizeInlineWikiTemplates(value, wikiUrl).refs);
 }
 
 function stripWikiMarkup(value) {
@@ -1148,19 +1224,20 @@ async function parseUniqueAttributes(section, wikiUrl = "") {
 	let index = 0;
 	while (match) {
 		const rawBlock = cleanText(match[1]);
-		const art = cleanText(rawBlock.match(/\[\[File:([^|\]]+)/i)?.[1] || "");
-		const artCredit = cleanText(rawBlock.match(/\[\[File:[^\]]*?\|([^|\]]+)\]\]/i)?.[1] || "");
-		const headingMatch = rawBlock.match(/'''([\s\S]*?)'''(?:\s*\(\[\[([^|\]]+)(?:\|[^\]]+)?]])?\)?/i);
+		const refExtraction = extractInlineRefContents(rawBlock);
+		const blockWithoutRefs = refExtraction.text;
+		const art = cleanText(blockWithoutRefs.match(/\[\[File:([^|\]]+)/i)?.[1] || "");
+		const artCredit = cleanText(blockWithoutRefs.match(/\[\[File:[^\]]*?\|([^|\]]+)\]\]/i)?.[1] || "");
+		const headingMatch = blockWithoutRefs.match(/'''([\s\S]*?)'''(?:\s*\((?:\[\[([^|\]]+)(?:\|[^\]]+)?]]|([^)]+))\))?/i);
 		const name = stripWikiMarkup(headingMatch?.[1] || "");
-		const replaces = stripWikiMarkup(headingMatch?.[2] || "");
-		const withoutFile = rawBlock.replace(/\[\[File:[\s\S]*?\]\]\s*/gi, "");
+		const replaces = stripWikiMarkup(headingMatch?.[2] || headingMatch?.[3] || "");
+		const withoutFile = blockWithoutRefs.replace(/\[\[File:[\s\S]*?\]\]\s*/gi, "");
 		const withoutHeading = headingMatch ? withoutFile.replace(headingMatch[0], "") : withoutFile;
 		const withoutCellMarkup = withoutHeading
 			.replace(/^\|[^\n]*\|/gm, "")
 			.replace(/^\|/gm, "")
 			.replace(/<br\s*\/?>/gi, "\n");
-		const refExtraction = extractInlineRefContents(withoutCellMarkup);
-		const content = stripWikiMarkup(refExtraction.text);
+		const content = stripWikiMarkup(withoutCellMarkup);
 		const footnotes = refExtraction.refs.map((ref) => stripWikiMarkup(ref)).filter(Boolean);
 		const lines = content
 			.split("\n")
@@ -1184,7 +1261,7 @@ async function parseUniqueAttributes(section, wikiUrl = "") {
 			body: textBody,
 			bullets,
 			footnotes,
-			templateRefs: [],
+			templateRefs: extractInlineTemplateRefs(withoutCellMarkup, wikiUrl),
 		});
 		index += 1;
 		match = rowPattern.exec(uniqueTable);
@@ -1273,6 +1350,7 @@ export async function createPediaEntryFromWikiMarkup(markup, options = {}) {
 		defeat: dawnOfMan.defeat,
 	};
 	entry.uniques = await parseUniqueAttributes(uniqueAttributesSection, options.wikiUrl || "");
+	entry.templateRefs = extractInlineTemplateRefs(source, options.wikiUrl || "");
 	entry.nameLists = parseCollapsibleLists(uniqueAttributesSection);
 	entry.music = parseMusic(musicSection);
 	entry.modSupport = parseSupportFlags(modSupportParams);

@@ -3,21 +3,27 @@
   "kind": "civilization",
   "meta": {
     "createdAt": "2026-03-23T00:35:00.190Z",
+    "updatedAt": "2026-03-29T19:13:15.936Z",
+    "createdByName": "",
     "formatVersion": 1,
+    "updatedByName": "",
+    "cloudCreatedByEmail": "isaac.volpe@me.com",
+    "cloudUpdatedByEmail": "renan.ro.mar@gmail.com",
     "unresolvedTemplates": [
       "ArilasquetoNav",
       "NCnav",
       "DEFAULTSORT:Rozvi (Changamire Dombo)"
-    ],
-    "updatedAt": "2026-03-23T00:36:06.311375+00:00"
+    ]
   },
   "slug": "the-rozvi-changamire-dombo",
   "music": {
     "war": {
+      "url": "",
       "title": "\"Kalanga, Hosana Dance\"",
       "credit": "the Mogwana Traditional Group"
     },
     "peace": {
+      "url": "",
       "title": "Nhemamusasa: Instrumental Excerpt I",
       "credit": "Nonesuch Explorer Series"
     }
@@ -34,7 +40,8 @@
     "lastUpdated": "January 2025",
     "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3125057964",
     "modFolderName": "",
-    "wikiPageTitle": "The Rozvi"
+    "wikiPageTitle": "The Rozvi",
+    "directDownload": ""
   },
   "authors": [
     "Lasqueto",
@@ -69,19 +76,32 @@
       "bullets": [],
       "replaces": "",
       "artCredit": "Art by Lasqueto",
+      "footnotes": [],
       "civilopedia": "",
       "templateRefs": [
         {
           "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
           "label": "Culture",
-          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Culture.png",
-          "template": "Culture Icon"
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+          "template": "Culture Icon",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Culture.png"
+          ]
         },
         {
           "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
           "label": "Strength",
           "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
-          "template": "Strength Icon"
+          "template": "Strength Icon",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/StrengthIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatStrength.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatStrengthIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Combatstrength.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatstrengthIcon.png"
+          ]
         }
       ]
     },
@@ -98,13 +118,22 @@
       ],
       "replaces": "Pikeman",
       "artCredit": "Art by Lasqueto",
+      "footnotes": [],
       "civilopedia": "",
       "templateRefs": [
         {
           "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Moves_Icon",
           "label": "Movement",
           "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png",
-          "template": "Moves Icon"
+          "template": "Moves Icon",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Movement.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MovementIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MovesIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Move.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MoveIcon.png"
+          ]
         }
       ]
     },
@@ -120,19 +149,34 @@
       ],
       "replaces": "Market",
       "artCredit": "Art by Lasqueto",
+      "footnotes": [],
       "civilopedia": "",
       "templateRefs": [
         {
           "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Trade_Route_Icon",
           "label": "Trade Routes",
           "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
-          "template": "Trade Route Icon"
+          "template": "Trade Route Icon",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRoutes.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRoutesIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoutes.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TraderoutesIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRoute.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRouteIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TraderouteIcon.png"
+          ]
         },
         {
           "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
           "label": "Culture",
-          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Culture.png",
-          "template": "Culture Icon"
+          "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+          "template": "Culture Icon",
+          "imageUrls": [
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+            "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Culture.png"
+          ]
         }
       ]
     }
@@ -147,7 +191,7 @@
     ],
     "adjectives": "Rozvi",
     "empireName": "Rozvi Empire",
-    "government": "",
+    "government": [],
     "requiredContent": [
       "Brave New World"
     ],
@@ -238,12 +282,16 @@
     "eandd": false,
     "piety": false,
     "culdiv": false,
+    "traits": false,
     "ynaemp": false,
+    "slavery": false,
     "maplabels": false,
     "civivtraits": false,
     "ethnicunits": false,
+    "mercenaries": false,
     "histreligions": true,
-    "enlightenmentera": false
+    "enlightenmentera": false,
+    "claimscoloniescrimes": false
   },
   "collections": [],
   "navTemplate": "Template:ArilasquetoNav",
@@ -253,9 +301,9 @@
       "background": "#441524"
     },
     "mapImage": "Ari Nope Rozvi ChangamireDombo Map.png",
-    "iconImage": "Cattle.png",
+    "iconImage": "Ari Nope Rozvi ChangamireDombo Icon.png",
     "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ari%20Nope%20Rozvi%20ChangamireDombo%20Map.png",
-    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Cattle.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/File:Ari_Nope_Rozvi_ChangamireDombo_Icon.png",
     "mapImageCaption": "Map by Lasqueto",
     "leaderSceneImage": "Ari_Nope_Rozvi_ChangamireDombo_Diplo.png",
     "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Ari_Nope_Rozvi_ChangamireDombo_Diplo.png",
@@ -265,26 +313,56 @@
     {
       "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Culture_Icon",
       "label": "Culture",
-      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Culture.png",
-      "template": "Culture Icon"
+      "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+      "template": "Culture Icon",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CultureIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Culture.png"
+      ]
     },
     {
       "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Strength_Icon",
       "label": "Strength",
       "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
-      "template": "Strength Icon"
+      "template": "Strength Icon",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Strength.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/StrengthIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatStrength.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatStrengthIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Combatstrength.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/CombatstrengthIcon.png"
+      ]
     },
     {
       "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Moves_Icon",
       "label": "Movement",
       "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png",
-      "template": "Moves Icon"
+      "template": "Moves Icon",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Moves.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Movement.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MovementIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MovesIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Move.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MoveIcon.png"
+      ]
     },
     {
       "href": "https://civilization-v-customisation.fandom.com/wiki/Template:Trade_Route_Icon",
       "label": "Trade Routes",
       "imageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
-      "template": "Trade Route Icon"
+      "template": "Trade Route Icon",
+      "imageUrls": [
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoute.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRoutes.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRoutesIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Traderoutes.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TraderoutesIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRoute.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TradeRouteIcon.png",
+        "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/TraderouteIcon.png"
+      ]
     }
   ]
 }

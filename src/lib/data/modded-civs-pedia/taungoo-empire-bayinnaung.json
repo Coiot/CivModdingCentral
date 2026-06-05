@@ -1,0 +1,251 @@
+{
+  "id": "civ-taungoo-empire-bayinnaung",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-05-03T02:25:56.550Z",
+    "updatedAt": "2026-05-03T02:40:25.407Z",
+    "createdByName": "EmeraldRange",
+    "formatVersion": 1,
+    "updatedByName": "EmeraldRange",
+    "cloudCreatedByEmail": "emerald.range2964@gmail.com",
+    "cloudUpdatedByEmail": "emerald.range2964@gmail.com",
+    "unresolvedTemplates": [
+      "EmeraldNav"
+    ]
+  },
+  "slug": "taungoo-empire-bayinnaung",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "Myanmar Traditional Sports Song",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "Lotus Dance",
+      "credit": ""
+    }
+  },
+  "title": "Taungoo",
+  "issues": [
+    "Unresolved templates: EmeraldNav"
+  ],
+  "leader": "Bayinnaung",
+  "source": {
+    "type": "wiki",
+    "version": "v 9",
+    "wikiUrl": "",
+    "lastUpdated": "February 2022",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=929430567",
+    "modFolderName": "",
+    "wikiPageTitle": "Taungoo Empire",
+    "directDownload": ""
+  },
+  "authors": [
+    "EmeraldRange"
+  ],
+  "credits": [
+    {
+      "name": "EmeraldRange",
+      "role": "Author"
+    },
+    {
+      "name": "Chrisy15",
+      "role": "Contributor"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Contributor"
+    },
+    {
+      "name": "Francesca",
+      "role": "Contributor"
+    }
+  ],
+  "summary": "Taungoo led by Bayinnaung is a custom civilization mod by EmeraldRange with contributions from Chrisy15, DarthKyofu and Francesca.",
+  "uniques": [
+    {
+      "art": "Bayinnaung Leader Icon.png",
+      "body": "During {{Golden Age}} Golden Ages, Puppeted cities produce a free melee unit every 5 turns on Standard Speed. Gain {{Golden Age}} Golden Age Points for conquering cities.",
+      "name": "Ahmudan Conscription",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Bayinnaung%20Leader%20Icon.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by DarthKyofu",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "White War Elephant.png",
+      "body": "",
+      "name": "White War Elephant",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/White%20War%20Elephant.png",
+      "bullets": [
+        "Costs 135 {{Production Icon}} Production",
+        "Produces {{Culture Icon}} culture equivalent to half the opponent unit's strength and {{Golden Age}} Golden Age Points equivalent to 1.5 times the opponent unit strength per unit killed",
+        "Starts with the Woodsman Promotion"
+      ],
+      "replaces": "Knight",
+      "artCredit": "Art by EmeraldRange",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "Martial School.png",
+      "body": "",
+      "name": "Martial School",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Martial%20School.png",
+      "bullets": [
+        "Provides 2XP to all units trained in this city for every 2 citizens in the city",
+        "Normal Library Yields"
+      ],
+      "replaces": "Library",
+      "artCredit": "Art by EmeraldRange",
+      "footnotes": [
+        "Lieberman 2003: 151–152"
+      ],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Hills\nRiver",
+    "capital": "Bago",
+    "culture": "Mandala",
+    "religion": [
+      "Buddhism",
+      "Theravada (HR)"
+    ],
+    "adjectives": "Taungoo",
+    "empireName": "Taungoo Empire",
+    "government": [],
+    "requiredContent": [
+      "BNW and, if used together with Sukritact's Burma, renames it to Bagan, alongside giving it a new city list"
+    ],
+    "mapLabelsLanguage": ""
+  },
+  "overview": {
+    "leader": {
+      "url": "",
+      "body": "Bayinnaung Kyawhtin Nawratha was the second king of the Taungoo Dynasty and succeeded his brother-in-law Tabinshwehti after Tabinshwehti had been assassinated. He found himself a king without a kingdom as the coup had undermined Tabinshwehti's re-unification of Burma.",
+      "title": "Bayinnaung"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/First_Toungoo_Empire",
+      "body": "The Taungoo Empire was the second dynasty of Burma and seated its power primarily in lower Burma Proper at first in the town of Taungoo, but later in the city of Bago. It was a very militaristic dynasty: extending the reach and influence of Burma to all of the Indochinese peninsula and left a strong impact on the legal and social systems of Indochina. It is also known as the First Taungoo Dynasty, the Taungoo-Hanthawaddy Period, or the Taungoo Period",
+      "title": "Taungoo"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Impossible! This cannot be! I will have myself exiled to Siam!\"",
+    "blessing": "Bayinnaung Kyawhtin Nawratha, your legacy in Indochina is unparalleled. After your brother-in-law's death, you restored the lands of the Taungoo Empire within 2 years, and then continued on your historic conquest of Siam, Lan Na, Lan Xang and much more in the 12 years that followed. Your leadership brought into existence the largest contiguous empire in the history of Southeast Asia. No other man could have caused this explosion of human energy. Your military prowess brought forth the majesty of Burma and the respect for your person to the rest of Indochina for centuries to come. Your reign saw the establishment of a mutli-ethnic polity, standardised orthodox Theravada Buddhism,  and the adoption of the Burmese calendar and Burmese law throughout Indochina. The lasting political and cultural impacts of the Taungoo Dynasty can never be forgotten.\nO Great Royal King of Burma, the people of your lands long for your return. Will you once again bring forth prosperity through order? Will you incite another explosion of military might? Will you build a civilization that can stand the test of time?",
+    "introduction": "\"Welcome to the Burmese Empire. I am Bayinnaung Kyawhtin Nawratha, what do you bring to the Universal Ruler?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Bago",
+        "Taungoo",
+        "Pyay",
+        "Sagaing",
+        "Inwa",
+        "Pathein",
+        "Mottama",
+        "Bagan",
+        "Bhamo",
+        "Mergui",
+        "Sandoway",
+        "Kyaukse",
+        "Ayutthaya",
+        "Luang Prabang",
+        "Chaing Mai",
+        "Sukhothai",
+        "Hsipaw",
+        "Naungyo",
+        "Kengtung",
+        "Ratchaburi",
+        "Mong Yang",
+        "Mong Kawng",
+        "Kale",
+        "Thobal",
+        "Myede",
+        "Yawnghwe",
+        "Tharrawaddy",
+        "Hsenwi",
+        "Phitsanulok",
+        "Nakhon Pahom",
+        "Champassak",
+        "Vientiane",
+        "Mong Pai",
+        "Mong Nai",
+        "Dala",
+        "Danubyu",
+        "Hpa An",
+        "Sri Thep",
+        "Chaing Rai",
+        "Kyaikhto"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Khine",
+        "Aung",
+        "Myat",
+        "Kaung",
+        "Cho",
+        "Shwe",
+        "Lin",
+        "Nwe",
+        "Lwin",
+        "Mya"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "Burma",
+    "All Civilizations",
+    "Mandala Cultures",
+    "EmeraldRange"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": true,
+    "eandd": true,
+    "piety": true,
+    "culdiv": true,
+    "traits": false,
+    "ynaemp": true,
+    "slavery": false,
+    "maplabels": false,
+    "civivtraits": true,
+    "ethnicunits": false,
+    "mercenaries": false,
+    "histreligions": true,
+    "enlightenmentera": false,
+    "claimscoloniescrimes": false
+  },
+  "collections": [],
+  "navTemplate": "EmeraldNav",
+  "presentation": {
+    "colors": {
+      "icon": "#012118",
+      "background": "#c1923c"
+    },
+    "mapImage": "Taungoo Cartography.png",
+    "iconImage": "Newtaungooiconsmol.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Taungoo%20Cartography.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Newtaungooiconsmol.png",
+    "mapImageCaption": "Map by EmeraldRange",
+    "leaderSceneImage": "Bayinnaung Leaderscene.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Bayinnaung%20Leaderscene.png",
+    "leaderSceneArtCredit": "Art by Francesca"
+  },
+  "templateRefs": []
+}

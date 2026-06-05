@@ -115,12 +115,20 @@ const ROUTE_SEO = {
 		pageType: "WebApplication",
 		applicationCategory: "DesignApplication",
 	},
-	// "/unit-flag-previewer": {
-	// 	title: "Unit Flag Previewer Concept for Civ V Art Checks | Civ Modding Central",
-	// 	description: "Preview interface for testing banner readability, alpha edges, and battlefield contrast before DDS export.",
-	// 	keywords: "Civilization V unit flag previewer, Civ 5 unit flag art, unit flag readability, Civ V banner helper",
-	// 	pageType: "WebPage",
-	// },
+	"/ui-screen-viewer": {
+		title: "UI Screen Helper for Civilization V Interface Mockups | Civ Modding Central",
+		description: "Preview civ names, leader art, loading text, city banners, and diplomacy copy across Civilization V style interface screens before final export.",
+		keywords: "Civilization V UI screen helper, Civ 5 interface mockup, city banner preview, diplomacy screen helper, loading screen preview",
+		pageType: "WebApplication",
+		applicationCategory: "DesignApplication",
+	},
+	"/unit-flag-previewer": {
+		title: "UI Screen Helper for Civilization V Interface Mockups | Civ Modding Central",
+		description: "Legacy path for the UI Screen Helper page covering civ select, setup, city banner, loading, dawn intro, and diplomacy style previews.",
+		keywords: "Civilization V UI screen helper, Civ 5 interface mockup, legacy route",
+		pageType: "WebApplication",
+		applicationCategory: "DesignApplication",
+	},
 	"/workshop-uploader": {
 		title: "CMC Workshop Uploader for Civilization V Steam Workshop | Civ Modding Central",
 		description:

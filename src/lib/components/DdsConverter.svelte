@@ -2,9 +2,12 @@
 	import { onDestroy, onMount } from "svelte";
 	import { get } from "svelte/store";
 	import HelpfulLinksPanel from "./HelpfulLinksPanel.svelte";
+	import IconAtlasPlaceholderGenerator from "./IconAtlasPlaceholderGenerator.svelte";
 	import { ddsPreferences, syncDdsPreferences } from "../stores/toolPreferences.js";
 
 	const CONVERTER_ENDPOINT = resolveConverterEndpoint();
+	const ENCODER_BACKEND_DXTJS = "dxtjs";
+	const ENCODER_BACKEND_NATIVE = "native";
 
 	function resolveConverterEndpoint() {
 		const configured = String(import.meta.env.VITE_DDS_CONVERTER_ENDPOINT || "").trim();
@@ -296,6 +299,11 @@
 	let sourcePreviewUrl = $state("");
 	let conversionMeta = $state(null);
 	let sqlHistoryEntries = $state([]);
+	let nativeEncoderAvailable = $state(null);
+	let nativeEncoderStatus = $state("");
+	let nativeEncoderBinary = $state("");
+	let nativeEncoderChecking = $state(true);
+	let allowCompatibilityEncoder = $state(false);
 
 	const workflowConfig = $derived(WORKFLOWS[workflow] || WORKFLOWS.unit);
 	const compressionOptions = $derived(workflowConfig.compressionOptions || ["DXT3"]);
@@ -328,6 +336,9 @@
 	const activeSvNamingConfig = $derived(SV_NAMING_CONFIG[activeSvPreset?.id] || SV_NAMING_CONFIG["unit-sv"]);
 	const activeSqlAtlasConfig = $derived(isAtlasBundleWorkflow ? activeAtlasTypeConfig : workflow === "icon_sheet" ? BUNDLE_ATLAS_TYPES.icon : workflow === "sv" ? activeSvNamingConfig : null);
 	const activeNativeOutputMode = $derived(activeBundleAtlasType === "unit_flag" ? "dxt3" : "rgba8");
+	const workflowRequiresNative = $derived(workflow === "screen" || workflow === "icon_sheet" || workflow === "sv" || (isAtlasBundleWorkflow && activeNativeOutputMode === "rgba8"));
+	const workflowSupportsCompatibilityEncoder = $derived(!workflowRequiresNative);
+	const effectiveEncoderBackend = $derived(nativeEncoderAvailable === false && workflowSupportsCompatibilityEncoder && allowCompatibilityEncoder ? ENCODER_BACKEND_DXTJS : ENCODER_BACKEND_NATIVE);
 	const atlasSqlToken = $derived(normalizeAtlasSqlToken(atlasExportName));
 	const atlasFilePrefix = $derived(buildAtlasFilePrefix(atlasSqlToken));
 	const sqlWorkflowEnabled = $derived(isAtlasBundleWorkflow || workflow === "icon_sheet" || workflow === "sv");
@@ -387,6 +398,15 @@
 		if (!canConvertWithDimensions) {
 			return "Source PNG dimensions do not match the selected preset.";
 		}
+		if (nativeEncoderChecking) {
+			return "Checking native encoder availability.";
+		}
+		if (nativeEncoderAvailable === false && !workflowSupportsCompatibilityEncoder) {
+			return nativeEncoderStatus || "Native encoder is unavailable for this workflow.";
+		}
+		if (nativeEncoderAvailable === false && workflowSupportsCompatibilityEncoder && !allowCompatibilityEncoder) {
+			return "Native encoder is unavailable. Enable compatibility mode to use the JS encoder for this workflow.";
+		}
 		return "";
 	});
 
@@ -405,6 +425,7 @@
 			atlasSelectedSizesMap = buildSizeSelection(Array.isArray(sharedPrefs.atlasSelectedSizes) ? sharedPrefs.atlasSelectedSizes : []);
 		}
 		sqlHistoryEntries = loadSqlHistory();
+		void loadNativeEncoderStatus();
 	});
 
 	$effect(() => {
@@ -420,6 +441,12 @@
 			atlasCols,
 			atlasSelectedSizes: [...atlasSelectedSizes],
 		});
+	});
+
+	$effect(() => {
+		if (nativeEncoderAvailable !== false || !workflowSupportsCompatibilityEncoder) {
+			allowCompatibilityEncoder = false;
+		}
 	});
 
 	function normalizeAtlasSqlToken(value) {
@@ -455,6 +482,26 @@
 			return parsed.filter((entry) => entry && typeof entry === "object");
 		} catch {
 			return [];
+		}
+	}
+
+	async function loadNativeEncoderStatus() {
+		nativeEncoderChecking = true;
+		try {
+			const response = await fetch(CONVERTER_ENDPOINT, { method: "GET" });
+			const payload = await response.json().catch(() => ({}));
+			if (!response.ok) {
+				throw new Error(payload?.error || `Native encoder check failed (${response.status}).`);
+			}
+			nativeEncoderAvailable = Boolean(payload?.nativeEncoderAvailable);
+			nativeEncoderStatus = String(payload?.error || "");
+			nativeEncoderBinary = String(payload?.executable || "");
+		} catch (error) {
+			nativeEncoderAvailable = false;
+			nativeEncoderStatus = String(error?.message || "Unable to verify native encoder availability.");
+			nativeEncoderBinary = "";
+		} finally {
+			nativeEncoderChecking = false;
 		}
 	}
 
@@ -597,6 +644,7 @@
 			atlasRowsInput = String(BUNDLE_WORKFLOW_SETTINGS[workflow].defaultRows || atlasRowsInput || 1);
 			atlasColsInput = String(BUNDLE_WORKFLOW_SETTINGS[workflow].defaultCols || atlasColsInput || 1);
 		}
+		allowCompatibilityEncoder = false;
 		errorMessage = "";
 		successMessage = "";
 		conversionMeta = null;
@@ -786,6 +834,7 @@
 			form.append("compressionFormat", workflow === "icon_sheet" ? "RGBA8" : activeCompression);
 			form.append("workflow", workflowForRequest);
 			form.append("preset", activePresetSummary());
+			form.append("encoderBackend", effectiveEncoderBackend);
 			if (expectedDimensions) {
 				form.append("targetWidth", String(expectedDimensions.width));
 				form.append("targetHeight", String(expectedDimensions.height));
@@ -797,7 +846,6 @@
 					form.append("mipmapSizes", activeIconMipmapSizes.join(","));
 				}
 				form.append("currentIconSize", String(ICON_SOURCE_SIZE));
-				form.append("encoderBackend", ICON_BUNDLE_ENCODER_PRESET.backend);
 				form.append("nativeOutputMode", "rgba8");
 				form.append("nativeQuality", String(ICON_BUNDLE_ENCODER_PRESET.nativeQuality));
 				form.append("resampleMode", ICON_BUNDLE_ENCODER_PRESET.resampleMode);
@@ -821,7 +869,6 @@
 				form.append("filePrefix", atlasFilePrefix);
 			}
 			if (workflow === "sv") {
-				form.append("encoderBackend", ICON_BUNDLE_ENCODER_PRESET.backend);
 				form.append("nativeOutputMode", "rgba8");
 				form.append("nativeQuality", String(ICON_BUNDLE_ENCODER_PRESET.nativeQuality));
 				form.append("colorMetric", ICON_BUNDLE_ENCODER_PRESET.colorMetric);
@@ -838,7 +885,6 @@
 				form.append("gridCols", String(atlasCols));
 				form.append("resizeSheet", "1");
 				form.append("padToMultipleOf4", "1");
-				form.append("encoderBackend", ICON_BUNDLE_ENCODER_PRESET.backend);
 				form.append("nativeOutputMode", activeNativeOutputMode);
 				form.append("nativeQuality", String(ICON_BUNDLE_ENCODER_PRESET.nativeQuality));
 				form.append("resampleMode", ICON_BUNDLE_ENCODER_PRESET.resampleMode);
@@ -1005,6 +1051,8 @@
 	</header>
 
 	<section class="dds-panel stack">
+		<IconAtlasPlaceholderGenerator />
+
 		<section class="dds-section">
 			<div class="section-head section-head-tight">
 				<h2 class="dds-section-title">1. Configure Workflow</h2>
@@ -1244,6 +1292,23 @@
 					Selected preset requires {expectedDimensions.width}x{expectedDimensions.height}, but PNG is {selectedFileInfo.width}x{selectedFileInfo.height}. Conversion is blocked until
 					dimensions match.
 				</p>
+			{/if}
+
+			{#if nativeEncoderChecking}
+				<p class="dds-warning">Checking native DDS encoder availability...</p>
+			{:else if nativeEncoderAvailable === false}
+				<div class="dds-warning stack half">
+					<p class="dds-warning-copy">Native encoder unavailable: {nativeEncoderStatus}</p>
+					{#if nativeEncoderBinary}
+						<p class="dds-warning-copy">Detected binary: {nativeEncoderBinary}</p>
+					{/if}
+					{#if workflowSupportsCompatibilityEncoder}
+						<label class="dds-compat-toggle">
+							<input type="checkbox" checked={allowCompatibilityEncoder} onchange={(event) => (allowCompatibilityEncoder = event.currentTarget.checked)} />
+							<span>Use compatibility JS encoder for this workflow</span>
+						</label>
+					{/if}
+				</div>
 			{/if}
 
 			<div class="dds-actions inline flex-wrap">
@@ -1700,6 +1765,22 @@
 		padding-block: 0.55rem;
 		padding-inline: 0.65rem;
 		margin: 0;
+	}
+
+	.dds-warning-copy {
+		margin: 0;
+	}
+
+	.dds-compat-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.9rem;
+
+		input[type="checkbox"] {
+			inline-size: auto;
+			margin: 0;
+		}
 	}
 
 	.dds-download {

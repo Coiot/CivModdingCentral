@@ -51,8 +51,12 @@ const BLOCK_BYTES_BY_FORMAT = {
 
 export async function handler(event) {
 	try {
+		if (event.httpMethod === "GET") {
+			return json(200, await getNativeEncoderStatus());
+		}
+
 		if (event.httpMethod !== "POST") {
-			return json(405, { error: "Method not allowed. Use POST." });
+			return json(405, { error: "Method not allowed. Use POST or GET." });
 		}
 
 		let form;
@@ -115,9 +119,9 @@ export async function handler(event) {
 		const generateMipmaps = isSvWorkflow || parseBooleanFlag(form.fields.generateMipmaps, false);
 
 		const padded = padRgbaToDxtBlocks(png.data, sourceWidth, sourceHeight);
-		let ddsPayload;
+		let ddsResult;
 		try {
-			ddsPayload = await encodeDdsWithBackend({
+			ddsResult = await encodeDdsWithBackend({
 				rgbaData: padded.data,
 				width: padded.width,
 				height: padded.height,
@@ -145,11 +149,11 @@ export async function handler(event) {
 				"X-Output-Width": String(padded.width),
 				"X-Output-Height": String(padded.height),
 				"X-Compression-Format": chosenFormat,
-				"X-Encoder-Backend": encoderBackend,
-				"X-Native-Quality": encoderBackend === ENCODER_BACKEND_NATIVE ? String(nativeQuality) : "",
+				"X-Encoder-Backend": ddsResult.backendUsed,
+				"X-Native-Quality": ddsResult.backendUsed === ENCODER_BACKEND_NATIVE ? String(nativeQuality) : "",
 				"X-MipMap-Enabled": generateMipmaps ? "1" : "0",
 			},
-			body: ddsPayload.toString("base64"),
+			body: ddsResult.ddsPayload.toString("base64"),
 		};
 	} catch (error) {
 		console.error("convert-dds unexpected error", error);
@@ -205,6 +209,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 	const filePrefix =
 		sanitizeFilenameComponent(form.fields.filePrefix || buildFilenamePrefixFromToken(form.fields.atlasToken || form.fields.exportName || form.filename || "IconAtlas")) || "IconAtlas";
 	const files = [];
+	const backendsUsed = new Set();
 
 	for (const size of selectedSizes) {
 		const atlas = resizeIconAtlas({
@@ -245,7 +250,7 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 		});
 		const generateMipmaps = mipmapSizeSet.has(size);
 		try {
-			const ddsPayload = await encodeDdsWithBackend({
+			const ddsResult = await encodeDdsWithBackend({
 				rgbaData: prepared.data,
 				width: prepared.width,
 				height: prepared.height,
@@ -256,14 +261,18 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 				nativeColorMetric: colorMetric,
 				generateMipmaps,
 			});
+			backendsUsed.add(ddsResult.backendUsed);
 			files.push({
 				name: `${filePrefix}_${fileSuffix}_${size}.dds`,
-				data: ddsPayload,
+				data: ddsResult.ddsPayload,
 			});
 		} catch (error) {
 			return json(500, { error: `DDS compression failed for ${size}px export: ${error?.message || "unknown compression error"}` });
 		}
 	}
+
+	const backendHeader = Array.from(backendsUsed).join(",") || encoderBackend;
+	const usedNativeBackend = backendsUsed.has(ENCODER_BACKEND_NATIVE);
 
 	if (files.length === 1) {
 		const onlyFile = files[0];
@@ -289,9 +298,9 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 				"X-Encoder-Mode": encoderMode,
 				"X-Color-Metric": colorMetric,
 				"X-Weight-By-Alpha": weightColorByAlpha ? "1" : "0",
-				"X-Encoder-Backend": encoderBackend,
-				"X-Native-Quality": encoderBackend === ENCODER_BACKEND_NATIVE ? String(nativeQuality) : "",
-				"X-Native-Output-Mode": encoderBackend === ENCODER_BACKEND_NATIVE ? nativeOutputMode : "",
+				"X-Encoder-Backend": backendHeader,
+				"X-Native-Quality": usedNativeBackend ? String(nativeQuality) : "",
+				"X-Native-Output-Mode": usedNativeBackend ? nativeOutputMode : "",
 				"X-MipMap-Sizes": mipmapSizes.join(","),
 			},
 			body: onlyFile.data.toString("base64"),
@@ -322,9 +331,9 @@ async function convertIconAtlasBundle({ form, png, sourceWidth, sourceHeight, en
 			"X-Encoder-Mode": encoderMode,
 			"X-Color-Metric": colorMetric,
 			"X-Weight-By-Alpha": weightColorByAlpha ? "1" : "0",
-			"X-Encoder-Backend": encoderBackend,
-			"X-Native-Quality": encoderBackend === ENCODER_BACKEND_NATIVE ? String(nativeQuality) : "",
-			"X-Native-Output-Mode": encoderBackend === ENCODER_BACKEND_NATIVE ? nativeOutputMode : "",
+			"X-Encoder-Backend": backendHeader,
+			"X-Native-Quality": usedNativeBackend ? String(nativeQuality) : "",
+			"X-Native-Output-Mode": usedNativeBackend ? nativeOutputMode : "",
 			"X-MipMap-Sizes": mipmapSizes.join(","),
 		},
 		body: zipBuffer.toString("base64"),
@@ -433,10 +442,10 @@ function normalizeEncoderBackend(input) {
 	const value = String(input || "")
 		.trim()
 		.toLowerCase();
-	if (value === ENCODER_BACKEND_NATIVE) {
-		return ENCODER_BACKEND_NATIVE;
+	if (value === ENCODER_BACKEND_DXTJS) {
+		return ENCODER_BACKEND_DXTJS;
 	}
-	return ENCODER_BACKEND_DXTJS;
+	return ENCODER_BACKEND_NATIVE;
 }
 
 function normalizeNativeOutputMode(input) {
@@ -451,7 +460,7 @@ function normalizeNativeOutputMode(input) {
 
 async function encodeDdsWithBackend({ rgbaData, width, height, format, backend, dxtFlags, nativeQuality, nativeColorMetric, generateMipmaps = false }) {
 	if (backend === ENCODER_BACKEND_NATIVE) {
-		return await encodeDdsWithCompressonator({
+		const ddsPayload = await encodeDdsWithCompressonator({
 			rgbaData,
 			width,
 			height,
@@ -460,17 +469,24 @@ async function encodeDdsWithBackend({ rgbaData, width, height, format, backend, 
 			nativeColorMetric,
 			generateMipmaps,
 		});
+		return {
+			ddsPayload,
+			backendUsed: ENCODER_BACKEND_NATIVE,
+		};
 	}
 	if (generateMipmaps) {
 		throw new Error("MipMap generation requires the native encoder backend.");
 	}
-	return encodeDdsWithDxtJs({
-		rgbaData,
-		width,
-		height,
-		format,
-		dxtFlags,
-	});
+	return {
+		ddsPayload: encodeDdsWithDxtJs({
+			rgbaData,
+			width,
+			height,
+			format,
+			dxtFlags,
+		}),
+		backendUsed: ENCODER_BACKEND_DXTJS,
+	};
 }
 
 function encodeDdsWithDxtJs({ rgbaData, width, height, format, dxtFlags }) {
@@ -534,6 +550,64 @@ async function encodeDdsWithCompressonator({ rgbaData, width, height, format, na
 		throw error;
 	} finally {
 		await fs.rm(workDir, { recursive: true, force: true });
+	}
+}
+
+function isNativeEncoderUnavailable(error) {
+	const message = String(error?.message || "");
+	return (
+		/not configured/i.test(message) ||
+		/failed to start/i.test(message) ||
+		/error while loading shared libraries/i.test(message) ||
+		/cannot open shared object file/i.test(message) ||
+		/image not found/i.test(message) ||
+		/dll/i.test(message)
+	);
+}
+
+function normalizeNativeEncoderError(error, { format, generateMipmaps = false } = {}) {
+	const message = String(error?.message || "").trim();
+	if (isNativeEncoderUnavailable(error)) {
+		const nativeOnlyHint =
+			format === "RGBA8" || generateMipmaps
+				? " This export still requires the native encoder because it needs RGBA8 output or mipmaps."
+				: " You can switch to the compatibility JS encoder from the UI if you still want a DXT export.";
+		return new Error(`Native DDS encoder is unavailable in this environment. Compressonator could not start because required runtime libraries are missing.${nativeOnlyHint}`);
+	}
+	return error instanceof Error ? error : new Error(message || "DDS compression failed.");
+}
+
+async function getNativeEncoderStatus() {
+	const executable = await resolveNativeEncoderBinary();
+	if (!executable) {
+		return {
+			nativeEncoderAvailable: false,
+			backend: ENCODER_BACKEND_NATIVE,
+			executable: "",
+			error: `CompressonatorCLI is not configured. Set one of: ${NATIVE_BIN_ENV_KEYS.join(", ")} or install it under /opt/compressonator.`,
+		};
+	}
+
+	try {
+		const result = await runCommand(executable, ["-version"]);
+		const stderr = String(result.stderr || "").trim();
+		if (result.code < 0 || isNativeEncoderUnavailable({ message: stderr })) {
+			throw new Error(stderr || "Native encoder process failed to start.");
+		}
+		return {
+			nativeEncoderAvailable: true,
+			backend: ENCODER_BACKEND_NATIVE,
+			executable,
+			error: "",
+		};
+	} catch (error) {
+		const normalized = normalizeNativeEncoderError(error);
+		return {
+			nativeEncoderAvailable: false,
+			backend: ENCODER_BACKEND_NATIVE,
+			executable,
+			error: normalized.message,
+		};
 	}
 }
 

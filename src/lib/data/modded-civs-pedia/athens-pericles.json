@@ -1,0 +1,281 @@
+{
+  "id": "civ-athens-pericles",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-04-06T06:06:31.124Z",
+    "updatedAt": "2026-04-06T06:12:46.825Z",
+    "createdByName": "Pouākai",
+    "formatVersion": 1,
+    "updatedByName": "Pouākai",
+    "cloudCreatedByEmail": "shadowkiwi.nui@gmail.com",
+    "cloudUpdatedByEmail": "shadowkiwi.nui@gmail.com",
+    "unresolvedTemplates": [
+      "MCnav"
+    ]
+  },
+  "slug": "athens-pericles",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "Epitaph of Seikilos",
+      "credit": "Geoff Knorr"
+    },
+    "peace": {
+      "url": "",
+      "title": "Epitaph of Seikilos",
+      "credit": "Geoff Knorr"
+    }
+  },
+  "title": "Athens",
+  "issues": [
+    "Unresolved templates: MCnav"
+  ],
+  "leader": "Pericles",
+  "source": {
+    "type": "wiki",
+    "version": "v 1",
+    "wikiUrl": "https://civilization-v-customisation.fandom.com/wiki/Athens_(Pericles)",
+    "lastUpdated": "12 January 2017",
+    "workshopUrl": "http://steamcommunity.com/sharedfiles/filedetails/?id=718535427",
+    "modFolderName": "",
+    "wikiPageTitle": "Athens",
+    "directDownload": ""
+  },
+  "authors": [
+    "More Civilisations"
+  ],
+  "credits": [
+    {
+      "name": "Pouakai",
+      "role": "Base Code."
+    },
+    {
+      "name": "Janboruta",
+      "role": "Art (Leader Icon, Unique Component Icons)."
+    },
+    {
+      "name": "Sukritact",
+      "role": "Art (Map, Civ Icon, Unit Model), Lua."
+    },
+    {
+      "name": "Leugi",
+      "role": "Art (Leaderscene)."
+    },
+    {
+      "name": "JFD",
+      "role": "Lua."
+    },
+    {
+      "name": "Tomatekh",
+      "role": "Lua (E&D)."
+    },
+    {
+      "name": "Guandao",
+      "role": "Text (Civilopedias)."
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "Text (Civilopedias)."
+    },
+    {
+      "name": "Chrisy15",
+      "role": "Lua."
+    },
+    {
+      "name": "CharlatanAlley",
+      "role": "Dawn of Man voiceover"
+    }
+  ],
+  "summary": "Athens, led by Pericles, is a custom civilisation mod by More Civilisations. More specifically, it features contributions by Pouakai, Janboruta, JFD, Tomatekh, Sukritact, Leugi, Guandao, DarthKyofu, Chrisy15, and CharlatanAlley.",
+  "uniques": [
+    {
+      "art": "Pericles.png",
+      "body": "City-State {{Influence Icon}} Influence degrades at 50% the normal rate, and is boosted whenever you are first to discover a technology or adopt a social policy. Units can pass through City-State territory without losing {{Influence Icon}} Influence.",
+      "name": "Delian League",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Pericles.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by Janboruta",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "Trieres.png",
+      "body": "",
+      "name": "Assault Trieres",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Trieres.png",
+      "bullets": [
+        "+20% {{Strength Icon}} Combat Strength (12 vs 10)",
+        "May capture enemy ships after starting the turn adjacent to another friendly naval unit"
+      ],
+      "replaces": "Trireme",
+      "artCredit": "Art by Janboruta",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "Gymnasium.png",
+      "body": "",
+      "name": "Gymnasium",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Gymnasium.png",
+      "bullets": [
+        "+2 {{Culture Icon}} Culture",
+        "+2 {{Science Icon}} Science",
+        "Contains 1 Scientist specialist slot"
+      ],
+      "replaces": "Library",
+      "artCredit": "Art by Janboruta",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Coastal",
+    "capital": "Athens",
+    "culture": "Classical",
+    "religion": [
+      "Eastern Orthodoxy",
+      "Dodekathism (HR)"
+    ],
+    "adjectives": "Athenian",
+    "empireName": "Athenian Empire",
+    "government": [
+      "Monarchy"
+    ],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": "Mediterranean"
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Pericles",
+      "body": "Pericles was arguably the most prominent and influential Greek statesman, orator and general of Athens during the Goldern Age. He was descended, through his mother, from the powerful and historically influential Alcmaeonid family. Pericles turned the Delian League into an Athenian empire, and promoted the arts and literature. Most of the surviving structures on the Athenian Acropolis were the result of an ambitious project started by him. He also fostered Athenian democracy to such an extent that critics called him a populist.",
+      "title": "Pericles"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/Classical_Athens",
+      "body": "Athens was a powerful city-state during the classical period of Greece. A center for the arts, learning and philosophy, home of Plato’s Academy and Aristotle’s Lyceum, it is widely referred to as the cradle of Western civilization and the birthplace of democracy, largely because of its cultural and political impact on Europe and in particular the Romans.",
+      "title": "Athens"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"You have extinguished a light which illuminated the world. I fear the dark age which will follow.\"\nDefeat: \"The world will never know a city as great as Athens again. You are a barbarian, undeserving of whatever false title you have claimed for yourself.\"",
+    "blessing": "Welcome Pericles, great statesman of Athens! You led Athens as both a politician and general in a time of great prosperity for the city state, which you then ushered to even greater heights. Under your rule, Athens transformed a league of city-states into a grand Athenian Empire, stretching across the Aegean Sea. But it was to be your efforts in the arts and literature which became the defining point of your rule. During your time Athens became an educational and cultural center in the ancient world, a status which echoed through the ages. Wise statesman and general, your profound influence over Athens is unmatched by any other!\nOh, great leader, the light Athens once emanated has waned. The illustrious shine of the grand city has fallen to ruins, the temples looted and plundered. Your people call out, wishing for a statesman to take the helm and restore Athens to her former glory. Will you answer that call? Will you rise to return Athens to greatness? Will you build a civilization that will stand the test of time?",
+    "introduction": "\"Welcome to Athens, the greatest city in all of Greece! Please, come, see the magnificence of our city.\"\nIntroduction: \"Oh, a new empire appears! I am Pericles, first citizen of Athens and proud scholar. Who might you be?\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Athens",
+        "Eretria",
+        "Megara",
+        "Argos",
+        "Amphipolis",
+        "Naxos",
+        "Rhodos",
+        "Samos",
+        "Mytilene",
+        "Ephesus",
+        "Halicarnassus",
+        "Milteus",
+        "Chios",
+        "Byzantion",
+        "Abydos",
+        "Eion",
+        "Thasos",
+        "Abdera",
+        "Thebai",
+        "Delphi",
+        "Pharsalos",
+        "Delos",
+        "Naupaktos",
+        "Antandros",
+        "Lampsakos",
+        "Kyzikos",
+        "Paros",
+        "Andros",
+        "Histiaia",
+        "Maroneia"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Socrates",
+        "Aristophanes",
+        "Solon",
+        "Eucleides",
+        "Aristotle",
+        "Plato",
+        "Athene",
+        "Pellas",
+        "Daphne",
+        "Persephone"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "More Civilizations",
+    "Classical Cultures",
+    "Greece",
+    "Greek Pack"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": true,
+    "eandd": true,
+    "piety": true,
+    "culdiv": true,
+    "traits": false,
+    "ynaemp": true,
+    "slavery": true,
+    "maplabels": true,
+    "civivtraits": true,
+    "ethnicunits": true,
+    "mercenaries": true,
+    "histreligions": true,
+    "enlightenmentera": false,
+    "claimscoloniescrimes": true
+  },
+  "collections": [
+    {
+      "id": "greek-civilisation-split",
+      "blurb": "",
+      "links": [],
+      "title": "Greek Civilisation Pack",
+      "colors": {
+        "accent": "#d4a64f",
+        "background": "#23395b"
+      },
+      "aliases": [],
+      "members": [],
+      "imageURL": "",
+      "sourceTemplate": ""
+    }
+  ],
+  "navTemplate": "MCnav",
+  "presentation": {
+    "colors": {
+      "icon": "#418dfe",
+      "background": "#FFF"
+    },
+    "mapImage": "MC Athens Map.png",
+    "iconImage": "Athens (More Civs).png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC%20Athens%20Map.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Athens%20(More%20Civs).png",
+    "mapImageCaption": "Map by Sukritact",
+    "leaderSceneImage": "MC Athens Diplo.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/MC%20Athens%20Diplo.png",
+    "leaderSceneArtCredit": "Leugi"
+  },
+  "templateRefs": []
+}

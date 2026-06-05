@@ -90,22 +90,22 @@ const PEDIA_INLINE_ICON_DEFINITIONS = [
 	},
 	{ templates: ["Golden Age", "Golden Age Icon", "Golden Age Points"], label: "Golden Age", fileName: "Goldenage.png" },
 	{ templates: ["Gold Icon"], label: "Gold", fileName: "Gold.png" },
-	{ templates: ["Gold Resource Icon"], label: "Gold Resource", fileName: "GoldRes_Icon.png" },
-	{ templates: ["Great Admiral Icon"], label: "Great Admiral", fileName: "Greatadmiral.png" },
-	{ templates: ["Great Artist Icon"], label: "Great Artist", fileName: "Greatartist.png" },
-	{ templates: ["Great Engineer Icon"], label: "Great Engineer", fileName: "Greatengineer.png" },
-	{ templates: ["Great General Icon"], label: "Great General", fileName: "Greatgeneral.png" },
-	{ templates: ["Great Merchant Icon"], label: "Great Merchant", fileName: "Greatmerchant.png" },
-	{ templates: ["Great Musician Icon"], label: "Great Musician", fileName: "Greatmusician.png" },
-	{ templates: ["Great Person Icon", "Great People Icon"], label: "Great People", fileName: "Greatperson.png" },
-	{ templates: ["Great Scientist Icon"], label: "Great Scientist", fileName: "Greatscientist.png" },
+	{ templates: ["Gold Resource Icon", "GoldRes Icon"], label: "Gold Resource", fileName: "GoldRes_Icon.png" },
+	{ templates: ["Great Admiral Icon", "Great Admiral"], label: "Great Admiral", fileName: "Greatadmiral.png" },
+	{ templates: ["Great Artist Icon", "Great Artist"], label: "Great Artist", fileName: "Greatartist.png" },
+	{ templates: ["Great Engineer Icon", "Great Engineer"], label: "Great Engineer", fileName: "Greatengineer.png" },
+	{ templates: ["Great General Icon", "Great General"], label: "Great General", fileName: "Greatgeneral.png" },
+	{ templates: ["Great Merchant Icon", "Great Merchant"], label: "Great Merchant", fileName: "Greatmerchant.png" },
+	{ templates: ["Great Musician Icon", "Great Musician"], label: "Great Musician", fileName: "Greatmusician.png" },
+	{ templates: ["Great Person Icon", "Great People Icon", "Great Person", "Great People"], label: "Great People", fileName: "Greatperson.png" },
+	{ templates: ["Great Scientist Icon", "Great Scientist"], label: "Great Scientist", fileName: "Greatscientist.png" },
 	{
 		templates: ["Great Work Icon"],
 		label: "Great Work",
 		fileName: "Greatwork.png",
 		imageUrl: "https://static.wikia.nocookie.net/civilization-v-customisation/images/6/67/Greatwork.png",
 	},
-	{ templates: ["Great Writer Icon"], label: "Great Writer", fileName: "Greatwriter.png" },
+	{ templates: ["Great Writer Icon", "Great Writer"], label: "Great Writer", fileName: "Greatwriter.png" },
 	{ templates: ["Happiness Icon", "Happiness"], label: "Happiness", fileName: "Happy.png" },
 	{ templates: ["Influence Icon", "Influence"], label: "Influence", fileName: "Influence.png" },
 	{ templates: ["Capital", "Capital Icon"], label: "Capital", fileName: "Capital.png" },
@@ -195,6 +195,7 @@ export const PEDIA_INLINE_ICONS = PEDIA_INLINE_ICON_DEFINITIONS.flatMap((definit
 		const imageUrls = buildImageUrls(definition);
 		return {
 			template,
+			canonicalTemplate: definition.templates[0],
 			label: definition.label,
 			fileName: fileNames[0] || "",
 			fileNames,
@@ -257,7 +258,7 @@ export function resolvePediaInlineIconRef(ref) {
 	if (byTemplate) {
 		return {
 			label: byTemplate.label,
-			template: byTemplate.template,
+			template: byTemplate.canonicalTemplate || byTemplate.template,
 			href: byTemplate.href,
 			imageUrl: byTemplate.imageUrl,
 			imageUrls: byTemplate.imageUrls,
@@ -268,7 +269,7 @@ export function resolvePediaInlineIconRef(ref) {
 	if (byLabel) {
 		return {
 			label: byLabel.label,
-			template: byLabel.template,
+			template: byLabel.canonicalTemplate || byLabel.template,
 			href: byLabel.href,
 			imageUrl: byLabel.imageUrl,
 			imageUrls: byLabel.imageUrls,

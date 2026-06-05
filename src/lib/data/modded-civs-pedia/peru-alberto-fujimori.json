@@ -1,0 +1,260 @@
+{
+  "id": "civ-peru-alberto-fujimori",
+  "kind": "civilization",
+  "meta": {
+    "createdAt": "2026-04-11T00:18:44.223Z",
+    "updatedAt": "2026-04-11T00:18:44.224Z",
+    "createdByName": "EmeraldRange",
+    "formatVersion": 1,
+    "updatedByName": "EmeraldRange",
+    "unresolvedTemplates": [
+      "EmeraldNav"
+    ]
+  },
+  "slug": "peru-alberto-fujimori",
+  "music": {
+    "war": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    },
+    "peace": {
+      "url": "",
+      "title": "",
+      "credit": ""
+    }
+  },
+  "title": "Peru",
+  "issues": [
+    "Unresolved templates: EmeraldNav"
+  ],
+  "leader": "Alberto Fujimori",
+  "source": {
+    "type": "wiki",
+    "version": "v 3",
+    "wikiUrl": "",
+    "lastUpdated": "10 October 2025",
+    "workshopUrl": "https://steamcommunity.com/sharedfiles/filedetails/?id=3583289377",
+    "modFolderName": "",
+    "wikiPageTitle": "Peru",
+    "directDownload": ""
+  },
+  "authors": [],
+  "credits": [
+    {
+      "name": "EmeraldRange",
+      "role": "Art, Design, Lua, Code, Testing, Texts"
+    },
+    {
+      "name": "Orangechrisy",
+      "role": "Lua, Map"
+    },
+    {
+      "name": "RawSasquatch",
+      "role": "UU, UB Icons"
+    },
+    {
+      "name": "Lasqueto",
+      "role": "Civ Icon, General Art Help"
+    },
+    {
+      "name": "DarthKyofu",
+      "role": "General Art Help"
+    },
+    {
+      "name": "Cloudchaser",
+      "role": "Text help"
+    }
+  ],
+  "summary": "Peru led by Alberto Fujimori is a custom civilisation mod by EmeraldRange, with contributions from HoopThrower, Orangechrisy, RawSasquatch, Lasqueto and others.",
+  "uniques": [
+    {
+      "art": "Fujicon.png",
+      "body": "May sell Social Policies to earn {{Gold Icon}} Gold and rush {{Production Icon}} Production in all cities. Low health enemy units ending their turn near one of your gun units turn into barbarians",
+      "name": "Demons and Redeemers",
+      "slot": "unique ability",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Fujicon.png",
+      "bullets": [],
+      "replaces": "",
+      "artCredit": "Art by EmeraldRange",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "Peru UU.png",
+      "body": "",
+      "name": "Sapito",
+      "slot": "unique unit",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Peru%20UU.png",
+      "bullets": [
+        "+15% Combat Bonus against units in rough terrain.",
+        "Units dealt damage by a Sapito may turn into barbarians."
+      ],
+      "replaces": "Bomber",
+      "artCredit": "Art by RawSasquatch",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    },
+    {
+      "art": "PeruUB.png",
+      "body": "",
+      "name": "GEIN",
+      "slot": "unique building",
+      "artUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PeruUB.png",
+      "bullets": [
+        "Units trained in this City become stronger on the territory of cities where you have spies operating.",
+        "All barbarians starting within 3 tiles get a 25% {{Strength Icon}} Strength Debuff"
+      ],
+      "replaces": "Police Station",
+      "artCredit": "Art by RawSasquatch",
+      "footnotes": [],
+      "civilopedia": "",
+      "templateRefs": []
+    }
+  ],
+  "identity": {
+    "bias": "Hills",
+    "capital": "Lima",
+    "culture": "Colonial (Latin)",
+    "religion": [
+      "Catholicism"
+    ],
+    "adjectives": "Peruvian",
+    "empireName": "Peruvian Empire",
+    "government": [
+      "Republic"
+    ],
+    "requiredContent": [
+      "Brave New World"
+    ],
+    "mapLabelsLanguage": "Spanish"
+  },
+  "overview": {
+    "leader": {
+      "url": "https://en.wikipedia.org/wiki/Alberto_Fujimori",
+      "body": "Alberto Fujimori was born in 1938 in Lima, Peru to Japanese immigrates who had immigrated there four years prior. He studied physics at the University of Strasbourg in France, earning a master's in mathematics from a later study at the University of Wisconsin-Milwaukee in 1969. Fujimori returned to Peru and served as a lecturer and member of the sciences faculty at his alma mater in Lima during the 1970s.\nFujimori ran on the newly founded Cambio 90 party platform, posing as a moderate populist. Fujimori quickly emerged as a rising party in the polls, attributed to his moderate profile and receiving endorsements from leftist parties who were disillusioned with the Garcia party. He gained the nickname \"el chino\", or the Chinaman, which Fujimori has taken as a term of affection. After taking office, he abandoned his campaign's economic platform and adopted more aggressive neoliberal policies. This came to be known as the Fujishock and was far more right-wing than his right-wing opponent had proposed. Despite its controversy, it did successfully restore Peru to the global economy and reduce inflation at the cost of severe deregulation.\nIn response to political deadlock, Fujimori worked with the military to perform a coup d'état. Fujimori was able to root out most of the remaining Shining Path with his GEIN special operatives bringing its leader into custody in 1992. His war against the Shining Path was largely successful due to a widespread and systematic campaign of crimes against humanity in the form of multiple massacres to exterminate the \"culturally backward and impoverished groups\". Fujimori was at the height of his popularity coming to the 1995 election. However, Fujimori became increasingly paranoid and began to strip freedoms of speech. His opponents began to call him \"Chinochet\". Most of Fujimori's support came from the countryside, with Fujimori playing up his agricultural engineering background. He slowly undermined the rule of law and most controversially implement population control programs that is alleged to have involved forced sterilisations.\nFujimori's congress passed a law of \"authentic interpretation\" allowing Fujimori to run for a third term. A corruptions scandal broke out regarding he and his relationship with Montesinos which exploded in September 2000, after which Fujimori's support collapsed leading him to shut down the intelligence agency and call new elections for which he would not stand for election.",
+      "title": "Alberto Fujimori"
+    },
+    "civilization": {
+      "url": "https://en.wikipedia.org/wiki/History_of_Peru",
+      "body": "Peru gained its independence after several revolutionaries, such as José de San Martin and Simón Bolívar vouched for it in the 1810s. Independence was formally consolidated in 1824 as the war wrapped up, but it took until 1879 for Spain to recognise its independence after losing more futile attempts to retake Peru in the 1860s. Initially ruled by Simón Bolívar, Peruvians were divided on the direction of the country and whether to join other former Spanish colonies. Eventually this lead to the Peru splitting into various short-lived republics and then uniting with Bolivia to form Peru-Bolivia in 1836.\nQuickly after the restoration of independent Peru, several military leaders engaged in a power struggle starting the period known as the Military Anarchy leading to the Peruvian Civil War of 1843-44. However, the 1880s saw the War of the Pacific with devastating battles breaking the Peru-Bolivian alliance. For the next 30 years, period enjoyed relative prosperity though with deepening class divides and corruption and the occasional internal conflict.\nIn 1919, President Augusto B. Leguía seized power in a coup, ending the last period of aristocratic republicanism. The Spanish Civil War spilled over during this period. By 1939, Mariano Prado retook power as an elected president. Peru remained neutral during World War II, which attracted many Japanese immigrants especially in wake of the United States’ Japanese internment camps. The post-war era saw Peru deepen its democratic institutions, but it was reversed by another military coup in 1948. In the late 1960s, internal strife from leftist revolutions and guerilla forces accelerated Peru's internal conflict, leading to a military coup. The coup led to radical military reforms, nationalising many industries and massive economic mismanagement.",
+      "title": "Peru"
+    }
+  },
+  "dawnOfMan": {
+    "defeat": "\"Now it is destroyed, there is only hell left awaiting us all. I submit to you my formal resignation as president of the republic.\"\nAttacked: \"If you seek murder and terrorism, there will be no pardon for you. It is out of my power, you can only be destroyed!\"",
+    "blessing": "Greetings to you, President Alberto Fujimori, architect of Peru's resurgence from crisis and turmoil. Rising from humble beginnings as the son of Japanese immigrants, you seized leadership to stop hyperinflation, terrorism and political disarray. With decisive and intelligent action you quelled the Shining Path and freed Peru's economy. Against naysayers and enemies within and without, you restored your country's fortunes to greatness.\nO resolute leader of Peru, the demons of terrorism and chaos have forced rightenousness into hiding. Yet the people year for the return of the Fujimorato. Will you secure the nation from its would-be terrorisers? Will you bring prosperity through stability and a strong grasp of power? Will you build a civilization that can stand the test of time?",
+    "introduction": "\"I am Alberto Fujimori, President of Peru. I've reconstructed our nation out of chaos and hope you are here to aid us in that effort.\""
+  },
+  "nameLists": [
+    {
+      "items": [
+        "Lima",
+        "Arequipa",
+        "Trujillo",
+        "Chiclayo",
+        "Iquitos",
+        "Piura",
+        "Chimbote",
+        "Cusco",
+        "Huancayo",
+        "Tacna",
+        "Pucallpa",
+        "Juliaca",
+        "Huanta",
+        "Ica",
+        "Ayacucho",
+        "Sullana",
+        "Huánuco",
+        "Chincha Alta",
+        "Cajamarca",
+        "Puno",
+        "Tarapoto",
+        "Pisco",
+        "Satipo",
+        "Talara",
+        "Tumbes",
+        "Abancay",
+        "Andahuaylas",
+        "Huacho",
+        "Huaraz",
+        "Huaral",
+        "Cerro de Pasco",
+        "San Vicente de Cañete",
+        "Jaén",
+        "Chulucanas",
+        "Barbadillo"
+      ],
+      "title": "City List"
+    },
+    {
+      "items": [
+        "Santiago",
+        "Vladimiro",
+        "Kenji",
+        "Nicolás",
+        "Fernando",
+        "Keiko",
+        "Luisa",
+        "Susana",
+        "Martha",
+        "Érika"
+      ],
+      "title": "Spy List"
+    }
+  ],
+  "categories": [
+    "All Civilizations",
+    "EmeraldRange",
+    "Peru",
+    "Civilizations with Male leaders",
+    "Dark Days"
+  ],
+  "modSupport": {
+    "aa": false,
+    "uci": true,
+    "eandd": false,
+    "piety": true,
+    "culdiv": true,
+    "ynaemp": true,
+    "maplabels": true,
+    "civivtraits": true,
+    "ethnicunits": true,
+    "histreligions": true,
+    "enlightenmentera": true
+  },
+  "collections": [
+    {
+      "id": "dark-days",
+      "blurb": "",
+      "links": [],
+      "title": "Dark Days Collection",
+      "colors": {
+        "accent": "#f26707",
+        "background": "#470202"
+      },
+      "aliases": [],
+      "members": [],
+      "imageURL": "",
+      "sourceTemplate": "DarkDaysNav"
+    }
+  ],
+  "navTemplate": "DarkDaysNav",
+  "presentation": {
+    "colors": {
+      "icon": "#f7ebe3",
+      "background": "#a12206"
+    },
+    "mapImage": "Fujimori map.png",
+    "iconImage": "PeruFuji.png",
+    "mapImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Fujimori%20map.png",
+    "iconImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/PeruFuji.png",
+    "mapImageCaption": "Map by Orangechrisy",
+    "leaderSceneImage": "Alberto Fujimori.png",
+    "leaderSceneImageUrl": "https://civilization-v-customisation.fandom.com/wiki/Special:Redirect/file/Alberto%20Fujimori.png",
+    "leaderSceneArtCredit": "Leaderscreen by EmeraldRange"
+  },
+  "templateRefs": []
+}
