@@ -303,6 +303,7 @@
 	let nativeEncoderStatus = $state("");
 	let nativeEncoderBinary = $state("");
 	let nativeEncoderChecking = $state(true);
+	let nativeEncoderCheckFailed = $state(false);
 
 	const workflowConfig = $derived(WORKFLOWS[workflow] || WORKFLOWS.unit);
 	const compressionOptions = $derived(workflowConfig.compressionOptions || ["DXT3"]);
@@ -335,9 +336,9 @@
 	const activeSvNamingConfig = $derived(SV_NAMING_CONFIG[activeSvPreset?.id] || SV_NAMING_CONFIG["unit-sv"]);
 	const activeSqlAtlasConfig = $derived(isAtlasBundleWorkflow ? activeAtlasTypeConfig : workflow === "icon_sheet" ? BUNDLE_ATLAS_TYPES.icon : workflow === "sv" ? activeSvNamingConfig : null);
 	const activeNativeOutputMode = $derived(activeBundleAtlasType === "unit_flag" ? "dxt3" : "rgba8");
-	const workflowRequiresNative = $derived(workflow === "screen" || workflow === "icon_sheet" || workflow === "sv" || (isAtlasBundleWorkflow && activeNativeOutputMode === "rgba8"));
+	const workflowRequiresNative = $derived(workflow === "screen" || workflow === "icon_sheet" || workflow === "sv");
 	const workflowSupportsCompatibilityEncoder = $derived(!workflowRequiresNative);
-	const effectiveEncoderBackend = $derived(nativeEncoderAvailable === false && workflowSupportsCompatibilityEncoder ? ENCODER_BACKEND_DXTJS : ENCODER_BACKEND_NATIVE);
+	const effectiveEncoderBackend = $derived(nativeEncoderAvailable === false && !nativeEncoderCheckFailed && workflowSupportsCompatibilityEncoder ? ENCODER_BACKEND_DXTJS : ENCODER_BACKEND_NATIVE);
 	const effectiveEncoderLabel = $derived(effectiveEncoderBackend === ENCODER_BACKEND_NATIVE ? "Native Compressonator" : "Compatibility JS encoder");
 	const nativeEncoderAvailabilityLabel = $derived.by(() => {
 		if (nativeEncoderChecking) {
@@ -346,16 +347,22 @@
 		if (nativeEncoderAvailable === true) {
 			return nativeEncoderBinary ? `Native encoder available: ${nativeEncoderBinary}` : "Native encoder available.";
 		}
+		if (nativeEncoderCheckFailed) {
+			return `Native encoder status check failed: ${nativeEncoderStatus || "Unable to verify native encoder availability."}`;
+		}
 		return `Native encoder unavailable: ${nativeEncoderStatus || "Unable to verify native encoder availability."}`;
 	});
 	const effectiveEncoderDetail = $derived.by(() => {
 		if (nativeEncoderChecking) {
 			return "Conversion will use the native encoder if it responds.";
 		}
-		if (effectiveEncoderBackend === ENCODER_BACKEND_NATIVE) {
-			return "Current workflow will use the native encoder.";
+		if (nativeEncoderCheckFailed) {
+			return "Current workflow will try the native encoder when you generate.";
 		}
-		return "Current workflow will use the JS encoder until native reconnects.";
+		if (effectiveEncoderBackend === ENCODER_BACKEND_NATIVE) {
+			return nativeEncoderAvailable === false ? "Current workflow requires native, so generation will try native anyway." : "Current workflow will use the native encoder.";
+		}
+		return "Current workflow will use the JS fallback until native reconnects.";
 	});
 	const atlasSqlToken = $derived(normalizeAtlasSqlToken(atlasExportName));
 	const atlasFilePrefix = $derived(buildAtlasFilePrefix(atlasSqlToken));
@@ -415,12 +422,6 @@
 		}
 		if (!canConvertWithDimensions) {
 			return "Source PNG dimensions do not match the selected preset.";
-		}
-		if (nativeEncoderChecking) {
-			return "Checking native encoder availability.";
-		}
-		if (nativeEncoderAvailable === false && !workflowSupportsCompatibilityEncoder) {
-			return nativeEncoderStatus || "Native encoder is unavailable for this workflow.";
 		}
 		return "";
 	});
@@ -502,11 +503,13 @@
 			if (!response.ok) {
 				throw new Error(payload?.error || `Native encoder check failed (${response.status}).`);
 			}
+			nativeEncoderCheckFailed = false;
 			nativeEncoderAvailable = Boolean(payload?.nativeEncoderAvailable);
 			nativeEncoderStatus = String(payload?.error || "");
 			nativeEncoderBinary = String(payload?.executable || "");
 		} catch (error) {
-			nativeEncoderAvailable = false;
+			nativeEncoderCheckFailed = true;
+			nativeEncoderAvailable = null;
 			nativeEncoderStatus = String(error?.message || "Unable to verify native encoder availability.");
 			nativeEncoderBinary = "";
 		} finally {
@@ -1302,13 +1305,13 @@
 				</p>
 			{/if}
 
-			<div class="dds-encoder-status" data-state={nativeEncoderAvailable === false ? "unavailable" : nativeEncoderChecking ? "checking" : "available"}>
+			<div class="dds-encoder-status" data-state={nativeEncoderCheckFailed ? "check-failed" : nativeEncoderAvailable === false ? "unavailable" : nativeEncoderChecking ? "checking" : "available"}>
 				<div class="dds-encoder-status-copy">
 					<p>{nativeEncoderAvailabilityLabel}</p>
 					<p>{effectiveEncoderDetail} Selected: {effectiveEncoderLabel}.</p>
 				</div>
 				<button type="button" class="tiny-action dds-reconnect-action" onclick={loadNativeEncoderStatus} disabled={nativeEncoderChecking}>
-					{nativeEncoderChecking ? "Checking..." : nativeEncoderAvailable === false ? "Reconnect Native Encoder" : "Check Native Encoder"}
+					{nativeEncoderChecking ? "Checking..." : nativeEncoderAvailable === false || nativeEncoderCheckFailed ? "Reconnect Native Encoder" : "Check Native Encoder"}
 				</button>
 			</div>
 
@@ -1790,6 +1793,11 @@
 	.dds-encoder-status[data-state="unavailable"] {
 		background: color-mix(in oklch, oklch(0.93 0.08 100) 30%, var(--control-bg));
 		border-color: color-mix(in oklch, oklch(0.9 0.15 95) 50%, var(--panel-border));
+	}
+
+	.dds-encoder-status[data-state="check-failed"] {
+		background: color-mix(in srgb, var(--dds-accent-panel) 14%, var(--control-bg));
+		border-color: color-mix(in srgb, var(--dds-accent-highlight) 38%, var(--panel-border));
 	}
 
 	.dds-encoder-status-copy {
