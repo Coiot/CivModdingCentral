@@ -213,12 +213,13 @@
 		inline-size: fit-content;
 		color: white;
 		font-weight: 800;
-		background: color-mix(in srgb, var(--icon-atlas-accent-highlight) 76%, black 24%);
-		border: 1px solid color-mix(in srgb, var(--icon-atlas-accent-highlight) 78%, white 12%);
+		background: color-mix(in srgb, var(--icon-atlas-accent-highlight) 40%, black 55%);
+		border: 1px solid color-mix(in srgb, var(--icon-atlas-accent-highlight) 80%, white 10%);
 		border-radius: 0.6rem;
 		box-shadow: 0 4px 8px color-mix(in srgb, black 45%, transparent);
 		cursor: pointer;
 		padding: 0.72rem 0.95rem;
+		margin-block-start: 0.5rem;
 	}
 
 	.icon-atlas-generator-button:hover,

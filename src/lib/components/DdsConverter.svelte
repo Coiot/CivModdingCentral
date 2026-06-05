@@ -772,6 +772,19 @@
 		}
 	}
 
+	function triggerDownload(url, filename) {
+		if (typeof document === "undefined" || !url) {
+			return;
+		}
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = filename || "converted.dds";
+		link.style.display = "none";
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
+
 	function revokeSourcePreviewUrl() {
 		if (sourcePreviewUrl) {
 			URL.revokeObjectURL(sourcePreviewUrl);
@@ -933,6 +946,7 @@
 			revokeDownloadUrl();
 			downloadUrl = URL.createObjectURL(blob);
 			downloadName = suggestedName;
+			triggerDownload(downloadUrl, downloadName);
 			conversionMeta = {
 				sourceWidth: response.headers.get("x-source-width") || "",
 				sourceHeight: response.headers.get("x-source-height") || "",
