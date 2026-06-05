@@ -87,7 +87,7 @@
 	<div class="icon-atlas-generator-head">
 		<div>
 			<h3>Dynamic Icon Atlas Generator</h3>
-			<p>Create a transparent PNG atlas with 256px cells and centered 174px red-circle to help you create your icon set.</p>
+			<p>Create a transparent PNG atlas grid to help you accurately place your icon set.</p>
 		</div>
 		<div class="icon-atlas-generator-meta">
 			<span>{atlasWidth}x{atlasHeight}px</span>
