@@ -1291,20 +1291,6 @@
 						<p class="dds-preview-title">Generated SQL (saved in local storage)</p>
 						<textarea class="dds-sql-textarea" rows="11" readonly value={[sqlIconTextureAtlasesText, sqlStrategicRowsText].filter(Boolean).join("\n\n")}></textarea>
 					</div>
-					<div class="dds-actions inline flex-wrap">
-						<span class="dds-tooltip-wrap relative">
-							<button type="button" onclick={copySqlToClipboard} disabled={Boolean(copySqlDisabledReason)}>Copy SQL</button>
-							{#if copySqlDisabledReason}
-								<span class="dds-tooltip">{copySqlDisabledReason}</span>
-							{/if}
-						</span>
-						<span class="dds-tooltip-wrap relative">
-							<button type="button" class="danger-action" onclick={resetSqlHistory} disabled={Boolean(resetSqlHistoryDisabledReason)}>Reset SQL History</button>
-							{#if resetSqlHistoryDisabledReason}
-								<span class="dds-tooltip">{resetSqlHistoryDisabledReason}</span>
-							{/if}
-						</span>
-					</div>
 				</div>
 			{/if}
 
@@ -1340,6 +1326,20 @@
 				</span>
 				{#if downloadUrl}
 					<a class="dds-download" href={downloadUrl} download={downloadName}>Download {downloadName}</a>
+				{/if}
+				{#if sqlWorkflowEnabled}
+					<span class="dds-tooltip-wrap relative">
+						<button type="button" onclick={copySqlToClipboard} disabled={Boolean(copySqlDisabledReason)}>Copy SQL</button>
+						{#if copySqlDisabledReason}
+							<span class="dds-tooltip">{copySqlDisabledReason}</span>
+						{/if}
+					</span>
+					<span class="dds-tooltip-wrap relative">
+						<button type="button" class="danger-action" onclick={resetSqlHistory} disabled={Boolean(resetSqlHistoryDisabledReason)}>Reset SQL History</button>
+						{#if resetSqlHistoryDisabledReason}
+							<span class="dds-tooltip">{resetSqlHistoryDisabledReason}</span>
+						{/if}
+					</span>
 				{/if}
 			</div>
 

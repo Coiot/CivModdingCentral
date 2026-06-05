@@ -1767,27 +1767,66 @@
 	}
 
 	.color-helper-details > summary {
+		position: relative;
 		color: var(--muted-ink);
 		font-size: 0.86rem;
 		font-weight: 650;
 		cursor: pointer;
-		list-style-position: inside;
+		list-style: none;
+		padding-inline-start: 1.25rem;
 	}
 
 	.color-helper-details[open] > summary {
 		margin-block-end: 0.45rem;
 	}
 
+	.color-helper-details[open] > summary::before,
+	.preset-details[open] > summary::before {
+		content: "−";
+	}
+
 	.preset-details > summary {
+		position: relative;
 		color: var(--muted-ink);
 		font-size: 0.84rem;
 		font-weight: 650;
 		cursor: pointer;
-		list-style-position: inside;
+		list-style: none;
+		padding-inline-start: 1.25rem;
 	}
 
 	.preset-details[open] > summary {
 		margin-block-end: 0.45rem;
+	}
+
+	.color-helper-details > summary::before,
+	.preset-details > summary::before {
+		position: absolute;
+		inset-block-start: 50%;
+		inset-inline-start: 0;
+		color: var(--modinfo-accent-strong, var(--ink));
+		font-size: 1rem;
+		font-weight: 800;
+		line-height: 1;
+		transform: translateY(-50%);
+		content: "+";
+	}
+
+	.color-helper-details > summary::-webkit-details-marker,
+	.preset-details > summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.color-helper-details > summary::marker,
+	.preset-details > summary::marker {
+		content: "";
+	}
+
+	.color-helper-details > summary:focus-visible,
+	.preset-details > summary:focus-visible {
+		outline: 2px solid color-mix(in oklch, var(--modinfo-accent-border) 72%, white);
+		outline-offset: 0.2rem;
+		border-radius: 0.35rem;
 	}
 
 	.color-helper {

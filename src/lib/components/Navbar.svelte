@@ -160,7 +160,7 @@
 	let userOpen = $state(false);
 	let helpOpen = $state(false);
 	let navMenuOpen = $state(false);
-	let openNavGroupId = $state(null);
+	let navMenuStyle = $state("");
 	let usernameInput = $state("");
 	let usernameSaving = $state(false);
 	let userWrapEl = $state();
@@ -188,18 +188,6 @@
 
 	function navLinkKey(groupId, link, index) {
 		return `${groupId}-${link.href || link.label}-${index}`;
-	}
-
-	function navGroupExamples(group, limit = 4) {
-		return group.links
-			.filter((link) => !link.disabled)
-			.slice(0, limit)
-			.map((link) => link.label)
-			.join(", ");
-	}
-
-	function activeNavGroup() {
-		return NAV_GROUPS.find((group) => group.id === openNavGroupId) ?? NAV_GROUPS[0] ?? null;
 	}
 
 	function navGroupThemeClass(groupId) {
@@ -258,20 +246,35 @@
 		return group.links.some((link) => isActivePath(link.href));
 	}
 
-	function getDefaultNavGroupId() {
-		return NAV_GROUPS.find((group) => isGroupActive(group))?.id ?? NAV_GROUPS[0]?.id ?? null;
+	function updateNavMenuPosition() {
+		if (typeof window === "undefined" || typeof document === "undefined") {
+			return;
+		}
+
+		const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 1024;
+		const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 768;
+		const rootFontSize = Number.parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
+		const margin = Math.max(8, Math.min(16, viewportWidth * 0.015));
+		const maxWidth = rootFontSize * 72;
+		const width = Math.max(280, Math.min(maxWidth, viewportWidth - margin * 2));
+		const left = Math.max(margin, (viewportWidth - width) / 2);
+		const triggerRect = navWrapEl?.getBoundingClientRect?.();
+		const preferredTop = triggerRect ? triggerRect.bottom + 10 : rootFontSize * 6;
+		const top = Math.max(margin, Math.min(preferredTop, viewportHeight - 220));
+		const maxHeight = Math.max(220, viewportHeight - top - margin);
+
+		navMenuStyle = `--page-nav-left: ${left}px; --page-nav-top: ${top}px; --page-nav-width: ${width}px; --page-nav-max-block-size: ${maxHeight}px;`;
 	}
 
-	function openNavMenu(groupId = openNavGroupId ?? getDefaultNavGroupId()) {
+	function openNavMenu() {
 		navMenuOpen = true;
-		openNavGroupId = groupId;
 		userOpen = false;
 		helpOpen = false;
+		updateNavMenuPosition();
 	}
 
 	function closeNavMenus() {
 		navMenuOpen = false;
-		openNavGroupId = null;
 	}
 
 	function toggleNavMenu() {
@@ -281,10 +284,6 @@
 		}
 
 		openNavMenu();
-	}
-
-	function toggleNavGroup(groupId) {
-		openNavMenu(groupId);
 	}
 
 	function handleNavShellFocusOut(event) {
@@ -337,6 +336,12 @@
 		}
 	}
 
+	function handleWindowViewportChange() {
+		if (navMenuOpen) {
+			updateNavMenuPosition();
+		}
+	}
+
 	async function handleUsernameSave() {
 		if (!authUser) {
 			return;
@@ -351,7 +356,7 @@
 	}
 </script>
 
-<svelte:window onkeydown={handleWindowKeyDown} onclick={handleWindowClick} />
+<svelte:window onkeydown={handleWindowKeyDown} onclick={handleWindowClick} onresize={handleWindowViewportChange} onscroll={handleWindowViewportChange} />
 
 <header class="navbar">
 	<div class="brand inline">
@@ -377,74 +382,56 @@
 				<span class="nav-menu-copy">{NAV_GROUPS.length} Groups, {NAV_PAGE_COUNT} Pages</span>
 			</button>
 
-			<nav id="primary-navigation" class={`page-nav ${navMenuOpen ? "is-open" : ""}`} aria-label="Primary navigation">
+			<nav id="primary-navigation" class={`page-nav ${navMenuOpen ? "is-open" : ""}`} style={navMenuStyle} aria-label="Primary navigation">
 				<div class="page-nav-header">
 					<p class="nav-group-panel-kicker">Your full civ modding toolkit</p>
-					<p class="nav-group-panel-copy">Start on the left, then jump into a tool or resource on the right.</p>
+					<p class="nav-group-panel-copy">Every section below contains direct links. Choose the workflow you need and jump straight into the tool or reference.</p>
 				</div>
 
-				<div class="page-nav-categories">
+				<div class="page-nav-sections">
 					{#each NAV_GROUPS as group (group.id)}
-						<section class={`nav-group ${navGroupThemeClass(group.id)} ${openNavGroupId === group.id ? "is-open" : ""} ${isGroupActive(group) ? "is-active" : ""}`}>
-							<button
-								type="button"
-								class="nav-group-trigger"
-								aria-pressed={openNavGroupId === group.id ? "true" : "false"}
-								aria-controls={`nav-panel-${group.id}`}
-								onclick={() => toggleNavGroup(group.id)}
-							>
-								<span class="nav-group-kicker">{group.kicker}</span>
-								<span class="nav-group-title-row inline half">
-									<span class="nav-group-title">{group.label}</span>
-									<!-- <span class="nav-group-count">{group.links.length}</span> -->
-								</span>
-								<span class="nav-group-copy">{group.description}</span>
-								<!-- <span class="nav-group-examples">{navGroupExamples(group)}</span> -->
-							</button>
+						<section class={`nav-menu-section nav-group-panel ${navGroupThemeClass(group.id)} ${isGroupActive(group) ? "is-active" : ""}`}>
+							<div class="nav-group-panel-head">
+								<p class="nav-group-panel-kicker">{group.kicker}</p>
+								<p class="nav-group-panel-title">{group.panelTitle}</p>
+								<p class="nav-group-panel-copy">{group.panelCopy}</p>
+								{#if group.id === "learn"}
+									<p class="page-nav-panel-recommendation">New here? Start with our Guided Planner + Civilization Starter.</p>
+								{/if}
+							</div>
+							<div class="nav-group-links">
+								{#each group.links as link, index (navLinkKey(group.id, link, index))}
+									{#if link.disabled}
+										<div class={`nav-entry ${navEntrySurfaceClass(link.href)} is-disabled`} aria-disabled="true">
+											<span class="nav-entry-head inline half">
+												<span class="nav-entry-title">{link.label}</span>
+												<span class="nav-entry-status">{link.statusLabel || "Coming Soon"}</span>
+											</span>
+											<span class="nav-entry-copy">{link.description}</span>
+										</div>
+									{:else}
+										<a
+											class={`nav-entry ${navEntrySurfaceClass(link.href)} ${isActivePath(link.href) ? "is-active" : ""}`}
+											href={link.href}
+											aria-current={isActivePath(link.href) ? "page" : undefined}
+											onclick={closeNavMenus}
+										>
+											<span class="nav-entry-head inline half">
+												<span class="nav-entry-title">{link.label}</span>
+												{#if group.id === "learn" && index === 0}
+													<span class="nav-entry-status">First Step</span>
+												{/if}
+												{#if group.id === "learn" && index === 1}
+													<span class="nav-entry-status">Starter Kit</span>
+												{/if}
+											</span>
+											<span class="nav-entry-copy">{link.description}</span>
+										</a>
+									{/if}
+								{/each}
+							</div>
 						</section>
 					{/each}
-				</div>
-
-				<div id={`nav-panel-${activeNavGroup()?.id || "default"}`} class={`nav-group-panel ${navGroupThemeClass(activeNavGroup()?.id)}`}>
-					<div class="nav-group-panel-head">
-						<p class="nav-group-panel-kicker">{activeNavGroup()?.kicker}</p>
-						<p class="nav-group-panel-title">{activeNavGroup()?.panelTitle}</p>
-						<p class="nav-group-panel-copy">{activeNavGroup()?.panelCopy}</p>
-						{#if activeNavGroup()?.id === "learn"}
-							<p class="page-nav-panel-recommendation">New here? Start with our Guided Planner + Civlization Starter.</p>
-						{/if}
-					</div>
-					<div class="nav-group-links">
-						{#each activeNavGroup()?.links || [] as link, index (navLinkKey(activeNavGroup()?.id || "group", link, index))}
-							{#if link.disabled}
-								<div class={`nav-entry ${navEntrySurfaceClass(link.href)} is-disabled`} aria-disabled="true">
-									<span class="nav-entry-head inline half">
-										<span class="nav-entry-title">{link.label}</span>
-										<span class="nav-entry-status">{link.statusLabel || "Coming Soon"}</span>
-									</span>
-									<span class="nav-entry-copy">{link.description}</span>
-								</div>
-							{:else}
-								<a
-									class={`nav-entry ${navEntrySurfaceClass(link.href)} ${isActivePath(link.href) ? "is-active" : ""}`}
-									href={link.href}
-									aria-current={isActivePath(link.href) ? "page" : undefined}
-									onclick={closeNavMenus}
-								>
-									<span class="nav-entry-head inline half">
-										<span class="nav-entry-title">{link.label}</span>
-										{#if activeNavGroup()?.id === "learn" && index === 0}
-											<span class="nav-entry-status">First Step</span>
-										{/if}
-										{#if activeNavGroup()?.id === "learn" && index === 1}
-											<span class="nav-entry-status">Starter Kit</span>
-										{/if}
-									</span>
-									<span class="nav-entry-copy">{link.description}</span>
-								</a>
-							{/if}
-						{/each}
-					</div>
 				</div>
 			</nav>
 		</div>
@@ -657,7 +644,6 @@
 		flex: 0 1 auto;
 	}
 
-	.nav-group-trigger:focus-visible,
 	.nav-menu-trigger:focus-visible,
 	.nav-entry:focus-visible,
 	.social-trigger:focus-visible,
@@ -693,13 +679,11 @@
 		border-color: color-mix(in oklch, var(--accent) 55%, var(--panel-border));
 	}
 
-	.nav-group-title,
 	.nav-menu-label {
 		white-space: pre;
 		font-size: 0.95rem;
 	}
 
-	.nav-group-title,
 	.nav-menu-label,
 	.nav-group-panel-title,
 	.nav-entry-title,
@@ -709,7 +693,6 @@
 		font-weight: 700;
 	}
 
-	.nav-group-kicker,
 	.nav-group-panel-kicker,
 	.nav-menu-copy {
 		text-transform: uppercase;
@@ -717,9 +700,7 @@
 		letter-spacing: 0.12em;
 	}
 
-	.nav-group-kicker,
 	.nav-menu-copy,
-	.nav-group-copy,
 	.nav-entry-copy,
 	.nav-group-panel-kicker,
 	.nav-group-panel-copy,
@@ -746,7 +727,6 @@
 		padding-block-end: 0.2rem;
 	}
 
-	.nav-group,
 	.nav-group-panel {
 		--nav-group-accent: var(--accent);
 		--nav-group-accent-strong: color-mix(in oklch, var(--accent) 70%, white 30%);
@@ -754,7 +734,6 @@
 		--nav-group-panel-surface: color-mix(in oklch, var(--panel-bg) 80%, black 20%);
 	}
 
-	.nav-group.is-learn,
 	.nav-group-panel.is-learn {
 		--nav-group-accent: oklch(0.975 0.05 70);
 		--nav-group-accent-strong: oklch(0.95 0.05 70);
@@ -762,7 +741,6 @@
 		--nav-group-panel-surface: color-mix(in oklch, var(--surface-pattern-panel) 80%, var(--panel-bg) 18%);
 	}
 
-	.nav-group.is-reference,
 	.nav-group-panel.is-reference {
 		--nav-group-accent: oklch(0.9 0.1 160);
 		--nav-group-accent-strong: oklch(0.85 0.05 160);
@@ -770,7 +748,6 @@
 		--nav-group-panel-surface: color-mix(in oklch, var(--surface-schema-panel) 80%, var(--panel-bg) 18%);
 	}
 
-	.nav-group.is-assets,
 	.nav-group-panel.is-assets {
 		--nav-group-accent: oklch(0.95 0.15 350);
 		--nav-group-accent-strong: oklch(0.9 0.1 350);
@@ -778,7 +755,6 @@
 		--nav-group-panel-surface: color-mix(in oklch, var(--surface-ui-panel) 82%, var(--panel-bg) 18%);
 	}
 
-	.nav-group.is-ship,
 	.nav-group-panel.is-ship {
 		--nav-group-accent: oklch(0.95 0.15 65);
 		--nav-group-accent-strong: oklch(0.9 0.1 65);
@@ -786,74 +762,11 @@
 		--nav-group-panel-surface: color-mix(in oklch, var(--surface-publish-panel) 82%, var(--panel-bg) 18%);
 	}
 
-	.nav-group-trigger {
-		inline-size: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.35rem;
-		min-block-size: 6rem;
-		color: var(--ink);
-		font: inherit;
-		text-align: left;
-		background:
-			radial-gradient(circle at 100% 0, color-mix(in oklch, var(--nav-group-accent) 10%, transparent) 0%, transparent 42%),
-			linear-gradient(160deg, color-mix(in oklch, var(--nav-group-surface) 88%, black 12%) 0%, color-mix(in oklch, var(--nav-group-surface) 78%, black 22%) 100%);
-		border: none;
-		border-radius: 0.75rem;
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--nav-group-accent-strong, var(--accent)) 15%, transparent),
-			0 4px 8px color-mix(in srgb, black 50%, transparent);
-		padding-block: 0.56rem;
-		padding-inline: 0.72rem;
-		transition:
-			background 160ms ease,
-			border-color 160ms ease,
-			transform 160ms ease,
-			box-shadow 160ms ease;
-		cursor: pointer;
-
-		&:hover {
-			background:
-				radial-gradient(circle at 100% 0, color-mix(in oklch, var(--nav-group-accent) 24%, transparent) 0%, transparent 42%),
-				linear-gradient(160deg, color-mix(in oklch, var(--nav-group-surface) 88%, black 12%) 0%, color-mix(in oklch, var(--nav-group-surface) 78%, black 22%) 100%);
-			box-shadow:
-				inset 0 1px 0 color-mix(in srgb, var(--nav-group-accent-strong, var(--accent)) 35%, transparent),
-				0 4px 8px color-mix(in srgb, black 70%, transparent);
-			border-color: color-mix(in oklch, var(--nav-group-accent) 74%, var(--panel-border));
-			transform: translateY(-1px);
-		}
-	}
-
-	.nav-group-title-row {
-		gap: 0.55rem;
-	}
-
-	.nav-group-count {
-		flex: 0 0 auto;
-		color: color-mix(in oklch, var(--accent) 25%, var(--ink));
-		font-size: 0.68rem;
-		line-height: 1.2;
-		background: color-mix(in oklch, var(--control-bg) 90%, black);
-		border: 1px solid color-mix(in oklch, var(--accent) 58%, var(--panel-border));
-		border-radius: 999px;
-		padding-block: 0.04rem;
-		padding-inline: 0.42rem;
-	}
-
-	.nav-group-copy,
 	.nav-entry-copy,
 	.nav-group-panel-copy {
 		font-size: 0.77rem;
 		line-height: 1.34;
 		margin-block: 0;
-	}
-
-	.nav-group-examples {
-		color: color-mix(in oklch, var(--nav-group-accent) 20%, var(--ink));
-		font-size: 0.72rem;
-		font-weight: 600;
-		line-height: 1.35;
 	}
 
 	.nav-group-panel {
@@ -862,14 +775,18 @@
 		align-content: start;
 		gap: 0.85rem;
 		background:
-			radial-gradient(circle at 100% 0, color-mix(in oklch, var(--nav-group-accent) 15%, transparent) 0%, transparent 40%),
-			linear-gradient(160deg, color-mix(in oklch, var(--nav-group-panel-surface) 40%, transparent 60%) 0%, color-mix(in oklch, var(--nav-group-panel-surface) 50%, transparent 50%) 100%);
+			radial-gradient(circle at 100% 0, color-mix(in oklch, var(--nav-group-accent) 13%, transparent) 0%, transparent 42%),
+			linear-gradient(160deg, color-mix(in oklch, var(--nav-group-panel-surface) 58%, var(--panel-bg) 42%) 0%, color-mix(in oklch, var(--nav-group-panel-surface) 46%, var(--control-bg) 54%) 100%);
 		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, var(--nav-group-accent-strong, var(--accent)) 40%, transparent),
-			0 4px 6px color-mix(in srgb, black 90%, transparent);
-		/*border: 1px solid color-mix(in oklch, var(--nav-group-accent) 54%, var(--panel-border));*/
+			inset 0 1px 0 color-mix(in srgb, var(--nav-group-accent-strong, var(--accent)) 20%, transparent),
+			0 4px 8px color-mix(in srgb, black 66%, transparent);
+		border: 1px solid color-mix(in oklch, var(--nav-group-accent) 34%, var(--panel-border));
 		border-radius: 0.95rem;
 		padding: 0.85rem;
+	}
+
+	.nav-group-panel.is-active {
+		border-color: color-mix(in oklch, var(--nav-group-accent) 70%, var(--panel-border));
 	}
 
 	.nav-group-panel-head {
@@ -903,8 +820,8 @@
 
 	.nav-group-links {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-		gap: 0.65rem;
+		grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+		gap: 0.55rem;
 	}
 
 	.nav-entry-head {
@@ -1204,35 +1121,6 @@
 		}
 	}
 
-	.nav-group {
-		position: static;
-		/*background:
-			radial-gradient(circle at 100% 0, color-mix(in oklch, var(--nav-group-accent) 10%, transparent) 0%, transparent 40%),
-			linear-gradient(160deg, color-mix(in oklch, var(--nav-group-surface) 40%, black 10%) 0%, color-mix(in oklch, var(--nav-group-surface) 70%, black 30%) 100%);*/
-		box-shadow:
-			inset 0 1px 0 color-mix(in srgb, white 30%, transparent),
-			0 4px 8px color-mix(in srgb, black 80%, transparent);
-		border-radius: 0.75rem;
-
-		&.is-open .nav-group-trigger {
-			background:
-				radial-gradient(circle at 100% 0, color-mix(in oklch, var(--nav-group-accent) 30%, transparent) 0%, transparent 40%),
-				linear-gradient(160deg, color-mix(in oklch, var(--nav-group-surface) 90%, black 10%) 0%, color-mix(in oklch, var(--nav-group-surface) 70%, black 30%) 100%);
-			box-shadow:
-				inset 0 1px 0 color-mix(in oklch, var(--nav-group-accent-strong) 50%, transparent),
-				0 8px 12px color-mix(in oklch, #000 90%, transparent);
-			border-color: color-mix(in oklch, var(--nav-group-accent) 86%, var(--panel-border));
-			transform: translateY(-1px);
-		}
-
-		&.is-active .nav-group-trigger {
-			background:
-				radial-gradient(circle at 100% 0, color-mix(in oklch, var(--nav-group-accent) 20%, transparent) 0%, transparent 42%),
-				linear-gradient(160deg, color-mix(in oklch, var(--nav-group-surface) 96%, var(--nav-group-accent)) 0%, color-mix(in oklch, var(--nav-group-surface) 86%, black 14%) 100%);
-			border-color: color-mix(in oklch, var(--nav-group-accent) 90%, var(--panel-border));
-		}
-	}
-
 	.nav-menu-trigger {
 		inline-size: fit-content;
 		min-inline-size: 0;
@@ -1293,16 +1181,22 @@
 	}
 
 	.page-nav {
-		position: absolute;
-		inset-block-start: calc(100% + 0.65rem);
-		inset-inline-end: 0;
+		position: fixed;
+		inset-block-start: var(--page-nav-top, 6rem);
+		inset-inline-start: var(--page-nav-left, 0.75rem);
+		inset-inline-end: auto;
 		z-index: 25;
-		inline-size: min(60rem, calc(100cqi - 1rem));
-		max-inline-size: calc(100cqi - 1rem);
+		inline-size: var(--page-nav-width, min(72rem, calc(100vw - 1.5rem)));
+		max-inline-size: calc(100vw - 1rem);
+		max-block-size: var(--page-nav-max-block-size, min(42rem, calc(100vh - 7rem)));
+		max-block-size: var(--page-nav-max-block-size, min(42rem, calc(100dvh - 7rem)));
 		display: none;
-		grid-template-columns: minmax(14rem, 17rem) minmax(0, 1fr);
+		grid-template-columns: 1fr;
 		align-items: start;
-		gap: 0.8rem;
+		gap: 0.85rem;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		scrollbar-gutter: stable;
 		background:
 			radial-gradient(circle at 100% 0, color-mix(in oklch, var(--accent) 10%, transparent) 0%, transparent 42%),
 			linear-gradient(160deg, color-mix(in oklch, var(--panel-bg) 88%, black) 0%, color-mix(in oklch, var(--panel-bg) 80%, black 20%) 100%);
@@ -1316,36 +1210,74 @@
 		}
 	}
 
-	.page-nav-categories {
+	.page-nav-sections {
 		display: grid;
-		gap: 0.55rem;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.75rem;
 	}
 
 	@media (width <= 1180px) {
 		.page-nav {
-			inline-size: min(52rem, calc(100cqi - 0.75rem));
-			grid-template-columns: minmax(12.5rem, 14rem) minmax(0, 1fr);
+			inline-size: min(58rem, calc(100cqi - 0.75rem));
 			gap: 0.65rem;
 			padding: 0.7rem;
 		}
 
-		.nav-group-trigger {
-			min-block-size: 7.5rem;
-			padding-block: 0.52rem;
-			padding-inline: 0.64rem;
-		}
-
-		.nav-group-title,
 		.nav-menu-label {
 			white-space: normal;
 		}
 
-		.nav-group-examples {
-			font-size: 0.68rem;
+		.nav-group-links {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (height <= 850px) and (width > 980px) {
+		.page-nav {
+			max-block-size: var(--page-nav-max-block-size, calc(100vh - 9.25rem));
+			max-block-size: var(--page-nav-max-block-size, calc(100dvh - 9.25rem));
+			gap: 0.6rem;
+			padding: 0.6rem;
+		}
+
+		.page-nav-sections {
+			gap: 0.55rem;
+		}
+
+		.nav-group-panel {
+			gap: 0.58rem;
+			border-radius: 0.78rem;
+			padding: 0.6rem;
+		}
+
+		.nav-group-panel-head {
+			gap: 0.22rem;
+		}
+
+		.nav-group-panel-title {
+			font-size: 0.94rem;
+		}
+
+		.nav-entry {
+			gap: 0.22rem;
+			border-radius: 0.66rem;
+			padding: 0.54rem;
 		}
 
 		.nav-group-links {
-			grid-template-columns: 1fr;
+			gap: 0.42rem;
+		}
+
+		.nav-entry-copy,
+		.nav-group-panel-copy {
+			font-size: 0.72rem;
+			line-height: 1.25;
+		}
+
+		.page-nav-panel-recommendation {
+			font-size: 0.72rem;
+			padding-block: 0.34rem;
+			padding-inline: 0.48rem;
 		}
 	}
 
@@ -1436,6 +1368,8 @@
 			position: static;
 			inline-size: auto;
 			max-inline-size: none;
+			max-block-size: none;
+			overflow-y: visible;
 			grid-template-columns: 1fr;
 			box-shadow: none;
 			padding: 0.75rem;
@@ -1446,8 +1380,8 @@
 			padding-block-end: 0;
 		}
 
-		.page-nav-categories {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
+		.page-nav-sections {
+			grid-template-columns: 1fr;
 		}
 
 		.nav-group-panel {
@@ -1472,23 +1406,9 @@
 			padding: 0.65rem;
 		}
 
-		.page-nav-categories {
+		.page-nav-sections {
 			grid-template-columns: 1fr;
 			gap: 0.45rem;
-		}
-
-		.nav-group-trigger {
-			min-block-size: auto;
-			padding-block: 0.56rem;
-			padding-inline: 0.62rem;
-		}
-
-		.nav-group-copy {
-			font-size: 0.74rem;
-		}
-
-		.nav-group-examples {
-			font-size: 0.66rem;
 		}
 
 		.nav-group-panel,

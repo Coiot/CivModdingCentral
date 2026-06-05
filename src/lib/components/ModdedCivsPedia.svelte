@@ -6598,11 +6598,15 @@
 		pointer-events: none;
 	}
 
-	.pedia-catalog-row:hover {
+	.pedia-catalog-row:hover,
+	.pedia-catalog-row:focus-visible {
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--catalog-accent) 75%, transparent) 0%, transparent 30%),
 			linear-gradient(145deg, color-mix(in srgb, var(--catalog-surface) 85%, var(--pedia-panel-soft)) 0%, color-mix(in srgb, var(--catalog-surface) 14%, #16110f) 100%);
 		border-color: color-mix(in srgb, var(--catalog-accent) 75%, var(--border-color));
+		box-shadow:
+			0 0 0 2px color-mix(in srgb, var(--catalog-accent) 34%, transparent),
+			var(--pedia-shadow-soft);
 	}
 
 	.pedia-catalog-row-meta {
@@ -7469,6 +7473,12 @@
 		content: "";
 	}
 
+	.pedia-unique-pedia-summary:focus-visible {
+		outline: 2px solid color-mix(in srgb, var(--pedia-accent-strong) 68%, white 32%);
+		outline-offset: 0.18rem;
+		border-radius: 0.35rem;
+	}
+
 	.pedia-unique-pedia-body {
 		display: grid;
 		gap: 0.75rem;
@@ -7497,12 +7507,39 @@
 	}
 
 	.pedia-list-panel-summary {
+		position: relative;
 		cursor: pointer;
 		list-style: none;
+		padding-inline-start: 1.35rem;
+	}
+
+	.pedia-list-panel[open] .pedia-list-panel-summary::before {
+		content: "−";
+	}
+
+	.pedia-list-panel-summary::before {
+		position: absolute;
+		inset-block-start: 1rem;
+		inset-inline-start: 0;
+		color: var(--pedia-accent-strong);
+		font-size: 1.05rem;
+		font-weight: 800;
+		line-height: 1;
+		content: "+";
 	}
 
 	.pedia-list-panel-summary::-webkit-details-marker {
 		display: none;
+	}
+
+	.pedia-list-panel-summary::marker {
+		content: "";
+	}
+
+	.pedia-list-panel-summary:focus-visible {
+		outline: 2px solid color-mix(in srgb, var(--pedia-accent-strong) 68%, white 32%);
+		outline-offset: 0.18rem;
+		border-radius: 0.35rem;
 	}
 
 	.pedia-name-list {

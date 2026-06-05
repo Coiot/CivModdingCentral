@@ -1510,6 +1510,7 @@
 						<span>Active: {completedDeliverableCount}/{plannerDeliverables.length} done</span>
 					{/if}
 					<span class="project-hub-summary-action">
+						<span aria-hidden="true">{projectDeskOpen ? "−" : "+"}</span>
 						<strong>{projectDeskOpen ? "Close desk" : "Open desk"}</strong>
 					</span>
 				</div>
@@ -2157,10 +2158,6 @@
 		line-height: 1.45;
 	}
 
-	.project-hub-disclosure[open] .project-hub-summary-action span[aria-hidden="true"] {
-		transform: rotate(45deg);
-	}
-
 	.project-hub-overview-meta span {
 		display: inline-flex;
 		align-items: center;
@@ -2427,11 +2424,13 @@
 		display: none;
 	}
 
-	.project-hub-summary:hover {
+	.project-hub-summary:hover,
+	.project-hub-summary:focus-visible {
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--planner-highlight) 20%, transparent) 0%, transparent 36%),
 			linear-gradient(165deg, color-mix(in oklch, var(--planner-panel-soft) 92%, transparent) 0%, color-mix(in oklch, var(--planner-panel-muted) 84%, #15110d 16%) 100%);
 		box-shadow:
+			0 0 0 2px color-mix(in oklch, var(--planner-highlight) 42%, transparent),
 			inset 0 1px 0 color-mix(in oklch, white 60%, transparent),
 			0 6px 8px color-mix(in oklch, black 60%, transparent);
 		border-color: color-mix(in oklch, var(--planner-highlight) 86%, var(--planner-border-soft));

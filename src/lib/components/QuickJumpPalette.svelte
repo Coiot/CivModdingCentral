@@ -821,6 +821,8 @@
 	let isOpen = $state(false);
 	let query = $state("");
 	let activeIndex = $state(0);
+	let triggerButtonEl = $state();
+	let dialogEl = $state();
 	let searchInputEl = $state();
 	let indexLoading = $state(false);
 	let indexReady = $state(false);
@@ -1048,6 +1050,7 @@
 
 	function closePalette() {
 		isOpen = false;
+		void tick().then(() => triggerButtonEl?.focus?.());
 	}
 
 	function setActiveIndex(index) {
@@ -1063,6 +1066,36 @@
 	function selectAdjacent(delta) {
 		if (!results.length) return;
 		activeIndex = (resolvedActiveIndex + delta + results.length) % results.length;
+	}
+
+	function focusableDialogElements() {
+		if (!dialogEl) {
+			return [];
+		}
+		return Array.from(dialogEl.querySelectorAll("a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex='-1'])")).filter(
+			(element) => !element.hasAttribute("disabled") && element.getAttribute("aria-hidden") !== "true",
+		);
+	}
+
+	function trapDialogFocus(event) {
+		if (event.key !== "Tab") {
+			return;
+		}
+		const focusable = focusableDialogElements();
+		if (!focusable.length) {
+			event.preventDefault();
+			searchInputEl?.focus?.();
+			return;
+		}
+		const first = focusable[0];
+		const last = focusable[focusable.length - 1];
+		if (event.shiftKey && document.activeElement === first) {
+			event.preventDefault();
+			last.focus();
+		} else if (!event.shiftKey && document.activeElement === last) {
+			event.preventDefault();
+			first.focus();
+		}
 	}
 
 	function handlePaletteKeyDown(event) {
@@ -1104,7 +1137,7 @@
 <svelte:window onkeydown={handleWindowKeyDown} />
 
 <div class="quick-jump relative">
-	<button type="button" class="quick-jump-trigger" aria-label="Open quick jump" onclick={() => openPalette()}>
+	<button bind:this={triggerButtonEl} type="button" class="quick-jump-trigger" aria-label="Open quick jump" onclick={() => openPalette()}>
 		<svg class="quick-jump-trigger-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true">
 			<path
 				d="M208 80C137.3 80 80 137.3 80 208s57.3 128 128 128s128-57.3 128-128S278.7 80 208 80zM0 208C0 93.1 93.1 0 208 0s208 93.1 208 208c0 45.1-14.3 86.8-38.6 120.9l124.9 124.9c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L332.1 374.2C298.8 398.7 255.8 416 208 416C93.1 416 0 322.9 0 208z"
@@ -1116,7 +1149,7 @@
 
 	{#if isOpen}
 		<div class="quick-jump-overlay" role="presentation" onclick={(event) => event.target === event.currentTarget && closePalette()} transition:fade={{ duration: 140 }}>
-			<div class="quick-jump-dialog overflow" role="dialog" aria-modal="true" aria-label="Quick jump">
+			<div bind:this={dialogEl} class="quick-jump-dialog overflow" role="dialog" aria-modal="true" aria-label="Quick jump" tabindex="-1" onkeydown={trapDialogFocus}>
 				<div class="quick-jump-input-wrap">
 					<input
 						bind:this={searchInputEl}
