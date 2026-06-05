@@ -1856,14 +1856,7 @@
 	$effect(() => {
 		const signature = allEntries
 			.map((entry) =>
-				[
-					entry.id,
-					entry.presentation?.iconImageUrl,
-					entry.presentation?.mapImageUrl,
-					entry.presentation?.leaderSceneImageUrl,
-					entry.meta?.updatedAt,
-					entry.meta?.createdAt,
-				].join("~"),
+				[entry.id, entry.presentation?.iconImageUrl, entry.presentation?.mapImageUrl, entry.presentation?.leaderSceneImageUrl, entry.meta?.updatedAt, entry.meta?.createdAt].join("~"),
 			)
 			.join("|");
 		if (signature !== imageFailureResetSignature) {
@@ -6713,7 +6706,7 @@
 		block-size: 100%;
 		display: block;
 		filter: drop-shadow(2px 2px 4px rgb(0 0 0 / 0.5));
-		border-radius: 1.5rem;
+		border-radius: 1.75rem;
 		object-fit: contain;
 		overflow: clip;
 	}
@@ -7689,7 +7682,7 @@
 		place-items: center;
 		inline-size: 100%;
 		aspect-ratio: 4 / 3;
-		min-block-size: 10rem;
+		min-block-size: 22rem;
 		max-block-size: min(42dvh, 19rem);
 		background:
 			radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--infobox-accent) 22%, transparent) 0%, transparent 40%),
