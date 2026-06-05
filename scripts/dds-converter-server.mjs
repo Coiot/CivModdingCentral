@@ -25,11 +25,11 @@ const server = http.createServer(async (request, response) => {
 		return;
 	}
 
-	if (request.method === "POST" && (url.pathname === "/convert-dds" || url.pathname === "/.netlify/functions/convert-dds")) {
+	if ((request.method === "GET" || request.method === "POST") && (url.pathname === "/convert-dds" || url.pathname === "/.netlify/functions/convert-dds")) {
 		try {
-			const body = await readRequestBody(request, MAX_REQUEST_BYTES);
+			const body = request.method === "POST" ? await readRequestBody(request, MAX_REQUEST_BYTES) : Buffer.alloc(0);
 			const netlifyEvent = {
-				httpMethod: "POST",
+				httpMethod: request.method,
 				headers: request.headers,
 				isBase64Encoded: true,
 				body: body.toString("base64"),

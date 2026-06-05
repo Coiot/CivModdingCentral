@@ -303,7 +303,6 @@
 	let nativeEncoderStatus = $state("");
 	let nativeEncoderBinary = $state("");
 	let nativeEncoderChecking = $state(true);
-	let allowCompatibilityEncoder = $state(false);
 
 	const workflowConfig = $derived(WORKFLOWS[workflow] || WORKFLOWS.unit);
 	const compressionOptions = $derived(workflowConfig.compressionOptions || ["DXT3"]);
@@ -338,7 +337,26 @@
 	const activeNativeOutputMode = $derived(activeBundleAtlasType === "unit_flag" ? "dxt3" : "rgba8");
 	const workflowRequiresNative = $derived(workflow === "screen" || workflow === "icon_sheet" || workflow === "sv" || (isAtlasBundleWorkflow && activeNativeOutputMode === "rgba8"));
 	const workflowSupportsCompatibilityEncoder = $derived(!workflowRequiresNative);
-	const effectiveEncoderBackend = $derived(nativeEncoderAvailable === false && workflowSupportsCompatibilityEncoder && allowCompatibilityEncoder ? ENCODER_BACKEND_DXTJS : ENCODER_BACKEND_NATIVE);
+	const effectiveEncoderBackend = $derived(nativeEncoderAvailable === false && workflowSupportsCompatibilityEncoder ? ENCODER_BACKEND_DXTJS : ENCODER_BACKEND_NATIVE);
+	const effectiveEncoderLabel = $derived(effectiveEncoderBackend === ENCODER_BACKEND_NATIVE ? "Native Compressonator" : "Compatibility JS encoder");
+	const nativeEncoderAvailabilityLabel = $derived.by(() => {
+		if (nativeEncoderChecking) {
+			return "Checking native encoder availability...";
+		}
+		if (nativeEncoderAvailable === true) {
+			return nativeEncoderBinary ? `Native encoder available: ${nativeEncoderBinary}` : "Native encoder available.";
+		}
+		return `Native encoder unavailable: ${nativeEncoderStatus || "Unable to verify native encoder availability."}`;
+	});
+	const effectiveEncoderDetail = $derived.by(() => {
+		if (nativeEncoderChecking) {
+			return "Conversion will use the native encoder if it responds.";
+		}
+		if (effectiveEncoderBackend === ENCODER_BACKEND_NATIVE) {
+			return "Current workflow will use the native encoder.";
+		}
+		return "Current workflow will use the JS encoder until native reconnects.";
+	});
 	const atlasSqlToken = $derived(normalizeAtlasSqlToken(atlasExportName));
 	const atlasFilePrefix = $derived(buildAtlasFilePrefix(atlasSqlToken));
 	const sqlWorkflowEnabled = $derived(isAtlasBundleWorkflow || workflow === "icon_sheet" || workflow === "sv");
@@ -404,9 +422,6 @@
 		if (nativeEncoderAvailable === false && !workflowSupportsCompatibilityEncoder) {
 			return nativeEncoderStatus || "Native encoder is unavailable for this workflow.";
 		}
-		if (nativeEncoderAvailable === false && workflowSupportsCompatibilityEncoder && !allowCompatibilityEncoder) {
-			return "Native encoder is unavailable. Enable compatibility mode to use the JS encoder for this workflow.";
-		}
 		return "";
 	});
 
@@ -441,12 +456,6 @@
 			atlasCols,
 			atlasSelectedSizes: [...atlasSelectedSizes],
 		});
-	});
-
-	$effect(() => {
-		if (nativeEncoderAvailable !== false || !workflowSupportsCompatibilityEncoder) {
-			allowCompatibilityEncoder = false;
-		}
 	});
 
 	function normalizeAtlasSqlToken(value) {
@@ -644,7 +653,6 @@
 			atlasRowsInput = String(BUNDLE_WORKFLOW_SETTINGS[workflow].defaultRows || atlasRowsInput || 1);
 			atlasColsInput = String(BUNDLE_WORKFLOW_SETTINGS[workflow].defaultCols || atlasColsInput || 1);
 		}
-		allowCompatibilityEncoder = false;
 		errorMessage = "";
 		successMessage = "";
 		conversionMeta = null;
@@ -1294,22 +1302,15 @@
 				</p>
 			{/if}
 
-			{#if nativeEncoderChecking}
-				<p class="dds-warning">Checking native DDS encoder availability...</p>
-			{:else if nativeEncoderAvailable === false}
-				<div class="dds-warning stack half">
-					<p class="dds-warning-copy">Native encoder unavailable: {nativeEncoderStatus}</p>
-					{#if nativeEncoderBinary}
-						<p class="dds-warning-copy">Detected binary: {nativeEncoderBinary}</p>
-					{/if}
-					{#if workflowSupportsCompatibilityEncoder}
-						<label class="dds-compat-toggle">
-							<input type="checkbox" checked={allowCompatibilityEncoder} onchange={(event) => (allowCompatibilityEncoder = event.currentTarget.checked)} />
-							<span>Use compatibility JS encoder for this workflow</span>
-						</label>
-					{/if}
+			<div class="dds-encoder-status" data-state={nativeEncoderAvailable === false ? "unavailable" : nativeEncoderChecking ? "checking" : "available"}>
+				<div class="dds-encoder-status-copy">
+					<p>{nativeEncoderAvailabilityLabel}</p>
+					<p>{effectiveEncoderDetail} Selected: {effectiveEncoderLabel}.</p>
 				</div>
-			{/if}
+				<button type="button" class="tiny-action dds-reconnect-action" onclick={loadNativeEncoderStatus} disabled={nativeEncoderChecking}>
+					{nativeEncoderChecking ? "Checking..." : nativeEncoderAvailable === false ? "Reconnect Native Encoder" : "Check Native Encoder"}
+				</button>
+			</div>
 
 			<div class="dds-actions inline flex-wrap">
 				<span class="dds-tooltip-wrap relative">
@@ -1767,19 +1768,59 @@
 		margin: 0;
 	}
 
-	.dds-warning-copy {
+	.dds-encoder-status {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		color: var(--ink);
+		font-size: 0.82rem;
+		background: color-mix(in srgb, var(--dds-accent-panel) 16%, var(--control-bg));
+		border: 1px solid color-mix(in srgb, var(--dds-accent-highlight) 42%, var(--panel-border));
+		border-radius: 0.5rem;
+		padding-block: 0.35rem;
+		padding-inline: 0.5rem;
 		margin: 0;
 	}
 
-	.dds-compat-toggle {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		font-size: 0.9rem;
+	.dds-encoder-status[data-state="checking"] {
+		border-color: color-mix(in srgb, var(--dds-accent-highlight) 58%, var(--panel-border));
+	}
 
-		input[type="checkbox"] {
-			inline-size: auto;
+	.dds-encoder-status[data-state="unavailable"] {
+		background: color-mix(in oklch, oklch(0.93 0.08 100) 30%, var(--control-bg));
+		border-color: color-mix(in oklch, oklch(0.9 0.15 95) 50%, var(--panel-border));
+	}
+
+	.dds-encoder-status-copy {
+		display: grid;
+		gap: 0.08rem;
+		min-inline-size: 0;
+		line-height: 1.25;
+
+		& p {
 			margin: 0;
+		}
+	}
+
+	.dds-reconnect-action {
+		flex: 0 0 auto;
+		inline-size: fit-content;
+		font-size: 0.74rem;
+		padding-block: 0.22rem;
+		padding-inline: 0.38rem;
+
+		&:disabled {
+			opacity: 0.55;
+			cursor: not-allowed;
+		}
+	}
+
+	@media (max-width: 720px) {
+		.dds-encoder-status {
+			align-items: start;
+			flex-direction: column;
+			gap: 0.45rem;
 		}
 	}
 

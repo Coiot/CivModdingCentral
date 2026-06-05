@@ -86,8 +86,7 @@
 <section class="icon-atlas-generator" aria-label="Icon art atlas placeholder generator">
 	<div class="icon-atlas-generator-head">
 		<div>
-			<p class="eyebrow">Icon Atlas Generator</p>
-			<h3>Dynamic Atlas Builder</h3>
+			<h3>Dynamic Icon Atlas Generator</h3>
 			<p>Create a transparent PNG atlas with 256px cells and centered 174px red-circle to help you create your icon set.</p>
 		</div>
 		<div class="icon-atlas-generator-meta">
@@ -125,11 +124,16 @@
 
 <style>
 	.icon-atlas-generator {
+		--icon-atlas-accent-border: var(--dds-accent-border, var(--wizard-accent-border, var(--surface-ui-border, var(--panel-border, rgba(255, 255, 255, 0.16)))));
+		--icon-atlas-accent-highlight: var(--dds-accent-highlight, var(--wizard-accent-highlight, var(--surface-ui-highlight, #2c86b5)));
+		--icon-atlas-accent-highlight-strong: var(--dds-accent-highlight-strong, var(--wizard-accent-highlight-strong, var(--surface-ui-highlight-strong, white)));
+		--icon-atlas-accent-panel: var(--dds-accent-panel, var(--wizard-accent-panel, var(--surface-ui-panel, var(--panel-bg, #16191f))));
+
 		display: grid;
 		gap: 1rem;
 		min-inline-size: 0;
-		background: color-mix(in srgb, var(--panel-bg, #16191f) 90%, black 10%);
-		border: 1px solid color-mix(in srgb, var(--panel-border, rgba(255, 255, 255, 0.16)) 70%, #2c86b5 30%);
+		background: color-mix(in srgb, var(--icon-atlas-accent-panel) 22%, var(--panel-bg, #16191f) 78%);
+		border: 1px solid color-mix(in srgb, var(--icon-atlas-accent-border) 72%, var(--icon-atlas-accent-highlight) 28%);
 		border-radius: 0.9rem;
 		box-shadow: 0 6px 10px color-mix(in srgb, black 55%, transparent);
 		padding: 1rem;
@@ -170,11 +174,11 @@
 	}
 
 	.icon-atlas-generator-meta span {
-		color: color-mix(in srgb, white 82%, #2c86b5 18%);
+		color: color-mix(in srgb, var(--icon-atlas-accent-highlight-strong) 82%, white 18%);
 		font-size: 0.78rem;
 		font-weight: 700;
-		background: color-mix(in srgb, #2c86b5 14%, transparent);
-		border: 1px solid color-mix(in srgb, #2c86b5 32%, var(--panel-border, rgba(255, 255, 255, 0.16)));
+		background: color-mix(in srgb, var(--icon-atlas-accent-highlight) 14%, transparent);
+		border: 1px solid color-mix(in srgb, var(--icon-atlas-accent-highlight) 32%, var(--panel-border, rgba(255, 255, 255, 0.16)));
 		border-radius: 999px;
 		padding: 0.35rem 0.6rem;
 	}
@@ -200,7 +204,7 @@
 		inline-size: 100%;
 		color: inherit;
 		background: color-mix(in srgb, var(--input-bg, #101319) 90%, black 10%);
-		border: 1px solid color-mix(in srgb, var(--panel-border, rgba(255, 255, 255, 0.16)) 82%, #2c86b5 18%);
+		border: 1px solid color-mix(in srgb, var(--panel-border, rgba(255, 255, 255, 0.16)) 82%, var(--icon-atlas-accent-highlight) 18%);
 		border-radius: 0.55rem;
 		padding: 0.62rem 0.7rem;
 	}
@@ -209,8 +213,8 @@
 		inline-size: fit-content;
 		color: white;
 		font-weight: 800;
-		background: color-mix(in srgb, #2c86b5 76%, black 24%);
-		border: 1px solid color-mix(in srgb, #2c86b5 78%, white 12%);
+		background: color-mix(in srgb, var(--icon-atlas-accent-highlight) 76%, black 24%);
+		border: 1px solid color-mix(in srgb, var(--icon-atlas-accent-highlight) 78%, white 12%);
 		border-radius: 0.6rem;
 		box-shadow: 0 4px 8px color-mix(in srgb, black 45%, transparent);
 		cursor: pointer;
@@ -219,7 +223,7 @@
 
 	.icon-atlas-generator-button:hover,
 	.icon-atlas-generator-button:focus-visible {
-		background: color-mix(in srgb, #2c86b5 88%, black 12%);
+		background: color-mix(in srgb, var(--icon-atlas-accent-highlight) 88%, black 12%);
 	}
 
 	.icon-atlas-generator-preview {
@@ -236,7 +240,7 @@
 			8px -8px,
 			-8px 0;
 		background-size: 16px 16px;
-		border: 1px solid color-mix(in srgb, var(--panel-border, rgba(255, 255, 255, 0.16)) 80%, #2c86b5 20%);
+		border: 1px solid color-mix(in srgb, var(--panel-border, rgba(255, 255, 255, 0.16)) 80%, var(--icon-atlas-accent-highlight) 20%);
 		border-radius: 0.75rem;
 		overflow: hidden;
 		padding: 0.75rem;
