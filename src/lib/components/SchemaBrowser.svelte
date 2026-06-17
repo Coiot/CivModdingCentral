@@ -13,7 +13,7 @@
 		{
 			tableName: "Units",
 			label: "Units",
-			copy: "Lookup strength, cost, movement, rage, promotion links, class relationships, and many other attributes.",
+			copy: "Lookup strength, cost, movement, range, promotion links, class relationships, and many other attributes.",
 		},
 		{
 			tableName: "Civilizations",
